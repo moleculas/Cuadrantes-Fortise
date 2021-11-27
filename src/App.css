@@ -1,0 +1,17 @@
+/* overrides mui styles */
+
+.MuiOutlinedInput-input {
+    padding: 15px 15px !important
+}
+
+.MuiAutocomplete-input {
+    padding: 6px 6px !important
+}
+
+.MuiOutlinedInput-inputMultiline {
+    padding: 0 !important;
+}
+
+.MuiCollapse-container {
+    transition-duration:0s!important
+}
