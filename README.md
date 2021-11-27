@@ -30,6 +30,24 @@ Para la gestión de rutas.
 
 `npm install react-router-dom`
 
+### `redux`
+
+Para la gestión de estados y acciones en base a entorno.
+
+`npm install redux`
+
+`npm install react-redux`
+
+`npm install redux-devtools-extension`
+
+`npm install redux-thunk`
+
+### `use-dynamic-refs`
+
+Para gestionar Refs dinámicamente. (Setter y Getter).
+
+`npm install --save use-dynamic-refs`
+
 ### `clsx`
 
 Para mostrar className condicionalmente.
@@ -38,7 +56,7 @@ Para mostrar className condicionalmente.
 
 ### `axios`
 
-Para la comunicación con la Api (Gestión de imágenes y XML data).
+Para la comunicación con la Api (Gestión de data).
 
 `npm install axios`
 
