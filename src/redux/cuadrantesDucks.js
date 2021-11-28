@@ -22,6 +22,13 @@ const dataInicial = {
             centro: null,
             arrayCuadrante: []
         },
+        datosInforme: {
+            objeto: 'informe',
+            computo: '',
+            mensualPactado: null,
+            precioHora: null,
+            arrayTrabajadores: []
+        }
     },
     cuadranteRegistrado: '',
     categoria: '',
@@ -176,6 +183,13 @@ export const vaciarDatosCuadrantesAccion = () => (dispatch, getState) => {
                 objeto: 'cuadrante',
                 arrayCuadrante: arrayVacio
             },
+            datosInforme: {
+                objeto: 'informe',
+                computo: '',
+                mensualPactado: null,
+                precioHora: null,
+                arrayTrabajadores: arrayVacio
+            }
         }
     });
 }
@@ -259,7 +273,8 @@ export const obtenerCuadranteAccion = (objeto, id) => async (dispatch, getState)
                     id: res.data.id,
                     nombre: res.data.nombre,
                     actualizacion: res.data.actualizacion,
-                    datosCuadrante: JSON.parse(res.data.datos_cuadrante)
+                    datosCuadrante: JSON.parse(res.data.datos_cuadrante),
+                    datosInforme: JSON.parse(res.data.datos_informe)
                 }
             });
         };
@@ -515,15 +530,17 @@ export const gestionaColumnaCuadranteInterior = (
             losDiasDelMes.forEach((dia, index) => {
                 numeroSemana = Math.ceil((index + 1) / 7);
                 if (stateFestivo['estadoFestivoDia' + (index + 1)] || !hayTrabajador) {
-                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                        lunesInicioRango: null,
-                        lunesFinRango: null,
-                        baja: false,
-                        tipoBaja: null,
-                        festivo: true,
-                        observaciones: '',
-                        modificado: false,
-                    };
+                    if (dia[1][0] === 'Lunes') {
+                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                            lunesInicioRango: null,
+                            lunesFinRango: null,
+                            baja: false,
+                            tipoBaja: null,
+                            festivo: true,
+                            observaciones: '',
+                            modificado: false,
+                        };
+                    }
                 } else {
                     if (trabajador.estado !== 'alta' || arrayRegistrosHistorico.length > 0) {
                         if (arrayBaja.includes(index + 1)) {
@@ -630,15 +647,17 @@ export const gestionaColumnaCuadranteInterior = (
                     }
                 }//final secuencia
                 if (stateFestivo['estadoFestivoDia' + (index + 1)] || !hayTrabajador) {
-                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                        martesInicioRango: null,
-                        martesFinRango: null,
-                        baja: false,
-                        tipoBaja: null,
-                        festivo: true,
-                        observaciones: '',
-                        modificado: false
-                    };
+                    if (dia[1][0] === 'Martes') {
+                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                            martesInicioRango: null,
+                            martesFinRango: null,
+                            baja: false,
+                            tipoBaja: null,
+                            festivo: true,
+                            observaciones: '',
+                            modificado: false
+                        };
+                    }
                 } else {
                     if (trabajador.estado !== 'alta' || arrayRegistrosHistorico.length > 0) {
                         if (arrayBaja.includes(index + 1)) {
@@ -745,15 +764,17 @@ export const gestionaColumnaCuadranteInterior = (
                     }
                 }//final secuencia
                 if (stateFestivo['estadoFestivoDia' + (index + 1)] || !hayTrabajador) {
-                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                        miercolesInicioRango: null,
-                        miercolesFinRango: null,
-                        baja: false,
-                        tipoBaja: null,
-                        festivo: true,
-                        observaciones: '',
-                        modificado: false
-                    };
+                    if (dia[1][0] === 'Miércoles') {
+                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                            miercolesInicioRango: null,
+                            miercolesFinRango: null,
+                            baja: false,
+                            tipoBaja: null,
+                            festivo: true,
+                            observaciones: '',
+                            modificado: false
+                        };
+                    }
                 } else {
                     if (trabajador.estado !== 'alta' || arrayRegistrosHistorico.length > 0) {
                         if (arrayBaja.includes(index + 1)) {
@@ -860,15 +881,17 @@ export const gestionaColumnaCuadranteInterior = (
                     }
                 }//final secuencia
                 if (stateFestivo['estadoFestivoDia' + (index + 1)] || !hayTrabajador) {
-                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                        juevesInicioRango: null,
-                        juevesFinRango: null,
-                        baja: false,
-                        tipoBaja: null,
-                        festivo: true,
-                        observaciones: '',
-                        modificado: false
-                    };
+                    if (dia[1][0] === 'Jueves') {
+                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                            juevesInicioRango: null,
+                            juevesFinRango: null,
+                            baja: false,
+                            tipoBaja: null,
+                            festivo: true,
+                            observaciones: '',
+                            modificado: false
+                        };
+                    }
                 } else {
                     if (trabajador.estado !== 'alta' || arrayRegistrosHistorico.length > 0) {
                         if (arrayBaja.includes(index + 1)) {
@@ -975,15 +998,17 @@ export const gestionaColumnaCuadranteInterior = (
                     }
                 }//final secuencia
                 if (stateFestivo['estadoFestivoDia' + (index + 1)] || !hayTrabajador) {
-                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                        viernesInicioRango: null,
-                        viernesFinRango: null,
-                        baja: false,
-                        tipoBaja: null,
-                        festivo: true,
-                        observaciones: '',
-                        modificado: false
-                    };
+                    if (dia[1][0] === 'Viernes') {
+                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                            viernesInicioRango: null,
+                            viernesFinRango: null,
+                            baja: false,
+                            tipoBaja: null,
+                            festivo: true,
+                            observaciones: '',
+                            modificado: false
+                        };
+                    }
                 } else {
                     if (trabajador.estado !== 'alta' || arrayRegistrosHistorico.length > 0) {
                         if (arrayBaja.includes(index + 1)) {
@@ -1090,15 +1115,17 @@ export const gestionaColumnaCuadranteInterior = (
                     }
                 }//final secuencia
                 if (stateFestivo['estadoFestivoDia' + (index + 1)] || !hayTrabajador) {
-                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                        sabadoInicioRango: null,
-                        sabadoFinRango: null,
-                        baja: false,
-                        tipoBaja: null,
-                        festivo: true,
-                        observaciones: '',
-                        modificado: false
-                    };
+                    if (dia[1][0] === 'Sábado') {
+                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                            sabadoInicioRango: null,
+                            sabadoFinRango: null,
+                            baja: false,
+                            tipoBaja: null,
+                            festivo: true,
+                            observaciones: '',
+                            modificado: false
+                        };
+                    }
                 } else {
                     if (trabajador.estado !== 'alta' || arrayRegistrosHistorico.length > 0) {
                         if (arrayBaja.includes(index + 1)) {
@@ -1205,15 +1232,17 @@ export const gestionaColumnaCuadranteInterior = (
                     }
                 }//final secuencia
                 if (stateFestivo['estadoFestivoDia' + (index + 1)] || !hayTrabajador) {
-                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                        domingoInicioRango: null,
-                        domingoFinRango: null,
-                        baja: false,
-                        tipoBaja: null,
-                        festivo: true,
-                        observaciones: '',
-                        modificado: false
-                    };
+                    if (dia[1][0] === 'Domingo') {
+                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                            domingoInicioRango: null,
+                            domingoFinRango: null,
+                            baja: false,
+                            tipoBaja: null,
+                            festivo: true,
+                            observaciones: '',
+                            modificado: false
+                        };
+                    }
                 } else {
                     if (trabajador.estado !== 'alta' || arrayRegistrosHistorico.length > 0) {
                         if (arrayBaja.includes(index + 1)) {
@@ -1325,17 +1354,19 @@ export const gestionaColumnaCuadranteInterior = (
             losDiasDelMes.forEach((dia, index) => {
                 numeroSemana = Math.ceil((index + 1) / 7);
                 if (stateFestivo['estadoFestivoDia' + (index + 1)] || !hayTrabajador) {
-                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                        lunesInicio1RangoDescanso: null,
-                        lunesFin1RangoDescanso: null,
-                        lunesInicio2RangoDescanso: null,
-                        lunesFin2RangoDescanso: null,
-                        baja: false,
-                        tipoBaja: null,
-                        festivo: true,
-                        observaciones: '',
-                        modificado: false
-                    };
+                    if (dia[1][0] === 'Lunes') {
+                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                            lunesInicio1RangoDescanso: null,
+                            lunesFin1RangoDescanso: null,
+                            lunesInicio2RangoDescanso: null,
+                            lunesFin2RangoDescanso: null,
+                            baja: false,
+                            tipoBaja: null,
+                            festivo: true,
+                            observaciones: '',
+                            modificado: false
+                        };
+                    }
                 } else {
                     if (trabajador.estado !== 'alta' || arrayRegistrosHistorico.length > 0) {
                         if (arrayBaja.includes(index + 1)) {
@@ -1456,17 +1487,19 @@ export const gestionaColumnaCuadranteInterior = (
                     }
                 }//final secuencia    
                 if (stateFestivo['estadoFestivoDia' + (index + 1)] || !hayTrabajador) {
-                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                        martesInicio1RangoDescanso: null,
-                        martesFin1RangoDescanso: null,
-                        martesInicio2RangoDescanso: null,
-                        martesFin2RangoDescanso: null,
-                        baja: false,
-                        tipoBaja: null,
-                        festivo: true,
-                        observaciones: '',
-                        modificado: false
-                    };
+                    if (dia[1][0] === 'Martes') {
+                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                            martesInicio1RangoDescanso: null,
+                            martesFin1RangoDescanso: null,
+                            martesInicio2RangoDescanso: null,
+                            martesFin2RangoDescanso: null,
+                            baja: false,
+                            tipoBaja: null,
+                            festivo: true,
+                            observaciones: '',
+                            modificado: false
+                        };
+                    }
                 } else {
                     if (trabajador.estado !== 'alta' || arrayRegistrosHistorico.length > 0) {
                         if (arrayBaja.includes(index + 1)) {
@@ -1587,17 +1620,19 @@ export const gestionaColumnaCuadranteInterior = (
                     }
                 }//final secuencia
                 if (stateFestivo['estadoFestivoDia' + (index + 1)] || !hayTrabajador) {
-                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                        miercolesInicio1RangoDescanso: null,
-                        miercolesFin1RangoDescanso: null,
-                        miercolesInicio2RangoDescanso: null,
-                        miercolesFin2RangoDescanso: null,
-                        baja: false,
-                        tipoBaja: null,
-                        festivo: true,
-                        observaciones: '',
-                        modificado: false
-                    };
+                    if (dia[1][0] === 'Miércoles') {
+                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                            miercolesInicio1RangoDescanso: null,
+                            miercolesFin1RangoDescanso: null,
+                            miercolesInicio2RangoDescanso: null,
+                            miercolesFin2RangoDescanso: null,
+                            baja: false,
+                            tipoBaja: null,
+                            festivo: true,
+                            observaciones: '',
+                            modificado: false
+                        };
+                    }
                 } else {
                     if (trabajador.estado !== 'alta' || arrayRegistrosHistorico.length > 0) {
                         if (arrayBaja.includes(index + 1)) {
@@ -1718,17 +1753,19 @@ export const gestionaColumnaCuadranteInterior = (
                     }
                 }//final secuencia
                 if (stateFestivo['estadoFestivoDia' + (index + 1)] || !hayTrabajador) {
-                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                        juevesInicio1RangoDescanso: null,
-                        juevesFin1RangoDescanso: null,
-                        juevesInicio2RangoDescanso: null,
-                        juevesFin2RangoDescanso: null,
-                        baja: false,
-                        tipoBaja: null,
-                        festivo: true,
-                        observaciones: '',
-                        modificado: false
-                    };
+                    if (dia[1][0] === 'Jueves') {
+                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                            juevesInicio1RangoDescanso: null,
+                            juevesFin1RangoDescanso: null,
+                            juevesInicio2RangoDescanso: null,
+                            juevesFin2RangoDescanso: null,
+                            baja: false,
+                            tipoBaja: null,
+                            festivo: true,
+                            observaciones: '',
+                            modificado: false
+                        };
+                    }
                 } else {
                     if (trabajador.estado !== 'alta' || arrayRegistrosHistorico.length > 0) {
                         if (arrayBaja.includes(index + 1)) {
@@ -1849,17 +1886,19 @@ export const gestionaColumnaCuadranteInterior = (
                     }
                 }//final secuencia
                 if (stateFestivo['estadoFestivoDia' + (index + 1)] || !hayTrabajador) {
-                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                        viernesInicio1RangoDescanso: null,
-                        viernesFin1RangoDescanso: null,
-                        viernesInicio2RangoDescanso: null,
-                        viernesFin2RangoDescanso: null,
-                        baja: false,
-                        tipoBaja: null,
-                        festivo: true,
-                        observaciones: '',
-                        modificado: false
-                    };
+                    if (dia[1][0] === 'Viernes') {
+                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                            viernesInicio1RangoDescanso: null,
+                            viernesFin1RangoDescanso: null,
+                            viernesInicio2RangoDescanso: null,
+                            viernesFin2RangoDescanso: null,
+                            baja: false,
+                            tipoBaja: null,
+                            festivo: true,
+                            observaciones: '',
+                            modificado: false
+                        };
+                    }
                 } else {
                     if (trabajador.estado !== 'alta' || arrayRegistrosHistorico.length > 0) {
                         if (arrayBaja.includes(index + 1)) {
@@ -1980,17 +2019,19 @@ export const gestionaColumnaCuadranteInterior = (
                     }
                 }//final secuencia
                 if (stateFestivo['estadoFestivoDia' + (index + 1)] || !hayTrabajador) {
-                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                        sabadoInicio1RangoDescanso: null,
-                        sabadoFin1RangoDescanso: null,
-                        sabadoInicio2RangoDescanso: null,
-                        sabadoFin2RangoDescanso: null,
-                        baja: false,
-                        tipoBaja: null,
-                        festivo: true,
-                        observaciones: '',
-                        modificado: false
-                    };
+                    if (dia[1][0] === 'Sábado') {
+                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                            sabadoInicio1RangoDescanso: null,
+                            sabadoFin1RangoDescanso: null,
+                            sabadoInicio2RangoDescanso: null,
+                            sabadoFin2RangoDescanso: null,
+                            baja: false,
+                            tipoBaja: null,
+                            festivo: true,
+                            observaciones: '',
+                            modificado: false
+                        };
+                    }
                 } else {
                     if (trabajador.estado !== 'alta' || arrayRegistrosHistorico.length > 0) {
                         if (arrayBaja.includes(index + 1)) {
@@ -2111,17 +2152,19 @@ export const gestionaColumnaCuadranteInterior = (
                     }
                 }//final secuencia
                 if (stateFestivo['estadoFestivoDia' + (index + 1)] || !hayTrabajador) {
-                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                        domingoInicio1RangoDescanso: null,
-                        domingoFin1RangoDescanso: null,
-                        domingoInicio2RangoDescanso: null,
-                        domingoFin2RangoDescanso: null,
-                        baja: false,
-                        tipoBaja: null,
-                        festivo: true,
-                        observaciones: '',
-                        modificado: false
-                    };
+                    if (dia[1][0] === 'Domingo') {
+                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                            domingoInicio1RangoDescanso: null,
+                            domingoFin1RangoDescanso: null,
+                            domingoInicio2RangoDescanso: null,
+                            domingoFin2RangoDescanso: null,
+                            baja: false,
+                            tipoBaja: null,
+                            festivo: true,
+                            observaciones: '',
+                            modificado: false
+                        };
+                    }
                 } else {
                     if (trabajador.estado !== 'alta' || arrayRegistrosHistorico.length > 0) {
                         if (arrayBaja.includes(index + 1)) {
@@ -2247,14 +2290,16 @@ export const gestionaColumnaCuadranteInterior = (
             losDiasDelMes.forEach((dia, index) => {
                 numeroSemana = Math.ceil((index + 1) / 7);
                 if (stateFestivo['estadoFestivoDia' + (index + 1)] || !hayTrabajador) {
-                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                        lunesCantidad: '',
-                        baja: false,
-                        tipoBaja: null,
-                        festivo: true,
-                        observaciones: '',
-                        modificado: false
-                    };
+                    if (dia[1][0] === 'Lunes') {
+                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                            lunesCantidad: '',
+                            baja: false,
+                            tipoBaja: null,
+                            festivo: true,
+                            observaciones: '',
+                            modificado: false
+                        };
+                    }
                 } else {
                     if (trabajador.estado !== 'alta' || arrayRegistrosHistorico.length > 0) {
                         if (arrayBaja.includes(index + 1)) {
@@ -2354,14 +2399,16 @@ export const gestionaColumnaCuadranteInterior = (
                     }
                 }//final secuencia
                 if (stateFestivo['estadoFestivoDia' + (index + 1)] || !hayTrabajador) {
-                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                        martesCantidad: '',
-                        baja: false,
-                        tipoBaja: null,
-                        festivo: true,
-                        observaciones: '',
-                        modificado: false
-                    };
+                    if (dia[1][0] === 'Martes') {
+                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                            martesCantidad: '',
+                            baja: false,
+                            tipoBaja: null,
+                            festivo: true,
+                            observaciones: '',
+                            modificado: false
+                        };
+                    }
                 } else {
                     if (trabajador.estado !== 'alta' || arrayRegistrosHistorico.length > 0) {
                         if (arrayBaja.includes(index + 1)) {
@@ -2461,14 +2508,16 @@ export const gestionaColumnaCuadranteInterior = (
                     }
                 }//final secuencia
                 if (stateFestivo['estadoFestivoDia' + (index + 1)] || !hayTrabajador) {
-                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                        miercolesCantidad: '',
-                        baja: false,
-                        tipoBaja: null,
-                        festivo: true,
-                        observaciones: '',
-                        modificado: false
-                    };
+                    if (dia[1][0] === 'Miércoles') {
+                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                            miercolesCantidad: '',
+                            baja: false,
+                            tipoBaja: null,
+                            festivo: true,
+                            observaciones: '',
+                            modificado: false
+                        };
+                    }
                 } else {
                     if (trabajador.estado !== 'alta' || arrayRegistrosHistorico.length > 0) {
                         if (arrayBaja.includes(index + 1)) {
@@ -2568,14 +2617,16 @@ export const gestionaColumnaCuadranteInterior = (
                     }
                 }//final secuencia
                 if (stateFestivo['estadoFestivoDia' + (index + 1)] || !hayTrabajador) {
-                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                        juevesCantidad: '',
-                        baja: false,
-                        tipoBaja: null,
-                        festivo: true,
-                        observaciones: '',
-                        modificado: false
-                    };
+                    if (dia[1][0] === 'Jueves') {
+                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                            juevesCantidad: '',
+                            baja: false,
+                            tipoBaja: null,
+                            festivo: true,
+                            observaciones: '',
+                            modificado: false
+                        };
+                    }
                 } else {
                     if (trabajador.estado !== 'alta' || arrayRegistrosHistorico.length > 0) {
                         if (arrayBaja.includes(index + 1)) {
@@ -2675,14 +2726,16 @@ export const gestionaColumnaCuadranteInterior = (
                     }
                 }//final secuencia
                 if (stateFestivo['estadoFestivoDia' + (index + 1)] || !hayTrabajador) {
-                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                        viernesCantidad: '',
-                        baja: false,
-                        tipoBaja: null,
-                        festivo: true,
-                        observaciones: '',
-                        modificado: false
-                    };
+                    if (dia[1][0] === 'Viernes') {
+                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                            viernesCantidad: '',
+                            baja: false,
+                            tipoBaja: null,
+                            festivo: true,
+                            observaciones: '',
+                            modificado: false
+                        };
+                    }
                 } else {
                     if (trabajador.estado !== 'alta' || arrayRegistrosHistorico.length > 0) {
                         if (arrayBaja.includes(index + 1)) {
@@ -2782,14 +2835,16 @@ export const gestionaColumnaCuadranteInterior = (
                     }
                 }//final secuencia
                 if (stateFestivo['estadoFestivoDia' + (index + 1)] || !hayTrabajador) {
-                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                        sabadoCantidad: '',
-                        baja: false,
-                        tipoBaja: null,
-                        festivo: true,
-                        observaciones: '',
-                        modificado: false
-                    };
+                    if (dia[1][0] === 'Sábado') {
+                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                            sabadoCantidad: '',
+                            baja: false,
+                            tipoBaja: null,
+                            festivo: true,
+                            observaciones: '',
+                            modificado: false
+                        };
+                    }
                 } else {
                     if (trabajador.estado !== 'alta' || arrayRegistrosHistorico.length > 0) {
                         if (arrayBaja.includes(index + 1)) {
@@ -2889,14 +2944,16 @@ export const gestionaColumnaCuadranteInterior = (
                     }
                 }//final secuencia
                 if (stateFestivo['estadoFestivoDia' + (index + 1)] || !hayTrabajador) {
-                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                        domingoCantidad: '',
-                        baja: false,
-                        tipoBaja: null,
-                        festivo: true,
-                        observaciones: '',
-                        modificado: false
-                    };
+                    if (dia[1][0] === 'Domingo') {
+                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                            domingoCantidad: '',
+                            baja: false,
+                            tipoBaja: null,
+                            festivo: true,
+                            observaciones: '',
+                            modificado: false
+                        };
+                    }
                 } else {
                     if (trabajador.estado !== 'alta' || arrayRegistrosHistorico.length > 0) {
                         if (arrayBaja.includes(index + 1)) {

@@ -17,13 +17,16 @@ const DialogComponente = (props) => {
         <div>
             <Dialog
                 open={props.prIsOpen}
-                onClose={() => { handleCloseDialogBotones('acuerdo')} }
+                onClose={() => { handleCloseDialogBotones('acuerdo') }}
+                fullWidth={props.prFullWidth ? true : false}
+                maxWidth={props.prMaxWidth ? 'lg' : 'xs'}
             >
                 <DialogTitle id="alert-dialog-title">{props.prTituloDialog}</DialogTitle>
-                <DialogContent>
+                <DialogContent>{!props.prFullWidth ? (
                     <DialogContentText id="alert-dialog-description">
                         {props.prDescripcionDialog}
                     </DialogContentText>
+                ) : props.prDescripcionDialog}
                     {!props.prNoTieneBotones ? (
                         <Fragment>
                             <Button onClick={() => { handleCloseDialogBotones('acuerdo') }} color="primary">

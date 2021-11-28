@@ -300,22 +300,22 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             return;
         };
         if (prop === "computo") {
-            if(e.target.value===1){
+            if (e.target.value === 1) {
                 setValuesFormRegistro({ ...valuesFormRegistro, [prop]: e.target.value, precioHora: null });
             };
-            if(e.target.value===2){
+            if (e.target.value === 2) {
                 setValuesFormRegistro({ ...valuesFormRegistro, [prop]: e.target.value, mensualPactado: null });
-            };  
+            };
             dispatch(activarDesactivarRegistrarCentroAccion(false));
             return;
         };
         if (prop === "mensualPactado") {
-            setValuesFormRegistro({ ...valuesFormRegistro, [prop]: e.target.value });
+            setValuesFormRegistro({ ...valuesFormRegistro, [prop]: parseInt(e.target.value) });
             dispatch(activarDesactivarRegistrarCentroAccion(false));
             return;
         };
         if (prop === "precioHora") {
-            setValuesFormRegistro({ ...valuesFormRegistro, [prop]: e.target.value });
+            setValuesFormRegistro({ ...valuesFormRegistro, [prop]: parseInt(e.target.value) });
             dispatch(activarDesactivarRegistrarCentroAccion(false));
             return;
         };
@@ -1283,7 +1283,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                             valuesFormRegistro.categoria === '' ||
                             valuesFormRegistro.variacion === '' ||
                             valuesFormRegistro.tipo === '' ||
-                            valuesFormRegistro.numeroTrabajadores === '' 
+                            valuesFormRegistro.numeroTrabajadores === ''
                         ) {
                             setAlert({
                                 mensaje: "Faltan datos por completar. Revisa el formulario.",
@@ -1897,13 +1897,13 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                 sabadoCantidad: horarioIntervencionRegistro.sabadoCantidad,
                                 domingoCantidad: horarioIntervencionRegistro.domingoCantidad,
                             };
-                        };         
+                        };
                         //añadimos cómputo final                        
-                        const elHorarioIntervencionRegistradoRevisado={
-                           ...horarioIntervencionRegistroRevisado,
-                           computo: valuesFormRegistro.computo,
-                           mensualPactado: valuesFormRegistro.mensualPactado,
-                           precioHora: valuesFormRegistro.precioHora
+                        const elHorarioIntervencionRegistradoRevisado = {
+                            ...horarioIntervencionRegistroRevisado,
+                            computo: valuesFormRegistro.computo,
+                            mensualPactado: valuesFormRegistro.mensualPactado,
+                            precioHora: valuesFormRegistro.precioHora
                         }
                         //registramos
                         const centroAGuardar = {
@@ -1911,7 +1911,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                             nombre: valuesFormRegistro.nombre,
                             categoria: valuesFormRegistro.categoria,
                             horario: JSON.stringify(elHorarioIntervencionRegistradoRevisado),
-                            trabajadores: JSON.stringify(trabajadoresRegistro),                            
+                            trabajadores: JSON.stringify(trabajadoresRegistro),
                         };
                         dispatch(registrarCentroAccion('centros', centroAGuardar.id, centroAGuardar));
                         dispatch(registrarIntervencionAccion(true));
@@ -2331,8 +2331,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                             className={classes.mb15}
                                             fullWidth
                                             id="form-mensual-pactado-registro"
-                                            type="number"
-                                            value={valuesFormRegistro.mensualPactado}
+                                            value={valuesFormRegistro.mensualPactado || ''}
                                             onChange={handleChangeFormRegistro('mensualPactado')}
                                             labelWidth={130}
                                             startAdornment={<InputAdornment position="start">€</InputAdornment>}
@@ -2349,8 +2348,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                             className={classes.mb15}
                                             fullWidth
                                             id="form-precio-hora-registro"
-                                            type="number"
-                                            value={valuesFormRegistro.precioHora}
+                                            value={valuesFormRegistro.precioHora || ''}
                                             onChange={handleChangeFormRegistro('precioHora')}
                                             labelWidth={90}
                                             startAdornment={<InputAdornment position="start">€</InputAdornment>}

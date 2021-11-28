@@ -515,12 +515,12 @@ const CentrosEditar = forwardRef((props, ref) => {
             return;
         };
         if (prop === "mensualPactado") {
-            setValuesFormEdicion({ ...valuesFormEdicion, [prop]: e.target.value });
+            setValuesFormEdicion({ ...valuesFormEdicion, [prop]: parseInt(e.target.value) });
             dispatch(activarDesactivarActualizarCentroAccion(false));
             return;
         };
         if (prop === "precioHora") {
-            setValuesFormEdicion({ ...valuesFormEdicion, [prop]: e.target.value });
+            setValuesFormEdicion({ ...valuesFormEdicion, [prop]: parseInt(e.target.value) });
             dispatch(activarDesactivarActualizarCentroAccion(false));
             return;
         };
@@ -2570,9 +2570,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         <OutlinedInput
                                             className={classes.mb15}
                                             fullWidth
-                                            id="form-mensual-pactado-edicion"
-                                            type="number"
-                                            value={valuesFormEdicion.mensualPactado}
+                                            id="form-mensual-pactado-edicion"                                          
+                                            value={valuesFormEdicion.mensualPactado || ''}
                                             onChange={handleChangeFormEdicion('mensualPactado')}
                                             labelWidth={130}
                                             startAdornment={<InputAdornment position="start">€</InputAdornment>}
@@ -2589,8 +2588,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                             className={classes.mb15}
                                             fullWidth
                                             id="form-precio-hora-edicion"
-                                            type="number"
-                                            value={valuesFormEdicion.precioHora}
+                                            value={valuesFormEdicion.precioHora || ''}
                                             onChange={handleChangeFormEdicion('precioHora')}
                                             labelWidth={90}
                                             startAdornment={<InputAdornment position="start">€</InputAdornment>}

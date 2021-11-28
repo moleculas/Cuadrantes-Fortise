@@ -59,7 +59,6 @@ const Contenedor = () => {
                 </Hidden>
                 <div className={classes.content}>
                     <div className={classes.toolbar}></div>
-
                     <Switch>
                         <Route path="/" exact>
                             <Inicio />

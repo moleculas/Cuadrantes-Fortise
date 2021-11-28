@@ -3,7 +3,7 @@ const dataInicial = {
     estadoActivadoDesactivado: true,
     estadoIntervencionRegistrada: true,
     onEstem: '',
-    openDialog: [false, false, false, false, false, false, false]
+    openDialog: [false, false, false, false, false, false, false, false]
 }
 
 //types
@@ -148,6 +148,7 @@ export const abreObjetoDialogAccion = (numero) => (dispatch, getState) => {
             arrayDialogs[4] = false;
             arrayDialogs[5] = false;
             arrayDialogs[6] = false;
+            arrayDialogs[7] = false;
             break;
         case '2':
             arrayDialogs[0] = false;
@@ -157,6 +158,7 @@ export const abreObjetoDialogAccion = (numero) => (dispatch, getState) => {
             arrayDialogs[4] = false;
             arrayDialogs[5] = false;
             arrayDialogs[6] = false;
+            arrayDialogs[7] = false;
             break;
         case '3':
             arrayDialogs[0] = false;
@@ -166,6 +168,7 @@ export const abreObjetoDialogAccion = (numero) => (dispatch, getState) => {
             arrayDialogs[4] = false;
             arrayDialogs[5] = false;
             arrayDialogs[6] = false;
+            arrayDialogs[7] = false;
             break;
         case '4':
             arrayDialogs[0] = false;
@@ -175,6 +178,7 @@ export const abreObjetoDialogAccion = (numero) => (dispatch, getState) => {
             arrayDialogs[4] = false;
             arrayDialogs[5] = false;
             arrayDialogs[6] = false;
+            arrayDialogs[7] = false;
             break;
         case '5':
             arrayDialogs[0] = false;
@@ -184,6 +188,7 @@ export const abreObjetoDialogAccion = (numero) => (dispatch, getState) => {
             arrayDialogs[4] = true;
             arrayDialogs[5] = false;
             arrayDialogs[6] = false;
+            arrayDialogs[7] = false;
             break;
         case '6':
             arrayDialogs[0] = false;
@@ -193,6 +198,7 @@ export const abreObjetoDialogAccion = (numero) => (dispatch, getState) => {
             arrayDialogs[4] = false;
             arrayDialogs[5] = true;
             arrayDialogs[6] = false;
+            arrayDialogs[7] = false;
             break;
         case '7':
             arrayDialogs[0] = false;
@@ -202,6 +208,17 @@ export const abreObjetoDialogAccion = (numero) => (dispatch, getState) => {
             arrayDialogs[4] = false;
             arrayDialogs[5] = false;
             arrayDialogs[6] = true;
+            arrayDialogs[7] = false;
+            break;
+        case '8':
+            arrayDialogs[0] = false;
+            arrayDialogs[1] = false;
+            arrayDialogs[2] = false;
+            arrayDialogs[3] = false;
+            arrayDialogs[4] = false;
+            arrayDialogs[5] = false;
+            arrayDialogs[6] = false;
+            arrayDialogs[7] = true;
             break;
         default:
     }

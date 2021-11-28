@@ -48,6 +48,12 @@ Para gestionar Refs dinámicamente. (Setter y Getter).
 
 `npm install --save use-dynamic-refs`
 
+### `react-pdf`
+
+Renderizador de documentos PDF.
+
+`npm install @react-pdf/renderer --save`
+
 ### `clsx`
 
 Para mostrar className condicionalmente.
