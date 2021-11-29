@@ -27,7 +27,8 @@ const dataInicial = {
             computo: '',
             mensualPactado: null,
             precioHora: null,
-            arrayTrabajadores: []
+            arrayTrabajadores: [],
+            facturado: 'no'
         }
     },
     cuadranteRegistrado: '',
@@ -181,6 +182,7 @@ export const vaciarDatosCuadrantesAccion = () => (dispatch, getState) => {
             actualizacion: '',
             datosCuadrante: {
                 objeto: 'cuadrante',
+                centro: null,
                 arrayCuadrante: arrayVacio
             },
             datosInforme: {
@@ -188,7 +190,8 @@ export const vaciarDatosCuadrantesAccion = () => (dispatch, getState) => {
                 computo: '',
                 mensualPactado: null,
                 precioHora: null,
-                arrayTrabajadores: arrayVacio
+                arrayTrabajadores: arrayVacio,
+                facturado: 'no'
             }
         }
     });
@@ -3060,4 +3063,335 @@ export const gestionaColumnaCuadranteInterior = (
         columnaAnadir,
         hayTrabajador
     };
+};
+
+const retornaMinutosAccionEnCuadrantes = (primeraHora, segundaHora) => {
+    if (primeraHora && segundaHora) {
+        let myArrSplit1 = primeraHora.split(":");
+        const horasPrimeraHora = parseInt(myArrSplit1[0]);
+        const minutosPrimeraHora = parseInt(myArrSplit1[1]);
+        const minutosTotalesPrimeraHora = (horasPrimeraHora * 60) + minutosPrimeraHora;
+        let myArrSplit2 = segundaHora.split(":");
+        const horasSegundaHora = parseInt(myArrSplit2[0]);
+        const minutosSegundaHora = parseInt(myArrSplit2[1]);
+        const minutosTotalesSegundaHora = (horasSegundaHora * 60) + minutosSegundaHora;
+        const diff = minutosTotalesSegundaHora - minutosTotalesPrimeraHora;
+        return diff;
+    }
+}
+
+export const gestionarInformeAccion = (cuadrante) => (dispatch, getState) => {
+    let arrayResultante = [];
+    let sumatorioHoras;
+    let lasHoras;
+    cuadrante.forEach((cuadranteColumna, index) => {
+        switch (cuadranteColumna.tipoHorario) {
+            case 'rango':
+                arrayResultante.push({
+                    trabajador: cuadranteColumna.idTrabajador,
+                    trabajadorNombre: cuadranteColumna.nombreTrabajador,
+                    tipo: cuadranteColumna.tipoTrabajador,
+                    computo: [],
+                    totalHoras: null
+                });
+                sumatorioHoras = 0;
+                for (const prop in cuadranteColumna) {
+                    if (prop.includes('Lunes')) {
+                        const mySplit = prop.split('Lunes');
+                        if (cuadranteColumna[prop].lunesInicioRango) {
+                            lasHoras = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicioRango, cuadranteColumna[prop].lunesFinRango) / 60
+                            arrayResultante[index].computo.push({
+                                dia: 'Lunes-' + mySplit[1],
+                                horas: lasHoras
+                            });
+                            sumatorioHoras += lasHoras;
+                        };
+                    };
+                    if (prop.includes('Martes')) {
+                        const mySplit = prop.split('Martes');
+                        if (cuadranteColumna[prop].martesInicioRango) {
+                            lasHoras = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60
+                            arrayResultante[index].computo.push({
+                                dia: 'Martes-' + mySplit[1],
+                                horas: lasHoras
+                            });
+                            sumatorioHoras += lasHoras;
+                        };
+                    };
+                    if (prop.includes('Miércoles')) {
+                        const mySplit = prop.split('Miércoles');
+                        if (cuadranteColumna[prop].miercolesInicioRango) {
+                            lasHoras = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicioRango, cuadranteColumna[prop].miercolesFinRango) / 60
+                            arrayResultante[index].computo.push({
+                                dia: 'Miércoles-' + mySplit[1],
+                                horas: lasHoras
+                            });
+                            sumatorioHoras += lasHoras;
+                        };
+                    };
+                    if (prop.includes('Jueves')) {
+                        const mySplit = prop.split('Jueves');
+                        if (cuadranteColumna[prop].juevesInicioRango) {
+                            lasHoras = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicioRango, cuadranteColumna[prop].juevesFinRango) / 60
+                            arrayResultante[index].computo.push({
+                                dia: 'Jueves-' + mySplit[1],
+                                horas: lasHoras
+                            });
+                            sumatorioHoras += lasHoras;
+                        };
+                    };
+                    if (prop.includes('Viernes')) {
+                        const mySplit = prop.split('Viernes');
+                        if (cuadranteColumna[prop].viernesInicioRango) {
+                            lasHoras = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicioRango, cuadranteColumna[prop].viernesFinRango) / 60
+                            arrayResultante[index].computo.push({
+                                dia: 'Viernes-' + mySplit[1],
+                                horas: lasHoras
+                            });
+                            sumatorioHoras += lasHoras;
+                        };
+                    };
+                    if (prop.includes('Sábado')) {
+                        const mySplit = prop.split('Sábado');
+                        if (cuadranteColumna[prop].sabadoInicioRango) {
+                            lasHoras = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicioRango, cuadranteColumna[prop].sabadoFinRango) / 60
+                            arrayResultante[index].computo.push({
+                                dia: 'Sábado-' + mySplit[1],
+                                horas: lasHoras
+                            });
+                            sumatorioHoras += lasHoras;
+                        };
+                    };
+                    if (prop.includes('Domingo')) {
+                        const mySplit = prop.split('Domingo');
+                        if (cuadranteColumna[prop].domingoInicioRango) {
+                            lasHoras = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicioRango, cuadranteColumna[prop].domingoFinRango) / 60
+                            arrayResultante[index].computo.push({
+                                dia: 'Domingo-' + mySplit[1],
+                                horas: lasHoras
+                            });
+                            sumatorioHoras += lasHoras;
+                        };
+                    };
+                    arrayResultante[index].totalHoras = sumatorioHoras;
+                }
+                break;
+            case 'rangoDescanso':
+                arrayResultante.push({
+                    trabajador: cuadranteColumna.idTrabajador,
+                    trabajadorNombre: cuadranteColumna.nombreTrabajador,
+                    tipo: cuadranteColumna.tipoTrabajador,
+                    computo: []
+                });
+                sumatorioHoras = 0;
+                let rango1, rango2;
+                for (const prop in cuadranteColumna) {
+                    if (prop.includes('Lunes')) {
+                        const mySplit = prop.split('Lunes');
+                        if (cuadranteColumna[prop].lunesInicio1RangoDescanso) {
+                            rango1 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicio1RangoDescanso, cuadranteColumna[prop].lunesFin1RangoDescanso) / 60;
+                            if (cuadranteColumna[prop].lunesInicio2RangoDescanso) {
+                                rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicio2RangoDescanso, cuadranteColumna[prop].lunesFin2RangoDescanso) / 60
+                            } else {
+                                rango2 = 0;
+                            }
+                            arrayResultante[index].computo.push({
+                                dia: 'Lunes-' + mySplit[1],
+                                horas: rango1 + rango2
+                            });
+                            sumatorioHoras += (rango1 + rango2);
+                        }
+                    };
+                    if (prop.includes('Martes')) {
+                        const mySplit = prop.split('Martes');
+                        if (cuadranteColumna[prop].martesInicio1RangoDescanso) {
+                            rango1 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicio1RangoDescanso, cuadranteColumna[prop].martesFin1RangoDescanso) / 60;
+                            if (cuadranteColumna[prop].martesInicio2RangoDescanso) {
+                                rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicio2RangoDescanso, cuadranteColumna[prop].martesFin2RangoDescanso) / 60
+                            } else {
+                                rango2 = 0;
+                            }
+                            arrayResultante[index].computo.push({
+                                dia: 'Martes-' + mySplit[1],
+                                horas: rango1 + rango2
+                            });
+                            sumatorioHoras += (rango1 + rango2);
+                        }
+                    };
+                    if (prop.includes('Miércoles')) {
+                        const mySplit = prop.split('Miércoles');
+                        if (cuadranteColumna[prop].miercolesInicio1RangoDescanso) {
+                            rango1 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicio1RangoDescanso, cuadranteColumna[prop].miercolesFin1RangoDescanso) / 60;
+                            if (cuadranteColumna[prop].miercolesInicio2RangoDescanso) {
+                                rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicio2RangoDescanso, cuadranteColumna[prop].miercolesFin2RangoDescanso) / 60
+                            } else {
+                                rango2 = 0;
+                            }
+                            arrayResultante[index].computo.push({
+                                dia: 'Miércoles-' + mySplit[1],
+                                horas: rango1 + rango2
+                            });
+                            sumatorioHoras += (rango1 + rango2);
+                        }
+                    };
+                    if (prop.includes('Jueves')) {
+                        const mySplit = prop.split('Jueves');
+                        if (cuadranteColumna[prop].juevesInicio1RangoDescanso) {
+                            rango1 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicio1RangoDescanso, cuadranteColumna[prop].juevesFin1RangoDescanso) / 60;
+                            if (cuadranteColumna[prop].juevesInicio2RangoDescanso) {
+                                rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicio2RangoDescanso, cuadranteColumna[prop].juevesFin2RangoDescanso) / 60
+                            } else {
+                                rango2 = 0;
+                            }
+                            arrayResultante[index].computo.push({
+                                dia: 'Jueves-' + mySplit[1],
+                                horas: rango1 + rango2
+                            });
+                            sumatorioHoras += (rango1 + rango2);
+                        }
+                    };
+                    if (prop.includes('Viernes')) {
+                        const mySplit = prop.split('Viernes');
+                        if (cuadranteColumna[prop].viernesInicio1RangoDescanso) {
+                            rango1 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicio1RangoDescanso, cuadranteColumna[prop].viernesFin1RangoDescanso) / 60;
+                            if (cuadranteColumna[prop].viernesInicio2RangoDescanso) {
+                                rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicio2RangoDescanso, cuadranteColumna[prop].viernesFin2RangoDescanso) / 60
+                            } else {
+                                rango2 = 0;
+                            }
+                            arrayResultante[index].computo.push({
+                                dia: 'Viernes-' + mySplit[1],
+                                horas: rango1 + rango2
+                            });
+                            sumatorioHoras += (rango1 + rango2);
+                        }
+                    };
+                    if (prop.includes('Sábado')) {
+                        const mySplit = prop.split('Sábado');
+                        if (cuadranteColumna[prop].sabadoInicio1RangoDescanso) {
+                            rango1 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicio1RangoDescanso, cuadranteColumna[prop].sabadoFin1RangoDescanso) / 60;
+                            if (cuadranteColumna[prop].sabadoInicio2RangoDescanso) {
+                                rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicio2RangoDescanso, cuadranteColumna[prop].sabadoFin2RangoDescanso) / 60
+                            } else {
+                                rango2 = 0;
+                            }
+                            arrayResultante[index].computo.push({
+                                dia: 'Sábado-' + mySplit[1],
+                                horas: rango1 + rango2
+                            });
+                            sumatorioHoras += (rango1 + rango2);
+                        }
+                    };
+                    if (prop.includes('Domingo')) {
+                        const mySplit = prop.split('Domingo');
+                        if (cuadranteColumna[prop].domingoInicio1RangoDescanso) {
+                            rango1 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicio1RangoDescanso, cuadranteColumna[prop].domingoFin1RangoDescanso) / 60;
+                            if (cuadranteColumna[prop].domingoInicio2RangoDescanso) {
+                                rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicio2RangoDescanso, cuadranteColumna[prop].domingoFin2RangoDescanso) / 60
+                            } else {
+                                rango2 = 0;
+                            }
+                            arrayResultante[index].computo.push({
+                                dia: 'Domingo-' + mySplit[1],
+                                horas: rango1 + rango2
+                            });
+                            sumatorioHoras += (rango1 + rango2);
+                        }
+                    };
+                    arrayResultante[index].totalHoras = sumatorioHoras;
+                }
+                break;
+            case 'cantidad':
+                arrayResultante.push({
+                    trabajador: cuadranteColumna.idTrabajador,
+                    trabajadorNombre: cuadranteColumna.nombreTrabajador,
+                    tipo: cuadranteColumna.tipoTrabajador,
+                    computo: []
+                });
+                sumatorioHoras = 0;
+                for (const prop in cuadranteColumna) {
+                    if (prop.includes('Lunes')) {
+                        const mySplit = prop.split('Lunes');
+                        if (cuadranteColumna[prop].lunesCantidad) {
+                            lasHoras = cuadranteColumna[prop].lunesCantidad / 60
+                            arrayResultante[index].computo.push({
+                                dia: 'Lunes-' + mySplit[1],
+                                horas: lasHoras
+                            });
+                            sumatorioHoras += lasHoras;
+                        }
+                    };
+                    if (prop.includes('Martes')) {
+                        const mySplit = prop.split('Martes');
+                        if (cuadranteColumna[prop].martesCantidad) {
+                            lasHoras = cuadranteColumna[prop].martesCantidad / 60
+                            arrayResultante[index].computo.push({
+                                dia: 'Martes-' + mySplit[1],
+                                horas: lasHoras
+                            });
+                            sumatorioHoras += lasHoras;
+                        }
+                    };
+                    if (prop.includes('Miércoles')) {
+                        const mySplit = prop.split('Miércoles');
+                        if (cuadranteColumna[prop].miercolesCantidad) {
+                            lasHoras = cuadranteColumna[prop].miercolesCantidad / 60
+                            arrayResultante[index].computo.push({
+                                dia: 'Miércoles-' + mySplit[1],
+                                horas: lasHoras
+                            });
+                            sumatorioHoras += lasHoras;
+                        }
+                    };
+                    if (prop.includes('Jueves')) {
+                        const mySplit = prop.split('Jueves');
+                        if (cuadranteColumna[prop].juevesCantidad) {
+                            lasHoras = cuadranteColumna[prop].juevesCantidad / 60
+                            arrayResultante[index].computo.push({
+                                dia: 'Jueves-' + mySplit[1],
+                                horas: lasHoras
+                            });
+                            sumatorioHoras += lasHoras;
+                        }
+                    };
+                    if (prop.includes('Viernes')) {
+                        const mySplit = prop.split('Viernes');
+                        if (cuadranteColumna[prop].viernesCantidad) {
+                            lasHoras = cuadranteColumna[prop].viernesCantidad / 60
+                            arrayResultante[index].computo.push({
+                                dia: 'Viernes-' + mySplit[1],
+                                horas: lasHoras
+                            });
+                            sumatorioHoras += lasHoras;
+                        }
+                    };
+                    if (prop.includes('Sábado')) {
+                        const mySplit = prop.split('Sábado');
+                        if (cuadranteColumna[prop].sabadoCantidad) {
+                            lasHoras = cuadranteColumna[prop].sabadoCantidad / 60
+                            arrayResultante[index].computo.push({
+                                dia: 'Sábado-' + mySplit[1],
+                                horas: lasHoras
+                            });
+                            sumatorioHoras += lasHoras;
+                        }
+                    };
+                    if (prop.includes('Domingo')) {
+                        const mySplit = prop.split('Domingo');
+                        if (cuadranteColumna[prop].domingoCantidad) {
+                            lasHoras = cuadranteColumna[prop].domingoCantidad / 60
+                            arrayResultante[index].computo.push({
+                                dia: 'Domingo-' + mySplit[1],
+                                horas: lasHoras
+                            });
+                            sumatorioHoras += lasHoras;
+                        }
+                    };
+                    arrayResultante[index].totalHoras = sumatorioHoras;
+                }
+                break;
+            default:
+        }
+    });
+    return arrayResultante;
 };

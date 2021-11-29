@@ -2163,3 +2163,39 @@ if (tipoTrabajador === 'trabajador') {
     </FormControl>
 )
 }
+
+<Fragment>
+<Divider />
+<Grid container spacing={2} className={classes.mb25}>
+    <Box
+        p={2}
+        mt={2}
+    >
+        <Typography variant='body1'>{'Centro: ' + centroAGestionar.nombre}</Typography>
+        {arrayPDF.push('Centro: ' + centroAGestionar.nombre)}
+        <Typography variant='body1'>{firmaActualizacion ? 'Estado: Actualizado el ' + firmaActualizacion : 'Estado: Pendiente de registrar'}</Typography>
+        <Typography variant='body1'>{objetoCuadrante.datosInforme.mensualPactado ?
+            'Cómputo de horas por precio mensual pactado: ' + objetoCuadrante.datosInforme.mensualPactado :
+            'Cómputo de horas por precio/hora: ' + objetoCuadrante.datosInforme.precioHora
+        } €</Typography>
+        <Typography variant='body1'>Trabajadores:</Typography>
+        {
+            arrayDatosInforme.map((dato, index) => {
+                let elTipo;
+                if (dato.tipo === 'trabajador') {
+                    elTipo = '(trabajador)'
+                } else {
+                    elTipo = '(suplente)'
+                };
+                sumatorioHoras += dato.totalHoras
+                return (<Typography key={'typo' + index} variant='body1'>{
+                    dato.trabajadorNombre + ' ' + elTipo + ' Total horas trabajadas mes trabajador: ' + dato.totalHoras + ' horas'
+                }</Typography>)
+            })
+        }
+        <Typography variant='body1'>Total horas trabajadas mes cuadrante: {sumatorioHoras} horas</Typography>
+        <Typography variant='body1'>Total a facturar según cómputo
+            {objetoCuadrante.datosInforme.mensualPactado ? ' mensual pactado: ' + objetoCuadrante.datosInforme.mensualPactado + ' €' : ' precio/hora: ' + (sumatorioHoras * objetoCuadrante.datosInforme.precioHora) + ' €'}</Typography>
+    </Box>
+</Grid>
+</Fragment>

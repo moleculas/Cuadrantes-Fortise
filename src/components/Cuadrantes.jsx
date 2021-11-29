@@ -53,7 +53,7 @@ import Divider from '@material-ui/core/Divider';
 
 //pdf
 import { BlobProvider } from '@react-pdf/renderer';
-import { DocumentoPDF } from './DocumentoPDF';
+import InformePDF from "./InformePDF";
 
 //carga componentes
 import ItemCuadrante from './ItemCuadrante';
@@ -101,7 +101,7 @@ import { setCentroAccion } from '../redux/cuadrantesDucks';
 import { obtenerCategoriaPorCentroAccion } from '../redux/centrosDucks';
 import { setCalendarioAGestionarAccion } from '../redux/cuadrantesDucks';
 import { retornaAnoMesCuadranteAccion } from '../redux/appDucks';
-
+import { gestionarInformeAccion } from '../redux/cuadrantesDucks';
 
 const categorias = Constantes.CATEGORIAS_CENTROS;
 const arrayFestivos = Constantes.CALENDARIO_FESTIVOS;
@@ -582,9 +582,8 @@ const Cuadrantes = (props) => {
     const [esUnaActualizacionTrabajador, setEsUnaActualizacionTrabajador] = useState(false);
     const [firmaActualizacion, setFirmaActualizacion] = useState('');
     const [anchorElMenu, setAnchorElMenu] = useState(null);
-    const [arrayDatosInforme, setArrayDatosInforme]= useState([]);
-
-    const elDocumentoPDF = DocumentoPDF();
+    const [arrayDatosInforme, setArrayDatosInforme] = useState(objetoCuadrante.datosInforme.arrayTrabajadores);
+    const [arrayInformeLineas, setArrayInformeLineas] = useState([]);
 
     //useEffect
 
@@ -697,7 +696,8 @@ const Cuadrantes = (props) => {
                             computo: centroAGestionar.horario.computo,
                             mensualPactado: centroAGestionar.horario.mensualPactado,
                             precioHora: centroAGestionar.horario.precioHora,
-                            arrayTrabajadores: []
+                            arrayTrabajadores: [],
+                            facturado: 'no'
                         }
                     }));
                 };
@@ -849,10 +849,11 @@ const Cuadrantes = (props) => {
                     setEstadoFlex('fila');
                 };
             };
-            if(cuadrante[cuadrante.length-1].nombreTrabajador){
-                setArrayDatosInforme(gestionarInforme());
-            }; 
-        };             
+            if (cuadrante[cuadrante.length - 1].nombreTrabajador) {
+                console.log('pasamos')
+                setArrayDatosInforme(dispatch(gestionarInformeAccion(cuadrante)));
+            };
+        };
     }, [cuadrante]);
 
     //secuencia venimos de pendientes    
@@ -863,7 +864,7 @@ const Cuadrantes = (props) => {
                 dispatch(obtenerCategoriaPorCentroAccion('centros', centro));
                 const nombreCuadrante = calendarioAGestionar + '-' + centro;
                 const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, centro: centro, arrayCuadrante: [] };
-                dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, id: null, nombre: nombreCuadrante, datosCuadrante: losDatosCuadrante }));
+                dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, id: null, nombre: nombreCuadrante, actualizacion: '', datosCuadrante: losDatosCuadrante }));
             };
         }
     }, [estadoVenimosDePendientes]);
@@ -928,6 +929,11 @@ const Cuadrantes = (props) => {
             setOpenLoading(true)
         }
     }, [openLoadingCentros, openLoadingTrabajadores, openLoadingCuadrantes]);
+
+    useEffect(() => {
+        if (openDialog8)
+            generaInformacionCuadrantes();
+    }, [openDialog8]);
 
     //funciones
 
@@ -995,7 +1001,7 @@ const Cuadrantes = (props) => {
             dispatch(setCentroAccion(e.target.value));
             const nombreCuadrante = calendarioAGestionar + '-' + e.target.value;
             const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, centro: e.target.value };
-            dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, nombre: nombreCuadrante, datosCuadrante: losDatosCuadrante }));
+            dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, nombre: nombreCuadrante, actualizacion: '', datosCuadrante: losDatosCuadrante }));
             dispatch(obtenerCuadranteAccion('cuadrantes', nombreCuadrante));
         } else {
             if (!cuadranteNuevoRegistrado) {
@@ -1009,7 +1015,7 @@ const Cuadrantes = (props) => {
                     dispatch(setCentroAccion(e.target.value));
                     const nombreCuadrante = calendarioAGestionar + '-' + e.target.value;
                     const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, centro: e.target.value, arrayCuadrante: [] };
-                    dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, id: null, nombre: nombreCuadrante, datosCuadrante: losDatosCuadrante }));
+                    dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, id: null, nombre: nombreCuadrante, actualizacion: '', datosCuadrante: losDatosCuadrante }));
                     dispatch(obtenerCuadranteAccion('cuadrantes', nombreCuadrante));
                 }
             }
@@ -1043,7 +1049,7 @@ const Cuadrantes = (props) => {
             if (cuadrante[posicionAnterior]) {
                 if (tipoTrabajador === 'suplente' && !cuadrante[posicionAnterior].hayBaja && esRevision && esAnadirColumna) {
                     setAlert({
-                        mensaje: "El trabajador no está o no ha estado de baja, no necesita suplente.",
+                        mensaje: "El trabajador no está o no ha estado de baja, o no has asignado trabajador, no necesita suplente.",
                         tipo: 'warning'
                     })
                     setOpenSnack(true);
@@ -1093,6 +1099,7 @@ const Cuadrantes = (props) => {
     };
 
     const reseteaContenidoCentro = () => {
+        //dispatch(vaciarDatosCuadrantesAccion());
         dispatch(vaciarDatosCuadranteRegistradoAccion());
         setTrabajadoresEnCuadrante([]);
         setSuplentesEnCuadrante([]);
@@ -1114,12 +1121,12 @@ const Cuadrantes = (props) => {
         dispatch(activarDesactivarCambioBotonActualizarAccion(true));
         setEstadoFlex('fila');
         dispatch(setCentroAccion(''));
-        //dispatch(vaciarDatosCuadrantesAccion());
         setPreValueValor({});
         setControladorDeEstado('inicio');
         setEsUnaActualizacionTrabajador(false);
         setFirmaActualizacion('');
         setArrayDatosInforme([]);
+        setArrayInformeLineas([]);
     };
 
     const handleClickAddColumna = (tipo, columna) => {
@@ -3233,319 +3240,6 @@ const Cuadrantes = (props) => {
 
     };
 
-    const gestionarInforme = () => {
-        let arrayResultante = [];
-        let sumatorioHoras;
-        let lasHoras;
-        cuadrante.forEach((cuadranteColumna, index) => {
-            switch (cuadranteColumna.tipoHorario) {
-                case 'rango':
-                    arrayResultante.push({
-                        trabajador: cuadranteColumna.idTrabajador,
-                        tipo: cuadranteColumna.tipoTrabajador,
-                        computo: [],
-                        totalHoras: null
-                    });
-                    sumatorioHoras = 0;                    
-                    for (const prop in cuadranteColumna) {
-                        if (prop.includes('Lunes')) {
-                            const mySplit = prop.split('Lunes');
-                            if (cuadranteColumna[prop].lunesInicioRango) {
-                                lasHoras = dispatch(retornaMinutosAccion(cuadranteColumna[prop].lunesInicioRango, cuadranteColumna[prop].lunesFinRango)) / 60
-                                arrayResultante[index].computo.push({
-                                    dia: 'Lunes-' + mySplit[1],
-                                    horas: lasHoras
-                                });
-                                sumatorioHoras += lasHoras;
-                            };
-                        };
-                        if (prop.includes('Martes')) {
-                            const mySplit = prop.split('Martes');
-                            if (cuadranteColumna[prop].martesInicioRango) {
-                                lasHoras = dispatch(retornaMinutosAccion(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango)) / 60
-                                arrayResultante[index].computo.push({
-                                    dia: 'Martes-' + mySplit[1],
-                                    horas: lasHoras
-                                });
-                                sumatorioHoras += lasHoras;
-                            };
-                        };
-                        if (prop.includes('Miércoles')) {
-                            const mySplit = prop.split('Miércoles');
-                            if (cuadranteColumna[prop].miercolesInicioRango) {
-                                lasHoras = dispatch(retornaMinutosAccion(cuadranteColumna[prop].miercolesInicioRango, cuadranteColumna[prop].miercolesFinRango)) / 60
-                                arrayResultante[index].computo.push({
-                                    dia: 'Miércoles-' + mySplit[1],
-                                    horas: lasHoras
-                                });
-                                sumatorioHoras += lasHoras;
-                            };
-                        };
-                        if (prop.includes('Jueves')) {
-                            const mySplit = prop.split('Jueves');
-                            if (cuadranteColumna[prop].juevesInicioRango) {
-                                lasHoras = dispatch(retornaMinutosAccion(cuadranteColumna[prop].juevesInicioRango, cuadranteColumna[prop].juevesFinRango)) / 60
-                                arrayResultante[index].computo.push({
-                                    dia: 'Jueves-' + mySplit[1],
-                                    horas: lasHoras
-                                });
-                                sumatorioHoras += lasHoras;
-                            };
-                        };
-                        if (prop.includes('Viernes')) {
-                            const mySplit = prop.split('Viernes');
-                            if (cuadranteColumna[prop].viernesInicioRango) {
-                                lasHoras = dispatch(retornaMinutosAccion(cuadranteColumna[prop].viernesInicioRango, cuadranteColumna[prop].viernesFinRango)) / 60
-                                arrayResultante[index].computo.push({
-                                    dia: 'Viernes-' + mySplit[1],
-                                    horas: lasHoras
-                                });
-                                sumatorioHoras += lasHoras;
-                            };
-                        };
-                        if (prop.includes('Sábado')) {
-                            const mySplit = prop.split('Sábado');
-                            if (cuadranteColumna[prop].sabadoInicioRango) {
-                                lasHoras = dispatch(retornaMinutosAccion(cuadranteColumna[prop].sabadoInicioRango, cuadranteColumna[prop].sabadoFinRango)) / 60
-                                arrayResultante[index].computo.push({
-                                    dia: 'Sábado-' + mySplit[1],
-                                    horas: lasHoras
-                                });
-                                sumatorioHoras += lasHoras;
-                            };
-                        };
-                        if (prop.includes('Domingo')) {
-                            const mySplit = prop.split('Domingo');
-                            if (cuadranteColumna[prop].domingoInicioRango) {
-                                lasHoras = dispatch(retornaMinutosAccion(cuadranteColumna[prop].domingoInicioRango, cuadranteColumna[prop].domingoFinRango)) / 60
-                                arrayResultante[index].computo.push({
-                                    dia: 'Domingo-' + mySplit[1],
-                                    horas: lasHoras
-                                });
-                                sumatorioHoras += lasHoras;
-                            };
-                        };
-                        arrayResultante[index].totalHoras = sumatorioHoras;
-                    }
-                    break;
-                case 'rangoDescanso':
-                    arrayResultante.push({
-                        trabajador: cuadranteColumna.idTrabajador,
-                        tipo: cuadranteColumna.tipoTrabajador,
-                        computo: []
-                    });
-                   sumatorioHoras = 0;                    
-                    let rango1, rango2;
-                    for (const prop in cuadranteColumna) {
-                        if (prop.includes('Lunes')) {
-                            const mySplit = prop.split('Lunes');
-                            if (cuadranteColumna[prop].lunesInicio1RangoDescanso) {
-                                rango1 = dispatch(retornaMinutosAccion(cuadranteColumna[prop].lunesInicio1RangoDescanso, cuadranteColumna[prop].lunesFin1RangoDescanso)) / 60;
-                                if (cuadranteColumna[prop].lunesInicio2RangoDescanso) {
-                                    rango2 = dispatch(retornaMinutosAccion(cuadranteColumna[prop].lunesInicio2RangoDescanso, cuadranteColumna[prop].lunesFin2RangoDescanso)) / 60
-                                } else {
-                                    rango2 = 0;
-                                }
-                                arrayResultante[index].computo.push({
-                                    dia: 'Lunes-' + mySplit[1],
-                                    horas: rango1 + rango2
-                                });
-                                sumatorioHoras += (rango1 + rango2);
-                            }
-                        };
-                        if (prop.includes('Martes')) {
-                            const mySplit = prop.split('Martes');
-                            if (cuadranteColumna[prop].martesInicio1RangoDescanso) {
-                                rango1 = dispatch(retornaMinutosAccion(cuadranteColumna[prop].martesInicio1RangoDescanso, cuadranteColumna[prop].martesFin1RangoDescanso)) / 60;
-                                if (cuadranteColumna[prop].martesInicio2RangoDescanso) {
-                                    rango2 = dispatch(retornaMinutosAccion(cuadranteColumna[prop].martesInicio2RangoDescanso, cuadranteColumna[prop].martesFin2RangoDescanso)) / 60
-                                } else {
-                                    rango2 = 0;
-                                }
-                                arrayResultante[index].computo.push({
-                                    dia: 'Martes-' + mySplit[1],
-                                    horas: rango1 + rango2
-                                });
-                                sumatorioHoras += (rango1 + rango2);
-                            }
-                        };
-                        if (prop.includes('Miércoles')) {
-                            const mySplit = prop.split('Miércoles');
-                            if (cuadranteColumna[prop].miercolesInicio1RangoDescanso) {
-                                rango1 = dispatch(retornaMinutosAccion(cuadranteColumna[prop].miercolesInicio1RangoDescanso, cuadranteColumna[prop].miercolesFin1RangoDescanso)) / 60;
-                                if (cuadranteColumna[prop].miercolesInicio2RangoDescanso) {
-                                    rango2 = dispatch(retornaMinutosAccion(cuadranteColumna[prop].miercolesInicio2RangoDescanso, cuadranteColumna[prop].miercolesFin2RangoDescanso)) / 60
-                                } else {
-                                    rango2 = 0;
-                                }
-                                arrayResultante[index].computo.push({
-                                    dia: 'Miércoles-' + mySplit[1],
-                                    horas: rango1 + rango2
-                                });
-                                sumatorioHoras += (rango1 + rango2);
-                            }
-                        };
-                        if (prop.includes('Jueves')) {
-                            const mySplit = prop.split('Jueves');
-                            if (cuadranteColumna[prop].juevesInicio1RangoDescanso) {
-                                rango1 = dispatch(retornaMinutosAccion(cuadranteColumna[prop].juevesInicio1RangoDescanso, cuadranteColumna[prop].juevesFin1RangoDescanso)) / 60;
-                                if (cuadranteColumna[prop].juevesInicio2RangoDescanso) {
-                                    rango2 = dispatch(retornaMinutosAccion(cuadranteColumna[prop].juevesInicio2RangoDescanso, cuadranteColumna[prop].juevesFin2RangoDescanso)) / 60
-                                } else {
-                                    rango2 = 0;
-                                }
-                                arrayResultante[index].computo.push({
-                                    dia: 'Jueves-' + mySplit[1],
-                                    horas: rango1 + rango2
-                                });
-                                sumatorioHoras += (rango1 + rango2);
-                            }
-                        };
-                        if (prop.includes('Viernes')) {
-                            const mySplit = prop.split('Viernes');
-                            if (cuadranteColumna[prop].viernesInicio1RangoDescanso) {
-                                rango1 = dispatch(retornaMinutosAccion(cuadranteColumna[prop].viernesInicio1RangoDescanso, cuadranteColumna[prop].viernesFin1RangoDescanso)) / 60;
-                                if (cuadranteColumna[prop].viernesInicio2RangoDescanso) {
-                                    rango2 = dispatch(retornaMinutosAccion(cuadranteColumna[prop].viernesInicio2RangoDescanso, cuadranteColumna[prop].viernesFin2RangoDescanso)) / 60
-                                } else {
-                                    rango2 = 0;
-                                }
-                                arrayResultante[index].computo.push({
-                                    dia: 'Viernes-' + mySplit[1],
-                                    horas: rango1 + rango2
-                                });
-                                sumatorioHoras += (rango1 + rango2);
-                            }
-                        };
-                        if (prop.includes('Sábado')) {
-                            const mySplit = prop.split('Sábado');
-                            if (cuadranteColumna[prop].sabadoInicio1RangoDescanso) {
-                                rango1 = dispatch(retornaMinutosAccion(cuadranteColumna[prop].sabadoInicio1RangoDescanso, cuadranteColumna[prop].sabadoFin1RangoDescanso)) / 60;
-                                if (cuadranteColumna[prop].sabadoInicio2RangoDescanso) {
-                                    rango2 = dispatch(retornaMinutosAccion(cuadranteColumna[prop].sabadoInicio2RangoDescanso, cuadranteColumna[prop].sabadoFin2RangoDescanso)) / 60
-                                } else {
-                                    rango2 = 0;
-                                }
-                                arrayResultante[index].computo.push({
-                                    dia: 'Sábado-' + mySplit[1],
-                                    horas: rango1 + rango2
-                                });
-                                sumatorioHoras += (rango1 + rango2);
-                            }
-                        };
-                        if (prop.includes('Domingo')) {
-                            const mySplit = prop.split('Domingo');
-                            if (cuadranteColumna[prop].domingoInicio1RangoDescanso) {
-                                rango1 = dispatch(retornaMinutosAccion(cuadranteColumna[prop].domingoInicio1RangoDescanso, cuadranteColumna[prop].domingoFin1RangoDescanso)) / 60;
-                                if (cuadranteColumna[prop].domingoInicio2RangoDescanso) {
-                                    rango2 = dispatch(retornaMinutosAccion(cuadranteColumna[prop].domingoInicio2RangoDescanso, cuadranteColumna[prop].domingoFin2RangoDescanso)) / 60
-                                } else {
-                                    rango2 = 0;
-                                }
-                                arrayResultante[index].computo.push({
-                                    dia: 'Domingo-' + mySplit[1],
-                                    horas: rango1 + rango2
-                                });
-                                sumatorioHoras += (rango1 + rango2);
-                            }
-                        };
-                        arrayResultante[index].totalHoras = sumatorioHoras;
-                    }
-                    break;
-                case 'cantidad':
-                    arrayResultante.push({
-                        trabajador: cuadranteColumna.idTrabajador,
-                        tipo: cuadranteColumna.tipoTrabajador,
-                        computo: []
-                    });
-                    sumatorioHoras = 0;                  
-                    for (const prop in cuadranteColumna) {
-                        if (prop.includes('Lunes')) {
-                            const mySplit = prop.split('Lunes');
-                            if (cuadranteColumna[prop].lunesCantidad) {
-                                lasHoras=cuadranteColumna[prop].lunesCantidad / 60
-                                arrayResultante[index].computo.push({
-                                    dia: 'Lunes-' + mySplit[1],
-                                    horas: lasHoras
-                                });
-                                sumatorioHoras += lasHoras;
-                            }
-                        };
-                        if (prop.includes('Martes')) {
-                            const mySplit = prop.split('Martes');
-                            if (cuadranteColumna[prop].martesCantidad) {
-                                lasHoras=cuadranteColumna[prop].martesCantidad / 60
-                                arrayResultante[index].computo.push({
-                                    dia: 'Martes-' + mySplit[1],
-                                    horas: lasHoras
-                                });
-                                sumatorioHoras += lasHoras;
-                            }
-                        };
-                        if (prop.includes('Miércoles')) {
-                            const mySplit = prop.split('Miércoles');
-                            if (cuadranteColumna[prop].miercolesCantidad) {
-                                lasHoras=cuadranteColumna[prop].miercolesCantidad / 60
-                                arrayResultante[index].computo.push({
-                                    dia: 'Miércoles-' + mySplit[1],
-                                    horas: lasHoras
-                                });
-                                sumatorioHoras += lasHoras;
-                            }
-                        };
-                        if (prop.includes('Jueves')) {
-                            const mySplit = prop.split('Jueves');
-                            if (cuadranteColumna[prop].juevesCantidad) {
-                                lasHoras=cuadranteColumna[prop].juevesCantidad / 60
-                                arrayResultante[index].computo.push({
-                                    dia: 'Jueves-' + mySplit[1],
-                                    horas: lasHoras
-                                });
-                                sumatorioHoras += lasHoras;
-                            }
-                        };
-                        if (prop.includes('Viernes')) {
-                            const mySplit = prop.split('Viernes');
-                            if (cuadranteColumna[prop].viernesCantidad) {
-                                lasHoras=cuadranteColumna[prop].viernesCantidad / 60
-                                arrayResultante[index].computo.push({
-                                    dia: 'Viernes-' + mySplit[1],
-                                    horas: lasHoras
-                                });
-                                sumatorioHoras += lasHoras;
-                            }
-                        };
-                        if (prop.includes('Sábado')) {
-                            const mySplit = prop.split('Sábado');
-                            if (cuadranteColumna[prop].sabadoCantidad) {
-                                lasHoras=cuadranteColumna[prop].sabadoCantidad / 60
-                                arrayResultante[index].computo.push({
-                                    dia: 'Sábado-' + mySplit[1],
-                                    horas: lasHoras
-                                });
-                                sumatorioHoras += lasHoras;
-                            }
-                        };
-                        if (prop.includes('Domingo')) {
-                            const mySplit = prop.split('Domingo');
-                            if (cuadranteColumna[prop].domingoCantidad) {
-                                lasHoras=cuadranteColumna[prop].domingoCantidad / 60
-                                arrayResultante[index].computo.push({
-                                    dia: 'Domingo-' + mySplit[1],
-                                    horas: lasHoras
-                                });
-                                sumatorioHoras += lasHoras;
-                            }
-                        };
-                        arrayResultante[index].totalHoras = sumatorioHoras;
-                    }
-                    break;
-                default:
-            }
-        });
-        return arrayResultante;
-    };
-
     const procesarDatosCuadrante = () => {
         //revisamos que no haya columnas vacías
         let arrayCuadrante = [...cuadrante];
@@ -3565,11 +3259,20 @@ const Cuadrantes = (props) => {
                 arrayCuadrante: arrayCuadrante
             }
         };
+        const objetoFinalInforme = {
+            objeto: 'informe',
+            computo: objetoCuadrante.datosInforme.computo,
+            mensualPactado: objetoCuadrante.datosInforme.mensualPactado,
+            precioHora: objetoCuadrante.datosInforme.precioHora,
+            arrayTrabajadores: arrayDatosInforme,
+            facturado: objetoCuadrante.datosInforme.facturado
+        }
         const cuadranteAGuardar = {
             id: objetoCuadrante.id,
             nombre: objetoCuadrante.nombre,
             actualizacion: laFirmaActualizacion,
             datos_cuadrante: JSON.stringify(objetoFinalCuadrante.datosCuadrante),
+            datos_informe: JSON.stringify(objetoFinalInforme),
         };
         if (cuadranteRegistrado === 'no') {
             dispatch(registrarCuadranteAccion('cuadrantes', cuadranteAGuardar.id, cuadranteAGuardar));
@@ -3603,37 +3306,90 @@ const Cuadrantes = (props) => {
         setAnchorElMenu(null);
     };
 
+    const generaInformacionCuadrantes = () => {
+        let sumatorioHoras = 0;
+        const arrayInforme = [];
+        arrayInforme.push('Mes: ' + calendarioAGestionar);
+        arrayInforme.push('Centro: ' + centroAGestionar.nombre);
+        if (firmaActualizacion) {
+            arrayInforme.push('Estado: Actualizado el ' + firmaActualizacion);
+        } else {
+            arrayInforme.push('Estado: Pendiente de registrar');
+        };
+        if (objetoCuadrante.datosInforme.mensualPactado) {
+            arrayInforme.push('Cómputo de horas por precio mensual pactado: ' + objetoCuadrante.datosInforme.mensualPactado + ' €');
+        } else {
+            arrayInforme.push('Cómputo de horas por precio/hora: ' + objetoCuadrante.datosInforme.precioHora + ' €');
+        };
+        arrayInforme.push('Trabajadores:');
+        arrayDatosInforme.map((dato, index) => {
+            let elTipo;
+            if (dato.tipo === 'trabajador') {
+                elTipo = '(trabajador)'
+            } else {
+                elTipo = '(suplente)'
+            };
+            sumatorioHoras += dato.totalHoras;
+            arrayInforme.push(dato.trabajadorNombre + ' ' + elTipo + ' Total horas trabajadas mes trabajador: ' + dato.totalHoras + ' horas')
+        });
+        arrayInforme.push('Total horas trabajadas mes cuadrante: ' + sumatorioHoras + ' horas');
+        if (objetoCuadrante.datosInforme.mensualPactado) {
+            arrayInforme.push('Total a facturar según cómputo mensual pactado: ' + objetoCuadrante.datosInforme.mensualPactado + ' €');
+        } else {
+            arrayInforme.push('Total a facturar según cómputo precio/hora: ' + (sumatorioHoras * objetoCuadrante.datosInforme.precioHora) + ' €');
+        };
+        setArrayInformeLineas(arrayInforme);
+    };
+
     const retornaInformacionCuadrantes = () => {
         return (
             <Fragment>
                 <Divider />
-                <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                        <Box
-                            p={2}
-                            mt={2}
-                        >
-                            <Typography variant='body1'>{'Centro: ' + centroAGestionar.nombre}</Typography>
-                            <Typography variant='body1'>{'Estado: Actualizado el ' + firmaActualizacion}</Typography>
-                            <BlobProvider document={elDocumentoPDF}>
-                                {({ url }) => (
-                                    <Button
-                                        href={url}
-                                        style={{ backgroundColor: '#d9241b', color: 'white' }}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        variant="contained"
-                                        startIcon={<PictureAsPdfIcon />}
-                                    >
-                                        Generar PDF
-                                    </Button>
-                                )}
-                            </BlobProvider>
-                        </Box>
-                    </Grid>
+                <Grid container spacing={2} className={classes.mb25}>
+                    <Box
+                        p={2}
+                        mt={2}
+                    >
+                        {arrayInformeLineas.map((linea, index) => {
+                            return <Typography key={'tipo' + index} variant='body1'>{linea}</Typography>
+                        })}
+                    </Box>
                 </Grid>
             </Fragment>
         )
+    };
+
+    const handleActualizaCuadranteFacturado = () => {
+        const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, arrayCuadrante: cuadrante };
+        const losDatosInforme = { ...objetoCuadrante.datosInforme, facturado: 'si' };
+        dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, datosCuadrante: losDatosCuadrante, datosInforme: losDatosInforme }));
+        dispatch(activarDesactivarCambioAccion(false));
+        dispatch(cierraObjetoDialogAccion());
+        handleCloseMenu();
+    };
+
+    const retornaTituloDialog4 = () => {
+        return (
+            <Box style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Box>Informe Cuadrante de Servicio</Box>
+                <Box>
+                    <BlobProvider document={<InformePDF arrayInformePDF={arrayInformeLineas} />}>
+                        {({ url }) => (
+                            <Button
+                                href={url}
+                                onClick={handleActualizaCuadranteFacturado}
+                                style={{ backgroundColor: '#d9241b', color: 'white' }}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                variant="contained"
+                                startIcon={<PictureAsPdfIcon />}
+                            >
+                                Generar PDF
+                            </Button>
+                        )}
+                    </BlobProvider>
+                </Box>
+            </Box>)
     };
 
     //dialog
@@ -3644,7 +3400,7 @@ const Cuadrantes = (props) => {
     const descripcionDialogCuadrantes2 = "Debes registrar el cuadrante nuevo antes de cambiar. Pulsa 'Registrar Cuadrante' en el menú superior.";
     const tituloDialogCuadrantes3 = "¿Estás seguro que quieres cambiar de pantalla?";
     const descripcionDialogCuadrantes3 = "Estás tratando de cambiar de pantalla pero no has registrado los datos de tu última intervención. Si no deseas guardar los datos pulsa 'De acuerdo', de lo contrario pulsa 'Desacuerdo' y registra los datos.";
-    const tituloDialogCuadrantes4 = "Informe Cuadrante";
+    const tituloDialogCuadrantes4 = retornaTituloDialog4();
     const descripcionDialogCuadrantes4 = retornaInformacionCuadrantes();
 
     const handleClickOpenDialogCuadrantes1 = () => {
@@ -3660,8 +3416,8 @@ const Cuadrantes = (props) => {
     };
 
     const handleClickOpenDialogCuadrantes4 = () => {
-        gestionarInforme()
-        //dispatch(abreObjetoDialogAccion('8'));
+        dispatch(abreObjetoDialogAccion('8'));
+        handleCloseMenu();
     };
 
     const handleCloseDialogBotonesCuadrantes1 = (respuesta) => {
@@ -3673,7 +3429,7 @@ const Cuadrantes = (props) => {
             dispatch(cambiarACuadranteNoRegistradoAccion());
             const nombreCuadrante = calendarioAGestionar + '-' + centroId;
             const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, centro: centroId, arrayCuadrante: [] };
-            dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, id: null, nombre: nombreCuadrante, datosCuadrante: losDatosCuadrante }));
+            dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, id: null, nombre: nombreCuadrante, actualizacion: '', datosCuadrante: losDatosCuadrante }));
             dispatch(activarDesactivarCambioBotonResetearAccion(true));
             setControladorDeEstado('venimosDeResetear');
         }
@@ -3688,7 +3444,7 @@ const Cuadrantes = (props) => {
                 dispatch(setCentroAccion(preValueValor.valor));
                 const nombreCuadrante = calendarioAGestionar + '-' + preValueValor.valor;
                 const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, centro: preValueValor.valor, arrayCuadrante: [] };
-                dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, id: null, nombre: nombreCuadrante, datosCuadrante: losDatosCuadrante }));
+                dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, id: null, nombre: nombreCuadrante, actualizacion: '', datosCuadrante: losDatosCuadrante }));
                 dispatch(obtenerCuadranteAccion('cuadrantes', nombreCuadrante));
             };
             if (preValueValor.origen === 'cuadrantes') {
@@ -3842,7 +3598,6 @@ const Cuadrantes = (props) => {
                                     </MenuItem>
                                     <MenuItem
                                         onClick={handleClickOpenDialogCuadrantes4}
-                                        disabled={cuadranteRegistrado === 'si' ? false : true}
                                     >
                                         <ListItemIcon>
                                             <PostAddIcon fontSize="small" />
@@ -4297,7 +4052,7 @@ const Cuadrantes = (props) => {
                 prFullWidth={true}
                 prMaxWidth={true}
             />
-            {console.log(arrayDatosInforme)}
+            {console.log(objetoCuadrante)}
         </div>
     )
 }

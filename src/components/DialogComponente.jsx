@@ -19,7 +19,7 @@ const DialogComponente = (props) => {
                 open={props.prIsOpen}
                 onClose={() => { handleCloseDialogBotones('acuerdo') }}
                 fullWidth={props.prFullWidth ? true : false}
-                maxWidth={props.prMaxWidth ? 'lg' : 'xs'}
+                maxWidth={props.prMaxWidth ? 'md' : 'xs'}
             >
                 <DialogTitle id="alert-dialog-title">{props.prTituloDialog}</DialogTitle>
                 <DialogContent>{!props.prFullWidth ? (
