@@ -28,7 +28,8 @@ const dataInicial = {
             mensualPactado: null,
             precioHora: null,
             arrayTrabajadores: [],
-            facturado: 'no'
+            facturado: 'no',
+            totalFacturado: null
         }
     },
     cuadranteRegistrado: '',
@@ -191,7 +192,8 @@ export const vaciarDatosCuadrantesAccion = () => (dispatch, getState) => {
                 mensualPactado: null,
                 precioHora: null,
                 arrayTrabajadores: arrayVacio,
-                facturado: 'no'
+                facturado: 'no',
+                totalFacturado: null
             }
         }
     });

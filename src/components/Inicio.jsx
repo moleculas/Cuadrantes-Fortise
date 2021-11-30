@@ -11,6 +11,7 @@ import AssignmentIcon from '@material-ui/icons/Assignment';
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 import HomeWorkIcon from '@material-ui/icons/HomeWork';
 import { Link } from "react-router-dom";
+import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 
 //importaciones acciones
 import { onEstemAccion } from '../redux/appDucks';
@@ -102,17 +103,17 @@ const Inicio = (props) => {
                                         Gestión de Cuadrantes
                                     </Button>
                                 </Link>
-                                <Link to="/trabajadores" className={classes.link}>
+                                <Link to="/nominas" className={classes.link}>
                                     <Button
                                         variant="contained"
                                         color="primary"
                                         size="large"
-                                        fullWidth                                      
+                                        fullWidth
                                         className={classes.button}
                                         style={{ fontSize: 17 }}
-                                        startIcon={<SupervisorAccountIcon style={{ fontSize: 40 }}/>}
+                                        startIcon={<AssignmentIndIcon style={{ fontSize: 40 }}/>}
                                     >
-                                        Gestión de Trabajadores
+                                        Gestión de Nóminas
                                     </Button>
                                 </Link>
                                 <Link to="/centros" className={classes.link}>
@@ -128,6 +129,19 @@ const Inicio = (props) => {
                                         Gestión de Centros
                                     </Button>
                                 </Link>
+                                <Link to="/trabajadores" className={classes.link}>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        size="large"
+                                        fullWidth                                      
+                                        className={classes.button}
+                                        style={{ fontSize: 17 }}
+                                        startIcon={<SupervisorAccountIcon style={{ fontSize: 40 }}/>}
+                                    >
+                                        Gestión de Trabajadores
+                                    </Button>
+                                </Link>                                
                             </Box>
                         </Box>
                     </Paper>

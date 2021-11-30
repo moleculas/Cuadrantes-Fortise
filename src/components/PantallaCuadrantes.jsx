@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from "@material-ui/core";
 import { useDispatch, useSelector } from 'react-redux';
 import Box from '@material-ui/core/Box';
@@ -11,6 +11,7 @@ import clsx from 'clsx';
 
 //carga componentes
 import Pendientes from './Pendientes';
+import GraficoCuadrantes from './GraficoCuadrantes';
 
 //importaciones acciones
 import { retornaAnoMesCuadranteAccion } from '../redux/appDucks';
@@ -42,7 +43,8 @@ const estilos = makeStyles((theme) => ({
     },
 }));
 
-const h2 = (window.innerHeight / 2) - 200;
+const getHeightContenedores = () => ((window.innerHeight / 2) - 200) || ((document.documentElement.clientHeight) - 200) || ((document.body.clientHeight) - 200);
+const getWidthContenedores = () => ((window.innerWidth -300) /2) || ((document.documentElement.clientWidth-300) /2) || ((document.body.clientWidth-300) /2);
 
 const PantallaCuadrantes = () => {
 
@@ -53,7 +55,22 @@ const PantallaCuadrantes = () => {
 
     //states
 
-    const { monthLet } = dispatch(retornaAnoMesCuadranteAccion(calendarioAGestionar)); 
+    const { monthLet } = dispatch(retornaAnoMesCuadranteAccion(calendarioAGestionar));
+    const [heightContenedores, setHeightContenedores] = useState(getHeightContenedores());
+    const [widthContenedores, setWidthContenedores] = useState(getWidthContenedores());
+
+    //useEffect
+
+    useEffect(() => {
+        const resizeListener = () => {
+            setHeightContenedores(getHeightContenedores());
+            setWidthContenedores(getWidthContenedores());
+        };
+        window.addEventListener('resize', resizeListener);
+        return () => {
+            window.removeEventListener('resize', resizeListener);
+        }
+    }, []);
 
     //funciones       
 
@@ -88,14 +105,14 @@ const PantallaCuadrantes = () => {
                     </Box>
                     <Paper
                         elevation={1}
-                        style={{ minHeight: h2, maxHeight: h2, margin: 8 }}
+                        style={{ minHeight: heightContenedores, maxHeight: heightContenedores, margin: 8 }}
                     >
                         {numeroCentrosPendientes === 0 ? (
                             <Box p={3}>
                                 No quedan cuadrantes pendientes por gestionar.
                             </Box>
                         ) : (
-                            <Pendientes />
+                            <Pendientes prHeightContenedores={heightContenedores} />
                         )}
                     </Paper>
                 </Grid>
@@ -106,12 +123,13 @@ const PantallaCuadrantes = () => {
                         color="secondary.contrastText"
                         bgcolor="secondary.main"
                     >
-                        <Typography variant="body2">Cómputo de gastos</Typography>
+                        <Typography variant="body2">Cómputo de ingresos anual</Typography>
                     </Box>
                     <Paper
                         elevation={1}
-                        style={{ minHeight: h2, margin: 8 }}
+                        style={{ minHeight: heightContenedores, maxHeight: heightContenedores, margin: 8 }}
                     >
+                        <GraficoCuadrantes prHeightContenedores={heightContenedores} prWidthContenedores={widthContenedores}/>
                     </Paper>
                 </Grid>
                 <Grid item xs={6}>
@@ -125,7 +143,7 @@ const PantallaCuadrantes = () => {
                     </Box>
                     <Paper
                         elevation={1}
-                        style={{ minHeight: h2, margin: 8 }}
+                        style={{ minHeight: heightContenedores, maxHeight: heightContenedores, margin: 8 }}
                     >
                     </Paper>
                 </Grid>
@@ -140,7 +158,7 @@ const PantallaCuadrantes = () => {
                     </Box>
                     <Paper
                         elevation={1}
-                        style={{ minHeight: h2, margin: 8 }}
+                        style={{ minHeight: heightContenedores, maxHeight: heightContenedores, margin: 8 }}
                     >
                     </Paper>
                 </Grid>

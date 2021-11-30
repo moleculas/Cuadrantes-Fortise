@@ -26,8 +26,6 @@ import { venimosDePendientesAccion } from '../redux/pendientesDucks';
 import { setCentroAccion } from '../redux/cuadrantesDucks';
 import { retornaAnoMesCuadranteAccion } from '../redux/appDucks';
 
-const h2 = (window.innerHeight / 2) - 200;
-
 //snackbar y alert
 const Alert = (props) => {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -46,15 +44,12 @@ const estilos = makeStyles((theme) => ({
     formInput: {
         marginBottom: '10px',
     },
-    scrollable: {
-        height: h2 - 10,
+    scrollable: {      
         overflowY: 'auto',
         overflowX: 'hidden',
         margin: 10
     },
-    root: {
-        minHeight: h2,
-        maxHeight: h2,
+    root: {       
         width: '100%',
         display: "flex",
         flexDirection: "row",
@@ -85,7 +80,7 @@ const estilos = makeStyles((theme) => ({
     },
 }));
 
-const Pendientes = () => {
+const Pendientes = (props) => {
 
     const classes = estilos();
     const dispatch = useDispatch();
@@ -193,6 +188,7 @@ const Pendientes = () => {
                 alignItems="center"
                 p={2}
                 className={classes.root}
+                style={{ minHeight: props.prHeightContenedores, maxHeight: props.prHeightContenedores}}
             >
                 {openLoading ? (
                     <Box
@@ -203,7 +199,7 @@ const Pendientes = () => {
                 ) : null}
                 <Box
                     className={classes.scrollable}
-                    style={{ width: '100%' }}
+                    style={{ width: '100%', height: props.prHeightContenedores - 10 }}
                 >
                     <List dense={true}
                         style={{ padding: 15 }}>

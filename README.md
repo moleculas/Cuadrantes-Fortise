@@ -4,8 +4,6 @@ Gestión de cuadrantes de turnos de trabajo para generar facturación en funció
 
 ## Dependencias instaladas
 
-Eliminar de package.json en caso de no necesitarlas antes de `npm install`.
-
 ### `material-ui`
 
 Framework para diseño.
@@ -53,6 +51,12 @@ Para gestionar Refs dinámicamente. (Setter y Getter).
 Renderizador de documentos PDF.
 
 `npm install @react-pdf/renderer --save`
+
+### `recharts`
+
+Librería de gráficos para generar diagramas de datos.
+
+`npm install recharts`
 
 ### `clsx`
 

@@ -7,6 +7,7 @@ import Inicio from './Inicio';
 import Login from './Login';
 import Cuadrantes from './Cuadrantes';
 import Trabajadores from './Trabajadores';
+import Nominas from './Nominas';
 import Centros from './Centros';
 import { makeStyles, Hidden } from '@material-ui/core';
 import Cajon from './Cajon';
@@ -34,10 +35,10 @@ const Contenedor = () => {
     }
     let baseName;
     if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
-        baseName='';           
-    }else{
-        baseName=subProduccio;      
-    }    
+        baseName = '';
+    } else {
+        baseName = subProduccio;
+    }
 
     return (
         <div className={classes.root}>
@@ -62,10 +63,10 @@ const Contenedor = () => {
                     <Switch>
                         <Route path="/" exact>
                             <Inicio />
-                        </Route>    
+                        </Route>
                         <Route path="/login" >
                             <Login />
-                        </Route>   
+                        </Route>
                         <Route path="/cuadrantes" >
                             <Cuadrantes />
                         </Route>
@@ -74,6 +75,9 @@ const Contenedor = () => {
                         </Route>
                         <Route path="/centros" >
                             <Centros />
+                        </Route>
+                        <Route path="/nominas" >
+                            <Nominas />
                         </Route>
                     </Switch>
                 </div>

@@ -9,6 +9,7 @@ import appReducer from './appDucks';
 import trabajadoresReducer from './trabajadoresDucks';
 import cuadrantesReducer from './cuadrantesDucks';
 import pendientesReducer from './pendientesDucks';
+import graficosReducer from './graficosDucks';
 
 const rootReducer = combineReducers({
     variablesCentros: centrosReducer,
@@ -16,7 +17,8 @@ const rootReducer = combineReducers({
     variablesApp: appReducer,
     variablesTrabajadores: trabajadoresReducer,
     variablesCuadrantes: cuadrantesReducer,
-    variablesPendientes: pendientesReducer
+    variablesPendientes: pendientesReducer,
+    variablesGraficos: graficosReducer
 })
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;

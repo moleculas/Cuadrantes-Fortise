@@ -50,6 +50,7 @@ import PostAddIcon from '@material-ui/icons/PostAdd';
 import Badge from '@material-ui/core/Badge';
 import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
 import Divider from '@material-ui/core/Divider';
+import Fab from '@material-ui/core/Fab';
 
 //pdf
 import { BlobProvider } from '@react-pdf/renderer';
@@ -106,7 +107,9 @@ import { gestionarInformeAccion } from '../redux/cuadrantesDucks';
 const categorias = Constantes.CATEGORIAS_CENTROS;
 const arrayFestivos = Constantes.CALENDARIO_FESTIVOS;
 const variaciones = Constantes.VARIACIONES_CUADRANTES;
-const h = (window.innerHeight) - (235); //245
+
+const getHeightScrollable = () => (window.innerHeight - 235) || (document.documentElement.clientHeight - 235) || (document.body.clientHeight - 235);
+
 const estilos = makeStyles((theme) => ({
     //loading
     loading: {
@@ -255,7 +258,7 @@ const estilos = makeStyles((theme) => ({
         marginTop: -5,
     },
     scrollable: {
-        height: h,
+        // height: h,
         overflowY: 'auto',
         overflowX: 'hidden',
     },
@@ -442,6 +445,19 @@ const estilos = makeStyles((theme) => ({
     },
     displayNone: {
         display: 'none !important'
+    },
+    fab: {
+        position: 'absolute',
+        bottom: theme.spacing(4),
+        right: theme.spacing(8),
+    },
+    typoFab: {
+        textTransform: 'none',
+        marginRight: 10
+    },
+    alignRight: {
+        display: 'flex',
+        flexDirection: 'row-reverse'
     }
 }));
 
@@ -584,6 +600,7 @@ const Cuadrantes = (props) => {
     const [anchorElMenu, setAnchorElMenu] = useState(null);
     const [arrayDatosInforme, setArrayDatosInforme] = useState(objetoCuadrante.datosInforme.arrayTrabajadores);
     const [arrayInformeLineas, setArrayInformeLineas] = useState([]);
+    const [heightScrollable, setHeightScrollable] = useState(getHeightScrollable());
 
     //useEffect
 
@@ -598,6 +615,16 @@ const Cuadrantes = (props) => {
     useEffect(() => {
         document.body.classList.add(classes.sinScroll);
         reseteaContenidoCuadrante();
+    }, []);
+
+    useEffect(() => {
+        const resizeListener = () => {
+            setHeightScrollable(getHeightScrollable());
+        };
+        window.addEventListener('resize', resizeListener);
+        return () => {
+            window.removeEventListener('resize', resizeListener);
+        }
     }, []);
 
     useEffect(() => {
@@ -642,7 +669,7 @@ const Cuadrantes = (props) => {
 
     useEffect(() => {
         if (controladorDeEstado === 'inicio' || controladorDeEstado === 'venimosDeResetear') {
-            setCuadrante(objetoCuadrante.datosCuadrante.arrayCuadrante);
+            setCuadrante(objetoCuadrante.datosCuadrante.arrayCuadrante);           
         };
         if (controladorDeEstado === 'venimosDeRegistrar') {
             setControladorDeEstado('inicio');
@@ -697,7 +724,8 @@ const Cuadrantes = (props) => {
                             mensualPactado: centroAGestionar.horario.mensualPactado,
                             precioHora: centroAGestionar.horario.precioHora,
                             arrayTrabajadores: [],
-                            facturado: 'no'
+                            facturado: 'no',
+                            totalFacturado: null
                         }
                     }));
                 };
@@ -850,7 +878,6 @@ const Cuadrantes = (props) => {
                 };
             };
             if (cuadrante[cuadrante.length - 1].nombreTrabajador) {
-                console.log('pasamos')
                 setArrayDatosInforme(dispatch(gestionarInformeAccion(cuadrante)));
             };
         };
@@ -1211,7 +1238,7 @@ const Cuadrantes = (props) => {
             setCuadrante(arrayCuadrante);
         };
         setExpandedAccordion(expandedAccordion ? panel : true);
-        const scrollableRef = getRef('scrollable');
+        const scrollableRef = getRef('scrollable');       
         expandedAccordion ? scrollableRef.current.classList.add(classes.openAccordion) : scrollableRef.current.classList.remove(classes.openAccordion);
     };
 
@@ -2234,7 +2261,7 @@ const Cuadrantes = (props) => {
             }
         };
         setItemPrevioEditando({ ...itemPrevioEditando, modificado: true })
-        setCuadrante(arrayCuadrante);
+        //setCuadrante(arrayCuadrante);
         dispatch(activarDesactivarCambioAccion(false));
     };
 
@@ -2336,7 +2363,7 @@ const Cuadrantes = (props) => {
             }
         };
         setItemPrevioEditando({ ...itemPrevioEditando, modificado: true });
-        setCuadrante(arrayCuadrante);
+        //setCuadrante(arrayCuadrante);
         dispatch(activarDesactivarCambioAccion(false));
     };
 
@@ -2366,7 +2393,7 @@ const Cuadrantes = (props) => {
             arrayCuadrante[index][key].domingoCantidad = e.target.value;
         };
         setItemPrevioEditando({ ...itemPrevioEditando, modificado: true });
-        setCuadrante(arrayCuadrante);
+        //setCuadrante(arrayCuadrante);
         dispatch(activarDesactivarCambioAccion(false));
     };
 
@@ -2376,7 +2403,7 @@ const Cuadrantes = (props) => {
         let arrayCuadrante = [...cuadrante];
         arrayCuadrante[index][key].observaciones = e.target.value;
         setItemPrevioEditando({ ...itemPrevioEditando, modificado: true });
-        setCuadrante(arrayCuadrante);
+        //setCuadrante(arrayCuadrante);
         dispatch(activarDesactivarCambioAccion(false));
     };
 
@@ -3240,7 +3267,7 @@ const Cuadrantes = (props) => {
 
     };
 
-    const procesarDatosCuadrante = () => {
+    const procesarDatosCuadrante = (source, totalFacturado) => {
         //revisamos que no haya columnas vacías
         let arrayCuadrante = [...cuadrante];
         let fechaHoy = new Date().toLocaleString() + '';
@@ -3265,7 +3292,8 @@ const Cuadrantes = (props) => {
             mensualPactado: objetoCuadrante.datosInforme.mensualPactado,
             precioHora: objetoCuadrante.datosInforme.precioHora,
             arrayTrabajadores: arrayDatosInforme,
-            facturado: objetoCuadrante.datosInforme.facturado
+            facturado: source==='informe' ? 'si' : objetoCuadrante.datosInforme.facturado,
+            totalFacturado: source==='informe' ? totalFacturado : objetoCuadrante.datosInforme.totalFacturado,
         }
         const cuadranteAGuardar = {
             id: objetoCuadrante.id,
@@ -3285,6 +3313,7 @@ const Cuadrantes = (props) => {
             dispatch(activarDesactivarCambioBotonActualizarAccion(true));
         };
         dispatch(registrarIntervencionAccion(true));
+        //dispatch(cierraObjetoDialogAccion());
     };
 
     const goToInicioCuadrantes = () => {
@@ -3306,13 +3335,29 @@ const Cuadrantes = (props) => {
         setAnchorElMenu(null);
     };
 
+    const retornaInfoFabButton = () => {
+        let sumatorioHoras = 0;
+        if (arrayDatosInforme.length > 0) {
+            arrayDatosInforme.forEach((dato, index) => {
+                sumatorioHoras += dato.totalHoras;
+            });
+            if (objetoCuadrante.datosInforme.mensualPactado) {
+                return 'Horas: ' + sumatorioHoras + ' - Total: ' + objetoCuadrante.datosInforme.mensualPactado + ' €'
+            } else {
+                return 'Horas: ' + sumatorioHoras + ' - Total: ' + (objetoCuadrante.datosInforme.precioHora * sumatorioHoras) + ' €'
+            };
+        }
+    };
+
     const generaInformacionCuadrantes = () => {
         let sumatorioHoras = 0;
         const arrayInforme = [];
         arrayInforme.push('Mes: ' + calendarioAGestionar);
         arrayInforme.push('Centro: ' + centroAGestionar.nombre);
-        if (firmaActualizacion) {
+        if (firmaActualizacion && intervencionRegistrada) {
             arrayInforme.push('Estado: Actualizado el ' + firmaActualizacion);
+        } else if (firmaActualizacion && !intervencionRegistrada) {
+            arrayInforme.push('Estado: Pendiente de actualizar');
         } else {
             arrayInforme.push('Estado: Pendiente de registrar');
         };
@@ -3360,12 +3405,21 @@ const Cuadrantes = (props) => {
     };
 
     const handleActualizaCuadranteFacturado = () => {
+        let sumatorioHoras = 0;
+        let elTotalFacturado;
+        arrayDatosInforme.map((dato, index) => {
+            sumatorioHoras += dato.totalHoras;
+        });
+        if (objetoCuadrante.datosInforme.mensualPactado) {
+            elTotalFacturado = objetoCuadrante.datosInforme.mensualPactado;
+        } else {
+            elTotalFacturado = sumatorioHoras * objetoCuadrante.datosInforme.precioHora;
+        };
         const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, arrayCuadrante: cuadrante };
-        const losDatosInforme = { ...objetoCuadrante.datosInforme, facturado: 'si' };
+        const losDatosInforme = { ...objetoCuadrante.datosInforme, facturado: 'si', totalFacturado: elTotalFacturado };
         dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, datosCuadrante: losDatosCuadrante, datosInforme: losDatosInforme }));
-        dispatch(activarDesactivarCambioAccion(false));
-        dispatch(cierraObjetoDialogAccion());
-        handleCloseMenu();
+        procesarDatosCuadrante('informe', elTotalFacturado);
+        //dispatch(registrarIntervencionAccion(false));        
     };
 
     const retornaTituloDialog4 = () => {
@@ -3545,76 +3599,77 @@ const Cuadrantes = (props) => {
             <Grid container spacing={2} >
                 <Grid item xs={12}>
                     <Box style={{ display: 'flex', flexDirection: 'row', justifycontent: 'space-between', alignItems: 'center' }}>
-                        <Grid item xs={10}>
+                        <Grid item xs={9}>
                             <Badge
                                 overlap="circle"
-                                classes={{ badge: firmaActualizacion && centroAGestionar.nombre ? classes.badgeVerd : !firmaActualizacion && centroAGestionar.nombre ? classes.badgeVermell : classes.displayNone }}
+                                classes={{ badge: firmaActualizacion && centroAGestionar.nombre && intervencionRegistrada ? classes.badgeVerd : firmaActualizacion && centroAGestionar.nombre && !intervencionRegistrada ? classes.badgeVermell : !firmaActualizacion && centroAGestionar.nombre ? classes.badgeVermell : classes.displayNone }}
                                 anchorOrigin={{
                                     vertical: 'bottom',
                                     horizontal: 'right',
                                 }}
                                 variant="dot"
                             >
-                                <Chip style={{ padding: 5 }} icon={<AssignmentIcon />} label={`Gestión de cuadrantes ` + (centroAGestionar.nombre ? ' - Centro: ' + centroAGestionar.nombre + (firmaActualizacion ? ' - Estado: Actualizado el ' + firmaActualizacion : ' - Estado: Pendiente de registrar') : '')} />
+                                <Chip style={{ padding: 5 }} icon={<AssignmentIcon />} label={`Gestión de cuadrantes ` + (centroAGestionar.nombre ? ' - Centro: ' + centroAGestionar.nombre + (firmaActualizacion && intervencionRegistrada ? ' - Estado: Actualizado el ' + firmaActualizacion : firmaActualizacion && !intervencionRegistrada ? ' - Estado: Pendiente de actualizar' : ' - Estado: Pendiente de registrar') : '')} />
                             </Badge>
                         </Grid>
-                        <Grid item xs={2}>
-                            <FormControl
-                                className={classes.form}>
-                                <Button
-                                    fullWidth
-                                    disabled={esInicio ? true : false}
-                                    style={{ marginRight: 20 }}
-                                    variant="contained"
-                                    color='primary'
-                                    startIcon={<AssignmentIcon />}
-                                    onClick={handleClickMenu}
-                                >
-                                    Gestión cuadrantes
-                                </Button>
-                                <StyledMenu
-                                    id="customized-menu"
-                                    anchorEl={anchorElMenu}
-                                    keepMounted
-                                    open={Boolean(anchorElMenu)}
-                                    onClose={handleCloseMenu}
-                                >
-                                    <MenuItem
-                                        onClick={goToInicioCuadrantes}
+                        <Grid item xs={3}>
+                            <Box className={classes.alignRight}>
+                                <FormControl
+                                    className={classes.form}>
+                                    <Button
+                                        disabled={esInicio ? true : false}
+                                        style={{ marginRight: 20, width: 250 }}
+                                        variant="contained"
+                                        color='primary'
+                                        startIcon={<AssignmentIcon />}
+                                        onClick={handleClickMenu}
                                     >
-                                        <ListItemIcon>
-                                            <HomeIcon fontSize="small" />
-                                        </ListItemIcon>
-                                        <ListItemText primary="Inicio Cuadrantes" />
-                                    </MenuItem>
-                                    <MenuItem
-                                        onClick={procesarDatosCuadrante}
-                                        disabled={cuadranteRegistrado === 'si' ? disabledItemBotonActualizar : disabledItemBotonRegistrar}
+                                        Gestión cuadrantes
+                                    </Button>
+                                    <StyledMenu
+                                        id="customized-menu"
+                                        anchorEl={anchorElMenu}
+                                        keepMounted
+                                        open={Boolean(anchorElMenu)}
+                                        onClose={handleCloseMenu}
                                     >
-                                        <ListItemIcon>
-                                            {cuadranteRegistrado === 'si' ? <SystemUpdateAltIcon fontSize="small" /> : <SaveIcon fontSize="small" />}
-                                        </ListItemIcon>
-                                        <ListItemText primary={cuadranteRegistrado === 'si' ? 'Actualizar Cuadrante' : 'Registrar Cuadrante'} />
-                                    </MenuItem>
-                                    <MenuItem
-                                        onClick={handleClickOpenDialogCuadrantes4}
-                                    >
-                                        <ListItemIcon>
-                                            <PostAddIcon fontSize="small" />
-                                        </ListItemIcon>
-                                        <ListItemText primary="Informe Cuadrante" />
-                                    </MenuItem>
-                                    <MenuItem
-                                        onClick={handleClickOpenDialogCuadrantes1}
-                                        disabled={disabledItemBotonResetear}
-                                    >
-                                        <ListItemIcon>
-                                            <DeleteIcon style={{ color: 'red' }} fontSize="small" />
-                                        </ListItemIcon>
-                                        <ListItemText style={{ color: 'red' }} primary="Resetear Cuadrante" />
-                                    </MenuItem>
-                                </StyledMenu>
-                            </FormControl>
+                                        <MenuItem
+                                            onClick={goToInicioCuadrantes}
+                                        >
+                                            <ListItemIcon>
+                                                <HomeIcon fontSize="small" />
+                                            </ListItemIcon>
+                                            <ListItemText primary="Inicio Cuadrantes" />
+                                        </MenuItem>
+                                        <MenuItem
+                                            onClick={()=>procesarDatosCuadrante('normal', null)}
+                                            disabled={cuadranteRegistrado === 'si' ? disabledItemBotonActualizar : disabledItemBotonRegistrar}
+                                        >
+                                            <ListItemIcon>
+                                                {cuadranteRegistrado === 'si' ? <SystemUpdateAltIcon fontSize="small" /> : <SaveIcon fontSize="small" />}
+                                            </ListItemIcon>
+                                            <ListItemText primary={cuadranteRegistrado === 'si' ? 'Actualizar Cuadrante' : 'Registrar Cuadrante'} />
+                                        </MenuItem>
+                                        <MenuItem
+                                            onClick={handleClickOpenDialogCuadrantes4}
+                                        >
+                                            <ListItemIcon>
+                                                <PostAddIcon fontSize="small" />
+                                            </ListItemIcon>
+                                            <ListItemText primary="Informe Cuadrante" />
+                                        </MenuItem>
+                                        <MenuItem
+                                            onClick={handleClickOpenDialogCuadrantes1}
+                                            disabled={disabledItemBotonResetear}
+                                        >
+                                            <ListItemIcon>
+                                                <DeleteIcon style={{ color: 'red' }} fontSize="small" />
+                                            </ListItemIcon>
+                                            <ListItemText style={{ color: 'red' }} primary="Resetear Cuadrante" />
+                                        </MenuItem>
+                                    </StyledMenu>
+                                </FormControl>
+                            </Box>
                         </Grid>
                     </Box>
                     <Box
@@ -3630,7 +3685,7 @@ const Cuadrantes = (props) => {
                                         inputVariant="outlined"
                                         fullWidth
                                         format="MM/yyyy"
-                                        label="Cuadrante a consultar"
+                                        label="Mes a gestionar"
                                         minDate={new Date('2021-1')}
                                         maxDate={new Date(dispatch(retornaAnoMesAccion()))}
                                         value={valueDatePicker}
@@ -3700,6 +3755,7 @@ const Cuadrantes = (props) => {
                         <Grid
                             className={clsx(classes.scrollable, classes.scrollableScroll)}
                             ref={setRef(`scrollable`)}
+                            style={{ height: heightScrollable }}
                         >
                             <Box
                                 p={0}
@@ -3903,6 +3959,16 @@ const Cuadrantes = (props) => {
                                     ))}
                                 </Grid>
                             </Box>
+                            <Tooltip title="Informe Cuadrante" placement="left" arrow>
+                                <Fab
+                                    variant="extended"
+                                    className={classes.fab}
+                                    onClick={handleClickOpenDialogCuadrantes4}
+                                >
+                                    <Typography variant="body2" className={classes.typoFab}>{retornaInfoFabButton()}</Typography>
+                                    <PostAddIcon />
+                                </Fab>
+                            </Tooltip>
                         </Grid>
                     ) : (
                         esInicio ? <PantallaCuadrantes /> : null
@@ -4052,7 +4118,7 @@ const Cuadrantes = (props) => {
                 prFullWidth={true}
                 prMaxWidth={true}
             />
-            {console.log(objetoCuadrante)}
+            {/* {console.log(firmaActualizacion)} */}
         </div>
     )
 }
