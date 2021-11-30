@@ -1,6 +1,5 @@
 import React, { useState, useEffect, Fragment, forwardRef, useImperativeHandle, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from "@material-ui/core";
 import Constantes from "../constantes";
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -34,6 +33,9 @@ import Tooltip from '@material-ui/core/Tooltip';
 //carga componentes
 import DialogComponente from './DialogComponente';
 
+//estilos
+import Clases from "../clases";
+
 //importaciones acciones
 import { obtenerTrabajadoresAccion } from '../redux/trabajadoresDucks';
 import { obtenerTrabajadorAccion } from '../redux/trabajadoresDucks';
@@ -53,57 +55,6 @@ import { vaciarDatosTrabajadoresAccion } from '../redux/trabajadoresDucks';
 
 const estados = Constantes.ESTADO_LABORAL_TRABAJADOR;
 
-const estilos = makeStyles((theme) => ({
-    //loading
-    loading: {
-        zIndex: theme.zIndex.drawer + 1,
-        color: '#fff',
-    },
-    root1: {
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        [theme.breakpoints.up('sm')]: {
-            flexDirection: 'row',
-        },
-    },
-    root11: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        [theme.breakpoints.up('sm')]: {
-            flexDirection: 'row',
-            alignItems: 'flex-end',
-        },
-    },
-    //tabs
-    root2: {
-        flexGrow: 1
-    },
-    //form
-    form: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        flexWrap: 'wrap',
-        '& > *': {
-            margin: theme.spacing(0.5),
-        },
-    },
-    mb15: {
-        marginBottom: 15,
-    },
-    mb25: {
-        marginBottom: 25,
-    },
-    mb20: {
-        marginBottom: 20,
-    },
-    paper: {
-        backgroundColor: theme.palette.background.paper,
-    },
-}));
-
 //snackbar y alert
 const Alert = (props) => {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -111,7 +62,7 @@ const Alert = (props) => {
 
 const TrabajadoresEditar = forwardRef((props, ref) => {
 
-    const classes = estilos();
+    const classes = Clases();
     const dispatch = useDispatch();
     const listadoTrabajadores = useSelector(store => store.variablesTrabajadores.arrayTrabajadores);
     const trabajadorAEditar = useSelector(store => store.variablesTrabajadores.objetoTrabajador);

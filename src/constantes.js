@@ -84,6 +84,8 @@ const devuelveFestivos = () => {
 
 const festivos=devuelveFestivos();
 
+const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
 const Constantes = {
     SUBDIRECTORI_PRODUCCIO: subdirectoriProduccio,
     RUTA_API: rutaApi,
@@ -145,5 +147,6 @@ const Constantes = {
         { value: 1, label: 'Total mensual pactado' },
         { value: 2, label: 'Precio hora estipulado' }
     ],
+    MESES: meses,
 };
 export default Constantes;

@@ -1,6 +1,5 @@
 import React, { useState, useEffect, Fragment, forwardRef, useImperativeHandle } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from "@material-ui/core";
 import Constantes from "../constantes";
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -18,6 +17,9 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 
 //carga componentes
 import ItemListTime from './ItemListTime';
+
+//estilos
+import Clases from "../clases";
 
 //importaciones acciones
 import { obtenerCentroAccion } from '../redux/centrosDucks';
@@ -37,54 +39,6 @@ const tipos = Constantes.MODO_ENTRADA_HORARIOS;
 const totalTrabajadores = Constantes.TRABAJADORES_ASIGNADOS_CENTRO;
 const computoHoras = Constantes.COMPUTO_HORAS;
 
-const estilos = makeStyles((theme) => ({
-    //loading
-    loading: {
-        zIndex: theme.zIndex.drawer + 1,
-        color: '#fff',
-    },
-    root1: {
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        [theme.breakpoints.up('sm')]: {
-            flexDirection: 'row',
-        },
-    },
-    root11: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        [theme.breakpoints.up('sm')]: {
-            flexDirection: 'row',
-            alignItems: 'flex-end',
-        },
-    },
-    //tabs
-    root2: {
-        flexGrow: 1
-    },
-    //form
-    form: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        flexWrap: 'wrap',
-        '& > *': {
-            margin: theme.spacing(0.5),
-        },
-    },
-    mb15: {
-        marginBottom: 15,
-    },
-    mb25: {
-        marginBottom: 25,
-    },
-    mb20: {
-        marginBottom: 20,
-    },
-}));
-
 //snackbar y alert
 const Alert = (props) => {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -92,7 +46,7 @@ const Alert = (props) => {
 
 const CentrosRegistrar = forwardRef((props, ref) => {
 
-    const classes = estilos();
+    const classes = Clases();
     const dispatch = useDispatch();
     const openLoadingCentros = useSelector(store => store.variablesCentros.loadingCentros);
     const openLoadingTrabajadores = useSelector(store => store.variablesTrabajadores.loadingTrabajadores);

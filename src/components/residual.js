@@ -2073,129 +2073,157 @@ if (tipoTrabajador === 'trabajador') {
         modificado: false
     };
 };
-
-<FormControl
-    className={classes.form}>
-    <Button
-        fullWidth
-        variant="contained"
-        color="primary"
-        disabled={onEstem === 'editarCentros' ? (disabledItemActualizacionCentro) : (disabledItemRegistroCentro)}
-        startIcon={onEstem === 'editarCentros' ? <SystemUpdateAltIcon /> : <SaveIcon />}
-        onClick={onEstem === 'editarCentros' ? (procesarDatosEdicionParent) : (procesarDatosRegistroParent)}
-    >
-        {onEstem === 'editarCentros' ? ('Actualizar centro') : ('Registrar centro')}
-    </Button>
-</FormControl>
-{
-    onEstem === 'editarCentros' ? (
-        <FormControl
-            className={classes.form}>
-            <Button
-                fullWidth
-                variant="contained"
-                className={classes.btnError}
-                disabled={disabledItem}
-                startIcon={<DeleteIcon />}
-                onClick={eliminarCentroParent}
-            >
-                Eliminar Centro
-            </Button>
-        </FormControl>
-    ) : (
-        <FormControl
-            className={classes.form}>
-            <Button
-                fullWidth
-                variant="contained"
-                color="secondary"
-                disabled={disabledItemNuevoCentro}
-                startIcon={<NoteAddIcon />}
-                onClick={nuevoCentroParent}
-            >
-                Nuevo Centro
-            </Button>
-        </FormControl>
-    )
-}
-
-<FormControl
-    className={classes.form}>
-    <Button
-        fullWidth
-        variant="contained"
-        color="primary"
-        disabled={onEstem === 'editarTrabajadores' ? (disabledItemActualizacionTrabajador) : (disabledItemRegistroTrabajador)}
-        startIcon={onEstem === 'editarTrabajadores' ? <SystemUpdateAltIcon /> : <SaveIcon />}
-        onClick={onEstem === 'editarTrabajadores' ? (procesarDatosEdicionParent) : (procesarDatosRegistroParent)}
-    >
-        {onEstem === 'editarTrabajadores' ? ('Actualizar trabajador') : ('Registrar trabajador')}
-    </Button>
-</FormControl>
-{
-    onEstem === 'editarTrabajadores' ? (
-        <FormControl
-            className={classes.form}>
-            <Button
-                fullWidth
-                variant="contained"
-                className={classes.btnError}
-                disabled={disabledItem}
-                startIcon={<DeleteIcon />}
-                onClick={eliminarTrabajadorParent}
-            >
-                Eliminar trabajador
-            </Button>
-        </FormControl>
-    ) : (
+<div>
     <FormControl
         className={classes.form}>
         <Button
             fullWidth
             variant="contained"
-            color="secondary"
-            disabled={disabledItemNuevoTrabajador}
-            startIcon={<GroupAddIcon />}
-            onClick={nuevoTrabajadorParent}
+            color="primary"
+            disabled={onEstem === 'editarCentros' ? (disabledItemActualizacionCentro) : (disabledItemRegistroCentro)}
+            startIcon={onEstem === 'editarCentros' ? <SystemUpdateAltIcon /> : <SaveIcon />}
+            onClick={onEstem === 'editarCentros' ? (procesarDatosEdicionParent) : (procesarDatosRegistroParent)}
         >
-            Nuevo trabajador
+            {onEstem === 'editarCentros' ? ('Actualizar centro') : ('Registrar centro')}
         </Button>
     </FormControl>
-)
-}
+    {
+        onEstem === 'editarCentros' ? (
+            <FormControl
+                className={classes.form}>
+                <Button
+                    fullWidth
+                    variant="contained"
+                    className={classes.btnError}
+                    disabled={disabledItem}
+                    startIcon={<DeleteIcon />}
+                    onClick={eliminarCentroParent}
+                >
+                    Eliminar Centro
+                </Button>
+            </FormControl>
+        ) : (
+            <FormControl
+                className={classes.form}>
+                <Button
+                    fullWidth
+                    variant="contained"
+                    color="secondary"
+                    disabled={disabledItemNuevoCentro}
+                    startIcon={<NoteAddIcon />}
+                    onClick={nuevoCentroParent}
+                >
+                    Nuevo Centro
+                </Button>
+            </FormControl>
+        )
+    }
 
-<Fragment>
-<Divider />
-<Grid container spacing={2} className={classes.mb25}>
-    <Box
-        p={2}
-        mt={2}
+    <FormControl
+        className={classes.form}>
+        <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            disabled={onEstem === 'editarTrabajadores' ? (disabledItemActualizacionTrabajador) : (disabledItemRegistroTrabajador)}
+            startIcon={onEstem === 'editarTrabajadores' ? <SystemUpdateAltIcon /> : <SaveIcon />}
+            onClick={onEstem === 'editarTrabajadores' ? (procesarDatosEdicionParent) : (procesarDatosRegistroParent)}
+        >
+            {onEstem === 'editarTrabajadores' ? ('Actualizar trabajador') : ('Registrar trabajador')}
+        </Button>
+    </FormControl>
+    {
+        onEstem === 'editarTrabajadores' ? (
+            <FormControl
+                className={classes.form}>
+                <Button
+                    fullWidth
+                    variant="contained"
+                    className={classes.btnError}
+                    disabled={disabledItem}
+                    startIcon={<DeleteIcon />}
+                    onClick={eliminarTrabajadorParent}
+                >
+                    Eliminar trabajador
+                </Button>
+            </FormControl>
+        ) : (
+            <FormControl
+                className={classes.form}>
+                <Button
+                    fullWidth
+                    variant="contained"
+                    color="secondary"
+                    disabled={disabledItemNuevoTrabajador}
+                    startIcon={<GroupAddIcon />}
+                    onClick={nuevoTrabajadorParent}
+                >
+                    Nuevo trabajador
+                </Button>
+            </FormControl>
+        )
+    }
+
+    <Fragment>
+        <Divider />
+        <Grid container spacing={2} className={classes.mb25}>
+            <Box
+                p={2}
+                mt={2}
+            >
+                <Typography variant='body1'>{'Centro: ' + centroAGestionar.nombre}</Typography>
+                {arrayPDF.push('Centro: ' + centroAGestionar.nombre)}
+                <Typography variant='body1'>{firmaActualizacion ? 'Estado: Actualizado el ' + firmaActualizacion : 'Estado: Pendiente de registrar'}</Typography>
+                <Typography variant='body1'>{objetoCuadrante.datosInforme.mensualPactado ?
+                    'Cómputo de horas por precio mensual pactado: ' + objetoCuadrante.datosInforme.mensualPactado :
+                    'Cómputo de horas por precio/hora: ' + objetoCuadrante.datosInforme.precioHora
+                } €</Typography>
+                <Typography variant='body1'>Trabajadores:</Typography>
+                {
+                    arrayDatosInforme.map((dato, index) => {
+                        let elTipo;
+                        if (dato.tipo === 'trabajador') {
+                            elTipo = '(trabajador)'
+                        } else {
+                            elTipo = '(suplente)'
+                        };
+                        sumatorioHoras += dato.totalHoras
+                        return (<Typography key={'typo' + index} variant='body1'>{
+                            dato.trabajadorNombre + ' ' + elTipo + ' Total horas trabajadas mes trabajador: ' + dato.totalHoras + ' horas'
+                        }</Typography>)
+                    })
+                }
+                <Typography variant='body1'>Total horas trabajadas mes cuadrante: {sumatorioHoras} horas</Typography>
+                <Typography variant='body1'>Total a facturar según cómputo
+                    {objetoCuadrante.datosInforme.mensualPactado ? ' mensual pactado: ' + objetoCuadrante.datosInforme.mensualPactado + ' €' : ' precio/hora: ' + (sumatorioHoras * objetoCuadrante.datosInforme.precioHora) + ' €'}</Typography>
+            </Box>
+        </Grid>
+    </Fragment>
+
+    <IconButton
+        size="small"
+        style={{ backgroundColor: 'white', marginLeft: 10, border: '1px solid rgba(0, 0, 0, 0.12)' }}
+        disabled={true}
     >
-        <Typography variant='body1'>{'Centro: ' + centroAGestionar.nombre}</Typography>
-        {arrayPDF.push('Centro: ' + centroAGestionar.nombre)}
-        <Typography variant='body1'>{firmaActualizacion ? 'Estado: Actualizado el ' + firmaActualizacion : 'Estado: Pendiente de registrar'}</Typography>
-        <Typography variant='body1'>{objetoCuadrante.datosInforme.mensualPactado ?
-            'Cómputo de horas por precio mensual pactado: ' + objetoCuadrante.datosInforme.mensualPactado :
-            'Cómputo de horas por precio/hora: ' + objetoCuadrante.datosInforme.precioHora
-        } €</Typography>
-        <Typography variant='body1'>Trabajadores:</Typography>
-        {
-            arrayDatosInforme.map((dato, index) => {
-                let elTipo;
-                if (dato.tipo === 'trabajador') {
-                    elTipo = '(trabajador)'
-                } else {
-                    elTipo = '(suplente)'
-                };
-                sumatorioHoras += dato.totalHoras
-                return (<Typography key={'typo' + index} variant='body1'>{
-                    dato.trabajadorNombre + ' ' + elTipo + ' Total horas trabajadas mes trabajador: ' + dato.totalHoras + ' horas'
-                }</Typography>)
-            })
-        }
-        <Typography variant='body1'>Total horas trabajadas mes cuadrante: {sumatorioHoras} horas</Typography>
-        <Typography variant='body1'>Total a facturar según cómputo
-            {objetoCuadrante.datosInforme.mensualPactado ? ' mensual pactado: ' + objetoCuadrante.datosInforme.mensualPactado + ' €' : ' precio/hora: ' + (sumatorioHoras * objetoCuadrante.datosInforme.precioHora) + ' €'}</Typography>
+        <DoneIcon style={{ color: green[500] }} />
+    </IconButton>
+
+    <Box>
+        <BlobProvider document={<InformePDF arrayInformePDF={arrayInformeLineas} />}>
+            {({ url }) => (
+                <Button
+                    href={url}
+                    onClick={handleActualizaCuadranteFacturado}
+                    style={{ backgroundColor: '#d9241b', color: 'white' }}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    variant="contained"
+                    startIcon={<PictureAsPdfIcon />}
+                >
+                    Generar PDF
+                </Button>
+            )}
+        </BlobProvider>
     </Box>
-</Grid>
-</Fragment>
+
+</div>

@@ -1,21 +1,35 @@
+import axios from 'axios';
+import Constantes from "../constantes";
+
 //constantes
+const rutaApi = Constantes.RUTA_API;
+const meses= Constantes.MESES;
+
 const dataInicial = {
+    loadingApp: false,
     estadoActivadoDesactivado: true,
     estadoIntervencionRegistrada: true,
     onEstem: '',
-    openDialog: [false, false, false, false, false, false, false, false]
+    openDialog: [false, false, false, false, false, false, false, false],
+    exitoEnviarMail: false,
+    errorEnviarMail: false,
 }
 
 //types
+const LOADING_APP = 'LOADING_APP';
 const ACTIVAR_DESACTIVAR_COMPONENTE = 'ACTIVAR_DESACTIVAR_COMPONENTE';
 const INTERVENCION_REGISTRADA = 'INTERVENCION_REGISTRADA';
 const ON_ESTEM = 'ON_ESTEM';
 const ABIERTO_DIALOG = 'ABIERTO_DIALOG';
 const CERRADO_DIALOG = 'CERRADO_DIALOG';
+const EXITO_ENVIAR_MAIL = 'EXITO_ENVIAR_MAIL';
+const ERROR_ENVIAR_MAIL = 'ERROR_ENVIAR_MAIL';
 
 //reducer
 export default function appReducer(state = dataInicial, action) {
     switch (action.type) {
+        case LOADING_APP:
+            return { ...state, loadingApp: true }
         case ACTIVAR_DESACTIVAR_COMPONENTE:
             return { ...state, estadoActivadoDesactivado: action.payload.estado }
         case INTERVENCION_REGISTRADA:
@@ -26,6 +40,10 @@ export default function appReducer(state = dataInicial, action) {
             return { ...state, openDialog: action.payload.array }
         case CERRADO_DIALOG:
             return { ...state, openDialog: dataInicial.openDialog }
+        case EXITO_ENVIAR_MAIL:
+            return { ...state, exitoEnviarMail: true, loadingApp: false }
+        case ERROR_ENVIAR_MAIL:
+            return { ...state, errorEnviarMail: true, loadingApp: false }
         default:
             return { ...state }
     }
@@ -98,7 +116,6 @@ export const retornaAnoMesAccion = (fecha) => (dispatch, getState) => {
 export const retornaAnoMesCuadranteAccion = (cuadrante) => (dispatch, getState) => {
     let myArrSplit = cuadrante.split("-");
     const monthNum = myArrSplit[1];
-    const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
     const monthLet = meses[monthNum - 1];
     const year = myArrSplit[0];
     return { monthNum, monthLet, year }
@@ -234,4 +251,31 @@ export const cierraObjetoDialogAccion = () => (dispatch, getState) => {
     dispatch({
         type: CERRADO_DIALOG
     });
+}
+
+export const enviarMailAccion = (from, email, file) => async (dispatch, getState) => {
+    dispatch({
+        type: LOADING_APP
+    });
+    try {      
+        const formData = new FormData();
+        formData.append("from", from);
+        formData.append("email", email);
+        formData.append("file", file);
+        let apiUrl = rutaApi + "enviar_mail.php";
+        const res = await axios.post(apiUrl, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            }
+        });
+        const respuesta = res.data;
+        dispatch({
+            type: EXITO_ENVIAR_MAIL          
+        })
+
+    } catch (error) {
+        dispatch({
+            type: ERROR_ENVIAR_MAIL
+        })
+    }
 }

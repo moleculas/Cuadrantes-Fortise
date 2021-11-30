@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from "@material-ui/core";
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -11,12 +10,11 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import { indigo } from '@material-ui/core/colors';
 
 //importaciones acciones
 import { obtenerCentrosAccion } from '../redux/centrosDucks';
 import { obtenerCuadrantesPendientesAccion } from '../redux/pendientesDucks';
-import { forzarRecargaAccion } from '../redux/pendientesDucks';
+import { forzarRecargaPendientesAccion } from '../redux/pendientesDucks';
 import { obtenerCentroAccion } from '../redux/centrosDucks';
 import { cambioEstadoInicioCuadrantesAccion } from '../redux/cuadrantesDucks';
 import { activarDesactivarCambioBotonRegistrarAccion } from '../redux/cuadrantesDucks';
@@ -26,70 +24,24 @@ import { venimosDePendientesAccion } from '../redux/pendientesDucks';
 import { setCentroAccion } from '../redux/cuadrantesDucks';
 import { retornaAnoMesCuadranteAccion } from '../redux/appDucks';
 
+//estilos
+import Clases from "../clases";
+
 //snackbar y alert
 const Alert = (props) => {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
 };
 
-const estilos = makeStyles((theme) => ({
-    form: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        flexWrap: 'wrap',
-        '& > *': {
-            margin: theme.spacing(0.5),
-        },
-    },
-    formInput: {
-        marginBottom: '10px',
-    },
-    scrollable: {      
-        overflowY: 'auto',
-        overflowX: 'hidden',
-        margin: 10
-    },
-    root: {       
-        width: '100%',
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        justify: "center"
-    },
-    centrado: {
-        minHeight: "20vh",
-        display: "flex",
-        alignItems: "center"
-    },
-    casilla: {
-        cursor: 'pointer',
-        backgroundColor: theme.palette.background.default,
-        marginBottom: 5,
-        marginRight: 10,
-        paddingRight: 10,
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        "&:hover": {
-            backgroundColor: `${indigo[50]} !important`,
-        },
-    },
-    gris: {
-        color: '#b4af9f'
-    },
-}));
-
 const Pendientes = (props) => {
 
-    const classes = estilos();
+    const classes = Clases();
     const dispatch = useDispatch();
     const listadoCentros = useSelector(store => store.variablesCentros.arrayCentros);
     const errorDeCargaCentros = useSelector(store => store.variablesTrabajadores.errorDeCargaCentros);
     const errorDeCargaCuadrantes = useSelector(store => store.variablesTrabajadores.errorDeCargaCuadrantes);
     const openLoadingCuadrantes = useSelector(store => store.variablesCentros.loadingCuadrantes);
     const centrosPendientesArray = useSelector(store => store.variablesPendientes.centrosPendientesArray);
-    const forzarRecarga = useSelector(store => store.variablesPendientes.forzarRecarga);
+    const forzarRecargaPendientes = useSelector(store => store.variablesPendientes.forzarRecargaPendientes);
     const calendarioAGestionar = useSelector(store => store.variablesCuadrantes.calendarioAGestionar);
 
     //states
@@ -101,16 +53,16 @@ const Pendientes = (props) => {
     //useEffect
 
     useEffect(() => {
-        if (forzarRecarga || calendarioAGestionar) {
+        if (forzarRecargaPendientes || calendarioAGestionar) {
             dispatch(obtenerCentrosAccion('centros'));
-            dispatch(forzarRecargaAccion(false));
+            dispatch(forzarRecargaPendientesAccion(false));
         }
-    }, [forzarRecarga, calendarioAGestionar]);
+    }, [forzarRecargaPendientes, calendarioAGestionar]);
 
     useEffect(() => {
         if (listadoCentros.length > 0) {
             const { monthNum, year } = dispatch(retornaAnoMesCuadranteAccion(calendarioAGestionar));
-            const anyoMes=year+'-'+monthNum;
+            const anyoMes = year + '-' + monthNum;
             dispatch(obtenerCuadrantesPendientesAccion('cuadrantes', anyoMes, listadoCentros));
         }
     }, [listadoCentros]);
@@ -142,14 +94,14 @@ const Pendientes = (props) => {
         setOpenSnack(false);
     };
 
-    const handleCuadrantesPendientes = (centro) => {  
-        dispatch(setCentroAccion(centro)); 
+    const handleCuadrantesPendientes = (centro) => {
+        dispatch(setCentroAccion(centro));
         dispatch(obtenerCentroAccion('centros', centro));
         dispatch(cambioEstadoInicioCuadrantesAccion(false));
         dispatch(activarDesactivarCambioBotonRegistrarAccion(false));
         dispatch(registrarIntervencionCuadranteNuevoAccion(false));
         dispatch(cambiarACuadranteNoRegistradoAccion());
-        dispatch(venimosDePendientesAccion(true));            
+        dispatch(venimosDePendientesAccion(true));
     };
 
     //retorno componentes
@@ -187,8 +139,8 @@ const Pendientes = (props) => {
                 justify="center"
                 alignItems="center"
                 p={2}
-                className={classes.root}
-                style={{ minHeight: props.prHeightContenedores, maxHeight: props.prHeightContenedores}}
+                className={classes.rootPendientes}
+                style={{ minHeight: props.prHeightContenedores, maxHeight: props.prHeightContenedores }}
             >
                 {openLoading ? (
                     <Box
@@ -196,25 +148,26 @@ const Pendientes = (props) => {
                     >
                         <CircularProgress />
                     </Box>
-                ) : null}
-                <Box
-                    className={classes.scrollable}
-                    style={{ width: '100%', height: props.prHeightContenedores - 10 }}
-                >
-                    <List dense={true}
-                        style={{ padding: 15 }}>
-                        {listadoCentros.map((centro, index) => (
-                            retornaCentroGestionado(centro, index)
-                        ))}
-                    </List>
-                </Box>
+                ) : (
+                    <Box
+                        className={classes.scrollable}
+                        style={{ width: '100%', height: props.prHeightContenedores - 10, margin: 10 }}
+                    >
+                        <List dense={true}
+                            style={{ padding: 15 }}>
+                            {listadoCentros.map((centro, index) => (
+                                retornaCentroGestionado(centro, index)
+                            ))}
+                        </List>
+                    </Box>
+                )}
             </Grid>
             <Snackbar open={openSnack} autoHideDuration={6000} onClose={handleCloseSnack}>
                 <Alert severity={alert.tipo} onClose={handleCloseSnack}>
                     {alert.mensaje}
                 </Alert>
             </Snackbar>
-            {/* {console.log(listadoCentros)} */}
+            {/* {console.log(forzarRecargaPendientes)} */}
         </div>
     )
 }

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { withRouter } from "react-router-dom";
-import { makeStyles } from "@material-ui/core";
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
@@ -28,80 +27,16 @@ import CentrosEditar from './CentrosEditar';
 import CentrosRegistrar from './CentrosRegistrar';
 import DialogComponente from './DialogComponente';
 
+//estilos
+import Clases from "../clases";
+
 //importaciones acciones
 import { registrarIntervencionAccion } from '../redux/appDucks';
 import { abreObjetoDialogAccion } from '../redux/appDucks';
 import { cierraObjetoDialogAccion } from '../redux/appDucks';
 import { activarDesactivarAccion } from '../redux/appDucks';
 
-const h = (window.innerHeight) - (220);
-const estilos = makeStyles((theme) => ({
-    //loading
-    loading: {
-        zIndex: theme.zIndex.drawer + 1,
-        color: '#fff',
-    },
-    root1: {
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        [theme.breakpoints.up('sm')]: {
-            flexDirection: 'row',
-        },
-    },
-    root11: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        [theme.breakpoints.up('sm')]: {
-            flexDirection: 'row',
-            alignItems: 'flex-end',
-        },
-    },
-    //tabs
-    root2: {
-        flexGrow: 1
-    },
-    //form
-    form: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        flexWrap: 'wrap',
-        '& > *': {
-            margin: theme.spacing(0.5),
-        },
-    },
-    mb15: {
-        marginBottom: 15,
-    },
-    mb25: {
-        marginBottom: 25,
-    },
-    mb20: {
-        marginBottom: 20,
-    },
-    mt_5: {
-        marginTop: -5,
-    },
-    scrollable: {
-        height: h,
-        overflowY: 'auto',
-        overflowX: 'hidden',
-    },
-    //boto
-    btnError: {
-        backgroundColor: theme.palette.error.main,
-        color: theme.palette.error.contrastText,
-        "&:hover": {
-            backgroundColor: theme.palette.error.dark
-        },
-        "&:disabled": {
-            backgroundColor: theme.palette.error.light
-        },
-        marginLeft: '5px'
-    },
-}));
+const getHeightScrollable = () => (window.innerHeight - 220) || (document.documentElement.clientHeight - 220) || (document.body.clientHeight - 220);
 
 //menu
 const StyledMenu = withStyles({
@@ -154,7 +89,7 @@ function a11yProps(index) {
 
 const Centros = (props) => {
 
-    const classes = estilos();
+    const classes = Clases();
     const dispatch = useDispatch();
     const logged = useSelector(store => store.variablesUsuario.activo);
     const disabledItem = useSelector(store => store.variablesApp.estadoActivadoDesactivado);
@@ -175,6 +110,7 @@ const Centros = (props) => {
     const [valueTab, setValueTab] = useState(0);
     const [preValueTab, setPreValueTab] = useState(null);
     const [anchorElMenu, setAnchorElMenu] = useState(null);
+    const [heightScrollable, setHeightScrollable] = useState(getHeightScrollable());
 
     //useEffect
 
@@ -183,6 +119,16 @@ const Centros = (props) => {
             props.history.push('/login')
         }
     }, [logged, props.history]);
+
+    useEffect(() => {
+        const resizeListener = () => {
+            setHeightScrollable(getHeightScrollable());
+        };
+        window.addEventListener('resize', resizeListener);
+        return () => {
+            window.removeEventListener('resize', resizeListener);
+        }
+    }, []);
 
     //funciones    
 
@@ -326,10 +272,10 @@ const Centros = (props) => {
                                     </Tooltip>
                                 </Tabs>
                             </AppBar>
-                            <TabPanel value={valueTab} index={0} className={classes.scrollable}>
+                            <TabPanel value={valueTab} index={0} className={classes.scrollable} style={{ height: heightScrollable }}>
                                 <CentrosEditar ref={funcionesEnCentrosEditarRef} />
                             </TabPanel>
-                            <TabPanel value={valueTab} index={1} className={classes.scrollable}>
+                            <TabPanel value={valueTab} index={1} className={classes.scrollable} style={{ height: heightScrollable }}>
                                 <CentrosRegistrar ref={funcionesEnCentrosRegistrarRef} />
                             </TabPanel>
                         </div>

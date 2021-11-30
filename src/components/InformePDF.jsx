@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     },
 });
 
-const DocuPDF = ({arrayInformePDF}) => {   
+const InformePDF = ({arrayInformePDF}) => {   
     return (
         <Document>
         <Page style={styles.body}>
@@ -77,4 +77,4 @@ const DocuPDF = ({arrayInformePDF}) => {
     );
   };
   
-  export default DocuPDF;
+  export default InformePDF

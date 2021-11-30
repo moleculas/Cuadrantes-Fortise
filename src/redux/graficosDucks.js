@@ -28,9 +28,9 @@ export default function graficosReducer(state = dataInicial, action) {
         case VENIMOS_DE_GRAFICOS_CUADRANTES:
             return { ...state, estadoVenimosDeGraficosCuadrantes: action.payload.estado }
         case FORZAR_RECARGA_GRAFICOS_CUADRANTES:
-            return { ...state, forzarRecargaGraficosCuadrantes: action.payload.estado }
+            return { ...state, forzarRecargaGraficosCuadrantes: action.payload.estado, cuadrantesPorAnyoGraficos: [] }
         case OBTENER_CUADRANTES_POR_ANYO_GRAFICOS_EXITO:
-            return { ...state, cuadrantesPorAnyoGraficos: action.payload.elementoArray }
+            return { ...state, cuadrantesPorAnyoGraficos: action.payload.elementoArray, loadingGraficosCuadrantes: false }
         default:
             return { ...state }
     }

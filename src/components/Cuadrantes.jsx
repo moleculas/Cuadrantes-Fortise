@@ -1,6 +1,5 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from "@material-ui/core";
 import Constantes from "../constantes";
 import { withRouter } from "react-router-dom";
 import Backdrop from '@material-ui/core/Backdrop';
@@ -34,7 +33,6 @@ import IconButton from '@material-ui/core/IconButton';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { amber, blueGrey, green, lime } from '@material-ui/core/colors';
 import Popover from "@material-ui/core/Popover";
 import ChatIcon from '@material-ui/icons/Chat';
 import TimerIcon from '@material-ui/icons/Timer';
@@ -46,20 +44,26 @@ import CachedIcon from '@material-ui/icons/Cached';
 import Menu from '@material-ui/core/Menu';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import PostAddIcon from '@material-ui/icons/PostAdd';
+import DescriptionIcon from '@material-ui/icons/Description';
 import Badge from '@material-ui/core/Badge';
-import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
+import GetAppIcon from '@material-ui/icons/GetApp';
 import Divider from '@material-ui/core/Divider';
 import Fab from '@material-ui/core/Fab';
+import AssessmentIcon from '@material-ui/icons/Assessment';
+import ReplyIcon from '@material-ui/icons/Reply';
+import EmailIcon from '@material-ui/icons/Email';
 
 //pdf
-import { BlobProvider } from '@react-pdf/renderer';
+import { PDFDownloadLink, PDFViewer, pdf } from "@react-pdf/renderer";
 import InformePDF from "./InformePDF";
 
 //carga componentes
 import ItemCuadrante from './ItemCuadrante';
 import PantallaCuadrantes from './PantallaCuadrantes';
 import DialogComponente from './DialogComponente';
+
+//estilos
+import Clases from "../clases";
 
 //importaciones acciones
 import { obtenerCentrosPorCategoriaAccion } from '../redux/centrosDucks';
@@ -94,7 +98,8 @@ import { resetearCuadranteAccion } from '../redux/cuadrantesDucks';
 import { cambiarACuadranteRegistradoAccion } from '../redux/cuadrantesDucks';
 import { cambiarACuadranteNoRegistradoAccion } from '../redux/cuadrantesDucks';
 import { vaciarDatosCuadrantesAccion } from '../redux/cuadrantesDucks';
-import { forzarRecargaAccion } from '../redux/pendientesDucks';
+import { forzarRecargaPendientesAccion } from '../redux/pendientesDucks';
+import { forzarRecargaGraficosCuadrantesAccion } from '../redux/graficosDucks';
 import { actualizarObjetoCuadranteAccion } from '../redux/cuadrantesDucks';
 import { venimosDePendientesAccion } from '../redux/pendientesDucks';
 import { setCategoriaAccion } from '../redux/cuadrantesDucks';
@@ -103,363 +108,13 @@ import { obtenerCategoriaPorCentroAccion } from '../redux/centrosDucks';
 import { setCalendarioAGestionarAccion } from '../redux/cuadrantesDucks';
 import { retornaAnoMesCuadranteAccion } from '../redux/appDucks';
 import { gestionarInformeAccion } from '../redux/cuadrantesDucks';
+import { enviarMailAccion } from '../redux/appDucks';
 
 const categorias = Constantes.CATEGORIAS_CENTROS;
 const arrayFestivos = Constantes.CALENDARIO_FESTIVOS;
 const variaciones = Constantes.VARIACIONES_CUADRANTES;
 
 const getHeightScrollable = () => (window.innerHeight - 235) || (document.documentElement.clientHeight - 235) || (document.body.clientHeight - 235);
-
-const estilos = makeStyles((theme) => ({
-    //loading
-    loading: {
-        zIndex: theme.zIndex.drawer + 1,
-        color: '#fff',
-    },
-    root1: {
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        [theme.breakpoints.up('sm')]: {
-            flexDirection: 'row',
-        },
-    },
-    root11: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        [theme.breakpoints.up('sm')]: {
-            flexDirection: 'row',
-            alignItems: 'flex-end',
-        },
-    },
-    root: {
-        width: '100%',
-    },
-    box20: {
-        width: '100%',
-        [theme.breakpoints.up('sm')]: {
-            width: '20%',
-        },
-    },
-    pl_dialog: {
-        paddingLeft: '0px',
-        [theme.breakpoints.up('sm')]: {
-            paddingLeft: '15px',
-        },
-    },
-    //boto
-    btnError: {
-        backgroundColor: theme.palette.error.main,
-        color: theme.palette.error.contrastText,
-        "&:hover": {
-            backgroundColor: theme.palette.error.dark
-        },
-        "&:disabled": {
-            backgroundColor: theme.palette.error.light
-        },
-        marginLeft: 5
-    },
-
-    btnVariacion: {
-        backgroundColor: `${green[200]} !important`,
-        color: theme.palette.error.contrastText,
-        "&:hover": {
-            backgroundColor: `${green[300]} !important`,
-        },
-        marginLeft: 5
-    },
-    //form
-    form: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        flexWrap: 'wrap',
-        '& > *': {
-            margin: theme.spacing(0.5),
-        },
-    },
-    formInput: {
-        marginBottom: '10px',
-    },
-    //tabla
-    inicio: {
-        width: 165
-    },
-    anchoColumna: {
-        width: 210
-    },
-    diaLaboral: {
-        backgroundColor: theme.palette.secondary.light,
-        cursor: 'pointer',
-        minHeight: 38,
-        maxHeight: 38,
-        padding: 9
-    },
-    diaFestivo: {
-        backgroundColor: theme.palette.secondary.dark,
-        cursor: 'pointer',
-        minHeight: 38,
-        maxHeight: 38,
-        padding: 9
-    },
-    cabecera: {
-        backgroundColor: theme.palette.secondary.main
-    },
-    casillaLaboral: {
-        backgroundColor: `${blueGrey[50]} !important`,
-        cursor: 'pointer',
-        minHeight: 38,
-        maxHeight: 38,
-        padding: 9
-    },
-    casillaModificado: {
-        backgroundColor: `${lime[100]} !important`,
-        color: `${lime[900]} !important`,
-        cursor: 'pointer',
-        minHeight: 38,
-        maxHeight: 38,
-        padding: 9,
-    },
-    casillaFestivo: {
-        backgroundColor: `${amber[50]} !important`,
-        color: '#b4af9f',
-        cursor: 'default',
-        minHeight: 38,
-        maxHeight: 38,
-        pointerEvents: 'none',
-        padding: 9
-    },
-    casillaBaja: {
-        backgroundColor: `${amber[300]} !important`,
-        color: '#b4af9f',
-        cursor: 'default',
-        minHeight: 38,
-        maxHeight: 38,
-        pointerEvents: 'none',
-        padding: 9
-    },
-    casillaDisabled: {
-        backgroundColor: `${blueGrey[50]} !important`,
-        pointerEvents: 'none',
-        minHeight: 38,
-        maxHeight: 38,
-        padding: 9
-    },
-    suplente: {
-        backgroundColor: `${blueGrey[200]} !important`,
-        color: 'white',
-    },
-    trabajador: {
-        backgroundColor: theme.palette.secondary.main,
-        color: 'white',
-    },
-    mt_5: {
-        marginTop: -5,
-    },
-    scrollable: {
-        // height: h,
-        overflowY: 'auto',
-        overflowX: 'hidden',
-    },
-    scrollableScroll: {
-        '&::-webkit-scrollbar-track': {
-            marginTop: 67, //modificador
-        },
-    },
-    sinScroll: {
-        overflowY: 'hidden !important',
-    },
-    blanc: {
-        color: 'white'
-    },
-    gris: {
-        color: '#b4af9f'
-    },
-    mb15: {
-        marginBottom: 15,
-    },
-    mb10: {
-        marginBottom: 10,
-    },
-    mb25: {
-        marginBottom: 25,
-    },
-    mb20: {
-        marginBottom: 20,
-    },
-    mt15: {
-        marginTop: 15,
-    },
-    mt10: {
-        marginTop: 10,
-    },
-    mt20: {
-        marginTop: 20,
-    },
-    mt5: {
-        marginTop: 5,
-    },
-    btnAddTrabajador: {
-        backgroundColor: theme.palette.secondary.main,
-        color: theme.palette.error.contrastText,
-        "&:hover": {
-            backgroundColor: theme.palette.secondary.main,
-        },
-        width: 30,
-        height: 30,
-    },
-    btnAddSuplente: {
-        backgroundColor: theme.palette.secondary.light,
-        color: theme.palette.error.contrastText,
-        "&:hover": {
-            backgroundColor: theme.palette.secondary.light,
-        },
-        width: 30,
-        height: 30,
-    },
-    ampliadoInferiorScroller: {
-        paddingTop: 133,
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        transition: 'padding 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms'
-    },
-    reducidoInferiorScroller: {
-        paddingTop: 0,
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        transition: 'padding 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms'
-    },
-    scrollableScrollAmpliado: {
-        '&::-webkit-scrollbar-track': {
-            marginTop: 198,
-        },
-    },
-    ampliadoInferiorAccordionInicio: {
-        marginBottom: 63,
-        transition: 'margin 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms'
-    },
-    ampliadoInferiorAccordionRango: {
-        marginBottom: 168,
-        transition: 'margin 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms'
-    },
-    ampliadoInferiorAccordionRangoDescanso: {
-        marginBottom: 233,
-        transition: 'margin 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms'
-    },
-    ampliadoInferiorAccordionCantidad: {
-        marginBottom: 168,
-        transition: 'margin 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms'
-    },
-    reducidoInferiorAccordion: {
-        marginBottom: 2.4,
-        transition: 'margin 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms'
-    },
-    tooltipArrow: {
-        position: "relative",
-        marginTop: "10px",
-        "&::before": {
-            backgroundColor: "white",
-            content: '""',
-            display: "block",
-            position: "absolute",
-            width: 12,
-            height: 12,
-            top: -6,
-            transform: "rotate(45deg)",
-            left: "calc(50% - 6px)",
-            borderBottom: '1px solid rgba(0, 0, 0, 0.12);',
-            borderLeft: '1px solid rgba(0, 0, 0, 0.12);',
-            borderRight: '1px solid rgba(0, 0, 0, 0.12);',
-            borderTop: '1px solid rgba(0, 0, 0, 0.12);',
-        }
-    },
-    tooltip: {
-        padding: 16,
-        backgroundColor: "white",
-        borderRadius: 0,
-        borderBottom: '1px solid rgba(0, 0, 0, 0.12);',
-        borderLeft: '1px solid rgba(0, 0, 0, 0.12);',
-        borderRight: '1px solid rgba(0, 0, 0, 0.12);',
-        borderTop: '1px solid rgba(0, 0, 0, 0.12);',
-        marginTop: 4,
-    },
-    openAccordion: {
-        overflowY: 'hidden !important'
-    },
-    editando: {
-        backgroundColor: '#ffffff !important',
-        border: '1px solid rgba(0, 0, 0, 0.12);',
-    },
-    flexRow: {
-        flexDirection: 'row',
-    },
-    flexColumn: {
-        flexDirection: 'column',
-    },
-    badgeVerd: {
-        backgroundColor: `${green[400]} !important`,
-        color: `${green[400]} !important`,
-        boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-        right: '1%',
-        '&::after': {
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            width: '100%',
-            height: '100%',
-            borderRadius: '50%',
-            animation: '$ripple 1.2s infinite ease-in-out',
-            border: '1px solid currentColor',
-            content: '""',
-        },
-    },
-    badgeVermell: {
-        backgroundColor: theme.palette.error.dark,
-        color: theme.palette.error.dark,
-        boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-        right: '1%',
-        '&::after': {
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            width: '100%',
-            height: '100%',
-            borderRadius: '50%',
-            animation: '$ripple 1.2s infinite ease-in-out',
-            border: '1px solid currentColor',
-            content: '""',
-        },
-    },
-    '@keyframes ripple': {
-        '0%': {
-            transform: 'scale(.8)',
-            opacity: 1,
-        },
-        '100%': {
-            transform: 'scale(2.4)',
-            opacity: 0,
-        },
-    },
-    displayNone: {
-        display: 'none !important'
-    },
-    fab: {
-        position: 'absolute',
-        bottom: theme.spacing(4),
-        right: theme.spacing(8),
-    },
-    typoFab: {
-        textTransform: 'none',
-        marginRight: 10
-    },
-    alignRight: {
-        display: 'flex',
-        flexDirection: 'row-reverse'
-    }
-}));
 
 //accordion
 const Accordion = withStyles({
@@ -515,7 +170,7 @@ const StyledMenu = withStyles({
 
 const Cuadrantes = (props) => {
 
-    const classes = estilos();
+    const classes = Clases();
     const dispatch = useDispatch();
     const [getRef, setRef] = useDynamicRefs();
     const centrosPorCategoria = useSelector(store => store.variablesCentros.arrayCentrosPorCategoria);
@@ -601,6 +256,7 @@ const Cuadrantes = (props) => {
     const [arrayDatosInforme, setArrayDatosInforme] = useState(objetoCuadrante.datosInforme.arrayTrabajadores);
     const [arrayInformeLineas, setArrayInformeLineas] = useState([]);
     const [heightScrollable, setHeightScrollable] = useState(getHeightScrollable());
+    const [esFacturacion, setEsFacturacion] = useState(false);
 
     //useEffect
 
@@ -629,7 +285,8 @@ const Cuadrantes = (props) => {
 
     useEffect(() => {
         dispatch(setCalendarioAGestionarAccion(dispatch(retornaAnoMesAccion())));
-        dispatch(forzarRecargaAccion(true));
+        dispatch(forzarRecargaPendientesAccion(true));
+        dispatch(forzarRecargaGraficosCuadrantesAccion(true));
         dispatch(vaciarDatosTrabajadoresAccion());
         dispatch(vaciarDatosCentrosAccion());
         dispatch(onEstemAccion('cuadrantes'));
@@ -669,13 +326,16 @@ const Cuadrantes = (props) => {
 
     useEffect(() => {
         if (controladorDeEstado === 'inicio' || controladorDeEstado === 'venimosDeResetear') {
-            setCuadrante(objetoCuadrante.datosCuadrante.arrayCuadrante);           
-        };
-        if (controladorDeEstado === 'venimosDeRegistrar') {
+            setCuadrante(objetoCuadrante.datosCuadrante.arrayCuadrante);
+            setFirmaActualizacion(objetoCuadrante.actualizacion);
             setControladorDeEstado('inicio');
         };
-        if (objetoCuadrante.actualizacion) {
-            setFirmaActualizacion(objetoCuadrante.actualizacion);
+        if (controladorDeEstado === 'venimosDeRegistrar') {
+            //setFirmaActualizacion(objetoCuadrante.actualizacion);
+            setControladorDeEstado('inicio');
+        };
+        if (controladorDeEstado === 'venimosDeInforme') {
+            setControladorDeEstado('inicio');
         };
     }, [objetoCuadrante]);
 
@@ -958,9 +618,9 @@ const Cuadrantes = (props) => {
     }, [openLoadingCentros, openLoadingTrabajadores, openLoadingCuadrantes]);
 
     useEffect(() => {
-        if (openDialog8)
+        if (esFacturacion || openDialog8)
             generaInformacionCuadrantes();
-    }, [openDialog8]);
+    }, [esFacturacion, openDialog8]);
 
     //funciones
 
@@ -1154,6 +814,7 @@ const Cuadrantes = (props) => {
         setFirmaActualizacion('');
         setArrayDatosInforme([]);
         setArrayInformeLineas([]);
+        setEsFacturacion(false);
     };
 
     const handleClickAddColumna = (tipo, columna) => {
@@ -1238,7 +899,7 @@ const Cuadrantes = (props) => {
             setCuadrante(arrayCuadrante);
         };
         setExpandedAccordion(expandedAccordion ? panel : true);
-        const scrollableRef = getRef('scrollable');       
+        const scrollableRef = getRef('scrollable');
         expandedAccordion ? scrollableRef.current.classList.add(classes.openAccordion) : scrollableRef.current.classList.remove(classes.openAccordion);
     };
 
@@ -3292,8 +2953,8 @@ const Cuadrantes = (props) => {
             mensualPactado: objetoCuadrante.datosInforme.mensualPactado,
             precioHora: objetoCuadrante.datosInforme.precioHora,
             arrayTrabajadores: arrayDatosInforme,
-            facturado: source==='informe' ? 'si' : objetoCuadrante.datosInforme.facturado,
-            totalFacturado: source==='informe' ? totalFacturado : objetoCuadrante.datosInforme.totalFacturado,
+            facturado: source === 'informe' ? 'si' : objetoCuadrante.datosInforme.facturado,
+            totalFacturado: source === 'informe' ? totalFacturado : objetoCuadrante.datosInforme.totalFacturado,
         }
         const cuadranteAGuardar = {
             id: objetoCuadrante.id,
@@ -3309,6 +2970,9 @@ const Cuadrantes = (props) => {
             setControladorDeEstado('venimosDeRegistrar');
         };
         if (cuadranteRegistrado === 'si') {
+            if (source === 'informe') {
+                setControladorDeEstado('venimosDeInforme');
+            }
             dispatch(actualizarCuadranteAccion('cuadrantes', cuadranteAGuardar.id, cuadranteAGuardar));
             dispatch(activarDesactivarCambioBotonActualizarAccion(true));
         };
@@ -3328,7 +2992,8 @@ const Cuadrantes = (props) => {
                 setDisableSelectCentros(true);
                 dispatch(vaciarDatosCuadrantesAccion());
                 dispatch(cambioEstadoInicioCuadrantesAccion(true));
-                dispatch(forzarRecargaAccion(true));
+                dispatch(forzarRecargaPendientesAccion(true));
+                dispatch(forzarRecargaGraficosCuadrantesAccion(true));
                 dispatch(setCategoriaAccion(''));
             }
         };
@@ -3404,6 +3069,11 @@ const Cuadrantes = (props) => {
         )
     };
 
+    const handleClickFacturarCuadrante = () => {
+        setEsFacturacion(true);
+        handleCloseMenu();
+    };
+
     const handleActualizaCuadranteFacturado = () => {
         let sumatorioHoras = 0;
         let elTotalFacturado;
@@ -3422,28 +3092,13 @@ const Cuadrantes = (props) => {
         //dispatch(registrarIntervencionAccion(false));        
     };
 
-    const retornaTituloDialog4 = () => {
-        return (
-            <Box style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Box>Informe Cuadrante de Servicio</Box>
-                <Box>
-                    <BlobProvider document={<InformePDF arrayInformePDF={arrayInformeLineas} />}>
-                        {({ url }) => (
-                            <Button
-                                href={url}
-                                onClick={handleActualizaCuadranteFacturado}
-                                style={{ backgroundColor: '#d9241b', color: 'white' }}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                variant="contained"
-                                startIcon={<PictureAsPdfIcon />}
-                            >
-                                Generar PDF
-                            </Button>
-                        )}
-                    </BlobProvider>
-                </Box>
-            </Box>)
+    const handleEnviarEmail = async () => {
+        const element = <InformePDF arrayInformePDF={arrayInformeLineas} />;
+        const myPdf = pdf([]);
+        myPdf.updateContainer(element);
+        const blob = await myPdf.toBlob();
+        let file = new File([blob], 'Factura-' + objetoCuadrante.nombre + '.pdf', { lastModified: (new Date()).getTime() });
+        //dispatch(enviarMailAccion('artikaweb@gmail.com', 'isaiasherreroflorensa@gmail.com', file))        
     };
 
     //dialog
@@ -3454,7 +3109,7 @@ const Cuadrantes = (props) => {
     const descripcionDialogCuadrantes2 = "Debes registrar el cuadrante nuevo antes de cambiar. Pulsa 'Registrar Cuadrante' en el menú superior.";
     const tituloDialogCuadrantes3 = "¿Estás seguro que quieres cambiar de pantalla?";
     const descripcionDialogCuadrantes3 = "Estás tratando de cambiar de pantalla pero no has registrado los datos de tu última intervención. Si no deseas guardar los datos pulsa 'De acuerdo', de lo contrario pulsa 'Desacuerdo' y registra los datos.";
-    const tituloDialogCuadrantes4 = retornaTituloDialog4();
+    const tituloDialogCuadrantes4 = 'Informe Cuadrante de Servicio';
     const descripcionDialogCuadrantes4 = retornaInformacionCuadrantes();
 
     const handleClickOpenDialogCuadrantes1 = () => {
@@ -3514,7 +3169,8 @@ const Cuadrantes = (props) => {
                 setDisableSelectCentros(true);
                 dispatch(vaciarDatosCuadrantesAccion());
                 dispatch(cambioEstadoInicioCuadrantesAccion(true));
-                dispatch(forzarRecargaAccion(true));
+                dispatch(forzarRecargaPendientesAccion(true));
+                dispatch(forzarRecargaGraficosCuadrantesAccion(true));
             }
         }
         dispatch(cierraObjetoDialogAccion());
@@ -3602,14 +3258,35 @@ const Cuadrantes = (props) => {
                         <Grid item xs={9}>
                             <Badge
                                 overlap="circle"
-                                classes={{ badge: firmaActualizacion && centroAGestionar.nombre && intervencionRegistrada ? classes.badgeVerd : firmaActualizacion && centroAGestionar.nombre && !intervencionRegistrada ? classes.badgeVermell : !firmaActualizacion && centroAGestionar.nombre ? classes.badgeVermell : classes.displayNone }}
+                                classes={{
+                                    badge:
+                                        firmaActualizacion && centroAGestionar.nombre && intervencionRegistrada && objetoCuadrante.datosInforme.facturado === 'si' ?
+                                            classes.badgeVerd :
+                                            firmaActualizacion && centroAGestionar.nombre && intervencionRegistrada && objetoCuadrante.datosInforme.facturado === 'no' ?
+                                                classes.badgeTaronja :
+                                                firmaActualizacion && centroAGestionar.nombre && !intervencionRegistrada ?
+                                                    classes.badgeVermell :
+                                                    !firmaActualizacion && centroAGestionar.nombre ?
+                                                        classes.badgeVermell :
+                                                        classes.displayNone
+                                }}
                                 anchorOrigin={{
                                     vertical: 'bottom',
                                     horizontal: 'right',
                                 }}
                                 variant="dot"
                             >
-                                <Chip style={{ padding: 5 }} icon={<AssignmentIcon />} label={`Gestión de cuadrantes ` + (centroAGestionar.nombre ? ' - Centro: ' + centroAGestionar.nombre + (firmaActualizacion && intervencionRegistrada ? ' - Estado: Actualizado el ' + firmaActualizacion : firmaActualizacion && !intervencionRegistrada ? ' - Estado: Pendiente de actualizar' : ' - Estado: Pendiente de registrar') : '')} />
+                                <Chip style={{ padding: 5 }} icon={<AssignmentIcon />} label={`Gestión de cuadrantes ` + (
+                                    centroAGestionar.nombre ?
+                                        ' - Centro: ' + centroAGestionar.nombre + (
+                                            firmaActualizacion && intervencionRegistrada && objetoCuadrante.datosInforme.facturado === 'no' ?
+                                                ' - Estado: Actualizado el ' + firmaActualizacion :
+                                                firmaActualizacion && intervencionRegistrada && objetoCuadrante.datosInforme.facturado === 'si' ?
+                                                    ' - Estado: Facturado el ' + firmaActualizacion :
+                                                    firmaActualizacion && !intervencionRegistrada ?
+                                                        ' - Estado: Pendiente de actualizar' :
+                                                        ' - Estado: Pendiente de registrar') :
+                                        '')} />
                             </Badge>
                         </Grid>
                         <Grid item xs={3}>
@@ -3642,7 +3319,7 @@ const Cuadrantes = (props) => {
                                             <ListItemText primary="Inicio Cuadrantes" />
                                         </MenuItem>
                                         <MenuItem
-                                            onClick={()=>procesarDatosCuadrante('normal', null)}
+                                            onClick={() => procesarDatosCuadrante('normal', null)}
                                             disabled={cuadranteRegistrado === 'si' ? disabledItemBotonActualizar : disabledItemBotonRegistrar}
                                         >
                                             <ListItemIcon>
@@ -3651,12 +3328,13 @@ const Cuadrantes = (props) => {
                                             <ListItemText primary={cuadranteRegistrado === 'si' ? 'Actualizar Cuadrante' : 'Registrar Cuadrante'} />
                                         </MenuItem>
                                         <MenuItem
-                                            onClick={handleClickOpenDialogCuadrantes4}
+                                            onClick={handleClickFacturarCuadrante}
+                                            disabled={cuadranteRegistrado === 'no' ? true : false}
                                         >
                                             <ListItemIcon>
-                                                <PostAddIcon fontSize="small" />
+                                                <DescriptionIcon fontSize="small" />
                                             </ListItemIcon>
-                                            <ListItemText primary="Informe Cuadrante" />
+                                            <ListItemText primary="Facturar Cuadrante" />
                                         </MenuItem>
                                         <MenuItem
                                             onClick={handleClickOpenDialogCuadrantes1}
@@ -3752,224 +3430,279 @@ const Cuadrantes = (props) => {
                         </Grid>
                     </Box>
                     {cuadrante.length > 0 ? (
-                        <Grid
-                            className={clsx(classes.scrollable, classes.scrollableScroll)}
-                            ref={setRef(`scrollable`)}
-                            style={{ height: heightScrollable }}
-                        >
-                            <Box
-                                p={0}
-                                mt={0}
-                            >
-                                <Grid
-                                    container
-                                    direction="row"
-                                    justifycontent="flex-start"
-                                    alignItems="flex-start"
-                                    style={{ position: 'fixed', zIndex: 3, marginTop: -45 }}
-                                    ref={setRef(`scrollableCuadrante`)}
-                                >
-                                    <Box
-                                        ref={setRef(`box_header_0`)}
-                                        p={1.5}
-                                        mx={0.3}
-                                        className={clsx(classes.cabecera, classes.inicio)}
-                                        color="secondary.contrastText"
-                                        style={{ minHeight: 38, maxHeight: 38, padding: 9 }}
-                                    >
-                                        <Typography variant="body2">Día</Typography>
-                                    </Box>
-                                    {cuadrante.map((columnaCabecera, index) => (
-                                        <Box
-                                            ref={setRef(`box_header_` + (index + 1))}
-                                            key={`box_header_` + (index + 1)}
-                                            mx={0.3}
+                        esFacturacion ? (
+                            <Grid style={{ marginRight: 8, marginTop: -8 }}>
+                                <Box className={clsx(classes.alignRight, classes.mb20)}>
+                                    <Tooltip title="Volver al Cuadrante" placement="top" arrow>
+                                        <Fab
+                                            color="secondary"
+                                            size="small"
+                                            style={{ marginLeft: 8 }}
+                                            onClick={() => setEsFacturacion(false)}
                                         >
-                                            <Accordion
-                                                expanded={expandedAccordion === 'panel_' + (index + 1)}
-                                                className={gestionaClassesColoresTrabajadores(columnaCabecera.tipoTrabajador)}
-                                                style={{ width: dimensionsColumna.width }}
-                                                onChange={(e, expandedAccordion) => { handleCambioAccordionHeader(expandedAccordion, 'panel_' + (index + 1), index) }}
+                                            <ReplyIcon />
+                                        </Fab>
+                                    </Tooltip>
+                                    <Tooltip title="Registrar Factura" placement="top" arrow>
+                                        <Fab
+                                            color="primary"
+                                            size="small"
+                                            style={{ marginLeft: 8 }}
+                                            onClick={handleActualizaCuadranteFacturado}
+                                        >
+                                            <SaveIcon />
+                                        </Fab>
+                                    </Tooltip>
+                                    <PDFDownloadLink
+                                        document={<InformePDF arrayInformePDF={arrayInformeLineas} />}
+                                        fileName={'Factura-' + objetoCuadrante.nombre + '.pdf'}
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <Tooltip title="Descargar Factura" placement="top" arrow>
+                                            <Fab
+                                                color="primary"
+                                                size="small"
+                                                style={{ marginLeft: 8 }}
                                             >
-                                                <AccordionSummary
-                                                    expandIcon={<ExpandMoreIcon className={classes.blanc} />}
+                                                <GetAppIcon />
+                                            </Fab>
+                                        </Tooltip>
+                                    </PDFDownloadLink>
+                                    <Tooltip title="Enviar Factura por mail" placement="top" arrow>
+                                        <Fab
+                                            color="primary"
+                                            size="small"
+                                            style={{ marginLeft: 8 }}
+                                            onClick={handleEnviarEmail}
+                                        >
+                                            <EmailIcon />
+                                        </Fab>
+                                    </Tooltip>
+                                </Box>
+                                <PDFViewer showToolbar={false} style={{ width: "100%", height: "70vh" }}>
+                                    <InformePDF arrayInformePDF={arrayInformeLineas} />
+                                </PDFViewer>
+                            </Grid>
+                        ) : (
+                            <Grid
+                                className={clsx(classes.scrollable, classes.scrollableScroll)}
+                                ref={setRef(`scrollable`)}
+                                style={{ height: heightScrollable }}
+                            >
+                                <Box
+                                    p={0}
+                                    mt={0}
+                                >
+                                    <Grid
+                                        container
+                                        direction="row"
+                                        justifycontent="flex-start"
+                                        alignItems="flex-start"
+                                        style={{ position: 'fixed', zIndex: 3, marginTop: -45 }}
+                                        ref={setRef(`scrollableCuadrante`)}
+                                    >
+                                        <Box
+                                            ref={setRef(`box_header_0`)}
+                                            p={1.5}
+                                            mx={0.3}
+                                            className={clsx(classes.cabecera, classes.inicio)}
+                                            color="secondary.contrastText"
+                                            style={{ minHeight: 38, maxHeight: 38, padding: 9 }}
+                                        >
+                                            <Typography variant="body2">Día</Typography>
+                                        </Box>
+                                        {cuadrante.map((columnaCabecera, index) => (
+                                            <Box
+                                                ref={setRef(`box_header_` + (index + 1))}
+                                                key={`box_header_` + (index + 1)}
+                                                mx={0.3}
+                                            >
+                                                <Accordion
+                                                    expanded={expandedAccordion === 'panel_' + (index + 1)}
+                                                    className={gestionaClassesColoresTrabajadores(columnaCabecera.tipoTrabajador)}
+                                                    style={{ width: dimensionsColumna.width }}
+                                                    onChange={(e, expandedAccordion) => { handleCambioAccordionHeader(expandedAccordion, 'panel_' + (index + 1), index) }}
                                                 >
-                                                    <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{columnaCabecera.nombreTrabajador}</Typography>
-                                                </AccordionSummary>
-                                                <AccordionDetails>
-                                                    <Grid container className={classes.mt5}>
-                                                        <Grid
-                                                            container
-                                                            direction="column"
-                                                            justifycontent="flex-start"
-                                                            alignItems="flex-start"
-                                                        >
-                                                            <Box
-                                                                style={{ width: '100%', display: 'flex' }}
-                                                                className={estadoFlex === 'fila' ? classes.flexRow : classes.flexColumn}
+                                                    <AccordionSummary
+                                                        expandIcon={<ExpandMoreIcon className={classes.blanc} />}
+                                                    >
+                                                        <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{columnaCabecera.nombreTrabajador}</Typography>
+                                                    </AccordionSummary>
+                                                    <AccordionDetails>
+                                                        <Grid container className={classes.mt5}>
+                                                            <Grid
+                                                                container
+                                                                direction="column"
+                                                                justifycontent="flex-start"
+                                                                alignItems="flex-start"
                                                             >
-                                                                <Grid item xs={false}>
-                                                                </Grid>
-                                                                <Grid item xs={12}>
-                                                                    <Box
-                                                                        display="flex"
-                                                                        alignItems="center"
-                                                                        justifyContent="flex-end"
-                                                                    >
-                                                                        <Tooltip title="Añadir suplente" placement="top-end" arrow>
-                                                                            <IconButton
-                                                                                className={clsx(classes.btnAddSuplente, classes.blanc, classes.mb10)}
-                                                                                onClick={() => handleClickAddColumna('suplente', index)}
-                                                                            >
-                                                                                <PersonAddIcon style={{ fontSize: 18 }} />
-                                                                            </IconButton>
-                                                                        </Tooltip>
-                                                                        <Tooltip title="Actualizar trabajador" placement="top-end" arrow>
-                                                                            <IconButton
-                                                                                className={clsx(classes.btnVariacion, classes.blanc, classes.mb10)}
-                                                                                size="small"
-                                                                                onClick={() => handleActualizarTrabajadores(index, columnaCabecera.tipoTrabajador, columnaCabecera.idTrabajador)}
-                                                                            >
-                                                                                <CachedIcon />
-                                                                            </IconButton>
-                                                                        </Tooltip>
-                                                                        {!columnaCabecera.visibleVariaciones ? (
-                                                                            <Tooltip title="Añadir variación" placement="top-end" arrow>
+                                                                <Box
+                                                                    style={{ width: '100%', display: 'flex' }}
+                                                                    className={estadoFlex === 'fila' ? classes.flexRow : classes.flexColumn}
+                                                                >
+                                                                    <Grid item xs={false}>
+                                                                    </Grid>
+                                                                    <Grid item xs={12}>
+                                                                        <Box
+                                                                            display="flex"
+                                                                            alignItems="center"
+                                                                            justifyContent="flex-end"
+                                                                        >
+                                                                            <Tooltip title="Añadir suplente" placement="top-end" arrow>
+                                                                                <IconButton
+                                                                                    className={clsx(classes.btnAddSuplente, classes.blanc, classes.mb10)}
+                                                                                    onClick={() => handleClickAddColumna('suplente', index)}
+                                                                                >
+                                                                                    <PersonAddIcon style={{ fontSize: 18 }} />
+                                                                                </IconButton>
+                                                                            </Tooltip>
+                                                                            <Tooltip title="Actualizar trabajador" placement="top-end" arrow>
                                                                                 <IconButton
                                                                                     className={clsx(classes.btnVariacion, classes.blanc, classes.mb10)}
                                                                                     size="small"
-                                                                                    onClick={() => handleVisibleVariaciones(index)}
+                                                                                    onClick={() => handleActualizarTrabajadores(index, columnaCabecera.tipoTrabajador, columnaCabecera.idTrabajador)}
                                                                                 >
-                                                                                    <TimerIcon />
+                                                                                    <CachedIcon />
                                                                                 </IconButton>
                                                                             </Tooltip>
-                                                                        ) : (
-                                                                            <Tooltip title="Eliminar variación" placement="top-end" arrow>
+                                                                            {!columnaCabecera.visibleVariaciones ? (
+                                                                                <Tooltip title="Añadir variación" placement="top-end" arrow>
+                                                                                    <IconButton
+                                                                                        className={clsx(classes.btnVariacion, classes.blanc, classes.mb10)}
+                                                                                        size="small"
+                                                                                        onClick={() => handleVisibleVariaciones(index)}
+                                                                                    >
+                                                                                        <TimerIcon />
+                                                                                    </IconButton>
+                                                                                </Tooltip>
+                                                                            ) : (
+                                                                                <Tooltip title="Eliminar variación" placement="top-end" arrow>
+                                                                                    <IconButton
+                                                                                        className={clsx(classes.btnError, classes.blanc, classes.mb10)}
+                                                                                        size="small"
+                                                                                        onClick={() => handleVisibleVariaciones(index)}
+                                                                                    >
+                                                                                        <TimerOffIcon />
+                                                                                    </IconButton>
+                                                                                </Tooltip>
+                                                                            )}
+                                                                            <Tooltip title="Eliminar trabajador" placement="top-end" arrow>
                                                                                 <IconButton
-                                                                                    className={clsx(classes.btnError, classes.blanc, classes.mb10)}
+                                                                                    className={clsx(classes.btnError, classes.mb10)}
                                                                                     size="small"
-                                                                                    onClick={() => handleVisibleVariaciones(index)}
+                                                                                    onClick={() => eliminarColumna(index, columnaCabecera.idTrabajador)}
                                                                                 >
-                                                                                    <TimerOffIcon />
+                                                                                    <DeleteIcon />
                                                                                 </IconButton>
                                                                             </Tooltip>
-                                                                        )}
-                                                                        <Tooltip title="Eliminar trabajador" placement="top-end" arrow>
-                                                                            <IconButton
-                                                                                className={clsx(classes.btnError, classes.mb10)}
-                                                                                size="small"
-                                                                                onClick={() => eliminarColumna(index, columnaCabecera.idTrabajador)}
-                                                                            >
-                                                                                <DeleteIcon />
-                                                                            </IconButton>
-                                                                        </Tooltip>
-                                                                    </Box>
-                                                                </Grid>
-                                                            </Box>
-                                                            <FormControl
-                                                                variant="outlined"
-                                                                fullWidth
-                                                                className={classes.mt15}
-                                                            >
-                                                                <InputLabel>{(columnaCabecera.tipoTrabajador === 'trabajador' || !columnaCabecera.tipoTrabajador) ? 'Trabajador' : 'Suplente'}</InputLabel>
-                                                                <Select
-                                                                    id={`form-trabajador-` + (index + 1)}
-                                                                    value={columnaCabecera.idTrabajador || ''}
-                                                                    onChange={handleChangeFormTrabajadores(index, columnaCabecera.tipoTrabajador)}
-                                                                    onOpen={() => setValorPrevioAccordionAbierto(columnaCabecera.idTrabajador)}
-                                                                    input={
-                                                                        <OutlinedInput
-                                                                            labelWidth={80}
-                                                                        />
-                                                                    }
-                                                                >
-                                                                    {listadoTrabajadores.map((option) => (
-                                                                        <MenuItem key={option.id} value={option.id}>
-                                                                            {option.nombre}
-                                                                        </MenuItem>
-                                                                    ))}
-                                                                </Select>
-                                                            </FormControl>
-                                                            <Box
-                                                                className={classes.root}
-                                                                display={columnaCabecera.visibleVariaciones ? 'block' : 'none'}
-                                                            >
+                                                                        </Box>
+                                                                    </Grid>
+                                                                </Box>
                                                                 <FormControl
                                                                     variant="outlined"
                                                                     fullWidth
                                                                     className={classes.mt15}
                                                                 >
-                                                                    <InputLabel>Variaciones</InputLabel>
+                                                                    <InputLabel>{(columnaCabecera.tipoTrabajador === 'trabajador' || !columnaCabecera.tipoTrabajador) ? 'Trabajador' : 'Suplente'}</InputLabel>
                                                                     <Select
-                                                                        display="none"
-                                                                        id={`form-variaciones-` + (index + 1)}
-                                                                        value={columnaCabecera.tipoVariacion || ''}
-                                                                        onChange={handleChangeTipoVariaciones(index)}
+                                                                        id={`form-trabajador-` + (index + 1)}
+                                                                        value={columnaCabecera.idTrabajador || ''}
+                                                                        onChange={handleChangeFormTrabajadores(index, columnaCabecera.tipoTrabajador)}
+                                                                        onOpen={() => setValorPrevioAccordionAbierto(columnaCabecera.idTrabajador)}
                                                                         input={
                                                                             <OutlinedInput
-                                                                                labelWidth={90}
+                                                                                labelWidth={80}
                                                                             />
                                                                         }
                                                                     >
-                                                                        {variaciones.map((option) => (
-                                                                            <MenuItem key={option.value} value={option.value}>
-                                                                                {option.label}
+                                                                        {listadoTrabajadores.map((option) => (
+                                                                            <MenuItem key={option.id} value={option.id}>
+                                                                                {option.nombre}
                                                                             </MenuItem>
                                                                         ))}
                                                                     </Select>
                                                                 </FormControl>
-                                                            </Box>
+                                                                <Box
+                                                                    className={classes.root}
+                                                                    display={columnaCabecera.visibleVariaciones ? 'block' : 'none'}
+                                                                >
+                                                                    <FormControl
+                                                                        variant="outlined"
+                                                                        fullWidth
+                                                                        className={classes.mt15}
+                                                                    >
+                                                                        <InputLabel>Variaciones</InputLabel>
+                                                                        <Select
+                                                                            display="none"
+                                                                            id={`form-variaciones-` + (index + 1)}
+                                                                            value={columnaCabecera.tipoVariacion || ''}
+                                                                            onChange={handleChangeTipoVariaciones(index)}
+                                                                            input={
+                                                                                <OutlinedInput
+                                                                                    labelWidth={90}
+                                                                                />
+                                                                            }
+                                                                        >
+                                                                            {variaciones.map((option) => (
+                                                                                <MenuItem key={option.value} value={option.value}>
+                                                                                    {option.label}
+                                                                                </MenuItem>
+                                                                            ))}
+                                                                        </Select>
+                                                                    </FormControl>
+                                                                </Box>
+                                                            </Grid>
                                                         </Grid>
-                                                    </Grid>
-                                                </AccordionDetails>
-                                            </Accordion>
-                                        </Box>
-                                    ))}
-                                    <Box
-                                        m={0.3}
-                                    >
-                                        <Tooltip title="Añadir trabajador" placement="right" arrow>
-                                            <IconButton
-                                                className={clsx(classes.btnAddTrabajador, classes.blanc)}
-                                                onClick={() => handleClickAddColumna('trabajador', null)}
-                                            >
-                                                <PersonAddIcon style={{ fontSize: 18 }} />
-                                            </IconButton>
-                                        </Tooltip>
-                                    </Box>
-                                </Grid>
-                                <Grid container
-                                    ref={setRef(`scrollableInterior`)}
-                                    style={{ marginTop: 45 }}
-                                >
-                                    <Box
-                                    >
-                                        {losDiasDelMes.map((dia, index) => (
-                                            retornaCasillasDias(dia, index)
+                                                    </AccordionDetails>
+                                                </Accordion>
+                                            </Box>
                                         ))}
-                                    </Box>
-                                    {cuadrante.map((columna, indexColumna) => (
                                         <Box
-                                            key={'Box_' + indexColumna}
+                                            m={0.3}
                                         >
-                                            {losDiasDelMes.map((dia, indexDia) => (
-                                                retornaCasillasGeneral(dia, indexDia, columna, indexColumna)
+                                            <Tooltip title="Añadir trabajador" placement="right" arrow>
+                                                <IconButton
+                                                    className={clsx(classes.btnAddTrabajador, classes.blanc)}
+                                                    onClick={() => handleClickAddColumna('trabajador', null)}
+                                                >
+                                                    <PersonAddIcon style={{ fontSize: 18 }} />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </Box>
+                                    </Grid>
+                                    <Grid container
+                                        ref={setRef(`scrollableInterior`)}
+                                        style={{ marginTop: 45 }}
+                                    >
+                                        <Box
+                                        >
+                                            {losDiasDelMes.map((dia, index) => (
+                                                retornaCasillasDias(dia, index)
                                             ))}
                                         </Box>
-                                    ))}
-                                </Grid>
-                            </Box>
-                            <Tooltip title="Informe Cuadrante" placement="left" arrow>
-                                <Fab
-                                    variant="extended"
-                                    className={classes.fab}
-                                    onClick={handleClickOpenDialogCuadrantes4}
-                                >
-                                    <Typography variant="body2" className={classes.typoFab}>{retornaInfoFabButton()}</Typography>
-                                    <PostAddIcon />
-                                </Fab>
-                            </Tooltip>
-                        </Grid>
+                                        {cuadrante.map((columna, indexColumna) => (
+                                            <Box
+                                                key={'Box_' + indexColumna}
+                                            >
+                                                {losDiasDelMes.map((dia, indexDia) => (
+                                                    retornaCasillasGeneral(dia, indexDia, columna, indexColumna)
+                                                ))}
+                                            </Box>
+                                        ))}
+                                    </Grid>
+                                </Box>
+                                <Tooltip title="Informe Cuadrante" placement="left" arrow>
+                                    <Fab
+                                        variant="extended"
+                                        className={classes.fab}
+                                        onClick={handleClickOpenDialogCuadrantes4}
+                                    >
+                                        <Typography variant="body2" className={classes.typoFab}>{retornaInfoFabButton()}</Typography>
+                                        <AssessmentIcon />
+                                    </Fab>
+                                </Tooltip>
+                            </Grid>
+                        )
                     ) : (
                         esInicio ? <PantallaCuadrantes /> : null
                     )}
@@ -4118,7 +3851,7 @@ const Cuadrantes = (props) => {
                 prFullWidth={true}
                 prMaxWidth={true}
             />
-            {/* {console.log(firmaActualizacion)} */}
+            {/* {console.log(controladorDeEstado)} */}
         </div>
     )
 }

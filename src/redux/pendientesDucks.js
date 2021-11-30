@@ -9,7 +9,7 @@ const dataInicial = {
     errorDeCargaCuadrantesPendientes: false,
     numeroCentrosPendientes: null,
     estadoVenimosDePendientes: false,
-    forzarRecarga: false
+    forzarRecargaPendientes: false
 };
 
 //types
@@ -17,7 +17,7 @@ const LOADING_PENDIENTES = 'LOADING_PENDIENTES';
 const OBTENER_CUADRANTE_PENDIENTE = 'OBTENER_CUADRANTE_PENDIENTE';
 const ERROR_DE_CARGA_CUADRANTES_PENDIENTES = 'ERROR_DE_CARGA_CUADRANTES_PENDIENTES';
 const VENIMOS_DE_PENDIENTES = 'VENIMOS_DE_PENDIENTES';
-const FORZAR_RECARGA = 'FORZAR_RECARGA';
+const FORZAR_RECARGA_PENDIENTES = 'FORZAR_RECARGA_PENDIENTES';
 
 //reducer
 export default function pendientesReducer(state = dataInicial, action) {
@@ -25,13 +25,13 @@ export default function pendientesReducer(state = dataInicial, action) {
         case LOADING_PENDIENTES:
             return { ...state, loadingPendientes: true }
         case OBTENER_CUADRANTE_PENDIENTE:
-            return { ...state, centrosPendientesArray: [...state.centrosPendientesArray, action.payload.elementoArray], numeroCentrosPendientes: action.payload.contador }
+            return { ...state, centrosPendientesArray: [...state.centrosPendientesArray, action.payload.elementoArray], numeroCentrosPendientes: action.payload.contador, loadingPendientes: false }
         case ERROR_DE_CARGA_CUADRANTES_PENDIENTES:
             return { ...state, errorDeCargaCuadrantesPendientes: true, loadingPendientes: false }
         case VENIMOS_DE_PENDIENTES:
             return { ...state, estadoVenimosDePendientes: action.payload.estado }
-        case FORZAR_RECARGA:
-            return { ...state, forzarRecarga: action.payload.estado, centrosPendientesArray: [] }
+        case FORZAR_RECARGA_PENDIENTES:
+            return { ...state, forzarRecargaPendientes: action.payload.estado, centrosPendientesArray: [] }
         default:
             return { ...state }
     }
@@ -83,9 +83,9 @@ export const venimosDePendientesAccion = (estado) => (dispatch, getState) => {
     });
 }
 
-export const forzarRecargaAccion = (estado) => (dispatch, getState) => {
+export const forzarRecargaPendientesAccion = (estado) => (dispatch, getState) => {
     dispatch({
-        type: FORZAR_RECARGA,
+        type: FORZAR_RECARGA_PENDIENTES,
         payload: {
             estado: estado
         }
