@@ -74,7 +74,6 @@ import { obtenerCentroAccion } from '../redux/centrosDucks';
 import { obtenerTrabajadorAccion } from '../redux/trabajadoresDucks';
 import { obtenerSuplenteAccion } from '../redux/trabajadoresDucks';
 import { vaciarDatosCentrosAccion } from '../redux/centrosDucks';
-import { vaciarDatosTrabajadoresAccion } from '../redux/trabajadoresDucks';
 import { generaFechaAccion } from '../redux/appDucks';
 import { retornaHoraRangoAccion } from '../redux/appDucks';
 import { retornaMinutosAccion } from '../redux/appDucks';
@@ -183,7 +182,7 @@ const Cuadrantes = (props) => {
     const suplenteAGestionar = useSelector(store => store.variablesTrabajadores.objetoSuplente);
     const listadoTrabajadores = useSelector(store => store.variablesTrabajadores.arrayTrabajadores);
     const objetoCuadrante = useSelector(store => store.variablesCuadrantes.objetoCuadrante);
-    const esInicio = useSelector(store => store.variablesCuadrantes.esInicio);
+    const esInicioCuadrantes = useSelector(store => store.variablesCuadrantes.esInicioCuadrantes);
     const disabledItemBotonRegistrar = useSelector(store => store.variablesCuadrantes.estadoActivadoDesactivadoBotonRegistrar);
     const disabledItemBotonActualizar = useSelector(store => store.variablesCuadrantes.estadoActivadoDesactivadoBotonActualizar);
     const disabledItemBotonResetear = useSelector(store => store.variablesCuadrantes.estadoActivadoDesactivadoBotonResetear);
@@ -286,9 +285,7 @@ const Cuadrantes = (props) => {
     useEffect(() => {
         dispatch(setCalendarioAGestionarAccion(dispatch(retornaAnoMesAccion())));
         dispatch(forzarRecargaPendientesAccion(true));
-        dispatch(forzarRecargaGraficosCuadrantesAccion(true));
-        dispatch(vaciarDatosTrabajadoresAccion());
-        dispatch(vaciarDatosCentrosAccion());
+        dispatch(forzarRecargaGraficosCuadrantesAccion(true));        
         dispatch(onEstemAccion('cuadrantes'));
         dispatch(obtenerTrabajadoresAccion('trabajadores'));
     }, [dispatch]);
@@ -650,7 +647,7 @@ const Cuadrantes = (props) => {
     };
 
     const handleChangeSelectCalendario = (newValue) => {
-        if (esInicio) {
+        if (esInicioCuadrantes) {
             reseteaContenidoCuadrante();
             dispatch(vaciarDatosCuadrantesAccion());
             setValueDatePicker(newValue);
@@ -683,7 +680,7 @@ const Cuadrantes = (props) => {
     };
 
     const handleChangeSelectCentro = (e) => {
-        if (esInicio) {
+        if (esInicioCuadrantes) {
             reseteaContenidoCentro();
             dispatch(setCentroAccion(e.target.value));
             const nombreCuadrante = calendarioAGestionar + '-' + e.target.value;
@@ -3252,7 +3249,7 @@ const Cuadrantes = (props) => {
             <Backdrop className={classes.loading} open={openLoading}>
                 <CircularProgress color="inherit" />
             </Backdrop>
-            <Grid container spacing={2} >
+            <Grid container spacing={2} style={{marginTop: -13}}>
                 <Grid item xs={12}>
                     <Box style={{ display: 'flex', flexDirection: 'row', justifycontent: 'space-between', alignItems: 'center' }}>
                         <Grid item xs={9}>
@@ -3294,7 +3291,7 @@ const Cuadrantes = (props) => {
                                 <FormControl
                                     className={classes.form}>
                                     <Button
-                                        disabled={esInicio ? true : false}
+                                        disabled={esInicioCuadrantes ? true : false}
                                         style={{ marginRight: 20, width: 250 }}
                                         variant="contained"
                                         color='primary'
@@ -3704,7 +3701,7 @@ const Cuadrantes = (props) => {
                             </Grid>
                         )
                     ) : (
-                        esInicio ? <PantallaCuadrantes /> : null
+                        esInicioCuadrantes ? <PantallaCuadrantes /> : null
                     )}
                 </Grid>
             </Grid>

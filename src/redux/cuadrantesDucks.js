@@ -35,7 +35,7 @@ const dataInicial = {
     cuadranteRegistrado: '',
     categoria: '',
     centro: '',
-    esInicio: true,
+    esInicioCuadrantes: true,
     estadoIntervencionCuadranteNuevoRegistrada: true,
     ultimoIdRegistrado: null,
     calendarioAGestionar: ''
@@ -83,7 +83,7 @@ export default function cuadrantesReducer(state = dataInicial, action) {
         case SET_CALENDARIO_A_GESTIONAR:
             return { ...state, calendarioAGestionar: action.payload.valor }
         case CAMBIO_ESTADO_INICIO_CUADRANTES:
-            return { ...state, esInicio: action.payload.estado }
+            return { ...state, esInicioCuadrantes: action.payload.estado }
         case ACTIVAR_DESACTIVAR_COMPONENTE_BOTON_REGISTRAR_CUADRANTE:
             return { ...state, estadoActivadoDesactivadoBotonRegistrar: action.payload.estado }
         case ACTIVAR_DESACTIVAR_COMPONENTE_BOTON_ACTUALIZAR_CUADRANTE:

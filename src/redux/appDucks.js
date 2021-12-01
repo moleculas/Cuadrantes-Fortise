@@ -3,7 +3,7 @@ import Constantes from "../constantes";
 
 //constantes
 const rutaApi = Constantes.RUTA_API;
-const meses= Constantes.MESES;
+const meses = Constantes.MESES;
 
 const dataInicial = {
     loadingApp: false,
@@ -13,6 +13,13 @@ const dataInicial = {
     openDialog: [false, false, false, false, false, false, false, false],
     exitoEnviarMail: false,
     errorEnviarMail: false,
+    errorDeCargaConfiguracion: false,
+    objetoConfiguracion: {
+        precioHoraNormal: null,
+        precioHoraExtra: null,
+        mensajeMailCentros: ''
+    },
+    exitoActualizacionConfiguracion: false
 }
 
 //types
@@ -24,6 +31,11 @@ const ABIERTO_DIALOG = 'ABIERTO_DIALOG';
 const CERRADO_DIALOG = 'CERRADO_DIALOG';
 const EXITO_ENVIAR_MAIL = 'EXITO_ENVIAR_MAIL';
 const ERROR_ENVIAR_MAIL = 'ERROR_ENVIAR_MAIL';
+const OBTENER_CONFIGURACION_EXITO = 'OBTENER_CONFIGURACION_EXITO';
+const ERROR_DE_CARGA_CONFIGURACION = 'ERROR_DE_CARGA_CONFIGURACION';
+const VACIAR_DATOS_CONFIGURACION = 'VACIAR_DATOS_CONFIGURACION';
+const ACTUALIZAR_CONFIGURACION_EXITO = 'ACTUALIZAR_CONFIGURACION_EXITO';
+const RESETEA_EXITO_CONFIGURACION = 'RESETEA_EXITO_CONFIGURACION';
 
 //reducer
 export default function appReducer(state = dataInicial, action) {
@@ -44,6 +56,16 @@ export default function appReducer(state = dataInicial, action) {
             return { ...state, exitoEnviarMail: true, loadingApp: false }
         case ERROR_ENVIAR_MAIL:
             return { ...state, errorEnviarMail: true, loadingApp: false }
+        case OBTENER_CONFIGURACION_EXITO:
+            return { ...state, objetoConfiguracion: action.payload.objeto, errorDeCargaConfiguracion: false, loadingApp: false }
+        case ERROR_DE_CARGA_CONFIGURACION:
+            return { ...state, errorDeCargaConfiguracion: true, loadingApp: false }
+        case VACIAR_DATOS_CONFIGURACION:
+            return { ...state, objetoConfiguracion: action.payload }
+        case ACTUALIZAR_CONFIGURACION_EXITO:
+            return { ...state, errorDeCargaConfiguracion: false, loadingApp: false, exitoActualizacionConfiguracion: true }
+        case RESETEA_EXITO_CONFIGURACION:
+            return { ...state, exitoActualizacionConfiguracion: false }
         default:
             return { ...state }
     }
@@ -257,7 +279,7 @@ export const enviarMailAccion = (from, email, file) => async (dispatch, getState
     dispatch({
         type: LOADING_APP
     });
-    try {      
+    try {
         const formData = new FormData();
         formData.append("from", from);
         formData.append("email", email);
@@ -270,7 +292,7 @@ export const enviarMailAccion = (from, email, file) => async (dispatch, getState
         });
         const respuesta = res.data;
         dispatch({
-            type: EXITO_ENVIAR_MAIL          
+            type: EXITO_ENVIAR_MAIL
         })
 
     } catch (error) {
@@ -278,4 +300,71 @@ export const enviarMailAccion = (from, email, file) => async (dispatch, getState
             type: ERROR_ENVIAR_MAIL
         })
     }
+}
+
+export const obtenerConfiguracionAccion = (objeto, id) => async (dispatch, getState) => {
+    dispatch({
+        type: LOADING_APP
+    });
+    try {
+        const formData = new FormData();
+        formData.append("objeto", objeto);
+        formData.append("id", id);
+        let apiUrl = rutaApi + "obtener.php";
+        const res = await axios.post(apiUrl, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            }
+        });
+        dispatch({
+            type: OBTENER_CONFIGURACION_EXITO,
+            payload: {
+                objeto: JSON.parse(res.data.datos_configuracion)
+            }
+        });
+    } catch (error) {
+        dispatch({
+            type: ERROR_DE_CARGA_CONFIGURACION
+        })
+    }
+}
+
+export const actualizarConfiguracionAccion = (objeto, id, datos) => async (dispatch, getState) => {
+    dispatch({
+        type: LOADING_APP
+    });
+    try {
+        const losDatos = JSON.stringify(datos);
+        const formData = new FormData();
+        formData.append("objeto", objeto);
+        formData.append("id", id);
+        formData.append("datos", losDatos);
+        let apiUrl = rutaApi + "actualizar.php";
+        await axios.post(apiUrl, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            }
+        });
+        dispatch({
+            type: ACTUALIZAR_CONFIGURACION_EXITO
+        });
+        dispatch({
+            type: RESETEA_EXITO_CONFIGURACION
+        });
+    } catch (error) {
+        dispatch({
+            type: ERROR_DE_CARGA_CONFIGURACION
+        })
+    }
+}
+
+export const vaciarDatosConfiguracionAccion = () => (dispatch, getState) => {
+    dispatch({
+        type: VACIAR_DATOS_CONFIGURACION,
+        payload: {
+            precioHoraNormal: null,
+            precioHoraExtra: null,
+            mensajeMailCentros: ''
+        }
+    });
 }

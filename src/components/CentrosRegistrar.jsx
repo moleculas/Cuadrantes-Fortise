@@ -2574,7 +2574,6 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 </Alert>
             </Snackbar>
             {/* {console.log(trabajadoresRegistro.trabajadores)} */}
-
         </div>
     )
 })

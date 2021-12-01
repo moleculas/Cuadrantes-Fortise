@@ -10,11 +10,19 @@ import Paper from '@material-ui/core/Paper';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 import HomeWorkIcon from '@material-ui/icons/HomeWork';
-import { Link } from "react-router-dom";
 import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 
 //importaciones acciones
 import { onEstemAccion } from '../redux/appDucks';
+import { vaciarDatosCentrosAccion } from '../redux/centrosDucks';
+import { vaciarDatosTrabajadoresAccion } from '../redux/trabajadoresDucks';
+import { vaciarDatosCuadrantesAccion } from '../redux/cuadrantesDucks';
+import { vaciarDatosCuadranteRegistradoAccion } from '../redux/cuadrantesDucks';
+import { cambioEstadoInicioCuadrantesAccion } from '../redux/cuadrantesDucks';
+import { cambioEstadoInicioNominasAccion } from '../redux/nominasDucks';
+import { registrarIntervencionAccion } from '../redux/appDucks';
+import { activarDesactivarAccion } from '../redux/appDucks';
+import { vaciarDatosConfiguracionAccion } from '../redux/appDucks';
 
 const estilos = makeStyles((theme) => ({
 
@@ -62,9 +70,53 @@ const Inicio = (props) => {
         }
     }, [logged, props.history]);
 
-    useEffect(() => {       
-        dispatch(onEstemAccion('inicio'));      
+    useEffect(() => {
+        dispatch(onEstemAccion('inicio'));
     }, [dispatch]);
+
+    //funciones
+
+    const limpiezaGeneral = () => {
+        dispatch(vaciarDatosCentrosAccion());
+        dispatch(vaciarDatosTrabajadoresAccion());
+        dispatch(activarDesactivarAccion(true));
+        dispatch(vaciarDatosCuadrantesAccion());
+        dispatch(vaciarDatosCuadranteRegistradoAccion());
+        dispatch(vaciarDatosConfiguracionAccion());
+        dispatch(cambioEstadoInicioCuadrantesAccion(true));
+        dispatch(cambioEstadoInicioNominasAccion(true));
+        dispatch(registrarIntervencionAccion(true));
+    };
+
+    const handleClick = (link) => {
+        switch (link) {
+            case '/':
+                limpiezaGeneral();
+                props.history.push('/');
+                break;
+            case '/cuadrantes':
+                limpiezaGeneral();
+                props.history.push('/cuadrantes');
+                break;
+            case '/trabajadores':
+                limpiezaGeneral();
+                props.history.push('/trabajadores');
+                break;
+            case '/centros':
+                limpiezaGeneral();
+                props.history.push('/centros');
+                break;
+            case '/nominas':
+                limpiezaGeneral();
+                props.history.push('/nominas');
+                break;
+            case '/configuracion':
+                limpiezaGeneral();
+                props.history.push('/configuracion');
+                break;
+            default:
+        }
+    }
 
     return (
         <div>
@@ -90,58 +142,54 @@ const Inicio = (props) => {
                             <Box
                                 px={2}
                             >
-                                <Link to="/cuadrantes" className={classes.link}>
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        size="large"
-                                        fullWidth
-                                        className={classes.button}
-                                        style={{ fontSize: 17 }}
-                                        startIcon={<AssignmentIcon style={{ fontSize: 40 }}/>}
-                                    >
-                                        Gestión de Cuadrantes
-                                    </Button>
-                                </Link>
-                                <Link to="/nominas" className={classes.link}>
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        size="large"
-                                        fullWidth
-                                        className={classes.button}
-                                        style={{ fontSize: 17 }}
-                                        startIcon={<AssignmentIndIcon style={{ fontSize: 40 }}/>}
-                                    >
-                                        Gestión de Nóminas
-                                    </Button>
-                                </Link>
-                                <Link to="/centros" className={classes.link}>
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        size="large"
-                                        fullWidth
-                                        className={classes.button}
-                                        style={{ fontSize: 17 }}
-                                        startIcon={<HomeWorkIcon style={{ fontSize: 40 }}/>}
-                                    >
-                                        Gestión de Centros
-                                    </Button>
-                                </Link>
-                                <Link to="/trabajadores" className={classes.link}>
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        size="large"
-                                        fullWidth                                      
-                                        className={classes.button}
-                                        style={{ fontSize: 17 }}
-                                        startIcon={<SupervisorAccountIcon style={{ fontSize: 40 }}/>}
-                                    >
-                                        Gestión de Trabajadores
-                                    </Button>
-                                </Link>                                
+                                <Button
+                                    variant="contained"
+                                    onClick={() => handleClick('/cuadrantes')}
+                                    color="primary"
+                                    size="large"
+                                    fullWidth
+                                    className={classes.button}
+                                    style={{ fontSize: 17 }}
+                                    startIcon={<AssignmentIcon style={{ fontSize: 40 }} />}
+                                >
+                                    Gestión de Cuadrantes
+                                </Button>
+                                <Button
+                                    variant="contained"
+                                    onClick={() => handleClick('/nominas')}
+                                    color="primary"
+                                    size="large"
+                                    fullWidth
+                                    className={classes.button}
+                                    style={{ fontSize: 17 }}
+                                    startIcon={<AssignmentIndIcon style={{ fontSize: 40 }} />}
+                                >
+                                    Gestión de Nóminas
+                                </Button>
+                                <Button
+                                    variant="contained"
+                                    onClick={() => handleClick('/centros')}
+                                    color="primary"
+                                    size="large"
+                                    fullWidth
+                                    className={classes.button}
+                                    style={{ fontSize: 17 }}
+                                    startIcon={<HomeWorkIcon style={{ fontSize: 40 }} />}
+                                >
+                                    Gestión de Centros
+                                </Button>
+                                <Button
+                                    variant="contained"
+                                    onClick={() => handleClick('/trabajadores')}
+                                    color="primary"
+                                    size="large"
+                                    fullWidth
+                                    className={classes.button}
+                                    style={{ fontSize: 17 }}
+                                    startIcon={<SupervisorAccountIcon style={{ fontSize: 40 }} />}
+                                >
+                                    Gestión de Trabajadores
+                                </Button>
                             </Box>
                         </Box>
                     </Paper>

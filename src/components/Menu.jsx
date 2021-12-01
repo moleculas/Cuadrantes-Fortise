@@ -15,6 +15,7 @@ import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 import HomeWorkIcon from '@material-ui/icons/HomeWork';
 import { withRouter } from "react-router-dom";
 import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
+import SettingsIcon from '@material-ui/icons/Settings';
 
 //carga componentes
 import DialogComponente from './DialogComponente';
@@ -26,7 +27,9 @@ import { vaciarDatosCentrosAccion } from '../redux/centrosDucks';
 import { vaciarDatosTrabajadoresAccion } from '../redux/trabajadoresDucks';
 import { vaciarDatosCuadrantesAccion } from '../redux/cuadrantesDucks';
 import { vaciarDatosCuadranteRegistradoAccion } from '../redux/cuadrantesDucks';
+import { vaciarDatosConfiguracionAccion } from '../redux/appDucks';
 import { cambioEstadoInicioCuadrantesAccion } from '../redux/cuadrantesDucks';
+import { cambioEstadoInicioNominasAccion } from '../redux/nominasDucks';
 import { abreObjetoDialogAccion } from '../redux/appDucks';
 import { cierraObjetoDialogAccion } from '../redux/appDucks';
 import { registrarIntervencionAccion } from '../redux/appDucks';
@@ -57,9 +60,11 @@ const Menu = (props) => {
         dispatch(vaciarDatosTrabajadoresAccion());
         dispatch(activarDesactivarAccion(true));
         dispatch(vaciarDatosCuadrantesAccion());
+        dispatch(vaciarDatosConfiguracionAccion());
         dispatch(vaciarDatosCuadranteRegistradoAccion());
         dispatch(cambioEstadoInicioCuadrantesAccion(true));
-        dispatch(registrarIntervencionAccion(true));
+        dispatch(cambioEstadoInicioNominasAccion(true));
+        dispatch(registrarIntervencionAccion(true));        
     };
 
     const handleClick = (link) => {
@@ -125,6 +130,19 @@ const Menu = (props) => {
                     }
                 }
                 break;
+            case '/configuracion':
+                if (!cuadranteNuevoRegistrado) {
+                    handleClickOpenDialogMenu2();
+                } else {
+                    if (!intervencionRegistrada) {
+                        setPreValueLink(link);
+                        handleClickOpenDialogMenu1();
+                    } else {
+                        limpiezaGeneral();
+                        props.history.push('/configuracion');
+                    }
+                }
+                break;
             default:
         }
     }
@@ -187,70 +205,80 @@ const Menu = (props) => {
             </List>
             {logged ? (
                 <Fragment>
-            <List
-                component='nav'
-                subheader={
-                    <ListSubheader component="div">
-                        Gestión
-                    </ListSubheader>
-                }
-                style={{ marginTop: -8 }}
-            >
-                <ListItem
-                    button
-                    disabled={onEstem === 'cuadrantes' ? true : false}
-                    onClick={() => handleClick('/cuadrantes')}
-                >
-                    <ListItemIcon>
-                        <AssignmentIcon />
-                    </ListItemIcon>
-                    <ListItemText primary='Cuadrantes' />
-                </ListItem>
-                <ListItem
-                    button
-                    disabled={onEstem === 'nominas' ? true : false}
-                    onClick={() => handleClick('/nominas')}
-                >
-                    <ListItemIcon>
-                        <AssignmentIndIcon />
-                    </ListItemIcon>
-                    <ListItemText primary='Nóminas' />
-                </ListItem>
-                <Divider />
-            </List>
-            <List
-                component='nav'
-                subheader={
-                    <ListSubheader component="div">
-                        Configuración
-                    </ListSubheader>
-                }
-                style={{ marginTop: -8 }}
-            >
-                <ListItem
-                    button
-                    disabled={onEstem === 'editarCentros' || onEstem === 'registrarCentros' ? true : false}
-                    onClick={() => handleClick('/centros')}
-                >
-                    <ListItemIcon>
-                        <HomeWorkIcon />
-                    </ListItemIcon>
-                    <ListItemText primary='Centros' />
-                </ListItem>
-                <ListItem
-                    button
-                    disabled={onEstem === 'editarTrabajadores' || onEstem === 'registrarTrabajadores' ? true : false}
-                    onClick={() => handleClick('/trabajadores')}
-                >
-                    <ListItemIcon>
-                        <SupervisorAccountIcon />
-                    </ListItemIcon>
-                    <ListItemText primary='Trabajadores' />
-                </ListItem>
-                <Divider />
-            </List>
-            </Fragment>
-             ) : null}
+                    <List
+                        component='nav'
+                        subheader={
+                            <ListSubheader component="div">
+                                Gestión
+                            </ListSubheader>
+                        }
+                        style={{ marginTop: -8 }}
+                    >
+                        <ListItem
+                            button
+                            disabled={onEstem === 'cuadrantes' ? true : false}
+                            onClick={() => handleClick('/cuadrantes')}
+                        >
+                            <ListItemIcon>
+                                <AssignmentIcon />
+                            </ListItemIcon>
+                            <ListItemText primary='Cuadrantes' />
+                        </ListItem>
+                        <ListItem
+                            button
+                            disabled={onEstem === 'nominas' ? true : false}
+                            onClick={() => handleClick('/nominas')}
+                        >
+                            <ListItemIcon>
+                                <AssignmentIndIcon />
+                            </ListItemIcon>
+                            <ListItemText primary='Nóminas' />
+                        </ListItem>
+                        <Divider />
+                    </List>
+                    <List
+                        component='nav'
+                        subheader={
+                            <ListSubheader component="div">
+                                Configuración
+                            </ListSubheader>
+                        }
+                        style={{ marginTop: -8 }}
+                    >
+                        <ListItem
+                            button
+                            disabled={onEstem === 'editarCentros' || onEstem === 'registrarCentros' ? true : false}
+                            onClick={() => handleClick('/centros')}
+                        >
+                            <ListItemIcon>
+                                <HomeWorkIcon />
+                            </ListItemIcon>
+                            <ListItemText primary='Centros' />
+                        </ListItem>
+                        <ListItem
+                            button
+                            disabled={onEstem === 'editarTrabajadores' || onEstem === 'registrarTrabajadores' ? true : false}
+                            onClick={() => handleClick('/trabajadores')}
+                        >
+                            <ListItemIcon>
+                                <SupervisorAccountIcon />
+                            </ListItemIcon>
+                            <ListItemText primary='Trabajadores' />
+                        </ListItem>
+                        <ListItem
+                            button
+                            disabled={onEstem === 'configuracion' ? true : false}
+                            onClick={() => handleClick('/configuracion')}
+                        >
+                            <ListItemIcon>
+                                <SettingsIcon />
+                            </ListItemIcon>
+                            <ListItemText primary='General' />
+                        </ListItem>
+                        <Divider />
+                    </List>
+                </Fragment>
+            ) : null}
             <DialogComponente
                 prIsOpen={openDialog3}
                 prHandleCloseDialogBotones={handleCloseDialogBotonesMenu1}

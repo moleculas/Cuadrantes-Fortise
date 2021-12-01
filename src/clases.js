@@ -1,5 +1,5 @@
 import { makeStyles } from "@material-ui/core";
-import { amber, blueGrey, green, lime, indigo } from '@material-ui/core/colors';
+import { amber, blueGrey, green, lime, indigo, red } from '@material-ui/core/colors';
 
 const Clases = makeStyles((theme) => ({
     //loading
@@ -171,6 +171,9 @@ const Clases = makeStyles((theme) => ({
     },
     mb10: {
         marginBottom: 10,
+    },
+    mb5: {
+        marginBottom: 5,
     },
     mb25: {
         marginBottom: 25,
@@ -401,6 +404,18 @@ const Clases = makeStyles((theme) => ({
             backgroundColor: `${indigo[50]} !important`,
         },
     },    
+    red: {
+        color: theme.palette.getContrastText(red[500]),
+        backgroundColor: red[500],
+    },
+    green: {
+        color: 'white',
+        backgroundColor: green[500],
+    },
+    small: {
+        width: theme.spacing(4),
+        height: theme.spacing(4),
+    },
 }));
 
 export default Clases;

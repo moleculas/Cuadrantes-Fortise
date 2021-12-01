@@ -8,6 +8,7 @@ import Login from './Login';
 import Cuadrantes from './Cuadrantes';
 import Trabajadores from './Trabajadores';
 import Nominas from './Nominas';
+import Configuracion from './Configuracion';
 import Centros from './Centros';
 import { makeStyles, Hidden } from '@material-ui/core';
 import Cajon from './Cajon';
@@ -78,6 +79,9 @@ const Contenedor = () => {
                         </Route>
                         <Route path="/nominas" >
                             <Nominas />
+                        </Route>
+                        <Route path="/configuracion" >
+                            <Configuracion />
                         </Route>
                     </Switch>
                 </div>

@@ -8,8 +8,6 @@ import Avatar from '@material-ui/core/Avatar';
 import clsx from 'clsx';
 
 //carga componentes
-import Pendientes from './Pendientes';
-import GraficoCuadrantes from './GraficoCuadrantes';
 
 //estilos
 import Clases from "../clases";
@@ -18,18 +16,18 @@ import Clases from "../clases";
 import { retornaAnoMesCuadranteAccion } from '../redux/appDucks';
 
 const getHeightContenedoresPeq = () => ((window.innerHeight / 2) - 190) || ((document.documentElement.clientHeight / 2) - 190) || ((document.body.clientHeight / 2) - 190);
-const getHeightContenedoresGra = () => ((window.innerHeight) - 310) || ((document.documentElement.clientHeight) - 310) || ((document.body.clientHeight) - 310); const getWidthContenedores = () => ((window.innerWidth - 300) / 2) || ((document.documentElement.clientWidth - 300) / 2) || ((document.body.clientWidth - 300) / 2);
+const getHeightContenedoresGra = () => ((window.innerHeight) - 310) || ((document.documentElement.clientHeight) - 310) || ((document.body.clientHeight) - 310);
+const getWidthContenedores = () => ((window.innerWidth - 300) / 2) || ((document.documentElement.clientWidth - 300) / 2) || ((document.body.clientWidth - 300) / 2);
 
-const PantallaCuadrantes = () => {
+const PantallaNominas = () => {
 
     const classes = Clases();
     const dispatch = useDispatch();
-    const numeroCentrosPendientes = useSelector(store => store.variablesPendientes.numeroCentrosPendientes);
-    const calendarioAGestionar = useSelector(store => store.variablesCuadrantes.calendarioAGestionar);
+    const calendarioAGestionarNominas = useSelector(store => store.variablesNominas.calendarioAGestionarNominas);
 
     //states
 
-    const { monthLet } = dispatch(retornaAnoMesCuadranteAccion(calendarioAGestionar));
+    const { monthLet } = dispatch(retornaAnoMesCuadranteAccion(calendarioAGestionarNominas));
     const [heightContenedoresPeq, setHeightContenedoresPeq] = useState(getHeightContenedoresPeq());
     const [heightContenedoresGra, setHeightContenedoresGra] = useState(getHeightContenedoresGra());
     const [widthContenedores, setWidthContenedores] = useState(getWidthContenedores());
@@ -69,44 +67,44 @@ const PantallaCuadrantes = () => {
                         style={{ maxHeight: 45, minHeight: 45, display: 'flex', flexDirection: 'row', justifycontent: 'space-between', alignItems: 'center' }}
                     >
                         <Grid item xs={11}>
-                            <Typography variant="body2">Cuadrantes del mes de {monthLet} pendientes de gestionar</Typography>
+                            <Typography variant="body2">Nóminas del mes de {monthLet} pendientes de gestionar</Typography>
                         </Grid>
                         <Grid item xs={1}>
-                            <Avatar
+                            {/* <Avatar
                                 className={clsx(classes.small, numeroCentrosPendientes === 0 ? classes.green : classes.red)}
                             >
                                 <Typography variant='body2'>{numeroCentrosPendientes}</Typography>
-                            </Avatar>
+                            </Avatar> */}
                         </Grid>
                     </Box>
                     <Paper
                         elevation={1}
                         style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra, margin: 8 }}
                     >
-                        {numeroCentrosPendientes === 0 ? (
+                        {/* {numeroCentrosPendientes === 0 ? (
                             <Box p={3}>
                                 No quedan cuadrantes pendientes por gestionar.
                             </Box>
                         ) : (
-                            <Pendientes prHeightContenedores={heightContenedoresGra} />
-                        )}
+                           //
+                        )} */}
                     </Paper>
                 </Grid>
                 <Grid item xs={6}>
-                    <Grid className={classes.mb20}>
+                    <Grid className={classes.mb15}>
                         <Box
                             p={1.5}
                             m={1}
                             color="secondary.contrastText"
                             bgcolor="secondary.main"
                         >
-                            <Typography variant="body2">Cómputo de ingresos anual</Typography>
+                            <Typography variant="body2">Cómputo de gastos anual</Typography>
                         </Box>
                         <Paper
                             elevation={1}
                             style={{ minHeight: heightContenedoresPeq, maxHeight: heightContenedoresPeq, margin: 8 }}
                         >
-                            <GraficoCuadrantes prHeightContenedores={heightContenedoresPeq} prWidthContenedores={widthContenedores} />
+
                         </Paper>
                     </Grid>
                     <Grid>
@@ -116,7 +114,7 @@ const PantallaCuadrantes = () => {
                             color="secondary.contrastText"
                             bgcolor="secondary.main"
                         >
-                            <Typography variant="body2">Trabajadores de baja</Typography>
+                            <Typography variant="body2">Día</Typography>
                         </Box>
                         <Paper
                             elevation={1}
@@ -124,11 +122,11 @@ const PantallaCuadrantes = () => {
                         >
                         </Paper>
                     </Grid>
-                </Grid>     
+                </Grid>
             </Grid>
             {/* {console.log(retornaCuadrantesPendientesParent)} */}
         </div>
     )
 }
 
-export default PantallaCuadrantes
+export default PantallaNominas
