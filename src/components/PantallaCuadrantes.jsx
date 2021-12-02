@@ -9,6 +9,7 @@ import clsx from 'clsx';
 
 //carga componentes
 import Pendientes from './Pendientes';
+import Bajas from './Bajas';
 import GraficoCuadrantes from './GraficoCuadrantes';
 
 //estilos
@@ -26,6 +27,7 @@ const PantallaCuadrantes = () => {
     const dispatch = useDispatch();
     const numeroCentrosPendientes = useSelector(store => store.variablesPendientes.numeroCentrosPendientes);
     const calendarioAGestionar = useSelector(store => store.variablesCuadrantes.calendarioAGestionar);
+    const listadoTrabajadoresBaja = useSelector(store => store.variablesTrabajadores.arrayTrabajadoresBaja);
 
     //states
 
@@ -71,7 +73,7 @@ const PantallaCuadrantes = () => {
                         <Grid item xs={11}>
                             <Typography variant="body2">Cuadrantes del mes de {monthLet} pendientes de gestionar</Typography>
                         </Grid>
-                        <Grid item xs={1}>
+                        <Grid item xs={1} className={classes.alignRight}>
                             <Avatar
                                 className={clsx(classes.small, numeroCentrosPendientes === 0 ? classes.green : classes.red)}
                             >
@@ -115,16 +117,27 @@ const PantallaCuadrantes = () => {
                             m={1}
                             color="secondary.contrastText"
                             bgcolor="secondary.main"
+                            style={{ maxHeight: 45, minHeight: 45, display: 'flex', flexDirection: 'row', justifycontent: 'space-between', alignItems: 'center' }}
                         >
-                            <Typography variant="body2">Trabajadores de baja</Typography>
+                            <Grid item xs={11}>
+                                <Typography variant="body2">Trabajadores de baja</Typography>
+                            </Grid>
+                            <Grid item xs={1} className={classes.alignRight}>
+                                <Avatar
+                                    className={clsx(classes.small, listadoTrabajadoresBaja.length === 0 ? classes.green : classes.red)}
+                                >
+                                    <Typography variant='body2'>{listadoTrabajadoresBaja.length}</Typography>
+                                </Avatar>
+                            </Grid>
                         </Box>
                         <Paper
                             elevation={1}
                             style={{ minHeight: heightContenedoresPeq, maxHeight: heightContenedoresPeq, margin: 8 }}
                         >
+                            <Bajas prHeightContenedores={heightContenedoresPeq} />
                         </Paper>
                     </Grid>
-                </Grid>     
+                </Grid>
             </Grid>
             {/* {console.log(retornaCuadrantesPendientesParent)} */}
         </div>

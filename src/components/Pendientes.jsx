@@ -37,12 +37,13 @@ const Pendientes = (props) => {
     const classes = Clases();
     const dispatch = useDispatch();
     const listadoCentros = useSelector(store => store.variablesCentros.arrayCentros);
-    const errorDeCargaCentros = useSelector(store => store.variablesTrabajadores.errorDeCargaCentros);
-    const errorDeCargaCuadrantes = useSelector(store => store.variablesTrabajadores.errorDeCargaCuadrantes);
-    const openLoadingCuadrantes = useSelector(store => store.variablesCentros.loadingCuadrantes);
+    const errorDeCargaCentros = useSelector(store => store.variablesCentros.errorDeCargaCentros);
+    const errorDeCargaCuadrantes = useSelector(store => store.variablesCuadrantes.errorDeCargaCuadrantes);
+    const openLoadingCuadrantes = useSelector(store => store.variablesCuadrantes.loadingCuadrantes);
     const centrosPendientesArray = useSelector(store => store.variablesPendientes.centrosPendientesArray);
     const forzarRecargaPendientes = useSelector(store => store.variablesPendientes.forzarRecargaPendientes);
     const calendarioAGestionar = useSelector(store => store.variablesCuadrantes.calendarioAGestionar);
+    const openLoadingPendientes = useSelector(store => store.variablesPendientes.loadingPendientes);    
 
     //states
 
@@ -78,12 +79,12 @@ const Pendientes = (props) => {
     }, [errorDeCargaCentros, errorDeCargaCuadrantes]);
 
     useEffect(() => {
-        if (!openLoadingCuadrantes) {
+        if (!openLoadingCuadrantes || !openLoadingPendientes) {
             setOpenLoading(false)
         } else {
             setOpenLoading(true)
         }
-    }, [openLoadingCuadrantes]);
+    }, [openLoadingCuadrantes,openLoadingPendientes]);
 
     //funciones    
 

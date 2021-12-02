@@ -470,8 +470,6 @@ export const gestionaColumnaCuadranteInterior = (
                 idTrabajador: trabajador.id,
                 tipoHorario: centroAGestionar.horario.tipo,
                 tipoTrabajador: tipoTrabajador,
-                visibleVariaciones: cuadrante[columna].visibleVariaciones,
-                tipoVariacion: cuadrante[columna].tipoVariacion,
             };
         } else {
             columnaAnadir = {
@@ -479,8 +477,6 @@ export const gestionaColumnaCuadranteInterior = (
                 idTrabajador: trabajador.id,
                 tipoHorario: centroAGestionar.horario.tipo,
                 tipoTrabajador: tipoTrabajador,
-                visibleVariaciones: false,
-                tipoVariacion: ''
             };
         };
         hayTrabajador = true;
@@ -544,6 +540,8 @@ export const gestionaColumnaCuadranteInterior = (
                             festivo: true,
                             observaciones: '',
                             modificado: false,
+                            visibleVariaciones: false,
+                            tipoVariacion: ''
                         };
                     }
                 } else {
@@ -557,7 +555,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -570,7 +570,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             } else {
@@ -589,7 +591,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -599,7 +603,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     }
                                 }
@@ -615,7 +621,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: null,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -634,7 +642,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -644,7 +654,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             }
@@ -660,7 +672,9 @@ export const gestionaColumnaCuadranteInterior = (
                             tipoBaja: null,
                             festivo: true,
                             observaciones: '',
-                            modificado: false
+                            modificado: false,
+                            visibleVariaciones: false,
+                            tipoVariacion: ''
                         };
                     }
                 } else {
@@ -674,7 +688,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -687,7 +703,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             } else {
@@ -706,7 +724,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -716,7 +736,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     }
                                 }
@@ -732,7 +754,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: null,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -751,7 +775,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -761,7 +787,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             }
@@ -777,7 +805,9 @@ export const gestionaColumnaCuadranteInterior = (
                             tipoBaja: null,
                             festivo: true,
                             observaciones: '',
-                            modificado: false
+                            modificado: false,
+                            visibleVariaciones: false,
+                            tipoVariacion: ''
                         };
                     }
                 } else {
@@ -791,7 +821,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -804,7 +836,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             } else {
@@ -823,7 +857,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -833,7 +869,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     }
                                 }
@@ -849,7 +887,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: null,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -868,7 +908,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -878,7 +920,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             }
@@ -894,7 +938,9 @@ export const gestionaColumnaCuadranteInterior = (
                             tipoBaja: null,
                             festivo: true,
                             observaciones: '',
-                            modificado: false
+                            modificado: false,
+                            visibleVariaciones: false,
+                            tipoVariacion: ''
                         };
                     }
                 } else {
@@ -908,7 +954,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -921,7 +969,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             } else {
@@ -940,7 +990,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -950,7 +1002,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     }
                                 }
@@ -966,7 +1020,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: null,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -985,7 +1041,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -995,7 +1053,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             }
@@ -1011,7 +1071,9 @@ export const gestionaColumnaCuadranteInterior = (
                             tipoBaja: null,
                             festivo: true,
                             observaciones: '',
-                            modificado: false
+                            modificado: false,
+                            visibleVariaciones: false,
+                            tipoVariacion: ''
                         };
                     }
                 } else {
@@ -1025,7 +1087,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -1038,7 +1102,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             } else {
@@ -1057,7 +1123,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -1067,7 +1135,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     }
                                 }
@@ -1083,7 +1153,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: null,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -1102,7 +1174,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -1112,7 +1186,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             }
@@ -1128,7 +1204,9 @@ export const gestionaColumnaCuadranteInterior = (
                             tipoBaja: null,
                             festivo: true,
                             observaciones: '',
-                            modificado: false
+                            modificado: false,
+                            visibleVariaciones: false,
+                            tipoVariacion: ''
                         };
                     }
                 } else {
@@ -1142,7 +1220,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -1155,7 +1235,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             } else {
@@ -1174,7 +1256,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -1184,7 +1268,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     }
                                 }
@@ -1200,7 +1286,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: null,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -1219,7 +1307,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -1229,7 +1319,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             }
@@ -1245,7 +1337,9 @@ export const gestionaColumnaCuadranteInterior = (
                             tipoBaja: null,
                             festivo: true,
                             observaciones: '',
-                            modificado: false
+                            modificado: false,
+                            visibleVariaciones: false,
+                            tipoVariacion: ''
                         };
                     }
                 } else {
@@ -1259,7 +1353,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -1272,7 +1368,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             } else {
@@ -1291,7 +1389,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -1301,7 +1401,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     }
                                 }
@@ -1317,7 +1419,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: null,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -1336,7 +1440,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -1346,7 +1452,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             }
@@ -1369,7 +1477,9 @@ export const gestionaColumnaCuadranteInterior = (
                             tipoBaja: null,
                             festivo: true,
                             observaciones: '',
-                            modificado: false
+                            modificado: false,
+                            visibleVariaciones: false,
+                            tipoVariacion: ''
                         };
                     }
                 } else {
@@ -1385,7 +1495,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -1400,7 +1512,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             } else {
@@ -1421,7 +1535,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -1433,7 +1549,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     }
                                 }
@@ -1451,7 +1569,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: null,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -1472,7 +1592,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -1484,7 +1606,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             }
@@ -1502,7 +1626,9 @@ export const gestionaColumnaCuadranteInterior = (
                             tipoBaja: null,
                             festivo: true,
                             observaciones: '',
-                            modificado: false
+                            modificado: false,
+                            visibleVariaciones: false,
+                            tipoVariacion: ''
                         };
                     }
                 } else {
@@ -1518,7 +1644,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -1533,7 +1661,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             } else {
@@ -1554,7 +1684,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -1566,7 +1698,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     }
                                 }
@@ -1584,7 +1718,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: null,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -1605,7 +1741,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -1617,7 +1755,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             }
@@ -1635,7 +1775,9 @@ export const gestionaColumnaCuadranteInterior = (
                             tipoBaja: null,
                             festivo: true,
                             observaciones: '',
-                            modificado: false
+                            modificado: false,
+                            visibleVariaciones: false,
+                            tipoVariacion: ''
                         };
                     }
                 } else {
@@ -1651,7 +1793,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -1666,7 +1810,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             } else {
@@ -1687,7 +1833,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -1699,7 +1847,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     }
                                 }
@@ -1717,7 +1867,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: null,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -1738,7 +1890,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -1750,7 +1904,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             }
@@ -1768,7 +1924,9 @@ export const gestionaColumnaCuadranteInterior = (
                             tipoBaja: null,
                             festivo: true,
                             observaciones: '',
-                            modificado: false
+                            modificado: false,
+                            visibleVariaciones: false,
+                            tipoVariacion: ''
                         };
                     }
                 } else {
@@ -1784,7 +1942,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -1799,7 +1959,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             } else {
@@ -1820,7 +1982,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -1832,7 +1996,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     }
                                 }
@@ -1850,7 +2016,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: null,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -1871,7 +2039,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -1883,7 +2053,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             }
@@ -1901,7 +2073,9 @@ export const gestionaColumnaCuadranteInterior = (
                             tipoBaja: null,
                             festivo: true,
                             observaciones: '',
-                            modificado: false
+                            modificado: false,
+                            visibleVariaciones: false,
+                            tipoVariacion: ''
                         };
                     }
                 } else {
@@ -1917,7 +2091,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -1932,7 +2108,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             } else {
@@ -1953,7 +2131,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -1965,7 +2145,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     }
                                 }
@@ -1983,7 +2165,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: null,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -2004,7 +2188,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -2016,7 +2202,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             }
@@ -2034,7 +2222,9 @@ export const gestionaColumnaCuadranteInterior = (
                             tipoBaja: null,
                             festivo: true,
                             observaciones: '',
-                            modificado: false
+                            modificado: false,
+                            visibleVariaciones: false,
+                            tipoVariacion: ''
                         };
                     }
                 } else {
@@ -2050,7 +2240,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -2065,7 +2257,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             } else {
@@ -2086,7 +2280,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -2098,7 +2294,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     }
                                 }
@@ -2116,7 +2314,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: null,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -2137,7 +2337,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -2149,7 +2351,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             }
@@ -2167,7 +2371,9 @@ export const gestionaColumnaCuadranteInterior = (
                             tipoBaja: null,
                             festivo: true,
                             observaciones: '',
-                            modificado: false
+                            modificado: false,
+                            visibleVariaciones: false,
+                            tipoVariacion: ''
                         };
                     }
                 } else {
@@ -2183,7 +2389,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -2198,7 +2406,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             } else {
@@ -2219,7 +2429,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -2231,7 +2443,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     }
                                 }
@@ -2249,7 +2463,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: null,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -2270,7 +2486,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -2282,7 +2500,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             }
@@ -2302,7 +2522,9 @@ export const gestionaColumnaCuadranteInterior = (
                             tipoBaja: null,
                             festivo: true,
                             observaciones: '',
-                            modificado: false
+                            modificado: false,
+                            visibleVariaciones: false,
+                            tipoVariacion: ''
                         };
                     }
                 } else {
@@ -2315,7 +2537,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -2327,7 +2551,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             } else {
@@ -2345,7 +2571,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -2354,7 +2582,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     }
                                 }
@@ -2369,7 +2599,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: null,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -2387,7 +2619,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -2396,7 +2630,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             }
@@ -2411,7 +2647,9 @@ export const gestionaColumnaCuadranteInterior = (
                             tipoBaja: null,
                             festivo: true,
                             observaciones: '',
-                            modificado: false
+                            modificado: false,
+                            visibleVariaciones: false,
+                            tipoVariacion: ''
                         };
                     }
                 } else {
@@ -2424,7 +2662,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -2436,7 +2676,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             } else {
@@ -2454,7 +2696,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -2463,7 +2707,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     }
                                 }
@@ -2478,7 +2724,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: null,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -2496,7 +2744,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -2505,7 +2755,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             }
@@ -2520,7 +2772,9 @@ export const gestionaColumnaCuadranteInterior = (
                             tipoBaja: null,
                             festivo: true,
                             observaciones: '',
-                            modificado: false
+                            modificado: false,
+                            visibleVariaciones: false,
+                            tipoVariacion: ''
                         };
                     }
                 } else {
@@ -2533,7 +2787,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -2545,7 +2801,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             } else {
@@ -2563,7 +2821,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -2572,7 +2832,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     }
                                 }
@@ -2587,7 +2849,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: null,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -2605,7 +2869,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -2614,7 +2880,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             }
@@ -2629,7 +2897,9 @@ export const gestionaColumnaCuadranteInterior = (
                             tipoBaja: null,
                             festivo: true,
                             observaciones: '',
-                            modificado: false
+                            modificado: false,
+                            visibleVariaciones: false,
+                            tipoVariacion: ''
                         };
                     }
                 } else {
@@ -2642,7 +2912,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -2654,7 +2926,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             } else {
@@ -2672,7 +2946,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -2681,7 +2957,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     }
                                 }
@@ -2696,7 +2974,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: null,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -2714,7 +2994,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -2723,7 +3005,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             }
@@ -2738,7 +3022,9 @@ export const gestionaColumnaCuadranteInterior = (
                             tipoBaja: null,
                             festivo: true,
                             observaciones: '',
-                            modificado: false
+                            modificado: false,
+                            visibleVariaciones: false,
+                            tipoVariacion: ''
                         };
                     }
                 } else {
@@ -2751,7 +3037,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -2763,7 +3051,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             } else {
@@ -2781,7 +3071,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -2790,7 +3082,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     }
                                 }
@@ -2805,7 +3099,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: null,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -2823,7 +3119,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -2832,7 +3130,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             }
@@ -2847,7 +3147,9 @@ export const gestionaColumnaCuadranteInterior = (
                             tipoBaja: null,
                             festivo: true,
                             observaciones: '',
-                            modificado: false
+                            modificado: false,
+                            visibleVariaciones: false,
+                            tipoVariacion: ''
                         };
                     }
                 } else {
@@ -2860,7 +3162,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -2872,7 +3176,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             } else {
@@ -2890,7 +3196,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -2899,7 +3207,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     }
                                 }
@@ -2914,7 +3224,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: null,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -2932,7 +3244,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -2941,7 +3255,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             }
@@ -2956,7 +3272,9 @@ export const gestionaColumnaCuadranteInterior = (
                             tipoBaja: null,
                             festivo: true,
                             observaciones: '',
-                            modificado: false
+                            modificado: false,
+                            visibleVariaciones: false,
+                            tipoVariacion: ''
                         };
                     }
                 } else {
@@ -2969,7 +3287,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -2981,7 +3301,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             } else {
@@ -2999,7 +3321,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -3008,7 +3332,9 @@ export const gestionaColumnaCuadranteInterior = (
                                             tipoBaja: null,
                                             festivo: false,
                                             observaciones: '',
-                                            modificado: false
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
                                         };
                                     }
                                 }
@@ -3023,7 +3349,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     tipoBaja: null,
                                     festivo: false,
                                     observaciones: '',
-                                    modificado: false
+                                    modificado: false,
+                                    visibleVariaciones: false,
+                                    tipoVariacion: ''
                                 };
                             }
                         } else {
@@ -3041,7 +3369,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -3050,7 +3380,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         tipoBaja: null,
                                         festivo: false,
                                         observaciones: '',
-                                        modificado: false
+                                        modificado: false,
+                                        visibleVariaciones: false,
+                                        tipoVariacion: ''
                                     };
                                 }
                             }
@@ -3085,7 +3417,10 @@ const retornaMinutosAccionEnCuadrantes = (primeraHora, segundaHora) => {
 export const gestionarInformeAccion = (cuadrante) => (dispatch, getState) => {
     let arrayResultante = [];
     let sumatorioHoras;
-    let lasHoras;
+    let sumatorioHorasNormal;
+    let sumatorioHorasExtra;
+    let lasHorasNormal;
+    let lasHorasExtra;
     cuadrante.forEach((cuadranteColumna, index) => {
         switch (cuadranteColumna.tipoHorario) {
             case 'rango':
@@ -3094,87 +3429,359 @@ export const gestionarInformeAccion = (cuadrante) => (dispatch, getState) => {
                     trabajadorNombre: cuadranteColumna.nombreTrabajador,
                     tipo: cuadranteColumna.tipoTrabajador,
                     computo: [],
+                    totalHorasNormal: null,
+                    totalHorasExtra: null,
                     totalHoras: null
                 });
                 sumatorioHoras = 0;
+                sumatorioHorasNormal= 0;
+                sumatorioHorasExtra= 0;
                 for (const prop in cuadranteColumna) {
                     if (prop.includes('Lunes')) {
                         const mySplit = prop.split('Lunes');
                         if (cuadranteColumna[prop].lunesInicioRango) {
-                            lasHoras = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicioRango, cuadranteColumna[prop].lunesFinRango) / 60
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicioRango, cuadranteColumna[prop].lunesFinRango) / 60;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicioRango, cuadranteColumna[prop].lunesFinRango) / 60;
+                                        lasHorasExtra = 30/60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicioRango, cuadranteColumna[prop].lunesFinRango) / 60;
+                                        lasHorasExtra = 60/60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicioRango, cuadranteColumna[prop].lunesFinRango) / 60;
+                                        lasHorasExtra = 90/60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicioRango, cuadranteColumna[prop].lunesFinRango) / 60;
+                                        lasHorasExtra = 120/60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicioRango, cuadranteColumna[prop].lunesFinRango) / 60;
+                                lasHorasExtra = null;
+                            };
                             arrayResultante[index].computo.push({
                                 dia: 'Lunes-' + mySplit[1],
-                                horas: lasHoras
+                                horasNormal: lasHorasNormal,
+                                horasExtra: lasHorasExtra
                             });
-                            sumatorioHoras += lasHoras;
+                            sumatorioHorasNormal += lasHorasNormal;
+                            sumatorioHorasExtra += lasHorasExtra;
+                            sumatorioHoras += (lasHorasNormal + lasHorasExtra);
                         };
                     };
                     if (prop.includes('Martes')) {
                         const mySplit = prop.split('Martes');
-                        if (cuadranteColumna[prop].martesInicioRango) {
-                            lasHoras = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60
+                        if (cuadranteColumna[prop].martesInicioRango) {                           
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60
+                                        lasHorasExtra = 30/60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60
+                                        lasHorasExtra = 60/60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60
+                                        lasHorasExtra = 90/60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60
+                                        lasHorasExtra = 120/60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60
+                                lasHorasExtra = null;
+                            };
                             arrayResultante[index].computo.push({
                                 dia: 'Martes-' + mySplit[1],
-                                horas: lasHoras
+                                horasNormal: lasHorasNormal,
+                                horasExtra: lasHorasExtra
                             });
-                            sumatorioHoras += lasHoras;
+                            sumatorioHorasNormal += lasHorasNormal;
+                            sumatorioHorasExtra += lasHorasExtra;
+                            sumatorioHoras += (lasHorasNormal + lasHorasExtra);
                         };
                     };
                     if (prop.includes('Miércoles')) {
                         const mySplit = prop.split('Miércoles');
                         if (cuadranteColumna[prop].miercolesInicioRango) {
-                            lasHoras = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicioRango, cuadranteColumna[prop].miercolesFinRango) / 60
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicioRango, cuadranteColumna[prop].miercolesFinRango) / 60;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicioRango, cuadranteColumna[prop].miercolesFinRango) / 60;
+                                        lasHorasExtra = 30/60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicioRango, cuadranteColumna[prop].miercolesFinRango) / 60;
+                                        lasHorasExtra = 60/60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicioRango, cuadranteColumna[prop].miercolesFinRango) / 60;
+                                        lasHorasExtra = 90/60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicioRango, cuadranteColumna[prop].miercolesFinRango) / 60;
+                                        lasHorasExtra = 120/60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicioRango, cuadranteColumna[prop].miercolesFinRango) / 60;
+                                lasHorasExtra = null;
+                            };
                             arrayResultante[index].computo.push({
                                 dia: 'Miércoles-' + mySplit[1],
-                                horas: lasHoras
+                                horasNormal: lasHorasNormal,
+                                horasExtra: lasHorasExtra
                             });
-                            sumatorioHoras += lasHoras;
+                            sumatorioHorasNormal += lasHorasNormal;
+                            sumatorioHorasExtra += lasHorasExtra;
+                            sumatorioHoras += (lasHorasNormal + lasHorasExtra);
                         };
                     };
                     if (prop.includes('Jueves')) {
                         const mySplit = prop.split('Jueves');
                         if (cuadranteColumna[prop].juevesInicioRango) {
-                            lasHoras = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicioRango, cuadranteColumna[prop].juevesFinRango) / 60
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicioRango, cuadranteColumna[prop].juevesFinRango) / 60;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicioRango, cuadranteColumna[prop].juevesFinRango) / 60;
+                                        lasHorasExtra = 30/60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicioRango, cuadranteColumna[prop].juevesFinRango) / 60;
+                                        lasHorasExtra = 60/60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicioRango, cuadranteColumna[prop].juevesFinRango) / 60;
+                                        lasHorasExtra = 90/60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicioRango, cuadranteColumna[prop].juevesFinRango) / 60;
+                                        lasHorasExtra = 120/60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicioRango, cuadranteColumna[prop].juevesFinRango) / 60;
+                                lasHorasExtra = null;
+                            };
                             arrayResultante[index].computo.push({
                                 dia: 'Jueves-' + mySplit[1],
-                                horas: lasHoras
+                                horasNormal: lasHorasNormal,
+                                horasExtra: lasHorasExtra
                             });
-                            sumatorioHoras += lasHoras;
+                            sumatorioHorasNormal += lasHorasNormal;
+                            sumatorioHorasExtra += lasHorasExtra;
+                            sumatorioHoras += (lasHorasNormal + lasHorasExtra);
                         };
                     };
                     if (prop.includes('Viernes')) {
                         const mySplit = prop.split('Viernes');
                         if (cuadranteColumna[prop].viernesInicioRango) {
-                            lasHoras = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicioRango, cuadranteColumna[prop].viernesFinRango) / 60
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicioRango, cuadranteColumna[prop].viernesFinRango) / 60;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicioRango, cuadranteColumna[prop].viernesFinRango) / 60;
+                                        lasHorasExtra = 30/60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicioRango, cuadranteColumna[prop].viernesFinRango) / 60;
+                                        lasHorasExtra = 60/60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicioRango, cuadranteColumna[prop].viernesFinRango) / 60;
+                                        lasHorasExtra = 90/60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicioRango, cuadranteColumna[prop].viernesFinRango) / 60;
+                                        lasHorasExtra = 120/60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicioRango, cuadranteColumna[prop].viernesFinRango) / 60;
+                                lasHorasExtra = null;
+                            };
                             arrayResultante[index].computo.push({
                                 dia: 'Viernes-' + mySplit[1],
-                                horas: lasHoras
+                                horasNormal: lasHorasNormal,
+                                horasExtra: lasHorasExtra
                             });
-                            sumatorioHoras += lasHoras;
+                            sumatorioHorasNormal += lasHorasNormal;
+                            sumatorioHorasExtra += lasHorasExtra;
+                            sumatorioHoras += (lasHorasNormal + lasHorasExtra);
                         };
                     };
                     if (prop.includes('Sábado')) {
                         const mySplit = prop.split('Sábado');
                         if (cuadranteColumna[prop].sabadoInicioRango) {
-                            lasHoras = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicioRango, cuadranteColumna[prop].sabadoFinRango) / 60
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicioRango, cuadranteColumna[prop].sabadoFinRango) / 60;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicioRango, cuadranteColumna[prop].sabadoFinRango) / 60;
+                                        lasHorasExtra = 30/60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicioRango, cuadranteColumna[prop].sabadoFinRango) / 60;
+                                        lasHorasExtra = 60/60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicioRango, cuadranteColumna[prop].sabadoFinRango) / 60;
+                                        lasHorasExtra = 90/60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicioRango, cuadranteColumna[prop].sabadoFinRango) / 60;
+                                        lasHorasExtra = 120/60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicioRango, cuadranteColumna[prop].sabadoFinRango) / 60;
+                                lasHorasExtra = null;
+                            };
                             arrayResultante[index].computo.push({
                                 dia: 'Sábado-' + mySplit[1],
-                                horas: lasHoras
+                                horasNormal: lasHorasNormal,
+                                horasExtra: lasHorasExtra
                             });
-                            sumatorioHoras += lasHoras;
+                            sumatorioHorasNormal += lasHorasNormal;
+                            sumatorioHorasExtra += lasHorasExtra;
+                            sumatorioHoras += (lasHorasNormal + lasHorasExtra);
                         };
                     };
                     if (prop.includes('Domingo')) {
                         const mySplit = prop.split('Domingo');
                         if (cuadranteColumna[prop].domingoInicioRango) {
-                            lasHoras = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicioRango, cuadranteColumna[prop].domingoFinRango) / 60
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicioRango, cuadranteColumna[prop].domingoFinRango) / 60;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicioRango, cuadranteColumna[prop].domingoFinRango) / 60;
+                                        lasHorasExtra = 30/60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicioRango, cuadranteColumna[prop].domingoFinRango) / 60;
+                                        lasHorasExtra = 60/60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicioRango, cuadranteColumna[prop].domingoFinRango) / 60;
+                                        lasHorasExtra = 90/60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicioRango, cuadranteColumna[prop].domingoFinRango) / 60;
+                                        lasHorasExtra = 120/60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicioRango, cuadranteColumna[prop].domingoFinRango) / 60;
+                                lasHorasExtra = null;
+                            };
                             arrayResultante[index].computo.push({
                                 dia: 'Domingo-' + mySplit[1],
-                                horas: lasHoras
+                                horasNormal: lasHorasNormal,
+                                horasExtra: lasHorasExtra
                             });
-                            sumatorioHoras += lasHoras;
+                            sumatorioHorasNormal += lasHorasNormal;
+                            sumatorioHorasExtra += lasHorasExtra;
+                            sumatorioHoras += (lasHorasNormal + lasHorasExtra);
                         };
                     };
+                    arrayResultante[index].totalHorasNormal = sumatorioHorasNormal;
+                    arrayResultante[index].totalHorasExtra = sumatorioHorasExtra;
                     arrayResultante[index].totalHoras = sumatorioHoras;
                 }
                 break;
@@ -3183,9 +3790,14 @@ export const gestionarInformeAccion = (cuadrante) => (dispatch, getState) => {
                     trabajador: cuadranteColumna.idTrabajador,
                     trabajadorNombre: cuadranteColumna.nombreTrabajador,
                     tipo: cuadranteColumna.tipoTrabajador,
-                    computo: []
+                    computo: [],
+                    totalHorasNormal: null,
+                    totalHorasExtra: null,
+                    totalHoras: null
                 });
                 sumatorioHoras = 0;
+                sumatorioHorasNormal= 0;
+                sumatorioHorasExtra= 0;
                 let rango1, rango2;
                 for (const prop in cuadranteColumna) {
                     if (prop.includes('Lunes')) {
@@ -3196,12 +3808,51 @@ export const gestionarInformeAccion = (cuadrante) => (dispatch, getState) => {
                                 rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicio2RangoDescanso, cuadranteColumna[prop].lunesFin2RangoDescanso) / 60
                             } else {
                                 rango2 = 0;
-                            }
+                            };        
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = rango1+rango2;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = rango1+rango2;
+                                        lasHorasExtra = 30/60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = rango1+rango2;
+                                        lasHorasExtra = 60/60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = rango1+rango2;
+                                        lasHorasExtra = 90/60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = rango1+rango2;
+                                        lasHorasExtra = 120/60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = rango1+rango2;
+                                lasHorasExtra = null;
+                            };                                             
                             arrayResultante[index].computo.push({
                                 dia: 'Lunes-' + mySplit[1],
-                                horas: rango1 + rango2
+                                horasNormal: lasHorasNormal,
+                                horasExtra: lasHorasExtra
                             });
-                            sumatorioHoras += (rango1 + rango2);
+                            sumatorioHorasNormal += lasHorasNormal;
+                            sumatorioHorasExtra += lasHorasExtra;
+                            sumatorioHoras += (lasHorasNormal + lasHorasExtra);
                         }
                     };
                     if (prop.includes('Martes')) {
@@ -3212,12 +3863,51 @@ export const gestionarInformeAccion = (cuadrante) => (dispatch, getState) => {
                                 rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicio2RangoDescanso, cuadranteColumna[prop].martesFin2RangoDescanso) / 60
                             } else {
                                 rango2 = 0;
-                            }
+                            };
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = rango1+rango2;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = rango1+rango2;
+                                        lasHorasExtra = 30/60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = rango1+rango2;
+                                        lasHorasExtra = 60/60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = rango1+rango2;
+                                        lasHorasExtra = 90/60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = rango1+rango2;
+                                        lasHorasExtra = 120/60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = rango1+rango2;
+                                lasHorasExtra = null;
+                            };   
                             arrayResultante[index].computo.push({
                                 dia: 'Martes-' + mySplit[1],
-                                horas: rango1 + rango2
+                                horasNormal: lasHorasNormal,
+                                horasExtra: lasHorasExtra
                             });
-                            sumatorioHoras += (rango1 + rango2);
+                            sumatorioHorasNormal += lasHorasNormal;
+                            sumatorioHorasExtra += lasHorasExtra;
+                            sumatorioHoras += (lasHorasNormal + lasHorasExtra);
                         }
                     };
                     if (prop.includes('Miércoles')) {
@@ -3228,12 +3918,51 @@ export const gestionarInformeAccion = (cuadrante) => (dispatch, getState) => {
                                 rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicio2RangoDescanso, cuadranteColumna[prop].miercolesFin2RangoDescanso) / 60
                             } else {
                                 rango2 = 0;
-                            }
+                            };
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = rango1+rango2;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = rango1+rango2;
+                                        lasHorasExtra = 30/60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = rango1+rango2;
+                                        lasHorasExtra = 60/60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = rango1+rango2;
+                                        lasHorasExtra = 90/60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = rango1+rango2;
+                                        lasHorasExtra = 120/60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = rango1+rango2;
+                                lasHorasExtra = null;
+                            };   
                             arrayResultante[index].computo.push({
                                 dia: 'Miércoles-' + mySplit[1],
-                                horas: rango1 + rango2
+                                horasNormal: lasHorasNormal,
+                                horasExtra: lasHorasExtra
                             });
-                            sumatorioHoras += (rango1 + rango2);
+                            sumatorioHorasNormal += lasHorasNormal;
+                            sumatorioHorasExtra += lasHorasExtra;
+                            sumatorioHoras += (lasHorasNormal + lasHorasExtra);
                         }
                     };
                     if (prop.includes('Jueves')) {
@@ -3244,12 +3973,51 @@ export const gestionarInformeAccion = (cuadrante) => (dispatch, getState) => {
                                 rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicio2RangoDescanso, cuadranteColumna[prop].juevesFin2RangoDescanso) / 60
                             } else {
                                 rango2 = 0;
-                            }
+                            };
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = rango1+rango2;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = rango1+rango2;
+                                        lasHorasExtra = 30/60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = rango1+rango2;
+                                        lasHorasExtra = 60/60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = rango1+rango2;
+                                        lasHorasExtra = 90/60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = rango1+rango2;
+                                        lasHorasExtra = 120/60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = rango1+rango2;
+                                lasHorasExtra = null;
+                            };   
                             arrayResultante[index].computo.push({
                                 dia: 'Jueves-' + mySplit[1],
-                                horas: rango1 + rango2
+                                horasNormal: lasHorasNormal,
+                                horasExtra: lasHorasExtra
                             });
-                            sumatorioHoras += (rango1 + rango2);
+                            sumatorioHorasNormal += lasHorasNormal;
+                            sumatorioHorasExtra += lasHorasExtra;
+                            sumatorioHoras += (lasHorasNormal + lasHorasExtra);
                         }
                     };
                     if (prop.includes('Viernes')) {
@@ -3260,12 +4028,51 @@ export const gestionarInformeAccion = (cuadrante) => (dispatch, getState) => {
                                 rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicio2RangoDescanso, cuadranteColumna[prop].viernesFin2RangoDescanso) / 60
                             } else {
                                 rango2 = 0;
-                            }
+                            };
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = rango1+rango2;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = rango1+rango2;
+                                        lasHorasExtra = 30/60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = rango1+rango2;
+                                        lasHorasExtra = 60/60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = rango1+rango2;
+                                        lasHorasExtra = 90/60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = rango1+rango2;
+                                        lasHorasExtra = 120/60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = rango1+rango2;
+                                lasHorasExtra = null;
+                            };   
                             arrayResultante[index].computo.push({
                                 dia: 'Viernes-' + mySplit[1],
-                                horas: rango1 + rango2
+                                horasNormal: lasHorasNormal,
+                                horasExtra: lasHorasExtra
                             });
-                            sumatorioHoras += (rango1 + rango2);
+                            sumatorioHorasNormal += lasHorasNormal;
+                            sumatorioHorasExtra += lasHorasExtra;
+                            sumatorioHoras += (lasHorasNormal + lasHorasExtra);
                         }
                     };
                     if (prop.includes('Sábado')) {
@@ -3276,12 +4083,51 @@ export const gestionarInformeAccion = (cuadrante) => (dispatch, getState) => {
                                 rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicio2RangoDescanso, cuadranteColumna[prop].sabadoFin2RangoDescanso) / 60
                             } else {
                                 rango2 = 0;
-                            }
+                            };
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = rango1+rango2;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = rango1+rango2;
+                                        lasHorasExtra = 30/60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = rango1+rango2;
+                                        lasHorasExtra = 60/60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = rango1+rango2;
+                                        lasHorasExtra = 90/60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = rango1+rango2;
+                                        lasHorasExtra = 120/60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = rango1+rango2;
+                                lasHorasExtra = null;
+                            };   
                             arrayResultante[index].computo.push({
                                 dia: 'Sábado-' + mySplit[1],
-                                horas: rango1 + rango2
+                                horasNormal: lasHorasNormal,
+                                horasExtra: lasHorasExtra
                             });
-                            sumatorioHoras += (rango1 + rango2);
+                            sumatorioHorasNormal += lasHorasNormal;
+                            sumatorioHorasExtra += lasHorasExtra;
+                            sumatorioHoras += (lasHorasNormal + lasHorasExtra);
                         }
                     };
                     if (prop.includes('Domingo')) {
@@ -3292,14 +4138,55 @@ export const gestionarInformeAccion = (cuadrante) => (dispatch, getState) => {
                                 rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicio2RangoDescanso, cuadranteColumna[prop].domingoFin2RangoDescanso) / 60
                             } else {
                                 rango2 = 0;
-                            }
+                            };
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = rango1+rango2;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = rango1+rango2;
+                                        lasHorasExtra = 30/60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = rango1+rango2;
+                                        lasHorasExtra = 60/60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = rango1+rango2;
+                                        lasHorasExtra = 90/60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = rango1+rango2;
+                                        lasHorasExtra = 120/60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = rango1+rango2;
+                                lasHorasExtra = null;
+                            };   
                             arrayResultante[index].computo.push({
                                 dia: 'Domingo-' + mySplit[1],
-                                horas: rango1 + rango2
+                                horasNormal: lasHorasNormal,
+                                horasExtra: lasHorasExtra
                             });
-                            sumatorioHoras += (rango1 + rango2);
+                            sumatorioHorasNormal += lasHorasNormal;
+                            sumatorioHorasExtra += lasHorasExtra;
+                            sumatorioHoras += (lasHorasNormal + lasHorasExtra);
                         }
                     };
+                    arrayResultante[index].totalHorasNormal = sumatorioHorasNormal;
+                    arrayResultante[index].totalHorasExtra = sumatorioHorasExtra;
                     arrayResultante[index].totalHoras = sumatorioHoras;
                 }
                 break;
@@ -3308,87 +4195,360 @@ export const gestionarInformeAccion = (cuadrante) => (dispatch, getState) => {
                     trabajador: cuadranteColumna.idTrabajador,
                     trabajadorNombre: cuadranteColumna.nombreTrabajador,
                     tipo: cuadranteColumna.tipoTrabajador,
-                    computo: []
+                    computo: [],
+                    totalHorasNormal: null,
+                    totalHorasExtra: null,
+                    totalHoras: null
                 });
                 sumatorioHoras = 0;
+                sumatorioHorasNormal= 0;
+                sumatorioHorasExtra= 0;
                 for (const prop in cuadranteColumna) {
                     if (prop.includes('Lunes')) {
                         const mySplit = prop.split('Lunes');
-                        if (cuadranteColumna[prop].lunesCantidad) {
-                            lasHoras = cuadranteColumna[prop].lunesCantidad / 60
+                        if (cuadranteColumna[prop].lunesCantidad) {                           
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = cuadranteColumna[prop].lunesCantidad / 60;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].lunesCantidad / 60;
+                                        lasHorasExtra = 30/60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].lunesCantidad / 60;
+                                        lasHorasExtra = 60/60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].lunesCantidad / 60;
+                                        lasHorasExtra = 90/60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].lunesCantidad / 60;
+                                        lasHorasExtra = 120/60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = cuadranteColumna[prop].lunesCantidad / 60;
+                                lasHorasExtra = null;
+                            };   
                             arrayResultante[index].computo.push({
                                 dia: 'Lunes-' + mySplit[1],
-                                horas: lasHoras
+                                horasNormal: lasHorasNormal,
+                                horasExtra: lasHorasExtra
                             });
-                            sumatorioHoras += lasHoras;
+                            sumatorioHorasNormal += lasHorasNormal;
+                            sumatorioHorasExtra += lasHorasExtra;
+                            sumatorioHoras += (lasHorasNormal + lasHorasExtra);
                         }
                     };
                     if (prop.includes('Martes')) {
                         const mySplit = prop.split('Martes');
                         if (cuadranteColumna[prop].martesCantidad) {
-                            lasHoras = cuadranteColumna[prop].martesCantidad / 60
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = cuadranteColumna[prop].martesCantidad / 60;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].martesCantidad / 60;
+                                        lasHorasExtra = 30/60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].martesCantidad / 60;
+                                        lasHorasExtra = 60/60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].martesCantidad / 60;
+                                        lasHorasExtra = 90/60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].martesCantidad / 60;
+                                        lasHorasExtra = 120/60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = cuadranteColumna[prop].martesCantidad / 60;
+                                lasHorasExtra = null;
+                            };   
                             arrayResultante[index].computo.push({
                                 dia: 'Martes-' + mySplit[1],
-                                horas: lasHoras
+                                horasNormal: lasHorasNormal,
+                                horasExtra: lasHorasExtra
                             });
-                            sumatorioHoras += lasHoras;
+                            sumatorioHorasNormal += lasHorasNormal;
+                            sumatorioHorasExtra += lasHorasExtra;
+                            sumatorioHoras += (lasHorasNormal + lasHorasExtra);
                         }
                     };
                     if (prop.includes('Miércoles')) {
                         const mySplit = prop.split('Miércoles');
                         if (cuadranteColumna[prop].miercolesCantidad) {
-                            lasHoras = cuadranteColumna[prop].miercolesCantidad / 60
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = cuadranteColumna[prop].miercolesCantidad / 60;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].miercolesCantidad / 60;
+                                        lasHorasExtra = 30/60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].miercolesCantidad / 60;
+                                        lasHorasExtra = 60/60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].miercolesCantidad / 60;
+                                        lasHorasExtra = 90/60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].miercolesCantidad / 60;
+                                        lasHorasExtra = 120/60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = cuadranteColumna[prop].miercolesCantidad / 60;
+                                lasHorasExtra = null;
+                            };   
                             arrayResultante[index].computo.push({
                                 dia: 'Miércoles-' + mySplit[1],
-                                horas: lasHoras
+                                horasNormal: lasHorasNormal,
+                                horasExtra: lasHorasExtra
                             });
-                            sumatorioHoras += lasHoras;
+                            sumatorioHorasNormal += lasHorasNormal;
+                            sumatorioHorasExtra += lasHorasExtra;
+                            sumatorioHoras += (lasHorasNormal + lasHorasExtra);
                         }
                     };
                     if (prop.includes('Jueves')) {
                         const mySplit = prop.split('Jueves');
                         if (cuadranteColumna[prop].juevesCantidad) {
-                            lasHoras = cuadranteColumna[prop].juevesCantidad / 60
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = cuadranteColumna[prop].juevesCantidad / 60;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].juevesCantidad / 60;
+                                        lasHorasExtra = 30/60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].juevesCantidad / 60;
+                                        lasHorasExtra = 60/60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].juevesCantidad / 60;
+                                        lasHorasExtra = 90/60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].juevesCantidad / 60;
+                                        lasHorasExtra = 120/60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = cuadranteColumna[prop].juevesCantidad / 60;
+                                lasHorasExtra = null;
+                            };   
                             arrayResultante[index].computo.push({
                                 dia: 'Jueves-' + mySplit[1],
-                                horas: lasHoras
+                                horasNormal: lasHorasNormal,
+                                horasExtra: lasHorasExtra
                             });
-                            sumatorioHoras += lasHoras;
+                            sumatorioHorasNormal += lasHorasNormal;
+                            sumatorioHorasExtra += lasHorasExtra;
+                            sumatorioHoras += (lasHorasNormal + lasHorasExtra);
                         }
                     };
                     if (prop.includes('Viernes')) {
                         const mySplit = prop.split('Viernes');
                         if (cuadranteColumna[prop].viernesCantidad) {
-                            lasHoras = cuadranteColumna[prop].viernesCantidad / 60
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = cuadranteColumna[prop].viernesCantidad / 60;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].viernesCantidad / 60;
+                                        lasHorasExtra = 30/60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].viernesCantidad / 60;
+                                        lasHorasExtra = 60/60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].viernesCantidad / 60;
+                                        lasHorasExtra = 90/60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].viernesCantidad / 60;
+                                        lasHorasExtra = 120/60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = cuadranteColumna[prop].viernesCantidad / 60;
+                                lasHorasExtra = null;
+                            };  
                             arrayResultante[index].computo.push({
                                 dia: 'Viernes-' + mySplit[1],
-                                horas: lasHoras
+                                horasNormal: lasHorasNormal,
+                                horasExtra: lasHorasExtra
                             });
-                            sumatorioHoras += lasHoras;
+                            sumatorioHorasNormal += lasHorasNormal;
+                            sumatorioHorasExtra += lasHorasExtra;
+                            sumatorioHoras += (lasHorasNormal + lasHorasExtra);
                         }
                     };
                     if (prop.includes('Sábado')) {
                         const mySplit = prop.split('Sábado');
                         if (cuadranteColumna[prop].sabadoCantidad) {
-                            lasHoras = cuadranteColumna[prop].sabadoCantidad / 60
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = cuadranteColumna[prop].sabadoCantidad / 60;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].sabadoCantidad / 60;
+                                        lasHorasExtra = 30/60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].sabadoCantidad / 60;
+                                        lasHorasExtra = 60/60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].sabadoCantidad / 60;
+                                        lasHorasExtra = 90/60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].sabadoCantidad / 60;
+                                        lasHorasExtra = 120/60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = cuadranteColumna[prop].sabadoCantidad / 60;
+                                lasHorasExtra = null;
+                            };  
                             arrayResultante[index].computo.push({
                                 dia: 'Sábado-' + mySplit[1],
-                                horas: lasHoras
+                                horasNormal: lasHorasNormal,
+                                horasExtra: lasHorasExtra
                             });
-                            sumatorioHoras += lasHoras;
+                            sumatorioHorasNormal += lasHorasNormal;
+                            sumatorioHorasExtra += lasHorasExtra;
+                            sumatorioHoras += (lasHorasNormal + lasHorasExtra);
                         }
                     };
                     if (prop.includes('Domingo')) {
                         const mySplit = prop.split('Domingo');
                         if (cuadranteColumna[prop].domingoCantidad) {
-                            lasHoras = cuadranteColumna[prop].domingoCantidad / 60
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = cuadranteColumna[prop].domingoCantidad / 60;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].domingoCantidad / 60;
+                                        lasHorasExtra = 30/60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].domingoCantidad / 60;
+                                        lasHorasExtra = 60/60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].domingoCantidad / 60;
+                                        lasHorasExtra = 90/60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].domingoCantidad / 60;
+                                        lasHorasExtra = 120/60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = cuadranteColumna[prop].domingoCantidad / 60;
+                                lasHorasExtra = null;
+                            }; 
                             arrayResultante[index].computo.push({
                                 dia: 'Domingo-' + mySplit[1],
-                                horas: lasHoras
+                                horasNormal: lasHorasNormal,
+                                horasExtra: lasHorasExtra
                             });
-                            sumatorioHoras += lasHoras;
+                            sumatorioHorasNormal += lasHorasNormal;
+                            sumatorioHorasExtra += lasHorasExtra;
+                            sumatorioHoras += (lasHorasNormal + lasHorasExtra);
                         }
                     };
+                    arrayResultante[index].totalHorasNormal = sumatorioHorasNormal;
+                    arrayResultante[index].totalHorasExtra = sumatorioHorasExtra;
                     arrayResultante[index].totalHoras = sumatorioHoras;
                 }
                 break;

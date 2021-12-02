@@ -139,9 +139,12 @@ const Constantes = {
     ],
     CALENDARIO_FESTIVOS: festivos,
     VARIACIONES_CUADRANTES: [
-        { value: 1, label: 'Añadir 1/2 hora de trabajo' },
-        { value: 2, label: 'Añadir 1 hora de trabajo' },
-        { value: 3, label: 'Horas especiales (+15%)' }
+        { value: 1, label: 'Considerar como horas extra' },
+        { value: 2, label: 'Añadir 0.5 horas extra de trabajo' },
+        { value: 3, label: 'Añadir 1 hora extra de trabajo' },
+        { value: 4, label: 'Añadir 1.5 horas extra de trabajo' },
+        { value: 5, label: 'Añadir 2 horas extra de trabajo' },      
+        { value: 6, label: 'Horas especiales (+15%)' }
     ],
     COMPUTO_HORAS: [
         { value: 1, label: 'Total mensual pactado' },

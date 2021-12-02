@@ -1,11 +1,10 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { makeStyles } from "@material-ui/core";
 import Constantes from "../constantes";
 import DateFnsUtils from '@date-io/date-fns';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
-import { MuiPickersUtilsProvider, TimePicker, } from '@material-ui/pickers';
+import { MuiPickersUtilsProvider, TimePicker } from '@material-ui/pickers';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -13,24 +12,23 @@ import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import SaveIcon from '@material-ui/icons/Save';
+import TimerIcon from '@material-ui/icons/Timer';
+import TimerOffIcon from '@material-ui/icons/TimerOff';
+import Tooltip from '@material-ui/core/Tooltip';
+import clsx from 'clsx';
+import IconButton from '@material-ui/core/IconButton';
+import OutlinedInput from "@material-ui/core/OutlinedInput";
+
+//estilos
+import Clases from "../clases";
 
 const cantidadHoras = Constantes.CANTIDAD_HORAS_CENTROS;
-const estilos = makeStyles((theme) => ({
-    //form
-    form: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        flexWrap: 'wrap',
-    },
-    mt15: {
-        marginTop: 15,
-    },
-}));
+const variaciones = Constantes.VARIACIONES_CUADRANTES;
+
 
 const ItemCuadrante = (props) => {
 
-    const classes = estilos();
+    const classes = Clases();
     const disabledItem = useSelector(store => store.variablesCuadrantes.estadoActivadoDesactivadoCambio);
 
     const [valoresPrevios, setValoresPrevios] = useState({
@@ -44,11 +42,13 @@ const ItemCuadrante = (props) => {
         finRangoDescanso2: props.prValueTimePickerFin2 || null,
         cantidad: props.prValueCantidadHoras || '',
         observaciones: props.prObservaciones || '',
+        visibleVariaciones: props.prVisibleVariaciones || false,
+        tipoVariacion: props.prTipoVariacion || '',
     });
 
     //useEffect
 
-    useEffect(() => {        
+    useEffect(() => {
         gestionItemPrevioEditando(props.prTipo, valoresPrevios);
     }, []);
 
@@ -72,9 +72,66 @@ const ItemCuadrante = (props) => {
     const handleRegistrarCambioEnCasilla = (id, index, tipo) => {
         props.prHandleRegistrarCambioEnCasilla(id, index, tipo);
     };
+    const handleVisibleVariaciones = (index, elId) => (e) => {
+        props.prHandleVisibleVariaciones(index, elId, e);
+    };
+    const handleChangeTipoVariaciones = (index) => (e) => {
+        props.prHandleChangeTipoVariaciones(index, e);
+    };
+
+    const retornaBotonVariaciones = () => {        
+        if (!props.prVisibleVariaciones) {
+            if ((props.prTipo === 'rango' && !props.prValueTimePickerInicio) || (props.prTipo === 'rangoDescanso' && !props.prValueTimePickerInicio1) || (props.prTipo === 'cantidad' && !props.prValueCantidadHoras)) {
+                return (
+                    <IconButton
+                        className={clsx(classes.btnVariacion, classes.blanc, classes.mb10)}
+                        disabled={true}
+                        size="small"
+                    >
+                        <TimerIcon />
+                    </IconButton>
+                )
+            } else {
+                return (
+                    <Tooltip title="Añadir variación" placement="top-end" arrow>
+                        <IconButton
+                            className={clsx(classes.btnVariacion, classes.blanc, classes.mb10)}
+                            id={props.prTipo === 'rango' ? ('visibleVariaciones-' + props.prIdInicio) : props.prTipo === 'rangoDescanso' ? ('visibleVariaciones-' + props.prIdInicio1) : ('visibleVariaciones-' + props.prIdCantidad)}
+                            size="small"
+                            onClick={handleVisibleVariaciones(props.prIndex, (props.prTipo === 'rango' ? ('visibleVariaciones-' + props.prIdInicio) : props.prTipo === 'rangoDescanso' ? ('visibleVariaciones-' + props.prIdInicio1) : ('visibleVariaciones-' + props.prIdCantidad)))}
+                        >
+                            <TimerIcon />
+                        </IconButton>
+                    </Tooltip>
+                )
+            }
+        }
+        if (props.prVisibleVariaciones) {
+            return (
+                <Tooltip title="Eliminar variación" placement="top-end" arrow>
+                    <IconButton
+                        className={clsx(classes.btnError, classes.blanc, classes.mb10)}
+                        id={props.prTipo === 'rango' ? ('visibleVariaciones-' + props.prIdInicio) : props.prTipo === 'rangoDescanso' ? ('visibleVariaciones-' + props.prIdInicio1) : ('visibleVariaciones-' + props.prIdCantidad)}
+                        size="small"
+                        onClick={handleVisibleVariaciones(props.prIndex, (props.prTipo === 'rango' ? ('visibleVariaciones-' + props.prIdInicio) : props.prTipo === 'rangoDescanso' ? ('visibleVariaciones-' + props.prIdInicio1) : ('visibleVariaciones-' + props.prIdCantidad)))}
+                    >
+                        <TimerOffIcon />
+                    </IconButton>
+                </Tooltip>
+            )
+        }
+    };
 
     return (
         <div>
+            <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="flex-end"
+                className={classes.mt_25}
+            >
+                {retornaBotonVariaciones()}
+            </Box>
             {props.prTipo === 'rango' ? (
                 <Box style={{ display: 'flex', flexDirection: 'row', justifycontent: 'flex-start', alignItems: 'flex-start' }}>
                     <Grid item xs={6}>
@@ -222,6 +279,35 @@ const ItemCuadrante = (props) => {
                     onChange={handleChangeObservaciones(props.prIndex)}
                 />
             </Box>
+            <Box
+                className={classes.root}
+                display={props.prVisibleVariaciones ? 'block' : 'none'}
+            >
+                <FormControl
+                    variant="outlined"
+                    fullWidth
+                    className={classes.mt15}
+                >
+                    <InputLabel>Variaciones</InputLabel>
+                    <Select
+                        display="none"
+                        name={props.prTipo === 'rango' ? ('tipoVariacionSelect-' + props.prIdInicio) : props.prTipo === 'rangoDescanso' ? ('tipoVariacionSelect-' + props.prIdInicio1) : ('tipoVariacionSelect-' + props.prIdCantidad)}
+                        value={props.prTipoVariacion || ''}
+                        onChange={handleChangeTipoVariaciones(props.prIndex)}
+                        input={
+                            <OutlinedInput
+                                labelWidth={90}
+                            />
+                        }
+                    >
+                        {variaciones.map((option) => (
+                            <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            </Box>
             <Button
                 className={classes.mt15}
                 disabled={disabledItem}
@@ -233,8 +319,7 @@ const ItemCuadrante = (props) => {
                 onClick={() => props.prTipo === 'rango' ? (handleRegistrarCambioEnCasilla(props.prIdInicio, props.prIndex, props.prTipo)) : props.prTipo === 'rangoDescanso' ? (handleRegistrarCambioEnCasilla(props.prIdInicio1, props.prIndex, props.prTipo)) : (handleRegistrarCambioEnCasilla(props.prIdCantidad, props.prIndex, props.prTipo))}
             >
                 Registrar cambio
-            </Button>
-            {/* {console.log(props.prValueTimePickerInicio)} */}
+            </Button>            
         </div>
     )
 }

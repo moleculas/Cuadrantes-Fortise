@@ -71,9 +71,12 @@ const Contenedor = () => {
                         <Route path="/cuadrantes" >
                             <Cuadrantes />
                         </Route>
-                        <Route path="/trabajadores" >
+                        <Route path="/trabajadores/:id/:nombre" exact>
                             <Trabajadores />
                         </Route>
+                        <Route path="/trabajadores" >
+                            <Trabajadores />
+                        </Route>                        
                         <Route path="/centros" >
                             <Centros />
                         </Route>

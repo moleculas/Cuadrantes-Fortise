@@ -196,6 +196,9 @@ const Clases = makeStyles((theme) => ({
     mt_5: {
         marginTop: -5,
     },
+    mt_25: {
+        marginTop: -25,
+    },
     btnAddTrabajador: {
         backgroundColor: theme.palette.secondary.main,
         color: theme.palette.error.contrastText,
@@ -404,6 +407,20 @@ const Clases = makeStyles((theme) => ({
             backgroundColor: `${indigo[50]} !important`,
         },
     },    
+    casillaBajas: {
+        cursor: 'pointer',
+        backgroundColor: theme.palette.background.default,
+        marginBottom: 5,
+        marginRight: 10,
+        paddingRight: 10,
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        "&:hover": {
+            backgroundColor: `${red[50]} !important`,
+        },
+    },    
     red: {
         color: theme.palette.getContrastText(red[500]),
         backgroundColor: red[500],
@@ -416,6 +433,10 @@ const Clases = makeStyles((theme) => ({
         width: theme.spacing(4),
         height: theme.spacing(4),
     },
+    link: {
+        textDecoration: 'none',
+        color: 'inherit'
+    }
 }));
 
 export default Clases;

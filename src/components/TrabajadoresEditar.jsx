@@ -126,6 +126,15 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
     }, [errorDeCargaTrabajadores]);
 
     useEffect(() => {
+        if (props.prVenimosTrabajadorBaja) {
+            setValuesAutocompleteTrabajadoresValores(props.prVenimosTrabajadorBaja)
+            dispatch(obtenerTrabajadorAccion('trabajadores', props.prVenimosTrabajadorBaja.id));
+            dispatch(activarDesactivarAccion(false));
+            setVisibleCentros(true);
+        }
+    }, [props.prVenimosTrabajadorBaja]);
+
+    useEffect(() => {
         if (exitoActualizacionTrabajador) {
             setAlert({
                 mensaje: "Registro actualizado correctamente.",
@@ -217,6 +226,7 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
     };
 
     const handleChangeSelectTrabajadoresEdicion = (e, values) => {
+        console.log(values)
         if (values) {
             setValuesAutocompleteTrabajadoresValores(values)
             dispatch(obtenerTrabajadorAccion('trabajadores', values.id));
@@ -809,7 +819,7 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                 prTituloDialog={tituloDialog}
                 prDescripcionDialog={descripcionDialog}
             />
-            {/* {console.log(historicoBajasEdicion)} */}
+            {/* {console.log(props.prVenimosTrabajadorBaja)} */}
         </div>
     )
 })

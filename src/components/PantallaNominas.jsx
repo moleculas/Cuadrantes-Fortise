@@ -8,6 +8,7 @@ import Avatar from '@material-ui/core/Avatar';
 import clsx from 'clsx';
 
 //carga componentes
+import Bajas from './Bajas';
 
 //estilos
 import Clases from "../clases";
@@ -24,6 +25,7 @@ const PantallaNominas = () => {
     const classes = Clases();
     const dispatch = useDispatch();
     const calendarioAGestionarNominas = useSelector(store => store.variablesNominas.calendarioAGestionarNominas);
+    const listadoTrabajadoresBaja = useSelector(store => store.variablesTrabajadores.arrayTrabajadoresBaja);
 
     //states
 
@@ -69,7 +71,7 @@ const PantallaNominas = () => {
                         <Grid item xs={11}>
                             <Typography variant="body2">Nóminas del mes de {monthLet} pendientes de gestionar</Typography>
                         </Grid>
-                        <Grid item xs={1}>
+                        <Grid item xs={1} className={classes.alignRight}>
                             {/* <Avatar
                                 className={clsx(classes.small, numeroCentrosPendientes === 0 ? classes.green : classes.red)}
                             >
@@ -108,18 +110,29 @@ const PantallaNominas = () => {
                         </Paper>
                     </Grid>
                     <Grid>
-                        <Box
+                    <Box
                             p={1.5}
                             m={1}
                             color="secondary.contrastText"
                             bgcolor="secondary.main"
+                            style={{ maxHeight: 45, minHeight: 45, display: 'flex', flexDirection: 'row', justifycontent: 'space-between', alignItems: 'center' }}
                         >
-                            <Typography variant="body2">Día</Typography>
+                            <Grid item xs={11}>
+                                <Typography variant="body2">Trabajadores de baja</Typography>
+                            </Grid>
+                            <Grid item xs={1} className={classes.alignRight}>
+                                <Avatar
+                                    className={clsx(classes.small, listadoTrabajadoresBaja.length === 0 ? classes.green : classes.red)}
+                                >
+                                    <Typography variant='body2'>{listadoTrabajadoresBaja.length}</Typography>
+                                </Avatar>
+                            </Grid>
                         </Box>
                         <Paper
                             elevation={1}
                             style={{ minHeight: heightContenedoresPeq, maxHeight: heightContenedoresPeq, margin: 8 }}
                         >
+                            <Bajas prHeightContenedores={heightContenedoresPeq} />
                         </Paper>
                     </Grid>
                 </Grid>

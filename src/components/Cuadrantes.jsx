@@ -36,7 +36,6 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import Popover from "@material-ui/core/Popover";
 import ChatIcon from '@material-ui/icons/Chat';
 import TimerIcon from '@material-ui/icons/Timer';
-import TimerOffIcon from '@material-ui/icons/TimerOff';
 import SaveIcon from '@material-ui/icons/Save';
 import SystemUpdateAltIcon from '@material-ui/icons/SystemUpdateAlt';
 import HomeIcon from '@material-ui/icons/Home';
@@ -285,7 +284,7 @@ const Cuadrantes = (props) => {
     useEffect(() => {
         dispatch(setCalendarioAGestionarAccion(dispatch(retornaAnoMesAccion())));
         dispatch(forzarRecargaPendientesAccion(true));
-        dispatch(forzarRecargaGraficosCuadrantesAccion(true));        
+        dispatch(forzarRecargaGraficosCuadrantesAccion(true));
         dispatch(onEstemAccion('cuadrantes'));
         dispatch(obtenerTrabajadoresAccion('trabajadores'));
     }, [dispatch]);
@@ -890,31 +889,28 @@ const Cuadrantes = (props) => {
     };
 
     const handleCambioAccordionHeader = (expandedAccordion, panel, index) => {
-        let arrayCuadrante = [...cuadrante];
-        if (arrayCuadrante[index].visibleVariaciones && !arrayCuadrante[index].tipoVariacion) {
-            arrayCuadrante[index].visibleVariaciones = false;
-            setCuadrante(arrayCuadrante);
-        };
         setExpandedAccordion(expandedAccordion ? panel : true);
         const scrollableRef = getRef('scrollable');
         expandedAccordion ? scrollableRef.current.classList.add(classes.openAccordion) : scrollableRef.current.classList.remove(classes.openAccordion);
     };
 
-    const handleVisibleVariaciones = (index) => {
+    const handleVisibleVariaciones = (index, elId, e) => {
+        const idSplitted = elId.split("-");
+        const key = idSplitted[2];
         let arrayCuadrante = [...cuadrante];
-        arrayCuadrante[index].visibleVariaciones = !arrayCuadrante[index].visibleVariaciones;
-        arrayCuadrante[index].tipoVariacion = '';
-        setCuadrante(arrayCuadrante);
+        arrayCuadrante[index][key].visibleVariaciones = !arrayCuadrante[index][key].visibleVariaciones;
+        arrayCuadrante[index][key].tipoVariacion = '';
+        setItemPrevioEditando({ ...itemPrevioEditando, modificado: true });
+        dispatch(activarDesactivarCambioAccion(false));
     };
 
-    const handleChangeTipoVariaciones = (index) => (e) => {
+    const handleChangeTipoVariaciones = (index, e) => {
+        const idSplitted = e.target.name.split("-");
+        const key = idSplitted[2];
         let arrayCuadrante = [...cuadrante];
-        arrayCuadrante[index].tipoVariacion = e.target.value;
-        setCuadrante(arrayCuadrante);
-        if (cuadranteRegistrado === 'si') {
-            dispatch(activarDesactivarCambioBotonActualizarAccion(false));
-        };
-        dispatch(registrarIntervencionAccion(false));
+        arrayCuadrante[index][key].tipoVariacion = e.target.value;
+        setItemPrevioEditando({ ...itemPrevioEditando, modificado: true });
+        dispatch(activarDesactivarCambioAccion(false));
     }
 
     const gestionaClassesColoresGeneral = (dia, trabajadorDiaDeBaja, modificado, nombreTrabajador) => {
@@ -945,7 +941,7 @@ const Cuadrantes = (props) => {
         }
     };
 
-    const gestionaTextoCasillas = (indexDia, dia, columna, diaSemana) => {
+    const gestionaTextoCasillas = (indexDia, dia, columna, diaSemana) => {     
         if (columna[dia].baja) {
             switch (columna[dia].tipoBaja) {
                 case 'baja':
@@ -1150,8 +1146,8 @@ const Cuadrantes = (props) => {
         }
     };
 
-    const gestionaValoresCasillas = (indexDia, dia, columna, diaSemana, casilla) => {
-        if (columna[dia].baja || stateFestivo['estadoFestivoDia' + (indexDia)]) {
+    const gestionaValoresCasillas = (indexDia, dia, columna, diaSemana, casilla) => {      
+        if (columna[dia].baja || stateFestivo['estadoFestivoDia' + (indexDia-1)]) {
             if (columna.tipoHorario === 'cantidad') {
                 return '';
             } else {
@@ -1690,13 +1686,18 @@ const Cuadrantes = (props) => {
     };
 
     const abrePopoverGeneral = (postRef, indexDia, dia, columna, ref, indexColumna) => (e) => {
+        let arrayCuadrante = [...cuadrante];
+        if (arrayCuadrante[indexColumna][postRef].visibleVariaciones && !arrayCuadrante[indexColumna][postRef].tipoVariacion) {
+            arrayCuadrante[indexColumna][postRef].visibleVariaciones = false;
+            setCuadrante(arrayCuadrante);
+        };
         setExpandedAccordion(false);
         const scrollableRef = getRef('scrollable');
         scrollableRef.current.classList.add(classes.openAccordion);
         setAnchorElGeneral(anchorElGeneral ? null : e.currentTarget);
         setVariablesPopoverGeneral({
             postRef: postRef,
-            indexDia: indexDia,
+            indexDia: indexDia + 1,
             dia: dia,
             columna: columna,
             indexColumna: indexColumna
@@ -1715,7 +1716,7 @@ const Cuadrantes = (props) => {
         const casilla = getRef(lastEditado);
         casilla.current.classList.remove(classes.editando);
         setLastEditado(null);
-        if (itemPrevioEditando) {
+        if (itemPrevioEditando) {            
             if (itemPrevioEditando.tipo === 'rango') {
                 if (itemPrevioEditando.id.includes('Lunes')) {
                     cuadrante[itemPrevioEditando.index][itemPrevioEditando.id].lunesInicioRango = dispatch(retornaHoraRangoAccion(itemPrevioEditando.inicioRango));
@@ -1746,6 +1747,8 @@ const Cuadrantes = (props) => {
                     cuadrante[itemPrevioEditando.index][itemPrevioEditando.id].domingoFinRango = dispatch(retornaHoraRangoAccion(itemPrevioEditando.finRango));
                 };
                 cuadrante[itemPrevioEditando.index][itemPrevioEditando.id].observaciones = itemPrevioEditando.observaciones;
+                cuadrante[itemPrevioEditando.index][itemPrevioEditando.id].visibleVariaciones = itemPrevioEditando.visibleVariaciones;
+                cuadrante[itemPrevioEditando.index][itemPrevioEditando.id].tipoVariacion = itemPrevioEditando.tipoVariacion;
             };
             if (itemPrevioEditando.tipo === 'rangoDescanso') {
                 if (itemPrevioEditando.id.includes('Lunes')) {
@@ -1791,6 +1794,8 @@ const Cuadrantes = (props) => {
                     cuadrante[itemPrevioEditando.index][itemPrevioEditando.id].domingoFin2RangoDescanso = dispatch(retornaHoraRangoAccion(itemPrevioEditando.finRangoDescanso2));
                 };
                 cuadrante[itemPrevioEditando.index][itemPrevioEditando.id].observaciones = itemPrevioEditando.observaciones;
+                cuadrante[itemPrevioEditando.index][itemPrevioEditando.id].visibleVariaciones = itemPrevioEditando.visibleVariaciones;
+                cuadrante[itemPrevioEditando.index][itemPrevioEditando.id].tipoVariacion = itemPrevioEditando.tipoVariacion;
             };
             if (itemPrevioEditando.tipo === 'cantidad') {
                 if (itemPrevioEditando.id.includes('Lunes')) {
@@ -1815,6 +1820,8 @@ const Cuadrantes = (props) => {
                     cuadrante[itemPrevioEditando.index][itemPrevioEditando.id].domingoCantidad = itemPrevioEditando.cantidad;
                 };
                 cuadrante[itemPrevioEditando.index][itemPrevioEditando.id].observaciones = itemPrevioEditando.observaciones;
+                cuadrante[itemPrevioEditando.index][itemPrevioEditando.id].visibleVariaciones = itemPrevioEditando.visibleVariaciones;
+                cuadrante[itemPrevioEditando.index][itemPrevioEditando.id].tipoVariacion = itemPrevioEditando.tipoVariacion;
             };
         };
         setItemPrevioEditando(null);
@@ -2077,6 +2084,8 @@ const Cuadrantes = (props) => {
                     inicioRango: valores.inicioRango,
                     finRango: valores.finRango,
                     observaciones: valores.observaciones,
+                    visibleVariaciones: valores.visibleVariaciones,
+                    tipoVariacion: valores.tipoVariacion,
                     modificado: false
                 })
                 break;
@@ -2090,6 +2099,8 @@ const Cuadrantes = (props) => {
                     inicioRangoDescanso2: valores.inicioRangoDescanso2,
                     finRangoDescanso2: valores.finRangoDescanso2,
                     observaciones: valores.observaciones,
+                    visibleVariaciones: valores.visibleVariaciones,
+                    tipoVariacion: valores.tipoVariacion,
                     modificado: false
                 })
                 break;
@@ -2100,6 +2111,8 @@ const Cuadrantes = (props) => {
                     id: key,
                     cantidad: valores.cantidad,
                     observaciones: valores.observaciones,
+                    visibleVariaciones: valores.visibleVariaciones,
+                    tipoVariacion: valores.tipoVariacion,
                     modificado: false
                 })
                 break;
@@ -2539,7 +2552,10 @@ const Cuadrantes = (props) => {
                 if (itemPrevioEditando.id.includes('Lunes')) {
                     if (arrayCuadrante[index][key].lunesInicioRango === elInicioRango &&
                         arrayCuadrante[index][key].lunesFinRango === elFinRango &&
-                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones) {
+                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones &&
+                        arrayCuadrante[index][key].visibleVariaciones === itemPrevioEditando.visibleVariaciones &&
+                        arrayCuadrante[index][key].tipoVariacion === itemPrevioEditando.tipoVariacion
+                    ) {
                         setItemPrevioEditando(null);
                         dispatch(activarDesactivarCambioAccion(true));
                         return;
@@ -2548,7 +2564,9 @@ const Cuadrantes = (props) => {
                 if (itemPrevioEditando.id.includes('Martes')) {
                     if (arrayCuadrante[index][key].martesInicioRango === elInicioRango &&
                         arrayCuadrante[index][key].martesFinRango === elFinRango &&
-                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones) {
+                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones &&
+                        arrayCuadrante[index][key].visibleVariaciones === itemPrevioEditando.visibleVariaciones &&
+                        arrayCuadrante[index][key].tipoVariacion === itemPrevioEditando.tipoVariacion) {
                         setItemPrevioEditando(null);
                         dispatch(activarDesactivarCambioAccion(true));
                         return;
@@ -2557,7 +2575,9 @@ const Cuadrantes = (props) => {
                 if (itemPrevioEditando.id.includes('Miércoles')) {
                     if (arrayCuadrante[index][key].miercolesInicioRango === elInicioRango &&
                         arrayCuadrante[index][key].miercolesFinRango === elFinRango &&
-                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones) {
+                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones &&
+                        arrayCuadrante[index][key].visibleVariaciones === itemPrevioEditando.visibleVariaciones &&
+                        arrayCuadrante[index][key].tipoVariacion === itemPrevioEditando.tipoVariacion) {
                         setItemPrevioEditando(null);
                         dispatch(activarDesactivarCambioAccion(true));
                         return;
@@ -2566,7 +2586,9 @@ const Cuadrantes = (props) => {
                 if (itemPrevioEditando.id.includes('Jueves')) {
                     if (arrayCuadrante[index][key].juevesInicioRango === elInicioRango &&
                         arrayCuadrante[index][key].juevesFinRango === elFinRango &&
-                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones) {
+                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones &&
+                        arrayCuadrante[index][key].visibleVariaciones === itemPrevioEditando.visibleVariaciones &&
+                        arrayCuadrante[index][key].tipoVariacion === itemPrevioEditando.tipoVariacion) {
                         setItemPrevioEditando(null);
                         dispatch(activarDesactivarCambioAccion(true));
                         return;
@@ -2575,7 +2597,9 @@ const Cuadrantes = (props) => {
                 if (itemPrevioEditando.id.includes('Viernes')) {
                     if (arrayCuadrante[index][key].viernesInicioRango === elInicioRango &&
                         arrayCuadrante[index][key].viernesFinRango === elFinRango &&
-                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones) {
+                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones &&
+                        arrayCuadrante[index][key].visibleVariaciones === itemPrevioEditando.visibleVariaciones &&
+                        arrayCuadrante[index][key].tipoVariacion === itemPrevioEditando.tipoVariacion) {
                         setItemPrevioEditando(null);
                         dispatch(activarDesactivarCambioAccion(true));
                         return;
@@ -2584,7 +2608,9 @@ const Cuadrantes = (props) => {
                 if (itemPrevioEditando.id.includes('Sábado')) {
                     if (arrayCuadrante[index][key].sabadoInicioRango === elInicioRango &&
                         arrayCuadrante[index][key].sabadoFinRango === elFinRango &&
-                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones) {
+                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones &&
+                        arrayCuadrante[index][key].visibleVariaciones === itemPrevioEditando.visibleVariaciones &&
+                        arrayCuadrante[index][key].tipoVariacion === itemPrevioEditando.tipoVariacion) {
                         setItemPrevioEditando(null);
                         dispatch(activarDesactivarCambioAccion(true));
                         return;
@@ -2593,7 +2619,9 @@ const Cuadrantes = (props) => {
                 if (itemPrevioEditando.id.includes('Domingo')) {
                     if (arrayCuadrante[index][key].domingoInicioRango === elInicioRango &&
                         arrayCuadrante[index][key].domingoFinRango === elFinRango &&
-                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones) {
+                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones &&
+                        arrayCuadrante[index][key].visibleVariaciones === itemPrevioEditando.visibleVariaciones &&
+                        arrayCuadrante[index][key].tipoVariacion === itemPrevioEditando.tipoVariacion) {
                         setItemPrevioEditando(null);
                         dispatch(activarDesactivarCambioAccion(true));
                         return;
@@ -2627,7 +2655,9 @@ const Cuadrantes = (props) => {
                         arrayCuadrante[index][key].lunesFin1RangoDescanso === elFinRangoDescanso1 &&
                         arrayCuadrante[index][key].lunesInicio2RangoDescanso === elInicioRangoDescanso2 &&
                         arrayCuadrante[index][key].lunesFin2RangoDescanso === elFinRangoDescanso2 &&
-                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones) {
+                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones &&
+                        arrayCuadrante[index][key].visibleVariaciones === itemPrevioEditando.visibleVariaciones &&
+                        arrayCuadrante[index][key].tipoVariacion === itemPrevioEditando.tipoVariacion) {
                         setItemPrevioEditando(null);
                         dispatch(activarDesactivarCambioAccion(true));
                         return;
@@ -2638,7 +2668,9 @@ const Cuadrantes = (props) => {
                         arrayCuadrante[index][key].martesFin1RangoDescanso === elFinRangoDescanso1 &&
                         arrayCuadrante[index][key].martesInicio2RangoDescanso === elInicioRangoDescanso2 &&
                         arrayCuadrante[index][key].martesFin2RangoDescanso === elFinRangoDescanso2 &&
-                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones) {
+                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones &&
+                        arrayCuadrante[index][key].visibleVariaciones === itemPrevioEditando.visibleVariaciones &&
+                        arrayCuadrante[index][key].tipoVariacion === itemPrevioEditando.tipoVariacion) {
                         setItemPrevioEditando(null);
                         dispatch(activarDesactivarCambioAccion(true));
                         return;
@@ -2649,7 +2681,9 @@ const Cuadrantes = (props) => {
                         arrayCuadrante[index][key].miercolesFin1RangoDescanso === elFinRangoDescanso1 &&
                         arrayCuadrante[index][key].miercolesInicio2RangoDescanso === elInicioRangoDescanso2 &&
                         arrayCuadrante[index][key].miercolesFin2RangoDescanso === elFinRangoDescanso2 &&
-                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones) {
+                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones &&
+                        arrayCuadrante[index][key].visibleVariaciones === itemPrevioEditando.visibleVariaciones &&
+                        arrayCuadrante[index][key].tipoVariacion === itemPrevioEditando.tipoVariacion) {
                         setItemPrevioEditando(null);
                         dispatch(activarDesactivarCambioAccion(true));
                         return;
@@ -2660,7 +2694,9 @@ const Cuadrantes = (props) => {
                         arrayCuadrante[index][key].juevesFin1RangoDescanso === elFinRangoDescanso1 &&
                         arrayCuadrante[index][key].juevesInicio2RangoDescanso === elInicioRangoDescanso2 &&
                         arrayCuadrante[index][key].juevesFin2RangoDescanso === elFinRangoDescanso2 &&
-                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones) {
+                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones &&
+                        arrayCuadrante[index][key].visibleVariaciones === itemPrevioEditando.visibleVariaciones &&
+                        arrayCuadrante[index][key].tipoVariacion === itemPrevioEditando.tipoVariacion) {
                         setItemPrevioEditando(null);
                         dispatch(activarDesactivarCambioAccion(true));
                         return;
@@ -2671,7 +2707,9 @@ const Cuadrantes = (props) => {
                         arrayCuadrante[index][key].viernesFin1RangoDescanso === elFinRangoDescanso1 &&
                         arrayCuadrante[index][key].viernesInicio2RangoDescanso === elInicioRangoDescanso2 &&
                         arrayCuadrante[index][key].viernesFin2RangoDescanso === elFinRangoDescanso2 &&
-                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones) {
+                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones &&
+                        arrayCuadrante[index][key].visibleVariaciones === itemPrevioEditando.visibleVariaciones &&
+                        arrayCuadrante[index][key].tipoVariacion === itemPrevioEditando.tipoVariacion) {
                         setItemPrevioEditando(null);
                         dispatch(activarDesactivarCambioAccion(true));
                         return;
@@ -2682,7 +2720,9 @@ const Cuadrantes = (props) => {
                         arrayCuadrante[index][key].sabadoFin1RangoDescanso === elFinRangoDescanso1 &&
                         arrayCuadrante[index][key].sabadoInicio2RangoDescanso === elInicioRangoDescanso2 &&
                         arrayCuadrante[index][key].sabadoFin2RangoDescanso === elFinRangoDescanso2 &&
-                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones) {
+                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones &&
+                        arrayCuadrante[index][key].visibleVariaciones === itemPrevioEditando.visibleVariaciones &&
+                        arrayCuadrante[index][key].tipoVariacion === itemPrevioEditando.tipoVariacion) {
                         setItemPrevioEditando(null);
                         dispatch(activarDesactivarCambioAccion(true));
                         return;
@@ -2693,7 +2733,9 @@ const Cuadrantes = (props) => {
                         arrayCuadrante[index][key].domingoFin1RangoDescanso === elFinRangoDescanso1 &&
                         arrayCuadrante[index][key].domingoInicio2RangoDescanso === elInicioRangoDescanso2 &&
                         arrayCuadrante[index][key].domingoFin2RangoDescanso === elFinRangoDescanso2 &&
-                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones) {
+                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones &&
+                        arrayCuadrante[index][key].visibleVariaciones === itemPrevioEditando.visibleVariaciones &&
+                        arrayCuadrante[index][key].tipoVariacion === itemPrevioEditando.tipoVariacion) {
                         setItemPrevioEditando(null);
                         dispatch(activarDesactivarCambioAccion(true));
                         return;
@@ -2703,7 +2745,9 @@ const Cuadrantes = (props) => {
             if (itemPrevioEditando.tipo === 'cantidad') {
                 if (itemPrevioEditando.id.includes('Lunes')) {
                     if (arrayCuadrante[index][key].lunesCantidad === itemPrevioEditando.cantidad &&
-                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones) {
+                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones &&
+                        arrayCuadrante[index][key].visibleVariaciones === itemPrevioEditando.visibleVariaciones &&
+                        arrayCuadrante[index][key].tipoVariacion === itemPrevioEditando.tipoVariacion) {
                         setItemPrevioEditando(null);
                         dispatch(activarDesactivarCambioAccion(true));
                         return;
@@ -2711,7 +2755,9 @@ const Cuadrantes = (props) => {
                 };
                 if (itemPrevioEditando.id.includes('Martes')) {
                     if (arrayCuadrante[index][key].martesCantidad === itemPrevioEditando.cantidad &&
-                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones) {
+                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones &&
+                        arrayCuadrante[index][key].visibleVariaciones === itemPrevioEditando.visibleVariaciones &&
+                        arrayCuadrante[index][key].tipoVariacion === itemPrevioEditando.tipoVariacion) {
                         setItemPrevioEditando(null);
                         dispatch(activarDesactivarCambioAccion(true));
                         return;
@@ -2719,7 +2765,9 @@ const Cuadrantes = (props) => {
                 };
                 if (itemPrevioEditando.id.includes('Miércoles')) {
                     if (arrayCuadrante[index][key].miercolesCantidad === itemPrevioEditando.cantidad &&
-                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones) {
+                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones &&
+                        arrayCuadrante[index][key].visibleVariaciones === itemPrevioEditando.visibleVariaciones &&
+                        arrayCuadrante[index][key].tipoVariacion === itemPrevioEditando.tipoVariacion) {
                         setItemPrevioEditando(null);
                         dispatch(activarDesactivarCambioAccion(true));
                         return;
@@ -2727,7 +2775,9 @@ const Cuadrantes = (props) => {
                 };
                 if (itemPrevioEditando.id.includes('Jueves')) {
                     if (arrayCuadrante[index][key].juevesCantidad === itemPrevioEditando.cantidad &&
-                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones) {
+                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones &&
+                        arrayCuadrante[index][key].visibleVariaciones === itemPrevioEditando.visibleVariaciones &&
+                        arrayCuadrante[index][key].tipoVariacion === itemPrevioEditando.tipoVariacion) {
                         setItemPrevioEditando(null);
                         dispatch(activarDesactivarCambioAccion(true));
                         return;
@@ -2735,7 +2785,9 @@ const Cuadrantes = (props) => {
                 };
                 if (itemPrevioEditando.id.includes('Viernes')) {
                     if (arrayCuadrante[index][key].viernesCantidad === itemPrevioEditando.cantidad &&
-                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones) {
+                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones &&
+                        arrayCuadrante[index][key].visibleVariaciones === itemPrevioEditando.visibleVariaciones &&
+                        arrayCuadrante[index][key].tipoVariacion === itemPrevioEditando.tipoVariacion) {
                         setItemPrevioEditando(null);
                         dispatch(activarDesactivarCambioAccion(true));
                         return;
@@ -2743,7 +2795,9 @@ const Cuadrantes = (props) => {
                 };
                 if (itemPrevioEditando.id.includes('Sábado')) {
                     if (arrayCuadrante[index][key].sabadoCantidad === itemPrevioEditando.cantidad &&
-                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones) {
+                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones &&
+                        arrayCuadrante[index][key].visibleVariaciones === itemPrevioEditando.visibleVariaciones &&
+                        arrayCuadrante[index][key].tipoVariacion === itemPrevioEditando.tipoVariacion) {
                         setItemPrevioEditando(null);
                         dispatch(activarDesactivarCambioAccion(true));
                         return;
@@ -2751,7 +2805,9 @@ const Cuadrantes = (props) => {
                 };
                 if (itemPrevioEditando.id.includes('Domingo')) {
                     if (arrayCuadrante[index][key].domingoCantidad === itemPrevioEditando.cantidad &&
-                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones) {
+                        arrayCuadrante[index][key].observaciones === itemPrevioEditando.observaciones &&
+                        arrayCuadrante[index][key].visibleVariaciones === itemPrevioEditando.visibleVariaciones &&
+                        arrayCuadrante[index][key].tipoVariacion === itemPrevioEditando.tipoVariacion) {
                         setItemPrevioEditando(null);
                         dispatch(activarDesactivarCambioAccion(true));
                         return;
@@ -2772,7 +2828,7 @@ const Cuadrantes = (props) => {
 
     const retornaIconoVariacion = (columna, postRef, diaSemana) => {
         const aRetornarIcono =
-            <Tooltip title={variaciones[columna.tipoVariacion - 1].label} placement="top-end" arrow >
+            <Tooltip title={variaciones[columna[postRef].tipoVariacion - 1].label} placement="top-end" arrow >
                 <TimerIcon
                     className={classes.gris}
                     style={{ marginLeft: 3 }}
@@ -3037,7 +3093,11 @@ const Cuadrantes = (props) => {
                 elTipo = '(suplente)'
             };
             sumatorioHoras += dato.totalHoras;
-            arrayInforme.push(dato.trabajadorNombre + ' ' + elTipo + ' Total horas trabajadas mes trabajador: ' + dato.totalHoras + ' horas')
+            if(dato.totalHorasExtra){
+                arrayInforme.push(dato.trabajadorNombre + ' ' + elTipo + ' Total horas trabajadas mes trabajador: ' + dato.totalHorasNormal + ' horas + '+ dato.totalHorasExtra +' horas extra')
+            }else{
+                arrayInforme.push(dato.trabajadorNombre + ' ' + elTipo + ' Total horas trabajadas mes trabajador: ' + dato.totalHoras + ' horas')
+            };            
         });
         arrayInforme.push('Total horas trabajadas mes cuadrante: ' + sumatorioHoras + ' horas');
         if (objetoCuadrante.datosInforme.mensualPactado) {
@@ -3234,7 +3294,7 @@ const Cuadrantes = (props) => {
                                     />
                                 </Tooltip>
                             ) : null}
-                            {columna.tipoVariacion && !columna[postRef].festivo && !columna[postRef].baja ? (
+                            {columna[postRef].tipoVariacion && !columna[postRef].festivo && !columna[postRef].baja ? (
                                 retornaIconoVariacion(columna, postRef, dia[1][0])
                             ) : null}
                         </Box>
@@ -3249,7 +3309,7 @@ const Cuadrantes = (props) => {
             <Backdrop className={classes.loading} open={openLoading}>
                 <CircularProgress color="inherit" />
             </Backdrop>
-            <Grid container spacing={2} style={{marginTop: -13}}>
+            <Grid container spacing={2} style={{ marginTop: -13 }}>
                 <Grid item xs={12}>
                     <Box style={{ display: 'flex', flexDirection: 'row', justifycontent: 'space-between', alignItems: 'center' }}>
                         <Grid item xs={9}>
@@ -3562,27 +3622,6 @@ const Cuadrantes = (props) => {
                                                                                     <CachedIcon />
                                                                                 </IconButton>
                                                                             </Tooltip>
-                                                                            {!columnaCabecera.visibleVariaciones ? (
-                                                                                <Tooltip title="Añadir variación" placement="top-end" arrow>
-                                                                                    <IconButton
-                                                                                        className={clsx(classes.btnVariacion, classes.blanc, classes.mb10)}
-                                                                                        size="small"
-                                                                                        onClick={() => handleVisibleVariaciones(index)}
-                                                                                    >
-                                                                                        <TimerIcon />
-                                                                                    </IconButton>
-                                                                                </Tooltip>
-                                                                            ) : (
-                                                                                <Tooltip title="Eliminar variación" placement="top-end" arrow>
-                                                                                    <IconButton
-                                                                                        className={clsx(classes.btnError, classes.blanc, classes.mb10)}
-                                                                                        size="small"
-                                                                                        onClick={() => handleVisibleVariaciones(index)}
-                                                                                    >
-                                                                                        <TimerOffIcon />
-                                                                                    </IconButton>
-                                                                                </Tooltip>
-                                                                            )}
                                                                             <Tooltip title="Eliminar trabajador" placement="top-end" arrow>
                                                                                 <IconButton
                                                                                     className={clsx(classes.btnError, classes.mb10)}
@@ -3619,35 +3658,6 @@ const Cuadrantes = (props) => {
                                                                         ))}
                                                                     </Select>
                                                                 </FormControl>
-                                                                <Box
-                                                                    className={classes.root}
-                                                                    display={columnaCabecera.visibleVariaciones ? 'block' : 'none'}
-                                                                >
-                                                                    <FormControl
-                                                                        variant="outlined"
-                                                                        fullWidth
-                                                                        className={classes.mt15}
-                                                                    >
-                                                                        <InputLabel>Variaciones</InputLabel>
-                                                                        <Select
-                                                                            display="none"
-                                                                            id={`form-variaciones-` + (index + 1)}
-                                                                            value={columnaCabecera.tipoVariacion || ''}
-                                                                            onChange={handleChangeTipoVariaciones(index)}
-                                                                            input={
-                                                                                <OutlinedInput
-                                                                                    labelWidth={90}
-                                                                                />
-                                                                            }
-                                                                        >
-                                                                            {variaciones.map((option) => (
-                                                                                <MenuItem key={option.value} value={option.value}>
-                                                                                    {option.label}
-                                                                                </MenuItem>
-                                                                            ))}
-                                                                        </Select>
-                                                                    </FormControl>
-                                                                </Box>
                                                             </Grid>
                                                         </Grid>
                                                     </AccordionDetails>
@@ -3768,6 +3778,10 @@ const Cuadrantes = (props) => {
                                         prValueTimePickerInicio={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillas(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 1) : null}
                                         prValueTimePickerFin={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillas(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 2) : null}
                                         prObservaciones={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].observaciones : null}
+                                        prVisibleVariaciones={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].visibleVariaciones : false}
+                                        prTipoVariacion={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].tipoVariacion : ''}
+                                        prHandleVisibleVariaciones={handleVisibleVariaciones}
+                                        prHandleChangeTipoVariaciones={handleChangeTipoVariaciones}
                                         prHandleChangeTimePickerInicioCuadrante={handleChangeTimePickerInicioCuadrante}
                                         prHandleChangeTimePickerFinCuadrante={handleChangeTimePickerFinCuadrante}
                                         prHandleChangeObservaciones={handleChangeObservaciones}
@@ -3783,6 +3797,10 @@ const Cuadrantes = (props) => {
                                         prIdCantidad={'selectCantidad-' + variablesPopoverGeneral.postRef}
                                         prValueCantidadHoras={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillas(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 1) : null}
                                         prObservaciones={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].observaciones : null}
+                                        prVisibleVariaciones={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].visibleVariaciones : false}
+                                        prTipoVariacion={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].tipoVariacion : ''}
+                                        prHandleVisibleVariaciones={handleVisibleVariaciones}
+                                        prHandleChangeTipoVariaciones={handleChangeTipoVariaciones}
                                         prHandleChangeSelectCantidad={handleChangeSelectCantidad}
                                         prHandleChangeObservaciones={handleChangeObservaciones}
                                         prGestionItemPrevioEditando={gestionItemPrevioEditando}
@@ -3803,6 +3821,10 @@ const Cuadrantes = (props) => {
                                         prValueTimePickerInicio2={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillas(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 3) : null}
                                         prValueTimePickerFin2={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillas(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 4) : null}
                                         prObservaciones={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].observaciones : null}
+                                        prVisibleVariaciones={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].visibleVariaciones : false}
+                                        prTipoVariacion={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].tipoVariacion : ''}
+                                        prHandleVisibleVariaciones={handleVisibleVariaciones}
+                                        prHandleChangeTipoVariaciones={handleChangeTipoVariaciones}
                                         prHandleChangeTimePickerInicioCuadrante={handleChangeTimePickerInicioCuadrante}
                                         prHandleChangeTimePickerFinCuadrante={handleChangeTimePickerFinCuadrante}
                                         prHandleChangeObservaciones={handleChangeObservaciones}
@@ -3848,7 +3870,7 @@ const Cuadrantes = (props) => {
                 prFullWidth={true}
                 prMaxWidth={true}
             />
-            {/* {console.log(controladorDeEstado)} */}
+            {/* {console.log(arrayDatosInforme)} */}
         </div>
     )
 }

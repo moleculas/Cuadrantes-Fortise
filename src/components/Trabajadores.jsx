@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { withRouter } from "react-router-dom";
+import { withRouter, useParams } from "react-router-dom";
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
@@ -89,6 +89,7 @@ const StyledMenu = withStyles({
 
 const Trabajadores = (props) => {
 
+    const { id, nombre } = useParams();
     const classes = Clases();
     const dispatch = useDispatch();
     const logged = useSelector(store => store.variablesUsuario.activo);
@@ -111,6 +112,7 @@ const Trabajadores = (props) => {
     const [preValueTab, setPreValueTab] = useState(null);
     const [anchorElMenu, setAnchorElMenu] = useState(null);
     const [heightScrollable, setHeightScrollable] = useState(getHeightScrollable());
+    const [venimosTrabajadorBaja, setVenimosTrabajadorBaja] = useState(null);
 
     //useEffect
 
@@ -129,6 +131,14 @@ const Trabajadores = (props) => {
             window.removeEventListener('resize', resizeListener);
         }
     }, []);
+
+    useEffect(() => {
+        if (id) {
+            setVenimosTrabajadorBaja({ id: id, nombre: nombre });
+        } else {
+            setVenimosTrabajadorBaja(null);
+        }
+    }, [id]);
 
     //funciones    
 
@@ -236,9 +246,9 @@ const Trabajadores = (props) => {
                                                     disabled={disabledItem}
                                                 >
                                                     <ListItemIcon>
-                                                        <DeleteIcon style={{color: 'red'}} fontSize="small" />
+                                                        <DeleteIcon style={{ color: 'red' }} fontSize="small" />
                                                     </ListItemIcon>
-                                                    <ListItemText style={{color: 'red'}} primary="Eliminar trabajador" />
+                                                    <ListItemText style={{ color: 'red' }} primary="Eliminar trabajador" />
                                                 </MenuItem>
                                             ) : (
                                                 <MenuItem
@@ -273,7 +283,7 @@ const Trabajadores = (props) => {
                                 </Tabs>
                             </AppBar>
                             <TabPanel value={valueTab} index={0} className={classes.scrollable} style={{ height: heightScrollable }}>
-                                <TrabajadoresEditar ref={funcionesEnTrabajadoresEditarRef} />
+                                <TrabajadoresEditar ref={funcionesEnTrabajadoresEditarRef} prVenimosTrabajadorBaja={venimosTrabajadorBaja} />
                             </TabPanel>
                             <TabPanel value={valueTab} index={1} className={classes.scrollable} style={{ height: heightScrollable }}>
                                 <TrabajadoresRegistrar ref={funcionesEnTrabajadoresRegistrarRef} />

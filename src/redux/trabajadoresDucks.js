@@ -6,6 +6,7 @@ const rutaApi = Constantes.RUTA_API;
 const dataInicial = {
     loadingTrabajadores: false,
     arrayTrabajadores: [],
+    arrayTrabajadoresBaja: [],
     errorDeCargaTrabajadores: false,
     objetoTrabajador: {
         id: null,
@@ -54,6 +55,7 @@ const dataInicial = {
 //types
 const LOADING_TRABAJADORES = 'LOADING_TRABAJADORES';
 const OBTENER_TRABAJADORES_EXITO = 'OBTENER_TRABAJADORES_EXITO';
+const OBTENER_TRABAJADORES_BAJA_EXITO = 'OBTENER_TRABAJADORES_BAJA_EXITO';
 const OBTENER_TRABAJADOR_EXITO = 'OBTENER_TRABAJADOR_EXITO';
 const OBTENER_SUPLENTE_EXITO = 'OBTENER_SUPLENTE_EXITO';
 const OBTENER_CENTRO_VINCULADO_TRABAJADOR_EXITO = 'OBTENER_CENTRO_VINCULADO_TRABAJADOR_EXITO';
@@ -75,6 +77,8 @@ export default function trabajadoresReducer(state = dataInicial, action) {
             return { ...state, loadingTrabajadores: true }
         case OBTENER_TRABAJADORES_EXITO:
             return { ...state, arrayTrabajadores: action.payload.array, errorDeCargaTrabajadores: action.payload.errorDeCargaTrabajadores, loadingTrabajadores: false }
+        case OBTENER_TRABAJADORES_BAJA_EXITO:
+            return { ...state, arrayTrabajadoresBaja: action.payload.array, errorDeCargaTrabajadores: action.payload.errorDeCargaTrabajadores, loadingTrabajadores: false }
         case OBTENER_TRABAJADOR_EXITO:
             return { ...state, objetoTrabajador: action.payload, errorDeCargaTrabajadores: false, loadingTrabajadores: false }
         case OBTENER_SUPLENTE_EXITO:
@@ -125,6 +129,35 @@ export const obtenerTrabajadoresAccion = (objeto) => async (dispatch, getState) 
         respuesta.sort((a, b) => a.nombre.localeCompare(b.nombre));
         dispatch({
             type: OBTENER_TRABAJADORES_EXITO,
+            payload: {
+                array: respuesta,
+                errorDeCargaTrabajadores: false
+            }
+        })
+    } catch (error) {
+        dispatch({
+            type: ERROR_DE_CARGA_TRABAJADORES
+        })
+    }
+}
+
+export const obtenerTrabajadoresBajaAccion = (objeto) => async (dispatch, getState) => {
+    dispatch({
+        type: LOADING_TRABAJADORES
+    });
+    try {
+        const formData = new FormData();
+        formData.append("objeto", objeto);
+        let apiUrl = rutaApi + "listar_trabajadores_baja.php";
+        const res = await axios.post(apiUrl, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            }
+        });
+        const respuesta = res.data;
+        respuesta.sort((a, b) => a.nombre.localeCompare(b.nombre));
+        dispatch({
+            type: OBTENER_TRABAJADORES_BAJA_EXITO,
             payload: {
                 array: respuesta,
                 errorDeCargaTrabajadores: false

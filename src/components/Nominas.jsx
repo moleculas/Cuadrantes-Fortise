@@ -138,13 +138,54 @@ const Nominas = (props) => {
             </Backdrop>
             <Grid item xs={12} >
                 <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Grid item xs={12}>
+                    <Grid item xs={6}>
                         <Chip style={{ padding: 5 }} icon={<AssignmentIndIcon />} label="Gestión de nóminas" />
                     </Grid>
+                    <Grid item xs={6}>
+                    <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-start', marginRight: 20 }}>
+                            <FormControl>                              
+                                <Button
+                                    fullWidth
+                                    variant="contained"
+                                    color='primary'
+                                    startIcon={<AssignmentIndIcon />}
+                                    onClick={handleClickMenu}
+                                >
+                                    Gestión de nóminas
+                                </Button>
+                                <StyledMenu
+                                    id="customized-menu"
+                                    anchorEl={anchorElMenu}
+                                    keepMounted
+                                    open={Boolean(anchorElMenu)}
+                                    onClose={handleCloseMenu}
+                                >
+                                    <MenuItem
+                                    // onClick={}
+                                    // disabled={}
+                                    >
+                                        <ListItemIcon>
+                                            <SaveIcon fontSize="small" />
+                                        </ListItemIcon>
+                                        <ListItemText primary="Registrar Nómina" />
+                                    </MenuItem>
+                                    <MenuItem
+                                    // onClick={eliminarCentroParent}
+                                    // disabled={disabledItem}
+                                    >
+                                        <ListItemIcon>
+                                            <DeleteIcon style={{ color: 'red' }} fontSize="small" />
+                                        </ListItemIcon>
+                                        <ListItemText style={{ color: 'red' }} primary="Eliminar Nómina" />
+                                    </MenuItem>
+                                </StyledMenu>
+                            </FormControl>
+                        </Box>
+                        </Grid>
                 </Box>
                 <Box
                     className={classes.root11}
-                    mt={4}
+                    mt={3}
                     mb={3}
                 >
                     <Grid item lg={4}>
@@ -193,46 +234,7 @@ const Nominas = (props) => {
                         </Box>
                     </Grid>
                     <Grid item lg={4}>
-                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-start', marginRight: 20 }}>
-                            <FormControl
-                                className={classes.form}>
-                                <Button
-                                    fullWidth
-                                    variant="contained"
-                                    color='primary'
-                                    startIcon={<AssignmentIndIcon />}
-                                    onClick={handleClickMenu}
-                                >
-                                    Gestión de nóminas
-                                </Button>
-                                <StyledMenu
-                                    id="customized-menu"
-                                    anchorEl={anchorElMenu}
-                                    keepMounted
-                                    open={Boolean(anchorElMenu)}
-                                    onClose={handleCloseMenu}
-                                >
-                                    <MenuItem
-                                    // onClick={}
-                                    // disabled={}
-                                    >
-                                        <ListItemIcon>
-                                            <SaveIcon fontSize="small" />
-                                        </ListItemIcon>
-                                        <ListItemText primary="Registrar Nómina" />
-                                    </MenuItem>
-                                    <MenuItem
-                                    // onClick={eliminarCentroParent}
-                                    // disabled={disabledItem}
-                                    >
-                                        <ListItemIcon>
-                                            <DeleteIcon style={{ color: 'red' }} fontSize="small" />
-                                        </ListItemIcon>
-                                        <ListItemText style={{ color: 'red' }} primary="Eliminar Nómina" />
-                                    </MenuItem>
-                                </StyledMenu>
-                            </FormControl>
-                        </Box>
+                       
                     </Grid>
                 </Box>
                 {esInicioNominas ? <PantallaNominas /> : null}
