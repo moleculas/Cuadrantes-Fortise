@@ -54,7 +54,7 @@ import EmailIcon from '@material-ui/icons/Email';
 
 //pdf
 import { PDFDownloadLink, PDFViewer, pdf } from "@react-pdf/renderer";
-import InformePDF from "./InformePDF";
+import FacturaPDF from "./FacturaPDF";
 
 //carga componentes
 import ItemCuadrante from './ItemCuadrante';
@@ -3000,11 +3000,12 @@ const Cuadrantes = (props) => {
             setOpenSnack(true);
             return;
         };
-        //revisamos que no haya columnas vacías
         let arrayCuadrante = [...cuadrante];
+        //firmamos
         let fechaHoy = new Date().toLocaleString() + '';
         let laFirmaActualizacion = fechaHoy + ' por ' + objetoUsuarioActivo.nombre.charAt(0).toUpperCase() + objetoUsuarioActivo.nombre.slice(1);
         setFirmaActualizacion(laFirmaActualizacion);
+        //revisamos que no haya columnas vacías
         for (let i = arrayCuadrante.length - 1; i >= 0; --i) {
             if (!arrayCuadrante[i].nombreTrabajador) {
                 arrayCuadrante.splice(i, 1);
@@ -3169,7 +3170,7 @@ const Cuadrantes = (props) => {
     };
 
     const handleEnviarEmail = async () => {
-        const element = <InformePDF arrayInformePDF={arrayInformeLineas} />;
+        const element = <FacturaPDF arrayFacturaPDF={arrayInformeLineas} />;
         const myPdf = pdf([]);
         myPdf.updateContainer(element);
         const blob = await myPdf.toBlob();
@@ -3530,7 +3531,7 @@ const Cuadrantes = (props) => {
                                         </Fab>
                                     </Tooltip>
                                     <PDFDownloadLink
-                                        document={<InformePDF arrayInformePDF={arrayInformeLineas} />}
+                                        document={<FacturaPDF arrayFacturaPDF={arrayInformeLineas} />}
                                         fileName={'Factura-' + objetoCuadrante.nombre + '.pdf'}
                                         style={{ textDecoration: 'none' }}
                                     >
@@ -3556,7 +3557,7 @@ const Cuadrantes = (props) => {
                                     </Tooltip>
                                 </Box>
                                 <PDFViewer showToolbar={false} style={{ width: "100%", height: "70vh" }}>
-                                    <InformePDF arrayInformePDF={arrayInformeLineas} />
+                                    <FacturaPDF arrayFacturaPDF={arrayInformeLineas} />
                                 </PDFViewer>
                             </Grid>
                         ) : (

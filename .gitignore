@@ -11,6 +11,9 @@
 # production
 /build
 
+# propis
+/components/residual.js
+
 # misc
 .DS_Store
 .env.local

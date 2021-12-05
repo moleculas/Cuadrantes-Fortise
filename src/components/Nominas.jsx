@@ -29,9 +29,18 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import ListItem from '@material-ui/core/ListItem';
 import List from '@material-ui/core/List';
+import Badge from '@material-ui/core/Badge';
+import DescriptionIcon from '@material-ui/icons/Description';
+import clsx from 'clsx';
+import Tooltip from '@material-ui/core/Tooltip';
+import Fab from '@material-ui/core/Fab';
+import ReplyIcon from '@material-ui/icons/Reply';
+import EmailIcon from '@material-ui/icons/Email';
+import GetAppIcon from '@material-ui/icons/GetApp';
 
 //pdf
 import { PDFDownloadLink, PDFViewer, pdf } from "@react-pdf/renderer";
+import NominaPDF from "./NominaPDF";
 
 //carga componentes
 import PantallaNominas from './PantallaNominas';
@@ -59,6 +68,20 @@ import { actualizarObjetoNominaAccion } from '../redux/nominasDucks';
 import { activarDesactivarCambioBotonRegistrarNominaAccion } from '../redux/nominasDucks';
 import { activarDesactivarCambioBotonEliminarNominaAccion } from '../redux/nominasDucks';
 import { registrarNominaAccion } from '../redux/nominasDucks';
+import { actualizarNominaAccion } from '../redux/nominasDucks';
+import { cambiarANominaRegistradaAccion } from '../redux/nominasDucks';
+import { cambiarANominaNoRegistradaAccion } from '../redux/nominasDucks';
+import { eliminarNominaAccion } from '../redux/nominasDucks';
+import { registrarIntervencionAccion } from '../redux/appDucks';
+import { abreObjetoDialogAccion } from '../redux/appDucks';
+import { cierraObjetoDialogAccion } from '../redux/appDucks';
+import { registrarIntervencionNominaNuevaAccion } from '../redux/nominasDucks';
+import { vaciarDatosNominasAccion } from '../redux/nominasDucks';
+import { forzarRecargaFaltantesAccion } from '../redux/faltantesDucks';
+import { vaciarDatosTrabajadorAccion } from '../redux/trabajadoresDucks';
+import { cambioEstadoNominaSinDatosAccion } from '../redux/nominasDucks';
+import { venimosDeFaltantesAccion } from '../redux/faltantesDucks';
+import { forzarRecargaGraficosNominasAccion } from '../redux/graficosDucks';
 
 const getHeightScrollable = () => (window.innerHeight - 220) || (document.documentElement.clientHeight - 220) || (document.body.clientHeight - 220);
 
@@ -115,7 +138,12 @@ const Nominas = (props) => {
     const disabledItemBotonEliminar = useSelector(store => store.variablesNominas.estadoActivadoDesactivadoBotonEliminarNomina);
     const exitoRegistroNomina = useSelector(store => store.variablesNominas.exitoRegistroNomina);
     const exitoEliminarNomina = useSelector(store => store.variablesNominas.exitoEliminarNomina);
+    const exitoActualizacionNomina = useSelector(store => store.variablesNominas.exitoActualizacionNomina);
     const ultimoIdRegistrado = useSelector(store => store.variablesNominas.ultimoIdRegistrado);
+    const objetoUsuarioActivo = useSelector(store => store.variablesUsuario.usuarioActivo);
+    const openDialog9 = useSelector(store => store.variablesApp.openDialog[8]);
+    const openDialog10 = useSelector(store => store.variablesApp.openDialog[9]);
+    const nominaSinDatosEstado = useSelector(store => store.variablesNominas.nominaSinDatosEstado);
 
     //states
 
@@ -128,6 +156,10 @@ const Nominas = (props) => {
     const [alert, setAlert] = useState({});
     const [visibleBaja, setVisibleBaja] = useState({ estado: false, tipo: '' });
     const [nominaAGestionar, setNominaAGestionar] = useState(objetoNomina.datosNomina.arrayDatos);
+    const [controladorDeEstado, setControladorDeEstado] = useState('inicio');
+    const [firmaActualizacion, setFirmaActualizacion] = useState('');
+    const [esEmision, setEsEmision] = useState(false);
+    const [arrayInformeLineas, setArrayInformeLineas] = useState([]);
 
     //useEffect
 
@@ -154,16 +186,34 @@ const Nominas = (props) => {
     useEffect(() => {
         dispatch(onEstemAccion('nominas'));
         dispatch(setCalendarioAGestionarNominasAccion(dispatch(retornaAnoMesAccion())));
+        dispatch(forzarRecargaFaltantesAccion(true));
+        dispatch(forzarRecargaGraficosNominasAccion(true));
         dispatch(obtenerTrabajadoresAccion('trabajadores'));
         dispatch(obtenerCentrosAccion('centros'));
         dispatch(obtenerConfiguracionAccion('configuracion', 1));
     }, [dispatch]);
 
+    //secuencia nomina
+
     useEffect(() => {
         dispatch(actualizarObjetoNominaAccion({ ...objetoNomina, id: ultimoIdRegistrado }));
     }, [ultimoIdRegistrado]);
 
-    useEffect(() => {       
+    useEffect(() => {
+        if (controladorDeEstado === 'inicio' || controladorDeEstado === 'venimosDeResetear') {
+            setNominaAGestionar(objetoNomina.datosNomina.arrayDatos);
+            setFirmaActualizacion(objetoNomina.actualizacion);
+            setControladorDeEstado('inicio');
+        };
+        if (controladorDeEstado === 'venimosDeRegistrar') {
+            setControladorDeEstado('inicio');
+        };
+        if (controladorDeEstado === 'venimosDeInforme') {
+            setControladorDeEstado('inicio');
+        };
+    }, [objetoNomina]);
+
+    useEffect(() => {
         if (nominaRegistrada === 'no') {
             if (!estadoVenimosDeFaltantes) {
                 dispatch(obtenerTrabajadorAccion('trabajadores', trabajador));
@@ -171,16 +221,18 @@ const Nominas = (props) => {
             dispatch(cambioEstadoInicioNominasAccion(false));
             dispatch(activarDesactivarCambioBotonRegistrarNominaAccion(false));
             dispatch(activarDesactivarCambioBotonEliminarNominaAccion(true));
+            dispatch(registrarIntervencionNominaNuevaAccion(false));
         };
         if (nominaRegistrada === 'si') {
             dispatch(obtenerTrabajadorAccion('trabajadores', trabajador));
             dispatch(cambioEstadoInicioNominasAccion(false));
             dispatch(activarDesactivarCambioBotonEliminarNominaAccion(false));
+            dispatch(registrarIntervencionNominaNuevaAccion(true));
         };
     }, [nominaRegistrada]);
 
     useEffect(() => {
-        const fetchData = () => {           
+        const fetchData = () => {
             setOpenLoading(true);
             if (trabajadorAGestionar.id) {
                 if (trabajadorAGestionar.estado !== 'alta') {
@@ -208,8 +260,7 @@ const Nominas = (props) => {
                     if (trabajador.trabajador === trabajadorAGestionar.id) {
                         if (trabajador.totalHorasNormal > 0 || trabajador.totalHorasExtra > 0) {
                             arrayNomina.push({
-                                centroId: objeto.centro,
-                                nombreCentro: dispatch(obtenerObjetoPorIdAccion(listadoCentros, objeto.centro)),
+                                centro: objeto.centro,
                                 tipo: trabajador.tipo,
                                 totalHorasNormal: trabajador.totalHorasNormal,
                                 totalHorasExtra: trabajador.totalHorasExtra
@@ -220,13 +271,30 @@ const Nominas = (props) => {
                                 tipo: 'warning'
                             })
                             setOpenSnack(true);
+                            dispatch(cambioEstadoNominaSinDatosAccion(true));
+                            dispatch(vaciarDatosCuadrantesvinculadosAccion());
                         }
                     }
                 });
             });
+            const losDatosNomina = { ...objetoNomina.datosNomina, arrayDatos: arrayNomina };
+            dispatch(actualizarObjetoNominaAccion({ ...objetoNomina, datosNomina: losDatosNomina }));
             setNominaAGestionar(arrayNomina);
         }
     }, [cuadrantesVinculadosATrabajador]);
+
+    //secuencia venimos de pendientes    
+
+    useEffect(() => {
+        if (estadoVenimosDeFaltantes) {
+            if (trabajador) {
+                const nombreNomina = calendarioAGestionarNominas + '-' + trabajador;
+                const losDatosNomina = { ...objetoNomina.datosNomina, arrayDatos: [] };
+                dispatch(actualizarObjetoNominaAccion({ ...objetoNomina, id: null, nombre: nombreNomina, actualizacion: '', trabajador: trabajador, datosNomina: losDatosNomina }));
+                dispatch(venimosDeFaltantesAccion(false));
+            };
+        }
+    }, [estadoVenimosDeFaltantes]);
 
     //secuencia alertas
 
@@ -247,6 +315,8 @@ const Nominas = (props) => {
                 tipo: 'warning'
             })
             setOpenSnack(true);
+            dispatch(cambioEstadoNominaSinDatosAccion(true));
+            dispatch(vaciarDatosCuadrantesvinculadosAccion());
         }
     }, [noHayCuadrantesVinculadosATrabajador]);
 
@@ -271,12 +341,27 @@ const Nominas = (props) => {
     }, [exitoEliminarNomina]);
 
     useEffect(() => {
+        if (exitoActualizacionNomina) {
+            setAlert({
+                mensaje: "Registro actualizado correctamente.",
+                tipo: 'success'
+            })
+            setOpenSnack(true);
+        }
+    }, [exitoActualizacionNomina]);
+
+    useEffect(() => {
         if (!openLoadingNominas || !openLoadingTrabajadores) {
             setOpenLoading(false)
         } else {
             setOpenLoading(true)
         }
     }, [openLoadingNominas, openLoadingTrabajadores]);
+
+    useEffect(() => {
+        if (esEmision)
+            generaInformacionNominas();
+    }, [esEmision]);
 
     //funciones    
 
@@ -296,28 +381,46 @@ const Nominas = (props) => {
     };
 
     const handleChangeSelectCalendarioNominas = (newValue) => {
-        setValueDatePickerNominas(newValue);
+        if (esInicioNominas) {
+            reseteaContenidoNominas();
+            dispatch(vaciarDatosNominasAccion());
+            dispatch(vaciarDatosTrabajadorAccion());
+            setValueDatePickerNominas(newValue);
+            dispatch(setCalendarioAGestionarNominasAccion(dispatch(retornaAnoMesAccion(newValue))));
+            dispatch(cambioEstadoInicioNominasAccion(true));
+        } else {
+            if (!nominaNuevaRegistrada && !nominaSinDatosEstado) {
+                handleClickOpenDialogNominas2();
+            } else {
+                if (intervencionRegistrada) {
+                    reseteaContenidoNominas();
+                    dispatch(vaciarDatosNominasAccion());
+                    dispatch(vaciarDatosTrabajadorAccion());
+                    setValueDatePickerNominas(newValue);
+                    dispatch(setCalendarioAGestionarNominasAccion(dispatch(retornaAnoMesAccion(newValue))));
+                    dispatch(cambioEstadoInicioNominasAccion(true));
+                }
+            }
+        }
     };
 
     const handleChangeFormTrabajadoresNominas = (e) => {
         if (esInicioNominas) {
             reseteaContenidoNominas();
             dispatch(setTrabajadorAccion(e.target.value));
-            const nombreNomina = nominaAGestionar + '-' + e.target.value;
-            dispatch(actualizarObjetoNominaAccion({ ...objetoNomina, nombre: nombreNomina, trabajador: e.target.value }));
+            const nombreNomina = calendarioAGestionarNominas + '-' + e.target.value;
+            dispatch(actualizarObjetoNominaAccion({ ...objetoNomina, nombre: nombreNomina, actualizacion: '', trabajador: e.target.value }));
             dispatch(obtenerNominaAccion('nominas', nombreNomina));
         } else {
-            if (!nominaNuevaRegistrada) {
-                //handleClickOpenDialogCuadrantes2();
+            if (!nominaNuevaRegistrada && !nominaSinDatosEstado) {
+                handleClickOpenDialogNominas2();
             } else {
-                if (!intervencionRegistrada) {
-                    // handleClickOpenDialogCuadrantes3();
-                    // setPreValueValor({ valor: e.target.value, origen: 'centros' });
-                } else {
+                if (intervencionRegistrada) {
                     reseteaContenidoNominas();
                     dispatch(setTrabajadorAccion(e.target.value));
-                    const nombreNomina = nominaAGestionar + '-' + e.target.value;
-                    dispatch(actualizarObjetoNominaAccion({ ...objetoNomina, nombre: nombreNomina, trabajador: e.target.value }));
+                    const nombreNomina = calendarioAGestionarNominas + '-' + e.target.value;
+                    const losDatosNomina = { ...objetoNomina.datosNomina, arrayDatos: [] };
+                    dispatch(actualizarObjetoNominaAccion({ ...objetoNomina, id: null, nombre: nombreNomina, actualizacion: '', trabajador: e.target.value, datosNomina: losDatosNomina }));
                     dispatch(obtenerNominaAccion('nominas', nombreNomina));
                 }
             }
@@ -328,18 +431,175 @@ const Nominas = (props) => {
         setVisibleBaja({ estado: false, tipo: '' });
         dispatch(vaciarDatosCuadrantesvinculadosAccion());
         setNominaAGestionar([]);
+        dispatch(activarDesactivarCambioBotonRegistrarNominaAccion(true));
+        dispatch(setTrabajadorAccion(''));
+        setControladorDeEstado('inicio');
+        setFirmaActualizacion('');
+        dispatch(cambioEstadoNominaSinDatosAccion(false));
+        setEsEmision(false);
+        setArrayInformeLineas([]);
     };
 
-    const procesarDatosNomina = () => {
+    const procesarDatosNomina = (source, totalEmitido) => {
+        //firmamos
+        let fechaHoy = new Date().toLocaleString() + '';
+        let laFirmaActualizacion = fechaHoy + ' por ' + objetoUsuarioActivo.nombre.charAt(0).toUpperCase() + objetoUsuarioActivo.nombre.slice(1);
+        setFirmaActualizacion(laFirmaActualizacion);
         const objetoFinalNomina = {
             objeto: 'nomina',
-            arrayDatos: nominaAGestionar
+            arrayDatos: nominaAGestionar,
+            emitida: source === 'informe' ? 'si' : objetoNomina.datosNomina.emitida,
+            totalEmitido: source === 'informe' ? totalEmitido : objetoNomina.datosNomina.totalEmitido,
         }
         const nominaAGuardar = {
             id: objetoNomina.id,
             nombre: objetoNomina.nombre,
+            actualizacion: laFirmaActualizacion,
             trabajador: objetoNomina.trabajador,
             datos_nomina: JSON.stringify(objetoFinalNomina),
+        };
+        if (nominaRegistrada === 'no') {
+            dispatch(registrarNominaAccion('nominas', nominaAGuardar.id, nominaAGuardar));
+            dispatch(cambiarANominaRegistradaAccion());
+            setControladorDeEstado('venimosDeRegistrar');
+        };
+        if (nominaRegistrada === 'si') {
+            if (source === 'informe') {
+                setControladorDeEstado('venimosDeInforme');
+            }
+            dispatch(actualizarNominaAccion('nominas', nominaAGuardar.id, nominaAGuardar));
+        };
+        dispatch(registrarIntervencionAccion(true));
+    };
+
+    const goToInicioNominas = () => {
+        if (!nominaNuevaRegistrada && !nominaSinDatosEstado) {
+            handleClickOpenDialogNominas2();
+        } else {
+            if (intervencionRegistrada) {
+                reseteaContenidoNominas();
+                dispatch(vaciarDatosTrabajadorAccion());
+                dispatch(vaciarDatosNominasAccion());
+                dispatch(cambioEstadoInicioNominasAccion(true));
+                dispatch(forzarRecargaFaltantesAccion(true));
+                dispatch(forzarRecargaGraficosNominasAccion(true)); 
+            }
+        };
+        setAnchorElMenu(null);
+    };
+
+    const generaInformacionNominas = () => {
+        let sumatorioHorasNormal = 0;
+        let sumatorioHorasExtra = 0;
+        let totalGeneral = '';
+        const arrayInforme = [];
+        arrayInforme.push('Mes: ' + calendarioAGestionarNominas);
+        arrayInforme.push('Trabajador: ' + trabajadorAGestionar.nombre);
+        if (firmaActualizacion && intervencionRegistrada) {
+            arrayInforme.push('Estado: Registrada el ' + firmaActualizacion);
+        } else if (firmaActualizacion && !intervencionRegistrada) {
+            arrayInforme.push('Estado: Pendiente de actualizar');
+        } else {
+            arrayInforme.push('Estado: Pendiente de registrar');
+        };
+        arrayInforme.push('Horas trabajadas por centro:');
+        nominaAGestionar.map((item, index) => {
+            const elCentro = dispatch(obtenerObjetoPorIdAccion(listadoCentros, item.centro));
+            sumatorioHorasNormal += item.totalHorasNormal;
+            sumatorioHorasExtra += item.totalHorasExtra;
+            arrayInforme.push('Centro ' + elCentro);
+            if (item.totalHorasNormal && item.totalHorasExtra) {
+                arrayInforme.push('Total horas/mes trabajadas como (' + item.tipo + '): ' + item.totalHorasNormal + ' horas a ' + objetoConfiguracion.precioHoraNormal + ' €/hora -> ' + (item.totalHorasNormal * objetoConfiguracion.precioHoraNormal) + ' €');
+                arrayInforme.push('Total horas extra/mes trabajadas como (' + item.tipo + '): ' + item.totalHorasExtra + ' horas a ' + objetoConfiguracion.precioHoraExtra + ' €/hora -> ' + (item.totalHorasExtra * objetoConfiguracion.precioHoraExtra) + ' €');
+            };
+            if (item.totalHorasNormal && !item.totalHorasExtra) {
+                arrayInforme.push('Total horas/mes trabajadas como (' + item.tipo + '): ' + item.totalHorasNormal + ' horas a ' + objetoConfiguracion.precioHoraNormal + ' €/hora -> ' + (item.totalHorasNormal * objetoConfiguracion.precioHoraNormal) + ' €');
+            };
+            if (!item.totalHorasNormal && item.totalHorasExtra) {
+                arrayInforme.push('Total horas extra/mes trabajadas como (' + item.tipo + '): ' + item.totalHorasExtra + ' horas a ' + objetoConfiguracion.precioHoraExtra + ' €/hora -> ' + (item.totalHorasExtra * objetoConfiguracion.precioHoraExtra) + ' €');
+            };
+        });
+        if (sumatorioHorasNormal > 0) {
+            totalGeneral += sumatorioHorasNormal + ' horas';
+        };
+        if (sumatorioHorasExtra > 0) {
+            totalGeneral += ' + ' + sumatorioHorasExtra + ' horas extra';
+        }
+        arrayInforme.push('Total general: ' + totalGeneral + ' -> ' + parseInt((sumatorioHorasNormal * objetoConfiguracion.precioHoraNormal) + (sumatorioHorasExtra * objetoConfiguracion.precioHoraExtra)) + ' €');
+        setArrayInformeLineas(arrayInforme);
+    };
+
+    const handleActualizaNominaFacturada = () => {
+        let sumatorioHorasNormal = 0;
+        let sumatorioHorasExtra = 0;
+        let elTotalEmitido = 0;
+        objetoNomina.datosNomina.arrayDatos.map((dato, index) => {
+            if (dato.totalHorasNormal) {
+                sumatorioHorasNormal += dato.totalHorasNormal;
+            };
+            if (dato.totalHorasExtra) {
+                sumatorioHorasExtra += dato.totalHorasExtra;
+            };
+        });
+        if (sumatorioHorasNormal > 0) {
+            elTotalEmitido += (sumatorioHorasNormal * objetoConfiguracion.precioHoraNormal);
+        };
+        if (sumatorioHorasExtra > 0) {
+            elTotalEmitido += (sumatorioHorasExtra * objetoConfiguracion.precioHoraExtra);
+        };
+        const losDatosNomina = { ...objetoNomina.datosNomina, emitida: 'si', totalEmitido: elTotalEmitido };
+        dispatch(actualizarObjetoNominaAccion({ ...objetoNomina, datosNomina: losDatosNomina }));
+        procesarDatosNomina('informe', elTotalEmitido);
+    };
+
+    const handleClickEmitirNomina = () => {
+        setEsEmision(true);
+        handleCloseMenu();
+    };
+
+    const handleEnviarEmail = async () => {
+        const element = <NominaPDF arrayNominaPDF={arrayInformeLineas} />;
+        const myPdf = pdf([]);
+        myPdf.updateContainer(element);
+        const blob = await myPdf.toBlob();
+        let file = new File([blob], 'Nomina-' + objetoNomina.nombre + '.pdf', { lastModified: (new Date()).getTime() });
+        //dispatch(enviarMailAccion('artikaweb@gmail.com', 'isaiasherreroflorensa@gmail.com', file))        
+    };
+
+    //dialog
+
+    const tituloDialogNominas1 = "¿Estás seguro que quieres eliminar la nómina registrada?";
+    const descripcionDialogNominas1 = "Para eliminar la nómina registrada pulsa 'De acuerdo', de lo contrario pulsa 'Desacuerdo'.";
+    const tituloDialogNominas2 = "Registra la nómina";
+    const descripcionDialogNominas2 = "Debes registrar la nómina nueva antes de cambiar. Pulsa 'Registrar Nómina' en el menú superior.";
+
+    const handleClickOpenDialogNominas1 = () => {
+        dispatch(abreObjetoDialogAccion('9'));
+    };
+
+    const handleClickOpenDialogNominas2 = () => {
+        dispatch(abreObjetoDialogAccion('10'));
+    };
+
+    const handleCloseDialogBotonesNominas1 = (respuesta) => {
+        if (respuesta === "acuerdo") {
+            dispatch(eliminarNominaAccion('nominas', objetoNomina.id));
+            const trabajadorId = objetoNomina.trabajador;
+            reseteaContenidoNominas();
+            dispatch(setTrabajadorAccion(trabajadorId));
+            dispatch(cambiarANominaNoRegistradaAccion());
+            const nombreNomina = calendarioAGestionarNominas + '-' + trabajadorId;
+            const losDatosNomina = { ...objetoNomina.datosNomina, arrayDatos: [] };
+            dispatch(actualizarObjetoNominaAccion({ ...objetoNomina, id: null, nombre: nombreNomina, actualizacion: '', trabajador: trabajadorId, datosNomina: losDatosNomina }));
+            dispatch(activarDesactivarCambioBotonEliminarNominaAccion(true));
+            setControladorDeEstado('venimosDeResetear');
+        }
+        dispatch(cierraObjetoDialogAccion());
+    };
+
+    const handleCloseDialogBotonesVacio = (respuesta) => {
+        if (respuesta === "acuerdo") {
+            dispatch(cierraObjetoDialogAccion());
         };
     };
 
@@ -354,6 +614,7 @@ const Nominas = (props) => {
             >
                 <List>
                     {nominaAGestionar.map((item, index) => {
+                        const elCentro = dispatch(obtenerObjetoPorIdAccion(listadoCentros, item.centro));
                         sumatorioHorasNormal += item.totalHorasNormal;
                         sumatorioHorasExtra += item.totalHorasExtra;
                         return (
@@ -372,7 +633,7 @@ const Nominas = (props) => {
                                         <Typography
                                             variant="body1"
                                         >
-                                            Centro {item.nombreCentro}
+                                            Centro {elCentro}
                                         </Typography>
                                     </Grid>
                                     {
@@ -527,10 +788,41 @@ const Nominas = (props) => {
             </Backdrop>
             <Grid item xs={12} >
                 <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Grid item xs={6}>
-                        <Chip style={{ padding: 5 }} icon={<AssignmentIndIcon />} label="Gestión de nóminas" />
+                    <Grid item xs={9}>
+                        <Badge
+                            overlap="circle"
+                            classes={{
+                                badge:
+                                    firmaActualizacion && trabajadorAGestionar.nombre && intervencionRegistrada && objetoNomina.datosNomina.emitida === 'si' ?
+                                        classes.badgeVerd :
+                                        firmaActualizacion && trabajadorAGestionar.nombre && intervencionRegistrada && objetoNomina.datosNomina.emitida === 'no' ?
+                                            classes.badgeTaronja :
+                                            firmaActualizacion && trabajadorAGestionar.nombre && !intervencionRegistrada ?
+                                                classes.badgeVermell :
+                                                !firmaActualizacion && trabajadorAGestionar.nombre ?
+                                                    classes.badgeVermell :
+                                                    classes.displayNone
+                            }}
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'right',
+                            }}
+                            variant="dot"
+                        >
+                            <Chip style={{ padding: 5 }} icon={<AssignmentIndIcon />} label={`Gestión de nóminas ` + (
+                                trabajadorAGestionar.nombre ?
+                                    ' - Trabajador: ' + trabajadorAGestionar.nombre + (
+                                        firmaActualizacion && intervencionRegistrada && objetoNomina.datosNomina.emitida === 'no' ?
+                                            ' - Estado: Registrada el ' + firmaActualizacion :
+                                            firmaActualizacion && intervencionRegistrada && objetoNomina.datosNomina.emitida === 'si' ?
+                                                ' - Estado: Emitida el ' + firmaActualizacion :
+                                                firmaActualizacion && !intervencionRegistrada ?
+                                                    ' - Estado: Pendiente de actualizar' :
+                                                    ' - Estado: Pendiente de registrar') :
+                                    '')} />
+                        </Badge>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={3}>
                         <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-start', marginRight: 20 }}>
                             <FormControl>
                                 <Button
@@ -551,7 +843,7 @@ const Nominas = (props) => {
                                     onClose={handleCloseMenu}
                                 >
                                     <MenuItem
-                                    //onClick={goToInicioCuadrantes}
+                                        onClick={goToInicioNominas}
                                     >
                                         <ListItemIcon>
                                             <HomeIcon fontSize="small" />
@@ -559,16 +851,25 @@ const Nominas = (props) => {
                                         <ListItemText primary="Inicio Nóminas" />
                                     </MenuItem>
                                     <MenuItem
-                                        // onClick={}
-                                        disabled={disabledItemBotonRegistrar}
+                                        onClick={() => procesarDatosNomina('normal', null)}
+                                        disabled={nominaRegistrada === 'si' ? true : nominaSinDatosEstado ? true : disabledItemBotonRegistrar}
                                     >
                                         <ListItemIcon>
-                                            <SaveIcon fontSize="small" />
+                                            {<SaveIcon fontSize="small" />}
                                         </ListItemIcon>
-                                        <ListItemText primary="Registrar Nómina" />
+                                        <ListItemText primary={'Registrar Nómina'} />
                                     </MenuItem>
                                     <MenuItem
-                                        // onClick={eliminarCentroParent}
+                                        onClick={handleClickEmitirNomina}
+                                        disabled={nominaRegistrada === 'no' ? true : nominaSinDatosEstado ? true : false}
+                                    >
+                                        <ListItemIcon>
+                                            <DescriptionIcon fontSize="small" />
+                                        </ListItemIcon>
+                                        <ListItemText primary="Emitir Nómina" />
+                                    </MenuItem>
+                                    <MenuItem
+                                        onClick={handleClickOpenDialogNominas1}
                                         disabled={disabledItemBotonEliminar}
                                     >
                                         <ListItemIcon>
@@ -635,40 +936,107 @@ const Nominas = (props) => {
 
                     </Grid>
                 </Box>
-                {esInicioNominas ? <PantallaNominas /> : (
-                    <Grid
-                        spacing={1}
-                        container
-                        direction="row"
-                        justifycontent="flex-start"
-                        alignItems="flex-start"
-                        style={{ height: heightScrollable, padding: 10 }}
-                        className={classes.scrollable}
-                    >
-                        <Grid item xs={8}>
-                            <Box
-                                p={1.5}
-                                m={0.5}
-                                bgcolor="secondary.light"
-                                color="secondary.contrastText"
-                                className={classes.mb10}
-                            >
-                                <Typography variant="body1">Horas trabajadas por centro en el mes de {monthLet}</Typography>
+                {esInicioNominas ? <PantallaNominas /> :
+                    esEmision ? (
+                        <Grid style={{ marginRight: 8, marginTop: -8 }}>
+                            <Box className={clsx(classes.alignRight, classes.mb20)}>
+                                <Tooltip title="Volver a la Nómina" placement="top" arrow>
+                                    <Fab
+                                        color="secondary"
+                                        size="small"
+                                        style={{ marginLeft: 8 }}
+                                        onClick={() => setEsEmision(false)}
+                                    >
+                                        <ReplyIcon />
+                                    </Fab>
+                                </Tooltip>
+                                <Tooltip title="Emitir Nómina" placement="top" arrow>
+                                    <Fab
+                                        color="primary"
+                                        size="small"
+                                        style={{ marginLeft: 8 }}
+                                        onClick={handleActualizaNominaFacturada}
+                                    >
+                                        <SaveIcon />
+                                    </Fab>
+                                </Tooltip>
+                                <PDFDownloadLink
+                                    document={<NominaPDF arrayNominaPDF={arrayInformeLineas} />}
+                                    fileName={'Nomina-' + objetoNomina.nombre + '.pdf'}
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <Tooltip title="Descargar Nómina" placement="top" arrow>
+                                        <Fab
+                                            color="primary"
+                                            size="small"
+                                            style={{ marginLeft: 8 }}
+                                        >
+                                            <GetAppIcon />
+                                        </Fab>
+                                    </Tooltip>
+                                </PDFDownloadLink>
+                                <Tooltip title="Enviar Nómina por mail" placement="top" arrow>
+                                    <Fab
+                                        color="primary"
+                                        size="small"
+                                        style={{ marginLeft: 8 }}
+                                        onClick={handleEnviarEmail}
+                                    >
+                                        <EmailIcon />
+                                    </Fab>
+                                </Tooltip>
                             </Box>
-                            {visibleBaja.estado ? <Alert severity="info">El trabajador se encuentra de baja por: {visibleBaja.tipo}</Alert> : null}
-                            {nominaAGestionar.length > 0 ? (
-                                retornaListadoNomina()
-                            ) : null}
+                            <PDFViewer showToolbar={false} style={{ width: "100%", height: "70vh" }}>
+                                <NominaPDF arrayNominaPDF={arrayInformeLineas} />
+                            </PDFViewer>
                         </Grid>
-                    </Grid>
-                )}
+                    ) : (
+                        <Grid
+                            spacing={1}
+                            container
+                            direction="row"
+                            justifycontent="flex-start"
+                            alignItems="flex-start"
+                            style={{ height: heightScrollable, padding: 10 }}
+                            className={classes.scrollable}
+                        >
+                            <Grid item xs={8}>
+                                <Box
+                                    p={1.5}
+                                    m={0.5}
+                                    bgcolor="secondary.light"
+                                    color="secondary.contrastText"
+                                    className={classes.mb10}
+                                >
+                                    <Typography variant="body1">Horas trabajadas por centro en el mes de {monthLet}</Typography>
+                                </Box>
+                                {visibleBaja.estado ? <Alert severity="info">El trabajador se encuentra de baja por: {visibleBaja.tipo}</Alert> : null}
+                                {nominaAGestionar.length > 0 ? (
+                                    retornaListadoNomina()
+                                ) : null}
+                            </Grid>
+                        </Grid>
+                    )}
             </Grid>
             <Snackbar open={openSnack} autoHideDuration={6000} onClose={handleCloseSnack}>
                 <Alert severity={alert.tipo} onClose={handleCloseSnack}>
                     {alert.mensaje}
                 </Alert>
             </Snackbar>
-            {console.log(estadoVenimosDeFaltantes)}
+            <DialogComponente
+                prIsOpen={openDialog9}
+                prHandleCloseDialogBotones={handleCloseDialogBotonesNominas1}
+                prTituloDialog={tituloDialogNominas1}
+                prDescripcionDialog={descripcionDialogNominas1}
+            />
+            <DialogComponente
+                prIsOpen={openDialog10}
+                prHandleCloseDialogBotones={handleCloseDialogBotonesVacio}
+                prTituloDialog={tituloDialogNominas2}
+                prDescripcionDialog={descripcionDialogNominas2}
+                prNoTieneBotones={true}
+            />
+            {/* {console.log(objetoNomina)} */}
         </div>
     )
 }

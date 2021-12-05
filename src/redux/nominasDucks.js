@@ -13,10 +13,13 @@ const dataInicial = {
     objetoNomina: {
         id: null,
         nombre: '',
+        actualizacion: '',
         trabajador: '',
         datosNomina: {
             objeto: 'nomina',
-            arrayDatos: []
+            arrayDatos: [],
+            emitida: 'no',
+            totalEmitido: null
         }
     },
     nominaRegistrada: '',
@@ -26,7 +29,9 @@ const dataInicial = {
     estadoActivadoDesactivadoBotonEliminarNomina: true,
     exitoRegistroNomina: false,
     exitoEliminarNomina: false,
+    exitoActualizacionNomina: false,
     ultimoIdRegistrado: null,
+    nominaSinDatosEstado: false
 
 };
 
@@ -45,7 +50,14 @@ const ACTUALIZAR_OBJETO_NOMINA = 'ACTUALIZAR_OBJETO_NOMINA';
 const ACTIVAR_DESACTIVAR_COMPONENTE_BOTON_REGISTRAR_NOMINA = 'ACTIVAR_DESACTIVAR_COMPONENTE_BOTON_REGISTRAR_NOMINA';
 const ACTIVAR_DESACTIVAR_COMPONENTE_BOTON_ELIMINAR_NOMINA = 'ACTIVAR_DESACTIVAR_COMPONENTE_BOTON_ELIMINAR_NOMINA';
 const REGISTRAR_NOMINA_EXITO = 'REGISTRAR_NOMINA_EXITO';
+const ACTUALIZAR_NOMINA_EXITO = 'ACTUALIZAR_NOMINA_EXITO';
 const RESETEA_EXITO_NOMINAS = 'RESETEA_EXITO_NOMINAS';
+const CAMBIAR_A_NOMINA_REGISTRADA = 'CAMBIAR_A_NOMINA_REGISTRADA';
+const CAMBIAR_A_NOMINA_NO_REGISTRADA = 'CAMBIAR_A_NOMINA_NO_REGISTRADA';
+const ELIMINAR_NOMINA_EXITO = 'ELIMINAR_NOMINA_EXITO';
+const INTERVENCION_NOMINA_NUEVA_REGISTRADA = 'INTERVENCION_NOMINA_NUEVA_REGISTRADA';
+const VACIAR_DATOS_NOMINAS = 'VACIAR_DATOS_NOMINAS';
+const CAMBIO_ESTADO_NOMINA_SIN_DATOS = 'CAMBIO_ESTADO_NOMINA_SIN_DATOS';
 
 //reducer
 export default function nominasReducer(state = dataInicial, action) {
@@ -61,7 +73,7 @@ export default function nominasReducer(state = dataInicial, action) {
         case OBTENER_CUADRANTES_VINCULADOS_A_TRABAJADOR:
             return { ...state, cuadrantesVinculadosATrabajador: action.payload.array, errorDeCargaNominas: action.payload.errorDeCargaNominas, loadingNominas: false, noHayCuadrantesVinculadosATrabajador: false }
         case VACIAR_DATOS_CUADRANTES_VINCULADOS:
-            return { ...state, cuadrantesVinculadosATrabajador: [], nominaRegistrada: '' }
+            return { ...state, cuadrantesVinculadosATrabajador: [], nominaRegistrada: '', noHayCuadrantesVinculadosATrabajador: false }
         case NO_HAY_CUADRANTES_VINCULADOS_A_TRABAJADOR:
             return { ...state, noHayCuadrantesVinculadosATrabajador: true }
         case OBTENER_NOMINA_EXITO:
@@ -75,11 +87,25 @@ export default function nominasReducer(state = dataInicial, action) {
         case ACTIVAR_DESACTIVAR_COMPONENTE_BOTON_REGISTRAR_NOMINA:
             return { ...state, estadoActivadoDesactivadoBotonRegistrarNomina: action.payload.estado }
         case ACTIVAR_DESACTIVAR_COMPONENTE_BOTON_ELIMINAR_NOMINA:
-            return { ...state, estadoActivadoDesactivadoBotonEliminarNomina: action.payload.estado }
+            return { ...state, estadoActivadoDesactivadoBotonEliminarNomina: action.payload.estado }      
         case REGISTRAR_NOMINA_EXITO:
             return { ...state, errorDeCargaNominas: false, loadingNominas: false, exitoRegistroNomina: true, ultimoIdRegistrado: action.payload.ultimoIdRegistrado }
+        case ACTUALIZAR_NOMINA_EXITO:
+            return { ...state, errorDeCargaNominas: false, loadingNominas: false, exitoActualizacionNomina: true }
         case RESETEA_EXITO_NOMINAS:
-            return { ...state, exitoRegistroNomina: false, exitoEliminarNomina: false }
+            return { ...state, exitoRegistroNomina: false, exitoEliminarNomina: false, exitoActualizacionNomina: false }
+        case CAMBIAR_A_NOMINA_REGISTRADA:
+            return { ...state, nominaRegistrada: 'si' }
+        case CAMBIAR_A_NOMINA_NO_REGISTRADA:
+            return { ...state, nominaRegistrada: 'no' }
+        case ELIMINAR_NOMINA_EXITO:
+            return { ...state, errorDeCargaNominas: false, loadingNominas: false, exitoEliminarNomina: true }
+        case INTERVENCION_NOMINA_NUEVA_REGISTRADA:
+            return { ...state, estadoIntervencionNominaNuevaRegistrada: action.payload.estado }
+        case VACIAR_DATOS_NOMINAS:
+            return { ...state, objetoNomina: action.payload }
+        case CAMBIO_ESTADO_NOMINA_SIN_DATOS:
+            return { ...state, nominaSinDatosEstado: action.payload.estado }
         default:
             return { ...state }
     }
@@ -99,6 +125,15 @@ export const setCalendarioAGestionarNominasAccion = (valor) => (dispatch, getSta
 export const cambioEstadoInicioNominasAccion = (estado) => (dispatch, getState) => {
     dispatch({
         type: CAMBIO_ESTADO_INICIO_NOMINAS,
+        payload: {
+            estado: estado
+        }
+    });
+}
+
+export const cambioEstadoNominaSinDatosAccion = (estado) => (dispatch, getState) => {
+    dispatch({
+        type: CAMBIO_ESTADO_NOMINA_SIN_DATOS,
         payload: {
             estado: estado
         }
@@ -147,6 +182,25 @@ export const vaciarDatosCuadrantesvinculadosAccion = () => (dispatch, getState) 
     });
 }
 
+export const vaciarDatosNominasAccion = () => (dispatch, getState) => {
+    const arrayVacio = [];
+    dispatch({
+        type: VACIAR_DATOS_NOMINAS,
+        payload: {
+            id: null,
+            nombre: '',
+            actualizacion: '',
+            trabajador: '',
+            datosNomina: {
+                objeto: 'nomina',
+                arrayDatos: arrayVacio,
+                emitida: 'no',
+                totalEmitido: null
+            }
+        }
+    });
+}
+
 export const obtenerNominaAccion = (objeto, id) => async (dispatch, getState) => {
     dispatch({
         type: LOADING_NOMINAS
@@ -171,6 +225,7 @@ export const obtenerNominaAccion = (objeto, id) => async (dispatch, getState) =>
                 payload: {
                     id: res.data.id,
                     nombre: res.data.nombre,
+                    actualizacion: res.data.actualizacion,
                     trabajador: res.data.trabajador,
                     datosNomina: JSON.parse(res.data.datos_nomina)
                 }
@@ -249,4 +304,81 @@ export const registrarNominaAccion = (objeto, id, datos) => async (dispatch, get
             type: ERROR_DE_CARGA_NOMINAS
         })
     }
+}
+
+export const actualizarNominaAccion = (objeto, id, datos) => async (dispatch, getState) => {
+    dispatch({
+        type: LOADING_NOMINAS
+    });
+    try {
+        const losDatos = JSON.stringify(datos);
+        const formData = new FormData();
+        formData.append("objeto", objeto);
+        formData.append("id", id);
+        formData.append("datos", losDatos);
+        let apiUrl = rutaApi + "actualizar.php";
+        await axios.post(apiUrl, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            }
+        });
+        dispatch({
+            type: ACTUALIZAR_NOMINA_EXITO
+        });
+        dispatch({
+            type: RESETEA_EXITO_NOMINAS
+        });
+    } catch (error) {
+        dispatch({
+            type: ERROR_DE_CARGA_NOMINAS
+        })
+    }
+}
+
+export const cambiarANominaRegistradaAccion = () => (dispatch, getState) => {
+    dispatch({
+        type: CAMBIAR_A_NOMINA_REGISTRADA,
+    });
+}
+
+export const cambiarANominaNoRegistradaAccion = () => (dispatch, getState) => {
+    dispatch({
+        type: CAMBIAR_A_NOMINA_NO_REGISTRADA,
+    });
+}
+
+export const eliminarNominaAccion = (objeto, id) => async (dispatch, getState) => {
+    dispatch({
+        type: LOADING_NOMINAS
+    });
+    try {
+        const formData = new FormData();
+        formData.append("objeto", objeto);
+        formData.append("id", id);
+        let apiUrl = rutaApi + "eliminar.php";
+        await axios.post(apiUrl, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            }
+        });
+        dispatch({
+            type: ELIMINAR_NOMINA_EXITO
+        });
+        dispatch({
+            type: RESETEA_EXITO_NOMINAS
+        });
+    } catch (error) {
+        dispatch({
+            type: ERROR_DE_CARGA_NOMINAS
+        })
+    }
+}
+
+export const registrarIntervencionNominaNuevaAccion = (estado) => (dispatch, getState) => {
+    dispatch({
+        type: INTERVENCION_NOMINA_NUEVA_REGISTRADA,
+        payload: {
+            estado: estado
+        }
+    });
 }

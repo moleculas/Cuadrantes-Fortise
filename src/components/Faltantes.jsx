@@ -12,17 +12,17 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 //importaciones acciones
-import { obtenerCentrosAccion } from '../redux/centrosDucks';
-import { obtenerCuadrantesPendientesAccion } from '../redux/pendientesDucks';
-import { forzarRecargaPendientesAccion } from '../redux/pendientesDucks';
-import { obtenerCentroAccion } from '../redux/centrosDucks';
-import { cambioEstadoInicioCuadrantesAccion } from '../redux/cuadrantesDucks';
-import { activarDesactivarCambioBotonRegistrarAccion } from '../redux/cuadrantesDucks';
-import { registrarIntervencionCuadranteNuevoAccion } from '../redux/cuadrantesDucks';
-import { cambiarACuadranteNoRegistradoAccion } from '../redux/cuadrantesDucks';
-import { venimosDePendientesAccion } from '../redux/pendientesDucks';
-import { setCentroAccion } from '../redux/cuadrantesDucks';
+import { obtenerTrabajadoresAccion } from '../redux/trabajadoresDucks';
+import { forzarRecargaFaltantesAccion } from '../redux/faltantesDucks';
+import { obtenerTrabajadoresFaltantesAccion } from '../redux/faltantesDucks';
 import { retornaAnoMesCuadranteAccion } from '../redux/appDucks';
+import { setTrabajadorAccion } from '../redux/nominasDucks';
+import { obtenerTrabajadorAccion } from '../redux/trabajadoresDucks';
+import { cambioEstadoInicioNominasAccion } from '../redux/nominasDucks';
+import { activarDesactivarCambioBotonRegistrarNominaAccion } from '../redux/nominasDucks';
+import { registrarIntervencionNominaNuevaAccion } from '../redux/nominasDucks';
+import { cambiarANominaNoRegistradaAccion } from '../redux/nominasDucks';
+import { venimosDeFaltantesAccion } from '../redux/faltantesDucks';
 
 //estilos
 import Clases from "../clases";
@@ -32,18 +32,18 @@ const Alert = (props) => {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
 };
 
-const Pendientes = (props) => {
+const Faltantes = (props) => {
 
     const classes = Clases();
     const dispatch = useDispatch();
-    const listadoCentros = useSelector(store => store.variablesCentros.arrayCentros);
-    const errorDeCargaCentros = useSelector(store => store.variablesCentros.errorDeCargaCentros);
-    const errorDeCargaCuadrantes = useSelector(store => store.variablesCuadrantes.errorDeCargaCuadrantes);
-    const openLoadingCuadrantes = useSelector(store => store.variablesCuadrantes.loadingCuadrantes);
-    const centrosPendientesArray = useSelector(store => store.variablesPendientes.centrosPendientesArray);
-    const forzarRecargaPendientes = useSelector(store => store.variablesPendientes.forzarRecargaPendientes);
-    const calendarioAGestionar = useSelector(store => store.variablesCuadrantes.calendarioAGestionar);
-    const openLoadingPendientes = useSelector(store => store.variablesPendientes.loadingPendientes);
+    const errorDeCargaNominas = useSelector(store => store.variablesNominas.errorDeCargaNominas);
+    const errorDeCargaTrabajadores = useSelector(store => store.variablesTrabajadores.errorDeCargaTrabajadores);
+    const openLoadingNominas = useSelector(store => store.variablesNominas.loadingNominas);
+    const trabajadoresFaltantesArray = useSelector(store => store.variablesFaltantes.trabajadoresFaltantesArray);
+    const forzarRecargaFaltantes = useSelector(store => store.variablesFaltantes.forzarRecargaFaltantes);
+    const calendarioAGestionarNominas = useSelector(store => store.variablesNominas.calendarioAGestionarNominas);
+    const openLoadingFaltantes = useSelector(store => store.variablesFaltantes.loadingFaltantes);
+    const listadoTrabajadores = useSelector(store => store.variablesTrabajadores.arrayTrabajadores);
 
     //states
 
@@ -54,37 +54,37 @@ const Pendientes = (props) => {
     //useEffect
 
     useEffect(() => {
-        if (forzarRecargaPendientes || calendarioAGestionar) {
-            dispatch(obtenerCentrosAccion('centros'));
-            dispatch(forzarRecargaPendientesAccion(false));
+        if (forzarRecargaFaltantes || calendarioAGestionarNominas) {
+            dispatch(obtenerTrabajadoresAccion('trabajadores'));
+            dispatch(forzarRecargaFaltantesAccion(false));
         }
-    }, [forzarRecargaPendientes, calendarioAGestionar]);
+    }, [forzarRecargaFaltantes, calendarioAGestionarNominas]);
 
     useEffect(() => {
-        if (listadoCentros.length > 0) {
-            const { monthNum, year } = dispatch(retornaAnoMesCuadranteAccion(calendarioAGestionar));
+        if (listadoTrabajadores.length > 0) {
+            const { monthNum, year } = dispatch(retornaAnoMesCuadranteAccion(calendarioAGestionarNominas));
             const anyoMes = year + '-' + monthNum;
-            dispatch(obtenerCuadrantesPendientesAccion('cuadrantes', anyoMes, listadoCentros));
+            dispatch(obtenerTrabajadoresFaltantesAccion('nominas', anyoMes, listadoTrabajadores));
         }
-    }, [listadoCentros]);
+    }, [listadoTrabajadores]);
 
     useEffect(() => {
-        if (errorDeCargaCentros || errorDeCargaCuadrantes) {
+        if (errorDeCargaTrabajadores || errorDeCargaNominas) {
             setAlert({
                 mensaje: "Error de conexión con la base de datos.",
                 tipo: 'error'
             })
             setOpenSnack(true);
         }
-    }, [errorDeCargaCentros, errorDeCargaCuadrantes]);
+    }, [errorDeCargaTrabajadores, errorDeCargaNominas]);
 
     useEffect(() => {
-        if (!openLoadingCuadrantes || !openLoadingPendientes) {
+        if (!openLoadingNominas || !openLoadingFaltantes) {
             setOpenLoading(false)
         } else {
             setOpenLoading(true)
         }
-    }, [openLoadingCuadrantes, openLoadingPendientes]);
+    }, [errorDeCargaTrabajadores, openLoadingFaltantes]);
 
     //funciones    
 
@@ -95,30 +95,30 @@ const Pendientes = (props) => {
         setOpenSnack(false);
     };
 
-    const handleCuadrantesPendientes = (centro) => {
-        dispatch(setCentroAccion(centro));
-        dispatch(obtenerCentroAccion('centros', centro));
-        dispatch(cambioEstadoInicioCuadrantesAccion(false));
-        dispatch(activarDesactivarCambioBotonRegistrarAccion(false));
-        dispatch(registrarIntervencionCuadranteNuevoAccion(false));
-        dispatch(cambiarACuadranteNoRegistradoAccion());
-        dispatch(venimosDePendientesAccion(true));
+    const handleNominasFaltantes = (trabajador) => {
+        dispatch(setTrabajadorAccion(trabajador));
+        dispatch(obtenerTrabajadorAccion('trabajadores', trabajador));
+        dispatch(cambioEstadoInicioNominasAccion(false));
+        dispatch(activarDesactivarCambioBotonRegistrarNominaAccion(false));
+        dispatch(registrarIntervencionNominaNuevaAccion(false));
+        dispatch(cambiarANominaNoRegistradaAccion());
+        dispatch(venimosDeFaltantesAccion(true));
     };
 
     //retorno componentes
 
-    const retornaCentroGestionado = (centro, index) => {
-        if (centrosPendientesArray.includes(centro.id)) {
+    const  retornaTrabajadorGestionado = (trabajador, index) => {
+        if (trabajadoresFaltantesArray.includes(trabajador.id)) {
             return (
                 <Box
-                    key={'listaCuadrantes' + index}
-                    onClick={() => handleCuadrantesPendientes(centro.id)}
+                    key={'listaNominas' + index}
+                    onClick={() => handleNominasFaltantes(trabajador.id)}
                 >
                     <ListItem
                         className={classes.casilla}
                     >
                         <ListItemText
-                            secondary={centro.nombre}
+                            secondary={trabajador.nombre}
                         />
                         <ListItemSecondaryAction>
                             <ExitToAppIcon
@@ -156,8 +156,8 @@ const Pendientes = (props) => {
                     >
                         <List dense={true}
                             style={{ padding: 15 }}>
-                            {listadoCentros.map((centro, index) => (
-                                retornaCentroGestionado(centro, index)
+                            {listadoTrabajadores.map((trabajador, index) => (
+                                retornaTrabajadorGestionado(trabajador, index)
                             ))}
                         </List>
                     </Box>
@@ -173,4 +173,4 @@ const Pendientes = (props) => {
     )
 }
 
-export default Pendientes
+export default Faltantes

@@ -62,6 +62,7 @@ const OBTENER_CENTRO_VINCULADO_TRABAJADOR_EXITO = 'OBTENER_CENTRO_VINCULADO_TRAB
 const OBTENER_CENTRO_VINCULADO_SUPLENTE_EXITO = 'OBTENER_CENTRO_VINCULADO_SUPLENTE_EXITO';
 const ERROR_DE_CARGA_TRABAJADORES = 'ERROR_DE_CARGA_TRABAJADORES';
 const VACIAR_DATOS_TRABAJADORES = 'VACIAR_DATOS_TRABAJADORES';
+const VACIAR_DATOS_TRABAJADOR = 'VACIAR_DATOS_TRABAJADOR';
 const ACTUALIZAR_TRABAJADOR_EXITO = 'ACTUALIZAR_TRABAJADOR_EXITO';
 const REGISTRAR_TRABAJADOR_EXITO = 'REGISTRAR_TRABAJADOR_EXITO';
 const ELIMINAR_TRABAJADOR_EXITO = 'ELIMINAR_TRABAJADOR_EXITO';
@@ -99,6 +100,8 @@ export default function trabajadoresReducer(state = dataInicial, action) {
             return { ...state, objetoCentroVinculadoSuplente: action.payload.array, errorDeCargaTrabajadores: false, loadingTrabajadores: false }
         case VACIAR_DATOS_TRABAJADORES:
             return { ...dataInicial }
+        case VACIAR_DATOS_TRABAJADOR:
+            return { ...state, objetoTrabajador: action.payload.objeto }
         case ACTIVAR_DESACTIVAR_COMPONENTE_NUEVO_TRABAJADOR:
             return { ...state, estadoActivadoDesactivadoNuevoTrabajador: action.payload.estado }
         case ACTIVAR_DESACTIVAR_COMPONENTE_ACTUALIZACION_TRABAJADOR:
@@ -274,6 +277,31 @@ export const obtenerCentroVinculadoAccion = (objeto, id_consulta, funcion, tipo)
 export const vaciarDatosTrabajadoresAccion = () => (dispatch, getState) => {
     dispatch({
         type: VACIAR_DATOS_TRABAJADORES
+    });
+}
+
+export const vaciarDatosTrabajadorAccion = () => (dispatch, getState) => {
+    dispatch({
+        type: VACIAR_DATOS_TRABAJADOR,
+        payload: {
+            objeto: {
+                id: null,
+                nombre: '',
+                categoria: 1,
+                estado: '',
+                datosEstado: {
+                    inicioBaja: null,
+                    finBaja: null,
+                    inicioVacaciones: null,
+                    finVacaciones: null,
+                    inicioExcedencia: null,
+                    finExcedencia: null,
+                    inicioPersonales: null,
+                    finPersonales: null
+                },
+                historicoBajas: null
+            }
+        }
     });
 }
 

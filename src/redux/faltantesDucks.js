@@ -39,6 +39,40 @@ export default function faltantesReducer(state = dataInicial, action) {
 
 //acciones
 
+export const obtenerTrabajadoresFaltantesAccion = (objeto, mes, arrayTrabajadores) => (dispatch, getState) => {
+    dispatch({
+        type: LOADING_FALTANTES
+    });
+    try {
+        let contador = 0;
+        arrayTrabajadores.forEach(async (trabajadorIterado, index, arr) => {
+            const nombreNomina = mes + '-' + trabajadorIterado.id;
+            const formData = new FormData();
+            formData.append("objeto", objeto);
+            formData.append("id", nombreNomina);
+            let apiUrl = rutaApi + "obtener.php";
+            const res = await axios.post(apiUrl, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                }
+            });
+            if (res.data === false) {
+                contador++;
+                dispatch({
+                    type: OBTENER_NOMINA_FALTANTE,
+                    payload: {
+                        elementoArray: trabajadorIterado.id,
+                        contador: contador
+                    }
+                })
+            }
+        });
+    } catch (error) {
+        dispatch({
+            type: ERROR_DE_CARGA_NOMINAS_FALTANTES
+        })
+    }
+}
 
 export const venimosDeFaltantesAccion = (estado) => (dispatch, getState) => {
     dispatch({

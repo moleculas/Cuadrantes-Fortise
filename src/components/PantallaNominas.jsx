@@ -8,7 +8,9 @@ import Avatar from '@material-ui/core/Avatar';
 import clsx from 'clsx';
 
 //carga componentes
+import Faltantes from './Faltantes';
 import Bajas from './Bajas';
+import GraficoNominas from './GraficoNominas';
 
 //estilos
 import Clases from "../clases";
@@ -26,6 +28,7 @@ const PantallaNominas = () => {
     const dispatch = useDispatch();
     const calendarioAGestionarNominas = useSelector(store => store.variablesNominas.calendarioAGestionarNominas);
     const listadoTrabajadoresBaja = useSelector(store => store.variablesTrabajadores.arrayTrabajadoresBaja);
+    const numeroNominasFaltantes = useSelector(store => store.variablesFaltantes.numeroNominasFaltantes);
 
     //states
 
@@ -72,28 +75,28 @@ const PantallaNominas = () => {
                             <Typography variant="body2">Nóminas del mes de {monthLet} pendientes de gestionar</Typography>
                         </Grid>
                         <Grid item xs={1} className={classes.alignRight}>
-                            {/* <Avatar
-                                className={clsx(classes.small, numeroCentrosPendientes === 0 ? classes.green : classes.red)}
+                            <Avatar
+                                className={clsx(classes.small, numeroNominasFaltantes === 0 ? classes.green : classes.red)}
                             >
-                                <Typography variant='body2'>{numeroCentrosPendientes}</Typography>
-                            </Avatar> */}
+                                <Typography variant='body2'>{numeroNominasFaltantes}</Typography>
+                            </Avatar>
                         </Grid>
                     </Box>
                     <Paper
                         elevation={1}
                         style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra, margin: 8 }}
                     >
-                        {/* {numeroCentrosPendientes === 0 ? (
+                        {numeroNominasFaltantes === 0 ? (
                             <Box p={3}>
-                                No quedan cuadrantes pendientes por gestionar.
+                                No quedan nóminas pendientes por gestionar.
                             </Box>
                         ) : (
-                           //
-                        )} */}
+                            <Faltantes prHeightContenedores={heightContenedoresGra} />
+                        )}
                     </Paper>
                 </Grid>
                 <Grid item xs={6}>
-                    <Grid className={classes.mb15}>
+                    <Grid className={classes.mb20}>
                         <Box
                             p={1.5}
                             m={1}
@@ -106,11 +109,11 @@ const PantallaNominas = () => {
                             elevation={1}
                             style={{ minHeight: heightContenedoresPeq, maxHeight: heightContenedoresPeq, margin: 8 }}
                         >
-
+                            <GraficoNominas prHeightContenedores={heightContenedoresPeq} prWidthContenedores={widthContenedores} />
                         </Paper>
                     </Grid>
                     <Grid>
-                    <Box
+                        <Box
                             p={1.5}
                             m={1}
                             color="secondary.contrastText"

@@ -26,6 +26,7 @@ import { activarDesactivarAccion } from '../redux/appDucks';
 import { vaciarDatosCentrosAccion } from '../redux/centrosDucks';
 import { vaciarDatosTrabajadoresAccion } from '../redux/trabajadoresDucks';
 import { vaciarDatosCuadrantesAccion } from '../redux/cuadrantesDucks';
+import { vaciarDatosNominasAccion } from '../redux/nominasDucks';
 import { vaciarDatosCuadranteRegistradoAccion } from '../redux/cuadrantesDucks';
 import { vaciarDatosConfiguracionAccion } from '../redux/appDucks';
 import { vaciarDatosCuadrantesvinculadosAccion } from '../redux/nominasDucks';
@@ -42,7 +43,10 @@ const Menu = (props) => {
     const intervencionRegistrada = useSelector(store => store.variablesApp.estadoIntervencionRegistrada);
     const openDialog3 = useSelector(store => store.variablesApp.openDialog[2]);
     const openDialog6 = useSelector(store => store.variablesApp.openDialog[5]);
+    const openDialog11 = useSelector(store => store.variablesApp.openDialog[10]);
     const cuadranteNuevoRegistrado = useSelector(store => store.variablesCuadrantes.estadoIntervencionCuadranteNuevoRegistrada);
+    const nominaNuevaRegistrada = useSelector(store => store.variablesNominas.estadoIntervencionNominaNuevaRegistrada);
+    const nominaSinDatosEstado= useSelector(store => store.variablesNominas.nominaSinDatosEstado);
     const onEstem = useSelector(store => store.variablesApp.onEstem);
 
     //states   
@@ -61,19 +65,25 @@ const Menu = (props) => {
         dispatch(vaciarDatosTrabajadoresAccion());
         dispatch(activarDesactivarAccion(true));
         dispatch(vaciarDatosCuadrantesAccion());
+        dispatch(vaciarDatosNominasAccion());
         dispatch(vaciarDatosConfiguracionAccion());
         dispatch(vaciarDatosCuadranteRegistradoAccion());
-        dispatch(vaciarDatosCuadrantesvinculadosAccion());      
+        dispatch(vaciarDatosCuadrantesvinculadosAccion());
         dispatch(cambioEstadoInicioCuadrantesAccion(true));
         dispatch(cambioEstadoInicioNominasAccion(true));
-        dispatch(registrarIntervencionAccion(true));        
+        dispatch(registrarIntervencionAccion(true));
     };
 
     const handleClick = (link) => {
         switch (link) {
             case '/':
-                if (!cuadranteNuevoRegistrado) {
-                    handleClickOpenDialogMenu2();
+                if (!cuadranteNuevoRegistrado || (!nominaNuevaRegistrada && !nominaSinDatosEstado)) {
+                    if (!cuadranteNuevoRegistrado) {
+                        handleClickOpenDialogMenu2();
+                    };
+                    if (!nominaNuevaRegistrada) {
+                        handleClickOpenDialogMenu3();
+                    };
                 } else {
                     if (!intervencionRegistrada) {
                         setPreValueLink(link);
@@ -85,17 +95,26 @@ const Menu = (props) => {
                 }
                 break;
             case '/cuadrantes':
-                if (!intervencionRegistrada) {
-                    setPreValueLink(link);
-                    handleClickOpenDialogMenu1();
+                if (!nominaNuevaRegistrada && !nominaSinDatosEstado) {
+                    handleClickOpenDialogMenu3();
                 } else {
-                    limpiezaGeneral();
-                    props.history.push('/cuadrantes');
+                    if (!intervencionRegistrada) {
+                        setPreValueLink(link);
+                        handleClickOpenDialogMenu1();
+                    } else {
+                        limpiezaGeneral();
+                        props.history.push('/cuadrantes');
+                    }
                 }
                 break;
             case '/trabajadores':
-                if (!cuadranteNuevoRegistrado) {
-                    handleClickOpenDialogMenu2();
+                if (!cuadranteNuevoRegistrado || (!nominaNuevaRegistrada && !nominaSinDatosEstado)) {
+                    if (!cuadranteNuevoRegistrado) {
+                        handleClickOpenDialogMenu2();
+                    };
+                    if (!nominaNuevaRegistrada) {
+                        handleClickOpenDialogMenu3();
+                    };
                 } else {
                     if (!intervencionRegistrada) {
                         setPreValueLink(link);
@@ -107,8 +126,13 @@ const Menu = (props) => {
                 }
                 break;
             case '/centros':
-                if (!cuadranteNuevoRegistrado) {
-                    handleClickOpenDialogMenu2();
+                if (!cuadranteNuevoRegistrado || (!nominaNuevaRegistrada && !nominaSinDatosEstado)) {
+                    if (!cuadranteNuevoRegistrado) {
+                        handleClickOpenDialogMenu2();
+                    };
+                    if (!nominaNuevaRegistrada) {
+                        handleClickOpenDialogMenu3();
+                    };
                 } else {
                     if (!intervencionRegistrada) {
                         setPreValueLink(link);
@@ -133,8 +157,13 @@ const Menu = (props) => {
                 }
                 break;
             case '/configuracion':
-                if (!cuadranteNuevoRegistrado) {
-                    handleClickOpenDialogMenu2();
+                if (!cuadranteNuevoRegistrado || (!nominaNuevaRegistrada && !nominaSinDatosEstado)) {
+                    if (!cuadranteNuevoRegistrado) {
+                        handleClickOpenDialogMenu2();
+                    };
+                    if (!nominaNuevaRegistrada) {
+                        handleClickOpenDialogMenu3();
+                    };
                 } else {
                     if (!intervencionRegistrada) {
                         setPreValueLink(link);
@@ -155,6 +184,8 @@ const Menu = (props) => {
     const descripcionDialogMenu1 = "Estás tratando de cambiar de pantalla pero no has registrado los datos de tu última intervención. Si no deseas guardar los datos pulsa 'De acuerdo', de lo contrario pulsa 'Desacuerdo' y registra los datos.";
     const tituloDialogMenu2 = "Registra el cuadrante";
     const descripcionDialogMenu2 = "Debes registrar el cuadrante nuevo antes de cambiar. Pulsa 'Registrar Cuadrante' en el menú superior.";
+    const tituloDialogMenu3 = "Registra la nómina";
+    const descripcionDialogMenu3 = "Debes registrar la nómina nueva antes de cambiar. Pulsa 'Registrar Nómina' en el menú superior.";
 
     const handleClickOpenDialogMenu1 = () => {
         dispatch(abreObjetoDialogAccion('3'));
@@ -162,6 +193,10 @@ const Menu = (props) => {
 
     const handleClickOpenDialogMenu2 = () => {
         dispatch(abreObjetoDialogAccion('6'));
+    };
+
+    const handleClickOpenDialogMenu3 = () => {
+        dispatch(abreObjetoDialogAccion('11'));
     };
 
     const handleCloseDialogBotonesMenu1 = (respuesta) => {
@@ -292,6 +327,13 @@ const Menu = (props) => {
                 prHandleCloseDialogBotones={handleCloseDialogBotonesVacio}
                 prTituloDialog={tituloDialogMenu2}
                 prDescripcionDialog={descripcionDialogMenu2}
+                prNoTieneBotones={true}
+            />
+            <DialogComponente
+                prIsOpen={openDialog11}
+                prHandleCloseDialogBotones={handleCloseDialogBotonesVacio}
+                prTituloDialog={tituloDialogMenu3}
+                prDescripcionDialog={descripcionDialogMenu3}
                 prNoTieneBotones={true}
             />
         </div>

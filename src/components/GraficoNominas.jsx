@@ -12,8 +12,8 @@ import Grid from '@material-ui/core/Grid';
 import Clases from "../clases";
 
 //importaciones acciones
-import { obtenerCuadrantesPorAnyoAccion } from '../redux/graficosDucks';
-import { forzarRecargaGraficosCuadrantesAccion } from '../redux/graficosDucks';
+import { obtenerNominasPorAnyoAccion } from '../redux/graficosDucks';
+import { forzarRecargaGraficosNominasAccion } from '../redux/graficosDucks';
 
 //constantes
 const meses = Constantes.MESES;
@@ -23,14 +23,14 @@ const Alert = (props) => {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
 };
 
-const GraficoCuadrantes = (props) => {
+const GraficoNominas = (props) => {
 
     const classes = Clases();
     const dispatch = useDispatch();
-    const cuadrantesPorAnyoGraficos = useSelector(store => store.variablesGraficos.cuadrantesPorAnyoGraficos);
-    const errorDeCargaGraficosCuadrantes = useSelector(store => store.variablesGraficos.errorDeCargaGraficosCuadrantes);
-    const openLoadingGraficosCuadrantes = useSelector(store => store.variablesGraficos.loadingGraficos);
-    const forzarRecargaGraficosCuadrantes = useSelector(store => store.variablesGraficos.forzarRecargaGraficosCuadrantes);
+    const nominasPorAnyoGraficos = useSelector(store => store.variablesGraficos.nominasPorAnyoGraficos);
+    const errorDeCargaGraficosNominas = useSelector(store => store.variablesGraficos.errorDeCargaGraficosNominas);
+    const openLoadingGraficosNominas = useSelector(store => store.variablesGraficos.loadingGraficos);
+    const forzarRecargaGraficosNominas = useSelector(store => store.variablesGraficos.forzarRecargaGraficosNominas);
 
     //states
 
@@ -42,57 +42,57 @@ const GraficoCuadrantes = (props) => {
     //useEffect
 
     useEffect(() => {
-        if (forzarRecargaGraficosCuadrantes) {
+        if (forzarRecargaGraficosNominas) {
             setData([]);
-            dispatch(obtenerCuadrantesPorAnyoAccion('cuadrantes'));
-            dispatch(forzarRecargaGraficosCuadrantesAccion(false));
+            dispatch(obtenerNominasPorAnyoAccion('nominas'));
+            dispatch(forzarRecargaGraficosNominasAccion(false));
         }
-    }, [forzarRecargaGraficosCuadrantes]);
+    }, [forzarRecargaGraficosNominas]);
 
     useEffect(() => {
-        if (cuadrantesPorAnyoGraficos.length > 0) {
+        if (nominasPorAnyoGraficos.length > 0) {
             let array = [];
             let sumatorio = 0;
             let objeto;
-            cuadrantesPorAnyoGraficos.forEach((mes, index) => {
+            nominasPorAnyoGraficos.forEach((mes, index) => {
                 if (mes.length > 0) {
                     mes.forEach((mesInt, index) => {
-                        objeto = JSON.parse(mesInt['datos_informe']);
-                        sumatorio += objeto.totalFacturado;
+                        objeto = JSON.parse(mesInt['datos_nomina']);
+                        sumatorio += objeto.totalEmitido;
                     });
                     array.push({
                         name: meses[index].substr(0, 3) + '.',
-                        Ingresos: sumatorio,
+                        Gastos: sumatorio,
                     });
                     sumatorio = 0;
                 } else {
                     array.push({
                         name: meses[index].substr(0, 3) + '.',
-                        Ingresos: 0,
+                        Gastos: 0,
                     })
                 }
             });
             setData(array);
         }
-    }, [cuadrantesPorAnyoGraficos]);
+    }, [nominasPorAnyoGraficos]);
 
     useEffect(() => {
-        if (errorDeCargaGraficosCuadrantes) {
+        if (errorDeCargaGraficosNominas) {
             setAlert({
                 mensaje: "Error de conexión con la base de datos.",
                 tipo: 'error'
             })
             setOpenSnack(true);
         }
-    }, [errorDeCargaGraficosCuadrantes]);
+    }, [errorDeCargaGraficosNominas]);
 
     useEffect(() => {
-        if (!openLoadingGraficosCuadrantes) {
+        if (!openLoadingGraficosNominas) {
             setOpenLoading(false)
         } else {
             setOpenLoading(true)
         }
-    }, [openLoadingGraficosCuadrantes]);
+    }, [openLoadingGraficosNominas]);
 
     //funciones    
 
@@ -138,7 +138,7 @@ const GraficoCuadrantes = (props) => {
                         <YAxis style={{fontSize: '0.7rem' }}/>
                         <Tooltip />
                         {/* <Legend /> */}
-                        <Line type="monotone" dataKey="Ingresos" stroke="#00bcd4" activeDot={{ r: 4 }} />
+                        <Line type="monotone" dataKey="Gastos" stroke="#ff9800" activeDot={{ r: 4 }} />
                         <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
                     </LineChart>
                 )}
@@ -148,9 +148,9 @@ const GraficoCuadrantes = (props) => {
                     </Alert>
                 </Snackbar>
             </Grid>
-            {/* {console.log(data)} */}
+            {/* {console.log(nominasPorAnyoGraficos)} */}
         </div>
     )
 }
 
-export default GraficoCuadrantes
+export default GraficoNominas

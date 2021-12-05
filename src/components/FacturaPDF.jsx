@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     },
 });
 
-const InformePDF = ({arrayInformePDF}) => {   
+const FacturaPDF = ({arrayFacturaPDF}) => {   
     return (
         <Document>
         <Page style={styles.body}>
@@ -63,7 +63,7 @@ const InformePDF = ({arrayInformePDF}) => {
                 ~ Gestión de cuadrantes de Servicio Fortise S.L. ~
             </Text>
             <Text style={styles.title}>Informe Cuadrante de Servicio</Text>
-            {arrayInformePDF.map((linea, index) => {
+            {arrayFacturaPDF.map((linea, index) => {
                 return (<Text key={'text'+index} style={styles.text}>
                     {linea}
                 </Text>)
@@ -77,4 +77,4 @@ const InformePDF = ({arrayInformePDF}) => {
     );
   };
   
-  export default InformePDF
+  export default FacturaPDF
