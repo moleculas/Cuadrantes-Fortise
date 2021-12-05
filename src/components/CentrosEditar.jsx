@@ -449,6 +449,10 @@ const CentrosEditar = forwardRef((props, ref) => {
         }
     };
 
+    function IsNumeric(num) {
+        return (num >= 0 || num < 0);
+    };
+
     const handleChangeFormEdicion = (prop) => (e) => {
         if (prop === "variacion") {
             setValuesFormEdicion({ ...valuesFormEdicion, [prop]: e.target.value });
@@ -468,14 +472,18 @@ const CentrosEditar = forwardRef((props, ref) => {
             return;
         };
         if (prop === "mensualPactado") {
-            setValuesFormEdicion({ ...valuesFormEdicion, [prop]: parseInt(e.target.value) });
-            dispatch(activarDesactivarActualizarCentroAccion(false));
-            return;
+            if (IsNumeric(e.target.value)) {
+                setValuesFormEdicion({ ...valuesFormEdicion, [prop]: e.target.value });
+                dispatch(activarDesactivarActualizarCentroAccion(false));
+                return;
+            }
         };
         if (prop === "precioHora") {
-            setValuesFormEdicion({ ...valuesFormEdicion, [prop]: parseInt(e.target.value) });
-            dispatch(activarDesactivarActualizarCentroAccion(false));
-            return;
+            if (IsNumeric(e.target.value)) {
+                setValuesFormEdicion({ ...valuesFormEdicion, [prop]: e.target.value });
+                dispatch(activarDesactivarActualizarCentroAccion(false));
+                return;
+            }
         };
         if (prop === "tipo") {
             setValuesFormEdicion({ ...valuesFormEdicion, [prop]: e.target.value });
@@ -2523,7 +2531,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         <OutlinedInput
                                             className={classes.mb15}
                                             fullWidth
-                                            id="form-mensual-pactado-edicion"                                          
+                                            id="form-mensual-pactado-edicion"
                                             value={valuesFormEdicion.mensualPactado || ''}
                                             onChange={handleChangeFormEdicion('mensualPactado')}
                                             labelWidth={130}

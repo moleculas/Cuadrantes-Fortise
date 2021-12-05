@@ -373,7 +373,7 @@ const Clases = makeStyles((theme) => ({
     },
     alignRight: {
         display: 'flex',
-        flexDirection: 'row-reverse'
+        flexDirection: 'row-reverse',       
     },
     paper: {
         backgroundColor: theme.palette.background.paper,
@@ -383,16 +383,16 @@ const Clases = makeStyles((theme) => ({
         display: "flex",
         alignItems: "center"
     },
-    fuentePequena:{
+    fuentePequena: {
         fontSize: '0.7rem'
     },
-    rootPendientes: {       
+    rootPendientes: {
         width: '100%',
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
         justify: "center"
-    },    
+    },
     casilla: {
         cursor: 'pointer',
         backgroundColor: theme.palette.background.default,
@@ -406,7 +406,7 @@ const Clases = makeStyles((theme) => ({
         "&:hover": {
             backgroundColor: `${indigo[50]} !important`,
         },
-    },    
+    },
     casillaBajas: {
         cursor: 'pointer',
         backgroundColor: theme.palette.background.default,
@@ -420,7 +420,7 @@ const Clases = makeStyles((theme) => ({
         "&:hover": {
             backgroundColor: `${red[50]} !important`,
         },
-    },    
+    },
     red: {
         color: theme.palette.getContrastText(red[500]),
         backgroundColor: red[500],
@@ -436,7 +436,22 @@ const Clases = makeStyles((theme) => ({
     link: {
         textDecoration: 'none',
         color: 'inherit'
-    }
+    },
+    casillaNominasNormal: {
+        marginTop: 10,
+        backgroundColor: 'white',
+        paddingTop: 15,
+        paddingBottom: 15
+    },
+    casillaNominasFinal: {
+        marginTop: 10,
+        backgroundColor: `${amber[50]} !important`,
+        paddingTop: 15,
+        paddingBottom: 15
+    },
+    inline: {
+        display: 'inline'
+    },
 }));
 
 export default Clases;

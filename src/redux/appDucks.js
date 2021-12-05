@@ -19,7 +19,7 @@ const dataInicial = {
         precioHoraExtra: null,
         mensajeMailCentros: ''
     },
-    exitoActualizacionConfiguracion: false
+    exitoActualizacionConfiguracion: false,
 }
 
 //types
@@ -367,4 +367,14 @@ export const vaciarDatosConfiguracionAccion = () => (dispatch, getState) => {
             mensajeMailCentros: ''
         }
     });
+}
+
+export const obtenerObjetoPorIdAccion = (listado, id) => (dispatch, getState) => {    
+    let aDevolver;
+    listado.map((elemento)=>{
+      if(elemento.id===id){  
+        aDevolver=elemento.nombre
+      }
+    });
+    return aDevolver
 }

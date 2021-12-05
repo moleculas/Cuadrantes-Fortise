@@ -3414,7 +3414,7 @@ const retornaMinutosAccionEnCuadrantes = (primeraHora, segundaHora) => {
     }
 }
 
-export const gestionarInformeAccion = (cuadrante) => (dispatch, getState) => {
+export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState) => {
     let arrayResultante = [];
     let sumatorioHoras;
     let sumatorioHorasNormal;
@@ -3426,7 +3426,7 @@ export const gestionarInformeAccion = (cuadrante) => (dispatch, getState) => {
             case 'rango':
                 arrayResultante.push({
                     trabajador: cuadranteColumna.idTrabajador,
-                    trabajadorNombre: cuadranteColumna.nombreTrabajador,
+                    //trabajadorNombre: cuadranteColumna.nombreTrabajador,
                     tipo: cuadranteColumna.tipoTrabajador,
                     computo: [],
                     totalHorasNormal: null,
@@ -3494,26 +3494,26 @@ export const gestionarInformeAccion = (cuadrante) => (dispatch, getState) => {
                                     case 1:
                                         //'Considerar como horas extra'
                                         lasHorasNormal = null;
-                                        lasHorasExtra = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60
+                                        lasHorasExtra = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60;
                                         break;
                                     case 2:
                                         //'Añadir 0.5 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60;
                                         lasHorasExtra = 30/60;
                                         break;
                                     case 3:
                                         //'Añadir 1 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60;
                                         lasHorasExtra = 60/60;
                                         break;
                                     case 4:
                                         //'Añadir 1.5 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60;
                                         lasHorasExtra = 90/60;
                                         break;
                                     case 5:
                                         //'Añadir 2 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60;
                                         lasHorasExtra = 120/60;
                                         break;
                                     case 6:
@@ -3522,7 +3522,7 @@ export const gestionarInformeAccion = (cuadrante) => (dispatch, getState) => {
                                     default:
                                 }
                             } else {
-                                lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60
+                                lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60;
                                 lasHorasExtra = null;
                             };
                             arrayResultante[index].computo.push({
@@ -3788,7 +3788,7 @@ export const gestionarInformeAccion = (cuadrante) => (dispatch, getState) => {
             case 'rangoDescanso':
                 arrayResultante.push({
                     trabajador: cuadranteColumna.idTrabajador,
-                    trabajadorNombre: cuadranteColumna.nombreTrabajador,
+                    //trabajadorNombre: cuadranteColumna.nombreTrabajador,
                     tipo: cuadranteColumna.tipoTrabajador,
                     computo: [],
                     totalHorasNormal: null,
@@ -3805,7 +3805,7 @@ export const gestionarInformeAccion = (cuadrante) => (dispatch, getState) => {
                         if (cuadranteColumna[prop].lunesInicio1RangoDescanso) {
                             rango1 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicio1RangoDescanso, cuadranteColumna[prop].lunesFin1RangoDescanso) / 60;
                             if (cuadranteColumna[prop].lunesInicio2RangoDescanso) {
-                                rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicio2RangoDescanso, cuadranteColumna[prop].lunesFin2RangoDescanso) / 60
+                                rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicio2RangoDescanso, cuadranteColumna[prop].lunesFin2RangoDescanso) / 60;
                             } else {
                                 rango2 = 0;
                             };        
@@ -3860,7 +3860,7 @@ export const gestionarInformeAccion = (cuadrante) => (dispatch, getState) => {
                         if (cuadranteColumna[prop].martesInicio1RangoDescanso) {
                             rango1 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicio1RangoDescanso, cuadranteColumna[prop].martesFin1RangoDescanso) / 60;
                             if (cuadranteColumna[prop].martesInicio2RangoDescanso) {
-                                rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicio2RangoDescanso, cuadranteColumna[prop].martesFin2RangoDescanso) / 60
+                                rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicio2RangoDescanso, cuadranteColumna[prop].martesFin2RangoDescanso) / 60;
                             } else {
                                 rango2 = 0;
                             };
@@ -3915,7 +3915,7 @@ export const gestionarInformeAccion = (cuadrante) => (dispatch, getState) => {
                         if (cuadranteColumna[prop].miercolesInicio1RangoDescanso) {
                             rango1 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicio1RangoDescanso, cuadranteColumna[prop].miercolesFin1RangoDescanso) / 60;
                             if (cuadranteColumna[prop].miercolesInicio2RangoDescanso) {
-                                rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicio2RangoDescanso, cuadranteColumna[prop].miercolesFin2RangoDescanso) / 60
+                                rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicio2RangoDescanso, cuadranteColumna[prop].miercolesFin2RangoDescanso) / 60;
                             } else {
                                 rango2 = 0;
                             };
@@ -3970,7 +3970,7 @@ export const gestionarInformeAccion = (cuadrante) => (dispatch, getState) => {
                         if (cuadranteColumna[prop].juevesInicio1RangoDescanso) {
                             rango1 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicio1RangoDescanso, cuadranteColumna[prop].juevesFin1RangoDescanso) / 60;
                             if (cuadranteColumna[prop].juevesInicio2RangoDescanso) {
-                                rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicio2RangoDescanso, cuadranteColumna[prop].juevesFin2RangoDescanso) / 60
+                                rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicio2RangoDescanso, cuadranteColumna[prop].juevesFin2RangoDescanso) / 60;
                             } else {
                                 rango2 = 0;
                             };
@@ -4025,7 +4025,7 @@ export const gestionarInformeAccion = (cuadrante) => (dispatch, getState) => {
                         if (cuadranteColumna[prop].viernesInicio1RangoDescanso) {
                             rango1 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicio1RangoDescanso, cuadranteColumna[prop].viernesFin1RangoDescanso) / 60;
                             if (cuadranteColumna[prop].viernesInicio2RangoDescanso) {
-                                rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicio2RangoDescanso, cuadranteColumna[prop].viernesFin2RangoDescanso) / 60
+                                rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicio2RangoDescanso, cuadranteColumna[prop].viernesFin2RangoDescanso) / 60;
                             } else {
                                 rango2 = 0;
                             };
@@ -4080,7 +4080,7 @@ export const gestionarInformeAccion = (cuadrante) => (dispatch, getState) => {
                         if (cuadranteColumna[prop].sabadoInicio1RangoDescanso) {
                             rango1 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicio1RangoDescanso, cuadranteColumna[prop].sabadoFin1RangoDescanso) / 60;
                             if (cuadranteColumna[prop].sabadoInicio2RangoDescanso) {
-                                rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicio2RangoDescanso, cuadranteColumna[prop].sabadoFin2RangoDescanso) / 60
+                                rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicio2RangoDescanso, cuadranteColumna[prop].sabadoFin2RangoDescanso) / 60;
                             } else {
                                 rango2 = 0;
                             };
@@ -4135,7 +4135,7 @@ export const gestionarInformeAccion = (cuadrante) => (dispatch, getState) => {
                         if (cuadranteColumna[prop].domingoInicio1RangoDescanso) {
                             rango1 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicio1RangoDescanso, cuadranteColumna[prop].domingoFin1RangoDescanso) / 60;
                             if (cuadranteColumna[prop].domingoInicio2RangoDescanso) {
-                                rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicio2RangoDescanso, cuadranteColumna[prop].domingoFin2RangoDescanso) / 60
+                                rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicio2RangoDescanso, cuadranteColumna[prop].domingoFin2RangoDescanso) / 60;
                             } else {
                                 rango2 = 0;
                             };
@@ -4193,7 +4193,7 @@ export const gestionarInformeAccion = (cuadrante) => (dispatch, getState) => {
             case 'cantidad':
                 arrayResultante.push({
                     trabajador: cuadranteColumna.idTrabajador,
-                    trabajadorNombre: cuadranteColumna.nombreTrabajador,
+                    //trabajadorNombre: cuadranteColumna.nombreTrabajador,
                     tipo: cuadranteColumna.tipoTrabajador,
                     computo: [],
                     totalHorasNormal: null,

@@ -28,6 +28,7 @@ import { vaciarDatosTrabajadoresAccion } from '../redux/trabajadoresDucks';
 import { vaciarDatosCuadrantesAccion } from '../redux/cuadrantesDucks';
 import { vaciarDatosCuadranteRegistradoAccion } from '../redux/cuadrantesDucks';
 import { vaciarDatosConfiguracionAccion } from '../redux/appDucks';
+import { vaciarDatosCuadrantesvinculadosAccion } from '../redux/nominasDucks';
 import { cambioEstadoInicioCuadrantesAccion } from '../redux/cuadrantesDucks';
 import { cambioEstadoInicioNominasAccion } from '../redux/nominasDucks';
 import { abreObjetoDialogAccion } from '../redux/appDucks';
@@ -62,6 +63,7 @@ const Menu = (props) => {
         dispatch(vaciarDatosCuadrantesAccion());
         dispatch(vaciarDatosConfiguracionAccion());
         dispatch(vaciarDatosCuadranteRegistradoAccion());
+        dispatch(vaciarDatosCuadrantesvinculadosAccion());      
         dispatch(cambioEstadoInicioCuadrantesAccion(true));
         dispatch(cambioEstadoInicioNominasAccion(true));
         dispatch(registrarIntervencionAccion(true));        

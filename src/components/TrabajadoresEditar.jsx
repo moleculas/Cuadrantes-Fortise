@@ -225,8 +225,7 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
         setOpenSnack(false);
     };
 
-    const handleChangeSelectTrabajadoresEdicion = (e, values) => {
-        console.log(values)
+    const handleChangeSelectTrabajadoresEdicion = (e, values) => {      
         if (values) {
             setValuesAutocompleteTrabajadoresValores(values)
             dispatch(obtenerTrabajadorAccion('trabajadores', values.id));

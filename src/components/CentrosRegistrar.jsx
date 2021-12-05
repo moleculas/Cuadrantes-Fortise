@@ -246,6 +246,10 @@ const CentrosRegistrar = forwardRef((props, ref) => {
         setOpenSnack(false);
     };
 
+    function IsNumeric(num) {
+        return (num >= 0 || num < 0);
+    };
+
     const handleChangeFormRegistro = (prop) => (e) => {
         if (prop === "variacion") {
             setValuesFormRegistro({ ...valuesFormRegistro, [prop]: e.target.value });
@@ -264,14 +268,18 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             return;
         };
         if (prop === "mensualPactado") {
-            setValuesFormRegistro({ ...valuesFormRegistro, [prop]: parseInt(e.target.value) });
-            dispatch(activarDesactivarRegistrarCentroAccion(false));
-            return;
+            if (IsNumeric(e.target.value)) {
+                setValuesFormRegistro({ ...valuesFormRegistro, [prop]: e.target.value });
+                dispatch(activarDesactivarRegistrarCentroAccion(false));
+                return;
+            }
         };
         if (prop === "precioHora") {
-            setValuesFormRegistro({ ...valuesFormRegistro, [prop]: parseInt(e.target.value) });
-            dispatch(activarDesactivarRegistrarCentroAccion(false));
-            return;
+            if (IsNumeric(e.target.value)) {
+                setValuesFormRegistro({ ...valuesFormRegistro, [prop]: e.target.value });
+                dispatch(activarDesactivarRegistrarCentroAccion(false));
+                return;
+            }
         };
         if (prop === "tipo") {
             setValuesFormRegistro({ ...valuesFormRegistro, [prop]: e.target.value });

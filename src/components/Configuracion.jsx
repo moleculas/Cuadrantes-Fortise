@@ -99,7 +99,6 @@ const Alert = (props) => {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-
 const Configuracion = (props) => {
 
     const classes = Clases();
@@ -216,9 +215,16 @@ const Configuracion = (props) => {
         }
     };
 
+    function IsNumeric(num) {
+        return (num >= 0 || num < 0);
+    };
+
     const handleChangeFormConfiguracion = (prop) => (e) => {
         if (prop === "precioHoraNormal" || prop === "precioHoraExtra") {
-            setValuesFormConfiguracion({ ...valuesFormConfiguracion, [prop]: parseInt(e.target.value) });
+            if (IsNumeric(e.target.value)) {
+                setValuesFormConfiguracion({ ...valuesFormConfiguracion, [prop]: e.target.value });
+            }
+
         }
         if (prop === "mensajeMailCentros") {
             setValuesFormConfiguracion({ ...valuesFormConfiguracion, [prop]: e.target.value });
@@ -247,17 +253,17 @@ const Configuracion = (props) => {
 
     const procesarDatosConfiguracion = () => {
         //comprobamos que no haya campos vacíos
-        if (!valuesFormConfiguracion.precioHoraNormal || !valuesFormConfiguracion.precioHoraExtra || valuesFormConfiguracion.mensajeMailCentros==='') {
+        if (!valuesFormConfiguracion.precioHoraNormal || !valuesFormConfiguracion.precioHoraExtra || valuesFormConfiguracion.mensajeMailCentros === '') {
             setAlert({
                 mensaje: "Faltan datos por completar. Revisa el formulario.",
                 tipo: 'error'
             })
             setOpenSnack(true);
             return;
-        };        
+        };
 
         //actualizamos
-        const configuracionAGuardar = {            
+        const configuracionAGuardar = {
             datos_configuracion: JSON.stringify(valuesFormConfiguracion)
         };
         dispatch(actualizarConfiguracionAccion('configuracion', 1, configuracionAGuardar));

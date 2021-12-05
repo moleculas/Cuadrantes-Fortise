@@ -11,6 +11,7 @@ import cuadrantesReducer from './cuadrantesDucks';
 import pendientesReducer from './pendientesDucks';
 import graficosReducer from './graficosDucks';
 import nominasReducer from './nominasDucks';
+import faltantesReducer from './faltantesDucks';
 
 const rootReducer = combineReducers({
     variablesCentros: centrosReducer,
@@ -20,7 +21,8 @@ const rootReducer = combineReducers({
     variablesCuadrantes: cuadrantesReducer,
     variablesPendientes: pendientesReducer,
     variablesGraficos: graficosReducer,
-    variablesNominas: nominasReducer
+    variablesNominas: nominasReducer,
+    variablesFaltantes: faltantesReducer
 })
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;

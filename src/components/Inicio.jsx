@@ -18,6 +18,7 @@ import { vaciarDatosCentrosAccion } from '../redux/centrosDucks';
 import { vaciarDatosTrabajadoresAccion } from '../redux/trabajadoresDucks';
 import { vaciarDatosCuadrantesAccion } from '../redux/cuadrantesDucks';
 import { vaciarDatosCuadranteRegistradoAccion } from '../redux/cuadrantesDucks';
+import { vaciarDatosCuadrantesvinculadosAccion } from '../redux/nominasDucks';
 import { cambioEstadoInicioCuadrantesAccion } from '../redux/cuadrantesDucks';
 import { cambioEstadoInicioNominasAccion } from '../redux/nominasDucks';
 import { registrarIntervencionAccion } from '../redux/appDucks';
@@ -83,6 +84,7 @@ const Inicio = (props) => {
         dispatch(vaciarDatosCuadrantesAccion());
         dispatch(vaciarDatosCuadranteRegistradoAccion());
         dispatch(vaciarDatosConfiguracionAccion());
+        dispatch(vaciarDatosCuadrantesvinculadosAccion());      
         dispatch(cambioEstadoInicioCuadrantesAccion(true));
         dispatch(cambioEstadoInicioNominasAccion(true));
         dispatch(registrarIntervencionAccion(true));

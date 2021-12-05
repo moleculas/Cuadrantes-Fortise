@@ -107,6 +107,8 @@ import { setCalendarioAGestionarAccion } from '../redux/cuadrantesDucks';
 import { retornaAnoMesCuadranteAccion } from '../redux/appDucks';
 import { gestionarInformeAccion } from '../redux/cuadrantesDucks';
 import { enviarMailAccion } from '../redux/appDucks';
+import { obtenerObjetoPorIdAccion } from '../redux/appDucks';
+
 
 const categorias = Constantes.CATEGORIAS_CENTROS;
 const arrayFestivos = Constantes.CALENDARIO_FESTIVOS;
@@ -376,6 +378,7 @@ const Cuadrantes = (props) => {
                         ...objetoCuadrante,
                         datosInforme: {
                             objeto: 'informe',
+                            centro: centroAGestionar.id,
                             computo: centroAGestionar.horario.computo,
                             mensualPactado: centroAGestionar.horario.mensualPactado,
                             precioHora: centroAGestionar.horario.precioHora,
@@ -534,7 +537,7 @@ const Cuadrantes = (props) => {
                 };
             };
             if (cuadrante[cuadrante.length - 1].nombreTrabajador) {
-                setArrayDatosInforme(dispatch(gestionarInformeAccion(cuadrante)));
+                setArrayDatosInforme(dispatch(gestionarInformeAccion(cuadrante, objetoCuadrante.datosCuadrante.centro)));
             };
         };
     }, [cuadrante]);
@@ -941,7 +944,7 @@ const Cuadrantes = (props) => {
         }
     };
 
-    const gestionaTextoCasillas = (indexDia, dia, columna, diaSemana) => {     
+    const gestionaTextoCasillas = (indexDia, dia, columna, diaSemana) => {
         if (columna[dia].baja) {
             switch (columna[dia].tipoBaja) {
                 case 'baja':
@@ -1146,8 +1149,8 @@ const Cuadrantes = (props) => {
         }
     };
 
-    const gestionaValoresCasillas = (indexDia, dia, columna, diaSemana, casilla) => {      
-        if (columna[dia].baja || stateFestivo['estadoFestivoDia' + (indexDia-1)]) {
+    const gestionaValoresCasillas = (indexDia, dia, columna, diaSemana, casilla) => {
+        if (columna[dia].baja || stateFestivo['estadoFestivoDia' + (indexDia - 1)]) {
             if (columna.tipoHorario === 'cantidad') {
                 return '';
             } else {
@@ -1716,7 +1719,7 @@ const Cuadrantes = (props) => {
         const casilla = getRef(lastEditado);
         casilla.current.classList.remove(classes.editando);
         setLastEditado(null);
-        if (itemPrevioEditando) {            
+        if (itemPrevioEditando) {
             if (itemPrevioEditando.tipo === 'rango') {
                 if (itemPrevioEditando.id.includes('Lunes')) {
                     cuadrante[itemPrevioEditando.index][itemPrevioEditando.id].lunesInicioRango = dispatch(retornaHoraRangoAccion(itemPrevioEditando.inicioRango));
@@ -2982,6 +2985,21 @@ const Cuadrantes = (props) => {
     };
 
     const procesarDatosCuadrante = (source, totalFacturado) => {
+        //revisamos que el cuadrante no esté a 0
+        let sumatorioHoras = 0;
+        if (arrayDatosInforme.length > 0) {
+            arrayDatosInforme.forEach((dato, index) => {
+                sumatorioHoras += dato.totalHoras;
+            });
+        }
+        if (sumatorioHoras < 1) {
+            setAlert({
+                mensaje: "El cuadrante no se puede registrar a 0. El trabajador asignado está de baja, añade un suplente o un trabajador para computar.",
+                tipo: 'error'
+            })
+            setOpenSnack(true);
+            return;
+        };
         //revisamos que no haya columnas vacías
         let arrayCuadrante = [...cuadrante];
         let fechaHoy = new Date().toLocaleString() + '';
@@ -3002,6 +3020,7 @@ const Cuadrantes = (props) => {
         };
         const objetoFinalInforme = {
             objeto: 'informe',
+            centro: objetoCuadrante.datosInforme.centro,
             computo: objetoCuadrante.datosInforme.computo,
             mensualPactado: objetoCuadrante.datosInforme.mensualPactado,
             precioHora: objetoCuadrante.datosInforme.precioHora,
@@ -3030,7 +3049,6 @@ const Cuadrantes = (props) => {
             dispatch(activarDesactivarCambioBotonActualizarAccion(true));
         };
         dispatch(registrarIntervencionAccion(true));
-        //dispatch(cierraObjetoDialogAccion());
     };
 
     const goToInicioCuadrantes = () => {
@@ -3093,11 +3111,12 @@ const Cuadrantes = (props) => {
                 elTipo = '(suplente)'
             };
             sumatorioHoras += dato.totalHoras;
-            if(dato.totalHorasExtra){
-                arrayInforme.push(dato.trabajadorNombre + ' ' + elTipo + ' Total horas trabajadas mes trabajador: ' + dato.totalHorasNormal + ' horas + '+ dato.totalHorasExtra +' horas extra')
-            }else{
-                arrayInforme.push(dato.trabajadorNombre + ' ' + elTipo + ' Total horas trabajadas mes trabajador: ' + dato.totalHoras + ' horas')
-            };            
+            let nombreTrabajador = dispatch(obtenerObjetoPorIdAccion(listadoTrabajadores, dato.trabajador));
+            if (dato.totalHorasExtra) {
+                arrayInforme.push(nombreTrabajador + ' ' + elTipo + ' Total horas trabajadas mes trabajador: ' + dato.totalHorasNormal + ' horas + ' + dato.totalHorasExtra + ' horas extra')
+            } else {
+                arrayInforme.push(nombreTrabajador + ' ' + elTipo + ' Total horas trabajadas mes trabajador: ' + dato.totalHoras + ' horas')
+            };
         });
         arrayInforme.push('Total horas trabajadas mes cuadrante: ' + sumatorioHoras + ' horas');
         if (objetoCuadrante.datosInforme.mensualPactado) {
@@ -3870,7 +3889,7 @@ const Cuadrantes = (props) => {
                 prFullWidth={true}
                 prMaxWidth={true}
             />
-            {/* {console.log(arrayDatosInforme)} */}
+            {/* {console.log(centroAGestionar)} */}
         </div>
     )
 }
