@@ -73,6 +73,16 @@ const Clases = makeStyles((theme) => ({
             margin: theme.spacing(0.5),
         },
     },
+    formTipo: {
+        display: 'flex',
+        marginRight: -10,
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        flexWrap: 'wrap',
+        '& > *': {
+            margin: theme.spacing(0),
+        },
+    },
     formInput: {
         marginBottom: '10px',
     },
@@ -452,6 +462,9 @@ const Clases = makeStyles((theme) => ({
     inline: {
         display: 'inline'
     },
+    cursorDefault: {
+        cursor: 'default'
+    }
 }));
 
 export default Clases;

@@ -535,6 +535,7 @@ export const gestionaColumnaCuadranteInterior = (
                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                             lunesInicioRango: null,
                             lunesFinRango: null,
+                            lunesTipoServicio: '',
                             baja: false,
                             tipoBaja: null,
                             festivo: true,
@@ -551,6 +552,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     lunesInicioRango: null,
                                     lunesFinRango: null,
+                                    lunesTipoServicio: '',
                                     baja: true,
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
@@ -566,6 +568,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         lunesInicioRango: null,
                                         lunesFinRango: null,
+                                        lunesTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -587,6 +590,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             lunesInicioRango: null,
                                             lunesFinRango: null,
+                                            lunesTipoServicio: '',
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -599,6 +603,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             lunesInicioRango: centroAGestionar.horario.lunesInicioRango,
                                             lunesFinRango: centroAGestionar.horario.lunesFinRango,
+                                            lunesTipoServicio: centroAGestionar.horario.lunesTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -617,6 +622,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     lunesInicioRango: null,
                                     lunesFinRango: null,
+                                    lunesTipoServicio: '',
                                     baja: false,
                                     tipoBaja: null,
                                     festivo: false,
@@ -638,6 +644,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         lunesInicioRango: null,
                                         lunesFinRango: null,
+                                        lunesTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -650,6 +657,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         lunesInicioRango: centroAGestionar.horario.lunesInicioRango,
                                         lunesFinRango: centroAGestionar.horario.lunesFinRango,
+                                        lunesTipoServicio: centroAGestionar.horario.lunesTipoServicio,
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -668,6 +676,7 @@ export const gestionaColumnaCuadranteInterior = (
                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                             martesInicioRango: null,
                             martesFinRango: null,
+                            martesTipoServicio: '',
                             baja: false,
                             tipoBaja: null,
                             festivo: true,
@@ -684,6 +693,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     martesInicioRango: null,
                                     martesFinRango: null,
+                                    martesTipoServicio: '',
                                     baja: true,
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
@@ -699,6 +709,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         martesInicioRango: null,
                                         martesFinRango: null,
+                                        martesTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -720,6 +731,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             martesInicioRango: null,
                                             martesFinRango: null,
+                                            martesTipoServicio: '',
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -732,6 +744,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             martesInicioRango: centroAGestionar.horario.martesInicioRango,
                                             martesFinRango: centroAGestionar.horario.martesFinRango,
+                                            martesTipoServicio: centroAGestionar.horario.martesTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -750,6 +763,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     martesInicioRango: null,
                                     martesFinRango: null,
+                                    martesTipoServicio: '',
                                     baja: false,
                                     tipoBaja: null,
                                     festivo: false,
@@ -771,6 +785,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         martesInicioRango: null,
                                         martesFinRango: null,
+                                        martesTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -783,6 +798,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         martesInicioRango: centroAGestionar.horario.martesInicioRango,
                                         martesFinRango: centroAGestionar.horario.martesFinRango,
+                                        martesTipoServicio: centroAGestionar.horario.martesTipoServicio,
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -801,6 +817,7 @@ export const gestionaColumnaCuadranteInterior = (
                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                             miercolesInicioRango: null,
                             miercolesFinRango: null,
+                            miercolesTipoServicio: '',
                             baja: false,
                             tipoBaja: null,
                             festivo: true,
@@ -817,6 +834,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     miercolesInicioRango: null,
                                     miercolesFinRango: null,
+                                    miercolesTipoServicio: '',
                                     baja: true,
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
@@ -832,6 +850,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         miercolesInicioRango: null,
                                         miercolesFinRango: null,
+                                        miercolesTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -853,6 +872,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             miercolesInicioRango: null,
                                             miercolesFinRango: null,
+                                            miercolesTipoServicio: '',
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -865,6 +885,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             miercolesInicioRango: centroAGestionar.horario.miercolesInicioRango,
                                             miercolesFinRango: centroAGestionar.horario.miercolesFinRango,
+                                            miercolesTipoServicio: centroAGestionar.horario.miercolesTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -883,6 +904,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     miercolesInicioRango: null,
                                     miercolesFinRango: null,
+                                    miercolesTipoServicio: '',
                                     baja: false,
                                     tipoBaja: null,
                                     festivo: false,
@@ -904,6 +926,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         miercolesInicioRango: null,
                                         miercolesFinRango: null,
+                                        miercolesTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -916,6 +939,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         miercolesInicioRango: centroAGestionar.horario.miercolesInicioRango,
                                         miercolesFinRango: centroAGestionar.horario.miercolesFinRango,
+                                        miercolesTipoServicio: centroAGestionar.horario.miercolesTipoServicio,
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -934,6 +958,7 @@ export const gestionaColumnaCuadranteInterior = (
                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                             juevesInicioRango: null,
                             juevesFinRango: null,
+                            juevesTipoServicio: '',
                             baja: false,
                             tipoBaja: null,
                             festivo: true,
@@ -950,6 +975,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     juevesInicioRango: null,
                                     juevesFinRango: null,
+                                    juevesTipoServicio: '',
                                     baja: true,
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
@@ -965,6 +991,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         juevesInicioRango: null,
                                         juevesFinRango: null,
+                                        juevesTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -986,6 +1013,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             juevesInicioRango: null,
                                             juevesFinRango: null,
+                                            juevesTipoServicio: '',
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -998,6 +1026,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             juevesInicioRango: centroAGestionar.horario.juevesInicioRango,
                                             juevesFinRango: centroAGestionar.horario.juevesFinRango,
+                                            juevesTipoServicio: centroAGestionar.horario.juevesTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -1016,6 +1045,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     juevesInicioRango: null,
                                     juevesFinRango: null,
+                                    juevesTipoServicio: '',
                                     baja: false,
                                     tipoBaja: null,
                                     festivo: false,
@@ -1037,6 +1067,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         juevesInicioRango: null,
                                         juevesFinRango: null,
+                                        juevesTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -1049,6 +1080,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         juevesInicioRango: centroAGestionar.horario.juevesInicioRango,
                                         juevesFinRango: centroAGestionar.horario.juevesFinRango,
+                                        juevesTipoServicio: centroAGestionar.horario.juevesTipoServicio,
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -1067,6 +1099,7 @@ export const gestionaColumnaCuadranteInterior = (
                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                             viernesInicioRango: null,
                             viernesFinRango: null,
+                            viernesTipoServicio: '',
                             baja: false,
                             tipoBaja: null,
                             festivo: true,
@@ -1083,6 +1116,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     viernesInicioRango: null,
                                     viernesFinRango: null,
+                                    viernesTipoServicio: '',
                                     baja: true,
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
@@ -1098,6 +1132,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         viernesInicioRango: null,
                                         viernesFinRango: null,
+                                        viernesTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -1119,6 +1154,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             viernesInicioRango: null,
                                             viernesFinRango: null,
+                                            viernesTipoServicio: '',
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -1131,6 +1167,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             viernesInicioRango: centroAGestionar.horario.viernesInicioRango,
                                             viernesFinRango: centroAGestionar.horario.viernesFinRango,
+                                            viernesTipoServicio: centroAGestionar.horario.viernesTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -1149,6 +1186,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     viernesInicioRango: null,
                                     viernesFinRango: null,
+                                    viernesTipoServicio: '',
                                     baja: false,
                                     tipoBaja: null,
                                     festivo: false,
@@ -1170,6 +1208,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         viernesInicioRango: null,
                                         viernesFinRango: null,
+                                        viernesTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -1182,6 +1221,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         viernesInicioRango: centroAGestionar.horario.viernesInicioRango,
                                         viernesFinRango: centroAGestionar.horario.viernesFinRango,
+                                        viernesTipoServicio: centroAGestionar.horario.viernesTipoServicio,
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -1200,6 +1240,7 @@ export const gestionaColumnaCuadranteInterior = (
                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                             sabadoInicioRango: null,
                             sabadoFinRango: null,
+                            sabadoTipoServicio: '',
                             baja: false,
                             tipoBaja: null,
                             festivo: true,
@@ -1216,6 +1257,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     sabadoInicioRango: null,
                                     sabadoFinRango: null,
+                                    sabadoTipoServicio: '',
                                     baja: true,
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
@@ -1231,6 +1273,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         sabadoInicioRango: null,
                                         sabadoFinRango: null,
+                                        sabadoTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -1252,6 +1295,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             sabadoInicioRango: null,
                                             sabadoFinRango: null,
+                                            sabadoTipoServicio: '',
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -1264,6 +1308,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             sabadoInicioRango: centroAGestionar.horario.sabadoInicioRango,
                                             sabadoFinRango: centroAGestionar.horario.sabadoFinRango,
+                                            sabadoTipoServicio: centroAGestionar.horario.sabadoTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -1282,6 +1327,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     sabadoInicioRango: null,
                                     sabadoFinRango: null,
+                                    sabadoTipoServicio: '',
                                     baja: false,
                                     tipoBaja: null,
                                     festivo: false,
@@ -1303,6 +1349,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         sabadoInicioRango: null,
                                         sabadoFinRango: null,
+                                        sabadoTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -1315,6 +1362,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         sabadoInicioRango: centroAGestionar.horario.sabadoInicioRango,
                                         sabadoFinRango: centroAGestionar.horario.sabadoFinRango,
+                                        sabadoTipoServicio: centroAGestionar.horario.sabadoTipoServicio,
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -1333,6 +1381,7 @@ export const gestionaColumnaCuadranteInterior = (
                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                             domingoInicioRango: null,
                             domingoFinRango: null,
+                            domingoTipoServicio: '',
                             baja: false,
                             tipoBaja: null,
                             festivo: true,
@@ -1349,6 +1398,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     domingoInicioRango: null,
                                     domingoFinRango: null,
+                                    domingoTipoServicio: '',
                                     baja: true,
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
@@ -1364,6 +1414,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         domingoInicioRango: null,
                                         domingoFinRango: null,
+                                        domingoTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -1385,6 +1436,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             domingoInicioRango: null,
                                             domingoFinRango: null,
+                                            domingoTipoServicio: '',
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -1397,6 +1449,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             domingoInicioRango: centroAGestionar.horario.domingoInicioRango,
                                             domingoFinRango: centroAGestionar.horario.domingoFinRango,
+                                            domingoTipoServicio: centroAGestionar.horario.domingoTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -1415,6 +1468,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     domingoInicioRango: null,
                                     domingoFinRango: null,
+                                    domingoTipoServicio: '',
                                     baja: false,
                                     tipoBaja: null,
                                     festivo: false,
@@ -1436,6 +1490,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         domingoInicioRango: null,
                                         domingoFinRango: null,
+                                        domingoTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -1448,6 +1503,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         domingoInicioRango: centroAGestionar.horario.domingoInicioRango,
                                         domingoFinRango: centroAGestionar.horario.domingoFinRango,
+                                        domingoTipoServicio: centroAGestionar.horario.domingoTipoServicio,
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -1473,6 +1529,7 @@ export const gestionaColumnaCuadranteInterior = (
                             lunesFin1RangoDescanso: null,
                             lunesInicio2RangoDescanso: null,
                             lunesFin2RangoDescanso: null,
+                            lunesTipoServicio: '',
                             baja: false,
                             tipoBaja: null,
                             festivo: true,
@@ -1491,6 +1548,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     lunesFin1RangoDescanso: null,
                                     lunesInicio2RangoDescanso: null,
                                     lunesFin2RangoDescanso: null,
+                                    lunesTipoServicio: '',
                                     baja: true,
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
@@ -1508,6 +1566,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         lunesFin1RangoDescanso: null,
                                         lunesInicio2RangoDescanso: null,
                                         lunesFin2RangoDescanso: null,
+                                        lunesTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -1531,6 +1590,7 @@ export const gestionaColumnaCuadranteInterior = (
                                             lunesFin1RangoDescanso: null,
                                             lunesInicio2RangoDescanso: null,
                                             lunesFin2RangoDescanso: null,
+                                            lunesTipoServicio: '',
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -1545,6 +1605,7 @@ export const gestionaColumnaCuadranteInterior = (
                                             lunesFin1RangoDescanso: centroAGestionar.horario.lunesFin1RangoDescanso,
                                             lunesInicio2RangoDescanso: centroAGestionar.horario.lunesInicio2RangoDescanso,
                                             lunesFin2RangoDescanso: centroAGestionar.horario.lunesFin2RangoDescanso,
+                                            lunesTipoServicio: centroAGestionar.horario.lunesTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -1565,6 +1626,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     lunesFin1RangoDescanso: null,
                                     lunesInicio2RangoDescanso: null,
                                     lunesFin2RangoDescanso: null,
+                                    lunesTipoServicio: '',
                                     baja: false,
                                     tipoBaja: null,
                                     festivo: false,
@@ -1588,6 +1650,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         lunesFin1RangoDescanso: null,
                                         lunesInicio2RangoDescanso: null,
                                         lunesFin2RangoDescanso: null,
+                                        lunesTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -1602,6 +1665,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         lunesFin1RangoDescanso: centroAGestionar.horario.lunesFin1RangoDescanso,
                                         lunesInicio2RangoDescanso: centroAGestionar.horario.lunesInicio2RangoDescanso,
                                         lunesFin2RangoDescanso: centroAGestionar.horario.lunesFin2RangoDescanso,
+                                        lunesTipoServicio: centroAGestionar.horario.lunesTipoServicio,
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -1622,6 +1686,7 @@ export const gestionaColumnaCuadranteInterior = (
                             martesFin1RangoDescanso: null,
                             martesInicio2RangoDescanso: null,
                             martesFin2RangoDescanso: null,
+                            martesTipoServicio: '',
                             baja: false,
                             tipoBaja: null,
                             festivo: true,
@@ -1640,6 +1705,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     martesFin1RangoDescanso: null,
                                     martesInicio2RangoDescanso: null,
                                     martesFin2RangoDescanso: null,
+                                    martesTipoServicio: '',
                                     baja: true,
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
@@ -1657,6 +1723,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         martesFin1RangoDescanso: null,
                                         martesInicio2RangoDescanso: null,
                                         martesFin2RangoDescanso: null,
+                                        martesTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -1680,6 +1747,7 @@ export const gestionaColumnaCuadranteInterior = (
                                             martesFin1RangoDescanso: null,
                                             martesInicio2RangoDescanso: null,
                                             martesFin2RangoDescanso: null,
+                                            martesTipoServicio: '',
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -1694,6 +1762,7 @@ export const gestionaColumnaCuadranteInterior = (
                                             martesFin1RangoDescanso: centroAGestionar.horario.martesFin1RangoDescanso,
                                             martesInicio2RangoDescanso: centroAGestionar.horario.martesInicio2RangoDescanso,
                                             martesFin2RangoDescanso: centroAGestionar.horario.martesFin2RangoDescanso,
+                                            martesTipoServicio: centroAGestionar.horario.martesTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -1714,6 +1783,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     martesFin1RangoDescanso: null,
                                     martesInicio2RangoDescanso: null,
                                     martesFin2RangoDescanso: null,
+                                    martesTipoServicio: '',
                                     baja: false,
                                     tipoBaja: null,
                                     festivo: false,
@@ -1737,6 +1807,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         martesFin1RangoDescanso: null,
                                         martesInicio2RangoDescanso: null,
                                         martesFin2RangoDescanso: null,
+                                        martesTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -1751,6 +1822,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         martesFin1RangoDescanso: centroAGestionar.horario.martesFin1RangoDescanso,
                                         martesInicio2RangoDescanso: centroAGestionar.horario.martesInicio2RangoDescanso,
                                         martesFin2RangoDescanso: centroAGestionar.horario.martesFin2RangoDescanso,
+                                        martesTipoServicio: centroAGestionar.horario.martesTipoServicio,
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -1771,6 +1843,7 @@ export const gestionaColumnaCuadranteInterior = (
                             miercolesFin1RangoDescanso: null,
                             miercolesInicio2RangoDescanso: null,
                             miercolesFin2RangoDescanso: null,
+                            miercolesTipoServicio: '',
                             baja: false,
                             tipoBaja: null,
                             festivo: true,
@@ -1789,6 +1862,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     miercolesFin1RangoDescanso: null,
                                     miercolesInicio2RangoDescanso: null,
                                     miercolesFin2RangoDescanso: null,
+                                    miercolesTipoServicio: '',
                                     baja: true,
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
@@ -1806,6 +1880,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         miercolesFin1RangoDescanso: null,
                                         miercolesInicio2RangoDescanso: null,
                                         miercolesFin2RangoDescanso: null,
+                                        miercolesTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -1829,6 +1904,7 @@ export const gestionaColumnaCuadranteInterior = (
                                             miercolesFin1RangoDescanso: null,
                                             miercolesInicio2RangoDescanso: null,
                                             miercolesFin2RangoDescanso: null,
+                                            miercolesTipoServicio: '',
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -1843,6 +1919,7 @@ export const gestionaColumnaCuadranteInterior = (
                                             miercolesFin1RangoDescanso: centroAGestionar.horario.miercolesFin1RangoDescanso,
                                             miercolesInicio2RangoDescanso: centroAGestionar.horario.miercolesInicio2RangoDescanso,
                                             miercolesFin2RangoDescanso: centroAGestionar.horario.miercolesFin2RangoDescanso,
+                                            miercolesTipoServicio: centroAGestionar.horario.miercolesTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -1863,6 +1940,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     miercolesFin1RangoDescanso: null,
                                     miercolesInicio2RangoDescanso: null,
                                     miercolesFin2RangoDescanso: null,
+                                    miercolesTipoServicio: '',
                                     baja: false,
                                     tipoBaja: null,
                                     festivo: false,
@@ -1886,6 +1964,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         miercolesFin1RangoDescanso: null,
                                         miercolesInicio2RangoDescanso: null,
                                         miercolesFin2RangoDescanso: null,
+                                        miercolesTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -1900,6 +1979,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         miercolesFin1RangoDescanso: centroAGestionar.horario.miercolesFin1RangoDescanso,
                                         miercolesInicio2RangoDescanso: centroAGestionar.horario.miercolesInicio2RangoDescanso,
                                         miercolesFin2RangoDescanso: centroAGestionar.horario.miercolesFin2RangoDescanso,
+                                        miercolesTipoServicio: centroAGestionar.horario.miercolesTipoServicio,
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -1920,6 +2000,7 @@ export const gestionaColumnaCuadranteInterior = (
                             juevesFin1RangoDescanso: null,
                             juevesInicio2RangoDescanso: null,
                             juevesFin2RangoDescanso: null,
+                            juevesTipoServicio: '',
                             baja: false,
                             tipoBaja: null,
                             festivo: true,
@@ -1938,6 +2019,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     juevesFin1RangoDescanso: null,
                                     juevesInicio2RangoDescanso: null,
                                     juevesFin2RangoDescanso: null,
+                                    juevesTipoServicio: '',
                                     baja: true,
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
@@ -1955,6 +2037,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         juevesFin1RangoDescanso: null,
                                         juevesInicio2RangoDescanso: null,
                                         juevesFin2RangoDescanso: null,
+                                        juevesTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -1978,6 +2061,7 @@ export const gestionaColumnaCuadranteInterior = (
                                             juevesFin1RangoDescanso: null,
                                             juevesInicio2RangoDescanso: null,
                                             juevesFin2RangoDescanso: null,
+                                            juevesTipoServicio: '',
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -1992,6 +2076,7 @@ export const gestionaColumnaCuadranteInterior = (
                                             juevesFin1RangoDescanso: centroAGestionar.horario.juevesFin1RangoDescanso,
                                             juevesInicio2RangoDescanso: centroAGestionar.horario.juevesInicio2RangoDescanso,
                                             juevesFin2RangoDescanso: centroAGestionar.horario.juevesFin2RangoDescanso,
+                                            juevesTipoServicio: centroAGestionar.horario.juevesTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -2012,6 +2097,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     juevesFin1RangoDescanso: null,
                                     juevesInicio2RangoDescanso: null,
                                     juevesFin2RangoDescanso: null,
+                                    juevesTipoServicio: '',
                                     baja: false,
                                     tipoBaja: null,
                                     festivo: false,
@@ -2035,6 +2121,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         juevesFin1RangoDescanso: null,
                                         juevesInicio2RangoDescanso: null,
                                         juevesFin2RangoDescanso: null,
+                                        juevesTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -2049,6 +2136,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         juevesFin1RangoDescanso: centroAGestionar.horario.juevesFin1RangoDescanso,
                                         juevesInicio2RangoDescanso: centroAGestionar.horario.juevesInicio2RangoDescanso,
                                         juevesFin2RangoDescanso: centroAGestionar.horario.juevesFin2RangoDescanso,
+                                        juevesTipoServicio: centroAGestionar.horario.juevesTipoServicio,
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -2069,6 +2157,7 @@ export const gestionaColumnaCuadranteInterior = (
                             viernesFin1RangoDescanso: null,
                             viernesInicio2RangoDescanso: null,
                             viernesFin2RangoDescanso: null,
+                            viernesTipoServicio: '',
                             baja: false,
                             tipoBaja: null,
                             festivo: true,
@@ -2087,6 +2176,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     viernesFin1RangoDescanso: null,
                                     viernesInicio2RangoDescanso: null,
                                     viernesFin2RangoDescanso: null,
+                                    viernesTipoServicio: '',
                                     baja: true,
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
@@ -2104,6 +2194,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         viernesFin1RangoDescanso: null,
                                         viernesInicio2RangoDescanso: null,
                                         viernesFin2RangoDescanso: null,
+                                        viernesTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -2127,6 +2218,7 @@ export const gestionaColumnaCuadranteInterior = (
                                             viernesFin1RangoDescanso: null,
                                             viernesInicio2RangoDescanso: null,
                                             viernesFin2RangoDescanso: null,
+                                            viernesTipoServicio: '',
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -2141,6 +2233,7 @@ export const gestionaColumnaCuadranteInterior = (
                                             viernesFin1RangoDescanso: centroAGestionar.horario.viernesFin1RangoDescanso,
                                             viernesInicio2RangoDescanso: centroAGestionar.horario.viernesInicio2RangoDescanso,
                                             viernesFin2RangoDescanso: centroAGestionar.horario.viernesFin2RangoDescanso,
+                                            viernesTipoServicio: centroAGestionar.horario.viernesTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -2161,6 +2254,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     viernesFin1RangoDescanso: null,
                                     viernesInicio2RangoDescanso: null,
                                     viernesFin2RangoDescanso: null,
+                                    viernesTipoServicio: '',
                                     baja: false,
                                     tipoBaja: null,
                                     festivo: false,
@@ -2184,6 +2278,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         viernesFin1RangoDescanso: null,
                                         viernesInicio2RangoDescanso: null,
                                         viernesFin2RangoDescanso: null,
+                                        viernesTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -2198,6 +2293,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         viernesFin1RangoDescanso: centroAGestionar.horario.viernesFin1RangoDescanso,
                                         viernesInicio2RangoDescanso: centroAGestionar.horario.viernesInicio2RangoDescanso,
                                         viernesFin2RangoDescanso: centroAGestionar.horario.viernesFin2RangoDescanso,
+                                        viernesTipoServicio: centroAGestionar.horario.viernesTipoServicio,
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -2218,6 +2314,7 @@ export const gestionaColumnaCuadranteInterior = (
                             sabadoFin1RangoDescanso: null,
                             sabadoInicio2RangoDescanso: null,
                             sabadoFin2RangoDescanso: null,
+                            sabadoTipoServicio: '',
                             baja: false,
                             tipoBaja: null,
                             festivo: true,
@@ -2236,6 +2333,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     sabadoFin1RangoDescanso: null,
                                     sabadoInicio2RangoDescanso: null,
                                     sabadoFin2RangoDescanso: null,
+                                    sabadoTipoServicio: '',
                                     baja: true,
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
@@ -2253,6 +2351,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         sabadoFin1RangoDescanso: null,
                                         sabadoInicio2RangoDescanso: null,
                                         sabadoFin2RangoDescanso: null,
+                                        sabadoTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -2276,6 +2375,7 @@ export const gestionaColumnaCuadranteInterior = (
                                             sabadoFin1RangoDescanso: null,
                                             sabadoInicio2RangoDescanso: null,
                                             sabadoFin2RangoDescanso: null,
+                                            sabadoTipoServicio: '',
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -2290,6 +2390,7 @@ export const gestionaColumnaCuadranteInterior = (
                                             sabadoFin1RangoDescanso: centroAGestionar.horario.sabadoFin1RangoDescanso,
                                             sabadoInicio2RangoDescanso: centroAGestionar.horario.sabadoInicio2RangoDescanso,
                                             sabadoFin2RangoDescanso: centroAGestionar.horario.sabadoFin2RangoDescanso,
+                                            sabadoTipoServicio: centroAGestionar.horario.sabadoTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -2310,6 +2411,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     sabadoFin1RangoDescanso: null,
                                     sabadoInicio2RangoDescanso: null,
                                     sabadoFin2RangoDescanso: null,
+                                    sabadoTipoServicio: '',
                                     baja: false,
                                     tipoBaja: null,
                                     festivo: false,
@@ -2333,6 +2435,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         sabadoFin1RangoDescanso: null,
                                         sabadoInicio2RangoDescanso: null,
                                         sabadoFin2RangoDescanso: null,
+                                        sabadoTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -2347,6 +2450,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         sabadoFin1RangoDescanso: centroAGestionar.horario.sabadoFin1RangoDescanso,
                                         sabadoInicio2RangoDescanso: centroAGestionar.horario.sabadoInicio2RangoDescanso,
                                         sabadoFin2RangoDescanso: centroAGestionar.horario.sabadoFin2RangoDescanso,
+                                        sabadoTipoServicio: centroAGestionar.horario.sabadoTipoServicio,
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -2367,6 +2471,7 @@ export const gestionaColumnaCuadranteInterior = (
                             domingoFin1RangoDescanso: null,
                             domingoInicio2RangoDescanso: null,
                             domingoFin2RangoDescanso: null,
+                            domingoTipoServicio: '',
                             baja: false,
                             tipoBaja: null,
                             festivo: true,
@@ -2385,6 +2490,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     domingoFin1RangoDescanso: null,
                                     domingoInicio2RangoDescanso: null,
                                     domingoFin2RangoDescanso: null,
+                                    domingoTipoServicio: '',
                                     baja: true,
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
@@ -2402,6 +2508,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         domingoFin1RangoDescanso: null,
                                         domingoInicio2RangoDescanso: null,
                                         domingoFin2RangoDescanso: null,
+                                        domingoTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -2425,6 +2532,7 @@ export const gestionaColumnaCuadranteInterior = (
                                             domingoFin1RangoDescanso: null,
                                             domingoInicio2RangoDescanso: null,
                                             domingoFin2RangoDescanso: null,
+                                            domingoTipoServicio: '',
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -2439,6 +2547,7 @@ export const gestionaColumnaCuadranteInterior = (
                                             domingoFin1RangoDescanso: centroAGestionar.horario.domingoFin1RangoDescanso,
                                             domingoInicio2RangoDescanso: centroAGestionar.horario.domingoInicio2RangoDescanso,
                                             domingoFin2RangoDescanso: centroAGestionar.horario.domingoFin2RangoDescanso,
+                                            domingoTipoServicio: centroAGestionar.horario.domingoTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -2459,6 +2568,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     domingoFin1RangoDescanso: null,
                                     domingoInicio2RangoDescanso: null,
                                     domingoFin2RangoDescanso: null,
+                                    domingoTipoServicio: '',
                                     baja: false,
                                     tipoBaja: null,
                                     festivo: false,
@@ -2482,6 +2592,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         domingoFin1RangoDescanso: null,
                                         domingoInicio2RangoDescanso: null,
                                         domingoFin2RangoDescanso: null,
+                                        domingoTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -2496,6 +2607,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         domingoFin1RangoDescanso: centroAGestionar.horario.domingoFin1RangoDescanso,
                                         domingoInicio2RangoDescanso: centroAGestionar.horario.domingoInicio2RangoDescanso,
                                         domingoFin2RangoDescanso: centroAGestionar.horario.domingoFin2RangoDescanso,
+                                        domingoTipoServicio: centroAGestionar.horario.domingoTipoServicio,
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -2518,6 +2630,7 @@ export const gestionaColumnaCuadranteInterior = (
                     if (dia[1][0] === 'Lunes') {
                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                             lunesCantidad: '',
+                            lunesTipoServicio: '',
                             baja: false,
                             tipoBaja: null,
                             festivo: true,
@@ -2533,6 +2646,7 @@ export const gestionaColumnaCuadranteInterior = (
                             if (dia[1][0] === 'Lunes') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     lunesCantidad: '',
+                                    lunesTipoServicio: '',
                                     baja: true,
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
@@ -2547,6 +2661,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 if (dia[1][0] === 'Lunes') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         lunesCantidad: '',
+                                        lunesTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -2567,6 +2682,7 @@ export const gestionaColumnaCuadranteInterior = (
                                             !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             lunesCantidad: '',
+                                            lunesTipoServicio: '',
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -2578,6 +2694,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             lunesCantidad: centroAGestionar.horario.lunesCantidad,
+                                            lunesTipoServicio: centroAGestionar.horario.lunesTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -2595,6 +2712,7 @@ export const gestionaColumnaCuadranteInterior = (
                             if (dia[1][0] === 'Lunes') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     lunesCantidad: '',
+                                    lunesTipoServicio: '',
                                     baja: false,
                                     tipoBaja: null,
                                     festivo: false,
@@ -2615,6 +2733,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         lunesCantidad: '',
+                                        lunesTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -2626,6 +2745,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         lunesCantidad: centroAGestionar.horario.lunesCantidad,
+                                        lunesTipoServicio: centroAGestionar.horario.lunesTipoServicio,
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -2643,6 +2763,7 @@ export const gestionaColumnaCuadranteInterior = (
                     if (dia[1][0] === 'Martes') {
                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                             martesCantidad: '',
+                            martesTipoServicio: '',
                             baja: false,
                             tipoBaja: null,
                             festivo: true,
@@ -2658,6 +2779,7 @@ export const gestionaColumnaCuadranteInterior = (
                             if (dia[1][0] === 'Martes') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     martesCantidad: '',
+                                    martesTipoServicio: '',
                                     baja: true,
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
@@ -2672,6 +2794,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 if (dia[1][0] === 'Martes') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         martesCantidad: '',
+                                        martesTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -2692,6 +2815,7 @@ export const gestionaColumnaCuadranteInterior = (
                                             !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             martesCantidad: '',
+                                            martesTipoServicio: '',
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -2703,6 +2827,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             martesCantidad: centroAGestionar.horario.martesCantidad,
+                                            martesTipoServicio: centroAGestionar.horario.martesTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -2720,6 +2845,7 @@ export const gestionaColumnaCuadranteInterior = (
                             if (dia[1][0] === 'Martes') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     martesCantidad: '',
+                                    martesTipoServicio: '',
                                     baja: false,
                                     tipoBaja: null,
                                     festivo: false,
@@ -2740,6 +2866,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         martesCantidad: '',
+                                        martesTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -2751,6 +2878,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         martesCantidad: centroAGestionar.horario.martesCantidad,
+                                        martesTipoServicio: centroAGestionar.horario.martesTipoServicio,
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -2768,6 +2896,7 @@ export const gestionaColumnaCuadranteInterior = (
                     if (dia[1][0] === 'Miércoles') {
                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                             miercolesCantidad: '',
+                            miercolesTipoServicio: '',
                             baja: false,
                             tipoBaja: null,
                             festivo: true,
@@ -2783,6 +2912,7 @@ export const gestionaColumnaCuadranteInterior = (
                             if (dia[1][0] === 'Miércoles') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     miercolesCantidad: '',
+                                    miercolesTipoServicio: '',
                                     baja: true,
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
@@ -2797,6 +2927,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 if (dia[1][0] === 'Miércoles') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         miercolesCantidad: '',
+                                        miercolesTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -2817,6 +2948,7 @@ export const gestionaColumnaCuadranteInterior = (
                                             !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             miercolesCantidad: '',
+                                            miercolesTipoServicio: '',
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -2828,6 +2960,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             miercolesCantidad: centroAGestionar.horario.miercolesCantidad,
+                                            miercolesTipoServicio: centroAGestionar.horario.miercolesTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -2845,6 +2978,7 @@ export const gestionaColumnaCuadranteInterior = (
                             if (dia[1][0] === 'Miércoles') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     miercolesCantidad: '',
+                                    miercolesTipoServicio: '',
                                     baja: false,
                                     tipoBaja: null,
                                     festivo: false,
@@ -2865,6 +2999,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         miercolesCantidad: '',
+                                        miercolesTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -2876,6 +3011,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         miercolesCantidad: centroAGestionar.horario.miercolesCantidad,
+                                        miercolesTipoServicio: centroAGestionar.horario.miercolesTipoServicio,
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -2893,6 +3029,7 @@ export const gestionaColumnaCuadranteInterior = (
                     if (dia[1][0] === 'Jueves') {
                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                             juevesCantidad: '',
+                            juevesTipoServicio: '',
                             baja: false,
                             tipoBaja: null,
                             festivo: true,
@@ -2908,6 +3045,7 @@ export const gestionaColumnaCuadranteInterior = (
                             if (dia[1][0] === 'Jueves') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     juevesCantidad: '',
+                                    juevesTipoServicio: '',
                                     baja: true,
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
@@ -2922,6 +3060,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 if (dia[1][0] === 'Jueves') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         juevesCantidad: '',
+                                        juevesTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -2942,6 +3081,7 @@ export const gestionaColumnaCuadranteInterior = (
                                             !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             juevesCantidad: '',
+                                            juevesTipoServicio: '',
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -2953,6 +3093,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             juevesCantidad: centroAGestionar.horario.juevesCantidad,
+                                            juevesTipoServicio: centroAGestionar.horario.juevesTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -2970,6 +3111,7 @@ export const gestionaColumnaCuadranteInterior = (
                             if (dia[1][0] === 'Jueves') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     juevesCantidad: '',
+                                    juevesTipoServicio: '',
                                     baja: false,
                                     tipoBaja: null,
                                     festivo: false,
@@ -2990,6 +3132,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         juevesCantidad: '',
+                                        juevesTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -3001,6 +3144,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         juevesCantidad: centroAGestionar.horario.juevesCantidad,
+                                        juevesTipoServicio: centroAGestionar.horario.juevesTipoServicio,
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -3018,6 +3162,7 @@ export const gestionaColumnaCuadranteInterior = (
                     if (dia[1][0] === 'Viernes') {
                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                             viernesCantidad: '',
+                            viernesTipoServicio: '',
                             baja: false,
                             tipoBaja: null,
                             festivo: true,
@@ -3033,6 +3178,7 @@ export const gestionaColumnaCuadranteInterior = (
                             if (dia[1][0] === 'Viernes') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     viernesCantidad: '',
+                                    viernesTipoServicio: '',
                                     baja: true,
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
@@ -3047,6 +3193,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 if (dia[1][0] === 'Viernes') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         viernesCantidad: '',
+                                        viernesTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -3067,6 +3214,7 @@ export const gestionaColumnaCuadranteInterior = (
                                             !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             viernesCantidad: '',
+                                            viernesTipoServicio: '',
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -3078,6 +3226,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             viernesCantidad: centroAGestionar.horario.viernesCantidad,
+                                            viernesTipoServicio: centroAGestionar.horario.viernesTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -3095,6 +3244,7 @@ export const gestionaColumnaCuadranteInterior = (
                             if (dia[1][0] === 'Viernes') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     viernesCantidad: '',
+                                    viernesTipoServicio: '',
                                     baja: false,
                                     tipoBaja: null,
                                     festivo: false,
@@ -3115,6 +3265,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         viernesCantidad: '',
+                                        viernesTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -3126,6 +3277,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         viernesCantidad: centroAGestionar.horario.viernesCantidad,
+                                        viernesTipoServicio: centroAGestionar.horario.viernesTipoServicio,
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -3143,6 +3295,7 @@ export const gestionaColumnaCuadranteInterior = (
                     if (dia[1][0] === 'Sábado') {
                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                             sabadoCantidad: '',
+                            sabadoTipoServicio: '',
                             baja: false,
                             tipoBaja: null,
                             festivo: true,
@@ -3158,6 +3311,7 @@ export const gestionaColumnaCuadranteInterior = (
                             if (dia[1][0] === 'Sábado') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     sabadoCantidad: '',
+                                    sabadoTipoServicio: '',
                                     baja: true,
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
@@ -3172,6 +3326,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 if (dia[1][0] === 'Sábado') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         sabadoCantidad: '',
+                                        sabadoTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -3192,6 +3347,7 @@ export const gestionaColumnaCuadranteInterior = (
                                             !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             sabadoCantidad: '',
+                                            sabadoTipoServicio: '',
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -3203,6 +3359,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             sabadoCantidad: centroAGestionar.horario.sabadoCantidad,
+                                            sabadoTipoServicio: centroAGestionar.horario.sabadoTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -3220,6 +3377,7 @@ export const gestionaColumnaCuadranteInterior = (
                             if (dia[1][0] === 'Sábado') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     sabadoCantidad: '',
+                                    sabadoTipoServicio: '',
                                     baja: false,
                                     tipoBaja: null,
                                     festivo: false,
@@ -3240,6 +3398,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         sabadoCantidad: '',
+                                        sabadoTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -3251,6 +3410,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         sabadoCantidad: centroAGestionar.horario.sabadoCantidad,
+                                        sabadoTipoServicio: centroAGestionar.horario.sabadoTipoServicio,
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -3268,6 +3428,7 @@ export const gestionaColumnaCuadranteInterior = (
                     if (dia[1][0] === 'Domingo') {
                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                             domingoCantidad: '',
+                            domingoTipoServicio: '',
                             baja: false,
                             tipoBaja: null,
                             festivo: true,
@@ -3283,6 +3444,7 @@ export const gestionaColumnaCuadranteInterior = (
                             if (dia[1][0] === 'Domingo') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     domingoCantidad: '',
+                                    domingoTipoServicio: '',
                                     baja: true,
                                     tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
                                     festivo: false,
@@ -3297,6 +3459,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 if (dia[1][0] === 'Domingo') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         domingoCantidad: '',
+                                        domingoTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -3317,6 +3480,7 @@ export const gestionaColumnaCuadranteInterior = (
                                             !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             domingoCantidad: '',
+                                            domingoTipoServicio: '',
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -3328,6 +3492,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             domingoCantidad: centroAGestionar.horario.domingoCantidad,
+                                            domingoTipoServicio: centroAGestionar.horario.domingoTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -3345,6 +3510,7 @@ export const gestionaColumnaCuadranteInterior = (
                             if (dia[1][0] === 'Domingo') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     domingoCantidad: '',
+                                    domingoTipoServicio: '',
                                     baja: false,
                                     tipoBaja: null,
                                     festivo: false,
@@ -3365,6 +3531,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         domingoCantidad: '',
+                                        domingoTipoServicio: '',
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -3376,6 +3543,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         domingoCantidad: centroAGestionar.horario.domingoCantidad,
+                                        domingoTipoServicio: centroAGestionar.horario.domingoTipoServicio,
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -3434,8 +3602,8 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                     totalHoras: null
                 });
                 sumatorioHoras = 0;
-                sumatorioHorasNormal= 0;
-                sumatorioHorasExtra= 0;
+                sumatorioHorasNormal = 0;
+                sumatorioHorasExtra = 0;
                 for (const prop in cuadranteColumna) {
                     if (prop.includes('Lunes')) {
                         const mySplit = prop.split('Lunes');
@@ -3450,22 +3618,22 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                                     case 2:
                                         //'Añadir 0.5 horas extra de trabajo'
                                         lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicioRango, cuadranteColumna[prop].lunesFinRango) / 60;
-                                        lasHorasExtra = 30/60;
+                                        lasHorasExtra = 30 / 60;
                                         break;
                                     case 3:
                                         //'Añadir 1 horas extra de trabajo'
                                         lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicioRango, cuadranteColumna[prop].lunesFinRango) / 60;
-                                        lasHorasExtra = 60/60;
+                                        lasHorasExtra = 60 / 60;
                                         break;
                                     case 4:
                                         //'Añadir 1.5 horas extra de trabajo'
                                         lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicioRango, cuadranteColumna[prop].lunesFinRango) / 60;
-                                        lasHorasExtra = 90/60;
+                                        lasHorasExtra = 90 / 60;
                                         break;
                                     case 5:
                                         //'Añadir 2 horas extra de trabajo'
                                         lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicioRango, cuadranteColumna[prop].lunesFinRango) / 60;
-                                        lasHorasExtra = 120/60;
+                                        lasHorasExtra = 120 / 60;
                                         break;
                                     case 6:
                                         //'Horas especiales (+15%)'
@@ -3488,7 +3656,7 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                     };
                     if (prop.includes('Martes')) {
                         const mySplit = prop.split('Martes');
-                        if (cuadranteColumna[prop].martesInicioRango) {                           
+                        if (cuadranteColumna[prop].martesInicioRango) {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
@@ -3499,22 +3667,22 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                                     case 2:
                                         //'Añadir 0.5 horas extra de trabajo'
                                         lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60;
-                                        lasHorasExtra = 30/60;
+                                        lasHorasExtra = 30 / 60;
                                         break;
                                     case 3:
                                         //'Añadir 1 horas extra de trabajo'
                                         lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60;
-                                        lasHorasExtra = 60/60;
+                                        lasHorasExtra = 60 / 60;
                                         break;
                                     case 4:
                                         //'Añadir 1.5 horas extra de trabajo'
                                         lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60;
-                                        lasHorasExtra = 90/60;
+                                        lasHorasExtra = 90 / 60;
                                         break;
                                     case 5:
                                         //'Añadir 2 horas extra de trabajo'
                                         lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60;
-                                        lasHorasExtra = 120/60;
+                                        lasHorasExtra = 120 / 60;
                                         break;
                                     case 6:
                                         //'Horas especiales (+15%)'
@@ -3548,22 +3716,22 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                                     case 2:
                                         //'Añadir 0.5 horas extra de trabajo'
                                         lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicioRango, cuadranteColumna[prop].miercolesFinRango) / 60;
-                                        lasHorasExtra = 30/60;
+                                        lasHorasExtra = 30 / 60;
                                         break;
                                     case 3:
                                         //'Añadir 1 horas extra de trabajo'
                                         lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicioRango, cuadranteColumna[prop].miercolesFinRango) / 60;
-                                        lasHorasExtra = 60/60;
+                                        lasHorasExtra = 60 / 60;
                                         break;
                                     case 4:
                                         //'Añadir 1.5 horas extra de trabajo'
                                         lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicioRango, cuadranteColumna[prop].miercolesFinRango) / 60;
-                                        lasHorasExtra = 90/60;
+                                        lasHorasExtra = 90 / 60;
                                         break;
                                     case 5:
                                         //'Añadir 2 horas extra de trabajo'
                                         lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicioRango, cuadranteColumna[prop].miercolesFinRango) / 60;
-                                        lasHorasExtra = 120/60;
+                                        lasHorasExtra = 120 / 60;
                                         break;
                                     case 6:
                                         //'Horas especiales (+15%)'
@@ -3597,22 +3765,22 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                                     case 2:
                                         //'Añadir 0.5 horas extra de trabajo'
                                         lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicioRango, cuadranteColumna[prop].juevesFinRango) / 60;
-                                        lasHorasExtra = 30/60;
+                                        lasHorasExtra = 30 / 60;
                                         break;
                                     case 3:
                                         //'Añadir 1 horas extra de trabajo'
                                         lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicioRango, cuadranteColumna[prop].juevesFinRango) / 60;
-                                        lasHorasExtra = 60/60;
+                                        lasHorasExtra = 60 / 60;
                                         break;
                                     case 4:
                                         //'Añadir 1.5 horas extra de trabajo'
                                         lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicioRango, cuadranteColumna[prop].juevesFinRango) / 60;
-                                        lasHorasExtra = 90/60;
+                                        lasHorasExtra = 90 / 60;
                                         break;
                                     case 5:
                                         //'Añadir 2 horas extra de trabajo'
                                         lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicioRango, cuadranteColumna[prop].juevesFinRango) / 60;
-                                        lasHorasExtra = 120/60;
+                                        lasHorasExtra = 120 / 60;
                                         break;
                                     case 6:
                                         //'Horas especiales (+15%)'
@@ -3646,22 +3814,22 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                                     case 2:
                                         //'Añadir 0.5 horas extra de trabajo'
                                         lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicioRango, cuadranteColumna[prop].viernesFinRango) / 60;
-                                        lasHorasExtra = 30/60;
+                                        lasHorasExtra = 30 / 60;
                                         break;
                                     case 3:
                                         //'Añadir 1 horas extra de trabajo'
                                         lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicioRango, cuadranteColumna[prop].viernesFinRango) / 60;
-                                        lasHorasExtra = 60/60;
+                                        lasHorasExtra = 60 / 60;
                                         break;
                                     case 4:
                                         //'Añadir 1.5 horas extra de trabajo'
                                         lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicioRango, cuadranteColumna[prop].viernesFinRango) / 60;
-                                        lasHorasExtra = 90/60;
+                                        lasHorasExtra = 90 / 60;
                                         break;
                                     case 5:
                                         //'Añadir 2 horas extra de trabajo'
                                         lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicioRango, cuadranteColumna[prop].viernesFinRango) / 60;
-                                        lasHorasExtra = 120/60;
+                                        lasHorasExtra = 120 / 60;
                                         break;
                                     case 6:
                                         //'Horas especiales (+15%)'
@@ -3695,22 +3863,22 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                                     case 2:
                                         //'Añadir 0.5 horas extra de trabajo'
                                         lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicioRango, cuadranteColumna[prop].sabadoFinRango) / 60;
-                                        lasHorasExtra = 30/60;
+                                        lasHorasExtra = 30 / 60;
                                         break;
                                     case 3:
                                         //'Añadir 1 horas extra de trabajo'
                                         lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicioRango, cuadranteColumna[prop].sabadoFinRango) / 60;
-                                        lasHorasExtra = 60/60;
+                                        lasHorasExtra = 60 / 60;
                                         break;
                                     case 4:
                                         //'Añadir 1.5 horas extra de trabajo'
                                         lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicioRango, cuadranteColumna[prop].sabadoFinRango) / 60;
-                                        lasHorasExtra = 90/60;
+                                        lasHorasExtra = 90 / 60;
                                         break;
                                     case 5:
                                         //'Añadir 2 horas extra de trabajo'
                                         lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicioRango, cuadranteColumna[prop].sabadoFinRango) / 60;
-                                        lasHorasExtra = 120/60;
+                                        lasHorasExtra = 120 / 60;
                                         break;
                                     case 6:
                                         //'Horas especiales (+15%)'
@@ -3744,22 +3912,22 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                                     case 2:
                                         //'Añadir 0.5 horas extra de trabajo'
                                         lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicioRango, cuadranteColumna[prop].domingoFinRango) / 60;
-                                        lasHorasExtra = 30/60;
+                                        lasHorasExtra = 30 / 60;
                                         break;
                                     case 3:
                                         //'Añadir 1 horas extra de trabajo'
                                         lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicioRango, cuadranteColumna[prop].domingoFinRango) / 60;
-                                        lasHorasExtra = 60/60;
+                                        lasHorasExtra = 60 / 60;
                                         break;
                                     case 4:
                                         //'Añadir 1.5 horas extra de trabajo'
                                         lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicioRango, cuadranteColumna[prop].domingoFinRango) / 60;
-                                        lasHorasExtra = 90/60;
+                                        lasHorasExtra = 90 / 60;
                                         break;
                                     case 5:
                                         //'Añadir 2 horas extra de trabajo'
                                         lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicioRango, cuadranteColumna[prop].domingoFinRango) / 60;
-                                        lasHorasExtra = 120/60;
+                                        lasHorasExtra = 120 / 60;
                                         break;
                                     case 6:
                                         //'Horas especiales (+15%)'
@@ -3796,8 +3964,8 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                     totalHoras: null
                 });
                 sumatorioHoras = 0;
-                sumatorioHorasNormal= 0;
-                sumatorioHorasExtra= 0;
+                sumatorioHorasNormal = 0;
+                sumatorioHorasExtra = 0;
                 let rango1, rango2;
                 for (const prop in cuadranteColumna) {
                     if (prop.includes('Lunes')) {
@@ -3808,33 +3976,33 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                                 rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicio2RangoDescanso, cuadranteColumna[prop].lunesFin2RangoDescanso) / 60;
                             } else {
                                 rango2 = 0;
-                            };        
+                            };
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
                                         //'Considerar como horas extra'
                                         lasHorasNormal = null;
-                                        lasHorasExtra = rango1+rango2;
+                                        lasHorasExtra = rango1 + rango2;
                                         break;
                                     case 2:
                                         //'Añadir 0.5 horas extra de trabajo'
-                                        lasHorasNormal = rango1+rango2;
-                                        lasHorasExtra = 30/60;
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 30 / 60;
                                         break;
                                     case 3:
                                         //'Añadir 1 horas extra de trabajo'
-                                        lasHorasNormal = rango1+rango2;
-                                        lasHorasExtra = 60/60;
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 60 / 60;
                                         break;
                                     case 4:
                                         //'Añadir 1.5 horas extra de trabajo'
-                                        lasHorasNormal = rango1+rango2;
-                                        lasHorasExtra = 90/60;
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 90 / 60;
                                         break;
                                     case 5:
                                         //'Añadir 2 horas extra de trabajo'
-                                        lasHorasNormal = rango1+rango2;
-                                        lasHorasExtra = 120/60;
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 120 / 60;
                                         break;
                                     case 6:
                                         //'Horas especiales (+15%)'
@@ -3842,9 +4010,9 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                                     default:
                                 }
                             } else {
-                                lasHorasNormal = rango1+rango2;
+                                lasHorasNormal = rango1 + rango2;
                                 lasHorasExtra = null;
-                            };                                             
+                            };
                             arrayResultante[index].computo.push({
                                 dia: 'Lunes-' + mySplit[1],
                                 horasNormal: lasHorasNormal,
@@ -3869,27 +4037,27 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                                     case 1:
                                         //'Considerar como horas extra'
                                         lasHorasNormal = null;
-                                        lasHorasExtra = rango1+rango2;
+                                        lasHorasExtra = rango1 + rango2;
                                         break;
                                     case 2:
                                         //'Añadir 0.5 horas extra de trabajo'
-                                        lasHorasNormal = rango1+rango2;
-                                        lasHorasExtra = 30/60;
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 30 / 60;
                                         break;
                                     case 3:
                                         //'Añadir 1 horas extra de trabajo'
-                                        lasHorasNormal = rango1+rango2;
-                                        lasHorasExtra = 60/60;
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 60 / 60;
                                         break;
                                     case 4:
                                         //'Añadir 1.5 horas extra de trabajo'
-                                        lasHorasNormal = rango1+rango2;
-                                        lasHorasExtra = 90/60;
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 90 / 60;
                                         break;
                                     case 5:
                                         //'Añadir 2 horas extra de trabajo'
-                                        lasHorasNormal = rango1+rango2;
-                                        lasHorasExtra = 120/60;
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 120 / 60;
                                         break;
                                     case 6:
                                         //'Horas especiales (+15%)'
@@ -3897,9 +4065,9 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                                     default:
                                 }
                             } else {
-                                lasHorasNormal = rango1+rango2;
+                                lasHorasNormal = rango1 + rango2;
                                 lasHorasExtra = null;
-                            };   
+                            };
                             arrayResultante[index].computo.push({
                                 dia: 'Martes-' + mySplit[1],
                                 horasNormal: lasHorasNormal,
@@ -3924,27 +4092,27 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                                     case 1:
                                         //'Considerar como horas extra'
                                         lasHorasNormal = null;
-                                        lasHorasExtra = rango1+rango2;
+                                        lasHorasExtra = rango1 + rango2;
                                         break;
                                     case 2:
                                         //'Añadir 0.5 horas extra de trabajo'
-                                        lasHorasNormal = rango1+rango2;
-                                        lasHorasExtra = 30/60;
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 30 / 60;
                                         break;
                                     case 3:
                                         //'Añadir 1 horas extra de trabajo'
-                                        lasHorasNormal = rango1+rango2;
-                                        lasHorasExtra = 60/60;
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 60 / 60;
                                         break;
                                     case 4:
                                         //'Añadir 1.5 horas extra de trabajo'
-                                        lasHorasNormal = rango1+rango2;
-                                        lasHorasExtra = 90/60;
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 90 / 60;
                                         break;
                                     case 5:
                                         //'Añadir 2 horas extra de trabajo'
-                                        lasHorasNormal = rango1+rango2;
-                                        lasHorasExtra = 120/60;
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 120 / 60;
                                         break;
                                     case 6:
                                         //'Horas especiales (+15%)'
@@ -3952,9 +4120,9 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                                     default:
                                 }
                             } else {
-                                lasHorasNormal = rango1+rango2;
+                                lasHorasNormal = rango1 + rango2;
                                 lasHorasExtra = null;
-                            };   
+                            };
                             arrayResultante[index].computo.push({
                                 dia: 'Miércoles-' + mySplit[1],
                                 horasNormal: lasHorasNormal,
@@ -3979,27 +4147,27 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                                     case 1:
                                         //'Considerar como horas extra'
                                         lasHorasNormal = null;
-                                        lasHorasExtra = rango1+rango2;
+                                        lasHorasExtra = rango1 + rango2;
                                         break;
                                     case 2:
                                         //'Añadir 0.5 horas extra de trabajo'
-                                        lasHorasNormal = rango1+rango2;
-                                        lasHorasExtra = 30/60;
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 30 / 60;
                                         break;
                                     case 3:
                                         //'Añadir 1 horas extra de trabajo'
-                                        lasHorasNormal = rango1+rango2;
-                                        lasHorasExtra = 60/60;
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 60 / 60;
                                         break;
                                     case 4:
                                         //'Añadir 1.5 horas extra de trabajo'
-                                        lasHorasNormal = rango1+rango2;
-                                        lasHorasExtra = 90/60;
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 90 / 60;
                                         break;
                                     case 5:
                                         //'Añadir 2 horas extra de trabajo'
-                                        lasHorasNormal = rango1+rango2;
-                                        lasHorasExtra = 120/60;
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 120 / 60;
                                         break;
                                     case 6:
                                         //'Horas especiales (+15%)'
@@ -4007,9 +4175,9 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                                     default:
                                 }
                             } else {
-                                lasHorasNormal = rango1+rango2;
+                                lasHorasNormal = rango1 + rango2;
                                 lasHorasExtra = null;
-                            };   
+                            };
                             arrayResultante[index].computo.push({
                                 dia: 'Jueves-' + mySplit[1],
                                 horasNormal: lasHorasNormal,
@@ -4034,27 +4202,27 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                                     case 1:
                                         //'Considerar como horas extra'
                                         lasHorasNormal = null;
-                                        lasHorasExtra = rango1+rango2;
+                                        lasHorasExtra = rango1 + rango2;
                                         break;
                                     case 2:
                                         //'Añadir 0.5 horas extra de trabajo'
-                                        lasHorasNormal = rango1+rango2;
-                                        lasHorasExtra = 30/60;
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 30 / 60;
                                         break;
                                     case 3:
                                         //'Añadir 1 horas extra de trabajo'
-                                        lasHorasNormal = rango1+rango2;
-                                        lasHorasExtra = 60/60;
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 60 / 60;
                                         break;
                                     case 4:
                                         //'Añadir 1.5 horas extra de trabajo'
-                                        lasHorasNormal = rango1+rango2;
-                                        lasHorasExtra = 90/60;
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 90 / 60;
                                         break;
                                     case 5:
                                         //'Añadir 2 horas extra de trabajo'
-                                        lasHorasNormal = rango1+rango2;
-                                        lasHorasExtra = 120/60;
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 120 / 60;
                                         break;
                                     case 6:
                                         //'Horas especiales (+15%)'
@@ -4062,9 +4230,9 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                                     default:
                                 }
                             } else {
-                                lasHorasNormal = rango1+rango2;
+                                lasHorasNormal = rango1 + rango2;
                                 lasHorasExtra = null;
-                            };   
+                            };
                             arrayResultante[index].computo.push({
                                 dia: 'Viernes-' + mySplit[1],
                                 horasNormal: lasHorasNormal,
@@ -4089,27 +4257,27 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                                     case 1:
                                         //'Considerar como horas extra'
                                         lasHorasNormal = null;
-                                        lasHorasExtra = rango1+rango2;
+                                        lasHorasExtra = rango1 + rango2;
                                         break;
                                     case 2:
                                         //'Añadir 0.5 horas extra de trabajo'
-                                        lasHorasNormal = rango1+rango2;
-                                        lasHorasExtra = 30/60;
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 30 / 60;
                                         break;
                                     case 3:
                                         //'Añadir 1 horas extra de trabajo'
-                                        lasHorasNormal = rango1+rango2;
-                                        lasHorasExtra = 60/60;
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 60 / 60;
                                         break;
                                     case 4:
                                         //'Añadir 1.5 horas extra de trabajo'
-                                        lasHorasNormal = rango1+rango2;
-                                        lasHorasExtra = 90/60;
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 90 / 60;
                                         break;
                                     case 5:
                                         //'Añadir 2 horas extra de trabajo'
-                                        lasHorasNormal = rango1+rango2;
-                                        lasHorasExtra = 120/60;
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 120 / 60;
                                         break;
                                     case 6:
                                         //'Horas especiales (+15%)'
@@ -4117,9 +4285,9 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                                     default:
                                 }
                             } else {
-                                lasHorasNormal = rango1+rango2;
+                                lasHorasNormal = rango1 + rango2;
                                 lasHorasExtra = null;
-                            };   
+                            };
                             arrayResultante[index].computo.push({
                                 dia: 'Sábado-' + mySplit[1],
                                 horasNormal: lasHorasNormal,
@@ -4144,27 +4312,27 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                                     case 1:
                                         //'Considerar como horas extra'
                                         lasHorasNormal = null;
-                                        lasHorasExtra = rango1+rango2;
+                                        lasHorasExtra = rango1 + rango2;
                                         break;
                                     case 2:
                                         //'Añadir 0.5 horas extra de trabajo'
-                                        lasHorasNormal = rango1+rango2;
-                                        lasHorasExtra = 30/60;
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 30 / 60;
                                         break;
                                     case 3:
                                         //'Añadir 1 horas extra de trabajo'
-                                        lasHorasNormal = rango1+rango2;
-                                        lasHorasExtra = 60/60;
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 60 / 60;
                                         break;
                                     case 4:
                                         //'Añadir 1.5 horas extra de trabajo'
-                                        lasHorasNormal = rango1+rango2;
-                                        lasHorasExtra = 90/60;
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 90 / 60;
                                         break;
                                     case 5:
                                         //'Añadir 2 horas extra de trabajo'
-                                        lasHorasNormal = rango1+rango2;
-                                        lasHorasExtra = 120/60;
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 120 / 60;
                                         break;
                                     case 6:
                                         //'Horas especiales (+15%)'
@@ -4172,9 +4340,9 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                                     default:
                                 }
                             } else {
-                                lasHorasNormal = rango1+rango2;
+                                lasHorasNormal = rango1 + rango2;
                                 lasHorasExtra = null;
-                            };   
+                            };
                             arrayResultante[index].computo.push({
                                 dia: 'Domingo-' + mySplit[1],
                                 horasNormal: lasHorasNormal,
@@ -4201,12 +4369,12 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                     totalHoras: null
                 });
                 sumatorioHoras = 0;
-                sumatorioHorasNormal= 0;
-                sumatorioHorasExtra= 0;
+                sumatorioHorasNormal = 0;
+                sumatorioHorasExtra = 0;
                 for (const prop in cuadranteColumna) {
                     if (prop.includes('Lunes')) {
                         const mySplit = prop.split('Lunes');
-                        if (cuadranteColumna[prop].lunesCantidad) {                           
+                        if (cuadranteColumna[prop].lunesCantidad) {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
@@ -4217,22 +4385,22 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                                     case 2:
                                         //'Añadir 0.5 horas extra de trabajo'
                                         lasHorasNormal = cuadranteColumna[prop].lunesCantidad / 60;
-                                        lasHorasExtra = 30/60;
+                                        lasHorasExtra = 30 / 60;
                                         break;
                                     case 3:
                                         //'Añadir 1 horas extra de trabajo'
                                         lasHorasNormal = cuadranteColumna[prop].lunesCantidad / 60;
-                                        lasHorasExtra = 60/60;
+                                        lasHorasExtra = 60 / 60;
                                         break;
                                     case 4:
                                         //'Añadir 1.5 horas extra de trabajo'
                                         lasHorasNormal = cuadranteColumna[prop].lunesCantidad / 60;
-                                        lasHorasExtra = 90/60;
+                                        lasHorasExtra = 90 / 60;
                                         break;
                                     case 5:
                                         //'Añadir 2 horas extra de trabajo'
                                         lasHorasNormal = cuadranteColumna[prop].lunesCantidad / 60;
-                                        lasHorasExtra = 120/60;
+                                        lasHorasExtra = 120 / 60;
                                         break;
                                     case 6:
                                         //'Horas especiales (+15%)'
@@ -4242,7 +4410,7 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                             } else {
                                 lasHorasNormal = cuadranteColumna[prop].lunesCantidad / 60;
                                 lasHorasExtra = null;
-                            };   
+                            };
                             arrayResultante[index].computo.push({
                                 dia: 'Lunes-' + mySplit[1],
                                 horasNormal: lasHorasNormal,
@@ -4266,22 +4434,22 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                                     case 2:
                                         //'Añadir 0.5 horas extra de trabajo'
                                         lasHorasNormal = cuadranteColumna[prop].martesCantidad / 60;
-                                        lasHorasExtra = 30/60;
+                                        lasHorasExtra = 30 / 60;
                                         break;
                                     case 3:
                                         //'Añadir 1 horas extra de trabajo'
                                         lasHorasNormal = cuadranteColumna[prop].martesCantidad / 60;
-                                        lasHorasExtra = 60/60;
+                                        lasHorasExtra = 60 / 60;
                                         break;
                                     case 4:
                                         //'Añadir 1.5 horas extra de trabajo'
                                         lasHorasNormal = cuadranteColumna[prop].martesCantidad / 60;
-                                        lasHorasExtra = 90/60;
+                                        lasHorasExtra = 90 / 60;
                                         break;
                                     case 5:
                                         //'Añadir 2 horas extra de trabajo'
                                         lasHorasNormal = cuadranteColumna[prop].martesCantidad / 60;
-                                        lasHorasExtra = 120/60;
+                                        lasHorasExtra = 120 / 60;
                                         break;
                                     case 6:
                                         //'Horas especiales (+15%)'
@@ -4291,7 +4459,7 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                             } else {
                                 lasHorasNormal = cuadranteColumna[prop].martesCantidad / 60;
                                 lasHorasExtra = null;
-                            };   
+                            };
                             arrayResultante[index].computo.push({
                                 dia: 'Martes-' + mySplit[1],
                                 horasNormal: lasHorasNormal,
@@ -4315,22 +4483,22 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                                     case 2:
                                         //'Añadir 0.5 horas extra de trabajo'
                                         lasHorasNormal = cuadranteColumna[prop].miercolesCantidad / 60;
-                                        lasHorasExtra = 30/60;
+                                        lasHorasExtra = 30 / 60;
                                         break;
                                     case 3:
                                         //'Añadir 1 horas extra de trabajo'
                                         lasHorasNormal = cuadranteColumna[prop].miercolesCantidad / 60;
-                                        lasHorasExtra = 60/60;
+                                        lasHorasExtra = 60 / 60;
                                         break;
                                     case 4:
                                         //'Añadir 1.5 horas extra de trabajo'
                                         lasHorasNormal = cuadranteColumna[prop].miercolesCantidad / 60;
-                                        lasHorasExtra = 90/60;
+                                        lasHorasExtra = 90 / 60;
                                         break;
                                     case 5:
                                         //'Añadir 2 horas extra de trabajo'
                                         lasHorasNormal = cuadranteColumna[prop].miercolesCantidad / 60;
-                                        lasHorasExtra = 120/60;
+                                        lasHorasExtra = 120 / 60;
                                         break;
                                     case 6:
                                         //'Horas especiales (+15%)'
@@ -4340,7 +4508,7 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                             } else {
                                 lasHorasNormal = cuadranteColumna[prop].miercolesCantidad / 60;
                                 lasHorasExtra = null;
-                            };   
+                            };
                             arrayResultante[index].computo.push({
                                 dia: 'Miércoles-' + mySplit[1],
                                 horasNormal: lasHorasNormal,
@@ -4364,22 +4532,22 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                                     case 2:
                                         //'Añadir 0.5 horas extra de trabajo'
                                         lasHorasNormal = cuadranteColumna[prop].juevesCantidad / 60;
-                                        lasHorasExtra = 30/60;
+                                        lasHorasExtra = 30 / 60;
                                         break;
                                     case 3:
                                         //'Añadir 1 horas extra de trabajo'
                                         lasHorasNormal = cuadranteColumna[prop].juevesCantidad / 60;
-                                        lasHorasExtra = 60/60;
+                                        lasHorasExtra = 60 / 60;
                                         break;
                                     case 4:
                                         //'Añadir 1.5 horas extra de trabajo'
                                         lasHorasNormal = cuadranteColumna[prop].juevesCantidad / 60;
-                                        lasHorasExtra = 90/60;
+                                        lasHorasExtra = 90 / 60;
                                         break;
                                     case 5:
                                         //'Añadir 2 horas extra de trabajo'
                                         lasHorasNormal = cuadranteColumna[prop].juevesCantidad / 60;
-                                        lasHorasExtra = 120/60;
+                                        lasHorasExtra = 120 / 60;
                                         break;
                                     case 6:
                                         //'Horas especiales (+15%)'
@@ -4389,7 +4557,7 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                             } else {
                                 lasHorasNormal = cuadranteColumna[prop].juevesCantidad / 60;
                                 lasHorasExtra = null;
-                            };   
+                            };
                             arrayResultante[index].computo.push({
                                 dia: 'Jueves-' + mySplit[1],
                                 horasNormal: lasHorasNormal,
@@ -4413,22 +4581,22 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                                     case 2:
                                         //'Añadir 0.5 horas extra de trabajo'
                                         lasHorasNormal = cuadranteColumna[prop].viernesCantidad / 60;
-                                        lasHorasExtra = 30/60;
+                                        lasHorasExtra = 30 / 60;
                                         break;
                                     case 3:
                                         //'Añadir 1 horas extra de trabajo'
                                         lasHorasNormal = cuadranteColumna[prop].viernesCantidad / 60;
-                                        lasHorasExtra = 60/60;
+                                        lasHorasExtra = 60 / 60;
                                         break;
                                     case 4:
                                         //'Añadir 1.5 horas extra de trabajo'
                                         lasHorasNormal = cuadranteColumna[prop].viernesCantidad / 60;
-                                        lasHorasExtra = 90/60;
+                                        lasHorasExtra = 90 / 60;
                                         break;
                                     case 5:
                                         //'Añadir 2 horas extra de trabajo'
                                         lasHorasNormal = cuadranteColumna[prop].viernesCantidad / 60;
-                                        lasHorasExtra = 120/60;
+                                        lasHorasExtra = 120 / 60;
                                         break;
                                     case 6:
                                         //'Horas especiales (+15%)'
@@ -4438,7 +4606,7 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                             } else {
                                 lasHorasNormal = cuadranteColumna[prop].viernesCantidad / 60;
                                 lasHorasExtra = null;
-                            };  
+                            };
                             arrayResultante[index].computo.push({
                                 dia: 'Viernes-' + mySplit[1],
                                 horasNormal: lasHorasNormal,
@@ -4462,22 +4630,22 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                                     case 2:
                                         //'Añadir 0.5 horas extra de trabajo'
                                         lasHorasNormal = cuadranteColumna[prop].sabadoCantidad / 60;
-                                        lasHorasExtra = 30/60;
+                                        lasHorasExtra = 30 / 60;
                                         break;
                                     case 3:
                                         //'Añadir 1 horas extra de trabajo'
                                         lasHorasNormal = cuadranteColumna[prop].sabadoCantidad / 60;
-                                        lasHorasExtra = 60/60;
+                                        lasHorasExtra = 60 / 60;
                                         break;
                                     case 4:
                                         //'Añadir 1.5 horas extra de trabajo'
                                         lasHorasNormal = cuadranteColumna[prop].sabadoCantidad / 60;
-                                        lasHorasExtra = 90/60;
+                                        lasHorasExtra = 90 / 60;
                                         break;
                                     case 5:
                                         //'Añadir 2 horas extra de trabajo'
                                         lasHorasNormal = cuadranteColumna[prop].sabadoCantidad / 60;
-                                        lasHorasExtra = 120/60;
+                                        lasHorasExtra = 120 / 60;
                                         break;
                                     case 6:
                                         //'Horas especiales (+15%)'
@@ -4487,7 +4655,7 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                             } else {
                                 lasHorasNormal = cuadranteColumna[prop].sabadoCantidad / 60;
                                 lasHorasExtra = null;
-                            };  
+                            };
                             arrayResultante[index].computo.push({
                                 dia: 'Sábado-' + mySplit[1],
                                 horasNormal: lasHorasNormal,
@@ -4511,22 +4679,22 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                                     case 2:
                                         //'Añadir 0.5 horas extra de trabajo'
                                         lasHorasNormal = cuadranteColumna[prop].domingoCantidad / 60;
-                                        lasHorasExtra = 30/60;
+                                        lasHorasExtra = 30 / 60;
                                         break;
                                     case 3:
                                         //'Añadir 1 horas extra de trabajo'
                                         lasHorasNormal = cuadranteColumna[prop].domingoCantidad / 60;
-                                        lasHorasExtra = 60/60;
+                                        lasHorasExtra = 60 / 60;
                                         break;
                                     case 4:
                                         //'Añadir 1.5 horas extra de trabajo'
                                         lasHorasNormal = cuadranteColumna[prop].domingoCantidad / 60;
-                                        lasHorasExtra = 90/60;
+                                        lasHorasExtra = 90 / 60;
                                         break;
                                     case 5:
                                         //'Añadir 2 horas extra de trabajo'
                                         lasHorasNormal = cuadranteColumna[prop].domingoCantidad / 60;
-                                        lasHorasExtra = 120/60;
+                                        lasHorasExtra = 120 / 60;
                                         break;
                                     case 6:
                                         //'Horas especiales (+15%)'
@@ -4536,7 +4704,7 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                             } else {
                                 lasHorasNormal = cuadranteColumna[prop].domingoCantidad / 60;
                                 lasHorasExtra = null;
-                            }; 
+                            };
                             arrayResultante[index].computo.push({
                                 dia: 'Domingo-' + mySplit[1],
                                 horasNormal: lasHorasNormal,

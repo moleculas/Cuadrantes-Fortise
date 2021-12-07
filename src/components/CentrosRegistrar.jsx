@@ -32,6 +32,7 @@ import { onEstemAccion } from '../redux/appDucks';
 import { activarDesactivarAccion } from '../redux/appDucks';
 import { activarDesactivarNuevoCentroAccion } from '../redux/centrosDucks';
 import { activarDesactivarRegistrarCentroAccion } from '../redux/centrosDucks';
+import { validarMailAccion } from '../redux/appDucks';
 
 const categorias = Constantes.CATEGORIAS_CENTROS;
 const variaciones = Constantes.VARIACIONES_HORARIOS_CENTROS;
@@ -63,6 +64,14 @@ const CentrosRegistrar = forwardRef((props, ref) => {
         id: null,
         nombre: '',
         categoria: '',
+        codigo: '',
+        domicilio: '',
+        codigoPostal: '',
+        poblacion: '',
+        provincia: '',
+        nif: '',
+        mail: '',
+        telefono: '',
         variacion: '',
         tipo: '',
         numeroTrabajadores: '',
@@ -135,6 +144,15 @@ const CentrosRegistrar = forwardRef((props, ref) => {
         sabado: '',
         domingo: ''
     });
+    const [valueTipoServicioRegistro, setValueTipoServicioRegistro] = useState({
+        lunesTipoServicio: '',
+        martesTipoServicio: '',
+        miercolesTipoServicio: '',
+        juevesTipoServicio: '',
+        viernesTipoServicio: '',
+        sabadoTipoServicio: '',
+        domingoTipoServicio: '',
+    });
     const [horarioIntervencionRegistro, setHorarioIntervencionRegistro] = useState({
         tipo: '',
         variacion: '',
@@ -187,6 +205,13 @@ const CentrosRegistrar = forwardRef((props, ref) => {
         viernesCantidad: '',
         sabadoCantidad: '',
         domingoCantidad: '',
+        lunesTipoServicio: '',
+        martesTipoServicio: '',
+        miercolesTipoServicio: '',
+        juevesTipoServicio: '',
+        viernesTipoServicio: '',
+        sabadoTipoServicio: '',
+        domingoTipoServicio: '',
     });
     const [trabajadoresRegistro, setTrabajadoresRegistro] = useState({
         cantidad: '',
@@ -271,15 +296,15 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             if (IsNumeric(e.target.value)) {
                 setValuesFormRegistro({ ...valuesFormRegistro, [prop]: e.target.value });
                 dispatch(activarDesactivarRegistrarCentroAccion(false));
-                return;
             }
+            return;
         };
         if (prop === "precioHora") {
             if (IsNumeric(e.target.value)) {
                 setValuesFormRegistro({ ...valuesFormRegistro, [prop]: e.target.value });
                 dispatch(activarDesactivarRegistrarCentroAccion(false));
-                return;
             }
+            return;
         };
         if (prop === "tipo") {
             setValuesFormRegistro({ ...valuesFormRegistro, [prop]: e.target.value });
@@ -334,7 +359,14 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 juevesCantidad: '',
                 viernesCantidad: '',
                 sabadoCantidad: '',
-                domingoCantidad: ''
+                domingoCantidad: '',
+                lunesTipoServicio: '',
+                martesTipoServicio: '',
+                miercolesTipoServicio: '',
+                juevesTipoServicio: '',
+                viernesTipoServicio: '',
+                sabadoTipoServicio: '',
+                domingoTipoServicio: '',
             });
             setValueTimePickerInicioRegistro({
                 lunes: null,
@@ -398,6 +430,15 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 viernes: '',
                 sabado: '',
                 domingo: ''
+            });
+            setValueTipoServicioRegistro({
+                lunesTipoServicio: '',
+                martesTipoServicio: '',
+                miercolesTipoServicio: '',
+                juevesTipoServicio: '',
+                viernesTipoServicio: '',
+                sabadoTipoServicio: '',
+                domingoTipoServicio: ''
             });
             dispatch(registrarIntervencionAccion(false));
             dispatch(activarDesactivarRegistrarCentroAccion(false));
@@ -1229,6 +1270,42 @@ const CentrosRegistrar = forwardRef((props, ref) => {
         dispatch(activarDesactivarRegistrarCentroAccion(false));
     };
 
+    const handleChangeSelectTipoServicioRegistro = (e) => {
+        switch (e.target.name) {
+            case 'selectTipoServicio-registro-lunes':
+                setValueTipoServicioRegistro({ ...valueTipoServicioRegistro, lunesTipoServicio: e.target.value });
+                setHorarioIntervencionRegistro({ ...horarioIntervencionRegistro, lunesTipoServicio: e.target.value });
+                break;
+            case 'selectTipoServicio-registro-martes':
+                setValueTipoServicioRegistro({ ...valueTipoServicioRegistro, martesTipoServicio: e.target.value });
+                setHorarioIntervencionRegistro({ ...horarioIntervencionRegistro, martesTipoServicio: e.target.value });
+                break;
+            case 'selectTipoServicio-registro-miercoles':
+                setValueTipoServicioRegistro({ ...valueTipoServicioRegistro, miercolesTipoServicio: e.target.value });
+                setHorarioIntervencionRegistro({ ...horarioIntervencionRegistro, miercolesTipoServicio: e.target.value });
+                break;
+            case 'selectTipoServicio-registro-jueves':
+                setValueTipoServicioRegistro({ ...valueTipoServicioRegistro, juevesTipoServicio: e.target.value });
+                setHorarioIntervencionRegistro({ ...horarioIntervencionRegistro, juevesTipoServicio: e.target.value });
+                break;
+            case 'selectTipoServicio-registro-viernes':
+                setValueTipoServicioRegistro({ ...valueTipoServicioRegistro, viernesTipoServicio: e.target.value });
+                setHorarioIntervencionRegistro({ ...horarioIntervencionRegistro, viernesTipoServicio: e.target.value });
+                break;
+            case 'selectTipoServicio-registro-sabado':
+                setValueTipoServicioRegistro({ ...valueTipoServicioRegistro, sabadoTipoServicio: e.target.value });
+                setHorarioIntervencionRegistro({ ...horarioIntervencionRegistro, sabadoTipoServicio: e.target.value });
+                break;
+            case 'selectTipoServicio-registro-domingo':
+                setValueTipoServicioRegistro({ ...valueTipoServicioRegistro, domingoTipoServicio: e.target.value });
+                setHorarioIntervencionRegistro({ ...horarioIntervencionRegistro, domingoTipoServicio: e.target.value });
+                break;
+            default:
+        }
+        dispatch(registrarIntervencionAccion(false));
+        dispatch(activarDesactivarRegistrarCentroAccion(false));
+    };
+
     useImperativeHandle(ref, () => ({
         funcionesEnCentrosRegistrar(funcion) {
             switch (funcion) {
@@ -1243,6 +1320,14 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     const procesarDatosRegistro = () => {
                         if (valuesFormRegistro.nombre === '' ||
                             valuesFormRegistro.categoria === '' ||
+                            valuesFormRegistro.codigo === '' ||
+                            valuesFormRegistro.domicilio === '' ||
+                            valuesFormRegistro.codigoPostal === '' ||
+                            valuesFormRegistro.poblacion === '' ||
+                            valuesFormRegistro.provincia === '' ||
+                            valuesFormRegistro.nif === '' ||
+                            valuesFormRegistro.mail === '' ||
+                            valuesFormRegistro.telefono === '' ||
                             valuesFormRegistro.variacion === '' ||
                             valuesFormRegistro.tipo === '' ||
                             valuesFormRegistro.numeroTrabajadores === ''
@@ -1257,6 +1342,16 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                         if (valuesFormRegistro.computo === '' || (valuesFormRegistro.computo === 1 && !valuesFormRegistro.mensualPactado) || (valuesFormRegistro.computo === 2 && !valuesFormRegistro.precioHora)) {
                             setAlert({
                                 mensaje: "Faltan datos por completar. Revisa el formulario.",
+                                tipo: 'error'
+                            })
+                            setOpenSnack(true);
+                            return;
+                        };
+                        //validacion mail
+                        const validacionMail = dispatch(validarMailAccion(valuesFormRegistro.mail));
+                        if (!validacionMail) {
+                            setAlert({
+                                mensaje: "El campo E-mail es incorrecto. Revisa el formulario.",
                                 tipo: 'error'
                             })
                             setOpenSnack(true);
@@ -1420,7 +1515,28 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                             if (horarioIntervencionRegistro.domingoInicioRango) {
                                 setHorarioIntervencionRegistro({ ...horarioIntervencionRegistro, domingoCantidad: retornaMinutos(horarioIntervencionRegistro.domingoInicioRango, horarioIntervencionRegistro.domingoFinRango) });
                             };
-
+                            //cuarta comprobacion que no falte tipo de servicio
+                            if ((horarioIntervencionRegistro.lunesInicioRango && !horarioIntervencionRegistro.lunesTipoServicio) ||
+                                (!horarioIntervencionRegistro.lunesInicioRango && horarioIntervencionRegistro.lunesTipoServicio) ||
+                                (horarioIntervencionRegistro.martesInicioRango && !horarioIntervencionRegistro.martesTipoServicio) ||
+                                (!horarioIntervencionRegistro.martesInicioRango && horarioIntervencionRegistro.martesTipoServicio) ||
+                                (horarioIntervencionRegistro.miercolesInicioRango && !horarioIntervencionRegistro.miercolesTipoServicio) ||
+                                (!horarioIntervencionRegistro.miercolesInicioRango && horarioIntervencionRegistro.miercolesTipoServicio) ||
+                                (horarioIntervencionRegistro.juevesInicioRango && !horarioIntervencionRegistro.juevesTipoServicio) ||
+                                (!horarioIntervencionRegistro.juevesInicioRango && horarioIntervencionRegistro.juevesTipoServicio) ||
+                                (horarioIntervencionRegistro.viernesInicioRango && !horarioIntervencionRegistro.viernesTipoServicio) ||
+                                (!horarioIntervencionRegistro.viernesInicioRango && horarioIntervencionRegistro.viernesTipoServicio) ||
+                                (horarioIntervencionRegistro.sabadoInicioRango && !horarioIntervencionRegistro.sabadoTipoServicio) ||
+                                (!horarioIntervencionRegistro.sabadoInicioRango && horarioIntervencionRegistro.sabadoTipoServicio) ||
+                                (horarioIntervencionRegistro.domingoInicioRango && !horarioIntervencionRegistro.domingoTipoServicio) ||
+                                (!horarioIntervencionRegistro.domingoInicioRango && horarioIntervencionRegistro.domingoTipoServicio)) {
+                                setAlert({
+                                    mensaje: "Falta seleccionar el tipo de servicio para el rango horario o viceversa.",
+                                    tipo: 'error'
+                                })
+                                setOpenSnack(true);
+                                return;
+                            };
                         };
 
                         if (horarioIntervencionRegistro.tipo === "rangoDescanso") {
@@ -1759,6 +1875,28 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                 cantidadTotalRango = cantidadRango1 + cantidadRango2;
                                 setHorarioIntervencionRegistro({ ...horarioIntervencionRegistro, domingoCantidad: cantidadTotalRango });
                             };
+                            //cuarta comprobacion que no falte tipo de servicio
+                            if ((horarioIntervencionRegistro.lunesInicio1RangoDescanso && !horarioIntervencionRegistro.lunesTipoServicio) ||
+                                (!horarioIntervencionRegistro.lunesInicio1RangoDescanso && horarioIntervencionRegistro.lunesTipoServicio) ||
+                                (horarioIntervencionRegistro.martesInicio1RangoDescanso && !horarioIntervencionRegistro.martesTipoServicio) ||
+                                (!horarioIntervencionRegistro.martesInicio1RangoDescanso && horarioIntervencionRegistro.martesTipoServicio) ||
+                                (horarioIntervencionRegistro.miercolesInicio1RangoDescanso && !horarioIntervencionRegistro.miercolesTipoServicio) ||
+                                (!horarioIntervencionRegistro.miercolesInicio1RangoDescanso && horarioIntervencionRegistro.miercolesTipoServicio) ||
+                                (horarioIntervencionRegistro.juevesInicio1RangoDescanso && !horarioIntervencionRegistro.juevesTipoServicio) ||
+                                (!horarioIntervencionRegistro.juevesInicio1RangoDescanso && horarioIntervencionRegistro.juevesTipoServicio) ||
+                                (horarioIntervencionRegistro.viernesInicio1RangoDescanso && !horarioIntervencionRegistro.viernesTipoServicio) ||
+                                (!horarioIntervencionRegistro.viernesInicio1RangoDescanso && horarioIntervencionRegistro.viernesTipoServicio) ||
+                                (horarioIntervencionRegistro.sabadoInicio1RangoDescanso && !horarioIntervencionRegistro.sabadoTipoServicio) ||
+                                (!horarioIntervencionRegistro.sabadoInicio1RangoDescanso && horarioIntervencionRegistro.sabadoTipoServicio) ||
+                                (horarioIntervencionRegistro.domingoInicio1RangoDescanso && !horarioIntervencionRegistro.domingoTipoServicio) ||
+                                (!horarioIntervencionRegistro.domingoInicio1RangoDescanso && horarioIntervencionRegistro.domingoTipoServicio)) {
+                                setAlert({
+                                    mensaje: "Falta seleccionar el tipo de servicio para el rango horario o viceversa.",
+                                    tipo: 'error'
+                                })
+                                setOpenSnack(true);
+                                return;
+                            };
                         };
 
                         if (horarioIntervencionRegistro.tipo === "cantidad") {
@@ -1777,8 +1915,30 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                 setOpenSnack(true);
                                 return;
                             };
+                            //cuarta comprobacion que no falte tipo de servicio
+                            if ((horarioIntervencionRegistro.lunesCantidad && !horarioIntervencionRegistro.lunesTipoServicio) ||
+                                (!horarioIntervencionRegistro.lunesCantidad && horarioIntervencionRegistro.lunesTipoServicio) ||
+                                (horarioIntervencionRegistro.martesCantidad && !horarioIntervencionRegistro.martesTipoServicio) ||
+                                (!horarioIntervencionRegistro.martesCantidad && horarioIntervencionRegistro.martesTipoServicio) ||
+                                (horarioIntervencionRegistro.miercolesCantidad && !horarioIntervencionRegistro.miercolesTipoServicio) ||
+                                (!horarioIntervencionRegistro.miercolesCantidad && horarioIntervencionRegistro.miercolesTipoServicio) ||
+                                (horarioIntervencionRegistro.juevesCantidad && !horarioIntervencionRegistro.juevesTipoServicio) ||
+                                (!horarioIntervencionRegistro.juevesCantidad && horarioIntervencionRegistro.juevesTipoServicio) ||
+                                (horarioIntervencionRegistro.viernesCantidad && !horarioIntervencionRegistro.viernesTipoServicio) ||
+                                (!horarioIntervencionRegistro.viernesCantidad && horarioIntervencionRegistro.viernesTipoServicio) ||
+                                (horarioIntervencionRegistro.sabadoCantidad && !horarioIntervencionRegistro.sabadoTipoServicio) ||
+                                (!horarioIntervencionRegistro.sabadoCantidad && horarioIntervencionRegistro.sabadoTipoServicio) ||
+                                (horarioIntervencionRegistro.domingoCantidad && !horarioIntervencionRegistro.domingoTipoServicio) ||
+                                (!horarioIntervencionRegistro.domingoCantidad && horarioIntervencionRegistro.domingoTipoServicio)) {
+                                setAlert({
+                                    mensaje: "Falta seleccionar el tipo de servicio para el rango horario o viceversa.",
+                                    tipo: 'error'
+                                })
+                                setOpenSnack(true);
+                                return;
+                            };
+                        };
 
-                        }
                         //comprobamos que array objetos trabajadores no tenga elementos vacíos
 
                         for (let i = 0; i < trabajadoresRegistro.cantidad; i++) {
@@ -1810,7 +1970,14 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                 sabadoInicioRango: horarioIntervencionRegistro.sabadoInicioRango,
                                 sabadoFinRango: horarioIntervencionRegistro.sabadoFinRango,
                                 domingoInicioRango: horarioIntervencionRegistro.domingoInicioRango,
-                                domingoFinRango: horarioIntervencionRegistro.domingoFinRango
+                                domingoFinRango: horarioIntervencionRegistro.domingoFinRango,
+                                lunesTipoServicio: horarioIntervencionRegistro.lunesTipoServicio,
+                                martesTipoServicio: horarioIntervencionRegistro.martesTipoServicio,
+                                miercolesTipoServicio: horarioIntervencionRegistro.miercolesTipoServicio,
+                                juevesTipoServicio: horarioIntervencionRegistro.juevesTipoServicio,
+                                viernesTipoServicio: horarioIntervencionRegistro.viernesTipoServicio,
+                                sabadoTipoServicio: horarioIntervencionRegistro.sabadoTipoServicio,
+                                domingoTipoServicio: horarioIntervencionRegistro.domingoTipoServicio
                             };
                         };
                         if (horarioIntervencionRegistro.tipo === 'rangoDescanso') {
@@ -1844,7 +2011,14 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                 domingoInicio1RangoDescanso: horarioIntervencionRegistro.domingoInicio1RangoDescanso,
                                 domingoInicio2RangoDescanso: horarioIntervencionRegistro.domingoInicio2RangoDescanso,
                                 domingoFin1RangoDescanso: horarioIntervencionRegistro.domingoFin1RangoDescanso,
-                                domingoFin2RangoDescanso: horarioIntervencionRegistro.domingoFin2RangoDescanso
+                                domingoFin2RangoDescanso: horarioIntervencionRegistro.domingoFin2RangoDescanso,
+                                lunesTipoServicio: horarioIntervencionRegistro.lunesTipoServicio,
+                                martesTipoServicio: horarioIntervencionRegistro.martesTipoServicio,
+                                miercolesTipoServicio: horarioIntervencionRegistro.miercolesTipoServicio,
+                                juevesTipoServicio: horarioIntervencionRegistro.juevesTipoServicio,
+                                viernesTipoServicio: horarioIntervencionRegistro.viernesTipoServicio,
+                                sabadoTipoServicio: horarioIntervencionRegistro.sabadoTipoServicio,
+                                domingoTipoServicio: horarioIntervencionRegistro.domingoTipoServicio
                             };
                         };
                         if (horarioIntervencionRegistro.tipo === 'cantidad') {
@@ -1858,6 +2032,13 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                 viernesCantidad: horarioIntervencionRegistro.viernesCantidad,
                                 sabadoCantidad: horarioIntervencionRegistro.sabadoCantidad,
                                 domingoCantidad: horarioIntervencionRegistro.domingoCantidad,
+                                lunesTipoServicio: horarioIntervencionRegistro.lunesTipoServicio,
+                                martesTipoServicio: horarioIntervencionRegistro.martesTipoServicio,
+                                miercolesTipoServicio: horarioIntervencionRegistro.miercolesTipoServicio,
+                                juevesTipoServicio: horarioIntervencionRegistro.juevesTipoServicio,
+                                viernesTipoServicio: horarioIntervencionRegistro.viernesTipoServicio,
+                                sabadoTipoServicio: horarioIntervencionRegistro.sabadoTipoServicio,
+                                domingoTipoServicio: horarioIntervencionRegistro.domingoTipoServicio
                             };
                         };
                         //añadimos cómputo final                        
@@ -1872,6 +2053,14 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                             id: valuesFormRegistro.id,
                             nombre: valuesFormRegistro.nombre,
                             categoria: valuesFormRegistro.categoria,
+                            codigo: valuesFormRegistro.codigo,
+                            domicilio: valuesFormRegistro.domicilio,
+                            codigo_postal: valuesFormRegistro.codigoPostal,
+                            poblacion: valuesFormRegistro.poblacion,
+                            provincia: valuesFormRegistro.provincia,
+                            nif: valuesFormRegistro.nif,
+                            mail: valuesFormRegistro.mail,
+                            telefono: valuesFormRegistro.telefono,
                             horario: JSON.stringify(elHorarioIntervencionRegistradoRevisado),
                             trabajadores: JSON.stringify(trabajadoresRegistro),
                         };
@@ -1892,6 +2081,14 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             id: null,
             nombre: '',
             categoria: '',
+            codigo: '',
+            domicilio: '',
+            codigoPostal: '',
+            poblacion: '',
+            provincia: '',
+            nif: '',
+            mail: '',
+            telefono: '',
             variacion: '',
             tipo: '',
             numeroTrabajadores: '',
@@ -1964,6 +2161,15 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             sabado: '',
             domingo: ''
         });
+        setValueTipoServicioRegistro({
+            lunesTipoServicio: '',
+            martesTipoServicio: '',
+            miercolesTipoServicio: '',
+            juevesTipoServicio: '',
+            viernesTipoServicio: '',
+            sabadoTipoServicio: '',
+            domingoTipoServicio: ''
+        });
         setHorarioIntervencionRegistro({
             tipo: '',
             variacion: '',
@@ -2016,6 +2222,13 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             viernesCantidad: '',
             sabadoCantidad: '',
             domingoCantidad: '',
+            lunesTipoServicio: '',
+            martesTipoServicio: '',
+            miercolesTipoServicio: '',
+            juevesTipoServicio: '',
+            viernesTipoServicio: '',
+            sabadoTipoServicio: '',
+            domingoTipoServicio: ''
         });
         setTrabajadoresRegistro({
             cantidad: '',
@@ -2136,7 +2349,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                 <InputLabel>Categoría Centro</InputLabel>
                                 <Select
                                     fullWidth
-                                    className={classes.mb25}
+                                    className={classes.mb15}
                                     id="form-categoria-registro"
                                     label="Categoría Centro"
                                     value={valuesFormRegistro.categoria}
@@ -2152,6 +2365,136 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                     }
                                 </Select>
                             </FormControl>
+                            <Grid container>
+                                <Grid item xs={6}>
+                                    <FormControl
+                                        variant="outlined"
+                                        className={classes.form}
+                                    >
+                                        <InputLabel>Código</InputLabel>
+                                        <OutlinedInput
+                                            className={classes.mb15}
+                                            fullWidth
+                                            id="form-codigo-centro-registro"
+                                            value={valuesFormRegistro.codigo}
+                                            onChange={handleChangeFormRegistro('codigo')}
+                                            labelWidth={55}
+                                        />
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <FormControl
+                                        variant="outlined"
+                                        className={classes.form}
+                                    >
+                                        <InputLabel>NIF</InputLabel>
+                                        <OutlinedInput
+                                            className={classes.mb15}
+                                            fullWidth
+                                            id="form-nif-centro-registro"
+                                            value={valuesFormRegistro.nif}
+                                            onChange={handleChangeFormRegistro('nif')}
+                                            labelWidth={30}
+                                        />
+                                    </FormControl>
+                                </Grid>
+                            </Grid>
+                            <FormControl
+                                variant="outlined"
+                                className={classes.form}
+                            >
+                                <InputLabel>E-mail</InputLabel>
+                                <OutlinedInput
+                                    className={classes.mb15}
+                                    fullWidth
+                                    id="form-mail-centro-registro"
+                                    value={valuesFormRegistro.mail}
+                                    onChange={handleChangeFormRegistro('mail')}
+                                    labelWidth={55}
+                                />
+                            </FormControl>
+                            <FormControl
+                                variant="outlined"
+                                className={classes.form}
+                            >
+                                <InputLabel>Domicilio</InputLabel>
+                                <OutlinedInput
+                                    className={classes.mb15}
+                                    fullWidth
+                                    id="form-domicilio-centro-registro"
+                                    value={valuesFormRegistro.domicilio}
+                                    onChange={handleChangeFormRegistro('domicilio')}
+                                    labelWidth={70}
+                                />
+                            </FormControl>
+                            <Grid container>
+                                <Grid item xs={6}>
+                                    <FormControl
+                                        variant="outlined"
+                                        className={classes.form}
+                                    >
+                                        <InputLabel>Población</InputLabel>
+                                        <OutlinedInput
+                                            className={classes.mb15}
+                                            fullWidth
+                                            id="form-poblacion-centro-registro"
+                                            value={valuesFormRegistro.poblacion}
+                                            onChange={handleChangeFormRegistro('poblacion')}
+                                            labelWidth={75}
+                                        />
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <FormControl
+                                        variant="outlined"
+                                        className={classes.form}
+                                    >
+                                        <InputLabel>Provincia</InputLabel>
+                                        <OutlinedInput
+                                            className={classes.mb15}
+                                            fullWidth
+                                            id="form-provincia-centro-registro"
+                                            value={valuesFormRegistro.provincia}
+                                            onChange={handleChangeFormRegistro('provincia')}
+                                            labelWidth={75}
+                                        />
+                                    </FormControl>
+                                </Grid>
+                            </Grid>
+                            <Grid container>
+                                <Grid item xs={6}>
+                                    <FormControl
+                                        variant="outlined"
+                                        className={classes.form}
+                                    >
+                                        <InputLabel>Código Postal</InputLabel>
+                                        <OutlinedInput
+                                            className={classes.mb15}
+                                            fullWidth
+                                            id="form-codigoPostal-centro-registro"
+                                            value={valuesFormRegistro.codigoPostal}
+                                            onChange={handleChangeFormRegistro('codigoPostal')}
+                                            labelWidth={105}
+                                        />
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <FormControl
+                                        variant="outlined"
+                                        className={classes.form}
+                                    >
+                                        <InputLabel>Teléfono</InputLabel>
+                                        <OutlinedInput
+                                            className={classes.mb25}
+                                            fullWidth
+                                            id="form-telefono-centro-registro"
+                                            value={valuesFormRegistro.telefono}
+                                            onChange={handleChangeFormRegistro('telefono')}
+                                            labelWidth={65}
+                                        />
+                                    </FormControl>
+                                </Grid>
+                            </Grid>
                             <Box
                                 p={1.5}
                                 m={0.5}
@@ -2333,6 +2676,9 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                     prValueTimePickerFin={valueTimePickerFinRegistro.lunes}
                                                     prHandleChangeTimePickerInicioRegistro={handleChangeTimePickerInicioRegistro}
                                                     prHandleChangeTimePickerFinRegistro={handleChangeTimePickerFinRegistro}
+                                                    prIdTipoServicio={'selectTipoServicio-registro-lunes'}
+                                                    prValueTipoServicio={valueTipoServicioRegistro.lunesTipoServicio}
+                                                    prHandleChangeSelectTipoServicioRegistro={handleChangeSelectTipoServicioRegistro}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'rango'}
@@ -2344,6 +2690,9 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                     prValueTimePickerFin={valueTimePickerFinRegistro.martes}
                                                     prHandleChangeTimePickerInicioRegistro={handleChangeTimePickerInicioRegistro}
                                                     prHandleChangeTimePickerFinRegistro={handleChangeTimePickerFinRegistro}
+                                                    prIdTipoServicio={'selectTipoServicio-registro-martes'}
+                                                    prValueTipoServicio={valueTipoServicioRegistro.martesTipoServicio}
+                                                    prHandleChangeSelectTipoServicioRegistro={handleChangeSelectTipoServicioRegistro}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'rango'}
@@ -2355,6 +2704,9 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                     prValueTimePickerFin={valueTimePickerFinRegistro.miercoles}
                                                     prHandleChangeTimePickerInicioRegistro={handleChangeTimePickerInicioRegistro}
                                                     prHandleChangeTimePickerFinRegistro={handleChangeTimePickerFinRegistro}
+                                                    prIdTipoServicio={'selectTipoServicio-registro-miercoles'}
+                                                    prValueTipoServicio={valueTipoServicioRegistro.miercolesTipoServicio}
+                                                    prHandleChangeSelectTipoServicioRegistro={handleChangeSelectTipoServicioRegistro}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'rango'}
@@ -2366,6 +2718,9 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                     prValueTimePickerFin={valueTimePickerFinRegistro.jueves}
                                                     prHandleChangeTimePickerInicioRegistro={handleChangeTimePickerInicioRegistro}
                                                     prHandleChangeTimePickerFinRegistro={handleChangeTimePickerFinRegistro}
+                                                    prIdTipoServicio={'selectTipoServicio-registro-jueves'}
+                                                    prValueTipoServicio={valueTipoServicioRegistro.juevesTipoServicio}
+                                                    prHandleChangeSelectTipoServicioRegistro={handleChangeSelectTipoServicioRegistro}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'rango'}
@@ -2377,6 +2732,9 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                     prValueTimePickerFin={valueTimePickerFinRegistro.viernes}
                                                     prHandleChangeTimePickerInicioRegistro={handleChangeTimePickerInicioRegistro}
                                                     prHandleChangeTimePickerFinRegistro={handleChangeTimePickerFinRegistro}
+                                                    prIdTipoServicio={'selectTipoServicio-registro-viernes'}
+                                                    prValueTipoServicio={valueTipoServicioRegistro.viernesTipoServicio}
+                                                    prHandleChangeSelectTipoServicioRegistro={handleChangeSelectTipoServicioRegistro}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'rango'}
@@ -2388,6 +2746,9 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                     prValueTimePickerFin={valueTimePickerFinRegistro.sabado}
                                                     prHandleChangeTimePickerInicioRegistro={handleChangeTimePickerInicioRegistro}
                                                     prHandleChangeTimePickerFinRegistro={handleChangeTimePickerFinRegistro}
+                                                    prIdTipoServicio={'selectTipoServicio-registro-sabado'}
+                                                    prValueTipoServicio={valueTipoServicioRegistro.sabadoTipoServicio}
+                                                    prHandleChangeSelectTipoServicioRegistro={handleChangeSelectTipoServicioRegistro}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'rango'}
@@ -2399,6 +2760,9 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                     prValueTimePickerFin={valueTimePickerFinRegistro.domingo}
                                                     prHandleChangeTimePickerInicioRegistro={handleChangeTimePickerInicioRegistro}
                                                     prHandleChangeTimePickerFinRegistro={handleChangeTimePickerFinRegistro}
+                                                    prIdTipoServicio={'selectTipoServicio-registro-domingo'}
+                                                    prValueTipoServicio={valueTipoServicioRegistro.domingoTipoServicio}
+                                                    prHandleChangeSelectTipoServicioRegistro={handleChangeSelectTipoServicioRegistro}
                                                 />
                                             </Fragment>
                                         ) : valuesFormRegistro.tipo === 'cantidad' ? (
@@ -2410,6 +2774,9 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                     prIdCantidad={'selectCantidad-registro-lunes'}
                                                     prValueCantidadHoras={valueCantidadHorasRegistro.lunes}
                                                     prHandleChangeSelectCantidadRegistro={handleChangeSelectCantidadRegistro}
+                                                    prIdTipoServicio={'selectTipoServicio-registro-lunes'}
+                                                    prValueTipoServicio={valueTipoServicioRegistro.lunesTipoServicio}
+                                                    prHandleChangeSelectTipoServicioRegistro={handleChangeSelectTipoServicioRegistro}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'cantidad'}
@@ -2418,6 +2785,9 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                     prIdCantidad={'selectCantidad-registro-martes'}
                                                     prValueCantidadHoras={valueCantidadHorasRegistro.martes}
                                                     prHandleChangeSelectCantidadRegistro={handleChangeSelectCantidadRegistro}
+                                                    prIdTipoServicio={'selectTipoServicio-registro-martes'}
+                                                    prValueTipoServicio={valueTipoServicioRegistro.martesTipoServicio}
+                                                    prHandleChangeSelectTipoServicioRegistro={handleChangeSelectTipoServicioRegistro}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'cantidad'}
@@ -2426,6 +2796,9 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                     prIdCantidad={'selectCantidad-registro-miercoles'}
                                                     prValueCantidadHoras={valueCantidadHorasRegistro.miercoles}
                                                     prHandleChangeSelectCantidadRegistro={handleChangeSelectCantidadRegistro}
+                                                    prIdTipoServicio={'selectTipoServicio-registro-miercoles'}
+                                                    prValueTipoServicio={valueTipoServicioRegistro.miercolesTipoServicio}
+                                                    prHandleChangeSelectTipoServicioRegistro={handleChangeSelectTipoServicioRegistro}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'cantidad'}
@@ -2434,6 +2807,9 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                     prIdCantidad={'selectCantidad-registro-jueves'}
                                                     prValueCantidadHoras={valueCantidadHorasRegistro.jueves}
                                                     prHandleChangeSelectCantidadRegistro={handleChangeSelectCantidadRegistro}
+                                                    prIdTipoServicio={'selectTipoServicio-registro-jueves'}
+                                                    prValueTipoServicio={valueTipoServicioRegistro.juevesTipoServicio}
+                                                    prHandleChangeSelectTipoServicioRegistro={handleChangeSelectTipoServicioRegistro}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'cantidad'}
@@ -2442,6 +2818,10 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                     prIdCantidad={'selectCantidad-registro-viernes'}
                                                     prValueCantidadHoras={valueCantidadHorasRegistro.viernes}
                                                     prHandleChangeSelectCantidadRegistro={handleChangeSelectCantidadRegistro}
+                                                    prIdTipoServicio={'selectTipoServicio-registro-viernes'}
+                                                    prValueTipoServicio={valueTipoServicioRegistro.viernesTipoServicio}
+                                                    prHandleChangeSelectTipoServicioRegistro={handleChangeSelectTipoServicioRegistro}
+
                                                 />
                                                 <ItemListTime
                                                     prTipo={'cantidad'}
@@ -2450,6 +2830,9 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                     prIdCantidad={'selectCantidad-registro-sabado'}
                                                     prValueCantidadHoras={valueCantidadHorasRegistro.sabado}
                                                     prHandleChangeSelectCantidadRegistro={handleChangeSelectCantidadRegistro}
+                                                    prIdTipoServicio={'selectTipoServicio-registro-sabado'}
+                                                    prValueTipoServicio={valueTipoServicioRegistro.sabadoTipoServicio}
+                                                    prHandleChangeSelectTipoServicioRegistro={handleChangeSelectTipoServicioRegistro}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'cantidad'}
@@ -2458,6 +2841,9 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                     prIdCantidad={'selectCantidad-registro-domingo'}
                                                     prValueCantidadHoras={valueCantidadHorasRegistro.domingo}
                                                     prHandleChangeSelectCantidadRegistro={handleChangeSelectCantidadRegistro}
+                                                    prIdTipoServicio={'selectTipoServicio-registro-domingo'}
+                                                    prValueTipoServicio={valueTipoServicioRegistro.domingoTipoServicio}
+                                                    prHandleChangeSelectTipoServicioRegistro={handleChangeSelectTipoServicioRegistro}
                                                 />
                                             </Fragment>
                                         ) : valuesFormRegistro.tipo === 'rangoDescanso' ? (
@@ -2476,6 +2862,9 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                     prValueTimePickerFin2={valueTimePickerFinDescanso2Registro.lunes}
                                                     prHandleChangeTimePickerInicioRegistro={handleChangeTimePickerInicioRegistro}
                                                     prHandleChangeTimePickerFinRegistro={handleChangeTimePickerFinRegistro}
+                                                    prIdTipoServicio={'selectTipoServicio-registro-lunes'}
+                                                    prValueTipoServicio={valueTipoServicioRegistro.lunesTipoServicio}
+                                                    prHandleChangeSelectTipoServicioRegistro={handleChangeSelectTipoServicioRegistro}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'rangoDescanso'}
@@ -2491,6 +2880,9 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                     prValueTimePickerFin2={valueTimePickerFinDescanso2Registro.martes}
                                                     prHandleChangeTimePickerInicioRegistro={handleChangeTimePickerInicioRegistro}
                                                     prHandleChangeTimePickerFinRegistro={handleChangeTimePickerFinRegistro}
+                                                    prIdTipoServicio={'selectTipoServicio-registro-martes'}
+                                                    prValueTipoServicio={valueTipoServicioRegistro.martesTipoServicio}
+                                                    prHandleChangeSelectTipoServicioRegistro={handleChangeSelectTipoServicioRegistro}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'rangoDescanso'}
@@ -2506,6 +2898,9 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                     prValueTimePickerFin2={valueTimePickerFinDescanso2Registro.miercoles}
                                                     prHandleChangeTimePickerInicioRegistro={handleChangeTimePickerInicioRegistro}
                                                     prHandleChangeTimePickerFinRegistro={handleChangeTimePickerFinRegistro}
+                                                    prIdTipoServicio={'selectTipoServicio-registro-miercoles'}
+                                                    prValueTipoServicio={valueTipoServicioRegistro.miercolesTipoServicio}
+                                                    prHandleChangeSelectTipoServicioRegistro={handleChangeSelectTipoServicioRegistro}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'rangoDescanso'}
@@ -2521,6 +2916,9 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                     prValueTimePickerFin2={valueTimePickerFinDescanso2Registro.jueves}
                                                     prHandleChangeTimePickerInicioRegistro={handleChangeTimePickerInicioRegistro}
                                                     prHandleChangeTimePickerFinRegistro={handleChangeTimePickerFinRegistro}
+                                                    prIdTipoServicio={'selectTipoServicio-registro-jueves'}
+                                                    prValueTipoServicio={valueTipoServicioRegistro.juevesTipoServicio}
+                                                    prHandleChangeSelectTipoServicioRegistro={handleChangeSelectTipoServicioRegistro}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'rangoDescanso'}
@@ -2536,6 +2934,9 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                     prValueTimePickerFin2={valueTimePickerFinDescanso2Registro.viernes}
                                                     prHandleChangeTimePickerInicioRegistro={handleChangeTimePickerInicioRegistro}
                                                     prHandleChangeTimePickerFinRegistro={handleChangeTimePickerFinRegistro}
+                                                    prIdTipoServicio={'selectTipoServicio-registro-viernes'}
+                                                    prValueTipoServicio={valueTipoServicioRegistro.viernesTipoServicio}
+                                                    prHandleChangeSelectTipoServicioRegistro={handleChangeSelectTipoServicioRegistro}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'rangoDescanso'}
@@ -2551,6 +2952,9 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                     prValueTimePickerFin2={valueTimePickerFinDescanso2Registro.sabado}
                                                     prHandleChangeTimePickerInicioRegistro={handleChangeTimePickerInicioRegistro}
                                                     prHandleChangeTimePickerFinRegistro={handleChangeTimePickerFinRegistro}
+                                                    prIdTipoServicio={'selectTipoServicio-registro-sabado'}
+                                                    prValueTipoServicio={valueTipoServicioRegistro.sabadoTipoServicio}
+                                                    prHandleChangeSelectTipoServicioRegistro={handleChangeSelectTipoServicioRegistro}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'rangoDescanso'}
@@ -2566,6 +2970,9 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                     prValueTimePickerFin2={valueTimePickerFinDescanso2Registro.domingo}
                                                     prHandleChangeTimePickerInicioRegistro={handleChangeTimePickerInicioRegistro}
                                                     prHandleChangeTimePickerFinRegistro={handleChangeTimePickerFinRegistro}
+                                                    prIdTipoServicio={'selectTipoServicio-registro-domingo'}
+                                                    prValueTipoServicio={valueTipoServicioRegistro.domingoTipoServicio}
+                                                    prHandleChangeSelectTipoServicioRegistro={handleChangeSelectTipoServicioRegistro}
                                                 />
                                             </Fragment>
                                         ) : null}

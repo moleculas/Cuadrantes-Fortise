@@ -321,7 +321,7 @@ export const abreObjetoDialogAccion = (numero) => (dispatch, getState) => {
             arrayDialogs[8] = false;
             arrayDialogs[9] = false;
             arrayDialogs[10] = true;
-            break;      
+            break;
         default:
     }
     dispatch({
@@ -440,4 +440,14 @@ export const obtenerObjetoPorIdAccion = (listado, id) => (dispatch, getState) =>
         }
     });
     return aDevolver
+}
+
+export const validarMailAccion = (mail) => (dispatch, getState) => {
+    let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');   
+    if (regex.test(mail)) {   
+        return true;
+    }
+    else {     
+        return false;
+    }
 }

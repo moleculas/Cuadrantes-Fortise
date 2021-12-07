@@ -51,6 +51,9 @@ const TrabajadoresRegistrar = forwardRef((props, ref) => {
         id: null,
         nombre: '',
         categoria: 1,
+        dni: '',
+        segSocial: '',
+        telefono: '',
         estado: 'alta'
     });
     const [valueDatePickerInicioRegistro, setValueDatePickerInicioRegistro] = useState(null);
@@ -68,7 +71,7 @@ const TrabajadoresRegistrar = forwardRef((props, ref) => {
 
     //useEffect
 
-    useEffect(() => {       
+    useEffect(() => {
         dispatch(onEstemAccion('registrarTrabajadores'));
     }, [dispatch]);
 
@@ -197,7 +200,12 @@ const TrabajadoresRegistrar = forwardRef((props, ref) => {
                     const procesarDatosRegistro = () => {
                         //comprobamos que no haya campos vacíos
 
-                        if (valuesFormRegistro.nombre === '' || valuesFormRegistro.estado === '') {
+                        if (valuesFormRegistro.nombre === '' ||
+                            valuesFormRegistro.estado === '' ||
+                            valuesFormRegistro.dni === '' ||
+                            valuesFormRegistro.segSocial === '' ||
+                            valuesFormRegistro.telefono === ''
+                        ) {
                             setAlert({
                                 mensaje: "Alguno de los registros está vacío. Revisa el formulario.",
                                 tipo: 'error'
@@ -222,6 +230,9 @@ const TrabajadoresRegistrar = forwardRef((props, ref) => {
                             id: valuesFormRegistro.id,
                             nombre: valuesFormRegistro.nombre,
                             categoria: 1,
+                            dni: valuesFormRegistro.dni,
+                            seg_social: valuesFormRegistro.segSocial,
+                            telefono: valuesFormRegistro.telefono,
                             estado: valuesFormRegistro.estado,
                             datos_estado: JSON.stringify(datosEstadoRegistro)
                         };
@@ -242,6 +253,9 @@ const TrabajadoresRegistrar = forwardRef((props, ref) => {
             id: null,
             nombre: '',
             categoria: '',
+            dni: '',
+            segSocial: '',
+            telefono: '',
             estado: ''
         });
         setValueDatePickerInicioRegistro(null);
@@ -294,6 +308,48 @@ const TrabajadoresRegistrar = forwardRef((props, ref) => {
                                     value={valuesFormRegistro.nombre || ''}
                                     onChange={handleChangeFormRegistro('nombre')}
                                     labelWidth={60}
+                                />
+                            </FormControl>
+                            <FormControl
+                                variant="outlined"
+                                className={classes.form}
+                            >
+                                <InputLabel>DNI - NIE</InputLabel>
+                                <OutlinedInput
+                                    className={classes.mb15}
+                                    fullWidth
+                                    id="form-telefono-trabajador-registro"
+                                    value={valuesFormRegistro.dni || ''}
+                                    onChange={handleChangeFormRegistro('dni')}
+                                    labelWidth={65}
+                                />
+                            </FormControl>
+                            <FormControl
+                                variant="outlined"
+                                className={classes.form}
+                            >
+                                <InputLabel>Seg. Social</InputLabel>
+                                <OutlinedInput                                
+                                    className={classes.mb15}
+                                    fullWidth
+                                    id="form-telefono-trabajador-registro"
+                                    value={valuesFormRegistro.segSocial || ''}
+                                    onChange={handleChangeFormRegistro('segSocial')}
+                                    labelWidth={90}
+                                />
+                            </FormControl>
+                            <FormControl
+                                variant="outlined"
+                                className={classes.form}
+                            >
+                                <InputLabel>Teléfono</InputLabel>
+                                <OutlinedInput
+                                    className={classes.mb25}
+                                    fullWidth
+                                    id="form-telefono-trabajador-registro"
+                                    value={valuesFormRegistro.telefono || ''}
+                                    onChange={handleChangeFormRegistro('telefono')}
+                                    labelWidth={65}
                                 />
                             </FormControl>
                         </Box>

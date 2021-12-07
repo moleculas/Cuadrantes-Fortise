@@ -86,6 +86,9 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
         id: null,
         nombre: '',
         categoria: 1,
+        dni: '',
+        segSocial: '',
+        telefono: '',
         estado: ''
     });
     const [disabledAccordionTrabajadores, setDisabledAccordionTrabajadores] = useState(true);
@@ -159,6 +162,9 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
             ...valuesFormEdicion,
             id: trabajadorAEditar.id,
             nombre: trabajadorAEditar.nombre,
+            dni: trabajadorAEditar.dni,
+            segSocial: trabajadorAEditar.segSocial,
+            telefono: trabajadorAEditar.telefono,
             estado: trabajadorAEditar.estado,
             categoria: 1,
         });
@@ -225,7 +231,7 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
         setOpenSnack(false);
     };
 
-    const handleChangeSelectTrabajadoresEdicion = (e, values) => {      
+    const handleChangeSelectTrabajadoresEdicion = (e, values) => {
         if (values) {
             setValuesAutocompleteTrabajadoresValores(values)
             dispatch(obtenerTrabajadorAccion('trabajadores', values.id));
@@ -452,7 +458,10 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                 case 'procesarDatosEdicion':
                     const procesarDatosEdicion = () => {
                         //comprobamos que no haya campos vacíos
-                        if (valuesFormEdicion.nombre === '') {
+                        if (valuesFormEdicion.nombre === '' ||
+                            valuesFormEdicion.dni === '' ||
+                            valuesFormEdicion.segSocial === '' ||
+                            valuesFormEdicion.telefono === '') {
                             setAlert({
                                 mensaje: "Faltan datos por completar. Revisa el formulario.",
                                 tipo: 'error'
@@ -471,12 +480,15 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                                 return;
                             }
                         };
-                        
+
                         //registramos
                         const trabajadorAGuardar = {
                             id: valuesFormEdicion.id,
                             nombre: valuesFormEdicion.nombre,
                             categoria: 1,
+                            dni: valuesFormEdicion.dni,
+                            seg_social: valuesFormEdicion.segSocial,
+                            telefono: valuesFormEdicion.telefono,
                             estado: valuesFormEdicion.estado,
                             datos_estado: JSON.stringify(datosEstadoEdicion),
                             historico_bajas: historicoBajasEdicion ? (JSON.stringify(historicoBajasEdicion)) : null
@@ -501,6 +513,9 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
             id: null,
             nombre: '',
             categoria: '',
+            dni: '',
+            segSocial: '',
+            telefono: '',
             estado: ''
         });
         setDisabledAccordionTrabajadores(true);
@@ -667,6 +682,48 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                                     onChange={handleChangeFormEdicion('nombre')}
                                     labelWidth={60}
                                     disabled={disabledItem}
+                                />
+                            </FormControl>
+                            <FormControl
+                                variant="outlined"
+                                className={classes.form}
+                            >
+                                <InputLabel>DNI - NIE</InputLabel>
+                                <OutlinedInput
+                                    className={classes.mb15}
+                                    fullWidth
+                                    id="form-telefono-trabajador-edicion"
+                                    value={valuesFormEdicion.dni || ''}
+                                    onChange={handleChangeFormEdicion('dni')}
+                                    labelWidth={65}
+                                />
+                            </FormControl>
+                            <FormControl
+                                variant="outlined"
+                                className={classes.form}
+                            >
+                                <InputLabel>Seg. Social</InputLabel>
+                                <OutlinedInput
+                                    className={classes.mb15}
+                                    fullWidth
+                                    id="form-telefono-trabajador-edicion"
+                                    value={valuesFormEdicion.segSocial || ''}
+                                    onChange={handleChangeFormEdicion('segSocial')}
+                                    labelWidth={90}
+                                />
+                            </FormControl>
+                            <FormControl
+                                variant="outlined"
+                                className={classes.form}
+                            >
+                                <InputLabel>Teléfono</InputLabel>
+                                <OutlinedInput
+                                    className={classes.mb25}
+                                    fullWidth
+                                    id="form-telefono-trabajador-edicion"
+                                    value={valuesFormEdicion.telefono || ''}
+                                    onChange={handleChangeFormEdicion('telefono')}
+                                    labelWidth={65}
                                 />
                             </FormControl>
                         </Box>

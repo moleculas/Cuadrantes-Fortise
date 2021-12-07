@@ -40,6 +40,7 @@ import { abreObjetoDialogAccion } from '../redux/appDucks';
 import { cierraObjetoDialogAccion } from '../redux/appDucks';
 import { activarDesactivarActualizarCentroAccion } from '../redux/centrosDucks';
 import { vaciarDatosCentrosAccion } from '../redux/centrosDucks';
+import { validarMailAccion } from '../redux/appDucks';
 
 const categorias = Constantes.CATEGORIAS_CENTROS;
 const variaciones = Constantes.VARIACIONES_HORARIOS_CENTROS;
@@ -79,6 +80,14 @@ const CentrosEditar = forwardRef((props, ref) => {
         id: null,
         nombre: '',
         categoria: '',
+        codigo: '',
+        domicilio: '',
+        codigoPostal: '',
+        poblacion: '',
+        provincia: '',
+        nif: '',
+        mail: '',
+        telefono: '',
         variacion: '',
         tipo: '',
         numeroTrabajadores: '',
@@ -151,6 +160,15 @@ const CentrosEditar = forwardRef((props, ref) => {
         sabado: '',
         domingo: ''
     });
+    const [valueTipoServicioEdicion, setValueTipoServicioEdicion] = useState({
+        lunesTipoServicio: '',
+        martesTipoServicio: '',
+        miercolesTipoServicio: '',
+        juevesTipoServicio: '',
+        viernesTipoServicio: '',
+        sabadoTipoServicio: '',
+        domingoTipoServicio: '',
+    });
     const [horarioIntervencionEdicion, setHorarioIntervencionEdicion] = useState({
         tipo: '',
         variacion: '',
@@ -203,12 +221,20 @@ const CentrosEditar = forwardRef((props, ref) => {
         viernesCantidad: '',
         sabadoCantidad: '',
         domingoCantidad: '',
+        lunesTipoServicio: '',
+        martesTipoServicio: '',
+        miercolesTipoServicio: '',
+        juevesTipoServicio: '',
+        viernesTipoServicio: '',
+        sabadoTipoServicio: '',
+        domingoTipoServicio: '',
     });
     const [trabajadoresEdicion, setTrabajadoresEdicion] = useState({
         cantidad: '',
         trabajadores: []
     });
     const [openLoading, setOpenLoading] = useState(false);
+
 
     //useEffect
 
@@ -263,6 +289,14 @@ const CentrosEditar = forwardRef((props, ref) => {
             id: centroAEditar.id,
             nombre: centroAEditar.nombre,
             categoria: centroAEditar.categoria,
+            codigo: centroAEditar.codigo,
+            domicilio: centroAEditar.domicilio,
+            codigoPostal: centroAEditar.codigoPostal,
+            poblacion: centroAEditar.poblacion,
+            provincia: centroAEditar.provincia,
+            nif: centroAEditar.nif,
+            mail: centroAEditar.mail,
+            telefono: centroAEditar.telefono,
             variacion: centroAEditar.horario.variacion,
             tipo: centroAEditar.horario.tipo,
             numeroTrabajadores: centroAEditar.trabajadores.cantidad,
@@ -284,6 +318,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                 domingo: (centroAEditar.horario.domingoInicioRango ? generaFecha(centroAEditar.horario.domingoInicioRango) : null),
             });
             setValueTimePickerFinEdicion({
+                ...valueTimePickerFinEdicion,
                 lunes: (centroAEditar.horario.lunesFinRango ? generaFecha(centroAEditar.horario.lunesFinRango) : null),
                 martes: (centroAEditar.horario.martesFinRango ? generaFecha(centroAEditar.horario.martesFinRango) : null),
                 miercoles: (centroAEditar.horario.miercolesFinRango ? generaFecha(centroAEditar.horario.miercolesFinRango) : null),
@@ -347,6 +382,16 @@ const CentrosEditar = forwardRef((props, ref) => {
                 domingo: (centroAEditar.horario.domingoFin2RangoDescanso ? generaFecha(centroAEditar.horario.domingoFin2RangoDescanso) : null),
             });
         };
+        setValueTipoServicioEdicion({
+            ...valueTipoServicioEdicion,
+            lunesTipoServicio: centroAEditar.horario.lunesTipoServicio,
+            martesTipoServicio: centroAEditar.horario.martesTipoServicio,
+            miercolesTipoServicio: centroAEditar.horario.miercolesTipoServicio,
+            juevesTipoServicio: centroAEditar.horario.juevesTipoServicio,
+            viernesTipoServicio: centroAEditar.horario.viernesTipoServicio,
+            sabadoTipoServicio: centroAEditar.horario.sabadoTipoServicio,
+            domingoTipoServicio: centroAEditar.horario.domingoTipoServicio,
+        });
         setHorarioIntervencionEdicion({
             tipo: centroAEditar.horario.tipo,
             variacion: centroAEditar.horario.variacion,
@@ -392,13 +437,20 @@ const CentrosEditar = forwardRef((props, ref) => {
             domingoInicio2RangoDescanso: centroAEditar.horario.domingoInicio2RangoDescanso ? centroAEditar.horario.domingoInicio2RangoDescanso : null,
             domingoFin1RangoDescanso: centroAEditar.horario.domingoFin1RangoDescanso ? centroAEditar.horario.domingoFin1RangoDescanso : null,
             domingoFin2RangoDescanso: centroAEditar.horario.domingoFin2RangoDescanso ? centroAEditar.horario.domingoFin2RangoDescanso : null,
-            lunesCantidad: centroAEditar.horario.lunesCantidad ? centroAEditar.horario.lunesCantidad : null,
-            martesCantidad: centroAEditar.horario.martesCantidad ? centroAEditar.horario.martesCantidad : null,
-            miercolesCantidad: centroAEditar.horario.miercolesCantidad ? centroAEditar.horario.miercolesCantidad : null,
-            juevesCantidad: centroAEditar.horario.juevesCantidad ? centroAEditar.horario.juevesCantidad : null,
-            viernesCantidad: centroAEditar.horario.viernesCantidad ? centroAEditar.horario.viernesCantidad : null,
-            sabadoCantidad: centroAEditar.horario.sabadoCantidad ? centroAEditar.horario.sabadoCantidad : null,
-            domingoCantidad: centroAEditar.horario.domingoCantidad ? centroAEditar.horario.domingoCantidad : null,
+            lunesCantidad: centroAEditar.horario.lunesCantidad ? centroAEditar.horario.lunesCantidad : '',
+            martesCantidad: centroAEditar.horario.martesCantidad ? centroAEditar.horario.martesCantidad : '',
+            miercolesCantidad: centroAEditar.horario.miercolesCantidad ? centroAEditar.horario.miercolesCantidad : '',
+            juevesCantidad: centroAEditar.horario.juevesCantidad ? centroAEditar.horario.juevesCantidad : '',
+            viernesCantidad: centroAEditar.horario.viernesCantidad ? centroAEditar.horario.viernesCantidad : '',
+            sabadoCantidad: centroAEditar.horario.sabadoCantidad ? centroAEditar.horario.sabadoCantidad : '',
+            domingoCantidad: centroAEditar.horario.domingoCantidad ? centroAEditar.horario.domingoCantidad : '',
+            lunesTipoServicio: centroAEditar.horario.lunesTipoServicio ? centroAEditar.horario.lunesTipoServicio : '',
+            martesTipoServicio: centroAEditar.horario.martesTipoServicio ? centroAEditar.horario.martesTipoServicio : '',
+            miercolesTipoServicio: centroAEditar.horario.miercolesTipoServicio ? centroAEditar.horario.miercolesTipoServicio : '',
+            juevesTipoServicio: centroAEditar.horario.juevesTipoServicio ? centroAEditar.horario.juevesTipoServicio : '',
+            viernesTipoServicio: centroAEditar.horario.viernesTipoServicio ? centroAEditar.horario.viernesTipoServicio : '',
+            sabadoTipoServicio: centroAEditar.horario.sabadoTipoServicio ? centroAEditar.horario.sabadoTipoServicio : '',
+            domingoTipoServicio: centroAEditar.horario.domingoTipoServicio ? centroAEditar.horario.domingoTipoServicio : '',
         });
         setTrabajadoresEdicion({
             ...trabajadoresEdicion,
@@ -475,15 +527,15 @@ const CentrosEditar = forwardRef((props, ref) => {
             if (IsNumeric(e.target.value)) {
                 setValuesFormEdicion({ ...valuesFormEdicion, [prop]: e.target.value });
                 dispatch(activarDesactivarActualizarCentroAccion(false));
-                return;
             }
+            return;
         };
         if (prop === "precioHora") {
             if (IsNumeric(e.target.value)) {
                 setValuesFormEdicion({ ...valuesFormEdicion, [prop]: e.target.value });
                 dispatch(activarDesactivarActualizarCentroAccion(false));
-                return;
             }
+            return;
         };
         if (prop === "tipo") {
             setValuesFormEdicion({ ...valuesFormEdicion, [prop]: e.target.value });
@@ -538,7 +590,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 juevesCantidad: '',
                 viernesCantidad: '',
                 sabadoCantidad: '',
-                domingoCantidad: ''
+                domingoCantidad: '',
+                lunesTipoServicio: '',
+                martesTipoServicio: '',
+                miercolesTipoServicio: '',
+                juevesTipoServicio: '',
+                viernesTipoServicio: '',
+                sabadoTipoServicio: '',
+                domingoTipoServicio: '',
             });
             setValueTimePickerInicioEdicion({
                 lunes: null,
@@ -602,6 +661,15 @@ const CentrosEditar = forwardRef((props, ref) => {
                 viernes: '',
                 sabado: '',
                 domingo: ''
+            });
+            setValueTipoServicioEdicion({
+                lunesTipoServicio: '',
+                martesTipoServicio: '',
+                miercolesTipoServicio: '',
+                juevesTipoServicio: '',
+                viernesTipoServicio: '',
+                sabadoTipoServicio: '',
+                domingoTipoServicio: ''
             });
             dispatch(registrarIntervencionAccion(false));
             dispatch(activarDesactivarActualizarCentroAccion(false));
@@ -1432,6 +1500,42 @@ const CentrosEditar = forwardRef((props, ref) => {
         dispatch(activarDesactivarActualizarCentroAccion(false));
     };
 
+    const handleChangeSelectTipoServicioEdicion = (e) => {
+        switch (e.target.name) {
+            case 'selectTipoServicio-edicion-lunes':
+                setValueTipoServicioEdicion({ ...valueTipoServicioEdicion, lunesTipoServicio: e.target.value });
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, lunesTipoServicio: e.target.value });
+                break;
+            case 'selectTipoServicio-edicion-martes':
+                setValueTipoServicioEdicion({ ...valueTipoServicioEdicion, martesTipoServicio: e.target.value });
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, martesTipoServicio: e.target.value });
+                break;
+            case 'selectTipoServicio-edicion-miercoles':
+                setValueTipoServicioEdicion({ ...valueTipoServicioEdicion, miercolesTipoServicio: e.target.value });
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, miercolesTipoServicio: e.target.value });
+                break;
+            case 'selectTipoServicio-edicion-jueves':
+                setValueTipoServicioEdicion({ ...valueTipoServicioEdicion, juevesTipoServicio: e.target.value });
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, juevesTipoServicio: e.target.value });
+                break;
+            case 'selectTipoServicio-edicion-viernes':
+                setValueTipoServicioEdicion({ ...valueTipoServicioEdicion, viernesTipoServicio: e.target.value });
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, viernesTipoServicio: e.target.value });
+                break;
+            case 'selectTipoServicio-edicion-sabado':
+                setValueTipoServicioEdicion({ ...valueTipoServicioEdicion, sabadoTipoServicio: e.target.value });
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, sabadoTipoServicio: e.target.value });
+                break;
+            case 'selectTipoServicio-edicion-domingo':
+                setValueTipoServicioEdicion({ ...valueTipoServicioEdicion, domingoTipoServicio: e.target.value });
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, domingoTipoServicio: e.target.value });
+                break;
+            default:
+        }
+        dispatch(registrarIntervencionAccion(false));
+        dispatch(activarDesactivarActualizarCentroAccion(false));
+    };
+
     const tituloDialog = "¿Estás seguro que quieres eliminar el Centro?";
     const descripcionDialog = "Para confirmar pulsa 'De acuerdo', de lo contrario pulsa 'Desacuerdo'."
 
@@ -1618,7 +1722,28 @@ const CentrosEditar = forwardRef((props, ref) => {
                             if (horarioIntervencionEdicion.domingoInicioRango) {
                                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, domingoCantidad: retornaMinutos(horarioIntervencionEdicion.domingoInicioRango, horarioIntervencionEdicion.domingoFinRango) });
                             };
-
+                            //cuarta comprobacion que no falte tipo de servicio
+                            if ((horarioIntervencionEdicion.lunesInicioRango && !horarioIntervencionEdicion.lunesTipoServicio) ||
+                                (!horarioIntervencionEdicion.lunesInicioRango && horarioIntervencionEdicion.lunesTipoServicio) ||
+                                (horarioIntervencionEdicion.martesInicioRango && !horarioIntervencionEdicion.martesTipoServicio) ||
+                                (!horarioIntervencionEdicion.martesInicioRango && horarioIntervencionEdicion.martesTipoServicio) ||
+                                (horarioIntervencionEdicion.miercolesInicioRango && !horarioIntervencionEdicion.miercolesTipoServicio) ||
+                                (!horarioIntervencionEdicion.miercolesInicioRango && horarioIntervencionEdicion.miercolesTipoServicio) ||
+                                (horarioIntervencionEdicion.juevesInicioRango && !horarioIntervencionEdicion.juevesTipoServicio) ||
+                                (!horarioIntervencionEdicion.juevesInicioRango && horarioIntervencionEdicion.juevesTipoServicio) ||
+                                (horarioIntervencionEdicion.viernesInicioRango && !horarioIntervencionEdicion.viernesTipoServicio) ||
+                                (!horarioIntervencionEdicion.viernesInicioRango && horarioIntervencionEdicion.viernesTipoServicio) ||
+                                (horarioIntervencionEdicion.sabadoInicioRango && !horarioIntervencionEdicion.sabadoTipoServicio) ||
+                                (!horarioIntervencionEdicion.sabadoInicioRango && horarioIntervencionEdicion.sabadoTipoServicio) ||
+                                (horarioIntervencionEdicion.domingoInicioRango && !horarioIntervencionEdicion.domingoTipoServicio) ||
+                                (!horarioIntervencionEdicion.domingoInicioRango && horarioIntervencionEdicion.domingoTipoServicio)) {
+                                setAlert({
+                                    mensaje: "Falta seleccionar el tipo de servicio para el rango horario o viceversa.",
+                                    tipo: 'error'
+                                })
+                                setOpenSnack(true);
+                                return;
+                            };
                         };
 
                         if (horarioIntervencionEdicion.tipo === "rangoDescanso") {
@@ -1957,6 +2082,28 @@ const CentrosEditar = forwardRef((props, ref) => {
                                 cantidadTotalRango = cantidadRango1 + cantidadRango2;
                                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, domingoCantidad: cantidadTotalRango });
                             };
+                            //cuarta comprobacion que no falte tipo de servicio
+                            if ((horarioIntervencionEdicion.lunesInicio1RangoDescanso && !horarioIntervencionEdicion.lunesTipoServicio) ||
+                                (!horarioIntervencionEdicion.lunesInicio1RangoDescanso && horarioIntervencionEdicion.lunesTipoServicio) ||
+                                (horarioIntervencionEdicion.martesInicio1RangoDescanso && !horarioIntervencionEdicion.martesTipoServicio) ||
+                                (!horarioIntervencionEdicion.martesInicio1RangoDescanso && horarioIntervencionEdicion.martesTipoServicio) ||
+                                (horarioIntervencionEdicion.miercolesInicio1RangoDescanso && !horarioIntervencionEdicion.miercolesTipoServicio) ||
+                                (!horarioIntervencionEdicion.miercolesInicio1RangoDescanso && horarioIntervencionEdicion.miercolesTipoServicio) ||
+                                (horarioIntervencionEdicion.juevesInicio1RangoDescanso && !horarioIntervencionEdicion.juevesTipoServicio) ||
+                                (!horarioIntervencionEdicion.juevesInicio1RangoDescanso && horarioIntervencionEdicion.juevesTipoServicio) ||
+                                (horarioIntervencionEdicion.viernesInicio1RangoDescanso && !horarioIntervencionEdicion.viernesTipoServicio) ||
+                                (!horarioIntervencionEdicion.viernesInicio1RangoDescanso && horarioIntervencionEdicion.viernesTipoServicio) ||
+                                (horarioIntervencionEdicion.sabadoInicio1RangoDescanso && !horarioIntervencionEdicion.sabadoTipoServicio) ||
+                                (!horarioIntervencionEdicion.sabadoInicio1RangoDescanso && horarioIntervencionEdicion.sabadoTipoServicio) ||
+                                (horarioIntervencionEdicion.domingoInicio1RangoDescanso && !horarioIntervencionEdicion.domingoTipoServicio) ||
+                                (!horarioIntervencionEdicion.domingoInicio1RangoDescanso && horarioIntervencionEdicion.domingoTipoServicio)) {
+                                setAlert({
+                                    mensaje: "Falta seleccionar el tipo de servicio para el rango horario o viceversa.",
+                                    tipo: 'error'
+                                })
+                                setOpenSnack(true);
+                                return;
+                            };
                         };
 
                         if (horarioIntervencionEdicion.tipo === "cantidad") {
@@ -1975,8 +2122,31 @@ const CentrosEditar = forwardRef((props, ref) => {
                                 setOpenSnack(true);
                                 return;
                             };
+                            //cuarta comprobacion que no falte tipo de servicio
+                            if ((horarioIntervencionEdicion.lunesCantidad && !horarioIntervencionEdicion.lunesTipoServicio) ||
+                                (!horarioIntervencionEdicion.lunesCantidad && horarioIntervencionEdicion.lunesTipoServicio) ||
+                                (horarioIntervencionEdicion.martesCantidad && !horarioIntervencionEdicion.martesTipoServicio) ||
+                                (!horarioIntervencionEdicion.martesCantidad && horarioIntervencionEdicion.martesTipoServicio) ||
+                                (horarioIntervencionEdicion.miercolesCantidad && !horarioIntervencionEdicion.miercolesTipoServicio) ||
+                                (!horarioIntervencionEdicion.miercolesCantidad && horarioIntervencionEdicion.miercolesTipoServicio) ||
+                                (horarioIntervencionEdicion.juevesCantidad && !horarioIntervencionEdicion.juevesTipoServicio) ||
+                                (!horarioIntervencionEdicion.juevesCantidad && horarioIntervencionEdicion.juevesTipoServicio) ||
+                                (horarioIntervencionEdicion.viernesCantidad && !horarioIntervencionEdicion.viernesTipoServicio) ||
+                                (!horarioIntervencionEdicion.viernesCantidad && horarioIntervencionEdicion.viernesTipoServicio) ||
+                                (horarioIntervencionEdicion.sabadoCantidad && !horarioIntervencionEdicion.sabadoTipoServicio) ||
+                                (!horarioIntervencionEdicion.sabadoCantidad && horarioIntervencionEdicion.sabadoTipoServicio) ||
+                                (horarioIntervencionEdicion.domingoCantidad && !horarioIntervencionEdicion.domingoTipoServicio) ||
+                                (!horarioIntervencionEdicion.domingoCantidad && horarioIntervencionEdicion.domingoTipoServicio)) {
+                                setAlert({
+                                    mensaje: "Falta seleccionar el tipo de servicio para el rango horario o viceversa.",
+                                    tipo: 'error'
+                                })
+                                setOpenSnack(true);
+                                return;
+                            };
+                        };
 
-                        }
+
                         //comprobamos que array objetos trabajadores no tenga elementos vacíos
 
                         for (let i = 0; i < trabajadoresEdicion.cantidad; i++) {
@@ -1991,7 +2161,16 @@ const CentrosEditar = forwardRef((props, ref) => {
                         };
 
                         //comprobamos que no haya elementos vacíos
-                        if (valuesFormEdicion.nombre === '') {
+                        if (valuesFormEdicion.nombre === '' ||
+                            valuesFormEdicion.categoria === '' ||
+                            valuesFormEdicion.codigo === '' ||
+                            valuesFormEdicion.domicilio === '' ||
+                            valuesFormEdicion.codigoPostal === '' ||
+                            valuesFormEdicion.poblacion === '' ||
+                            valuesFormEdicion.provincia === '' ||
+                            valuesFormEdicion.nif === '' ||
+                            valuesFormEdicion.mail === '' ||
+                            valuesFormEdicion.telefono === '') {
                             setAlert({
                                 mensaje: "Faltan datos por completar. Revisa el formulario.",
                                 tipo: 'error'
@@ -2002,6 +2181,16 @@ const CentrosEditar = forwardRef((props, ref) => {
                         if (valuesFormEdicion.computo === '' || (valuesFormEdicion.computo === 1 && !valuesFormEdicion.mensualPactado) || (valuesFormEdicion.computo === 2 && !valuesFormEdicion.precioHora)) {
                             setAlert({
                                 mensaje: "Faltan datos por completar. Revisa el formulario.",
+                                tipo: 'error'
+                            })
+                            setOpenSnack(true);
+                            return;
+                        };
+                        //validacion mail
+                        const validacionMail = dispatch(validarMailAccion(valuesFormEdicion.mail));
+                        if (!validacionMail) {
+                            setAlert({
+                                mensaje: "El campo E-mail es incorrecto. Revisa el formulario.",
                                 tipo: 'error'
                             })
                             setOpenSnack(true);
@@ -2026,7 +2215,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                                 sabadoInicioRango: horarioIntervencionEdicion.sabadoInicioRango,
                                 sabadoFinRango: horarioIntervencionEdicion.sabadoFinRango,
                                 domingoInicioRango: horarioIntervencionEdicion.domingoInicioRango,
-                                domingoFinRango: horarioIntervencionEdicion.domingoFinRango
+                                domingoFinRango: horarioIntervencionEdicion.domingoFinRango,
+                                lunesTipoServicio: horarioIntervencionEdicion.lunesTipoServicio,
+                                martesTipoServicio: horarioIntervencionEdicion.martesTipoServicio,
+                                miercolesTipoServicio: horarioIntervencionEdicion.miercolesTipoServicio,
+                                juevesTipoServicio: horarioIntervencionEdicion.juevesTipoServicio,
+                                viernesTipoServicio: horarioIntervencionEdicion.viernesTipoServicio,
+                                sabadoTipoServicio: horarioIntervencionEdicion.sabadoTipoServicio,
+                                domingoTipoServicio: horarioIntervencionEdicion.domingoTipoServicio
                             };
                         };
                         if (horarioIntervencionEdicion.tipo === 'rangoDescanso') {
@@ -2060,7 +2256,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                                 domingoInicio1RangoDescanso: horarioIntervencionEdicion.domingoInicio1RangoDescanso,
                                 domingoInicio2RangoDescanso: horarioIntervencionEdicion.domingoInicio2RangoDescanso,
                                 domingoFin1RangoDescanso: horarioIntervencionEdicion.domingoFin1RangoDescanso,
-                                domingoFin2RangoDescanso: horarioIntervencionEdicion.domingoFin2RangoDescanso
+                                domingoFin2RangoDescanso: horarioIntervencionEdicion.domingoFin2RangoDescanso,
+                                lunesTipoServicio: horarioIntervencionEdicion.lunesTipoServicio,
+                                martesTipoServicio: horarioIntervencionEdicion.martesTipoServicio,
+                                miercolesTipoServicio: horarioIntervencionEdicion.miercolesTipoServicio,
+                                juevesTipoServicio: horarioIntervencionEdicion.juevesTipoServicio,
+                                viernesTipoServicio: horarioIntervencionEdicion.viernesTipoServicio,
+                                sabadoTipoServicio: horarioIntervencionEdicion.sabadoTipoServicio,
+                                domingoTipoServicio: horarioIntervencionEdicion.domingoTipoServicio
                             };
                         };
                         if (horarioIntervencionEdicion.tipo === 'cantidad') {
@@ -2074,6 +2277,13 @@ const CentrosEditar = forwardRef((props, ref) => {
                                 viernesCantidad: horarioIntervencionEdicion.viernesCantidad,
                                 sabadoCantidad: horarioIntervencionEdicion.sabadoCantidad,
                                 domingoCantidad: horarioIntervencionEdicion.domingoCantidad,
+                                lunesTipoServicio: horarioIntervencionEdicion.lunesTipoServicio,
+                                martesTipoServicio: horarioIntervencionEdicion.martesTipoServicio,
+                                miercolesTipoServicio: horarioIntervencionEdicion.miercolesTipoServicio,
+                                juevesTipoServicio: horarioIntervencionEdicion.juevesTipoServicio,
+                                viernesTipoServicio: horarioIntervencionEdicion.viernesTipoServicio,
+                                sabadoTipoServicio: horarioIntervencionEdicion.sabadoTipoServicio,
+                                domingoTipoServicio: horarioIntervencionEdicion.domingoTipoServicio
                             };
                         };
                         //añadimos cómputo final                        
@@ -2088,6 +2298,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                             id: valuesFormEdicion.id,
                             nombre: valuesFormEdicion.nombre,
                             categoria: valuesFormEdicion.categoria,
+                            codigo: valuesFormEdicion.codigo,
+                            domicilio: valuesFormEdicion.domicilio,
+                            codigo_postal: valuesFormEdicion.codigoPostal,
+                            poblacion: valuesFormEdicion.poblacion,
+                            provincia: valuesFormEdicion.provincia,
+                            nif: valuesFormEdicion.nif,
+                            mail: valuesFormEdicion.mail,
+                            telefono: valuesFormEdicion.telefono,
                             horario: JSON.stringify(elHorarioIntervencionEditadoRevisado),
                             trabajadores: JSON.stringify(trabajadoresEdicion)
                         };
@@ -2109,6 +2327,14 @@ const CentrosEditar = forwardRef((props, ref) => {
             id: null,
             nombre: '',
             categoria: '',
+            codigo: '',
+            domicilio: '',
+            codigoPostal: '',
+            poblacion: '',
+            provincia: '',
+            nif: '',
+            mail: '',
+            telefono: '',
             variacion: '',
             tipo: '',
             numeroTrabajadores: '',
@@ -2181,6 +2407,15 @@ const CentrosEditar = forwardRef((props, ref) => {
             sabado: '',
             domingo: ''
         });
+        setValueTipoServicioEdicion({
+            lunesTipoServicio: '',
+            martesTipoServicio: '',
+            miercolesTipoServicio: '',
+            juevesTipoServicio: '',
+            viernesTipoServicio: '',
+            sabadoTipoServicio: '',
+            domingoTipoServicio: ''
+        });
         setHorarioIntervencionEdicion({
             tipo: '',
             variacion: '',
@@ -2233,6 +2468,13 @@ const CentrosEditar = forwardRef((props, ref) => {
             viernesCantidad: '',
             sabadoCantidad: '',
             domingoCantidad: '',
+            lunesTipoServicio: '',
+            martesTipoServicio: '',
+            miercolesTipoServicio: '',
+            juevesTipoServicio: '',
+            viernesTipoServicio: '',
+            sabadoTipoServicio: '',
+            domingoTipoServicio: ''
         });
         setTrabajadoresEdicion({
             cantidad: '',
@@ -2370,7 +2612,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                 <InputLabel>Categoría Centro</InputLabel>
                                 <Select
                                     fullWidth
-                                    className={classes.mb25}
+                                    className={classes.mb15}
                                     id="form-categoria-edicion"
                                     label="Categoría Centro"
                                     value={valuesFormEdicion.categoria}
@@ -2387,6 +2629,136 @@ const CentrosEditar = forwardRef((props, ref) => {
                                     }
                                 </Select>
                             </FormControl>
+                            <Grid container>
+                                <Grid item xs={6}>
+                                    <FormControl
+                                        variant="outlined"
+                                        className={classes.form}
+                                    >
+                                        <InputLabel>Código</InputLabel>
+                                        <OutlinedInput
+                                            className={classes.mb15}
+                                            fullWidth
+                                            id="form-codigo-centro-edicion"
+                                            value={valuesFormEdicion.codigo}
+                                            onChange={handleChangeFormEdicion('codigo')}
+                                            labelWidth={55}
+                                        />
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <FormControl
+                                        variant="outlined"
+                                        className={classes.form}
+                                    >
+                                        <InputLabel>NIF</InputLabel>
+                                        <OutlinedInput
+                                            className={classes.mb15}
+                                            fullWidth
+                                            id="form-nif-centro-edicion"
+                                            value={valuesFormEdicion.nif}
+                                            onChange={handleChangeFormEdicion('nif')}
+                                            labelWidth={30}
+                                        />
+                                    </FormControl>
+                                </Grid>
+                            </Grid>
+                            <FormControl
+                                variant="outlined"
+                                className={classes.form}
+                            >
+                                <InputLabel>E-mail</InputLabel>
+                                <OutlinedInput
+                                    className={classes.mb15}
+                                    fullWidth
+                                    id="form-mail-centro-edicion"
+                                    value={valuesFormEdicion.mail}
+                                    onChange={handleChangeFormEdicion('mail')}
+                                    labelWidth={55}
+                                />
+                            </FormControl>
+                            <FormControl
+                                variant="outlined"
+                                className={classes.form}
+                            >
+                                <InputLabel>Domicilio</InputLabel>
+                                <OutlinedInput
+                                    className={classes.mb15}
+                                    fullWidth
+                                    id="form-domicilio-centro-edicion"
+                                    value={valuesFormEdicion.domicilio}
+                                    onChange={handleChangeFormEdicion('domicilio')}
+                                    labelWidth={70}
+                                />
+                            </FormControl>
+                            <Grid container>
+                                <Grid item xs={6}>
+                                    <FormControl
+                                        variant="outlined"
+                                        className={classes.form}
+                                    >
+                                        <InputLabel>Población</InputLabel>
+                                        <OutlinedInput
+                                            className={classes.mb15}
+                                            fullWidth
+                                            id="form-poblacion-centro-edicion"
+                                            value={valuesFormEdicion.poblacion}
+                                            onChange={handleChangeFormEdicion('poblacion')}
+                                            labelWidth={75}
+                                        />
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <FormControl
+                                        variant="outlined"
+                                        className={classes.form}
+                                    >
+                                        <InputLabel>Provincia</InputLabel>
+                                        <OutlinedInput
+                                            className={classes.mb15}
+                                            fullWidth
+                                            id="form-provincia-centro-edicion"
+                                            value={valuesFormEdicion.provincia}
+                                            onChange={handleChangeFormEdicion('provincia')}
+                                            labelWidth={75}
+                                        />
+                                    </FormControl>
+                                </Grid>
+                            </Grid>
+                            <Grid container>
+                                <Grid item xs={6}>
+                                    <FormControl
+                                        variant="outlined"
+                                        className={classes.form}
+                                    >
+                                        <InputLabel>Código Postal</InputLabel>
+                                        <OutlinedInput
+                                            className={classes.mb15}
+                                            fullWidth
+                                            id="form-codigoPostal-centro-edicion"
+                                            value={valuesFormEdicion.codigoPostal}
+                                            onChange={handleChangeFormEdicion('codigoPostal')}
+                                            labelWidth={105}
+                                        />
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <FormControl
+                                        variant="outlined"
+                                        className={classes.form}
+                                    >
+                                        <InputLabel>Teléfono</InputLabel>
+                                        <OutlinedInput
+                                            className={classes.mb25}
+                                            fullWidth
+                                            id="form-telefono-centro-edicion"
+                                            value={valuesFormEdicion.telefono}
+                                            onChange={handleChangeFormEdicion('telefono')}
+                                            labelWidth={65}
+                                        />
+                                    </FormControl>
+                                </Grid>
+                            </Grid>
                             <Box
                                 p={1.5}
                                 m={0.5}
@@ -2572,6 +2944,9 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                     prValueTimePickerFin={valueTimePickerFinEdicion.lunes}
                                                     prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
                                                     prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
+                                                    prIdTipoServicio={'selectTipoServicio-edicion-lunes'}
+                                                    prValueTipoServicio={valueTipoServicioEdicion.lunesTipoServicio}
+                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'rango'}
@@ -2583,6 +2958,9 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                     prValueTimePickerFin={valueTimePickerFinEdicion.martes}
                                                     prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
                                                     prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
+                                                    prIdTipoServicio={'selectTipoServicio-edicion-martes'}
+                                                    prValueTipoServicio={valueTipoServicioEdicion.martesTipoServicio}
+                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'rango'}
@@ -2594,6 +2972,9 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                     prValueTimePickerFin={valueTimePickerFinEdicion.miercoles}
                                                     prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
                                                     prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
+                                                    prIdTipoServicio={'selectTipoServicio-edicion-miercoles'}
+                                                    prValueTipoServicio={valueTipoServicioEdicion.miercolesTipoServicio}
+                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'rango'}
@@ -2605,6 +2986,9 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                     prValueTimePickerFin={valueTimePickerFinEdicion.jueves}
                                                     prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
                                                     prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
+                                                    prIdTipoServicio={'selectTipoServicio-edicion-jueves'}
+                                                    prValueTipoServicio={valueTipoServicioEdicion.juevesTipoServicio}
+                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'rango'}
@@ -2616,6 +3000,9 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                     prValueTimePickerFin={valueTimePickerFinEdicion.viernes}
                                                     prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
                                                     prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
+                                                    prIdTipoServicio={'selectTipoServicio-edicion-viernes'}
+                                                    prValueTipoServicio={valueTipoServicioEdicion.viernesTipoServicio}
+                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'rango'}
@@ -2627,6 +3014,9 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                     prValueTimePickerFin={valueTimePickerFinEdicion.sabado}
                                                     prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
                                                     prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
+                                                    prIdTipoServicio={'selectTipoServicio-edicion-sabado'}
+                                                    prValueTipoServicio={valueTipoServicioEdicion.sabadoTipoServicio}
+                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'rango'}
@@ -2638,6 +3028,9 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                     prValueTimePickerFin={valueTimePickerFinEdicion.domingo}
                                                     prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
                                                     prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
+                                                    prIdTipoServicio={'selectTipoServicio-edicion-domingo'}
+                                                    prValueTipoServicio={valueTipoServicioEdicion.domingoTipoServicio}
+                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
                                                 />
                                             </Fragment>
                                         ) : valuesFormEdicion.tipo === 'cantidad' ? (
@@ -2649,6 +3042,9 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                     prIdCantidad={'selectCantidad-edicion-lunes'}
                                                     prValueCantidadHoras={valueCantidadHorasEdicion.lunes}
                                                     prHandleChangeSelectCantidadEdicion={handleChangeSelectCantidadEdicion}
+                                                    prIdTipoServicio={'selectTipoServicio-edicion-lunes'}
+                                                    prValueTipoServicio={valueTipoServicioEdicion.lunesTipoServicio}
+                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'cantidad'}
@@ -2657,6 +3053,9 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                     prIdCantidad={'selectCantidad-edicion-martes'}
                                                     prValueCantidadHoras={valueCantidadHorasEdicion.martes}
                                                     prHandleChangeSelectCantidadEdicion={handleChangeSelectCantidadEdicion}
+                                                    prIdTipoServicio={'selectTipoServicio-edicion-martes'}
+                                                    prValueTipoServicio={valueTipoServicioEdicion.martesTipoServicio}
+                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'cantidad'}
@@ -2665,6 +3064,9 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                     prIdCantidad={'selectCantidad-edicion-miercoles'}
                                                     prValueCantidadHoras={valueCantidadHorasEdicion.miercoles}
                                                     prHandleChangeSelectCantidadEdicion={handleChangeSelectCantidadEdicion}
+                                                    prIdTipoServicio={'selectTipoServicio-edicion-miercoles'}
+                                                    prValueTipoServicio={valueTipoServicioEdicion.miercolesTipoServicio}
+                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'cantidad'}
@@ -2673,6 +3075,9 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                     prIdCantidad={'selectCantidad-edicion-jueves'}
                                                     prValueCantidadHoras={valueCantidadHorasEdicion.jueves}
                                                     prHandleChangeSelectCantidadEdicion={handleChangeSelectCantidadEdicion}
+                                                    prIdTipoServicio={'selectTipoServicio-edicion-jueves'}
+                                                    prValueTipoServicio={valueTipoServicioEdicion.juevesTipoServicio}
+                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'cantidad'}
@@ -2681,6 +3086,9 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                     prIdCantidad={'selectCantidad-edicion-viernes'}
                                                     prValueCantidadHoras={valueCantidadHorasEdicion.viernes}
                                                     prHandleChangeSelectCantidadEdicion={handleChangeSelectCantidadEdicion}
+                                                    prIdTipoServicio={'selectTipoServicio-edicion-viernes'}
+                                                    prValueTipoServicio={valueTipoServicioEdicion.viernesTipoServicio}
+                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'cantidad'}
@@ -2689,6 +3097,9 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                     prIdCantidad={'selectCantidad-edicion-sabado'}
                                                     prValueCantidadHoras={valueCantidadHorasEdicion.sabado}
                                                     prHandleChangeSelectCantidadEdicion={handleChangeSelectCantidadEdicion}
+                                                    prIdTipoServicio={'selectTipoServicio-edicion-sabado'}
+                                                    prValueTipoServicio={valueTipoServicioEdicion.sabadoTipoServicio}
+                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'cantidad'}
@@ -2697,6 +3108,9 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                     prIdCantidad={'selectCantidad-edicion-domingo'}
                                                     prValueCantidadHoras={valueCantidadHorasEdicion.domingo}
                                                     prHandleChangeSelectCantidadEdicion={handleChangeSelectCantidadEdicion}
+                                                    prIdTipoServicio={'selectTipoServicio-edicion-domingo'}
+                                                    prValueTipoServicio={valueTipoServicioEdicion.domingoTipoServicio}
+                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
                                                 />
                                             </Fragment>
                                         ) : valuesFormEdicion.tipo === 'rangoDescanso' ? (
@@ -2715,6 +3129,9 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                     prValueTimePickerFin2={valueTimePickerFinDescanso2Edicion.lunes}
                                                     prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
                                                     prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
+                                                    prIdTipoServicio={'selectTipoServicio-edicion-lunes'}
+                                                    prValueTipoServicio={valueTipoServicioEdicion.lunesTipoServicio}
+                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'rangoDescanso'}
@@ -2730,6 +3147,9 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                     prValueTimePickerFin2={valueTimePickerFinDescanso2Edicion.martes}
                                                     prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
                                                     prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
+                                                    prIdTipoServicio={'selectTipoServicio-edicion-martes'}
+                                                    prValueTipoServicio={valueTipoServicioEdicion.martesTipoServicio}
+                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'rangoDescanso'}
@@ -2745,6 +3165,9 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                     prValueTimePickerFin2={valueTimePickerFinDescanso2Edicion.miercoles}
                                                     prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
                                                     prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
+                                                    prIdTipoServicio={'selectTipoServicio-edicion-miercoles'}
+                                                    prValueTipoServicio={valueTipoServicioEdicion.miercolesTipoServicio}
+                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'rangoDescanso'}
@@ -2760,6 +3183,9 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                     prValueTimePickerFin2={valueTimePickerFinDescanso2Edicion.jueves}
                                                     prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
                                                     prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
+                                                    prIdTipoServicio={'selectTipoServicio-edicion-jueves'}
+                                                    prValueTipoServicio={valueTipoServicioEdicion.juevesTipoServicio}
+                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'rangoDescanso'}
@@ -2775,6 +3201,9 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                     prValueTimePickerFin2={valueTimePickerFinDescanso2Edicion.viernes}
                                                     prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
                                                     prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
+                                                    prIdTipoServicio={'selectTipoServicio-edicion-viernes'}
+                                                    prValueTipoServicio={valueTipoServicioEdicion.viernesTipoServicio}
+                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'rangoDescanso'}
@@ -2790,6 +3219,9 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                     prValueTimePickerFin2={valueTimePickerFinDescanso2Edicion.sabado}
                                                     prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
                                                     prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
+                                                    prIdTipoServicio={'selectTipoServicio-edicion-sabado'}
+                                                    prValueTipoServicio={valueTipoServicioEdicion.sabadoTipoServicio}
+                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
                                                 />
                                                 <ItemListTime
                                                     prTipo={'rangoDescanso'}
@@ -2805,6 +3237,9 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                     prValueTimePickerFin2={valueTimePickerFinDescanso2Edicion.domingo}
                                                     prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
                                                     prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
+                                                    prIdTipoServicio={'selectTipoServicio-edicion-domingo'}
+                                                    prValueTipoServicio={valueTipoServicioEdicion.domingoTipoServicio}
+                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
                                                 />
                                             </Fragment>
                                         ) : null}

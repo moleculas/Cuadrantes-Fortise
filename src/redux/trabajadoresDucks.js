@@ -12,6 +12,9 @@ const dataInicial = {
         id: null,
         nombre: '',
         categoria: 1,
+        dni: '',
+        segSocial: '',
+        telefono: '',
         estado: '',
         datosEstado: {
             inicioBaja: null,
@@ -29,6 +32,9 @@ const dataInicial = {
         id: null,
         nombre: '',
         categoria: 1,
+        dni: '',
+        segSocial: '',
+        telefono: '',
         estado: '',
         datosEstado: {
             inicioBaja: null,
@@ -191,7 +197,10 @@ export const obtenerTrabajadorAccion = (objeto, id) => async (dispatch, getState
             type: OBTENER_TRABAJADOR_EXITO,
             payload: {
                 id: res.data.id,
-                nombre: res.data.nombre,
+                nombre: res.data.nombre, 
+                dni: res.data.dni, 
+                segSocial: res.data.seg_social, 
+                telefono: res.data.telefono, 
                 estado: res.data.estado,
                 datosEstado: JSON.parse(res.data.datos_estado),
                 historicoBajas: JSON.parse(res.data.historico_bajas)
@@ -223,6 +232,9 @@ export const obtenerSuplenteAccion = (objeto, id) => async (dispatch, getState) 
             payload: {
                 id: res.data.id,
                 nombre: res.data.nombre,
+                dni: res.data.dni, 
+                segSocial: res.data.seg_social, 
+                telefono: res.data.telefono, 
                 estado: res.data.estado,
                 datosEstado: JSON.parse(res.data.datos_estado),
                 historicoBajas: JSON.parse(res.data.historico_bajas)
@@ -288,6 +300,9 @@ export const vaciarDatosTrabajadorAccion = () => (dispatch, getState) => {
                 id: null,
                 nombre: '',
                 categoria: 1,
+                dni: '', 
+                segSocial: '', 
+                telefono: '', 
                 estado: '',
                 datosEstado: {
                     inicioBaja: null,

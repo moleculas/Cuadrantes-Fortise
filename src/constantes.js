@@ -67,7 +67,7 @@ const devuelveFestivos = () => {
         '1-1',
         '6-1',
         retornaDiaMes(viernesSanto),
-        retornaDiaMes(lunesPascua), 
+        retornaDiaMes(lunesPascua),
         '1-5',
         retornaDiaMes(segundaPascua),
         '24-6',
@@ -78,11 +78,11 @@ const devuelveFestivos = () => {
         '6-12',
         '8-12',
         '25-12'
-        ];
+    ];
     return arrayFestivos;
 }
 
-const festivos=devuelveFestivos();
+const festivos = devuelveFestivos();
 
 const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
@@ -143,12 +143,21 @@ const Constantes = {
         { value: 2, label: 'Añadir 0.5 horas extra de trabajo' },
         { value: 3, label: 'Añadir 1 hora extra de trabajo' },
         { value: 4, label: 'Añadir 1.5 horas extra de trabajo' },
-        { value: 5, label: 'Añadir 2 horas extra de trabajo' },      
+        { value: 5, label: 'Añadir 2 horas extra de trabajo' },
         { value: 6, label: 'Horas especiales (+15%)' }
     ],
     COMPUTO_HORAS: [
         { value: 1, label: 'Total mensual pactado' },
         { value: 2, label: 'Precio hora estipulado' }
+    ],
+    TIPO_SERVICIO: [
+        { value: 'LIM', label: 'SERVICIO DE LIMPIEZA' },
+        { value: 'CRIS', label: 'SERVICIO DE LIMPIEZA DE CRISTALES' },
+        { value: 'CRISE', label: 'LIMPIEZA CRISTALES EXTERIORES' },
+        { value: 'CRISI', label: 'LIMPIEZA CRISTALES INTERIORES' },
+        { value: 'LIME', label: 'SERVICIO DE LIMPIEZA DE ESCALERA Y ZONAS COMUNES' },
+        { value: 'TOL', label: 'SERVICIO DE LIMPIEZA DE TOLDOS' },
+        { value: 'LIMP', label: 'SERVICIO DE LIMPIEZA DEL PARKING' }
     ],
     MESES: meses,
 };
