@@ -35,7 +35,7 @@ const GraficoNominas = (props) => {
     //states
 
     const [data, setData] = useState([]);
-    const [openLoading, setOpenLoading] = useState(false);
+    const [openLoading, setOpenLoading] = useState(true);
     const [openSnack, setOpenSnack] = useState(false);
     const [alert, setAlert] = useState({});
 
@@ -71,9 +71,13 @@ const GraficoNominas = (props) => {
                         Gastos: 0,
                     })
                 }
-            });
-            if (nominasPorAnyoGraficos.length === 12) {
-               setData(array);
+            });           
+            if (nominasPorAnyoGraficos.length > 0) {
+                setOpenLoading(true)
+                setTimeout(() => {
+                    setData(array);
+                    setOpenLoading(false)
+                }, 300);
             };
         }
     }, [nominasPorAnyoGraficos]);
@@ -88,13 +92,13 @@ const GraficoNominas = (props) => {
         }
     }, [errorDeCargaGraficosNominas]);
 
-    useEffect(() => {
-        if (!openLoadingGraficosNominas) {
-            setOpenLoading(false)
-        } else {
-            setOpenLoading(true)
-        }
-    }, [openLoadingGraficosNominas]);
+    // useEffect(() => {
+    //     if (!openLoadingGraficosNominas) {
+    //         setOpenLoading(false)
+    //     } else {
+    //         setOpenLoading(true)
+    //     }
+    // }, [openLoadingGraficosNominas]);
 
     //funciones    
 

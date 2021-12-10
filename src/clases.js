@@ -447,6 +447,20 @@ const Clases = makeStyles((theme) => ({
             backgroundColor: `${red[50]} !important`,
         },
     },
+    casillaBajasInicio: {
+        cursor: 'pointer',
+        backgroundColor: `${red[50]} !important`,
+        marginBottom: 5,
+        marginRight: 10,
+        paddingRight: 10,
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        "&:hover": {
+            backgroundColor: `${red[100]} !important`,
+        },
+    },
     red: {
         color: theme.palette.getContrastText(red[500]),
         backgroundColor: red[500],
@@ -463,7 +477,7 @@ const Clases = makeStyles((theme) => ({
         width: theme.spacing(2.75),
         height: theme.spacing(2.75),
         fontSize: '0.9rem',
-        marginLeft: 5,            
+        marginLeft: 5,
     },
     link: {
         textDecoration: 'none',
@@ -486,34 +500,38 @@ const Clases = makeStyles((theme) => ({
     },
     cursorDefault: {
         cursor: 'default'
-    },  
-    tipoServ1:{
+    },
+    tipoServ1: {
         backgroundColor: green[400]
     },
-    tipoServ2:{
+    tipoServ2: {
         backgroundColor: blue[400]
     },
-    tipoServ3:{
+    tipoServ3: {
         backgroundColor: indigo[400]
     },
-    tipoServ4:{
+    tipoServ4: {
         backgroundColor: amber[400]
     },
-    tipoServ5:{
+    tipoServ5: {
         backgroundColor: red[400]
     },
-    tipoServ6:{
+    tipoServ6: {
         backgroundColor: lime[600]
     },
-    tipoServ7:{
+    tipoServ7: {
         backgroundColor: blueGrey[400]
     },
-    tituloSecundario:{
-        paddingBottom: 5, 
-        paddingTop: 5, 
+    tituloSecundario: {
+        paddingBottom: 5,
+        paddingTop: 5,
         paddingLeft: 15,
         backgroundColor: theme.palette.primary.light,
         color: theme.palette.primary.contrastText
+    },
+    secLight: {
+        color: 'white',
+        backgroundColor: theme.palette.primary.light,
     }
 }));
 

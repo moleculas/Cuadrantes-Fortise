@@ -1054,7 +1054,7 @@ const Nominas = (props) => {
                 prDescripcionDialog={descripcionDialogNominas2}
                 prNoTieneBotones={true}
             />
-            {/* {console.log(nominaSinDatosEstado)} */}
+            {/* {console.log(listadoCentros)} */}
         </div>
     )
 }

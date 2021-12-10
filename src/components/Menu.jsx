@@ -61,7 +61,7 @@ const Menu = (props) => {
     };
 
     const limpiezaGeneral = () => {
-        dispatch(vaciarDatosCentrosAccion());
+        //dispatch(vaciarDatosCentrosAccion());
         dispatch(vaciarDatosTrabajadoresAccion());
         dispatch(activarDesactivarAccion(true));
         dispatch(vaciarDatosCuadrantesAccion());

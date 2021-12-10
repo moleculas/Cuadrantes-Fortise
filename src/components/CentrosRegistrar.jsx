@@ -14,6 +14,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import List from '@material-ui/core/List';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import clsx from 'clsx';
 
 //carga componentes
 import ItemListTime from './ItemListTime';
@@ -39,6 +40,7 @@ const variaciones = Constantes.VARIACIONES_HORARIOS_CENTROS;
 const tipos = Constantes.MODO_ENTRADA_HORARIOS;
 const totalTrabajadores = Constantes.TRABAJADORES_ASIGNADOS_CENTRO;
 const computoHoras = Constantes.COMPUTO_HORAS;
+const formasDePago = Constantes.FORMA_DE_PAGO;
 
 //snackbar y alert
 const Alert = (props) => {
@@ -72,6 +74,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
         nif: '',
         mail: '',
         telefono: '',
+        formaPago: '',
         variacion: '',
         tipo: '',
         numeroTrabajadores: '',
@@ -79,7 +82,13 @@ const CentrosRegistrar = forwardRef((props, ref) => {
         datosSuplentes: [],
         computo: '',
         mensualPactado: null,
-        precioHora: null
+        precioHora_L: null,
+        precioHora_C: null,
+        precioHora_E: null,
+        precioHora_I: null,
+        precioHora_Z: null,
+        precioHora_T: null,
+        precioHora_P: null
     });
     const [valueTimePickerInicioRegistro, setValueTimePickerInicioRegistro] = useState({
         lunes: null,
@@ -283,7 +292,17 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             return;
         };
         if (prop === "computo") {
-            setValuesFormRegistro({ ...valuesFormRegistro, [prop]: e.target.value, mensualPactado: null, precioHora: null });            
+            setValuesFormRegistro({
+                ...valuesFormRegistro, [prop]: e.target.value,
+                mensualPactado: null,
+                precioHora_L: null,
+                precioHora_C: null,
+                precioHora_E: null,
+                precioHora_I: null,
+                precioHora_Z: null,
+                precioHora_T: null,
+                precioHora_P: null
+            });
             dispatch(activarDesactivarRegistrarCentroAccion(false));
             return;
         };
@@ -294,7 +313,14 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             }
             return;
         };
-        if (prop === "precioHora") {
+        if (prop === "precioHora_L" ||
+            prop === "precioHora_C" ||
+            prop === "precioHora_E" ||
+            prop === "precioHora_I" ||
+            prop === "precioHora_Z" ||
+            prop === "precioHora_T" ||
+            prop === "precioHora_P"
+        ) {
             if (IsNumeric(e.target.value)) {
                 setValuesFormRegistro({ ...valuesFormRegistro, [prop]: e.target.value });
                 dispatch(activarDesactivarRegistrarCentroAccion(false));
@@ -1322,6 +1348,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                             valuesFormRegistro.provincia === '' ||
                             valuesFormRegistro.nif === '' ||
                             valuesFormRegistro.variacion === '' ||
+                            valuesFormRegistro.formaPago === '' ||
                             valuesFormRegistro.tipo === '' ||
                             valuesFormRegistro.numeroTrabajadores === ''
                         ) {
@@ -1334,8 +1361,23 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                         };
                         if (valuesFormRegistro.computo === '' ||
                             (valuesFormRegistro.computo === 1 && !valuesFormRegistro.mensualPactado) ||
-                            (valuesFormRegistro.computo === 2 && !valuesFormRegistro.precioHora) ||
-                            (valuesFormRegistro.computo === 3 && (!valuesFormRegistro.precioHora && !valuesFormRegistro.mensualPactado))) {
+                            (valuesFormRegistro.computo === 2 && (
+                                !valuesFormRegistro.precioHora_L &&
+                                !valuesFormRegistro.precioHora_C &&
+                                !valuesFormRegistro.precioHora_E &&
+                                !valuesFormRegistro.precioHora_I &&
+                                !valuesFormRegistro.precioHora_Z &&
+                                !valuesFormRegistro.precioHora_T &&
+                                !valuesFormRegistro.precioHora_P)) ||
+                            (valuesFormRegistro.computo === 3 && (
+                                !valuesFormRegistro.precioHora_L &&
+                                !valuesFormRegistro.precioHora_C &&
+                                !valuesFormRegistro.precioHora_E &&
+                                !valuesFormRegistro.precioHora_I &&
+                                !valuesFormRegistro.precioHora_Z &&
+                                !valuesFormRegistro.precioHora_T &&
+                                !valuesFormRegistro.precioHora_P &&
+                                !valuesFormRegistro.mensualPactado))) {
                             setAlert({
                                 mensaje: "Faltan datos por completar. Revisa el cómputo de horas en el formulario.",
                                 tipo: 'error'
@@ -1343,7 +1385,14 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                             setOpenSnack(true);
                             return;
                         };
-                        if (valuesFormRegistro.computo === 3 && (valuesFormRegistro.precioHora && valuesFormRegistro.mensualPactado)) {
+                        if (valuesFormRegistro.computo === 3 && (
+                            (!valuesFormRegistro.precioHora_L ||
+                                !valuesFormRegistro.precioHora_C ||
+                                !valuesFormRegistro.precioHora_E ||
+                                !valuesFormRegistro.precioHora_I ||
+                                !valuesFormRegistro.precioHora_Z ||
+                                !valuesFormRegistro.precioHora_T ||
+                                !valuesFormRegistro.precioHora_P) && valuesFormRegistro.mensualPactado)) {
                             setAlert({
                                 mensaje: "Revisa el formulario, solo puede haber un tipo de cómputo de horas.",
                                 tipo: 'error'
@@ -1351,6 +1400,114 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                             setOpenSnack(true);
                             return;
                         };
+
+                        if (valuesFormRegistro.computo === 2 || (valuesFormRegistro.computo === 3 && !valuesFormRegistro.mensualPactado)) {
+                            if ((horarioIntervencionRegistro.lunesTipoServicio === 'LIM' ||
+                                horarioIntervencionRegistro.martesTipoServicio === 'LIM' ||
+                                horarioIntervencionRegistro.miercolesTipoServicio === 'LIM' ||
+                                horarioIntervencionRegistro.juevesTipoServicio === 'LIM' ||
+                                horarioIntervencionRegistro.viernesTipoServicio === 'LIM' ||
+                                horarioIntervencionRegistro.sabadoTipoServicio === 'LIM' ||
+                                horarioIntervencionRegistro.domingoTipoServicio === 'LIM')
+                                && !valuesFormRegistro.precioHora_L) {
+                                setAlert({
+                                    mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                                    tipo: 'error'
+                                })
+                                setOpenSnack(true);
+                                return;
+                            };
+                            if ((horarioIntervencionRegistro.lunesTipoServicio === 'CRIS' ||
+                                horarioIntervencionRegistro.martesTipoServicio === 'CRIS' ||
+                                horarioIntervencionRegistro.miercolesTipoServicio === 'CRIS' ||
+                                horarioIntervencionRegistro.juevesTipoServicio === 'CRIS' ||
+                                horarioIntervencionRegistro.viernesTipoServicio === 'CRIS' ||
+                                horarioIntervencionRegistro.sabadoTipoServicio === 'CRIS' ||
+                                horarioIntervencionRegistro.domingoTipoServicio === 'CRIS')
+                                && !valuesFormRegistro.precioHora_C) {
+                                setAlert({
+                                    mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                                    tipo: 'error'
+                                })
+                                setOpenSnack(true);
+                                return;
+                            };
+                            if ((horarioIntervencionRegistro.lunesTipoServicio === 'CRISE' ||
+                                horarioIntervencionRegistro.martesTipoServicio === 'CRISE' ||
+                                horarioIntervencionRegistro.miercolesTipoServicio === 'CRISE' ||
+                                horarioIntervencionRegistro.juevesTipoServicio === 'CRISE' ||
+                                horarioIntervencionRegistro.viernesTipoServicio === 'CRISE' ||
+                                horarioIntervencionRegistro.sabadoTipoServicio === 'CRISE' ||
+                                horarioIntervencionRegistro.domingoTipoServicio === 'CRISE')
+                                && !valuesFormRegistro.precioHora_E) {
+                                setAlert({
+                                    mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                                    tipo: 'error'
+                                })
+                                setOpenSnack(true);
+                                return;
+                            };
+                            if ((horarioIntervencionRegistro.lunesTipoServicio === 'CRISI' ||
+                                horarioIntervencionRegistro.martesTipoServicio === 'CRISI' ||
+                                horarioIntervencionRegistro.miercolesTipoServicio === 'CRISI' ||
+                                horarioIntervencionRegistro.juevesTipoServicio === 'CRISI' ||
+                                horarioIntervencionRegistro.viernesTipoServicio === 'CRISI' ||
+                                horarioIntervencionRegistro.sabadoTipoServicio === 'CRISI' ||
+                                horarioIntervencionRegistro.domingoTipoServicio === 'CRISI')
+                                && !valuesFormRegistro.precioHora_I) {
+                                setAlert({
+                                    mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                                    tipo: 'error'
+                                })
+                                setOpenSnack(true);
+                                return;
+                            };
+                            if ((horarioIntervencionRegistro.lunesTipoServicio === 'LIME' ||
+                                horarioIntervencionRegistro.martesTipoServicio === 'LIME' ||
+                                horarioIntervencionRegistro.miercolesTipoServicio === 'LIME' ||
+                                horarioIntervencionRegistro.juevesTipoServicio === 'LIME' ||
+                                horarioIntervencionRegistro.viernesTipoServicio === 'LIME' ||
+                                horarioIntervencionRegistro.sabadoTipoServicio === 'LIME' ||
+                                horarioIntervencionRegistro.domingoTipoServicio === 'LIME')
+                                && !valuesFormRegistro.precioHora_Z) {
+                                setAlert({
+                                    mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                                    tipo: 'error'
+                                })
+                                setOpenSnack(true);
+                                return;
+                            };
+                            if ((horarioIntervencionRegistro.lunesTipoServicio === 'TOL' ||
+                                horarioIntervencionRegistro.martesTipoServicio === 'TOL' ||
+                                horarioIntervencionRegistro.miercolesTipoServicio === 'TOL' ||
+                                horarioIntervencionRegistro.juevesTipoServicio === 'TOL' ||
+                                horarioIntervencionRegistro.viernesTipoServicio === 'TOL' ||
+                                horarioIntervencionRegistro.sabadoTipoServicio === 'TOL' ||
+                                horarioIntervencionRegistro.domingoTipoServicio === 'TOL')
+                                && !valuesFormRegistro.precioHora_T) {
+                                setAlert({
+                                    mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                                    tipo: 'error'
+                                })
+                                setOpenSnack(true);
+                                return;
+                            };
+                            if ((horarioIntervencionRegistro.lunesTipoServicio === 'LIMP' ||
+                                horarioIntervencionRegistro.martesTipoServicio === 'LIMP' ||
+                                horarioIntervencionRegistro.miercolesTipoServicio === 'LIMP' ||
+                                horarioIntervencionRegistro.juevesTipoServicio === 'LIMP' ||
+                                horarioIntervencionRegistro.viernesTipoServicio === 'LIMP' ||
+                                horarioIntervencionRegistro.sabadoTipoServicio === 'LIMP' ||
+                                horarioIntervencionRegistro.domingoTipoServicio === 'LIMP')
+                                && !valuesFormRegistro.precioHora_P) {
+                                setAlert({
+                                    mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                                    tipo: 'error'
+                                })
+                                setOpenSnack(true);
+                                return;
+                            };
+                        }
                         //validacion mail
                         if (valuesFormRegistro.mail) {
                             const validacionMail = dispatch(validarMailAccion(valuesFormRegistro.mail));
@@ -2051,8 +2208,14 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                         const elHorarioIntervencionRegistradoRevisado = {
                             ...horarioIntervencionRegistroRevisado,
                             computo: valuesFormRegistro.computo,
-                            mensualPactado: valuesFormRegistro.mensualPactado,
-                            precioHora: valuesFormRegistro.precioHora
+                            mensualPactado: parseInt(valuesFormRegistro.mensualPactado),
+                            precioHora_L: parseInt(valuesFormRegistro.precioHora_L),
+                            precioHora_C: parseInt(valuesFormRegistro.precioHora_C),
+                            precioHora_E: parseInt(valuesFormRegistro.precioHora_E),
+                            precioHora_I: parseInt(valuesFormRegistro.precioHora_I),
+                            precioHora_Z: parseInt(valuesFormRegistro.precioHora_Z),
+                            precioHora_T: parseInt(valuesFormRegistro.precioHora_T),
+                            precioHora_P: parseInt(valuesFormRegistro.precioHora_P),
                         }
                         //registramos
                         const centroAGuardar = {
@@ -2067,6 +2230,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                             nif: valuesFormRegistro.nif,
                             mail: valuesFormRegistro.mail,
                             telefono: valuesFormRegistro.telefono,
+                            forma_pago: valuesFormRegistro.formaPago,
                             horario: JSON.stringify(elHorarioIntervencionRegistradoRevisado),
                             trabajadores: JSON.stringify(trabajadoresRegistro),
                         };
@@ -2095,6 +2259,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             nif: '',
             mail: '',
             telefono: '',
+            formaPago: '',
             variacion: '',
             tipo: '',
             numeroTrabajadores: '',
@@ -2102,7 +2267,13 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             datosSuplentes: [],
             computo: '',
             mensualPactado: null,
-            precioHora: null
+            precioHora_L: null,
+            precioHora_C: null,
+            precioHora_E: null,
+            precioHora_I: null,
+            precioHora_Z: null,
+            precioHora_T: null,
+            precioHora_P: null,
         });
         setValueTimePickerInicioRegistro({
             lunes: null,
@@ -2650,22 +2821,146 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                     </FormControl>
                                 ) : null}
                                 {valuesFormRegistro.computo === 2 || valuesFormRegistro.computo === 3 ? (
-                                    <FormControl
-                                        variant="outlined"
-                                        className={classes.form}
-                                    >
-                                        <InputLabel>Precio hora</InputLabel>
-                                        <OutlinedInput
-                                            className={classes.mb15}
-                                            fullWidth
-                                            id="form-precio-hora-registro"
-                                            value={valuesFormRegistro.precioHora || ''}
-                                            onChange={handleChangeFormRegistro('precioHora')}
-                                            labelWidth={90}
-                                            startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                                        />
-                                    </FormControl>
+                                    <Fragment>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                        >
+                                            <InputLabel>Precio hora LIM</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb15}
+                                                fullWidth
+                                                id="form-precio-hora_L-registro"
+                                                value={valuesFormRegistro.precioHora_L || ''}
+                                                onChange={handleChangeFormRegistro('precioHora_L')}
+                                                labelWidth={120}
+                                                startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                            />
+                                        </FormControl>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                        >
+                                            <InputLabel>Precio hora CRIS</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb15}
+                                                fullWidth
+                                                id="form-precio-hora_C-registro"
+                                                value={valuesFormRegistro.precioHora_C || ''}
+                                                onChange={handleChangeFormRegistro('precioHora_C')}
+                                                labelWidth={125}
+                                                startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                            />
+                                        </FormControl>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                        >
+                                            <InputLabel>Precio hora CRISE</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb15}
+                                                fullWidth
+                                                id="form-precio-hora_E-registro"
+                                                value={valuesFormRegistro.precioHora_E || ''}
+                                                onChange={handleChangeFormRegistro('precioHora_E')}
+                                                labelWidth={130}
+                                                startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                            />
+                                        </FormControl>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                        >
+                                            <InputLabel>Precio hora CRISI</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb15}
+                                                fullWidth
+                                                id="form-precio-hora_I-registro"
+                                                value={valuesFormRegistro.precioHora_I || ''}
+                                                onChange={handleChangeFormRegistro('precioHora_I')}
+                                                labelWidth={130}
+                                                startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                            />
+                                        </FormControl>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                        >
+                                            <InputLabel>Precio hora LIME</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb15}
+                                                fullWidth
+                                                id="form-precio-hora_Z-registro"
+                                                value={valuesFormRegistro.precioHora_Z || ''}
+                                                onChange={handleChangeFormRegistro('precioHora_Z')}
+                                                labelWidth={125}
+                                                startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                            />
+                                        </FormControl>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                        >
+                                            <InputLabel>Precio hora TOL</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb15}
+                                                fullWidth
+                                                id="form-precio-hora_T-registro"
+                                                value={valuesFormRegistro.precioHora_T || ''}
+                                                onChange={handleChangeFormRegistro('precioHora_T')}
+                                                labelWidth={120}
+                                                startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                            />
+                                        </FormControl>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                        >
+                                            <InputLabel>Precio hora LIMP</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb15}
+                                                fullWidth
+                                                id="form-precio-hora_P-registro"
+                                                value={valuesFormRegistro.precioHora_P || ''}
+                                                onChange={handleChangeFormRegistro('precioHora_P')}
+                                                labelWidth={125}
+                                                startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                            />
+                                        </FormControl>
+                                    </Fragment>
                                 ) : null}
+                                <Box
+                                    p={1.5}
+                                    m={0.5}
+                                    bgcolor="secondary.light"
+                                    color="secondary.contrastText"
+                                    className={clsx(classes.mb25, classes.mt15)}
+                                >
+                                    Forma de pago
+                                </Box>
+                                <FormControl
+                                    variant="outlined"
+                                    className={classes.form}
+                                >
+                                    <InputLabel>Forma pago</InputLabel>
+                                    <Select
+                                        fullWidth
+                                        className={classes.mb15}
+                                        id="form-formaPago-registro"
+                                        label="Forma pago"
+                                        value={valuesFormRegistro.formaPago || ''}
+                                        onChange={handleChangeFormRegistro('formaPago')}
+                                        helpertext="Selecciona la forma de pago"
+                                    >
+                                        {
+                                            formasDePago.map((option) => (
+                                                <MenuItem key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </MenuItem>
+                                            ))
+                                        }
+                                    </Select>
+                                </FormControl>
                             </Grid>
                             <Grid item lg={7} sm={6} xs={12}>
                                 <Box style={{ marginTop: -10 }}>

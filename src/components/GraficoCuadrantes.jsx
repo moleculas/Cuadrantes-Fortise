@@ -35,7 +35,7 @@ const GraficoCuadrantes = (props) => {
     //states
 
     const [data, setData] = useState([]);
-    const [openLoading, setOpenLoading] = useState(false);
+    const [openLoading, setOpenLoading] = useState(true);
     const [openSnack, setOpenSnack] = useState(false);
     const [alert, setAlert] = useState({});
 
@@ -43,22 +43,22 @@ const GraficoCuadrantes = (props) => {
 
     useEffect(() => {
         if (forzarRecargaGraficosCuadrantes) {
-            setData([]);       
-            dispatch(obtenerCuadrantesPorAnyoAccion('cuadrantes'));     
+            setData([]);
+            dispatch(obtenerCuadrantesPorAnyoAccion('cuadrantes'));
             dispatch(forzarRecargaGraficosCuadrantesAccion(false));
         }
     }, [forzarRecargaGraficosCuadrantes]);
 
     useEffect(() => {
-        if (cuadrantesPorAnyoGraficos.length >0) {
+        if (cuadrantesPorAnyoGraficos.length > 0) {
             let array = [];
             let sumatorio = 0;
             cuadrantesPorAnyoGraficos.forEach((mes, index) => {
                 if (mes.length > 0) {
                     mes.forEach((mesInt, index) => {
-                        if(mesInt.total){
+                        if (mesInt.total) {
                             sumatorio += parseInt(mesInt.total);
-                        }                        
+                        }
                     });
                     array.push({
                         name: meses[index].substr(0, 3) + '.',
@@ -72,8 +72,12 @@ const GraficoCuadrantes = (props) => {
                     })
                 }
             });
-            if (cuadrantesPorAnyoGraficos.length ===12) {
-            setData(array);
+            if (cuadrantesPorAnyoGraficos.length > 0) {
+                setOpenLoading(true)
+                setTimeout(() => {
+                    setData(array);
+                    setOpenLoading(false)
+                }, 300);
             };
         }
     }, [cuadrantesPorAnyoGraficos]);
@@ -88,13 +92,13 @@ const GraficoCuadrantes = (props) => {
         }
     }, [errorDeCargaGraficosCuadrantes]);
 
-    useEffect(() => {
-        if (!openLoadingGraficosCuadrantes) {
-            setOpenLoading(false)
-        } else {
-            setOpenLoading(true)
-        }
-    }, [openLoadingGraficosCuadrantes]);
+    // useEffect(() => {
+    //     if (!openLoadingGraficosCuadrantes) {
+    //         setOpenLoading(false)
+    //     } else {
+    //         setOpenLoading(true)
+    //     }
+    // }, [openLoadingGraficosCuadrantes]);
 
     //funciones    
 

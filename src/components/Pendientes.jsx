@@ -168,7 +168,7 @@ const Pendientes = (props) => {
                     {alert.mensaje}
                 </Alert>
             </Snackbar>
-            {/* {console.log(forzarRecargaPendientes)} */}
+            {console.log(listadoCentros)}
         </div>
     )
 }

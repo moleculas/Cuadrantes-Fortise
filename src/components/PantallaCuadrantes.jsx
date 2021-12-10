@@ -19,7 +19,8 @@ import Clases from "../clases";
 import { retornaAnoMesCuadranteAccion } from '../redux/appDucks';
 
 const getHeightContenedoresPeq = () => ((window.innerHeight / 2) - 190) || ((document.documentElement.clientHeight / 2) - 190) || ((document.body.clientHeight / 2) - 190);
-const getHeightContenedoresGra = () => ((window.innerHeight) - 310) || ((document.documentElement.clientHeight) - 310) || ((document.body.clientHeight) - 310); const getWidthContenedores = () => ((window.innerWidth - 300) / 2) || ((document.documentElement.clientWidth - 300) / 2) || ((document.body.clientWidth - 300) / 2);
+const getHeightContenedoresGra = () => ((window.innerHeight) - 310) || ((document.documentElement.clientHeight) - 310) || ((document.body.clientHeight) - 310); 
+const getWidthContenedores = () => ((window.innerWidth - 300) / 2) || ((document.documentElement.clientWidth - 300) / 2) || ((document.body.clientWidth - 300) / 2);
 
 const PantallaCuadrantes = () => {
 
