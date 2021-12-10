@@ -55,26 +55,34 @@ const styles = StyleSheet.create({
     },
 });
 
-const FacturaPDF = ({arrayFacturaPDF}) => {   
+const FacturaPDF = ({ arrayFacturaPDF }) => {
     return (
         <Document>
-        <Page style={styles.body}>
-            <Text style={styles.header} fixed>
-                ~ Gestión de cuadrantes de Servicio Fortise S.L. ~
-            </Text>
-            <Text style={styles.title}>Informe Cuadrante de Servicio</Text>
-            {arrayFacturaPDF.map((linea, index) => {
-                return (<Text key={'text'+index} style={styles.text}>
-                    {linea}
-                </Text>)
-            })}
+            <Page style={styles.body}>
+                <Text style={styles.header} fixed>
+                    ~ Gestión de cuadrantes de Servicio Fortise S.L. ~
+                </Text>
+                <Text style={styles.title}>Informe Cuadrante de Servicio</Text>
+                {arrayFacturaPDF.map((linea, index) => {
+                    if (linea[0] === 'divider') {
+                        return (
+                            <Text key={'text' + index} style={styles.text}></Text>
+                        )
+                    } else {
+                        return (
+                            <Text key={'text' + index} style={styles.text}>
+                                {linea[0]}
+                            </Text>
+                        )
+                    }
+                })}
 
-            <Text style={styles.pageNumber} render={({ pageNumber, totalPages }) => (
-                `${pageNumber} / ${totalPages}`
-            )} fixed />
-        </Page>
-    </Document>
+                <Text style={styles.pageNumber} render={({ pageNumber, totalPages }) => (
+                    `${pageNumber} / ${totalPages}`
+                )} fixed />
+            </Page>
+        </Document>
     );
-  };
-  
-  export default FacturaPDF
+};
+
+export default FacturaPDF

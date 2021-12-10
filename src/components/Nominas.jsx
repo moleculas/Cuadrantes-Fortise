@@ -77,7 +77,7 @@ import { abreObjetoDialogAccion } from '../redux/appDucks';
 import { cierraObjetoDialogAccion } from '../redux/appDucks';
 import { registrarIntervencionNominaNuevaAccion } from '../redux/nominasDucks';
 import { vaciarDatosNominasAccion } from '../redux/nominasDucks';
-import { forzarRecargaFaltantesAccion } from '../redux/faltantesDucks';
+//import { forzarRecargaFaltantesAccion } from '../redux/faltantesDucks';
 import { vaciarDatosTrabajadorAccion } from '../redux/trabajadoresDucks';
 import { cambioEstadoNominaSinDatosAccion } from '../redux/nominasDucks';
 import { venimosDeFaltantesAccion } from '../redux/faltantesDucks';
@@ -186,7 +186,7 @@ const Nominas = (props) => {
     useEffect(() => {
         dispatch(onEstemAccion('nominas'));
         dispatch(setCalendarioAGestionarNominasAccion(dispatch(retornaAnoMesAccion())));
-        dispatch(forzarRecargaFaltantesAccion(true));
+        //dispatch(forzarRecargaFaltantesAccion(true));
         dispatch(forzarRecargaGraficosNominasAccion(true));
         dispatch(obtenerTrabajadoresAccion('trabajadores'));
         dispatch(obtenerCentrosAccion('centros'));
@@ -253,17 +253,33 @@ const Nominas = (props) => {
     useEffect(() => {
         if (cuadrantesVinculadosATrabajador.length > 0) {
             let objeto;
-            let arrayNomina = [...nominaAGestionar];
+            let arrayNomina = [...nominaAGestionar];            
             cuadrantesVinculadosATrabajador.forEach((cuadrante, index) => {
                 objeto = JSON.parse(cuadrante['datos_informe']);
                 objeto.arrayTrabajadores.forEach((trabajador, index) => {
                     if (trabajador.trabajador === trabajadorAGestionar.id) {
-                        if (trabajador.totalHorasNormal > 0 || trabajador.totalHorasExtra > 0) {
+                        const elTotalHorasNormal= 
+                        trabajador.totalHorasNormal_L+
+                        trabajador.totalHorasNormal_C+
+                        trabajador.totalHorasNormal_E+
+                        trabajador.totalHorasNormal_I+
+                        trabajador.totalHorasNormal_Z+
+                        trabajador.totalHorasNormal_T+
+                        trabajador.totalHorasNormal_P;
+                        const elTotalHorasExtra= 
+                        trabajador.totalHorasExtra_L+
+                        trabajador.totalHorasExtra_C+
+                        trabajador.totalHorasExtra_E+
+                        trabajador.totalHorasExtra_I+
+                        trabajador.totalHorasExtra_Z+
+                        trabajador.totalHorasExtra_T+
+                        trabajador.totalHorasExtra_P;
+                        if (elTotalHorasNormal > 0 || elTotalHorasExtra > 0) {
                             arrayNomina.push({
                                 centro: objeto.centro,
                                 tipo: trabajador.tipo,
-                                totalHorasNormal: trabajador.totalHorasNormal,
-                                totalHorasExtra: trabajador.totalHorasExtra
+                                totalHorasNormal: elTotalHorasNormal,
+                                totalHorasExtra: elTotalHorasExtra
                             })
                         } else {
                             setAlert({
@@ -457,6 +473,7 @@ const Nominas = (props) => {
             actualizacion: laFirmaActualizacion,
             trabajador: objetoNomina.trabajador,
             datos_nomina: JSON.stringify(objetoFinalNomina),
+            total: source === 'informe' ? totalEmitido : objetoNomina.datosNomina.emitida==='si' ? objetoNomina.datosNomina.totalEmitido : null,         
         };
         if (nominaRegistrada === 'no') {
             dispatch(registrarNominaAccion('nominas', nominaAGuardar.id, nominaAGuardar));
@@ -481,8 +498,9 @@ const Nominas = (props) => {
                 dispatch(vaciarDatosTrabajadorAccion());
                 dispatch(vaciarDatosNominasAccion());
                 dispatch(cambioEstadoInicioNominasAccion(true));
-                dispatch(forzarRecargaFaltantesAccion(true));
+                //dispatch(forzarRecargaFaltantesAccion(true));
                 dispatch(forzarRecargaGraficosNominasAccion(true)); 
+                dispatch(cambioEstadoNominaSinDatosAccion(true));
             }
         };
         setAnchorElMenu(null);
@@ -1018,7 +1036,7 @@ const Nominas = (props) => {
                         </Grid>
                     )}
             </Grid>
-            <Snackbar open={openSnack} autoHideDuration={6000} onClose={handleCloseSnack}>
+            <Snackbar open={openSnack} autoHideDuration={12000} onClose={handleCloseSnack}>
                 <Alert severity={alert.tipo} onClose={handleCloseSnack}>
                     {alert.mensaje}
                 </Alert>
@@ -1036,7 +1054,7 @@ const Nominas = (props) => {
                 prDescripcionDialog={descripcionDialogNominas2}
                 prNoTieneBotones={true}
             />
-            {/* {console.log(objetoNomina)} */}
+            {/* {console.log(nominaSinDatosEstado)} */}
         </div>
     )
 }

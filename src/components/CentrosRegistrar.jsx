@@ -283,12 +283,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             return;
         };
         if (prop === "computo") {
-            if (e.target.value === 1) {
-                setValuesFormRegistro({ ...valuesFormRegistro, [prop]: e.target.value, precioHora: null });
-            };
-            if (e.target.value === 2) {
-                setValuesFormRegistro({ ...valuesFormRegistro, [prop]: e.target.value, mensualPactado: null });
-            };
+            setValuesFormRegistro({ ...valuesFormRegistro, [prop]: e.target.value, mensualPactado: null, precioHora: null });            
             dispatch(activarDesactivarRegistrarCentroAccion(false));
             return;
         };
@@ -1326,8 +1321,6 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                             valuesFormRegistro.poblacion === '' ||
                             valuesFormRegistro.provincia === '' ||
                             valuesFormRegistro.nif === '' ||
-                            valuesFormRegistro.mail === '' ||
-                            valuesFormRegistro.telefono === '' ||
                             valuesFormRegistro.variacion === '' ||
                             valuesFormRegistro.tipo === '' ||
                             valuesFormRegistro.numeroTrabajadores === ''
@@ -1339,24 +1332,37 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                             setOpenSnack(true);
                             return;
                         };
-                        if (valuesFormRegistro.computo === '' || (valuesFormRegistro.computo === 1 && !valuesFormRegistro.mensualPactado) || (valuesFormRegistro.computo === 2 && !valuesFormRegistro.precioHora)) {
+                        if (valuesFormRegistro.computo === '' ||
+                            (valuesFormRegistro.computo === 1 && !valuesFormRegistro.mensualPactado) ||
+                            (valuesFormRegistro.computo === 2 && !valuesFormRegistro.precioHora) ||
+                            (valuesFormRegistro.computo === 3 && (!valuesFormRegistro.precioHora && !valuesFormRegistro.mensualPactado))) {
                             setAlert({
-                                mensaje: "Faltan datos por completar. Revisa el formulario.",
+                                mensaje: "Faltan datos por completar. Revisa el cómputo de horas en el formulario.",
+                                tipo: 'error'
+                            })
+                            setOpenSnack(true);
+                            return;
+                        };
+                        if (valuesFormRegistro.computo === 3 && (valuesFormRegistro.precioHora && valuesFormRegistro.mensualPactado)) {
+                            setAlert({
+                                mensaje: "Revisa el formulario, solo puede haber un tipo de cómputo de horas.",
                                 tipo: 'error'
                             })
                             setOpenSnack(true);
                             return;
                         };
                         //validacion mail
-                        const validacionMail = dispatch(validarMailAccion(valuesFormRegistro.mail));
-                        if (!validacionMail) {
-                            setAlert({
-                                mensaje: "El campo E-mail es incorrecto. Revisa el formulario.",
-                                tipo: 'error'
-                            })
-                            setOpenSnack(true);
-                            return;
-                        };
+                        if (valuesFormRegistro.mail) {
+                            const validacionMail = dispatch(validarMailAccion(valuesFormRegistro.mail));
+                            if (!validacionMail) {
+                                setAlert({
+                                    mensaje: "El campo E-mail es incorrecto. Revisa el formulario.",
+                                    tipo: 'error'
+                                })
+                                setOpenSnack(true);
+                                return;
+                            };
+                        }
                         if (horarioIntervencionRegistro.tipo === "rango") {
                             //primera comprobación, que todos los campos esten vacíos
                             if (!horarioIntervencionRegistro.lunesInicioRango &&
@@ -2626,7 +2632,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         }
                                     </Select>
                                 </FormControl>
-                                {valuesFormRegistro.computo === 1 ? (
+                                {valuesFormRegistro.computo === 1 || valuesFormRegistro.computo === 3 ? (
                                     <FormControl
                                         variant="outlined"
                                         className={classes.form}
@@ -2643,7 +2649,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         />
                                     </FormControl>
                                 ) : null}
-                                {valuesFormRegistro.computo === 2 ? (
+                                {valuesFormRegistro.computo === 2 || valuesFormRegistro.computo === 3 ? (
                                     <FormControl
                                         variant="outlined"
                                         className={classes.form}
@@ -2983,7 +2989,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     </Grid>
                 </Grid>
             </Fragment>
-            <Snackbar open={openSnack} autoHideDuration={6000} onClose={handleCloseSnack}>
+            <Snackbar open={openSnack} autoHideDuration={12000} onClose={handleCloseSnack}>
                 <Alert severity={alert.tipo} onClose={handleCloseSnack}>
                     {alert.mensaje}
                 </Alert>

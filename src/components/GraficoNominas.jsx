@@ -47,18 +47,18 @@ const GraficoNominas = (props) => {
             dispatch(obtenerNominasPorAnyoAccion('nominas'));
             dispatch(forzarRecargaGraficosNominasAccion(false));
         }
-    }, [forzarRecargaGraficosNominas]);
+    }, [forzarRecargaGraficosNominas]);   
 
     useEffect(() => {
         if (nominasPorAnyoGraficos.length > 0) {
-            let array = [];
+            const array = [];
             let sumatorio = 0;
-            let objeto;
             nominasPorAnyoGraficos.forEach((mes, index) => {
                 if (mes.length > 0) {
                     mes.forEach((mesInt, index) => {
-                        objeto = JSON.parse(mesInt['datos_nomina']);
-                        sumatorio += objeto.totalEmitido;
+                        if (mesInt.total) {
+                            sumatorio += parseInt(mesInt.total);
+                        }
                     });
                     array.push({
                         name: meses[index].substr(0, 3) + '.',
@@ -72,7 +72,9 @@ const GraficoNominas = (props) => {
                     })
                 }
             });
-            setData(array);
+            if (nominasPorAnyoGraficos.length === 12) {
+               setData(array);
+            };
         }
     }, [nominasPorAnyoGraficos]);
 
@@ -134,15 +136,15 @@ const GraficoNominas = (props) => {
                         }}
                     >
                         {/* <CartesianGrid strokeDasharray="3 3" /> */}
-                        <XAxis dataKey="name" style={{fontSize: '0.7rem' }} />
-                        <YAxis style={{fontSize: '0.7rem' }}/>
+                        <XAxis dataKey="name" style={{ fontSize: '0.7rem' }} />
+                        <YAxis style={{ fontSize: '0.7rem' }} />
                         <Tooltip />
                         {/* <Legend /> */}
                         <Line type="monotone" dataKey="Gastos" stroke="#ff9800" activeDot={{ r: 4 }} />
                         <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
                     </LineChart>
                 )}
-                <Snackbar open={openSnack} autoHideDuration={6000} onClose={handleCloseSnack}>
+                <Snackbar open={openSnack} autoHideDuration={12000} onClose={handleCloseSnack}>
                     <Alert severity={alert.tipo} onClose={handleCloseSnack}>
                         {alert.mensaje}
                     </Alert>

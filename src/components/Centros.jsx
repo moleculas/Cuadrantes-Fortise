@@ -153,19 +153,22 @@ const Centros = (props) => {
     const procesarDatosEdicionParent = () => {
         if (funcionesEnCentrosEditarRef.current) {
             funcionesEnCentrosEditarRef.current.funcionesEnCentrosEditar('procesarDatosEdicion');
-        }
+        };
+        handleCloseMenu();
     };
 
     const eliminarCentroParent = () => {
         if (funcionesEnCentrosEditarRef.current) {
             funcionesEnCentrosEditarRef.current.funcionesEnCentrosEditar('eliminarCentro');
-        }
+        };
+        handleCloseMenu();
     };
 
     const procesarDatosRegistroParent = () => {
         if (funcionesEnCentrosRegistrarRef.current) {
             funcionesEnCentrosRegistrarRef.current.funcionesEnCentrosRegistrar('procesarDatosRegistro');
-        }
+        };
+        handleCloseMenu();
     };
 
     const nuevoCentroParent = () => {

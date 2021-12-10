@@ -16,6 +16,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import List from '@material-ui/core/List';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import clsx from 'clsx';
 
 //carga componentes
 import ItemListTime from './ItemListTime';
@@ -47,6 +48,7 @@ const variaciones = Constantes.VARIACIONES_HORARIOS_CENTROS;
 const tipos = Constantes.MODO_ENTRADA_HORARIOS;
 const totalTrabajadores = Constantes.TRABAJADORES_ASIGNADOS_CENTRO;
 const computoHoras = Constantes.COMPUTO_HORAS;
+const formasDePago = Constantes.FORMA_DE_PAGO;
 
 //snackbar y alert
 const Alert = (props) => {
@@ -88,6 +90,7 @@ const CentrosEditar = forwardRef((props, ref) => {
         nif: '',
         mail: '',
         telefono: '',
+        formaPago: '',
         variacion: '',
         tipo: '',
         numeroTrabajadores: '',
@@ -95,7 +98,13 @@ const CentrosEditar = forwardRef((props, ref) => {
         datosSuplentes: [],
         computo: '',
         mensualPactado: null,
-        precioHora: null
+        precioHora_L: null,
+        precioHora_C: null,
+        precioHora_E: null,
+        precioHora_I: null,
+        precioHora_Z: null,
+        precioHora_T: null,
+        precioHora_P: null
     });
     const [valueTimePickerInicioEdicion, setValueTimePickerInicioEdicion] = useState({
         lunes: null,
@@ -234,8 +243,7 @@ const CentrosEditar = forwardRef((props, ref) => {
         trabajadores: []
     });
     const [openLoading, setOpenLoading] = useState(false);
-
-
+    
     //useEffect
 
     useEffect(() => {
@@ -287,25 +295,32 @@ const CentrosEditar = forwardRef((props, ref) => {
         setValuesFormEdicion({
             ...valuesFormEdicion,
             id: centroAEditar.id,
-            nombre: centroAEditar.nombre,
-            categoria: centroAEditar.categoria,
-            codigo: centroAEditar.codigo,
-            domicilio: centroAEditar.domicilio,
-            codigoPostal: centroAEditar.codigoPostal,
-            poblacion: centroAEditar.poblacion,
-            provincia: centroAEditar.provincia,
-            nif: centroAEditar.nif,
-            mail: centroAEditar.mail,
-            telefono: centroAEditar.telefono,
-            variacion: centroAEditar.horario.variacion,
+            nombre: centroAEditar.nombre || '',
+            categoria: centroAEditar.categoria || '',
+            codigo: centroAEditar.codigo || '',
+            domicilio: centroAEditar.domicilio || '',
+            codigoPostal: centroAEditar.codigoPostal || '',
+            poblacion: centroAEditar.poblacion || '',
+            provincia: centroAEditar.provincia || '',
+            nif: centroAEditar.nif || '',
+            mail: centroAEditar.mail || '',
+            telefono: centroAEditar.telefono || '',
+            formaPago: centroAEditar.formaPago || '',
+            variacion: centroAEditar.horario.variacion || '',
             tipo: centroAEditar.horario.tipo,
             numeroTrabajadores: centroAEditar.trabajadores.cantidad,
             datosTrabajadores: arrayTr,
             datosSuplentes: arraySu,
             computo: centroAEditar.horario.computo,
             mensualPactado: centroAEditar.horario.mensualPactado,
-            precioHora: centroAEditar.horario.precioHora
-        });
+            precioHora_L: centroAEditar.horario.precioHora_L,
+            precioHora_C: centroAEditar.horario.precioHora_C,
+            precioHora_E: centroAEditar.horario.precioHora_E,
+            precioHora_I: centroAEditar.horario.precioHora_I,
+            precioHora_Z: centroAEditar.horario.precioHora_Z,
+            precioHora_T: centroAEditar.horario.precioHora_T,
+            precioHora_P: centroAEditar.horario.precioHora_P,
+        });        
         if (centroAEditar.horario.tipo === "rango") {
             setValueTimePickerInicioEdicion({
                 ...valueTimePickerInicioEdicion,
@@ -456,8 +471,8 @@ const CentrosEditar = forwardRef((props, ref) => {
             ...trabajadoresEdicion,
             cantidad: centroAEditar.trabajadores.cantidad,
             trabajadores: centroAEditar.trabajadores.trabajadores
-        })
-    }, [centroAEditar]);
+        });
+    }, [centroAEditar]);    
 
     useEffect(() => {
         if (!openLoadingCentros && !openLoadingTrabajadores) {
@@ -514,12 +529,18 @@ const CentrosEditar = forwardRef((props, ref) => {
             return;
         };
         if (prop === "computo") {
-            if (e.target.value === 1) {
-                setValuesFormEdicion({ ...valuesFormEdicion, [prop]: e.target.value, precioHora: null });
-            };
-            if (e.target.value === 2) {
-                setValuesFormEdicion({ ...valuesFormEdicion, [prop]: e.target.value, mensualPactado: null });
-            };
+            setValuesFormEdicion({
+                ...valuesFormEdicion, [prop]: e.target.value,
+                mensualPactado: null,
+                precioHora_L: null,
+                precioHora_C: null,
+                precioHora_E: null,
+                precioHora_I: null,
+                precioHora_Z: null,
+                precioHora_T: null,
+                precioHora_P: null
+            });
+            dispatch(registrarIntervencionAccion(false));
             dispatch(activarDesactivarActualizarCentroAccion(false));
             return;
         };
@@ -530,7 +551,14 @@ const CentrosEditar = forwardRef((props, ref) => {
             }
             return;
         };
-        if (prop === "precioHora") {
+        if (prop === "precioHora_L" ||
+            prop === "precioHora_C" ||
+            prop === "precioHora_E" ||
+            prop === "precioHora_I" ||
+            prop === "precioHora_Z" ||
+            prop === "precioHora_T" ||
+            prop === "precioHora_P"
+        ) {
             if (IsNumeric(e.target.value)) {
                 setValuesFormEdicion({ ...valuesFormEdicion, [prop]: e.target.value });
                 dispatch(activarDesactivarActualizarCentroAccion(false));
@@ -1531,7 +1559,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, domingoTipoServicio: e.target.value });
                 break;
             default:
-        }
+        };
+
         dispatch(registrarIntervencionAccion(false));
         dispatch(activarDesactivarActualizarCentroAccion(false));
     };
@@ -2146,7 +2175,6 @@ const CentrosEditar = forwardRef((props, ref) => {
                             };
                         };
 
-
                         //comprobamos que array objetos trabajadores no tenga elementos vacíos
 
                         for (let i = 0; i < trabajadoresEdicion.cantidad; i++) {
@@ -2169,8 +2197,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                             valuesFormEdicion.poblacion === '' ||
                             valuesFormEdicion.provincia === '' ||
                             valuesFormEdicion.nif === '' ||
-                            valuesFormEdicion.mail === '' ||
-                            valuesFormEdicion.telefono === '') {
+                            valuesFormEdicion.formaPago === '') {
                             setAlert({
                                 mensaje: "Faltan datos por completar. Revisa el formulario.",
                                 tipo: 'error'
@@ -2178,24 +2205,167 @@ const CentrosEditar = forwardRef((props, ref) => {
                             setOpenSnack(true);
                             return;
                         };
-                        if (valuesFormEdicion.computo === '' || (valuesFormEdicion.computo === 1 && !valuesFormEdicion.mensualPactado) || (valuesFormEdicion.computo === 2 && !valuesFormEdicion.precioHora)) {
+                        if (valuesFormEdicion.computo === '' ||
+                            (valuesFormEdicion.computo === 1 && !valuesFormEdicion.mensualPactado) ||
+                            (valuesFormEdicion.computo === 2 &&
+                                !valuesFormEdicion.precioHora_L &&
+                                !valuesFormEdicion.precioHora_C &&
+                                !valuesFormEdicion.precioHora_E &&
+                                !valuesFormEdicion.precioHora_I &&
+                                !valuesFormEdicion.precioHora_Z &&
+                                !valuesFormEdicion.precioHora_T &&
+                                !valuesFormEdicion.precioHora_P) ||
+                            (valuesFormEdicion.computo === 3 && (
+                                !valuesFormEdicion.precioHora_L &&
+                                !valuesFormEdicion.precioHora_C &&
+                                !valuesFormEdicion.precioHora_E &&
+                                !valuesFormEdicion.precioHora_I &&
+                                !valuesFormEdicion.precioHora_Z &&
+                                !valuesFormEdicion.precioHora_T &&
+                                !valuesFormEdicion.precioHora_P &&
+                                !valuesFormEdicion.mensualPactado))) {
                             setAlert({
-                                mensaje: "Faltan datos por completar. Revisa el formulario.",
+                                mensaje: "Faltan datos por completar. Revisa el cómputo de horas en el formulario.",
                                 tipo: 'error'
                             })
                             setOpenSnack(true);
                             return;
                         };
+                        if (valuesFormEdicion.computo === 3 && ((
+                            valuesFormEdicion.precioHora_L ||
+                            valuesFormEdicion.precioHora_C ||
+                            valuesFormEdicion.precioHora_E ||
+                            valuesFormEdicion.precioHora_I ||
+                            valuesFormEdicion.precioHora_Z ||
+                            valuesFormEdicion.precioHora_T ||
+                            valuesFormEdicion.precioHora_P) && valuesFormEdicion.mensualPactado)) {
+                            setAlert({
+                                mensaje: "Revisa el formulario, solo puede haber un tipo de cómputo de horas.",
+                                tipo: 'error'
+                            })
+                            setOpenSnack(true);
+                            return;
+                        };
+                        if (valuesFormEdicion.computo === 2 || (valuesFormEdicion.computo === 3 && !valuesFormEdicion.mensualPactado)) {
+                            if ((horarioIntervencionEdicion.lunesTipoServicio === 'LIM' ||
+                                horarioIntervencionEdicion.martesTipoServicio === 'LIM' ||
+                                horarioIntervencionEdicion.miercolesTipoServicio === 'LIM' ||
+                                horarioIntervencionEdicion.juevesTipoServicio === 'LIM' ||
+                                horarioIntervencionEdicion.viernesTipoServicio === 'LIM' ||
+                                horarioIntervencionEdicion.sabadoTipoServicio === 'LIM' ||
+                                horarioIntervencionEdicion.domingoTipoServicio === 'LIM')
+                                && !valuesFormEdicion.precioHora_L) {
+                                setAlert({
+                                    mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                                    tipo: 'error'
+                                })
+                                setOpenSnack(true);
+                                return;
+                            };
+                            if ((horarioIntervencionEdicion.lunesTipoServicio === 'CRIS' ||
+                                horarioIntervencionEdicion.martesTipoServicio === 'CRIS' ||
+                                horarioIntervencionEdicion.miercolesTipoServicio === 'CRIS' ||
+                                horarioIntervencionEdicion.juevesTipoServicio === 'CRIS' ||
+                                horarioIntervencionEdicion.viernesTipoServicio === 'CRIS' ||
+                                horarioIntervencionEdicion.sabadoTipoServicio === 'CRIS' ||
+                                horarioIntervencionEdicion.domingoTipoServicio === 'CRIS')
+                                && !valuesFormEdicion.precioHora_C) {
+                                setAlert({
+                                    mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                                    tipo: 'error'
+                                })
+                                setOpenSnack(true);
+                                return;
+                            };
+                            if ((horarioIntervencionEdicion.lunesTipoServicio === 'CRISE' ||
+                                horarioIntervencionEdicion.martesTipoServicio === 'CRISE' ||
+                                horarioIntervencionEdicion.miercolesTipoServicio === 'CRISE' ||
+                                horarioIntervencionEdicion.juevesTipoServicio === 'CRISE' ||
+                                horarioIntervencionEdicion.viernesTipoServicio === 'CRISE' ||
+                                horarioIntervencionEdicion.sabadoTipoServicio === 'CRISE' ||
+                                horarioIntervencionEdicion.domingoTipoServicio === 'CRISE')
+                                && !valuesFormEdicion.precioHora_E) {
+                                setAlert({
+                                    mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                                    tipo: 'error'
+                                })
+                                setOpenSnack(true);
+                                return;
+                            };
+                            if ((horarioIntervencionEdicion.lunesTipoServicio === 'CRISI' ||
+                                horarioIntervencionEdicion.martesTipoServicio === 'CRISI' ||
+                                horarioIntervencionEdicion.miercolesTipoServicio === 'CRISI' ||
+                                horarioIntervencionEdicion.juevesTipoServicio === 'CRISI' ||
+                                horarioIntervencionEdicion.viernesTipoServicio === 'CRISI' ||
+                                horarioIntervencionEdicion.sabadoTipoServicio === 'CRISI' ||
+                                horarioIntervencionEdicion.domingoTipoServicio === 'CRISI')
+                                && !valuesFormEdicion.precioHora_I) {
+                                setAlert({
+                                    mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                                    tipo: 'error'
+                                })
+                                setOpenSnack(true);
+                                return;
+                            };
+                            if ((horarioIntervencionEdicion.lunesTipoServicio === 'LIME' ||
+                                horarioIntervencionEdicion.martesTipoServicio === 'LIME' ||
+                                horarioIntervencionEdicion.miercolesTipoServicio === 'LIME' ||
+                                horarioIntervencionEdicion.juevesTipoServicio === 'LIME' ||
+                                horarioIntervencionEdicion.viernesTipoServicio === 'LIME' ||
+                                horarioIntervencionEdicion.sabadoTipoServicio === 'LIME' ||
+                                horarioIntervencionEdicion.domingoTipoServicio === 'LIME')
+                                && !valuesFormEdicion.precioHora_Z) {
+                                setAlert({
+                                    mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                                    tipo: 'error'
+                                })
+                                setOpenSnack(true);
+                                return;
+                            };
+                            if ((horarioIntervencionEdicion.lunesTipoServicio === 'TOL' ||
+                                horarioIntervencionEdicion.martesTipoServicio === 'TOL' ||
+                                horarioIntervencionEdicion.miercolesTipoServicio === 'TOL' ||
+                                horarioIntervencionEdicion.juevesTipoServicio === 'TOL' ||
+                                horarioIntervencionEdicion.viernesTipoServicio === 'TOL' ||
+                                horarioIntervencionEdicion.sabadoTipoServicio === 'TOL' ||
+                                horarioIntervencionEdicion.domingoTipoServicio === 'TOL')
+                                && !valuesFormEdicion.precioHora_T) {
+                                setAlert({
+                                    mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                                    tipo: 'error'
+                                })
+                                setOpenSnack(true);
+                                return;
+                            };
+                            if ((horarioIntervencionEdicion.lunesTipoServicio === 'LIMP' ||
+                                horarioIntervencionEdicion.martesTipoServicio === 'LIMP' ||
+                                horarioIntervencionEdicion.miercolesTipoServicio === 'LIMP' ||
+                                horarioIntervencionEdicion.juevesTipoServicio === 'LIMP' ||
+                                horarioIntervencionEdicion.viernesTipoServicio === 'LIMP' ||
+                                horarioIntervencionEdicion.sabadoTipoServicio === 'LIMP' ||
+                                horarioIntervencionEdicion.domingoTipoServicio === 'LIMP')
+                                && !valuesFormEdicion.precioHora_P) {
+                                setAlert({
+                                    mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                                    tipo: 'error'
+                                })
+                                setOpenSnack(true);
+                                return;
+                            };
+                        }
+
                         //validacion mail
-                        const validacionMail = dispatch(validarMailAccion(valuesFormEdicion.mail));
-                        if (!validacionMail) {
-                            setAlert({
-                                mensaje: "El campo E-mail es incorrecto. Revisa el formulario.",
-                                tipo: 'error'
-                            })
-                            setOpenSnack(true);
-                            return;
-                        };
+                        if (valuesFormEdicion.mail) {
+                            const validacionMail = dispatch(validarMailAccion(valuesFormEdicion.mail));
+                            if (!validacionMail) {
+                                setAlert({
+                                    mensaje: "El campo E-mail es incorrecto. Revisa el formulario.",
+                                    tipo: 'error'
+                                })
+                                setOpenSnack(true);
+                                return;
+                            };
+                        }
                         //limpieza final  
                         let horarioIntervencionEdicionRevisado;
                         if (horarioIntervencionEdicion.tipo === 'rango') {
@@ -2286,12 +2456,18 @@ const CentrosEditar = forwardRef((props, ref) => {
                                 domingoTipoServicio: horarioIntervencionEdicion.domingoTipoServicio
                             };
                         };
-                        //añadimos cómputo final                        
+                        //añadimos cómputo final                           
                         const elHorarioIntervencionEditadoRevisado = {
                             ...horarioIntervencionEdicionRevisado,
                             computo: valuesFormEdicion.computo,
-                            mensualPactado: valuesFormEdicion.mensualPactado,
-                            precioHora: valuesFormEdicion.precioHora
+                            mensualPactado: parseInt(valuesFormEdicion.mensualPactado),
+                            precioHora_L:  parseInt(valuesFormEdicion.precioHora_L),
+                            precioHora_C:  parseInt(valuesFormEdicion.precioHora_C),
+                            precioHora_E:  parseInt(valuesFormEdicion.precioHora_E),
+                            precioHora_I:  parseInt(valuesFormEdicion.precioHora_I),
+                            precioHora_Z:  parseInt(valuesFormEdicion.precioHora_Z),
+                            precioHora_T:  parseInt(valuesFormEdicion.precioHora_T),
+                            precioHora_P:  parseInt(valuesFormEdicion.precioHora_P),
                         }
                         //registramos
                         const centroAGuardar = {
@@ -2306,6 +2482,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                             nif: valuesFormEdicion.nif,
                             mail: valuesFormEdicion.mail,
                             telefono: valuesFormEdicion.telefono,
+                            forma_pago: valuesFormEdicion.formaPago,
                             horario: JSON.stringify(elHorarioIntervencionEditadoRevisado),
                             trabajadores: JSON.stringify(trabajadoresEdicion)
                         };
@@ -2335,6 +2512,7 @@ const CentrosEditar = forwardRef((props, ref) => {
             nif: '',
             mail: '',
             telefono: '',
+            formaPago: '',
             variacion: '',
             tipo: '',
             numeroTrabajadores: '',
@@ -2342,7 +2520,13 @@ const CentrosEditar = forwardRef((props, ref) => {
             datosSuplentes: [],
             computo: '',
             mensualPactado: null,
-            precioHora: null
+            precioHora_L: null,
+            precioHora_C: null,
+            precioHora_E: null,
+            precioHora_I: null,
+            precioHora_Z: null,
+            precioHora_T: null,
+            precioHora_P: null,
         });
         setValueTimePickerInicioEdicion({
             lunes: null,
@@ -2643,6 +2827,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                             value={valuesFormEdicion.codigo}
                                             onChange={handleChangeFormEdicion('codigo')}
                                             labelWidth={55}
+                                            disabled={disabledItem}
                                         />
                                     </FormControl>
                                 </Grid>
@@ -2659,6 +2844,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                             value={valuesFormEdicion.nif}
                                             onChange={handleChangeFormEdicion('nif')}
                                             labelWidth={30}
+                                            disabled={disabledItem}
                                         />
                                     </FormControl>
                                 </Grid>
@@ -2675,6 +2861,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                     value={valuesFormEdicion.mail}
                                     onChange={handleChangeFormEdicion('mail')}
                                     labelWidth={55}
+                                    disabled={disabledItem}
                                 />
                             </FormControl>
                             <FormControl
@@ -2689,6 +2876,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                     value={valuesFormEdicion.domicilio}
                                     onChange={handleChangeFormEdicion('domicilio')}
                                     labelWidth={70}
+                                    disabled={disabledItem}
                                 />
                             </FormControl>
                             <Grid container>
@@ -2705,6 +2893,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                             value={valuesFormEdicion.poblacion}
                                             onChange={handleChangeFormEdicion('poblacion')}
                                             labelWidth={75}
+                                            disabled={disabledItem}
                                         />
                                     </FormControl>
                                 </Grid>
@@ -2721,6 +2910,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                             value={valuesFormEdicion.provincia}
                                             onChange={handleChangeFormEdicion('provincia')}
                                             labelWidth={75}
+                                            disabled={disabledItem}
                                         />
                                     </FormControl>
                                 </Grid>
@@ -2739,6 +2929,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                             value={valuesFormEdicion.codigoPostal}
                                             onChange={handleChangeFormEdicion('codigoPostal')}
                                             labelWidth={105}
+                                            disabled={disabledItem}
                                         />
                                     </FormControl>
                                 </Grid>
@@ -2755,6 +2946,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                             value={valuesFormEdicion.telefono}
                                             onChange={handleChangeFormEdicion('telefono')}
                                             labelWidth={65}
+                                            disabled={disabledItem}
                                         />
                                     </FormControl>
                                 </Grid>
@@ -2894,7 +3086,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         }
                                     </Select>
                                 </FormControl>
-                                {valuesFormEdicion.computo === 1 ? (
+                                {valuesFormEdicion.computo === 1 || valuesFormEdicion.computo === 3 ? (
                                     <FormControl
                                         variant="outlined"
                                         className={classes.form}
@@ -2911,23 +3103,148 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         />
                                     </FormControl>
                                 ) : null}
-                                {valuesFormEdicion.computo === 2 ? (
-                                    <FormControl
-                                        variant="outlined"
-                                        className={classes.form}
-                                    >
-                                        <InputLabel>Precio hora</InputLabel>
-                                        <OutlinedInput
-                                            className={classes.mb15}
-                                            fullWidth
-                                            id="form-precio-hora-edicion"
-                                            value={valuesFormEdicion.precioHora || ''}
-                                            onChange={handleChangeFormEdicion('precioHora')}
-                                            labelWidth={90}
-                                            startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                                        />
-                                    </FormControl>
+                                {valuesFormEdicion.computo === 2 || valuesFormEdicion.computo === 3 ? (
+                                    <Fragment>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                        >
+                                            <InputLabel>Precio hora LIM</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb15}
+                                                fullWidth
+                                                id="form-precio-hora_L-edicion"
+                                                value={valuesFormEdicion.precioHora_L || ''}
+                                                onChange={handleChangeFormEdicion('precioHora_L')}
+                                                labelWidth={120}
+                                                startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                            />
+                                        </FormControl>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                        >
+                                            <InputLabel>Precio hora CRIS</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb15}
+                                                fullWidth
+                                                id="form-precio-hora_C-edicion"
+                                                value={valuesFormEdicion.precioHora_C || ''}
+                                                onChange={handleChangeFormEdicion('precioHora_C')}
+                                                labelWidth={125}
+                                                startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                            />
+                                        </FormControl>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                        >
+                                            <InputLabel>Precio hora CRISE</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb15}
+                                                fullWidth
+                                                id="form-precio-hora_E-edicion"
+                                                value={valuesFormEdicion.precioHora_E || ''}
+                                                onChange={handleChangeFormEdicion('precioHora_E')}
+                                                labelWidth={130}
+                                                startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                            />
+                                        </FormControl>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                        >
+                                            <InputLabel>Precio hora CRISI</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb15}
+                                                fullWidth
+                                                id="form-precio-hora_I-edicion"
+                                                value={valuesFormEdicion.precioHora_I || ''}
+                                                onChange={handleChangeFormEdicion('precioHora_I')}
+                                                labelWidth={130}
+                                                startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                            />
+                                        </FormControl>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                        >
+                                            <InputLabel>Precio hora LIME</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb15}
+                                                fullWidth
+                                                id="form-precio-hora_Z-edicion"
+                                                value={valuesFormEdicion.precioHora_Z || ''}
+                                                onChange={handleChangeFormEdicion('precioHora_Z')}
+                                                labelWidth={125}
+                                                startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                            />
+                                        </FormControl>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                        >
+                                            <InputLabel>Precio hora TOL</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb15}
+                                                fullWidth
+                                                id="form-precio-hora_T-edicion"
+                                                value={valuesFormEdicion.precioHora_T || ''}
+                                                onChange={handleChangeFormEdicion('precioHora_T')}
+                                                labelWidth={120}
+                                                startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                            />
+                                        </FormControl>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                        >
+                                            <InputLabel>Precio hora LIMP</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb15}
+                                                fullWidth
+                                                id="form-precio-hora_P-edicion"
+                                                value={valuesFormEdicion.precioHora_P || ''}
+                                                onChange={handleChangeFormEdicion('precioHora_P')}
+                                                labelWidth={125}
+                                                startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                            />
+                                        </FormControl>
+                                    </Fragment>
                                 ) : null}
+                                <Box
+                                    p={1.5}
+                                    m={0.5}
+                                    bgcolor="secondary.light"
+                                    color="secondary.contrastText"
+                                    className={clsx(classes.mb25, classes.mt15)}
+                                >
+                                    Forma de pago
+                                </Box>
+                                <FormControl
+                                    variant="outlined"
+                                    className={classes.form}
+                                >
+                                    <InputLabel>Forma pago</InputLabel>
+                                    <Select
+                                        fullWidth
+                                        className={classes.mb15}
+                                        id="form-formaPago-edicion"
+                                        label="Forma pago"
+                                        value={valuesFormEdicion.formaPago || ''}
+                                        onChange={handleChangeFormEdicion('formaPago')}
+                                        helpertext="Selecciona la forma de pago"
+                                        disabled={disabledItem}
+                                    >
+                                        {
+                                            formasDePago.map((option) => (
+                                                <MenuItem key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </MenuItem>
+                                            ))
+                                        }
+                                    </Select>
+                                </FormControl>
                             </Grid>
                             <Grid item lg={7} sm={6} xs={12}>
                                 <Box style={{ marginTop: -10 }}>
@@ -3250,7 +3567,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                     </Grid>
                 </Grid>
             </Fragment>
-            <Snackbar open={openSnack} autoHideDuration={6000} onClose={handleCloseSnack}>
+            <Snackbar open={openSnack} autoHideDuration={12000} onClose={handleCloseSnack}>
                 <Alert severity={alert.tipo} onClose={handleCloseSnack}>
                     {alert.mensaje}
                 </Alert>

@@ -2227,3 +2227,4396 @@ if (tipoTrabajador === 'trabajador') {
     </Box>
 
 </div>
+
+export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState) => {
+    let arrayResultante = [];
+    let sumatorioHoras;
+    let sumatorioHorasNormal_L;
+    let sumatorioHorasExtra_L;
+    let sumatorioHorasNormal_C;
+    let sumatorioHorasExtra_C;
+    let sumatorioHorasNormal_E;
+    let sumatorioHorasExtra_E;
+    let sumatorioHorasNormal_I;
+    let sumatorioHorasExtra_I;
+    let sumatorioHorasNormal_Z;
+    let sumatorioHorasExtra_Z;
+    let sumatorioHorasNormal_T;
+    let sumatorioHorasExtra_T;
+    let sumatorioHorasNormal_P;
+    let sumatorioHorasExtra_P;
+    let lasHorasNormal;
+    let lasHorasExtra;
+    cuadrante.forEach((cuadranteColumna, index) => {
+        switch (cuadranteColumna.tipoHorario) {
+            case 'rango':
+                arrayResultante.push({
+                    trabajador: cuadranteColumna.idTrabajador,
+                    //trabajadorNombre: cuadranteColumna.nombreTrabajador,
+                    tipo: cuadranteColumna.tipoTrabajador,
+                    computo: [],
+                    totalHorasNormal_L: null,
+                    totalHorasExtra_L: null,
+                    totalHorasNormal_C: null,
+                    totalHorasExtra_C: null,
+                    totalHorasNormal_E: null,
+                    totalHorasExtra_E: null,
+                    totalHorasNormal_I: null,
+                    totalHorasExtra_I: null,
+                    totalHorasNormal_Z: null,
+                    totalHorasExtra_Z: null,
+                    totalHorasNormal_T: null,
+                    totalHorasExtra_T: null,
+                    totalHorasNormal_P: null,
+                    totalHorasExtra_P: null,
+                    totalHoras: null
+                });
+                sumatorioHoras = 0;
+                sumatorioHorasNormal_L = 0;
+                sumatorioHorasExtra_L = 0;
+                sumatorioHorasNormal_C = 0;
+                sumatorioHorasExtra_C = 0;
+                sumatorioHorasNormal_E = 0;
+                sumatorioHorasExtra_E = 0;
+                sumatorioHorasNormal_I = 0;
+                sumatorioHorasExtra_I = 0;
+                sumatorioHorasNormal_Z = 0;
+                sumatorioHorasExtra_Z = 0;
+                sumatorioHorasNormal_T = 0;
+                sumatorioHorasExtra_T = 0;
+                sumatorioHorasNormal_P = 0;
+                sumatorioHorasExtra_P = 0;
+                for (const prop in cuadranteColumna) {
+                    if (prop.includes('Lunes')) {
+                        const mySplit = prop.split('Lunes');
+                        if (cuadranteColumna[prop].lunesInicioRango) {
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicioRango, cuadranteColumna[prop].lunesFinRango) / 60;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicioRango, cuadranteColumna[prop].lunesFinRango) / 60;
+                                        lasHorasExtra = 30 / 60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicioRango, cuadranteColumna[prop].lunesFinRango) / 60;
+                                        lasHorasExtra = 60 / 60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicioRango, cuadranteColumna[prop].lunesFinRango) / 60;
+                                        lasHorasExtra = 90 / 60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicioRango, cuadranteColumna[prop].lunesFinRango) / 60;
+                                        lasHorasExtra = 120 / 60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicioRango, cuadranteColumna[prop].lunesFinRango) / 60;
+                                lasHorasExtra = null;
+                            };
+                            switch (cuadranteColumna[prop].tipoServicio) {
+                                case 'LIM':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Lunes-' + mySplit[1],
+                                        horasNormal_L: lasHorasNormal,
+                                        horasExtra_L: lasHorasExtra,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_L += lasHorasNormal;
+                                    sumatorioHorasExtra_L += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRIS':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Lunes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: lasHorasNormal,
+                                        horasExtra_C: lasHorasExtra,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_C += lasHorasNormal;
+                                    sumatorioHorasExtra_C += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISE':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Lunes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: lasHorasNormal,
+                                        horasExtra_E: lasHorasExtra,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_E += lasHorasNormal;
+                                    sumatorioHorasExtra_E += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISI':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Lunes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: lasHorasNormal,
+                                        horasExtra_I: lasHorasExtra,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_I += lasHorasNormal;
+                                    sumatorioHorasExtra_I += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIME':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Lunes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: lasHorasNormal,
+                                        horasExtra_Z: lasHorasExtra,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_Z += lasHorasNormal;
+                                    sumatorioHorasExtra_Z += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'TOL':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Lunes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: lasHorasNormal,
+                                        horasExtra_T: lasHorasExtra,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_T += lasHorasNormal;
+                                    sumatorioHorasExtra_T += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIMP':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Lunes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: lasHorasNormal,
+                                        horasExtra_P: lasHorasExtra,
+                                    });
+                                    sumatorioHorasNormal_P += lasHorasNormal;
+                                    sumatorioHorasExtra_P += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                default:
+                            }
+                        };
+                    };
+                    if (prop.includes('Martes')) {
+                        const mySplit = prop.split('Martes');
+                        if (cuadranteColumna[prop].martesInicioRango) {
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60;
+                                        lasHorasExtra = 30 / 60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60;
+                                        lasHorasExtra = 60 / 60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60;
+                                        lasHorasExtra = 90 / 60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60;
+                                        lasHorasExtra = 120 / 60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60;
+                                lasHorasExtra = null;
+                            };
+                            switch (cuadranteColumna[prop].tipoServicio) {
+                                case 'LIM':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Martes-' + mySplit[1],
+                                        horasNormal_L: lasHorasNormal,
+                                        horasExtra_L: lasHorasExtra,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_L += lasHorasNormal;
+                                    sumatorioHorasExtra_L += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRIS':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Martes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: lasHorasNormal,
+                                        horasExtra_C: lasHorasExtra,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_C += lasHorasNormal;
+                                    sumatorioHorasExtra_C += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISE':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Martes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: lasHorasNormal,
+                                        horasExtra_E: lasHorasExtra,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_E += lasHorasNormal;
+                                    sumatorioHorasExtra_E += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISI':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Martes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: lasHorasNormal,
+                                        horasExtra_I: lasHorasExtra,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_I += lasHorasNormal;
+                                    sumatorioHorasExtra_I += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIME':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Martes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: lasHorasNormal,
+                                        horasExtra_Z: lasHorasExtra,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_Z += lasHorasNormal;
+                                    sumatorioHorasExtra_Z += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'TOL':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Martes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: lasHorasNormal,
+                                        horasExtra_T: lasHorasExtra,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_T += lasHorasNormal;
+                                    sumatorioHorasExtra_T += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIMP':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Martes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: lasHorasNormal,
+                                        horasExtra_P: lasHorasExtra,
+                                    });
+                                    sumatorioHorasNormal_P += lasHorasNormal;
+                                    sumatorioHorasExtra_P += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                default:
+                            }
+                        };
+                    };
+                    if (prop.includes('Miércoles')) {
+                        const mySplit = prop.split('Miércoles');
+                        if (cuadranteColumna[prop].miercolesInicioRango) {
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicioRango, cuadranteColumna[prop].miercolesFinRango) / 60;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicioRango, cuadranteColumna[prop].miercolesFinRango) / 60;
+                                        lasHorasExtra = 30 / 60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicioRango, cuadranteColumna[prop].miercolesFinRango) / 60;
+                                        lasHorasExtra = 60 / 60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicioRango, cuadranteColumna[prop].miercolesFinRango) / 60;
+                                        lasHorasExtra = 90 / 60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicioRango, cuadranteColumna[prop].miercolesFinRango) / 60;
+                                        lasHorasExtra = 120 / 60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicioRango, cuadranteColumna[prop].miercolesFinRango) / 60;
+                                lasHorasExtra = null;
+                            };
+                            switch (cuadranteColumna[prop].tipoServicio) {
+                                case 'LIM':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Miércoles-' + mySplit[1],
+                                        horasNormal_L: lasHorasNormal,
+                                        horasExtra_L: lasHorasExtra,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_L += lasHorasNormal;
+                                    sumatorioHorasExtra_L += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRIS':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Miércoles-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: lasHorasNormal,
+                                        horasExtra_C: lasHorasExtra,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_C += lasHorasNormal;
+                                    sumatorioHorasExtra_C += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISE':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Miércoles-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: lasHorasNormal,
+                                        horasExtra_E: lasHorasExtra,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_E += lasHorasNormal;
+                                    sumatorioHorasExtra_E += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISI':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Miércoles-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: lasHorasNormal,
+                                        horasExtra_I: lasHorasExtra,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_I += lasHorasNormal;
+                                    sumatorioHorasExtra_I += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIME':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Miércoles-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: lasHorasNormal,
+                                        horasExtra_Z: lasHorasExtra,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_Z += lasHorasNormal;
+                                    sumatorioHorasExtra_Z += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'TOL':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Miércoles-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: lasHorasNormal,
+                                        horasExtra_T: lasHorasExtra,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_T += lasHorasNormal;
+                                    sumatorioHorasExtra_T += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIMP':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Miércoles-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: lasHorasNormal,
+                                        horasExtra_P: lasHorasExtra,
+                                    });
+                                    sumatorioHorasNormal_P += lasHorasNormal;
+                                    sumatorioHorasExtra_P += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                default:
+                            }
+                        };
+                    };
+                    if (prop.includes('Jueves')) {
+                        const mySplit = prop.split('Jueves');
+                        if (cuadranteColumna[prop].juevesInicioRango) {
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicioRango, cuadranteColumna[prop].juevesFinRango) / 60;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicioRango, cuadranteColumna[prop].juevesFinRango) / 60;
+                                        lasHorasExtra = 30 / 60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicioRango, cuadranteColumna[prop].juevesFinRango) / 60;
+                                        lasHorasExtra = 60 / 60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicioRango, cuadranteColumna[prop].juevesFinRango) / 60;
+                                        lasHorasExtra = 90 / 60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicioRango, cuadranteColumna[prop].juevesFinRango) / 60;
+                                        lasHorasExtra = 120 / 60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicioRango, cuadranteColumna[prop].juevesFinRango) / 60;
+                                lasHorasExtra = null;
+                            };
+                            switch (cuadranteColumna[prop].tipoServicio) {
+                                case 'LIM':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Jueves-' + mySplit[1],
+                                        horasNormal_L: lasHorasNormal,
+                                        horasExtra_L: lasHorasExtra,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_L += lasHorasNormal;
+                                    sumatorioHorasExtra_L += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRIS':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Jueves-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: lasHorasNormal,
+                                        horasExtra_C: lasHorasExtra,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_C += lasHorasNormal;
+                                    sumatorioHorasExtra_C += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISE':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Jueves-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: lasHorasNormal,
+                                        horasExtra_E: lasHorasExtra,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_E += lasHorasNormal;
+                                    sumatorioHorasExtra_E += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISI':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Jueves-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: lasHorasNormal,
+                                        horasExtra_I: lasHorasExtra,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_I += lasHorasNormal;
+                                    sumatorioHorasExtra_I += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIME':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Jueves-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: lasHorasNormal,
+                                        horasExtra_Z: lasHorasExtra,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_Z += lasHorasNormal;
+                                    sumatorioHorasExtra_Z += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'TOL':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Jueves-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: lasHorasNormal,
+                                        horasExtra_T: lasHorasExtra,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_T += lasHorasNormal;
+                                    sumatorioHorasExtra_T += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIMP':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Jueves-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: lasHorasNormal,
+                                        horasExtra_P: lasHorasExtra,
+                                    });
+                                    sumatorioHorasNormal_P += lasHorasNormal;
+                                    sumatorioHorasExtra_P += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                default:
+                            }
+                        };
+                    };
+                    if (prop.includes('Viernes')) {
+                        const mySplit = prop.split('Viernes');
+                        if (cuadranteColumna[prop].viernesInicioRango) {
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicioRango, cuadranteColumna[prop].viernesFinRango) / 60;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicioRango, cuadranteColumna[prop].viernesFinRango) / 60;
+                                        lasHorasExtra = 30 / 60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicioRango, cuadranteColumna[prop].viernesFinRango) / 60;
+                                        lasHorasExtra = 60 / 60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicioRango, cuadranteColumna[prop].viernesFinRango) / 60;
+                                        lasHorasExtra = 90 / 60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicioRango, cuadranteColumna[prop].viernesFinRango) / 60;
+                                        lasHorasExtra = 120 / 60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicioRango, cuadranteColumna[prop].viernesFinRango) / 60;
+                                lasHorasExtra = null;
+                            };
+                            switch (cuadranteColumna[prop].tipoServicio) {
+                                case 'LIM':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Viernes-' + mySplit[1],
+                                        horasNormal_L: lasHorasNormal,
+                                        horasExtra_L: lasHorasExtra,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_L += lasHorasNormal;
+                                    sumatorioHorasExtra_L += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRIS':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Viernes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: lasHorasNormal,
+                                        horasExtra_C: lasHorasExtra,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_C += lasHorasNormal;
+                                    sumatorioHorasExtra_C += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISE':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Viernes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: lasHorasNormal,
+                                        horasExtra_E: lasHorasExtra,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_E += lasHorasNormal;
+                                    sumatorioHorasExtra_E += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISI':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Viernes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: lasHorasNormal,
+                                        horasExtra_I: lasHorasExtra,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_I += lasHorasNormal;
+                                    sumatorioHorasExtra_I += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIME':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Viernes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: lasHorasNormal,
+                                        horasExtra_Z: lasHorasExtra,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_Z += lasHorasNormal;
+                                    sumatorioHorasExtra_Z += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'TOL':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Viernes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: lasHorasNormal,
+                                        horasExtra_T: lasHorasExtra,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_T += lasHorasNormal;
+                                    sumatorioHorasExtra_T += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIMP':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Viernes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: lasHorasNormal,
+                                        horasExtra_P: lasHorasExtra,
+                                    });
+                                    sumatorioHorasNormal_P += lasHorasNormal;
+                                    sumatorioHorasExtra_P += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                default:
+                            }
+                        };
+                    };
+                    if (prop.includes('Sábado')) {
+                        const mySplit = prop.split('Sábado');
+                        if (cuadranteColumna[prop].sabadoInicioRango) {
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicioRango, cuadranteColumna[prop].sabadoFinRango) / 60;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicioRango, cuadranteColumna[prop].sabadoFinRango) / 60;
+                                        lasHorasExtra = 30 / 60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicioRango, cuadranteColumna[prop].sabadoFinRango) / 60;
+                                        lasHorasExtra = 60 / 60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicioRango, cuadranteColumna[prop].sabadoFinRango) / 60;
+                                        lasHorasExtra = 90 / 60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicioRango, cuadranteColumna[prop].sabadoFinRango) / 60;
+                                        lasHorasExtra = 120 / 60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicioRango, cuadranteColumna[prop].sabadoFinRango) / 60;
+                                lasHorasExtra = null;
+                            };
+                            switch (cuadranteColumna[prop].tipoServicio) {
+                                case 'LIM':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Sábado-' + mySplit[1],
+                                        horasNormal_L: lasHorasNormal,
+                                        horasExtra_L: lasHorasExtra,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_L += lasHorasNormal;
+                                    sumatorioHorasExtra_L += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRIS':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Sábado-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: lasHorasNormal,
+                                        horasExtra_C: lasHorasExtra,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_C += lasHorasNormal;
+                                    sumatorioHorasExtra_C += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISE':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Sábado-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: lasHorasNormal,
+                                        horasExtra_E: lasHorasExtra,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_E += lasHorasNormal;
+                                    sumatorioHorasExtra_E += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISI':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Sábado-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: lasHorasNormal,
+                                        horasExtra_I: lasHorasExtra,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_I += lasHorasNormal;
+                                    sumatorioHorasExtra_I += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIME':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Sábado-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: lasHorasNormal,
+                                        horasExtra_Z: lasHorasExtra,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_Z += lasHorasNormal;
+                                    sumatorioHorasExtra_Z += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'TOL':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Sábado-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: lasHorasNormal,
+                                        horasExtra_T: lasHorasExtra,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_T += lasHorasNormal;
+                                    sumatorioHorasExtra_T += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIMP':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Sábado-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: lasHorasNormal,
+                                        horasExtra_P: lasHorasExtra,
+                                    });
+                                    sumatorioHorasNormal_P += lasHorasNormal;
+                                    sumatorioHorasExtra_P += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                default:
+                            }
+                        };
+                    };
+                    if (prop.includes('Domingo')) {
+                        const mySplit = prop.split('Domingo');
+                        if (cuadranteColumna[prop].domingoInicioRango) {
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicioRango, cuadranteColumna[prop].domingoFinRango) / 60;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicioRango, cuadranteColumna[prop].domingoFinRango) / 60;
+                                        lasHorasExtra = 30 / 60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicioRango, cuadranteColumna[prop].domingoFinRango) / 60;
+                                        lasHorasExtra = 60 / 60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicioRango, cuadranteColumna[prop].domingoFinRango) / 60;
+                                        lasHorasExtra = 90 / 60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicioRango, cuadranteColumna[prop].domingoFinRango) / 60;
+                                        lasHorasExtra = 120 / 60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicioRango, cuadranteColumna[prop].domingoFinRango) / 60;
+                                lasHorasExtra = null;
+                            };
+                            switch (cuadranteColumna[prop].tipoServicio) {
+                                case 'LIM':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Domingo-' + mySplit[1],
+                                        horasNormal_L: lasHorasNormal,
+                                        horasExtra_L: lasHorasExtra,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_L += lasHorasNormal;
+                                    sumatorioHorasExtra_L += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRIS':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Domingo-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: lasHorasNormal,
+                                        horasExtra_C: lasHorasExtra,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_C += lasHorasNormal;
+                                    sumatorioHorasExtra_C += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISE':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Domingo-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: lasHorasNormal,
+                                        horasExtra_E: lasHorasExtra,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_E += lasHorasNormal;
+                                    sumatorioHorasExtra_E += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISI':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Domingo-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: lasHorasNormal,
+                                        horasExtra_I: lasHorasExtra,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_I += lasHorasNormal;
+                                    sumatorioHorasExtra_I += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIME':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Domingo-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: lasHorasNormal,
+                                        horasExtra_Z: lasHorasExtra,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_Z += lasHorasNormal;
+                                    sumatorioHorasExtra_Z += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'TOL':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Domingo-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: lasHorasNormal,
+                                        horasExtra_T: lasHorasExtra,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_T += lasHorasNormal;
+                                    sumatorioHorasExtra_T += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIMP':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Domingo-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: lasHorasNormal,
+                                        horasExtra_P: lasHorasExtra,
+                                    });
+                                    sumatorioHorasNormal_P += lasHorasNormal;
+                                    sumatorioHorasExtra_P += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                default:
+                            }
+                        };
+                    };
+                    arrayResultante[index].totalHorasNormal_L = sumatorioHorasNormal_L;
+                    arrayResultante[index].totalHorasExtra_L = sumatorioHorasExtra_L;
+                    arrayResultante[index].totalHorasNormal_C = sumatorioHorasNormal_C;
+                    arrayResultante[index].totalHorasExtra_C = sumatorioHorasExtra_C;
+                    arrayResultante[index].totalHorasNormal_E = sumatorioHorasNormal_E;
+                    arrayResultante[index].totalHorasExtra_E = sumatorioHorasExtra_E;
+                    arrayResultante[index].totalHorasNormal_I = sumatorioHorasNormal_I;
+                    arrayResultante[index].totalHorasExtra_I = sumatorioHorasExtra_I;
+                    arrayResultante[index].totalHorasNormal_Z = sumatorioHorasNormal_Z;
+                    arrayResultante[index].totalHorasExtra_Z = sumatorioHorasExtra_Z;
+                    arrayResultante[index].totalHorasNormal_T = sumatorioHorasNormal_T;
+                    arrayResultante[index].totalHorasExtra_T = sumatorioHorasExtra_T;
+                    arrayResultante[index].totalHorasNormal_P = sumatorioHorasNormal_P;
+                    arrayResultante[index].totalHorasExtra_P = sumatorioHorasExtra_P;
+                    arrayResultante[index].totalHoras = sumatorioHoras;
+                }
+                break;
+            case 'rangoDescanso':
+                arrayResultante.push({
+                    trabajador: cuadranteColumna.idTrabajador,
+                    //trabajadorNombre: cuadranteColumna.nombreTrabajador,
+                    tipo: cuadranteColumna.tipoTrabajador,
+                    computo: [],
+                    totalHorasNormal_L: null,
+                    totalHorasExtra_L: null,
+                    totalHorasNormal_C: null,
+                    totalHorasExtra_C: null,
+                    totalHorasNormal_E: null,
+                    totalHorasExtra_E: null,
+                    totalHorasNormal_I: null,
+                    totalHorasExtra_I: null,
+                    totalHorasNormal_Z: null,
+                    totalHorasExtra_Z: null,
+                    totalHorasNormal_T: null,
+                    totalHorasExtra_T: null,
+                    totalHorasNormal_P: null,
+                    totalHorasExtra_P: null,
+                    totalHoras: null
+                });
+                sumatorioHoras = 0;
+                sumatorioHorasNormal_L = 0;
+                sumatorioHorasExtra_L = 0;
+                sumatorioHorasNormal_C = 0;
+                sumatorioHorasExtra_C = 0;
+                sumatorioHorasNormal_E = 0;
+                sumatorioHorasExtra_E = 0;
+                sumatorioHorasNormal_I = 0;
+                sumatorioHorasExtra_I = 0;
+                sumatorioHorasNormal_Z = 0;
+                sumatorioHorasExtra_Z = 0;
+                sumatorioHorasNormal_T = 0;
+                sumatorioHorasExtra_T = 0;
+                sumatorioHorasNormal_P = 0;
+                sumatorioHorasExtra_P = 0;
+                let rango1, rango2;
+                for (const prop in cuadranteColumna) {
+                    if (prop.includes('Lunes')) {
+                        const mySplit = prop.split('Lunes');
+                        if (cuadranteColumna[prop].lunesInicio1RangoDescanso) {
+                            rango1 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicio1RangoDescanso, cuadranteColumna[prop].lunesFin1RangoDescanso) / 60;
+                            if (cuadranteColumna[prop].lunesInicio2RangoDescanso) {
+                                rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicio2RangoDescanso, cuadranteColumna[prop].lunesFin2RangoDescanso) / 60;
+                            } else {
+                                rango2 = 0;
+                            };
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = rango1 + rango2;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 30 / 60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 60 / 60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 90 / 60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 120 / 60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = rango1 + rango2;
+                                lasHorasExtra = null;
+                            };
+                            switch (cuadranteColumna[prop].tipoServicio) {
+                                case 'LIM':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Lunes-' + mySplit[1],
+                                        horasNormal_L: lasHorasNormal,
+                                        horasExtra_L: lasHorasExtra,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_L += lasHorasNormal;
+                                    sumatorioHorasExtra_L += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRIS':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Lunes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: lasHorasNormal,
+                                        horasExtra_C: lasHorasExtra,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_C += lasHorasNormal;
+                                    sumatorioHorasExtra_C += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISE':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Lunes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: lasHorasNormal,
+                                        horasExtra_E: lasHorasExtra,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_E += lasHorasNormal;
+                                    sumatorioHorasExtra_E += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISI':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Lunes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: lasHorasNormal,
+                                        horasExtra_I: lasHorasExtra,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_I += lasHorasNormal;
+                                    sumatorioHorasExtra_I += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIME':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Lunes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: lasHorasNormal,
+                                        horasExtra_Z: lasHorasExtra,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_Z += lasHorasNormal;
+                                    sumatorioHorasExtra_Z += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'TOL':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Lunes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: lasHorasNormal,
+                                        horasExtra_T: lasHorasExtra,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_T += lasHorasNormal;
+                                    sumatorioHorasExtra_T += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIMP':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Lunes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: lasHorasNormal,
+                                        horasExtra_P: lasHorasExtra,
+                                    });
+                                    sumatorioHorasNormal_P += lasHorasNormal;
+                                    sumatorioHorasExtra_P += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                default:
+                            }
+                        }
+                    };
+                    if (prop.includes('Martes')) {
+                        const mySplit = prop.split('Martes');
+                        if (cuadranteColumna[prop].martesInicio1RangoDescanso) {
+                            rango1 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicio1RangoDescanso, cuadranteColumna[prop].martesFin1RangoDescanso) / 60;
+                            if (cuadranteColumna[prop].martesInicio2RangoDescanso) {
+                                rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicio2RangoDescanso, cuadranteColumna[prop].martesFin2RangoDescanso) / 60;
+                            } else {
+                                rango2 = 0;
+                            };
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = rango1 + rango2;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 30 / 60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 60 / 60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 90 / 60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 120 / 60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = rango1 + rango2;
+                                lasHorasExtra = null;
+                            };
+                            switch (cuadranteColumna[prop].tipoServicio) {
+                                case 'LIM':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Martes-' + mySplit[1],
+                                        horasNormal_L: lasHorasNormal,
+                                        horasExtra_L: lasHorasExtra,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_L += lasHorasNormal;
+                                    sumatorioHorasExtra_L += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRIS':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Martes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: lasHorasNormal,
+                                        horasExtra_C: lasHorasExtra,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_C += lasHorasNormal;
+                                    sumatorioHorasExtra_C += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISE':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Martes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: lasHorasNormal,
+                                        horasExtra_E: lasHorasExtra,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_E += lasHorasNormal;
+                                    sumatorioHorasExtra_E += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISI':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Martes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: lasHorasNormal,
+                                        horasExtra_I: lasHorasExtra,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_I += lasHorasNormal;
+                                    sumatorioHorasExtra_I += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIME':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Martes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: lasHorasNormal,
+                                        horasExtra_Z: lasHorasExtra,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_Z += lasHorasNormal;
+                                    sumatorioHorasExtra_Z += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'TOL':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Martes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: lasHorasNormal,
+                                        horasExtra_T: lasHorasExtra,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_T += lasHorasNormal;
+                                    sumatorioHorasExtra_T += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIMP':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Martes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: lasHorasNormal,
+                                        horasExtra_P: lasHorasExtra,
+                                    });
+                                    sumatorioHorasNormal_P += lasHorasNormal;
+                                    sumatorioHorasExtra_P += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                default:
+                            }
+                        }
+                    };
+                    if (prop.includes('Miércoles')) {
+                        const mySplit = prop.split('Miércoles');
+                        if (cuadranteColumna[prop].miercolesInicio1RangoDescanso) {
+                            rango1 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicio1RangoDescanso, cuadranteColumna[prop].miercolesFin1RangoDescanso) / 60;
+                            if (cuadranteColumna[prop].miercolesInicio2RangoDescanso) {
+                                rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicio2RangoDescanso, cuadranteColumna[prop].miercolesFin2RangoDescanso) / 60;
+                            } else {
+                                rango2 = 0;
+                            };
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = rango1 + rango2;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 30 / 60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 60 / 60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 90 / 60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 120 / 60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = rango1 + rango2;
+                                lasHorasExtra = null;
+                            };
+                            switch (cuadranteColumna[prop].tipoServicio) {
+                                case 'LIM':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Miércoles-' + mySplit[1],
+                                        horasNormal_L: lasHorasNormal,
+                                        horasExtra_L: lasHorasExtra,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_L += lasHorasNormal;
+                                    sumatorioHorasExtra_L += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRIS':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Miércoles-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: lasHorasNormal,
+                                        horasExtra_C: lasHorasExtra,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_C += lasHorasNormal;
+                                    sumatorioHorasExtra_C += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISE':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Miércoles-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: lasHorasNormal,
+                                        horasExtra_E: lasHorasExtra,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_E += lasHorasNormal;
+                                    sumatorioHorasExtra_E += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISI':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Miércoles-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: lasHorasNormal,
+                                        horasExtra_I: lasHorasExtra,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_I += lasHorasNormal;
+                                    sumatorioHorasExtra_I += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIME':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Miércoles-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: lasHorasNormal,
+                                        horasExtra_Z: lasHorasExtra,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_Z += lasHorasNormal;
+                                    sumatorioHorasExtra_Z += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'TOL':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Miércoles-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: lasHorasNormal,
+                                        horasExtra_T: lasHorasExtra,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_T += lasHorasNormal;
+                                    sumatorioHorasExtra_T += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIMP':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Miércoles-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: lasHorasNormal,
+                                        horasExtra_P: lasHorasExtra,
+                                    });
+                                    sumatorioHorasNormal_P += lasHorasNormal;
+                                    sumatorioHorasExtra_P += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                default:
+                            }
+                        }
+                    };
+                    if (prop.includes('Jueves')) {
+                        const mySplit = prop.split('Jueves');
+                        if (cuadranteColumna[prop].juevesInicio1RangoDescanso) {
+                            rango1 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicio1RangoDescanso, cuadranteColumna[prop].juevesFin1RangoDescanso) / 60;
+                            if (cuadranteColumna[prop].juevesInicio2RangoDescanso) {
+                                rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicio2RangoDescanso, cuadranteColumna[prop].juevesFin2RangoDescanso) / 60;
+                            } else {
+                                rango2 = 0;
+                            };
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = rango1 + rango2;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 30 / 60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 60 / 60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 90 / 60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 120 / 60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = rango1 + rango2;
+                                lasHorasExtra = null;
+                            };
+                            switch (cuadranteColumna[prop].tipoServicio) {
+                                case 'LIM':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Jueves-' + mySplit[1],
+                                        horasNormal_L: lasHorasNormal,
+                                        horasExtra_L: lasHorasExtra,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_L += lasHorasNormal;
+                                    sumatorioHorasExtra_L += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRIS':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Jueves-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: lasHorasNormal,
+                                        horasExtra_C: lasHorasExtra,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_C += lasHorasNormal;
+                                    sumatorioHorasExtra_C += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISE':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Jueves-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: lasHorasNormal,
+                                        horasExtra_E: lasHorasExtra,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_E += lasHorasNormal;
+                                    sumatorioHorasExtra_E += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISI':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Jueves-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: lasHorasNormal,
+                                        horasExtra_I: lasHorasExtra,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_I += lasHorasNormal;
+                                    sumatorioHorasExtra_I += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIME':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Jueves-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: lasHorasNormal,
+                                        horasExtra_Z: lasHorasExtra,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_Z += lasHorasNormal;
+                                    sumatorioHorasExtra_Z += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'TOL':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Jueves-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: lasHorasNormal,
+                                        horasExtra_T: lasHorasExtra,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_T += lasHorasNormal;
+                                    sumatorioHorasExtra_T += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIMP':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Jueves-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: lasHorasNormal,
+                                        horasExtra_P: lasHorasExtra,
+                                    });
+                                    sumatorioHorasNormal_P += lasHorasNormal;
+                                    sumatorioHorasExtra_P += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                default:
+                            }
+                        }
+                    };
+                    if (prop.includes('Viernes')) {
+                        const mySplit = prop.split('Viernes');
+                        if (cuadranteColumna[prop].viernesInicio1RangoDescanso) {
+                            rango1 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicio1RangoDescanso, cuadranteColumna[prop].viernesFin1RangoDescanso) / 60;
+                            if (cuadranteColumna[prop].viernesInicio2RangoDescanso) {
+                                rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicio2RangoDescanso, cuadranteColumna[prop].viernesFin2RangoDescanso) / 60;
+                            } else {
+                                rango2 = 0;
+                            };
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = rango1 + rango2;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 30 / 60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 60 / 60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 90 / 60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 120 / 60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = rango1 + rango2;
+                                lasHorasExtra = null;
+                            };
+                            switch (cuadranteColumna[prop].tipoServicio) {
+                                case 'LIM':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Viernes-' + mySplit[1],
+                                        horasNormal_L: lasHorasNormal,
+                                        horasExtra_L: lasHorasExtra,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_L += lasHorasNormal;
+                                    sumatorioHorasExtra_L += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRIS':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Viernes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: lasHorasNormal,
+                                        horasExtra_C: lasHorasExtra,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_C += lasHorasNormal;
+                                    sumatorioHorasExtra_C += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISE':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Viernes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: lasHorasNormal,
+                                        horasExtra_E: lasHorasExtra,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_E += lasHorasNormal;
+                                    sumatorioHorasExtra_E += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISI':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Viernes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: lasHorasNormal,
+                                        horasExtra_I: lasHorasExtra,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_I += lasHorasNormal;
+                                    sumatorioHorasExtra_I += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIME':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Viernes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: lasHorasNormal,
+                                        horasExtra_Z: lasHorasExtra,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_Z += lasHorasNormal;
+                                    sumatorioHorasExtra_Z += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'TOL':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Viernes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: lasHorasNormal,
+                                        horasExtra_T: lasHorasExtra,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_T += lasHorasNormal;
+                                    sumatorioHorasExtra_T += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIMP':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Viernes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: lasHorasNormal,
+                                        horasExtra_P: lasHorasExtra,
+                                    });
+                                    sumatorioHorasNormal_P += lasHorasNormal;
+                                    sumatorioHorasExtra_P += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                default:
+                            }
+                        }
+                    };
+                    if (prop.includes('Sábado')) {
+                        const mySplit = prop.split('Sábado');
+                        if (cuadranteColumna[prop].sabadoInicio1RangoDescanso) {
+                            rango1 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicio1RangoDescanso, cuadranteColumna[prop].sabadoFin1RangoDescanso) / 60;
+                            if (cuadranteColumna[prop].sabadoInicio2RangoDescanso) {
+                                rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicio2RangoDescanso, cuadranteColumna[prop].sabadoFin2RangoDescanso) / 60;
+                            } else {
+                                rango2 = 0;
+                            };
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = rango1 + rango2;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 30 / 60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 60 / 60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 90 / 60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 120 / 60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = rango1 + rango2;
+                                lasHorasExtra = null;
+                            };
+                            switch (cuadranteColumna[prop].tipoServicio) {
+                                case 'LIM':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Sábado-' + mySplit[1],
+                                        horasNormal_L: lasHorasNormal,
+                                        horasExtra_L: lasHorasExtra,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_L += lasHorasNormal;
+                                    sumatorioHorasExtra_L += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRIS':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Sábado-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: lasHorasNormal,
+                                        horasExtra_C: lasHorasExtra,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_C += lasHorasNormal;
+                                    sumatorioHorasExtra_C += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISE':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Sábado-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: lasHorasNormal,
+                                        horasExtra_E: lasHorasExtra,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_E += lasHorasNormal;
+                                    sumatorioHorasExtra_E += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISI':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Sábado-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: lasHorasNormal,
+                                        horasExtra_I: lasHorasExtra,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_I += lasHorasNormal;
+                                    sumatorioHorasExtra_I += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIME':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Sábado-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: lasHorasNormal,
+                                        horasExtra_Z: lasHorasExtra,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_Z += lasHorasNormal;
+                                    sumatorioHorasExtra_Z += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'TOL':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Sábado-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: lasHorasNormal,
+                                        horasExtra_T: lasHorasExtra,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_T += lasHorasNormal;
+                                    sumatorioHorasExtra_T += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIMP':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Sábado-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: lasHorasNormal,
+                                        horasExtra_P: lasHorasExtra,
+                                    });
+                                    sumatorioHorasNormal_P += lasHorasNormal;
+                                    sumatorioHorasExtra_P += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                default:
+                            }
+                        }
+                    };
+                    if (prop.includes('Domingo')) {
+                        const mySplit = prop.split('Domingo');
+                        if (cuadranteColumna[prop].domingoInicio1RangoDescanso) {
+                            rango1 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicio1RangoDescanso, cuadranteColumna[prop].domingoFin1RangoDescanso) / 60;
+                            if (cuadranteColumna[prop].domingoInicio2RangoDescanso) {
+                                rango2 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicio2RangoDescanso, cuadranteColumna[prop].domingoFin2RangoDescanso) / 60;
+                            } else {
+                                rango2 = 0;
+                            };
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = rango1 + rango2;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 30 / 60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 60 / 60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 90 / 60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = rango1 + rango2;
+                                        lasHorasExtra = 120 / 60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = rango1 + rango2;
+                                lasHorasExtra = null;
+                            };
+                            switch (cuadranteColumna[prop].tipoServicio) {
+                                case 'LIM':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Domingo-' + mySplit[1],
+                                        horasNormal_L: lasHorasNormal,
+                                        horasExtra_L: lasHorasExtra,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_L += lasHorasNormal;
+                                    sumatorioHorasExtra_L += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRIS':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Domingo-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: lasHorasNormal,
+                                        horasExtra_C: lasHorasExtra,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_C += lasHorasNormal;
+                                    sumatorioHorasExtra_C += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISE':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Domingo-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: lasHorasNormal,
+                                        horasExtra_E: lasHorasExtra,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_E += lasHorasNormal;
+                                    sumatorioHorasExtra_E += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISI':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Domingo-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: lasHorasNormal,
+                                        horasExtra_I: lasHorasExtra,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_I += lasHorasNormal;
+                                    sumatorioHorasExtra_I += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIME':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Domingo-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: lasHorasNormal,
+                                        horasExtra_Z: lasHorasExtra,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_Z += lasHorasNormal;
+                                    sumatorioHorasExtra_Z += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'TOL':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Domingo-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: lasHorasNormal,
+                                        horasExtra_T: lasHorasExtra,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_T += lasHorasNormal;
+                                    sumatorioHorasExtra_T += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIMP':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Domingo-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: lasHorasNormal,
+                                        horasExtra_P: lasHorasExtra,
+                                    });
+                                    sumatorioHorasNormal_P += lasHorasNormal;
+                                    sumatorioHorasExtra_P += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                default:
+                            }
+                        }
+                    };
+                    arrayResultante[index].totalHorasNormal_L = sumatorioHorasNormal_L;
+                    arrayResultante[index].totalHorasExtra_L = sumatorioHorasExtra_L;
+                    arrayResultante[index].totalHorasNormal_C = sumatorioHorasNormal_C;
+                    arrayResultante[index].totalHorasExtra_C = sumatorioHorasExtra_C;
+                    arrayResultante[index].totalHorasNormal_E = sumatorioHorasNormal_E;
+                    arrayResultante[index].totalHorasExtra_E = sumatorioHorasExtra_E;
+                    arrayResultante[index].totalHorasNormal_I = sumatorioHorasNormal_I;
+                    arrayResultante[index].totalHorasExtra_I = sumatorioHorasExtra_I;
+                    arrayResultante[index].totalHorasNormal_Z = sumatorioHorasNormal_Z;
+                    arrayResultante[index].totalHorasExtra_Z = sumatorioHorasExtra_Z;
+                    arrayResultante[index].totalHorasNormal_T = sumatorioHorasNormal_T;
+                    arrayResultante[index].totalHorasExtra_T = sumatorioHorasExtra_T;
+                    arrayResultante[index].totalHorasNormal_P = sumatorioHorasNormal_P;
+                    arrayResultante[index].totalHorasExtra_P = sumatorioHorasExtra_P;
+                    arrayResultante[index].totalHoras = sumatorioHoras;
+                }
+                break;
+            case 'cantidad':
+                arrayResultante.push({
+                    trabajador: cuadranteColumna.idTrabajador,
+                    //trabajadorNombre: cuadranteColumna.nombreTrabajador,
+                    tipo: cuadranteColumna.tipoTrabajador,
+                    computo: [],
+                    totalHorasNormal_L: null,
+                    totalHorasExtra_L: null,
+                    totalHorasNormal_C: null,
+                    totalHorasExtra_C: null,
+                    totalHorasNormal_E: null,
+                    totalHorasExtra_E: null,
+                    totalHorasNormal_I: null,
+                    totalHorasExtra_I: null,
+                    totalHorasNormal_Z: null,
+                    totalHorasExtra_Z: null,
+                    totalHorasNormal_T: null,
+                    totalHorasExtra_T: null,
+                    totalHorasNormal_P: null,
+                    totalHorasExtra_P: null,
+                    totalHoras: null
+                });
+                sumatorioHoras = 0;
+                sumatorioHorasNormal_L = 0;
+                sumatorioHorasExtra_L = 0;
+                sumatorioHorasNormal_C = 0;
+                sumatorioHorasExtra_C = 0;
+                sumatorioHorasNormal_E = 0;
+                sumatorioHorasExtra_E = 0;
+                sumatorioHorasNormal_I = 0;
+                sumatorioHorasExtra_I = 0;
+                sumatorioHorasNormal_Z = 0;
+                sumatorioHorasExtra_Z = 0;
+                sumatorioHorasNormal_T = 0;
+                sumatorioHorasExtra_T = 0;
+                sumatorioHorasNormal_P = 0;
+                sumatorioHorasExtra_P = 0;
+                for (const prop in cuadranteColumna) {
+                    if (prop.includes('Lunes')) {
+                        const mySplit = prop.split('Lunes');
+                        if (cuadranteColumna[prop].lunesCantidad) {
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = cuadranteColumna[prop].lunesCantidad / 60;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].lunesCantidad / 60;
+                                        lasHorasExtra = 30 / 60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].lunesCantidad / 60;
+                                        lasHorasExtra = 60 / 60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].lunesCantidad / 60;
+                                        lasHorasExtra = 90 / 60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].lunesCantidad / 60;
+                                        lasHorasExtra = 120 / 60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = cuadranteColumna[prop].lunesCantidad / 60;
+                                lasHorasExtra = null;
+                            };
+                            switch (cuadranteColumna[prop].tipoServicio) {
+                                case 'LIM':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Lunes-' + mySplit[1],
+                                        horasNormal_L: lasHorasNormal,
+                                        horasExtra_L: lasHorasExtra,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_L += lasHorasNormal;
+                                    sumatorioHorasExtra_L += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRIS':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Lunes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: lasHorasNormal,
+                                        horasExtra_C: lasHorasExtra,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_C += lasHorasNormal;
+                                    sumatorioHorasExtra_C += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISE':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Lunes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: lasHorasNormal,
+                                        horasExtra_E: lasHorasExtra,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_E += lasHorasNormal;
+                                    sumatorioHorasExtra_E += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISI':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Lunes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: lasHorasNormal,
+                                        horasExtra_I: lasHorasExtra,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_I += lasHorasNormal;
+                                    sumatorioHorasExtra_I += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIME':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Lunes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: lasHorasNormal,
+                                        horasExtra_Z: lasHorasExtra,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_Z += lasHorasNormal;
+                                    sumatorioHorasExtra_Z += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'TOL':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Lunes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: lasHorasNormal,
+                                        horasExtra_T: lasHorasExtra,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_T += lasHorasNormal;
+                                    sumatorioHorasExtra_T += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIMP':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Lunes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: lasHorasNormal,
+                                        horasExtra_P: lasHorasExtra,
+                                    });
+                                    sumatorioHorasNormal_P += lasHorasNormal;
+                                    sumatorioHorasExtra_P += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                default:
+                            }
+                        }
+                    };
+                    if (prop.includes('Martes')) {
+                        const mySplit = prop.split('Martes');
+                        if (cuadranteColumna[prop].martesCantidad) {
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = cuadranteColumna[prop].martesCantidad / 60;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].martesCantidad / 60;
+                                        lasHorasExtra = 30 / 60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].martesCantidad / 60;
+                                        lasHorasExtra = 60 / 60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].martesCantidad / 60;
+                                        lasHorasExtra = 90 / 60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].martesCantidad / 60;
+                                        lasHorasExtra = 120 / 60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = cuadranteColumna[prop].martesCantidad / 60;
+                                lasHorasExtra = null;
+                            };
+                            switch (cuadranteColumna[prop].tipoServicio) {
+                                case 'LIM':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Martes-' + mySplit[1],
+                                        horasNormal_L: lasHorasNormal,
+                                        horasExtra_L: lasHorasExtra,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_L += lasHorasNormal;
+                                    sumatorioHorasExtra_L += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRIS':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Martes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: lasHorasNormal,
+                                        horasExtra_C: lasHorasExtra,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_C += lasHorasNormal;
+                                    sumatorioHorasExtra_C += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISE':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Martes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: lasHorasNormal,
+                                        horasExtra_E: lasHorasExtra,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_E += lasHorasNormal;
+                                    sumatorioHorasExtra_E += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISI':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Martes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: lasHorasNormal,
+                                        horasExtra_I: lasHorasExtra,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_I += lasHorasNormal;
+                                    sumatorioHorasExtra_I += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIME':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Martes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: lasHorasNormal,
+                                        horasExtra_Z: lasHorasExtra,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_Z += lasHorasNormal;
+                                    sumatorioHorasExtra_Z += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'TOL':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Martes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: lasHorasNormal,
+                                        horasExtra_T: lasHorasExtra,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_T += lasHorasNormal;
+                                    sumatorioHorasExtra_T += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIMP':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Martes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: lasHorasNormal,
+                                        horasExtra_P: lasHorasExtra,
+                                    });
+                                    sumatorioHorasNormal_P += lasHorasNormal;
+                                    sumatorioHorasExtra_P += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                default:
+                            }
+                        }
+                    };
+                    if (prop.includes('Miércoles')) {
+                        const mySplit = prop.split('Miércoles');
+                        if (cuadranteColumna[prop].miercolesCantidad) {
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = cuadranteColumna[prop].miercolesCantidad / 60;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].miercolesCantidad / 60;
+                                        lasHorasExtra = 30 / 60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].miercolesCantidad / 60;
+                                        lasHorasExtra = 60 / 60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].miercolesCantidad / 60;
+                                        lasHorasExtra = 90 / 60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].miercolesCantidad / 60;
+                                        lasHorasExtra = 120 / 60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = cuadranteColumna[prop].miercolesCantidad / 60;
+                                lasHorasExtra = null;
+                            };
+                            switch (cuadranteColumna[prop].tipoServicio) {
+                                case 'LIM':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Miércoles-' + mySplit[1],
+                                        horasNormal_L: lasHorasNormal,
+                                        horasExtra_L: lasHorasExtra,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_L += lasHorasNormal;
+                                    sumatorioHorasExtra_L += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRIS':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Miércoles-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: lasHorasNormal,
+                                        horasExtra_C: lasHorasExtra,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_C += lasHorasNormal;
+                                    sumatorioHorasExtra_C += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISE':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Miércoles-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: lasHorasNormal,
+                                        horasExtra_E: lasHorasExtra,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_E += lasHorasNormal;
+                                    sumatorioHorasExtra_E += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISI':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Miércoles-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: lasHorasNormal,
+                                        horasExtra_I: lasHorasExtra,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_I += lasHorasNormal;
+                                    sumatorioHorasExtra_I += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIME':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Miércoles-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: lasHorasNormal,
+                                        horasExtra_Z: lasHorasExtra,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_Z += lasHorasNormal;
+                                    sumatorioHorasExtra_Z += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'TOL':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Miércoles-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: lasHorasNormal,
+                                        horasExtra_T: lasHorasExtra,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_T += lasHorasNormal;
+                                    sumatorioHorasExtra_T += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIMP':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Miércoles-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: lasHorasNormal,
+                                        horasExtra_P: lasHorasExtra,
+                                    });
+                                    sumatorioHorasNormal_P += lasHorasNormal;
+                                    sumatorioHorasExtra_P += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                default:
+                            }
+                        }
+                    };
+                    if (prop.includes('Jueves')) {
+                        const mySplit = prop.split('Jueves');
+                        if (cuadranteColumna[prop].juevesCantidad) {
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = cuadranteColumna[prop].juevesCantidad / 60;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].juevesCantidad / 60;
+                                        lasHorasExtra = 30 / 60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].juevesCantidad / 60;
+                                        lasHorasExtra = 60 / 60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].juevesCantidad / 60;
+                                        lasHorasExtra = 90 / 60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].juevesCantidad / 60;
+                                        lasHorasExtra = 120 / 60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = cuadranteColumna[prop].juevesCantidad / 60;
+                                lasHorasExtra = null;
+                            };
+                            switch (cuadranteColumna[prop].tipoServicio) {
+                                case 'LIM':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Jueves-' + mySplit[1],
+                                        horasNormal_L: lasHorasNormal,
+                                        horasExtra_L: lasHorasExtra,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_L += lasHorasNormal;
+                                    sumatorioHorasExtra_L += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRIS':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Jueves-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: lasHorasNormal,
+                                        horasExtra_C: lasHorasExtra,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_C += lasHorasNormal;
+                                    sumatorioHorasExtra_C += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISE':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Jueves-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: lasHorasNormal,
+                                        horasExtra_E: lasHorasExtra,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_E += lasHorasNormal;
+                                    sumatorioHorasExtra_E += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISI':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Jueves-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: lasHorasNormal,
+                                        horasExtra_I: lasHorasExtra,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_I += lasHorasNormal;
+                                    sumatorioHorasExtra_I += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIME':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Jueves-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: lasHorasNormal,
+                                        horasExtra_Z: lasHorasExtra,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_Z += lasHorasNormal;
+                                    sumatorioHorasExtra_Z += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'TOL':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Jueves-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: lasHorasNormal,
+                                        horasExtra_T: lasHorasExtra,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_T += lasHorasNormal;
+                                    sumatorioHorasExtra_T += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIMP':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Jueves-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: lasHorasNormal,
+                                        horasExtra_P: lasHorasExtra,
+                                    });
+                                    sumatorioHorasNormal_P += lasHorasNormal;
+                                    sumatorioHorasExtra_P += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                default:
+                            }
+                        }
+                    };
+                    if (prop.includes('Viernes')) {
+                        const mySplit = prop.split('Viernes');
+                        if (cuadranteColumna[prop].viernesCantidad) {
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = cuadranteColumna[prop].viernesCantidad / 60;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].viernesCantidad / 60;
+                                        lasHorasExtra = 30 / 60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].viernesCantidad / 60;
+                                        lasHorasExtra = 60 / 60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].viernesCantidad / 60;
+                                        lasHorasExtra = 90 / 60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].viernesCantidad / 60;
+                                        lasHorasExtra = 120 / 60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = cuadranteColumna[prop].viernesCantidad / 60;
+                                lasHorasExtra = null;
+                            };
+                            switch (cuadranteColumna[prop].tipoServicio) {
+                                case 'LIM':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Viernes-' + mySplit[1],
+                                        horasNormal_L: lasHorasNormal,
+                                        horasExtra_L: lasHorasExtra,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_L += lasHorasNormal;
+                                    sumatorioHorasExtra_L += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRIS':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Viernes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: lasHorasNormal,
+                                        horasExtra_C: lasHorasExtra,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_C += lasHorasNormal;
+                                    sumatorioHorasExtra_C += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISE':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Viernes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: lasHorasNormal,
+                                        horasExtra_E: lasHorasExtra,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_E += lasHorasNormal;
+                                    sumatorioHorasExtra_E += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISI':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Viernes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: lasHorasNormal,
+                                        horasExtra_I: lasHorasExtra,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_I += lasHorasNormal;
+                                    sumatorioHorasExtra_I += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIME':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Viernes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: lasHorasNormal,
+                                        horasExtra_Z: lasHorasExtra,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_Z += lasHorasNormal;
+                                    sumatorioHorasExtra_Z += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'TOL':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Viernes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: lasHorasNormal,
+                                        horasExtra_T: lasHorasExtra,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_T += lasHorasNormal;
+                                    sumatorioHorasExtra_T += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIMP':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Viernes-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: lasHorasNormal,
+                                        horasExtra_P: lasHorasExtra,
+                                    });
+                                    sumatorioHorasNormal_P += lasHorasNormal;
+                                    sumatorioHorasExtra_P += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                default:
+                            }
+                        }
+                    };
+                    if (prop.includes('Sábado')) {
+                        const mySplit = prop.split('Sábado');
+                        if (cuadranteColumna[prop].sabadoCantidad) {
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = cuadranteColumna[prop].sabadoCantidad / 60;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].sabadoCantidad / 60;
+                                        lasHorasExtra = 30 / 60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].sabadoCantidad / 60;
+                                        lasHorasExtra = 60 / 60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].sabadoCantidad / 60;
+                                        lasHorasExtra = 90 / 60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].sabadoCantidad / 60;
+                                        lasHorasExtra = 120 / 60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = cuadranteColumna[prop].sabadoCantidad / 60;
+                                lasHorasExtra = null;
+                            };
+                            switch (cuadranteColumna[prop].tipoServicio) {
+                                case 'LIM':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Sábado-' + mySplit[1],
+                                        horasNormal_L: lasHorasNormal,
+                                        horasExtra_L: lasHorasExtra,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_L += lasHorasNormal;
+                                    sumatorioHorasExtra_L += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRIS':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Sábado-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: lasHorasNormal,
+                                        horasExtra_C: lasHorasExtra,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_C += lasHorasNormal;
+                                    sumatorioHorasExtra_C += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISE':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Sábado-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: lasHorasNormal,
+                                        horasExtra_E: lasHorasExtra,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_E += lasHorasNormal;
+                                    sumatorioHorasExtra_E += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISI':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Sábado-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: lasHorasNormal,
+                                        horasExtra_I: lasHorasExtra,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_I += lasHorasNormal;
+                                    sumatorioHorasExtra_I += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIME':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Sábado-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: lasHorasNormal,
+                                        horasExtra_Z: lasHorasExtra,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_Z += lasHorasNormal;
+                                    sumatorioHorasExtra_Z += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'TOL':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Sábado-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: lasHorasNormal,
+                                        horasExtra_T: lasHorasExtra,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_T += lasHorasNormal;
+                                    sumatorioHorasExtra_T += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIMP':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Sábado-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: lasHorasNormal,
+                                        horasExtra_P: lasHorasExtra,
+                                    });
+                                    sumatorioHorasNormal_P += lasHorasNormal;
+                                    sumatorioHorasExtra_P += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                default:
+                            }
+                        }
+                    };
+                    if (prop.includes('Domingo')) {
+                        const mySplit = prop.split('Domingo');
+                        if (cuadranteColumna[prop].domingoCantidad) {
+                            if (cuadranteColumna[prop].tipoVariacion) {
+                                switch (cuadranteColumna[prop].tipoVariacion) {
+                                    case 1:
+                                        //'Considerar como horas extra'
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = cuadranteColumna[prop].domingoCantidad / 60;
+                                        break;
+                                    case 2:
+                                        //'Añadir 0.5 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].domingoCantidad / 60;
+                                        lasHorasExtra = 30 / 60;
+                                        break;
+                                    case 3:
+                                        //'Añadir 1 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].domingoCantidad / 60;
+                                        lasHorasExtra = 60 / 60;
+                                        break;
+                                    case 4:
+                                        //'Añadir 1.5 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].domingoCantidad / 60;
+                                        lasHorasExtra = 90 / 60;
+                                        break;
+                                    case 5:
+                                        //'Añadir 2 horas extra de trabajo'
+                                        lasHorasNormal = cuadranteColumna[prop].domingoCantidad / 60;
+                                        lasHorasExtra = 120 / 60;
+                                        break;
+                                    case 6:
+                                        //'Horas especiales (+15%)'
+                                        break;
+                                    default:
+                                }
+                            } else {
+                                lasHorasNormal = cuadranteColumna[prop].domingoCantidad / 60;
+                                lasHorasExtra = null;
+                            };
+                            switch (cuadranteColumna[prop].tipoServicio) {
+                                case 'LIM':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Domingo-' + mySplit[1],
+                                        horasNormal_L: lasHorasNormal,
+                                        horasExtra_L: lasHorasExtra,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_L += lasHorasNormal;
+                                    sumatorioHorasExtra_L += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRIS':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Domingo-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: lasHorasNormal,
+                                        horasExtra_C: lasHorasExtra,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_C += lasHorasNormal;
+                                    sumatorioHorasExtra_C += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISE':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Domingo-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: lasHorasNormal,
+                                        horasExtra_E: lasHorasExtra,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_E += lasHorasNormal;
+                                    sumatorioHorasExtra_E += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'CRISI':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Domingo-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: lasHorasNormal,
+                                        horasExtra_I: lasHorasExtra,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_I += lasHorasNormal;
+                                    sumatorioHorasExtra_I += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIME':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Domingo-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: lasHorasNormal,
+                                        horasExtra_Z: lasHorasExtra,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_Z += lasHorasNormal;
+                                    sumatorioHorasExtra_Z += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'TOL':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Domingo-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: lasHorasNormal,
+                                        horasExtra_T: lasHorasExtra,
+                                        horasNormal_P: null,
+                                        horasExtra_P: null,
+                                    });
+                                    sumatorioHorasNormal_T += lasHorasNormal;
+                                    sumatorioHorasExtra_T += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                case 'LIMP':
+                                    arrayResultante[index].computo.push({
+                                        dia: 'Domingo-' + mySplit[1],
+                                        horasNormal_L: null,
+                                        horasExtra_L: null,
+                                        horasNormal_C: null,
+                                        horasExtra_C: null,
+                                        horasNormal_E: null,
+                                        horasExtra_E: null,
+                                        horasNormal_I: null,
+                                        horasExtra_I: null,
+                                        horasNormal_Z: null,
+                                        horasExtra_Z: null,
+                                        horasNormal_T: null,
+                                        horasExtra_T: null,
+                                        horasNormal_P: lasHorasNormal,
+                                        horasExtra_P: lasHorasExtra,
+                                    });
+                                    sumatorioHorasNormal_P += lasHorasNormal;
+                                    sumatorioHorasExtra_P += lasHorasExtra;
+                                    sumatorioHoras += (lasHorasNormal + lasHorasExtra);
+                                    break;
+                                default:
+                            }
+                        }
+                    };
+                    arrayResultante[index].totalHorasNormal_L = sumatorioHorasNormal_L;
+                    arrayResultante[index].totalHorasExtra_L = sumatorioHorasExtra_L;
+                    arrayResultante[index].totalHorasNormal_C = sumatorioHorasNormal_C;
+                    arrayResultante[index].totalHorasExtra_C = sumatorioHorasExtra_C;
+                    arrayResultante[index].totalHorasNormal_E = sumatorioHorasNormal_E;
+                    arrayResultante[index].totalHorasExtra_E = sumatorioHorasExtra_E;
+                    arrayResultante[index].totalHorasNormal_I = sumatorioHorasNormal_I;
+                    arrayResultante[index].totalHorasExtra_I = sumatorioHorasExtra_I;
+                    arrayResultante[index].totalHorasNormal_Z = sumatorioHorasNormal_Z;
+                    arrayResultante[index].totalHorasExtra_Z = sumatorioHorasExtra_Z;
+                    arrayResultante[index].totalHorasNormal_T = sumatorioHorasNormal_T;
+                    arrayResultante[index].totalHorasExtra_T = sumatorioHorasExtra_T;
+                    arrayResultante[index].totalHorasNormal_P = sumatorioHorasNormal_P;
+                    arrayResultante[index].totalHorasExtra_P = sumatorioHorasExtra_P;
+                    arrayResultante[index].totalHoras = sumatorioHoras;
+                }
+                break;
+            default:
+        }
+    });
+    return arrayResultante;
+};

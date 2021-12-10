@@ -24,7 +24,7 @@ import Clases from "../clases";
 
 const cantidadHoras = Constantes.CANTIDAD_HORAS_CENTROS;
 const variaciones = Constantes.VARIACIONES_CUADRANTES;
-
+const tiposServicios = Constantes.TIPO_SERVICIO;
 
 const ItemCuadrante = (props) => {
 
@@ -44,6 +44,7 @@ const ItemCuadrante = (props) => {
         observaciones: props.prObservaciones || '',
         visibleVariaciones: props.prVisibleVariaciones || false,
         tipoVariacion: props.prTipoVariacion || '',
+        tipoServicio: props.prValueTipoServicio || '',
     });
 
     //useEffect
@@ -78,7 +79,12 @@ const ItemCuadrante = (props) => {
     const handleChangeTipoVariaciones = (index) => (e) => {
         props.prHandleChangeTipoVariaciones(index, e);
     };
+    const handleChangeTipoServicio = (index) => (e) => {
+        props.prHandleChangeTipoServicio(index, e);
+    };
 
+    //retorno componentes
+    
     const retornaBotonVariaciones = () => {        
         if (!props.prVisibleVariaciones) {
             if ((props.prTipo === 'rango' && !props.prValueTimePickerInicio) || (props.prTipo === 'rangoDescanso' && !props.prValueTimePickerInicio1) || (props.prTipo === 'cantidad' && !props.prValueCantidadHoras)) {
@@ -120,6 +126,37 @@ const ItemCuadrante = (props) => {
                 </Tooltip>
             )
         }
+    };
+
+    const retornaSelectTipoServicio = () => {
+        return (
+            <FormControl
+                variant="outlined"
+                className={classes.formTipo2}
+            >
+                <InputLabel>Tipo Servicio</InputLabel>
+                <Select
+                    fullWidth
+                    id="form-tipo-servicio-cuadrante"
+                    name={props.prTipo === 'rango' ? ('tipoServicioSelect-' + props.prIdInicio) : props.prTipo === 'rangoDescanso' ? ('tipoServicioSelect-' + props.prIdInicio1) : ('tipoServicioSelect-' + props.prIdCantidad)}
+                    label="Tipo servicio"
+                    value={props.prValueTipoServicio}
+                    onChange={handleChangeTipoServicio(props.prIndex)}
+                    helpertext="Selecciona tipo de servicio"
+                >
+                    <MenuItem value=''>
+                        <em>No</em>
+                    </MenuItem>
+                    {
+                        tiposServicios.map((option) => (
+                            <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                            </MenuItem>
+                        ))
+                    }
+                </Select>
+            </FormControl>
+        )
     };
 
     return (
@@ -165,9 +202,10 @@ const ItemCuadrante = (props) => {
                                 onChange={handleChangeTimePickerFinCuadrante(props.prIdFin, props.prIndex, props.prValueTimePickerInicio)}
                             />
                         </MuiPickersUtilsProvider>
-                    </Grid>
+                    </Grid>                   
                 </Box>
             ) : props.prTipo === 'cantidad' ? (
+                <Fragment>
                 <Grid item xs={12}>
                     <FormControl
                         variant="outlined"
@@ -196,7 +234,8 @@ const ItemCuadrante = (props) => {
                         </Select>
                     </FormControl>
                 </Grid>
-            ) : props.prTipo === "rangoDescanso" ? (
+               </Fragment>
+            ) : props.prTipo === "rangoDescanso" ? (                
                 <Fragment>
                     <Box style={{ display: 'flex', flexDirection: 'row', justifycontent: 'flex-start', alignItems: 'flex-start' }}>
                         <Grid item xs={6}>
@@ -267,6 +306,9 @@ const ItemCuadrante = (props) => {
                     </Box>
                 </Fragment>
             ) : null}
+            <Box className={classes.mt15}>
+            {retornaSelectTipoServicio()}
+            </Box>          
             <Box className={classes.mt15}>
                 <TextField
                     label="Observaciones"

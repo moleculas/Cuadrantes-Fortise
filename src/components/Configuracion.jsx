@@ -27,6 +27,7 @@ import OutlinedInput from '@material-ui/core/OutlinedInput';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Divider from '@material-ui/core/Divider';
 import TextField from '@material-ui/core/TextField';
+import clsx from 'clsx';
 
 //carga componentes
 import DialogComponente from './DialogComponente';
@@ -123,7 +124,16 @@ const Configuracion = (props) => {
     const [valuesFormConfiguracion, setValuesFormConfiguracion] = useState({
         precioHoraNormal: null,
         precioHoraExtra: null,
-        mensajeMailCentros: ''
+        mensajeMailCentros: '',
+        cuenta1: {
+            iban: '',
+            bic: '',
+            nombreBanco: '',
+            entidad: '',
+            oficina: '',
+            digitosControl: '',
+            numeroCuenta: ''
+        },
     });
     const [openLoading, setOpenLoading] = useState(false);
 
@@ -184,6 +194,15 @@ const Configuracion = (props) => {
                 precioHoraNormal: objetoConfiguracion.precioHoraNormal,
                 precioHoraExtra: objetoConfiguracion.precioHoraExtra,
                 mensajeMailCentros: objetoConfiguracion.mensajeMailCentros,
+                cuenta1: {
+                    iban: objetoConfiguracion.cuenta1.iban,
+                    bic: objetoConfiguracion.cuenta1.bic,
+                    nombreBanco: objetoConfiguracion.cuenta1.nombreBanco,
+                    entidad: objetoConfiguracion.cuenta1.entidad,
+                    oficina: objetoConfiguracion.cuenta1.oficina,
+                    digitosControl: objetoConfiguracion.cuenta1.digitosControl,
+                    numeroCuenta: objetoConfiguracion.cuenta1.numeroCuenta
+                },
             })
         }
     }, [objetoConfiguracion]);
@@ -224,11 +243,29 @@ const Configuracion = (props) => {
             if (IsNumeric(e.target.value)) {
                 setValuesFormConfiguracion({ ...valuesFormConfiguracion, [prop]: e.target.value });
             }
-
         }
         if (prop === "mensajeMailCentros") {
             setValuesFormConfiguracion({ ...valuesFormConfiguracion, [prop]: e.target.value });
         }
+        if (prop === "bic" || prop === "nombreBanco") {
+            let objetoCuenta = { ...valuesFormConfiguracion.cuenta1, [prop]: e.target.value };
+            setValuesFormConfiguracion({ ...valuesFormConfiguracion, cuenta1: objetoCuenta });
+        };       
+        if (prop === "iban") {           
+            const elIban = e.target.value;            
+            const decEntidad = elIban.substr(4, 4);
+            const decOficina = elIban.substr(8, 4);
+            const decDigitosControl = elIban.substr(12, 2);
+            const decNumeroCuenta = elIban.substr(14, 10);
+            let objetoCuenta = { ...valuesFormConfiguracion.cuenta1, 
+                [prop]: e.target.value,
+                entidad: decEntidad,
+                oficina: decOficina,
+                digitosControl: decDigitosControl,
+                numeroCuenta: decNumeroCuenta
+            };           
+            setValuesFormConfiguracion({ ...valuesFormConfiguracion, cuenta1: objetoCuenta });
+        };
         dispatch(activarDesactivarAccion(false));
         dispatch(registrarIntervencionAccion(false));
     };
@@ -253,9 +290,22 @@ const Configuracion = (props) => {
 
     const procesarDatosConfiguracion = () => {
         //comprobamos que no haya campos vacíos
-        if (!valuesFormConfiguracion.precioHoraNormal || !valuesFormConfiguracion.precioHoraExtra || valuesFormConfiguracion.mensajeMailCentros === '') {
+        if (!valuesFormConfiguracion.precioHoraNormal ||
+            !valuesFormConfiguracion.precioHoraExtra ||
+            valuesFormConfiguracion.mensajeMailCentros === '' ||
+            valuesFormConfiguracion.cuenta1.iban === '' ||
+            valuesFormConfiguracion.cuenta1.bic === '' ||
+            valuesFormConfiguracion.cuenta1.nombreBanco === '') {
             setAlert({
                 mensaje: "Faltan datos por completar. Revisa el formulario.",
+                tipo: 'error'
+            })
+            setOpenSnack(true);
+            return;
+        };
+        if (valuesFormConfiguracion.cuenta1.iban.length !==24) {
+            setAlert({
+                mensaje: "El formato del IBAN es incorrecto.",
                 tipo: 'error'
             })
             setOpenSnack(true);
@@ -328,6 +378,9 @@ const Configuracion = (props) => {
                                     </Tooltip>
                                     <Tooltip title="Modificar mensajes predeterminados en mails" placement="top-end" arrow>
                                         <Tab label="Plantillas mails" {...a11yProps(1)} />
+                                    </Tooltip>
+                                    <Tooltip title="Modificar datos bancarios" placement="top-end" arrow>
+                                        <Tab label="Datos bancarios" {...a11yProps(2)} />
                                     </Tooltip>
                                 </Tabs>
                             </AppBar>
@@ -403,9 +456,11 @@ const Configuracion = (props) => {
                                             >
                                                 Configuración mensajes predeterminados mails
                                             </Box>
-                                            <Box p={1} className={classes.mb25}>
-                                                <Typography variant="body1">Mensaje envío factura Centro</Typography>
-                                                <Divider />
+                                            <Box
+                                                m={0.5}
+                                                className={clsx(classes.mb25, classes.tituloSecundario)}
+                                            >
+                                                Mensaje envío factura Centro
                                             </Box>
                                             <TextField
                                                 className={classes.form}
@@ -423,11 +478,88 @@ const Configuracion = (props) => {
                                     </Grid>
                                 </Grid>
                             </TabPanel>
+                            <TabPanel value={valueTab} index={2} className={classes.scrollable} style={{ height: heightScrollable }}>
+                                <Grid
+                                    container
+                                    direction="row"
+                                    justifycontent="flex-start"
+                                    alignItems="flex-start"
+                                    spacing={2}
+                                >
+                                    <Grid item lg={4} sm={4} xs={12}>
+                                        <Box>
+                                            <Box
+                                                p={1.5}
+                                                m={0.5}
+                                                bgcolor="secondary.light"
+                                                color="secondary.contrastText"
+                                                className={classes.mb25}
+                                            >
+                                                Datos bancarios
+                                            </Box>
+                                            <Box
+                                                m={0.5}
+                                                className={clsx(classes.mb25, classes.tituloSecundario)}
+                                            >
+                                                Cuenta corriente para ingresos
+                                            </Box>
+                                            <FormControl
+                                                variant="outlined"
+                                                className={classes.form}
+                                            >
+                                                <InputLabel>Nombre del banco</InputLabel>
+                                                <OutlinedInput
+                                                    className={classes.mb15}
+                                                    fullWidth
+                                                    id="form-configuracion-hora-normal"
+                                                    value={valuesFormConfiguracion.cuenta1.nombreBanco || ''}
+                                                    onChange={handleChangeFormConfiguracion('nombreBanco')}
+                                                    labelWidth={135}
+                                                />
+                                            </FormControl>                                           
+                                            <Grid container>
+                                                <Grid item xs={8}>
+                                                    <FormControl
+                                                        variant="outlined"
+                                                        className={classes.form}
+                                                    >
+                                                        <InputLabel>IBAN</InputLabel>
+                                                        <OutlinedInput
+                                                            className={classes.mb15}
+                                                            fullWidth
+                                                            id="form-configuracion-hora-normal"
+                                                            value={valuesFormConfiguracion.cuenta1.iban || ''}
+                                                            onChange={handleChangeFormConfiguracion('iban')}
+                                                            labelWidth={40}
+                                                        />
+                                                    </FormControl>
+                                                </Grid>
+                                                <Grid item xs={4}>
+                                                    <FormControl
+                                                        variant="outlined"
+                                                        className={classes.form}
+                                                    >
+                                                        <InputLabel>BIC</InputLabel>
+                                                        <OutlinedInput
+                                                            className={classes.mb15}
+                                                            fullWidth
+                                                            id="form-configuracion-hora-normal"
+                                                            value={valuesFormConfiguracion.cuenta1.bic || ''}
+                                                            onChange={handleChangeFormConfiguracion('bic')}
+                                                            labelWidth={35}
+                                                        />
+                                                    </FormControl>
+                                                </Grid>
+                                            </Grid>                                            
+                                        </Box>
+                                    </Grid>
+                                </Grid>
+                            </TabPanel>
                         </div>
                     </Box>
                 </Grid>
             </Grid>
-            <Snackbar open={openSnack} autoHideDuration={6000} onClose={handleCloseSnack}>
+            <Snackbar open={openSnack} autoHideDuration={12000} onClose={handleCloseSnack}>
                 <Alert severity={alert.tipo} onClose={handleCloseSnack}>
                     {alert.mensaje}
                 </Alert>

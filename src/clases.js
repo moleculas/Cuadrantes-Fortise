@@ -1,5 +1,5 @@
 import { makeStyles } from "@material-ui/core";
-import { amber, blueGrey, green, lime, indigo, red } from '@material-ui/core/colors';
+import { amber, blueGrey, green, lime, indigo, red, grey, blue } from '@material-ui/core/colors';
 
 const Clases = makeStyles((theme) => ({
     //loading
@@ -77,6 +77,16 @@ const Clases = makeStyles((theme) => ({
         display: 'flex',
         marginRight: -10,
         flexDirection: 'row',
+        justifyContent: 'flex-start',
+        flexWrap: 'wrap',
+        '& > *': {
+            margin: theme.spacing(0),
+        },
+    },
+    formTipo2: {
+        display: 'flex',
+        flexDirection: 'row',
+        marginTop: 15,
         justifyContent: 'flex-start',
         flexWrap: 'wrap',
         '& > *': {
@@ -174,7 +184,10 @@ const Clases = makeStyles((theme) => ({
         color: 'white'
     },
     gris: {
-        color: '#b4af9f'
+        color: grey[400]
+    },
+    vermell: {
+        color: red[500]
     },
     mb15: {
         marginBottom: 15,
@@ -372,6 +385,9 @@ const Clases = makeStyles((theme) => ({
     displayNone: {
         display: 'none !important'
     },
+    displayBlock: {
+        display: 'block !important'
+    },
     fab: {
         position: 'absolute',
         bottom: theme.spacing(4),
@@ -383,7 +399,7 @@ const Clases = makeStyles((theme) => ({
     },
     alignRight: {
         display: 'flex',
-        flexDirection: 'row-reverse',       
+        flexDirection: 'row-reverse',
     },
     paper: {
         backgroundColor: theme.palette.background.paper,
@@ -443,6 +459,12 @@ const Clases = makeStyles((theme) => ({
         width: theme.spacing(4),
         height: theme.spacing(4),
     },
+    small2: {
+        width: theme.spacing(2.75),
+        height: theme.spacing(2.75),
+        fontSize: '0.9rem',
+        marginLeft: 5,            
+    },
     link: {
         textDecoration: 'none',
         color: 'inherit'
@@ -464,6 +486,34 @@ const Clases = makeStyles((theme) => ({
     },
     cursorDefault: {
         cursor: 'default'
+    },  
+    tipoServ1:{
+        backgroundColor: green[400]
+    },
+    tipoServ2:{
+        backgroundColor: blue[400]
+    },
+    tipoServ3:{
+        backgroundColor: indigo[400]
+    },
+    tipoServ4:{
+        backgroundColor: amber[400]
+    },
+    tipoServ5:{
+        backgroundColor: red[400]
+    },
+    tipoServ6:{
+        backgroundColor: lime[600]
+    },
+    tipoServ7:{
+        backgroundColor: blueGrey[400]
+    },
+    tituloSecundario:{
+        paddingBottom: 5, 
+        paddingTop: 5, 
+        paddingLeft: 15,
+        backgroundColor: theme.palette.primary.light,
+        color: theme.palette.primary.contrastText
     }
 }));
 

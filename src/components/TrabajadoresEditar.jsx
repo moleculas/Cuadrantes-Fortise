@@ -864,7 +864,7 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                     </Grid>
                 </Grid>
             </Fragment>
-            <Snackbar open={openSnack} autoHideDuration={6000} onClose={handleCloseSnack}>
+            <Snackbar open={openSnack} autoHideDuration={12000} onClose={handleCloseSnack}>
                 <Alert severity={alert.tipo} onClose={handleCloseSnack}>
                     {alert.mensaje}
                 </Alert>

@@ -17,7 +17,16 @@ const dataInicial = {
     objetoConfiguracion: {
         precioHoraNormal: null,
         precioHoraExtra: null,
-        mensajeMailCentros: ''
+        mensajeMailCentros: '',
+        cuenta1: {
+            iban: '',
+            bic: '',
+            nombreBanco: '',
+            entidad: '',
+            oficina: '',
+            digitosControl: '',
+            numeroCuenta: ''
+        },
     },
     exitoActualizacionConfiguracion: false,
 }
@@ -427,7 +436,16 @@ export const vaciarDatosConfiguracionAccion = () => (dispatch, getState) => {
         payload: {
             precioHoraNormal: null,
             precioHoraExtra: null,
-            mensajeMailCentros: ''
+            mensajeMailCentros: '',
+            cuenta1: {
+                iban: '',
+                bic: '',
+                nombreBanco: '',
+                entidad: '',
+                oficina: '',
+                digitosControl: '',
+                numeroCuenta: ''
+            },
         }
     });
 }

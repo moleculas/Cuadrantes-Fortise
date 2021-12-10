@@ -163,25 +163,29 @@ const Trabajadores = (props) => {
     const procesarDatosEdicionParent = () => {
         if (funcionesEnTrabajadoresEditarRef.current) {
             funcionesEnTrabajadoresEditarRef.current.funcionesEnTrabajadoresEditar('procesarDatosEdicion');
-        }
+        };
+        handleCloseMenu();
     };
 
     const eliminarTrabajadorParent = () => {
         if (funcionesEnTrabajadoresEditarRef.current) {
             funcionesEnTrabajadoresEditarRef.current.funcionesEnTrabajadoresEditar('eliminarTrabajador');
-        }
+        };
+        handleCloseMenu();
     };
 
     const procesarDatosRegistroParent = () => {
         if (funcionesEnTrabajadoresRegistrarRef.current) {
             funcionesEnTrabajadoresRegistrarRef.current.funcionesEnTrabajadoresRegistrar('procesarDatosRegistro');
-        }
+        };
+        handleCloseMenu();
     };
 
     const nuevoTrabajadorParent = () => {
         if (funcionesEnTrabajadoresRegistrarRef.current) {
             funcionesEnTrabajadoresRegistrarRef.current.funcionesEnTrabajadoresRegistrar('nuevoTrabajador');
-        }
+        };
+        handleCloseMenu();
     };
 
     //dialog

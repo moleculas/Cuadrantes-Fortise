@@ -148,7 +148,8 @@ const Constantes = {
     ],
     COMPUTO_HORAS: [
         { value: 1, label: 'Total mensual pactado' },
-        { value: 2, label: 'Precio hora estipulado' }
+        { value: 2, label: 'Precio hora estipulado' },
+        { value: 3, label: 'Gestión especial horas' }
     ],
     TIPO_SERVICIO: [
         { value: 'LIM', label: 'SERVICIO DE LIMPIEZA' },
@@ -158,6 +159,28 @@ const Constantes = {
         { value: 'LIME', label: 'SERVICIO DE LIMPIEZA DE ESCALERA Y ZONAS COMUNES' },
         { value: 'TOL', label: 'SERVICIO DE LIMPIEZA DE TOLDOS' },
         { value: 'LIMP', label: 'SERVICIO DE LIMPIEZA DEL PARKING' }
+    ],
+    FORMA_DE_PAGO: [
+        { value: 'C1', label: 'Cheque bancario a 30 días' },
+        { value: 'C3', label: 'Cheque bancario a 90 días' },
+        { value: 'C4', label: 'Confirming a 120 días' },
+        { value: 'C5', label: 'Confirming a 180 días' },
+        { value: 'C2', label: 'Contado' },
+        { value: '@C', label: 'Contrareembolso - Entrega' },
+        { value: 'CH', label: 'Envían cheque' },
+        { value: 'F1', label: 'Factoring' },
+        { value: 'ME', label: 'Metálico' },
+        { value: 'P1', label: 'Pagaré' },
+        { value: 'RE', label: 'Recibo domiciliado a 3 días' },
+        { value: 'R1', label: 'Recibo domiciliado a 30 días' },
+        { value: 'R2', label: 'Recibo domiciliado a 60 días' },
+        { value: 'R3', label: 'Recibo domiciliado a 90 días' },       
+        { value: '@T', label: 'Tarjeta de crédito' },
+        { value: 'TR', label: 'Transferencia' },
+        { value: 'T1', label: 'Transferencia a 30 días' },
+        { value: 'T4', label: 'Transferencia a 45 días' },
+        { value: 'T2', label: 'Transferencia a 60 días' },
+        { value: 'T3', label: 'Transferencia a 90 días' }       
     ],
     MESES: meses,
 };

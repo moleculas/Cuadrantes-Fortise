@@ -12,7 +12,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 //importaciones acciones
-import { obtenerTrabajadoresAccion } from '../redux/trabajadoresDucks';
+//import { obtenerTrabajadoresAccion } from '../redux/trabajadoresDucks';
 import { forzarRecargaFaltantesAccion } from '../redux/faltantesDucks';
 import { obtenerTrabajadoresFaltantesAccion } from '../redux/faltantesDucks';
 import { retornaAnoMesCuadranteAccion } from '../redux/appDucks';
@@ -55,7 +55,7 @@ const Faltantes = (props) => {
 
     useEffect(() => {
         if (forzarRecargaFaltantes || calendarioAGestionarNominas) {
-            dispatch(obtenerTrabajadoresAccion('trabajadores'));
+            //dispatch(obtenerTrabajadoresAccion('trabajadores'));
             dispatch(forzarRecargaFaltantesAccion(false));
         }
     }, [forzarRecargaFaltantes, calendarioAGestionarNominas]);
@@ -107,7 +107,7 @@ const Faltantes = (props) => {
 
     //retorno componentes
 
-    const  retornaTrabajadorGestionado = (trabajador, index) => {
+    const retornaTrabajadorGestionado = (trabajador, index) => {
         if (trabajadoresFaltantesArray.includes(trabajador.id)) {
             return (
                 <Box
@@ -163,12 +163,12 @@ const Faltantes = (props) => {
                     </Box>
                 )}
             </Grid>
-            <Snackbar open={openSnack} autoHideDuration={6000} onClose={handleCloseSnack}>
+            <Snackbar open={openSnack} autoHideDuration={12000} onClose={handleCloseSnack}>
                 <Alert severity={alert.tipo} onClose={handleCloseSnack}>
                     {alert.mensaje}
                 </Alert>
             </Snackbar>
-            {/* {console.log(forzarRecargaPendientes)} */}
+            {/* {console.log(forzarRecargaFaltantes)} */}
         </div>
     )
 }

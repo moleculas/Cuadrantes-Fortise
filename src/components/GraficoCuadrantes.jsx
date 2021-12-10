@@ -43,22 +43,22 @@ const GraficoCuadrantes = (props) => {
 
     useEffect(() => {
         if (forzarRecargaGraficosCuadrantes) {
-            setData([]);
-            dispatch(obtenerCuadrantesPorAnyoAccion('cuadrantes'));
+            setData([]);       
+            dispatch(obtenerCuadrantesPorAnyoAccion('cuadrantes'));     
             dispatch(forzarRecargaGraficosCuadrantesAccion(false));
         }
     }, [forzarRecargaGraficosCuadrantes]);
 
     useEffect(() => {
-        if (cuadrantesPorAnyoGraficos.length > 0) {
+        if (cuadrantesPorAnyoGraficos.length >0) {
             let array = [];
             let sumatorio = 0;
-            let objeto;
             cuadrantesPorAnyoGraficos.forEach((mes, index) => {
                 if (mes.length > 0) {
                     mes.forEach((mesInt, index) => {
-                        objeto = JSON.parse(mesInt['datos_informe']);
-                        sumatorio += objeto.totalFacturado;
+                        if(mesInt.total){
+                            sumatorio += parseInt(mesInt.total);
+                        }                        
                     });
                     array.push({
                         name: meses[index].substr(0, 3) + '.',
@@ -72,7 +72,9 @@ const GraficoCuadrantes = (props) => {
                     })
                 }
             });
+            if (cuadrantesPorAnyoGraficos.length ===12) {
             setData(array);
+            };
         }
     }, [cuadrantesPorAnyoGraficos]);
 
@@ -134,15 +136,15 @@ const GraficoCuadrantes = (props) => {
                         }}
                     >
                         {/* <CartesianGrid strokeDasharray="3 3" /> */}
-                        <XAxis dataKey="name" style={{fontSize: '0.7rem' }} />
-                        <YAxis style={{fontSize: '0.7rem' }}/>
+                        <XAxis dataKey="name" style={{ fontSize: '0.7rem' }} />
+                        <YAxis style={{ fontSize: '0.7rem' }} />
                         <Tooltip />
                         {/* <Legend /> */}
                         <Line type="monotone" dataKey="Ingresos" stroke="#00bcd4" activeDot={{ r: 4 }} />
                         <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
                     </LineChart>
                 )}
-                <Snackbar open={openSnack} autoHideDuration={6000} onClose={handleCloseSnack}>
+                <Snackbar open={openSnack} autoHideDuration={12000} onClose={handleCloseSnack}>
                     <Alert severity={alert.tipo} onClose={handleCloseSnack}>
                         {alert.mensaje}
                     </Alert>

@@ -20,7 +20,8 @@ const dataInicial = {
             arrayDatos: [],
             emitida: 'no',
             totalEmitido: null
-        }
+        },
+        total: null
     },
     nominaRegistrada: '',
     trabajador: '',
@@ -196,7 +197,8 @@ export const vaciarDatosNominasAccion = () => (dispatch, getState) => {
                 arrayDatos: arrayVacio,
                 emitida: 'no',
                 totalEmitido: null
-            }
+            },
+            total: null
         }
     });
 }
@@ -227,7 +229,8 @@ export const obtenerNominaAccion = (objeto, id) => async (dispatch, getState) =>
                     nombre: res.data.nombre,
                     actualizacion: res.data.actualizacion,
                     trabajador: res.data.trabajador,
-                    datosNomina: JSON.parse(res.data.datos_nomina)
+                    datosNomina: JSON.parse(res.data.datos_nomina),
+                    total: res.data.total
                 }
             });
         };
