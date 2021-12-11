@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { withRouter } from "react-router-dom";
+import Constantes from "../constantes";
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Avatar from '@material-ui/core/Avatar';
@@ -19,17 +19,27 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import { Link } from "react-router-dom";
+
+//carga componentes
+import GraficoInicio from './GraficoInicio';
+
+//estilos
+import Clases from "../clases";
 
 //importaciones acciones
 import { onEstemAccion } from '../redux/appDucks';
 import { obtenerCentrosAccion } from '../redux/centrosDucks';
 import { obtenerTrabajadoresAccion } from '../redux/trabajadoresDucks';
+import { forzarRecargaGraficosCuadrantesAccion } from '../redux/graficosDucks';
+import { forzarRecargaGraficosNominasAccion } from '../redux/graficosDucks';
+import { obtenerUltimasIntervencionesAccion } from '../redux/appDucks';
+import { obtenerObjetoPorIdAccion } from '../redux/appDucks';
 
-//estilos
-import Clases from "../clases";
+const meses = Constantes.MESES;
 
-const getHeightContenedoresPeq = () => ((window.innerHeight / 2) - 130) || ((document.documentElement.clientHeight / 2) - 130) || ((document.body.clientHeight / 2) - 130);
-const getHeightContenedoresGra = () => ((window.innerHeight) - 188) || ((document.documentElement.clientHeight) - 188) || ((document.body.clientHeight) - 188);
+const getHeightContenedoresPeq = () => ((window.innerHeight / 2) - 120) || ((document.documentElement.clientHeight / 2) - 120) || ((document.body.clientHeight / 2) - 120);
+const getHeightContenedoresGra = () => ((window.innerHeight) - 175) || ((document.documentElement.clientHeight) - 175) || ((document.body.clientHeight) - 175);
 const getWidthContenedores = () => ((window.innerWidth - 300) / 2) || ((document.documentElement.clientWidth - 300) / 2) || ((document.body.clientWidth - 300) / 2);
 
 //tabs
@@ -76,6 +86,8 @@ const Inicio = (props) => {
     const openLoadingCentros = useSelector(store => store.variablesCentros.loadingCentros);
     const openLoadingTrabajadores = useSelector(store => store.variablesTrabajadores.loadingTrabajadores);
     const listadoTrabajadores = useSelector(store => store.variablesTrabajadores.arrayTrabajadores);
+    const arrayUltimasIntervenciones = useSelector(store => store.variablesApp.arrayUltimasIntervenciones);
+    const errorDeCargaUltimasIntervenciones = useSelector(store => store.variablesApp.errorDeCargaUltimasIntervenciones);
 
     //states
 
@@ -97,8 +109,15 @@ const Inicio = (props) => {
 
     useEffect(() => {
         dispatch(onEstemAccion('inicio'));
-        dispatch(obtenerCentrosAccion('centros'));
-        dispatch(obtenerTrabajadoresAccion('trabajadores'));
+        if (listadoCentros.length === 0) {
+            dispatch(obtenerCentrosAccion('centros'));
+        };
+        if (listadoTrabajadores.length === 0) {
+            dispatch(obtenerTrabajadoresAccion('trabajadores'));
+        };
+        dispatch(forzarRecargaGraficosCuadrantesAccion(true));
+        dispatch(forzarRecargaGraficosNominasAccion(true));
+        dispatch(obtenerUltimasIntervencionesAccion());
     }, [dispatch]);
 
     useEffect(() => {
@@ -118,14 +137,14 @@ const Inicio = (props) => {
     }, []);
 
     useEffect(() => {
-        if (errorDeCargaCentros || errorDeCargaTrabajadores) {
+        if (errorDeCargaCentros || errorDeCargaTrabajadores || errorDeCargaUltimasIntervenciones) {
             setAlert({
                 mensaje: "Error de conexión con la base de datos.",
                 tipo: 'error'
             })
             setOpenSnack(true);
         }
-    }, [errorDeCargaCentros, errorDeCargaTrabajadores]);
+    }, [errorDeCargaCentros, errorDeCargaTrabajadores, errorDeCargaUltimasIntervenciones]);
 
     useEffect(() => {
         if (!openLoadingCentros || !openLoadingTrabajadores) {
@@ -152,47 +171,77 @@ const Inicio = (props) => {
 
     const retornaCentros = (centro, index) => {
         return (
-            <Box
-                key={'listaCentros' + index}
-            //onClick={() => handleCuadrantesPendientes(centro.id)}
-            >
-                <ListItem
-                    className={classes.casilla}
-                >
-                    <ListItemText
-                        secondary={centro.nombre}
-                    />
-                    <ListItemSecondaryAction>
-                        <ExitToAppIcon
-                            className={classes.gris}
+            <Link key={'listaCentros' + index} to={`/centros/${centro.id}/${centro.nombre}`} className={classes.link}>
+                <Box >
+                    <ListItem
+                        className={classes.casilla}
+                    >
+                        <ListItemText
+                            secondary={centro.nombre}
                         />
-                    </ListItemSecondaryAction>
-                </ListItem >
-            </Box >
+                        <ListItemSecondaryAction>
+                            <ExitToAppIcon
+                                className={classes.gris}
+                            />
+                        </ListItemSecondaryAction>
+                    </ListItem >
+                </Box >
+            </Link>
         )
     };
 
     const retornaTrabajadores = (trabajador, index) => {
         return (
-            <Box
-                key={'listaTrabajadores' + index}
-            //onClick={() => handleCuadrantesPendientes(centro.id)}
-            >
-                <ListItem
-                    className={trabajador.estado !== 'alta' ? classes.casillaBajasInicio : classes.casilla}
-                >
-                    <ListItemText
-                        secondary={trabajador.estado !== 'alta' ? trabajador.nombre +' ('+trabajador.estado+')' :trabajador.nombre}
-                    />
-                    <ListItemSecondaryAction>
-                        <ExitToAppIcon
-                            className={classes.gris}
+            <Link key={'listaTrabajadores' + index} to={`/trabajadores/${trabajador.id}/${trabajador.nombre}`} className={classes.link}>
+                <Box>
+                    <ListItem
+                        className={trabajador.estado !== 'alta' ? classes.casillaBajasInicio : classes.casilla}
+                    >
+                        <ListItemText
+                            secondary={trabajador.estado !== 'alta' ? trabajador.nombre + ' (' + trabajador.estado + ')' : trabajador.nombre}
                         />
-                    </ListItemSecondaryAction>
-                </ListItem >
-            </Box >
+                        <ListItemSecondaryAction>
+                            <ExitToAppIcon
+                                className={classes.gris}
+                            />
+                        </ListItemSecondaryAction>
+                    </ListItem >
+                </Box >
+            </Link>
         )
     };
+
+    const retornaUltimasIntervenciones = (intervencion, index) => {
+
+        let nombreSplitted;        
+        if (Object.keys(intervencion)[0] === 'nombre_cuadrante') {
+            nombreSplitted = intervencion.nombre_cuadrante.split("-");
+            const nombreCentro = dispatch(obtenerObjetoPorIdAccion(listadoCentros, parseInt(nombreSplitted[2])));
+            return (
+                <Box key={'ultimaIntervencion' + index}>
+                    <ListItem>
+                        <ListItemText
+                            primary={'Cuadrante ' + meses[nombreSplitted[1] - 1] + '/' + nombreSplitted[0] + ' Centro: ' + nombreCentro} secondary={'Actualizado el ' + intervencion.actualizacion}
+                        />
+                    </ListItem >
+                </Box >
+            )
+        };
+        if (Object.keys(intervencion)[0] === 'nombre_nomina') {
+            nombreSplitted = intervencion.nombre_nomina.split("-");
+            const nombreTrabajador = dispatch(obtenerObjetoPorIdAccion(listadoTrabajadores, parseInt(nombreSplitted[2])));
+            return (
+                <Box key={'ultimaIntervencion' + index}>
+                    <ListItem>
+                        <ListItemText
+                            primary={'Nómina ' + meses[nombreSplitted[1] - 1] + '/' + nombreSplitted[0] + ' Trabajador: ' + nombreTrabajador} secondary={'Actualizada el ' + intervencion.actualizacion}
+                        />
+                    </ListItem >
+                </Box >
+            )
+        }
+    };
+
     return (
         <div>
             <Grid
@@ -222,7 +271,7 @@ const Inicio = (props) => {
                         <TabPanel value={valueTab} index={0}>
                             <Paper
                                 elevation={1}
-                                style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra, marginTop: -8, marginLeft: -24, marginRight: -24 }}
+                                style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra, marginTop: -20, marginLeft: -24, marginRight: -24 }}
                             >
                                 <Grid
                                     spacing={1}
@@ -259,7 +308,7 @@ const Inicio = (props) => {
                         <TabPanel value={valueTab} index={1}>
                             <Paper
                                 elevation={1}
-                                style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra, marginTop: -8, marginLeft: -24, marginRight: -24 }}
+                                style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra, marginTop: -20, marginLeft: -24, marginRight: -24 }}
                             >
                                 <Grid
                                     spacing={1}
@@ -298,40 +347,65 @@ const Inicio = (props) => {
                 <Grid item xs={6}>
                     <Grid className={classes.mb20}>
                         <Box
-                            p={1.5}
+                            p={1.6}
                             m={1}
-                            color="secondary.contrastText"
-                            bgcolor="secondary.main"
+                            color="primary.contrastText"
+                            bgcolor="primary.main"
+                            className={classes.sombraBox}
                         >
-                            <Typography variant="body2">Cómputo de ingresos anual</Typography>
+                            <Typography variant="body2">Cómputo anual de ingresos vs gastos</Typography>
                         </Box>
                         <Paper
                             elevation={1}
                             style={{ minHeight: heightContenedoresPeq, maxHeight: heightContenedoresPeq, margin: 8 }}
                         >
-                            <p>olakease</p>
+                            <GraficoInicio prHeightContenedores={heightContenedoresPeq} prWidthContenedores={widthContenedores} />
                         </Paper>
                     </Grid>
                     <Grid>
                         <Box
-                            p={1.5}
+                            p={1.6}
                             m={1}
-                            color="secondary.contrastText"
-                            bgcolor="secondary.main"
-                            style={{ maxHeight: 45, minHeight: 45, display: 'flex', flexDirection: 'row', justifycontent: 'space-between', alignItems: 'center' }}
+                            color="primary.contrastText"
+                            bgcolor="primary.main"
+                            className={classes.sombraBox}
                         >
-                            <Grid item xs={11}>
-                                <Typography variant="body2">Trabajadores de baja</Typography>
-                            </Grid>
-                            <Grid item xs={1} className={classes.alignRight}>
-
-                            </Grid>
+                            <Typography variant="body2">Últimas intervenciones en la base de datos</Typography>
                         </Box>
                         <Paper
                             elevation={1}
                             style={{ minHeight: heightContenedoresPeq, maxHeight: heightContenedoresPeq, margin: 8 }}
                         >
-                            <p>olakease</p>
+                            <Grid
+                                spacing={1}
+                                container
+                                direction="column"
+                                justify="center"
+                                alignItems="center"
+                                p={2}
+                                className={classes.rootPendientes}
+                                style={{ minHeight: heightContenedoresPeq, maxHeight: heightContenedoresPeq }}
+                            >
+                                {openLoading ? (
+                                    <Box
+                                        className={classes.centrado}
+                                    >
+                                        <CircularProgress />
+                                    </Box>
+                                ) : (
+                                    <Box
+                                        className={classes.scrollable}
+                                        style={{ width: '100%', height: heightContenedoresPeq - 10, margin: 10 }}
+                                    >
+                                        <List dense={true}
+                                            style={{ padding: 15 }}>
+                                            {arrayUltimasIntervenciones.map((intervencion, index) => (
+                                                retornaUltimasIntervenciones(intervencion, index)
+                                            ))}
+                                        </List>
+                                    </Box>
+                                )}
+                            </Grid>
                         </Paper>
                     </Grid>
                 </Grid>
@@ -341,6 +415,7 @@ const Inicio = (props) => {
                     {alert.mensaje}
                 </Alert>
             </Snackbar>
+            {/* {console.log(arrayUltimasIntervenciones)} */}
         </div>
     )
 }

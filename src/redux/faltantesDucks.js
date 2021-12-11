@@ -8,8 +8,7 @@ const dataInicial = {
     trabajadoresFaltantesArray: [],
     errorDeCargaNominasFaltantes: false,
     numeroNominasFaltantes: null,
-    estadoVenimosDeFaltantes: false,
-    forzarRecargaFaltantes: false
+    estadoVenimosDeFaltantes: false
 };
 
 //types
@@ -17,7 +16,7 @@ const LOADING_FALTANTES = 'LOADING_FALTANTES';
 const OBTENER_NOMINA_FALTANTE = 'OBTENER_NOMINA_FALTANTE';
 const ERROR_DE_CARGA_NOMINAS_FALTANTES = 'ERROR_DE_CARGA_NOMINAS_FALTANTES';
 const VENIMOS_DE_FALTANTES = 'VENIMOS_DE_FALTANTES';
-const FORZAR_RECARGA_FALTANTES = 'FORZAR_RECARGA_FALTANTES';
+const VACIAR_DATOS_FALTANTES = 'VACIAR_DATOS_FALTANTES';
 
 //reducer
 export default function faltantesReducer(state = dataInicial, action) {
@@ -30,8 +29,8 @@ export default function faltantesReducer(state = dataInicial, action) {
             return { ...state, errorDeCargaNominasFaltantes: true, loadingFaltantes: false }
         case VENIMOS_DE_FALTANTES:
             return { ...state, estadoVenimosDeFaltantes: action.payload.estado }
-        case FORZAR_RECARGA_FALTANTES:
-            return { ...state, forzarRecargaFaltantes: action.payload.estado, trabajadoresFaltantesArray: [] }
+        case VACIAR_DATOS_FALTANTES:
+            return { ...state, trabajadoresFaltantesArray: [] }
         default:
             return { ...state }
     }
@@ -83,11 +82,8 @@ export const venimosDeFaltantesAccion = (estado) => (dispatch, getState) => {
     });
 }
 
-export const forzarRecargaFaltantesAccion = (estado) => (dispatch, getState) => {
+export const vaciarDatosFaltantesAccion = () => (dispatch, getState) => {
     dispatch({
-        type: FORZAR_RECARGA_FALTANTES,
-        payload: {
-            estado: estado
-        }
+        type: VACIAR_DATOS_FALTANTES,
     });
 }

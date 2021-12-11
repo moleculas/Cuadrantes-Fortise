@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { withRouter } from "react-router-dom";
+import { withRouter, useParams } from "react-router-dom";
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
@@ -89,6 +89,7 @@ function a11yProps(index) {
 
 const Centros = (props) => {
 
+    const { id, nombre } = useParams();
     const classes = Clases();
     const dispatch = useDispatch();
     const logged = useSelector(store => store.variablesUsuario.activo);
@@ -111,6 +112,7 @@ const Centros = (props) => {
     const [preValueTab, setPreValueTab] = useState(null);
     const [anchorElMenu, setAnchorElMenu] = useState(null);
     const [heightScrollable, setHeightScrollable] = useState(getHeightScrollable());
+    const [venimosCentroFuera, setVenimosCentroFuera] = useState(null);
 
     //useEffect
 
@@ -129,6 +131,14 @@ const Centros = (props) => {
             window.removeEventListener('resize', resizeListener);
         }
     }, []);
+
+    useEffect(() => {
+        if (id) {
+            setVenimosCentroFuera({ id: id, nombre: nombre });
+        } else {
+            setVenimosCentroFuera(null);
+        }
+    }, [id]);
 
     //funciones    
 
@@ -276,7 +286,7 @@ const Centros = (props) => {
                                 </Tabs>
                             </AppBar>
                             <TabPanel value={valueTab} index={0} className={classes.scrollable} style={{ height: heightScrollable }}>
-                                <CentrosEditar ref={funcionesEnCentrosEditarRef} />
+                                <CentrosEditar ref={funcionesEnCentrosEditarRef} prVenimosCentroFuera={venimosCentroFuera}/>
                             </TabPanel>
                             <TabPanel value={valueTab} index={1} className={classes.scrollable} style={{ height: heightScrollable }}>
                                 <CentrosRegistrar ref={funcionesEnCentrosRegistrarRef} />

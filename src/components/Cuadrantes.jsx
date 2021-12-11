@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect, Fragment, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Constantes from "../constantes";
 import { withRouter } from "react-router-dom";
@@ -28,7 +28,6 @@ import MuiAccordionDetails from '@material-ui/core/AccordionDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { withStyles } from '@material-ui/core/styles';
 import Switch from '@material-ui/core/Switch';
-import useDynamicRefs from 'use-dynamic-refs';
 import IconButton from '@material-ui/core/IconButton';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -73,7 +72,6 @@ import { diaDeLaSemanaAccion } from '../redux/appDucks';
 import { obtenerCentroAccion } from '../redux/centrosDucks';
 import { obtenerTrabajadorAccion } from '../redux/trabajadoresDucks';
 import { obtenerSuplenteAccion } from '../redux/trabajadoresDucks';
-import { vaciarDatosCentrosAccion } from '../redux/centrosDucks';
 import { generaFechaAccion } from '../redux/appDucks';
 import { retornaHoraRangoAccion } from '../redux/appDucks';
 import { retornaMinutosAccion } from '../redux/appDucks';
@@ -97,7 +95,6 @@ import { resetearCuadranteAccion } from '../redux/cuadrantesDucks';
 import { cambiarACuadranteRegistradoAccion } from '../redux/cuadrantesDucks';
 import { cambiarACuadranteNoRegistradoAccion } from '../redux/cuadrantesDucks';
 import { vaciarDatosCuadrantesAccion } from '../redux/cuadrantesDucks';
-//import { forzarRecargaPendientesAccion } from '../redux/pendientesDucks';
 import { forzarRecargaGraficosCuadrantesAccion } from '../redux/graficosDucks';
 import { actualizarObjetoCuadranteAccion } from '../redux/cuadrantesDucks';
 import { venimosDePendientesAccion } from '../redux/pendientesDucks';
@@ -109,7 +106,8 @@ import { retornaAnoMesCuadranteAccion } from '../redux/appDucks';
 import { gestionarInformeAccion } from '../redux/cuadrantesDucks';
 import { enviarMailAccion } from '../redux/appDucks';
 import { obtenerObjetoPorIdAccion } from '../redux/appDucks';
-
+import { vaciarDatosCentroAccion } from '../redux/centrosDucks';
+import { vaciarDatosPendientesAccion } from '../redux/pendientesDucks';
 
 const categorias = Constantes.CATEGORIAS_CENTROS;
 const arrayFestivos = Constantes.CALENDARIO_FESTIVOS;
@@ -172,8 +170,7 @@ const StyledMenu = withStyles({
 const Cuadrantes = (props) => {
 
     const classes = Clases();
-    const dispatch = useDispatch();
-    const [getRef, setRef] = useDynamicRefs();
+    const dispatch = useDispatch();        
     const centrosPorCategoria = useSelector(store => store.variablesCentros.arrayCentrosPorCategoria);
     const logged = useSelector(store => store.variablesUsuario.activo);
     const openLoadingCentros = useSelector(store => store.variablesCentros.loadingCentros);
@@ -208,6 +205,11 @@ const Cuadrantes = (props) => {
     const categoriaPorCentro = useSelector(store => store.variablesCentros.categoriaPorCentro);
     const calendarioAGestionar = useSelector(store => store.variablesCuadrantes.calendarioAGestionar);
     const objetoUsuarioActivo = useSelector(store => store.variablesUsuario.usuarioActivo);
+
+    //refs
+
+    const scrollable =useRef();
+    const boxes=useRef([]);
 
     //states
 
@@ -286,11 +288,12 @@ const Cuadrantes = (props) => {
     }, []);
 
     useEffect(() => {
-        dispatch(setCalendarioAGestionarAccion(dispatch(retornaAnoMesAccion())));
-        //dispatch(forzarRecargaPendientesAccion(true));
+        dispatch(setCalendarioAGestionarAccion(dispatch(retornaAnoMesAccion())));        
         dispatch(forzarRecargaGraficosCuadrantesAccion(true));
         dispatch(onEstemAccion('cuadrantes'));
-        dispatch(obtenerTrabajadoresAccion('trabajadores'));
+        if (listadoTrabajadores.length === 0) {
+            dispatch(obtenerTrabajadoresAccion('trabajadores'));
+        };  
     }, [dispatch]);
 
     //secuencia gestión meses
@@ -592,6 +595,7 @@ const Cuadrantes = (props) => {
                 const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, centro: centro, arrayCuadrante: [] };
                 dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, id: null, nombre: nombreCuadrante, actualizacion: '', datosCuadrante: losDatosCuadrante }));
             };
+            
         }
     }, [estadoVenimosDePendientes]);
 
@@ -599,8 +603,8 @@ const Cuadrantes = (props) => {
         if (estadoVenimosDePendientes) {
             if (categoriaPorCentro) {
                 dispatch(setCategoriaAccion(categoriaPorCentro));
-                setDisableSelectCentros(false);
                 dispatch(obtenerCentrosPorCategoriaAccion('centros', categoriaPorCentro));
+                setDisableSelectCentros(false);
             };
             dispatch(venimosDePendientesAccion(false));
         }
@@ -649,7 +653,7 @@ const Cuadrantes = (props) => {
     }, [exitoResetearCuadrante]);
 
     useEffect(() => {
-        if (!openLoadingCentros && !openLoadingTrabajadores && !openLoadingCuadrantes) {
+        if (!openLoadingCentros || !openLoadingTrabajadores || !openLoadingCuadrantes) {
             setOpenLoading(false)
         } else {
             setOpenLoading(true)
@@ -712,7 +716,8 @@ const Cuadrantes = (props) => {
                     dispatch(cambioEstadoInicioCuadrantesAccion(true));
                 }
             }
-        }
+        };  
+        dispatch(vaciarDatosPendientesAccion());            
     };
 
     const handleChangeSelectCategoria = (e) => {
@@ -821,7 +826,8 @@ const Cuadrantes = (props) => {
     const reseteaContenidoCuadrante = () => {
         reseteaContenidoCentro();
         setStateFestivo({});
-        dispatch(vaciarDatosCentrosAccion());
+        //dispatch(vaciarDatosCentrosAccion());        
+        dispatch(vaciarDatosCentroAccion());        
     };
 
     const reseteaContenidoCentro = () => {
@@ -870,8 +876,7 @@ const Cuadrantes = (props) => {
             dispatch(activarDesactivarCambioBotonActualizarAccion(false));
         };
         dispatch(registrarIntervencionAccion(false));
-        const scrollableRef = getRef('scrollable');
-        scrollableRef.current.classList.remove(classes.openAccordion);
+        scrollable.current.classList.remove(classes.openAccordion);
     };
 
     const eliminarColumna = (columna, idTrabajador) => {
@@ -923,8 +928,7 @@ const Cuadrantes = (props) => {
                 setExpandedAccordion(false);
             }
         }
-        const scrollableRef = getRef('scrollable');
-        scrollableRef.current.classList.remove(classes.openAccordion);
+        scrollable.current.classList.remove(classes.openAccordion);
         if (cuadranteRegistrado === 'si') {
             dispatch(activarDesactivarCambioBotonActualizarAccion(false));
         };
@@ -933,8 +937,7 @@ const Cuadrantes = (props) => {
 
     const handleCambioAccordionHeader = (expandedAccordion, panel, index) => {
         setExpandedAccordion(expandedAccordion ? panel : true);
-        const scrollableRef = getRef('scrollable');
-        expandedAccordion ? scrollableRef.current.classList.add(classes.openAccordion) : scrollableRef.current.classList.remove(classes.openAccordion);
+        expandedAccordion ? scrollable.current.classList.add(classes.openAccordion) : scrollable.current.classList.remove(classes.openAccordion);
     };
 
     const handleVisibleVariaciones = (index, elId, e) => {
@@ -1707,8 +1710,7 @@ const Cuadrantes = (props) => {
 
     const abrePopoverDias = (postRef, index, dia) => (e) => {
         setExpandedAccordion(false);
-        const scrollableRef = getRef('scrollable');
-        scrollableRef.current.classList.add(classes.openAccordion);
+        scrollable.current.classList.add(classes.openAccordion);
         setAnchorElDias(anchorElDias ? null : e.currentTarget);
         setVariablesPopoverDias({
             postRef: postRef,
@@ -1719,11 +1721,10 @@ const Cuadrantes = (props) => {
 
     const handleClosePopoverDias = () => {
         setAnchorElDias(null);
-        const scrollableRef = getRef('scrollable');
-        scrollableRef.current.classList.remove(classes.openAccordion);
+        scrollable.current.classList.remove(classes.openAccordion);
         if (lastEditado) {
-            const casilla = getRef(lastEditado);
-            casilla.current.classList.remove(classes.editando);
+            //const casilla = getRef(lastEditado);
+            lastEditado.current.classList.remove(classes.editando);
             setLastEditado(null);
         }
     };
@@ -1735,8 +1736,7 @@ const Cuadrantes = (props) => {
             setCuadrante(arrayCuadrante);
         };
         setExpandedAccordion(false);
-        const scrollableRef = getRef('scrollable');
-        scrollableRef.current.classList.add(classes.openAccordion);
+        scrollable.current.classList.add(classes.openAccordion);
         setAnchorElGeneral(anchorElGeneral ? null : e.currentTarget);
         setVariablesPopoverGeneral({
             postRef: postRef,
@@ -1744,20 +1744,17 @@ const Cuadrantes = (props) => {
             dia: dia,
             columna: columna,
             indexColumna: indexColumna
-        });
-        const casilla = getRef(ref);
-        if (!cuadrante[indexColumna][postRef].modificado) {
-            casilla.current.classList.add(classes.editando);
+        });       
+        if (!cuadrante[indexColumna][postRef].modificado) {          
+            boxes.current[ref].classList.add(classes.editando);
         };
         setLastEditado(ref);
     };
 
     const handleClosePopoverGeneral = () => {
         setAnchorElGeneral(null);
-        const scrollableRef = getRef('scrollable');
-        scrollableRef.current.classList.remove(classes.openAccordion);
-        const casilla = getRef(lastEditado);
-        casilla.current.classList.remove(classes.editando);
+        scrollable.current.classList.remove(classes.openAccordion);        
+        boxes.current[lastEditado].classList.remove(classes.editando);
         setLastEditado(null);
         if (itemPrevioEditando) {
             if (itemPrevioEditando.tipo === 'rango') {
@@ -3523,6 +3520,7 @@ const Cuadrantes = (props) => {
             dispatch(activarDesactivarCambioBotonActualizarAccion(true));
         };
         dispatch(registrarIntervencionAccion(true));
+        handleCloseMenu();
     };
 
     const goToInicioCuadrantes = () => {
@@ -3536,13 +3534,13 @@ const Cuadrantes = (props) => {
                 reseteaContenidoCuadrante();
                 setDisableSelectCentros(true);
                 dispatch(vaciarDatosCuadrantesAccion());
-                dispatch(cambioEstadoInicioCuadrantesAccion(true));
-                // dispatch(forzarRecargaPendientesAccion(true));
-                dispatch(forzarRecargaGraficosCuadrantesAccion(true));
+                dispatch(cambioEstadoInicioCuadrantesAccion(true));   
                 dispatch(setCategoriaAccion(''));
             }
         };
         setAnchorElMenu(null);
+        dispatch(vaciarDatosPendientesAccion());
+        dispatch(forzarRecargaGraficosCuadrantesAccion(true));
     };
 
     const retornaInfoFabButton = () => {
@@ -4070,8 +4068,7 @@ const Cuadrantes = (props) => {
                 reseteaContenidoCuadrante();
                 setDisableSelectCentros(true);
                 dispatch(vaciarDatosCuadrantesAccion());
-                dispatch(cambioEstadoInicioCuadrantesAccion(true));
-                //dispatch(forzarRecargaPendientesAccion(true));
+                dispatch(cambioEstadoInicioCuadrantesAccion(true));               
                 dispatch(forzarRecargaGraficosCuadrantesAccion(true));
             }
         }
@@ -4098,8 +4095,7 @@ const Cuadrantes = (props) => {
             >
                 <Box
                     m={0.3}
-                    p={1.5}
-                    ref={setRef(`box_0_` + postRef)}
+                    p={1.5}                    
                     className={clsx(classes.inicio, classes.blanc, classes.mb_5, dia[1][0] === 'Domingo' || stateFestivo['estadoFestivoDia' + (index + 1)] ? classes.diaFestivo : classes.diaLaboral)}
                     onClick={abrePopoverDias(postRef, index, dia[1][0])}
                 >
@@ -4121,11 +4117,11 @@ const Cuadrantes = (props) => {
             >
                 < Box
                     m={0.3}
-                    p={1.5}
-                    ref={setRef(`box_` + (indexColumna + 1) + '_' + postRef)}
+                    p={1.5}                   
+                    ref={ref => { boxes.current[indexColumna]=ref }}
                     className={gestionaClassesColoresGeneral(indexDia + 1, columna[postRef].baja, columna[postRef].modificado, columna.nombreTrabajador) || null}
                     style={{ width: dimensionsColumna.width, display: 'flex', flexDirection: 'row', justifycontent: 'space-between', alignItems: 'center' }}
-                    onClick={abrePopoverGeneral(postRef, indexDia, dia[1][0], columna, `box_` + (indexColumna + 1) + '_' + postRef, indexColumna)}
+                    onClick={abrePopoverGeneral(postRef, indexDia, dia[1][0], columna, indexColumna, indexColumna)}
                 >
                     <Grid item xs={10}>
                         <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{gestionaTextoCasillas(indexDia + 1, postRef, columna, dia[1][0])}</Typography>
@@ -4142,7 +4138,7 @@ const Cuadrantes = (props) => {
                             {columna[postRef].tipoVariacion && !columna[postRef].festivo && !columna[postRef].baja ? (
                                 retornaIconoVariacion(columna, postRef, dia[1][0])
                             ) : null}
-                            {columna[postRef].tipoServicio ? (
+                            {columna[postRef].tipoServicio && !columna[postRef].festivo && !columna[postRef].baja ? (
                                 retornaIconoTipoServicio(columna[postRef].tipoServicio)
                             ) : null}
                         </Box>
@@ -4398,7 +4394,7 @@ const Cuadrantes = (props) => {
                         ) : (
                             <Grid
                                 className={clsx(classes.scrollable, classes.scrollableScroll)}
-                                ref={setRef(`scrollable`)}
+                                ref={scrollable}
                                 style={{ height: heightScrollable }}
                             >
                                 <Box
@@ -4411,10 +4407,8 @@ const Cuadrantes = (props) => {
                                         justifycontent="flex-start"
                                         alignItems="flex-start"
                                         style={{ position: 'fixed', zIndex: 3, marginTop: -45 }}
-                                        ref={setRef(`scrollableCuadrante`)}
                                     >
                                         <Box
-                                            ref={setRef(`box_header_0`)}
                                             p={1.5}
                                             mx={0.3}
                                             className={clsx(classes.cabecera, classes.inicio)}
@@ -4425,7 +4419,6 @@ const Cuadrantes = (props) => {
                                         </Box>
                                         {cuadrante.map((columnaCabecera, index) => (
                                             <Box
-                                                ref={setRef(`box_header_` + (index + 1))}
                                                 key={`box_header_` + (index + 1)}
                                                 mx={0.3}
                                             >
@@ -4533,7 +4526,6 @@ const Cuadrantes = (props) => {
                                         </Box>
                                     </Grid>
                                     <Grid container
-                                        ref={setRef(`scrollableInterior`)}
                                         style={{ marginTop: 45 }}
                                     >
                                         <Box
@@ -4731,7 +4723,7 @@ const Cuadrantes = (props) => {
                 prFullWidth={true}
                 prMaxWidth={true}
             />
-            {/* {console.log(arrayDatosInforme)} */}
+            {/* {console.log(categoriaPorCentro)} */}
         </div>
     )
 }

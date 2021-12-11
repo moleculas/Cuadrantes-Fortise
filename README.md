@@ -40,12 +40,6 @@ Para la gestión de estados y acciones en base a entorno.
 
 `npm install redux-thunk`
 
-### `use-dynamic-refs`
-
-Para gestionar Refs dinámicamente. (Setter y Getter).
-
-`npm install --save use-dynamic-refs`
-
 ### `react-pdf`
 
 Renderizador de documentos PDF.

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useDispatch, useSelector } from 'react-redux';
-import Constantes from "../constantes";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
@@ -14,9 +13,6 @@ import Clases from "../clases";
 //importaciones acciones
 import { obtenerCuadrantesPorAnyoAccion } from '../redux/graficosDucks';
 import { forzarRecargaGraficosCuadrantesAccion } from '../redux/graficosDucks';
-
-//constantes
-const meses = Constantes.MESES;
 
 //snackbar y alert
 const Alert = (props) => {
@@ -34,7 +30,6 @@ const GraficoCuadrantes = (props) => {
 
     //states
 
-    const [data, setData] = useState([]);
     const [openLoading, setOpenLoading] = useState(true);
     const [openSnack, setOpenSnack] = useState(false);
     const [alert, setAlert] = useState({});
@@ -43,44 +38,10 @@ const GraficoCuadrantes = (props) => {
 
     useEffect(() => {
         if (forzarRecargaGraficosCuadrantes) {
-            setData([]);
             dispatch(obtenerCuadrantesPorAnyoAccion('cuadrantes'));
             dispatch(forzarRecargaGraficosCuadrantesAccion(false));
         }
     }, [forzarRecargaGraficosCuadrantes]);
-
-    useEffect(() => {
-        if (cuadrantesPorAnyoGraficos.length > 0) {
-            let array = [];
-            let sumatorio = 0;
-            cuadrantesPorAnyoGraficos.forEach((mes, index) => {
-                if (mes.length > 0) {
-                    mes.forEach((mesInt, index) => {
-                        if (mesInt.total) {
-                            sumatorio += parseInt(mesInt.total);
-                        }
-                    });
-                    array.push({
-                        name: meses[index].substr(0, 3) + '.',
-                        Ingresos: sumatorio,
-                    });
-                    sumatorio = 0;
-                } else {
-                    array.push({
-                        name: meses[index].substr(0, 3) + '.',
-                        Ingresos: 0,
-                    })
-                }
-            });
-            if (cuadrantesPorAnyoGraficos.length > 0) {
-                setOpenLoading(true)
-                setTimeout(() => {
-                    setData(array);
-                    setOpenLoading(false)
-                }, 300);
-            };
-        }
-    }, [cuadrantesPorAnyoGraficos]);
 
     useEffect(() => {
         if (errorDeCargaGraficosCuadrantes) {
@@ -92,13 +53,13 @@ const GraficoCuadrantes = (props) => {
         }
     }, [errorDeCargaGraficosCuadrantes]);
 
-    // useEffect(() => {
-    //     if (!openLoadingGraficosCuadrantes) {
-    //         setOpenLoading(false)
-    //     } else {
-    //         setOpenLoading(true)
-    //     }
-    // }, [openLoadingGraficosCuadrantes]);
+    useEffect(() => {
+        if (!openLoadingGraficosCuadrantes) {
+            setOpenLoading(false)
+        } else {
+            setOpenLoading(true)
+        }
+    }, [openLoadingGraficosCuadrantes]);
 
     //funciones    
 
@@ -131,7 +92,7 @@ const GraficoCuadrantes = (props) => {
                     <LineChart
                         width={props.prWidthContenedores}
                         height={props.prHeightContenedores}
-                        data={data}
+                        data={cuadrantesPorAnyoGraficos}
                         margin={{
                             top: 20,
                             right: 30,
@@ -139,7 +100,7 @@ const GraficoCuadrantes = (props) => {
                             bottom: 5,
                         }}
                     >
-                        {/* <CartesianGrid strokeDasharray="3 3" /> */}
+                        <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="name" style={{ fontSize: '0.7rem' }} />
                         <YAxis style={{ fontSize: '0.7rem' }} />
                         <Tooltip />
@@ -154,7 +115,7 @@ const GraficoCuadrantes = (props) => {
                     </Alert>
                 </Snackbar>
             </Grid>
-            {/* {console.log(data)} */}
+            {/* {console.log(cuadrantesPorAnyoGraficos)} */}
         </div>
     )
 }

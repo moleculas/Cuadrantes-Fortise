@@ -8,8 +8,7 @@ const dataInicial = {
     centrosPendientesArray: [],
     errorDeCargaCuadrantesPendientes: false,
     numeroCentrosPendientes: null,
-    estadoVenimosDePendientes: false,
-    forzarRecargaPendientes: false
+    estadoVenimosDePendientes: false
 };
 
 //types
@@ -17,7 +16,7 @@ const LOADING_PENDIENTES = 'LOADING_PENDIENTES';
 const OBTENER_CUADRANTE_PENDIENTE = 'OBTENER_CUADRANTE_PENDIENTE';
 const ERROR_DE_CARGA_CUADRANTES_PENDIENTES = 'ERROR_DE_CARGA_CUADRANTES_PENDIENTES';
 const VENIMOS_DE_PENDIENTES = 'VENIMOS_DE_PENDIENTES';
-const FORZAR_RECARGA_PENDIENTES = 'FORZAR_RECARGA_PENDIENTES';
+const VACIAR_DATOS_PENDIENTES = 'VACIAR_DATOS_PENDIENTES';
 
 //reducer
 export default function pendientesReducer(state = dataInicial, action) {
@@ -29,9 +28,9 @@ export default function pendientesReducer(state = dataInicial, action) {
         case ERROR_DE_CARGA_CUADRANTES_PENDIENTES:
             return { ...state, errorDeCargaCuadrantesPendientes: true, loadingPendientes: false }
         case VENIMOS_DE_PENDIENTES:
-            return { ...state, estadoVenimosDePendientes: action.payload.estado }
-        case FORZAR_RECARGA_PENDIENTES:
-            return { ...state, forzarRecargaPendientes: action.payload.estado, centrosPendientesArray: [] }
+            return { ...state, estadoVenimosDePendientes: action.payload.estado }      
+        case VACIAR_DATOS_PENDIENTES:
+            return { ...state, centrosPendientesArray: []}
         default:
             return { ...state }
     }
@@ -83,11 +82,8 @@ export const venimosDePendientesAccion = (estado) => (dispatch, getState) => {
     });
 }
 
-export const forzarRecargaPendientesAccion = (estado) => (dispatch, getState) => {
+export const vaciarDatosPendientesAccion = () => (dispatch, getState) => {
     dispatch({
-        type: FORZAR_RECARGA_PENDIENTES,
-        payload: {
-            estado: estado
-        }
+        type: VACIAR_DATOS_PENDIENTES,
     });
 }

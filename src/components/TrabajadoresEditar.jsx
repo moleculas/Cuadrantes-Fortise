@@ -51,7 +51,7 @@ import { obtenerCentroVinculadoAccion } from '../redux/trabajadoresDucks';
 import { retornaAnoMesDiaAccion } from '../redux/appDucks';
 import { activarDesactivarActualizarTrabajadorAccion } from '../redux/trabajadoresDucks';
 import { retornaAnoMesAccion } from '../redux/appDucks';
-import { vaciarDatosTrabajadoresAccion } from '../redux/trabajadoresDucks';
+//import { vaciarDatosTrabajadoresAccion } from '../redux/trabajadoresDucks';
 
 const estados = Constantes.ESTADO_LABORAL_TRABAJADOR;
 
@@ -113,9 +113,11 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
     //useEffect
 
     useEffect(() => {
-        dispatch(vaciarDatosTrabajadoresAccion());
+        //dispatch(vaciarDatosTrabajadoresAccion());
         dispatch(onEstemAccion('editarTrabajadores'));
-        dispatch(obtenerTrabajadoresAccion('trabajadores'));
+        if (listadoTrabajadores.length === 0) {
+            dispatch(obtenerTrabajadoresAccion('trabajadores'));
+        };  
     }, [dispatch]);
 
     useEffect(() => {
@@ -129,13 +131,13 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
     }, [errorDeCargaTrabajadores]);
 
     useEffect(() => {
-        if (props.prVenimosTrabajadorBaja) {
-            setValuesAutocompleteTrabajadoresValores(props.prVenimosTrabajadorBaja)
-            dispatch(obtenerTrabajadorAccion('trabajadores', props.prVenimosTrabajadorBaja.id));
+        if (props.prVenimosTrabajadorFuera) {
+            setValuesAutocompleteTrabajadoresValores(props.prVenimosTrabajadorFuera);
+            dispatch(obtenerTrabajadorAccion('trabajadores', props.prVenimosTrabajadorFuera.id));
             dispatch(activarDesactivarAccion(false));
             setVisibleCentros(true);
         }
-    }, [props.prVenimosTrabajadorBaja]);
+    }, [props.prVenimosTrabajadorFuera]);
 
     useEffect(() => {
         if (exitoActualizacionTrabajador) {
@@ -506,7 +508,7 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
 
     const reseteaContenidoEdicion = () => {
         setVisibleCentros(false);
-        dispatch(obtenerTrabajadoresAccion('trabajadores'));
+        //dispatch(obtenerTrabajadoresAccion('trabajadores'));
         forceUpdate();
         setValuesAutocompleteTrabajadoresValores(null);
         setValuesFormEdicion({

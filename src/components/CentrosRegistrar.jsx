@@ -23,7 +23,6 @@ import ItemListTime from './ItemListTime';
 import Clases from "../clases";
 
 //importaciones acciones
-import { obtenerCentroAccion } from '../redux/centrosDucks';
 import { registrarCentroAccion } from '../redux/centrosDucks';
 import { obtenerTrabajadoresAccion } from '../redux/trabajadoresDucks';
 import { registrarIntervencionAccion } from '../redux/appDucks';
@@ -232,7 +231,9 @@ const CentrosRegistrar = forwardRef((props, ref) => {
 
     useEffect(() => {
         dispatch(onEstemAccion('registrarCentros'));
-        dispatch(obtenerTrabajadoresAccion('trabajadores'));
+        if (listadoTrabajadores.length === 0) {
+            dispatch(obtenerTrabajadoresAccion('trabajadores'));
+        };  
     }, [dispatch]);
 
     useEffect(() => {

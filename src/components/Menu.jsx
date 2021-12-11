@@ -35,6 +35,12 @@ import { cambioEstadoInicioNominasAccion } from '../redux/nominasDucks';
 import { abreObjetoDialogAccion } from '../redux/appDucks';
 import { cierraObjetoDialogAccion } from '../redux/appDucks';
 import { registrarIntervencionAccion } from '../redux/appDucks';
+import { vaciarDatosPendientesAccion } from '../redux/pendientesDucks';
+import { setCalendarioAGestionarAccion } from '../redux/cuadrantesDucks';
+import { retornaAnoMesAccion } from '../redux/appDucks';
+import { vaciarDatosFaltantesAccion } from '../redux/faltantesDucks';
+import { setCalendarioAGestionarNominasAccion } from '../redux/nominasDucks';
+import { vaciarDatosUltimasIntervencionesAccion } from '../redux/appDucks';
 
 const Menu = (props) => {
 
@@ -46,7 +52,7 @@ const Menu = (props) => {
     const openDialog11 = useSelector(store => store.variablesApp.openDialog[10]);
     const cuadranteNuevoRegistrado = useSelector(store => store.variablesCuadrantes.estadoIntervencionCuadranteNuevoRegistrada);
     const nominaNuevaRegistrada = useSelector(store => store.variablesNominas.estadoIntervencionNominaNuevaRegistrada);
-    const nominaSinDatosEstado= useSelector(store => store.variablesNominas.nominaSinDatosEstado);
+    const nominaSinDatosEstado = useSelector(store => store.variablesNominas.nominaSinDatosEstado);
     const onEstem = useSelector(store => store.variablesApp.onEstem);
 
     //states   
@@ -61,8 +67,19 @@ const Menu = (props) => {
     };
 
     const limpiezaGeneral = () => {
-        //dispatch(vaciarDatosCentrosAccion());
-        dispatch(vaciarDatosTrabajadoresAccion());
+        if (onEstem === 'editarCentros' || onEstem === 'registrarCentros') {
+            dispatch(vaciarDatosCentrosAccion());
+        };
+        if (onEstem === 'editarTrabajadores' || onEstem === 'registrarTrabajadores') {
+            dispatch(vaciarDatosTrabajadoresAccion());
+        };
+        //gestión pendientes
+        dispatch(vaciarDatosPendientesAccion());
+        dispatch(setCalendarioAGestionarAccion(dispatch(retornaAnoMesAccion()))); 
+        //gestión faltantes
+        dispatch(vaciarDatosFaltantesAccion());
+        dispatch(setCalendarioAGestionarNominasAccion(dispatch(retornaAnoMesAccion()))); 
+        //
         dispatch(activarDesactivarAccion(true));
         dispatch(vaciarDatosCuadrantesAccion());
         dispatch(vaciarDatosNominasAccion());
@@ -72,6 +89,7 @@ const Menu = (props) => {
         dispatch(cambioEstadoInicioCuadrantesAccion(true));
         dispatch(cambioEstadoInicioNominasAccion(true));
         dispatch(registrarIntervencionAccion(true));
+        dispatch(vaciarDatosUltimasIntervencionesAccion());
     };
 
     const handleClick = (link) => {
@@ -336,6 +354,7 @@ const Menu = (props) => {
                 prDescripcionDialog={descripcionDialogMenu3}
                 prNoTieneBotones={true}
             />
+            {/* {console.log(onEstem)} */}
         </div>
     )
 }

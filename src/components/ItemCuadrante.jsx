@@ -209,7 +209,7 @@ const ItemCuadrante = (props) => {
                 <Grid item xs={12}>
                     <FormControl
                         variant="outlined"
-                        className={classes.form}
+                        className={classes.formTipo2}
                     >
                         <InputLabel>Cantidad horas</InputLabel>
                         <Select

@@ -3,6 +3,7 @@ import Constantes from "../constantes";
 
 //constantes
 const rutaApi = Constantes.RUTA_API;
+const meses = Constantes.MESES;
 const dataInicial = {
     loadingGraficos: false,
     errorDeCargaGraficosCuadrantes: false,
@@ -12,7 +13,7 @@ const dataInicial = {
     errorDeCargaGraficosNominas: false,
     estadoVenimosDeGraficosNominas: false,
     forzarRecargaGraficosNominas: false,
-    nominasPorAnyoGraficos: []
+    nominasPorAnyoGraficos: [],
 };
 
 //types
@@ -74,10 +75,33 @@ export const obtenerCuadrantesPorAnyoAccion = (objeto) => (dispatch, getState) =
                 }
             });
             arrayCuadrantes.push(res.data);
+            let array = [];
+            let sumatorio = 0;
+            if (arrayCuadrantes.length > 0) {
+                arrayCuadrantes.forEach((mes, index) => {
+                    if (mes.length > 0) {
+                        mes.forEach((mesInt, index) => {
+                            if (mesInt.total) {
+                                sumatorio += parseInt(mesInt.total);
+                            }
+                        });
+                        array.push({
+                            name: meses[index].substr(0, 3) + '.',
+                            Ingresos: sumatorio,
+                        });
+                        sumatorio = 0;
+                    } else {
+                        array.push({
+                            name: meses[index].substr(0, 3) + '.',
+                            Ingresos: 0,
+                        })
+                    }
+                });
+            };
             dispatch({
                 type: OBTENER_CUADRANTES_POR_ANYO_GRAFICOS_EXITO,
                 payload: {
-                    elementoArray: arrayCuadrantes,
+                    elementoArray: array,
                 }
             })
         });
@@ -110,10 +134,33 @@ export const obtenerNominasPorAnyoAccion = (objeto) => (dispatch, getState) => {
                 }
             });
             arrayNominas.push(res.data);
+            let array = [];
+            let sumatorio = 0;
+            if (arrayNominas.length > 0) {
+                arrayNominas.forEach((mes, index) => {
+                    if (mes.length > 0) {
+                        mes.forEach((mesInt, index) => {
+                            if (mesInt.total) {
+                                sumatorio += parseInt(mesInt.total);
+                            }
+                        });
+                        array.push({
+                            name: meses[index].substr(0, 3) + '.',
+                            Gastos: sumatorio,
+                        });
+                        sumatorio = 0;
+                    } else {
+                        array.push({
+                            name: meses[index].substr(0, 3) + '.',
+                            Gastos: 0,
+                        })
+                    }
+                });
+            };
             dispatch({
                 type: OBTENER_NOMINAS_POR_ANYO_GRAFICOS_EXITO,
                 payload: {
-                    elementoArray: arrayNominas,
+                    elementoArray: array,
                 }
             })
         });

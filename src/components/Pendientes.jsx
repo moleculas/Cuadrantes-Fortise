@@ -14,7 +14,6 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 //importaciones acciones
 import { obtenerCentrosAccion } from '../redux/centrosDucks';
 import { obtenerCuadrantesPendientesAccion } from '../redux/pendientesDucks';
-import { forzarRecargaPendientesAccion } from '../redux/pendientesDucks';
 import { obtenerCentroAccion } from '../redux/centrosDucks';
 import { cambioEstadoInicioCuadrantesAccion } from '../redux/cuadrantesDucks';
 import { activarDesactivarCambioBotonRegistrarAccion } from '../redux/cuadrantesDucks';
@@ -23,6 +22,7 @@ import { cambiarACuadranteNoRegistradoAccion } from '../redux/cuadrantesDucks';
 import { venimosDePendientesAccion } from '../redux/pendientesDucks';
 import { setCentroAccion } from '../redux/cuadrantesDucks';
 import { retornaAnoMesCuadranteAccion } from '../redux/appDucks';
+import { vaciarDatosPendientesAccion } from '../redux/pendientesDucks';
 
 //estilos
 import Clases from "../clases";
@@ -41,7 +41,6 @@ const Pendientes = (props) => {
     const errorDeCargaCuadrantes = useSelector(store => store.variablesCuadrantes.errorDeCargaCuadrantes);
     const openLoadingCuadrantes = useSelector(store => store.variablesCuadrantes.loadingCuadrantes);
     const centrosPendientesArray = useSelector(store => store.variablesPendientes.centrosPendientesArray);
-    const forzarRecargaPendientes = useSelector(store => store.variablesPendientes.forzarRecargaPendientes);
     const calendarioAGestionar = useSelector(store => store.variablesCuadrantes.calendarioAGestionar);
     const openLoadingPendientes = useSelector(store => store.variablesPendientes.loadingPendientes);
 
@@ -54,19 +53,24 @@ const Pendientes = (props) => {
     //useEffect
 
     useEffect(() => {
-        if (forzarRecargaPendientes || calendarioAGestionar) {
+        if (listadoCentros.length === 0) {
             dispatch(obtenerCentrosAccion('centros'));
-            dispatch(forzarRecargaPendientesAccion(false));
-        }
-    }, [forzarRecargaPendientes, calendarioAGestionar]);
+        };       
+    }, [dispatch]);
+
+    useEffect(() => {        
+        dispatch(vaciarDatosPendientesAccion());
+    }, [calendarioAGestionar]);
 
     useEffect(() => {
         if (listadoCentros.length > 0) {
-            const { monthNum, year } = dispatch(retornaAnoMesCuadranteAccion(calendarioAGestionar));
-            const anyoMes = year + '-' + monthNum;
-            dispatch(obtenerCuadrantesPendientesAccion('cuadrantes', anyoMes, listadoCentros));
+            if (centrosPendientesArray.length === 0) {
+                const { monthNum, year } = dispatch(retornaAnoMesCuadranteAccion(calendarioAGestionar));
+                const anyoMes = year + '-' + monthNum;
+                dispatch(obtenerCuadrantesPendientesAccion('cuadrantes', anyoMes, listadoCentros));
+            }
         }
-    }, [listadoCentros]);
+    }, [ listadoCentros, calendarioAGestionar]);
 
     useEffect(() => {
         if (errorDeCargaCentros || errorDeCargaCuadrantes) {
@@ -168,7 +172,7 @@ const Pendientes = (props) => {
                     {alert.mensaje}
                 </Alert>
             </Snackbar>
-            {console.log(listadoCentros)}
+            {/* {console.log(centrosPendientesArray)} */}
         </div>
     )
 }

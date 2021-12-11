@@ -182,7 +182,6 @@ export const activarDesactivarCambioBotonResetearAccion = (estado) => (dispatch,
 }
 
 export const vaciarDatosCuadrantesAccion = () => (dispatch, getState) => {
-    const arrayVacio = [];
     dispatch({
         type: VACIAR_DATOS_CUADRANTES,
         payload: {
@@ -192,14 +191,14 @@ export const vaciarDatosCuadrantesAccion = () => (dispatch, getState) => {
             datosCuadrante: {
                 objeto: 'cuadrante',
                 centro: null,
-                arrayCuadrante: arrayVacio
+                arrayCuadrante: []
             },
             datosInforme: {
                 objeto: 'informe',
                 computo: '',
                 mensualPactado: null,
                 precioHora: null,
-                arrayTrabajadores: arrayVacio,
+                arrayTrabajadores: [],
                 facturado: 'no',
                 totalFacturado_M: null,
                 totalFacturado_L: null,

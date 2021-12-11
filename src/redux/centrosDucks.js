@@ -24,7 +24,7 @@ const dataInicial = {
         horario: {
             tipo: '',
             variacion: '',
-            computo: '',            
+            computo: '',
             mensualPactado: null,
             precioHora_L: null,
             precioHora_C: null,
@@ -93,7 +93,7 @@ const dataInicial = {
         trabajadores: {
             cantidad: '',
             trabajadores: []
-        },       
+        },
     },
     exitoActualizacionCentro: false,
     exitoRegistroCentro: false,
@@ -119,6 +119,7 @@ const ACTIVAR_DESACTIVAR_COMPONENTE_NUEVO_CENTRO = 'ACTIVAR_DESACTIVAR_COMPONENT
 const ACTIVAR_DESACTIVAR_COMPONENTE_ACTUALIZACION_CENTRO = 'ACTIVAR_DESACTIVAR_COMPONENTE_ACTUALIZACION_CENTRO';
 const ACTIVAR_DESACTIVAR_COMPONENTE_REGISTRO_CENTRO = 'ACTIVAR_DESACTIVAR_COMPONENTE_REGISTRO_CENTRO';
 const OBTENER_CATEGORIA_POR_CENTRO_EXITO = 'OBTENER_CATEGORIA_POR_CENTRO_EXITO';
+const VACIAR_DATOS_CENTRO = 'VACIAR_DATOS_CENTRO';
 
 //reducer
 export default function centrosReducer(state = dataInicial, action) {
@@ -151,6 +152,8 @@ export default function centrosReducer(state = dataInicial, action) {
             return { ...state, estadoActivadoDesactivadoRegistroCentro: action.payload.estado }
         case OBTENER_CATEGORIA_POR_CENTRO_EXITO:
             return { ...state, categoriaPorCentro: action.payload.categoria, errorDeCargaCentros: false, loadingCentros: false }
+        case VACIAR_DATOS_CENTRO:
+            return { ...state, objetoCentro: action.payload, categoriaPorCentro: '' }
         default:
             return { ...state }
     }
@@ -210,8 +213,7 @@ export const obtenerCentrosAccion = (objeto) => async (dispatch, getState) => {
                 array: respuesta,
                 errorDeCargaCentros: false
             }
-        })
-
+        });
     } catch (error) {
         dispatch({
             type: ERROR_DE_CARGA_CENTROS
@@ -222,6 +224,99 @@ export const obtenerCentrosAccion = (objeto) => async (dispatch, getState) => {
 export const vaciarDatosCentrosAccion = () => (dispatch, getState) => {
     dispatch({
         type: VACIAR_DATOS_CENTROS
+    });
+}
+
+export const vaciarDatosCentroAccion = () => (dispatch, getState) => {
+    dispatch({
+        type: VACIAR_DATOS_CENTRO,
+        payload: {
+            id: null,
+            nombre: '',
+            categoria: '',
+            codigo: '',
+            domicilio: '',
+            codigoPostal: '',
+            poblacion: '',
+            provincia: '',
+            nif: '',
+            mail: '',
+            telefono: '',
+            formaPago: '',
+            horario: {
+                tipo: '',
+                variacion: '',
+                computo: '',
+                mensualPactado: null,
+                precioHora_L: null,
+                precioHora_C: null,
+                precioHora_E: null,
+                precioHora_I: null,
+                precioHora_Z: null,
+                precioHora_T: null,
+                precioHora_P: null,
+                lunesInicioRango: null,
+                lunesFinRango: null,
+                martesInicioRango: null,
+                martesFinRango: null,
+                miercolesInicioRango: null,
+                miercolesFinRango: null,
+                juevesInicioRango: null,
+                juevesFinRango: null,
+                viernesInicioRango: null,
+                viernesFinRango: null,
+                sabadoInicioRango: null,
+                sabadoFinRango: null,
+                domingoInicioRango: null,
+                domingoFinRango: null,
+                lunesInicio1RangoDescanso: null,
+                lunesInicio2RangoDescanso: null,
+                lunesFin1RangoDescanso: null,
+                lunesFin2RangoDescanso: null,
+                martesInicio1RangoDescanso: null,
+                martesInicio2RangoDescanso: null,
+                martesFin1RangoDescanso: null,
+                martesFin2RangoDescanso: null,
+                miercolesInicio1RangoDescanso: null,
+                miercolesInicio2RangoDescanso: null,
+                miercolesFin1RangoDescanso: null,
+                miercolesFin2RangoDescanso: null,
+                juevesInicio1RangoDescanso: null,
+                juevesInicio2RangoDescanso: null,
+                juevesFin1RangoDescanso: null,
+                juevesFin2RangoDescanso: null,
+                viernesInicio1RangoDescanso: null,
+                viernesInicio2RangoDescanso: null,
+                viernesFin1RangoDescanso: null,
+                viernesFin2RangoDescanso: null,
+                sabadoInicio1RangoDescanso: null,
+                sabadoInicio2RangoDescanso: null,
+                sabadoFin1RangoDescanso: null,
+                sabadoFin2RangoDescanso: null,
+                domingoInicio1RangoDescanso: null,
+                domingoInicio2RangoDescanso: null,
+                domingoFin1RangoDescanso: null,
+                domingoFin2RangoDescanso: null,
+                lunesCantidad: '',
+                martesCantidad: '',
+                miercolesCantidad: '',
+                juevesCantidad: '',
+                viernesCantidad: '',
+                sabadoCantidad: '',
+                domingoCantidad: '',
+                lunesTipoServicio: '',
+                martesTipoServicio: '',
+                miercolesTipoServicio: '',
+                juevesTipoServicio: '',
+                viernesTipoServicio: '',
+                sabadoTipoServicio: '',
+                domingoTipoServicio: '',
+            },
+            trabajadores: {
+                cantidad: '',
+                trabajadores: []
+            },
+        }
     });
 }
 
@@ -281,8 +376,8 @@ export const obtenerCategoriaPorCentroAccion = (objeto, id) => async (dispatch, 
         });
         dispatch({
             type: OBTENER_CATEGORIA_POR_CENTRO_EXITO,
-            payload: {                
-                categoria: res.data.categoria,              
+            payload: {
+                categoria: res.data.categoria,
             }
         });
     } catch (error) {

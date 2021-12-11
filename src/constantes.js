@@ -4,7 +4,7 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
     //rutaServer = window.location.protocol + "//" + window.location.host    
 
 } else {
-    rutaServer = window.location.protocol + "//" + window.location.host + "/gestio";
+    rutaServer = window.location.protocol + "//" + window.location.host;
     rutaApi = rutaServer + "/api/";
 }
 

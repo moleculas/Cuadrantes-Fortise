@@ -53,7 +53,6 @@ import Clases from "../clases";
 import { onEstemAccion } from '../redux/appDucks';
 import { retornaAnoMesAccion } from '../redux/appDucks';
 import { setCalendarioAGestionarNominasAccion } from '../redux/nominasDucks';
-import { obtenerTrabajadoresAccion } from '../redux/trabajadoresDucks';
 import { obtenerCentrosAccion } from '../redux/centrosDucks';
 import { cambioEstadoInicioNominasAccion } from '../redux/nominasDucks';
 import { retornaAnoMesCuadranteAccion } from '../redux/appDucks';
@@ -77,11 +76,11 @@ import { abreObjetoDialogAccion } from '../redux/appDucks';
 import { cierraObjetoDialogAccion } from '../redux/appDucks';
 import { registrarIntervencionNominaNuevaAccion } from '../redux/nominasDucks';
 import { vaciarDatosNominasAccion } from '../redux/nominasDucks';
-//import { forzarRecargaFaltantesAccion } from '../redux/faltantesDucks';
 import { vaciarDatosTrabajadorAccion } from '../redux/trabajadoresDucks';
 import { cambioEstadoNominaSinDatosAccion } from '../redux/nominasDucks';
 import { venimosDeFaltantesAccion } from '../redux/faltantesDucks';
 import { forzarRecargaGraficosNominasAccion } from '../redux/graficosDucks';
+import { vaciarDatosFaltantesAccion } from '../redux/faltantesDucks';
 
 const getHeightScrollable = () => (window.innerHeight - 220) || (document.documentElement.clientHeight - 220) || (document.body.clientHeight - 220);
 
@@ -171,6 +170,7 @@ const Nominas = (props) => {
 
     useEffect(() => {
         document.body.classList.add(classes.sinScroll);
+        reseteaContenidoNominas();
     }, []);
 
     useEffect(() => {
@@ -186,10 +186,10 @@ const Nominas = (props) => {
     useEffect(() => {
         dispatch(onEstemAccion('nominas'));
         dispatch(setCalendarioAGestionarNominasAccion(dispatch(retornaAnoMesAccion())));
-        //dispatch(forzarRecargaFaltantesAccion(true));
         dispatch(forzarRecargaGraficosNominasAccion(true));
-        dispatch(obtenerTrabajadoresAccion('trabajadores'));
-        dispatch(obtenerCentrosAccion('centros'));
+        if (listadoCentros.length === 0) {
+            dispatch(obtenerCentrosAccion('centros'));
+        };
         dispatch(obtenerConfiguracionAccion('configuracion', 1));
     }, [dispatch]);
 
@@ -253,27 +253,27 @@ const Nominas = (props) => {
     useEffect(() => {
         if (cuadrantesVinculadosATrabajador.length > 0) {
             let objeto;
-            let arrayNomina = [...nominaAGestionar];            
+            let arrayNomina = [...nominaAGestionar];
             cuadrantesVinculadosATrabajador.forEach((cuadrante, index) => {
                 objeto = JSON.parse(cuadrante['datos_informe']);
                 objeto.arrayTrabajadores.forEach((trabajador, index) => {
                     if (trabajador.trabajador === trabajadorAGestionar.id) {
-                        const elTotalHorasNormal= 
-                        trabajador.totalHorasNormal_L+
-                        trabajador.totalHorasNormal_C+
-                        trabajador.totalHorasNormal_E+
-                        trabajador.totalHorasNormal_I+
-                        trabajador.totalHorasNormal_Z+
-                        trabajador.totalHorasNormal_T+
-                        trabajador.totalHorasNormal_P;
-                        const elTotalHorasExtra= 
-                        trabajador.totalHorasExtra_L+
-                        trabajador.totalHorasExtra_C+
-                        trabajador.totalHorasExtra_E+
-                        trabajador.totalHorasExtra_I+
-                        trabajador.totalHorasExtra_Z+
-                        trabajador.totalHorasExtra_T+
-                        trabajador.totalHorasExtra_P;
+                        const elTotalHorasNormal =
+                            trabajador.totalHorasNormal_L +
+                            trabajador.totalHorasNormal_C +
+                            trabajador.totalHorasNormal_E +
+                            trabajador.totalHorasNormal_I +
+                            trabajador.totalHorasNormal_Z +
+                            trabajador.totalHorasNormal_T +
+                            trabajador.totalHorasNormal_P;
+                        const elTotalHorasExtra =
+                            trabajador.totalHorasExtra_L +
+                            trabajador.totalHorasExtra_C +
+                            trabajador.totalHorasExtra_E +
+                            trabajador.totalHorasExtra_I +
+                            trabajador.totalHorasExtra_Z +
+                            trabajador.totalHorasExtra_T +
+                            trabajador.totalHorasExtra_P;
                         if (elTotalHorasNormal > 0 || elTotalHorasExtra > 0) {
                             arrayNomina.push({
                                 centro: objeto.centro,
@@ -282,6 +282,7 @@ const Nominas = (props) => {
                                 totalHorasExtra: elTotalHorasExtra
                             })
                         } else {
+                            console.log(elTotalHorasNormal)
                             setAlert({
                                 mensaje: "La consulta no ha devuelto resultados.",
                                 tipo: 'warning'
@@ -400,7 +401,6 @@ const Nominas = (props) => {
         if (esInicioNominas) {
             reseteaContenidoNominas();
             dispatch(vaciarDatosNominasAccion());
-            dispatch(vaciarDatosTrabajadorAccion());
             setValueDatePickerNominas(newValue);
             dispatch(setCalendarioAGestionarNominasAccion(dispatch(retornaAnoMesAccion(newValue))));
             dispatch(cambioEstadoInicioNominasAccion(true));
@@ -411,13 +411,13 @@ const Nominas = (props) => {
                 if (intervencionRegistrada) {
                     reseteaContenidoNominas();
                     dispatch(vaciarDatosNominasAccion());
-                    dispatch(vaciarDatosTrabajadorAccion());
                     setValueDatePickerNominas(newValue);
                     dispatch(setCalendarioAGestionarNominasAccion(dispatch(retornaAnoMesAccion(newValue))));
                     dispatch(cambioEstadoInicioNominasAccion(true));
                 }
             }
-        }
+        };
+        dispatch(vaciarDatosFaltantesAccion());
     };
 
     const handleChangeFormTrabajadoresNominas = (e) => {
@@ -454,6 +454,8 @@ const Nominas = (props) => {
         dispatch(cambioEstadoNominaSinDatosAccion(false));
         setEsEmision(false);
         setArrayInformeLineas([]);
+        dispatch(vaciarDatosTrabajadorAccion());       
+
     };
 
     const procesarDatosNomina = (source, totalEmitido) => {
@@ -473,7 +475,7 @@ const Nominas = (props) => {
             actualizacion: laFirmaActualizacion,
             trabajador: objetoNomina.trabajador,
             datos_nomina: JSON.stringify(objetoFinalNomina),
-            total: source === 'informe' ? totalEmitido : objetoNomina.datosNomina.emitida==='si' ? objetoNomina.datosNomina.totalEmitido : null,         
+            total: source === 'informe' ? totalEmitido : objetoNomina.datosNomina.emitida === 'si' ? objetoNomina.datosNomina.totalEmitido : null,
         };
         if (nominaRegistrada === 'no') {
             dispatch(registrarNominaAccion('nominas', nominaAGuardar.id, nominaAGuardar));
@@ -495,15 +497,14 @@ const Nominas = (props) => {
         } else {
             if (intervencionRegistrada) {
                 reseteaContenidoNominas();
-                dispatch(vaciarDatosTrabajadorAccion());
                 dispatch(vaciarDatosNominasAccion());
                 dispatch(cambioEstadoInicioNominasAccion(true));
-                //dispatch(forzarRecargaFaltantesAccion(true));
-                dispatch(forzarRecargaGraficosNominasAccion(true)); 
                 dispatch(cambioEstadoNominaSinDatosAccion(true));
-            }
+            };
         };
         setAnchorElMenu(null);
+        dispatch(vaciarDatosFaltantesAccion());
+        dispatch(forzarRecargaGraficosNominasAccion(true));
     };
 
     const generaInformacionNominas = () => {

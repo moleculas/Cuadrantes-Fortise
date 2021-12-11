@@ -112,7 +112,7 @@ const Trabajadores = (props) => {
     const [preValueTab, setPreValueTab] = useState(null);
     const [anchorElMenu, setAnchorElMenu] = useState(null);
     const [heightScrollable, setHeightScrollable] = useState(getHeightScrollable());
-    const [venimosTrabajadorBaja, setVenimosTrabajadorBaja] = useState(null);
+    const [venimosTrabajadorFuera, setVenimosTrabajadorFuera] = useState(null);
 
     //useEffect
 
@@ -134,9 +134,9 @@ const Trabajadores = (props) => {
 
     useEffect(() => {
         if (id) {
-            setVenimosTrabajadorBaja({ id: id, nombre: nombre });
+            setVenimosTrabajadorFuera({ id: id, nombre: nombre });
         } else {
-            setVenimosTrabajadorBaja(null);
+            setVenimosTrabajadorFuera(null);
         }
     }, [id]);
 
@@ -287,7 +287,7 @@ const Trabajadores = (props) => {
                                 </Tabs>
                             </AppBar>
                             <TabPanel value={valueTab} index={0} className={classes.scrollable} style={{ height: heightScrollable }}>
-                                <TrabajadoresEditar ref={funcionesEnTrabajadoresEditarRef} prVenimosTrabajadorBaja={venimosTrabajadorBaja} />
+                                <TrabajadoresEditar ref={funcionesEnTrabajadoresEditarRef} prVenimosTrabajadorFuera={venimosTrabajadorFuera} />
                             </TabPanel>
                             <TabPanel value={valueTab} index={1} className={classes.scrollable} style={{ height: heightScrollable }}>
                                 <TrabajadoresRegistrar ref={funcionesEnTrabajadoresRegistrarRef} />

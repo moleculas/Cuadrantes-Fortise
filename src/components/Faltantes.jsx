@@ -12,9 +12,8 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 //importaciones acciones
-//import { obtenerTrabajadoresAccion } from '../redux/trabajadoresDucks';
-import { forzarRecargaFaltantesAccion } from '../redux/faltantesDucks';
 import { obtenerTrabajadoresFaltantesAccion } from '../redux/faltantesDucks';
+import { obtenerTrabajadoresAccion } from '../redux/trabajadoresDucks';
 import { retornaAnoMesCuadranteAccion } from '../redux/appDucks';
 import { setTrabajadorAccion } from '../redux/nominasDucks';
 import { obtenerTrabajadorAccion } from '../redux/trabajadoresDucks';
@@ -23,6 +22,7 @@ import { activarDesactivarCambioBotonRegistrarNominaAccion } from '../redux/nomi
 import { registrarIntervencionNominaNuevaAccion } from '../redux/nominasDucks';
 import { cambiarANominaNoRegistradaAccion } from '../redux/nominasDucks';
 import { venimosDeFaltantesAccion } from '../redux/faltantesDucks';
+import { vaciarDatosFaltantesAccion } from '../redux/faltantesDucks';
 
 //estilos
 import Clases from "../clases";
@@ -40,7 +40,6 @@ const Faltantes = (props) => {
     const errorDeCargaTrabajadores = useSelector(store => store.variablesTrabajadores.errorDeCargaTrabajadores);
     const openLoadingNominas = useSelector(store => store.variablesNominas.loadingNominas);
     const trabajadoresFaltantesArray = useSelector(store => store.variablesFaltantes.trabajadoresFaltantesArray);
-    const forzarRecargaFaltantes = useSelector(store => store.variablesFaltantes.forzarRecargaFaltantes);
     const calendarioAGestionarNominas = useSelector(store => store.variablesNominas.calendarioAGestionarNominas);
     const openLoadingFaltantes = useSelector(store => store.variablesFaltantes.loadingFaltantes);
     const listadoTrabajadores = useSelector(store => store.variablesTrabajadores.arrayTrabajadores);
@@ -54,19 +53,24 @@ const Faltantes = (props) => {
     //useEffect
 
     useEffect(() => {
-        if (forzarRecargaFaltantes || calendarioAGestionarNominas) {
-            //dispatch(obtenerTrabajadoresAccion('trabajadores'));
-            dispatch(forzarRecargaFaltantesAccion(false));
-        }
-    }, [forzarRecargaFaltantes, calendarioAGestionarNominas]);
+        if (listadoTrabajadores.length === 0) {
+            dispatch(obtenerTrabajadoresAccion('trabajadores'));
+        };       
+    }, [dispatch]);
+
+    useEffect(() => {        
+        dispatch(vaciarDatosFaltantesAccion());
+    }, [calendarioAGestionarNominas]);
 
     useEffect(() => {
         if (listadoTrabajadores.length > 0) {
-            const { monthNum, year } = dispatch(retornaAnoMesCuadranteAccion(calendarioAGestionarNominas));
-            const anyoMes = year + '-' + monthNum;
-            dispatch(obtenerTrabajadoresFaltantesAccion('nominas', anyoMes, listadoTrabajadores));
+            if (trabajadoresFaltantesArray.length === 0) {
+                const { monthNum, year } = dispatch(retornaAnoMesCuadranteAccion(calendarioAGestionarNominas));
+                const anyoMes = year + '-' + monthNum;
+                dispatch(obtenerTrabajadoresFaltantesAccion('nominas', anyoMes, listadoTrabajadores));
+            }
         }
-    }, [listadoTrabajadores]);
+    }, [ listadoTrabajadores, calendarioAGestionarNominas]);
 
     useEffect(() => {
         if (errorDeCargaTrabajadores || errorDeCargaNominas) {
@@ -168,7 +172,7 @@ const Faltantes = (props) => {
                     {alert.mensaje}
                 </Alert>
             </Snackbar>
-            {/* {console.log(forzarRecargaFaltantes)} */}
+            {/* {console.log(trabajadoresFaltantesArray)} */}
         </div>
     )
 }

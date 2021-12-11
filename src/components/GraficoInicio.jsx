@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useDispatch, useSelector } from 'react-redux';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -11,6 +11,8 @@ import Grid from '@material-ui/core/Grid';
 import Clases from "../clases";
 
 //importaciones acciones
+import { obtenerCuadrantesPorAnyoAccion } from '../redux/graficosDucks';
+import { forzarRecargaGraficosCuadrantesAccion } from '../redux/graficosDucks';
 import { obtenerNominasPorAnyoAccion } from '../redux/graficosDucks';
 import { forzarRecargaGraficosNominasAccion } from '../redux/graficosDucks';
 
@@ -19,13 +21,18 @@ const Alert = (props) => {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
 };
 
-const GraficoNominas = (props) => {
+
+
+const GraficoCuadrantes = (props) => {
 
     const classes = Clases();
     const dispatch = useDispatch();
+    const cuadrantesPorAnyoGraficos = useSelector(store => store.variablesGraficos.cuadrantesPorAnyoGraficos);
     const nominasPorAnyoGraficos = useSelector(store => store.variablesGraficos.nominasPorAnyoGraficos);
+    const errorDeCargaGraficosCuadrantes = useSelector(store => store.variablesGraficos.errorDeCargaGraficosCuadrantes);
     const errorDeCargaGraficosNominas = useSelector(store => store.variablesGraficos.errorDeCargaGraficosNominas);
-    const openLoadingGraficosNominas = useSelector(store => store.variablesGraficos.loadingGraficos);
+    const openLoadingGraficos = useSelector(store => store.variablesGraficos.loadingGraficos);
+    const forzarRecargaGraficosCuadrantes = useSelector(store => store.variablesGraficos.forzarRecargaGraficosCuadrantes);
     const forzarRecargaGraficosNominas = useSelector(store => store.variablesGraficos.forzarRecargaGraficosNominas);
 
     //states
@@ -33,33 +40,57 @@ const GraficoNominas = (props) => {
     const [openLoading, setOpenLoading] = useState(true);
     const [openSnack, setOpenSnack] = useState(false);
     const [alert, setAlert] = useState({});
+    const [dataGraficosInicio, setDataGraficosInicio] = useState([]);
 
     //useEffect
 
     useEffect(() => {
-        if (forzarRecargaGraficosNominas) {            
+        if (forzarRecargaGraficosNominas) {
             dispatch(obtenerNominasPorAnyoAccion('nominas'));
             dispatch(forzarRecargaGraficosNominasAccion(false));
         }
-    }, [forzarRecargaGraficosNominas]);   
+    }, [forzarRecargaGraficosNominas]);
 
     useEffect(() => {
-        if (errorDeCargaGraficosNominas) {
+        if (forzarRecargaGraficosCuadrantes) {
+            dispatch(obtenerCuadrantesPorAnyoAccion('cuadrantes'));
+            dispatch(forzarRecargaGraficosCuadrantesAccion(false));
+        }
+    }, [forzarRecargaGraficosCuadrantes]);
+
+    useEffect(() => {
+        if (cuadrantesPorAnyoGraficos.length ===12 && nominasPorAnyoGraficos.length ===12) {
+            let array = [];
+            let objeto;            
+            for (let i = 0; i < 12; i++) {               
+                objeto = {
+                    name: cuadrantesPorAnyoGraficos[i].name,
+                    Ingresos: cuadrantesPorAnyoGraficos[i].Ingresos,
+                    Gastos: nominasPorAnyoGraficos[i].Gastos
+                }
+                array.push(objeto);
+            };
+            setDataGraficosInicio(array);
+        }
+    }, [cuadrantesPorAnyoGraficos, nominasPorAnyoGraficos]);
+
+    useEffect(() => {
+        if (errorDeCargaGraficosCuadrantes || errorDeCargaGraficosNominas) {
             setAlert({
                 mensaje: "Error de conexión con la base de datos.",
                 tipo: 'error'
             })
             setOpenSnack(true);
         }
-    }, [errorDeCargaGraficosNominas]);
+    }, [errorDeCargaGraficosCuadrantes, errorDeCargaGraficosNominas]);
 
     useEffect(() => {
-        if (!openLoadingGraficosNominas) {
+        if (!openLoadingGraficos) {
             setOpenLoading(false)
         } else {
             setOpenLoading(true)
         }
-    }, [openLoadingGraficosNominas]);
+    }, [openLoadingGraficos]);
 
     //funciones    
 
@@ -89,10 +120,10 @@ const GraficoNominas = (props) => {
                         <CircularProgress />
                     </Box>
                 ) : (
-                    <LineChart
+                    <BarChart
                         width={props.prWidthContenedores}
                         height={props.prHeightContenedores}
-                        data={nominasPorAnyoGraficos}
+                        data={dataGraficosInicio}
                         margin={{
                             top: 20,
                             right: 30,
@@ -105,9 +136,9 @@ const GraficoNominas = (props) => {
                         <YAxis style={{ fontSize: '0.7rem' }} />
                         <Tooltip />
                         {/* <Legend /> */}
-                        <Line type="monotone" dataKey="Gastos" stroke="#ff9800" activeDot={{ r: 4 }} />
-                        <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-                    </LineChart>
+                        <Bar dataKey="Ingresos" fill="#00bcd4" />
+                        <Bar dataKey="Gastos" fill="#ff9800" />
+                    </BarChart>
                 )}
                 <Snackbar open={openSnack} autoHideDuration={12000} onClose={handleCloseSnack}>
                     <Alert severity={alert.tipo} onClose={handleCloseSnack}>
@@ -115,9 +146,9 @@ const GraficoNominas = (props) => {
                     </Alert>
                 </Snackbar>
             </Grid>
-            {/* {console.log(nominasPorAnyoGraficos)} */}
+            {/* {console.log(cuadrantesPorAnyoGraficos)} */}
         </div>
     )
 }
 
-export default GraficoNominas
+export default GraficoCuadrantes

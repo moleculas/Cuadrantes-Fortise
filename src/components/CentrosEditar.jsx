@@ -40,7 +40,7 @@ import { eliminarCentroAccion } from '../redux/centrosDucks';
 import { abreObjetoDialogAccion } from '../redux/appDucks';
 import { cierraObjetoDialogAccion } from '../redux/appDucks';
 import { activarDesactivarActualizarCentroAccion } from '../redux/centrosDucks';
-import { vaciarDatosCentrosAccion } from '../redux/centrosDucks';
+//import { vaciarDatosCentrosAccion } from '../redux/centrosDucks';
 import { validarMailAccion } from '../redux/appDucks';
 
 const categorias = Constantes.CATEGORIAS_CENTROS;
@@ -247,10 +247,14 @@ const CentrosEditar = forwardRef((props, ref) => {
     //useEffect
 
     useEffect(() => {
-        dispatch(vaciarDatosCentrosAccion());
+        //dispatch(vaciarDatosCentrosAccion());
         dispatch(onEstemAccion('editarCentros'));
-        dispatch(obtenerCentrosAccion('centros'));
-        dispatch(obtenerTrabajadoresAccion('trabajadores'));
+        if (listadoCentros.length === 0) {
+            dispatch(obtenerCentrosAccion('centros'));
+        };
+        if (listadoTrabajadores.length === 0) {
+            dispatch(obtenerTrabajadoresAccion('trabajadores'));
+        };  
     }, [dispatch]);
 
     useEffect(() => {
@@ -262,6 +266,14 @@ const CentrosEditar = forwardRef((props, ref) => {
             setOpenSnack(true);
         }
     }, [errorDeCargaTrabajadores, errorDeCargaCentros]);
+
+    useEffect(() => {
+        if (props.prVenimosCentroFuera) {
+            setValuesAutocompleteCentrosValores(props.prVenimosCentroFuera);
+            dispatch(obtenerCentroAccion('centros', props.prVenimosCentroFuera.id));
+            dispatch(activarDesactivarAccion(false));
+        }
+    }, [props.prVenimosCentroFuera]);
 
     useEffect(() => {
         if (exitoActualizacionCentro) {
@@ -2497,7 +2509,7 @@ const CentrosEditar = forwardRef((props, ref) => {
         }
     }));
     const reseteaContenidoEdicion = () => {
-        dispatch(obtenerCentrosAccion('centros'));
+        //dispatch(obtenerCentrosAccion('centros'));
         forceUpdate();
         setValuesAutocompleteCentrosValores(null);
         setValuesFormEdicion({
@@ -3578,7 +3590,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                 prTituloDialog={tituloDialog}
                 prDescripcionDialog={descripcionDialog}
             />
-            {/* {console.log(horarioIntervencionEdicion)} */}
+            {/* {console.log(listadoCentros)} */}
         </div>
     )
 })

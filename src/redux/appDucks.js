@@ -29,6 +29,8 @@ const dataInicial = {
         },
     },
     exitoActualizacionConfiguracion: false,
+    arrayUltimasIntervenciones: [],
+    errorDeCargaUltimasIntervenciones: false,
 }
 
 //types
@@ -45,6 +47,9 @@ const ERROR_DE_CARGA_CONFIGURACION = 'ERROR_DE_CARGA_CONFIGURACION';
 const VACIAR_DATOS_CONFIGURACION = 'VACIAR_DATOS_CONFIGURACION';
 const ACTUALIZAR_CONFIGURACION_EXITO = 'ACTUALIZAR_CONFIGURACION_EXITO';
 const RESETEA_EXITO_CONFIGURACION = 'RESETEA_EXITO_CONFIGURACION';
+const OBTENER_ULTIMAS_INTERVENCIONES_EXITO = 'OBTENER_ULTIMAS_INTERVENCIONES_EXITO';
+const VACIAR_DATOS_ULTIMAS_INTERVENCIONES = 'VACIAR_DATOS_ULTIMAS_INTERVENCIONES';
+const ERROR_DE_CARGA_ULTIMAS_INTERVENCIONES = 'ERROR_DE_CARGA_ULTIMAS_INTERVENCIONES';
 
 //reducer
 export default function appReducer(state = dataInicial, action) {
@@ -75,6 +80,14 @@ export default function appReducer(state = dataInicial, action) {
             return { ...state, errorDeCargaConfiguracion: false, loadingApp: false, exitoActualizacionConfiguracion: true }
         case RESETEA_EXITO_CONFIGURACION:
             return { ...state, exitoActualizacionConfiguracion: false }
+        case OBTENER_CONFIGURACION_EXITO:
+            return { ...state, objetoConfiguracion: action.payload.objeto, errorDeCargaConfiguracion: false, loadingApp: false }
+        case OBTENER_ULTIMAS_INTERVENCIONES_EXITO:
+            return { ...state, arrayUltimasIntervenciones: action.payload.array, errorDeCargaUltimasIntervenciones: false, loadingApp: false }
+        case ERROR_DE_CARGA_ULTIMAS_INTERVENCIONES:
+            return { ...state, errorDeCargaUltimasIntervenciones: true, loadingApp: false }
+        case VACIAR_DATOS_ULTIMAS_INTERVENCIONES:
+            return { ...state, arrayUltimasIntervenciones: [] }
         default:
             return { ...state }
     }
@@ -461,11 +474,44 @@ export const obtenerObjetoPorIdAccion = (listado, id) => (dispatch, getState) =>
 }
 
 export const validarMailAccion = (mail) => (dispatch, getState) => {
-    let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');   
-    if (regex.test(mail)) {   
+    let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
+    if (regex.test(mail)) {
         return true;
     }
-    else {     
+    else {
         return false;
     }
+}
+
+export const obtenerUltimasIntervencionesAccion = () => async (dispatch, getState) => {
+    dispatch({
+        type: LOADING_APP
+    });
+    try {
+        const formData = new FormData();
+        let apiUrl = rutaApi + "ultimas_intervenciones.php";
+        const res = await axios.post(apiUrl, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            }
+        });
+        const respuesta = res.data;
+        respuesta.sort((a, b) => a.actualizacion.localeCompare(b.actualizacion));
+        dispatch({
+            type: OBTENER_ULTIMAS_INTERVENCIONES_EXITO,
+            payload: {
+                array: respuesta
+            }
+        })
+    } catch (error) {
+        dispatch({
+            type: ERROR_DE_CARGA_ULTIMAS_INTERVENCIONES
+        })
+    }
+}
+
+export const vaciarDatosUltimasIntervencionesAccion = () => (dispatch, getState) => {
+    dispatch({
+        type: VACIAR_DATOS_ULTIMAS_INTERVENCIONES
+    });
 }
