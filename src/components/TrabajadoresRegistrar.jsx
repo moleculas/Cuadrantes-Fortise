@@ -299,6 +299,7 @@ const TrabajadoresRegistrar = forwardRef((props, ref) => {
                             <FormControl
                                 variant="outlined"
                                 className={classes.form}
+                                size="small"
                             >
                                 <InputLabel>Nombre</InputLabel>
                                 <OutlinedInput
@@ -313,6 +314,7 @@ const TrabajadoresRegistrar = forwardRef((props, ref) => {
                             <FormControl
                                 variant="outlined"
                                 className={classes.form}
+                                size="small"
                             >
                                 <InputLabel>DNI - NIE</InputLabel>
                                 <OutlinedInput
@@ -327,6 +329,7 @@ const TrabajadoresRegistrar = forwardRef((props, ref) => {
                             <FormControl
                                 variant="outlined"
                                 className={classes.form}
+                                size="small"
                             >
                                 <InputLabel>Seg. Social</InputLabel>
                                 <OutlinedInput                                
@@ -341,6 +344,7 @@ const TrabajadoresRegistrar = forwardRef((props, ref) => {
                             <FormControl
                                 variant="outlined"
                                 className={classes.form}
+                                size="small"
                             >
                                 <InputLabel>Teléfono</InputLabel>
                                 <OutlinedInput
@@ -367,6 +371,7 @@ const TrabajadoresRegistrar = forwardRef((props, ref) => {
                         <FormControl
                             variant="outlined"
                             className={classes.form}
+                            size="small"
                         >
                             <InputLabel>Estado Trabajador</InputLabel>
                             <Select
@@ -406,6 +411,7 @@ const TrabajadoresRegistrar = forwardRef((props, ref) => {
                                             onChange={(newValue) => {
                                                 handleChangeDatePickerInicioRegistro(newValue);
                                             }}
+                                            size="small"
                                         />
                                     </MuiPickersUtilsProvider>
                                     <MuiPickersUtilsProvider locale={es} utils={DateFnsUtils}>
@@ -421,6 +427,7 @@ const TrabajadoresRegistrar = forwardRef((props, ref) => {
                                             onChange={(newValue) => {
                                                 handleChangeDatePickerFinRegistro(newValue);
                                             }}
+                                            size="small"
                                         />
                                     </MuiPickersUtilsProvider>
                                 </Fragment>

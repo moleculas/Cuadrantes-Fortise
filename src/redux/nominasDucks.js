@@ -18,9 +18,9 @@ const dataInicial = {
         datosNomina: {
             objeto: 'nomina',
             arrayDatos: [],
-            emitida: 'no',
             totalEmitido: null
         },
+        estado: 'registrado',
         total: null
     },
     nominaRegistrada: '',
@@ -88,7 +88,7 @@ export default function nominasReducer(state = dataInicial, action) {
         case ACTIVAR_DESACTIVAR_COMPONENTE_BOTON_REGISTRAR_NOMINA:
             return { ...state, estadoActivadoDesactivadoBotonRegistrarNomina: action.payload.estado }
         case ACTIVAR_DESACTIVAR_COMPONENTE_BOTON_ELIMINAR_NOMINA:
-            return { ...state, estadoActivadoDesactivadoBotonEliminarNomina: action.payload.estado }      
+            return { ...state, estadoActivadoDesactivadoBotonEliminarNomina: action.payload.estado }
         case REGISTRAR_NOMINA_EXITO:
             return { ...state, errorDeCargaNominas: false, loadingNominas: false, exitoRegistroNomina: true, ultimoIdRegistrado: action.payload.ultimoIdRegistrado }
         case ACTUALIZAR_NOMINA_EXITO:
@@ -194,10 +194,10 @@ export const vaciarDatosNominasAccion = () => (dispatch, getState) => {
             trabajador: '',
             datosNomina: {
                 objeto: 'nomina',
-                arrayDatos: arrayVacio,
-                emitida: 'no',
+                arrayDatos: arrayVacio,               
                 totalEmitido: null
             },
+            estado: 'registrado',
             total: null
         }
     });
@@ -230,6 +230,7 @@ export const obtenerNominaAccion = (objeto, id) => async (dispatch, getState) =>
                     actualizacion: res.data.actualizacion,
                     trabajador: res.data.trabajador,
                     datosNomina: JSON.parse(res.data.datos_nomina),
+                    estado: res.data.estado,
                     total: res.data.total
                 }
             });

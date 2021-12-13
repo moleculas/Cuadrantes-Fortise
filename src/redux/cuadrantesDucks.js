@@ -28,7 +28,6 @@ const dataInicial = {
             mensualPactado: null,
             precioHora: null,
             arrayTrabajadores: [],
-            facturado: 'no',
             totalFacturado_M: null,
             totalFacturado_L: null,
             totalFacturado_C: null,
@@ -38,6 +37,7 @@ const dataInicial = {
             totalFacturado_T: null,
             totalFacturado_P: null,
         },
+        estado: 'registrado',
         total: null
     },
     cuadranteRegistrado: '',
@@ -199,7 +199,6 @@ export const vaciarDatosCuadrantesAccion = () => (dispatch, getState) => {
                 mensualPactado: null,
                 precioHora: null,
                 arrayTrabajadores: [],
-                facturado: 'no',
                 totalFacturado_M: null,
                 totalFacturado_L: null,
                 totalFacturado_C: null,
@@ -209,6 +208,7 @@ export const vaciarDatosCuadrantesAccion = () => (dispatch, getState) => {
                 totalFacturado_T: null,
                 totalFacturado_P: null,
             },
+            estado: 'registrado',
             total: null
         }
     });
@@ -295,6 +295,7 @@ export const obtenerCuadranteAccion = (objeto, id) => async (dispatch, getState)
                     actualizacion: res.data.actualizacion,
                     datosCuadrante: JSON.parse(res.data.datos_cuadrante),
                     datosInforme: JSON.parse(res.data.datos_informe),
+                    estado: res.data.estado,
                     total: res.data.total,
                 }
             });

@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
@@ -12,9 +10,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 //importaciones acciones
-import { obtenerTrabajadoresFaltantesAccion } from '../redux/faltantesDucks';
-import { obtenerTrabajadoresAccion } from '../redux/trabajadoresDucks';
-import { retornaAnoMesCuadranteAccion } from '../redux/appDucks';
 import { setTrabajadorAccion } from '../redux/nominasDucks';
 import { obtenerTrabajadorAccion } from '../redux/trabajadoresDucks';
 import { cambioEstadoInicioNominasAccion } from '../redux/nominasDucks';
@@ -22,82 +17,20 @@ import { activarDesactivarCambioBotonRegistrarNominaAccion } from '../redux/nomi
 import { registrarIntervencionNominaNuevaAccion } from '../redux/nominasDucks';
 import { cambiarANominaNoRegistradaAccion } from '../redux/nominasDucks';
 import { venimosDeFaltantesAccion } from '../redux/faltantesDucks';
-import { vaciarDatosFaltantesAccion } from '../redux/faltantesDucks';
 
 //estilos
 import Clases from "../clases";
 
-//snackbar y alert
-const Alert = (props) => {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-};
-
 const Faltantes = (props) => {
 
     const classes = Clases();
-    const dispatch = useDispatch();
-    const errorDeCargaNominas = useSelector(store => store.variablesNominas.errorDeCargaNominas);
-    const errorDeCargaTrabajadores = useSelector(store => store.variablesTrabajadores.errorDeCargaTrabajadores);
-    const openLoadingNominas = useSelector(store => store.variablesNominas.loadingNominas);
-    const trabajadoresFaltantesArray = useSelector(store => store.variablesFaltantes.trabajadoresFaltantesArray);
-    const calendarioAGestionarNominas = useSelector(store => store.variablesNominas.calendarioAGestionarNominas);
-    const openLoadingFaltantes = useSelector(store => store.variablesFaltantes.loadingFaltantes);
+    const dispatch = useDispatch(); 
+    const nominasFaltantesArray = useSelector(store => store.variablesFaltantes.nominasFaltantesArray);
     const listadoTrabajadores = useSelector(store => store.variablesTrabajadores.arrayTrabajadores);
 
     //states
 
-    const [openSnack, setOpenSnack] = useState(false);
-    const [alert, setAlert] = useState({});
-    const [openLoading, setOpenLoading] = useState(false);
-
-    //useEffect
-
-    useEffect(() => {
-        if (listadoTrabajadores.length === 0) {
-            dispatch(obtenerTrabajadoresAccion('trabajadores'));
-        };       
-    }, [dispatch]);
-
-    useEffect(() => {        
-        dispatch(vaciarDatosFaltantesAccion());
-    }, [calendarioAGestionarNominas]);
-
-    useEffect(() => {
-        if (listadoTrabajadores.length > 0) {
-            if (trabajadoresFaltantesArray.length === 0) {
-                const { monthNum, year } = dispatch(retornaAnoMesCuadranteAccion(calendarioAGestionarNominas));
-                const anyoMes = year + '-' + monthNum;
-                dispatch(obtenerTrabajadoresFaltantesAccion('nominas', anyoMes, listadoTrabajadores));
-            }
-        }
-    }, [ listadoTrabajadores, calendarioAGestionarNominas]);
-
-    useEffect(() => {
-        if (errorDeCargaTrabajadores || errorDeCargaNominas) {
-            setAlert({
-                mensaje: "Error de conexión con la base de datos.",
-                tipo: 'error'
-            })
-            setOpenSnack(true);
-        }
-    }, [errorDeCargaTrabajadores, errorDeCargaNominas]);
-
-    useEffect(() => {
-        if (!openLoadingNominas || !openLoadingFaltantes) {
-            setOpenLoading(false)
-        } else {
-            setOpenLoading(true)
-        }
-    }, [errorDeCargaTrabajadores, openLoadingFaltantes]);
-
-    //funciones    
-
-    const handleCloseSnack = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setOpenSnack(false);
-    };
+    //funciones
 
     const handleNominasFaltantes = (trabajador) => {
         dispatch(setTrabajadorAccion(trabajador));
@@ -112,7 +45,7 @@ const Faltantes = (props) => {
     //retorno componentes
 
     const retornaTrabajadorGestionado = (trabajador, index) => {
-        if (trabajadoresFaltantesArray.includes(trabajador.id)) {
+        if (nominasFaltantesArray.includes(trabajador.id)) {
             return (
                 <Box
                     key={'listaNominas' + index}
@@ -122,7 +55,7 @@ const Faltantes = (props) => {
                         className={classes.casilla}
                     >
                         <ListItemText
-                            secondary={trabajador.nombre}
+                            primary={trabajador.nombre}
                         />
                         <ListItemSecondaryAction>
                             <ExitToAppIcon
@@ -145,9 +78,9 @@ const Faltantes = (props) => {
                 alignItems="center"
                 p={2}
                 className={classes.rootPendientes}
-                style={{ minHeight: props.prHeightContenedores, maxHeight: props.prHeightContenedores }}
+                style={{ width: props.prWidthContenedores, minHeight: props.prHeightContenedores, maxHeight: props.prHeightContenedores }}
             >
-                {openLoading ? (
+                {props.prOpenLoading ? (
                     <Box
                         className={classes.centrado}
                     >
@@ -166,12 +99,7 @@ const Faltantes = (props) => {
                         </List>
                     </Box>
                 )}
-            </Grid>
-            <Snackbar open={openSnack} autoHideDuration={12000} onClose={handleCloseSnack}>
-                <Alert severity={alert.tipo} onClose={handleCloseSnack}>
-                    {alert.mensaje}
-                </Alert>
-            </Snackbar>
+            </Grid>           
             {/* {console.log(trabajadoresFaltantesArray)} */}
         </div>
     )

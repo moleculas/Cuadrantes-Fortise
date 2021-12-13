@@ -35,6 +35,7 @@ import { registrarIntervencionAccion } from '../redux/appDucks';
 import { abreObjetoDialogAccion } from '../redux/appDucks';
 import { cierraObjetoDialogAccion } from '../redux/appDucks';
 import { activarDesactivarAccion } from '../redux/appDucks';
+import { vaciarDatosCentroAccion } from '../redux/centrosDucks';
 
 const getHeightScrollable = () => (window.innerHeight - 220) || (document.documentElement.clientHeight - 220) || (document.body.clientHeight - 220);
 
@@ -157,7 +158,10 @@ const Centros = (props) => {
         } else {
             dispatch(activarDesactivarAccion(true));
             setValueTab(newValue)
-        }
+        };
+        dispatch(vaciarDatosCentroAccion());
+        setVenimosCentroFuera(null);
+        props.history.push('/centros');
     };
 
     const procesarDatosEdicionParent = () => {
@@ -249,9 +253,9 @@ const Centros = (props) => {
                                                     disabled={disabledItem}
                                                 >
                                                     <ListItemIcon>
-                                                        <DeleteIcon style={{color: 'red'}} fontSize="small" />
+                                                        <DeleteIcon style={{ color: 'red' }} fontSize="small" />
                                                     </ListItemIcon>
-                                                    <ListItemText style={{color: 'red'}} primary="Eliminar Centro" />
+                                                    <ListItemText style={{ color: 'red' }} primary="Eliminar Centro" />
                                                 </MenuItem>
                                             ) : (
                                                 <MenuItem
@@ -286,7 +290,7 @@ const Centros = (props) => {
                                 </Tabs>
                             </AppBar>
                             <TabPanel value={valueTab} index={0} className={classes.scrollable} style={{ height: heightScrollable }}>
-                                <CentrosEditar ref={funcionesEnCentrosEditarRef} prVenimosCentroFuera={venimosCentroFuera}/>
+                                <CentrosEditar ref={funcionesEnCentrosEditarRef} prVenimosCentroFuera={venimosCentroFuera} />
                             </TabPanel>
                             <TabPanel value={valueTab} index={1} className={classes.scrollable} style={{ height: heightScrollable }}>
                                 <CentrosRegistrar ref={funcionesEnCentrosRegistrarRef} />

@@ -2430,6 +2430,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                         variant="outlined"
                         fullWidth
                         className={classes.mb20}
+                        size="small"
                     >
                         <InputLabel>{`Trabajador-` + index}</InputLabel>
                         <Select
@@ -2455,6 +2456,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     <FormControl
                         variant="outlined"
                         fullWidth
+                        size="small"
                     >
                         <InputLabel>{`Suplente-` + index}</InputLabel>
                         <Select
@@ -2509,6 +2511,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                             <FormControl
                                 variant="outlined"
                                 className={classes.form}
+                                size="small"
                             >
                                 <InputLabel>Nombre</InputLabel>
                                 <OutlinedInput
@@ -2523,6 +2526,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                             <FormControl
                                 variant="outlined"
                                 className={classes.form}
+                                size="small"
                             >
                                 <InputLabel>Categoría Centro</InputLabel>
                                 <Select
@@ -2548,6 +2552,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                     <FormControl
                                         variant="outlined"
                                         className={classes.form}
+                                        size="small"
                                     >
                                         <InputLabel>Código</InputLabel>
                                         <OutlinedInput
@@ -2564,6 +2569,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                     <FormControl
                                         variant="outlined"
                                         className={classes.form}
+                                        size="small"
                                     >
                                         <InputLabel>NIF</InputLabel>
                                         <OutlinedInput
@@ -2580,6 +2586,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                             <FormControl
                                 variant="outlined"
                                 className={classes.form}
+                                size="small"
                             >
                                 <InputLabel>E-mail</InputLabel>
                                 <OutlinedInput
@@ -2594,6 +2601,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                             <FormControl
                                 variant="outlined"
                                 className={classes.form}
+                                size="small"
                             >
                                 <InputLabel>Domicilio</InputLabel>
                                 <OutlinedInput
@@ -2610,6 +2618,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                     <FormControl
                                         variant="outlined"
                                         className={classes.form}
+                                        size="small"
                                     >
                                         <InputLabel>Población</InputLabel>
                                         <OutlinedInput
@@ -2626,6 +2635,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                     <FormControl
                                         variant="outlined"
                                         className={classes.form}
+                                        size="small"
                                     >
                                         <InputLabel>Provincia</InputLabel>
                                         <OutlinedInput
@@ -2644,6 +2654,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                     <FormControl
                                         variant="outlined"
                                         className={classes.form}
+                                        size="small"
                                     >
                                         <InputLabel>Código Postal</InputLabel>
                                         <OutlinedInput
@@ -2660,6 +2671,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                     <FormControl
                                         variant="outlined"
                                         className={classes.form}
+                                        size="small"
                                     >
                                         <InputLabel>Teléfono</InputLabel>
                                         <OutlinedInput
@@ -2685,6 +2697,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                             <FormControl
                                 variant="outlined"
                                 className={classes.form}
+                                size="small"
                             >
                                 <InputLabel>Trabajadores asignados</InputLabel>
                                 <Select
@@ -2729,6 +2742,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                 <FormControl
                                     variant="outlined"
                                     className={classes.form}
+                                    size="small"
                                 >
                                     <InputLabel>Modo entrada datos</InputLabel>
                                     <Select
@@ -2752,6 +2766,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                 <FormControl
                                     variant="outlined"
                                     className={classes.form}
+                                    size="small"
                                 >
                                     <InputLabel>Variaciones</InputLabel>
                                     <Select
@@ -2784,6 +2799,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                 <FormControl
                                     variant="outlined"
                                     className={classes.form}
+                                    size="small"
                                 >
                                     <InputLabel>Tipo cómputo</InputLabel>
                                     <Select
@@ -2808,6 +2824,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                     <FormControl
                                         variant="outlined"
                                         className={classes.form}
+                                        size="small"
                                     >
                                         <InputLabel>Mensual pactado</InputLabel>
                                         <OutlinedInput
@@ -2826,6 +2843,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         <FormControl
                                             variant="outlined"
                                             className={classes.form}
+                                            size="small"
                                         >
                                             <InputLabel>Precio hora LIM</InputLabel>
                                             <OutlinedInput
@@ -2841,6 +2859,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         <FormControl
                                             variant="outlined"
                                             className={classes.form}
+                                            size="small"
                                         >
                                             <InputLabel>Precio hora CRIS</InputLabel>
                                             <OutlinedInput
@@ -2856,6 +2875,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         <FormControl
                                             variant="outlined"
                                             className={classes.form}
+                                            size="small"
                                         >
                                             <InputLabel>Precio hora CRISE</InputLabel>
                                             <OutlinedInput
@@ -2871,6 +2891,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         <FormControl
                                             variant="outlined"
                                             className={classes.form}
+                                            size="small"
                                         >
                                             <InputLabel>Precio hora CRISI</InputLabel>
                                             <OutlinedInput
@@ -2886,6 +2907,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         <FormControl
                                             variant="outlined"
                                             className={classes.form}
+                                            size="small"
                                         >
                                             <InputLabel>Precio hora LIME</InputLabel>
                                             <OutlinedInput
@@ -2901,6 +2923,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         <FormControl
                                             variant="outlined"
                                             className={classes.form}
+                                            size="small"
                                         >
                                             <InputLabel>Precio hora TOL</InputLabel>
                                             <OutlinedInput
@@ -2916,6 +2939,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         <FormControl
                                             variant="outlined"
                                             className={classes.form}
+                                            size="small"
                                         >
                                             <InputLabel>Precio hora LIMP</InputLabel>
                                             <OutlinedInput
@@ -2942,6 +2966,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                 <FormControl
                                     variant="outlined"
                                     className={classes.form}
+                                    size="small"
                                 >
                                     <InputLabel>Forma pago</InputLabel>
                                     <Select

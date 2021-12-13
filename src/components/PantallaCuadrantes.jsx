@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
@@ -6,29 +6,77 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Avatar from '@material-ui/core/Avatar';
 import clsx from 'clsx';
+import AppBar from '@material-ui/core/AppBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import Tooltip from '@material-ui/core/Tooltip';
+import MuiAlert from '@material-ui/lab/Alert';
+import Snackbar from '@material-ui/core/Snackbar';
 
 //carga componentes
 import Pendientes from './Pendientes';
 import Bajas from './Bajas';
 import GraficoCuadrantes from './GraficoCuadrantes';
+import PendientesRegistrados from './PendientesRegistrados';
+import PendientesFacturados from './PendientesFacturados';
 
 //estilos
 import Clases from "../clases";
 
 //importaciones acciones
 import { retornaAnoMesCuadranteAccion } from '../redux/appDucks';
+import { obtenerCentrosAccion } from '../redux/centrosDucks';
+import { obtenerCuadrantesPendientesAccion } from '../redux/pendientesDucks';
+import { obtenerCuadrantesRegistradosFacturadosAccion } from '../redux/pendientesDucks';
+import { vaciarDatosPendientesAccion } from '../redux/pendientesDucks';
 
-const getHeightContenedoresPeq = () => ((window.innerHeight / 2) - 190) || ((document.documentElement.clientHeight / 2) - 190) || ((document.body.clientHeight / 2) - 190);
-const getHeightContenedoresGra = () => ((window.innerHeight) - 310) || ((document.documentElement.clientHeight) - 310) || ((document.body.clientHeight) - 310); 
+const getHeightContenedoresPeq = () => ((window.innerHeight / 2) - 168) || ((document.documentElement.clientHeight / 2) - 168) || ((document.body.clientHeight / 2) - 168);
+const getHeightContenedoresGra = () => ((window.innerHeight) - 272) || ((document.documentElement.clientHeight) - 272) || ((document.body.clientHeight) - 272);
 const getWidthContenedores = () => ((window.innerWidth - 300) / 2) || ((document.documentElement.clientWidth - 300) / 2) || ((document.body.clientWidth - 300) / 2);
+
+//tabs
+function TabPanel(props) {
+    const { children, value, index, ...other } = props;
+
+    return (
+        <Typography
+            component="div"
+            role="tabpanel"
+            hidden={value !== index}
+            id={`simple-tabpanel-${index}`}
+            aria-labelledby={`simple-tab-${index}`}
+            {...other}
+        >
+            {<Box p={3}>{children}</Box>}
+        </Typography>
+    );
+}
+
+function a11yProps(index) {
+    return {
+        id: `simple-tab-${index}`,
+        'aria-controls': `simple-tabpanel-${index}`,
+    };
+}
+
+//snackbar y alert
+const Alert = (props) => {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const PantallaCuadrantes = () => {
 
     const classes = Clases();
     const dispatch = useDispatch();
-    const numeroCentrosPendientes = useSelector(store => store.variablesPendientes.numeroCentrosPendientes);
+    const numeroCuadrantesPendientes = useSelector(store => store.variablesPendientes.numeroCuadrantesPendientes);
+    const numeroCuadrantesRegistrados = useSelector(store => store.variablesPendientes.numeroCuadrantesRegistrados);
+    const numeroCuadrantesFacturados = useSelector(store => store.variablesPendientes.numeroCuadrantesFacturados);
     const calendarioAGestionar = useSelector(store => store.variablesCuadrantes.calendarioAGestionar);
     const listadoTrabajadoresBaja = useSelector(store => store.variablesTrabajadores.arrayTrabajadoresBaja);
+    const errorDeCargaCentros = useSelector(store => store.variablesCentros.errorDeCargaCentros);
+    const errorDeCargaCuadrantes = useSelector(store => store.variablesCuadrantes.errorDeCargaCuadrantes);
+    const listadoCentros = useSelector(store => store.variablesCentros.arrayCentros);
+    const cuadrantesPendientesArray = useSelector(store => store.variablesPendientes.cuadrantesPendientesArray);
 
     //states
 
@@ -36,6 +84,10 @@ const PantallaCuadrantes = () => {
     const [heightContenedoresPeq, setHeightContenedoresPeq] = useState(getHeightContenedoresPeq());
     const [heightContenedoresGra, setHeightContenedoresGra] = useState(getHeightContenedoresGra());
     const [widthContenedores, setWidthContenedores] = useState(getWidthContenedores());
+    const [valueTab, setValueTab] = useState(0);
+    const [openSnack, setOpenSnack] = useState(false);
+    const [alert, setAlert] = useState({});
+    const [openLoading, setOpenLoading] = useState(false);
 
     //useEffect
 
@@ -51,7 +103,57 @@ const PantallaCuadrantes = () => {
         }
     }, []);
 
-    //funciones       
+    useEffect(() => {
+        if (listadoCentros.length === 0) {
+            dispatch(obtenerCentrosAccion('centros'));
+        };
+    }, [dispatch]);
+
+    useEffect(() => {
+        dispatch(vaciarDatosPendientesAccion());
+    }, [calendarioAGestionar]);
+
+    useEffect(() => {
+        if (listadoCentros.length > 0) {
+            if (cuadrantesPendientesArray.length === 0) {
+                const { monthNum, year } = dispatch(retornaAnoMesCuadranteAccion(calendarioAGestionar));
+                const anyoMes = year + '-' + monthNum;
+                dispatch(obtenerCuadrantesPendientesAccion('cuadrantes', anyoMes, listadoCentros));
+                dispatch(obtenerCuadrantesRegistradosFacturadosAccion('cuadrantes', anyoMes, listadoCentros));
+            }
+        }
+    }, [listadoCentros, calendarioAGestionar]);
+
+    useEffect(() => {
+        if (errorDeCargaCentros || errorDeCargaCuadrantes) {
+            setAlert({
+                mensaje: "Error de conexión con la base de datos.",
+                tipo: 'error'
+            })
+            setOpenSnack(true);
+        }
+    }, [errorDeCargaCentros, errorDeCargaCuadrantes]);
+
+    useEffect(() => {
+        if ((numeroCuadrantesPendientes + numeroCuadrantesRegistrados + numeroCuadrantesFacturados) < listadoCentros.length) {
+            setOpenLoading(true)
+        } else {
+            setOpenLoading(false)
+        };
+    }, [numeroCuadrantesPendientes, numeroCuadrantesRegistrados, numeroCuadrantesFacturados]);
+
+    //funciones    
+
+    const handleCloseSnack = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenSnack(false);
+    };
+
+    const handleChangeTab = (event, newValue) => {
+        setValueTab(newValue)
+    };
 
     return (
         <div>
@@ -61,47 +163,126 @@ const PantallaCuadrantes = () => {
                 direction="row"
                 justifycontent="flex-start"
                 alignItems="flex-start"
-                style={{ padding: 10 }}
+                style={{ marginLeft: -10, marginTop: -15 }}
             >
                 <Grid item xs={6}>
-                    <Box
-                        p={1.5}
-                        m={1}
-                        color="secondary.contrastText"
-                        bgcolor="secondary.main"
-                        style={{ maxHeight: 45, minHeight: 45, display: 'flex', flexDirection: 'row', justifycontent: 'space-between', alignItems: 'center' }}
-                    >
-                        <Grid item xs={11}>
-                            <Typography variant="body2">Cuadrantes del mes de {monthLet} pendientes de gestionar</Typography>
-                        </Grid>
-                        <Grid item xs={1} className={classes.alignRight}>
+                    <Grid style={{ padding: 8 }}>
+                        <AppBar position="static"
+                            style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
+                            color="secondary"
+                        >
+                            <Tabs value={valueTab} onChange={handleChangeTab}>
+                                <Tooltip title={'Cuadrantes del mes de ' + monthLet + ' pendientes de gestionar'} placement="top-start" arrow>
+                                    <Tab label={'Pendientes'} {...a11yProps(0)} />
+                                </Tooltip>
+                                <Tooltip title={'Cuadrantes del mes de ' + monthLet + ' registrados'} placement="top-start" arrow>
+                                    <Tab label={'Registrados'} {...a11yProps(1)} />
+                                </Tooltip>
+                                <Tooltip title={'Cuadrantes del mes de ' + monthLet + ' facturados'} placement="top-start" arrow>
+                                    <Tab label={'Facturados'} {...a11yProps(2)} />
+                                </Tooltip>
+                            </Tabs>
                             <Avatar
-                                className={clsx(classes.small, numeroCentrosPendientes === 0 ? classes.green : classes.red)}
+                                className={clsx(classes.small, valueTab === 0 ? classes.red : valueTab === 1 ? classes.orange : classes.green)}
+                                style={{ marginRight: 8 }}
                             >
-                                <Typography variant='body2'>{numeroCentrosPendientes}</Typography>
+                                <Typography variant='body2'>{
+                                    valueTab === 0 ?
+                                        (numeroCuadrantesPendientes ? numeroCuadrantesPendientes : 0) :
+                                        valueTab === 1 ?
+                                            (numeroCuadrantesRegistrados ? numeroCuadrantesRegistrados : 0) :
+                                            (numeroCuadrantesFacturados ? numeroCuadrantesFacturados : 0)
+                                }</Typography>
                             </Avatar>
-                        </Grid>
-                    </Box>
-                    <Paper
-                        elevation={1}
-                        style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra, margin: 8 }}
-                    >
-                        {numeroCentrosPendientes === 0 ? (
-                            <Box p={3}>
-                                No quedan cuadrantes pendientes por gestionar.
-                            </Box>
-                        ) : (
-                            <Pendientes prHeightContenedores={heightContenedoresGra} />
-                        )}
-                    </Paper>
+                        </AppBar>
+                        <TabPanel value={valueTab} index={0}>
+                            <Paper
+                                elevation={1}
+                                style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra, marginTop: -20, marginLeft: -24, marginRight: -24 }}
+                            >
+                                <Grid
+                                    spacing={1}
+                                    container
+                                    direction="column"
+                                    justifycontent="flex-start"
+                                    alignItems="flex-start"
+                                    p={0}
+                                    style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra }}
+                                >
+                                    {numeroCuadrantesPendientes === 0 ? (
+                                        <Box p={3} style={{ width: '100%' }}>
+                                            <Alert severity="info">No quedan cuadrantes pendientes por gestionar.</Alert>
+                                        </Box>
+                                    ) : (
+                                        <Fragment>
+                                            <Pendientes prHeightContenedores={heightContenedoresGra} prWidthContenedores={widthContenedores} prOpenLoading={openLoading} />
+                                        </Fragment>
+                                    )}
+                                </Grid>
+                            </Paper>
+                        </TabPanel>
+                        <TabPanel value={valueTab} index={1}>
+                            <Paper
+                                elevation={1}
+                                style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra, marginTop: -20, marginLeft: -24, marginRight: -24 }}
+                            >
+                                <Grid
+                                    spacing={1}
+                                    container
+                                    direction="column"
+                                    justifycontent="flex-start"
+                                    alignItems="flex-start"
+                                    p={0}
+                                    style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra }}
+                                >
+                                    {numeroCuadrantesRegistrados === 0 || !numeroCuadrantesRegistrados ? (
+                                        <Box p={3} style={{ width: '100%' }}>
+                                            <Alert severity="info">No hay cuadrantes registrados por gestionar.</Alert>
+                                        </Box>
+                                    ) : (
+                                        <Fragment>
+                                            <PendientesRegistrados prWidthContenedores={widthContenedores} prOpenLoading={openLoading} />
+                                        </Fragment>
+                                    )}
+                                </Grid>
+                            </Paper>
+                        </TabPanel>
+                        <TabPanel value={valueTab} index={2}>
+                            <Paper
+                                elevation={1}
+                                style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra, marginTop: -20, marginLeft: -24, marginRight: -24 }}
+                            >
+                                <Grid
+                                    spacing={1}
+                                    container
+                                    direction="column"
+                                    justifycontent="flex-start"
+                                    alignItems="flex-start"
+                                    p={0}
+                                    style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra }}
+                                >
+                                    {numeroCuadrantesFacturados === 0 || !numeroCuadrantesFacturados ? (
+                                        <Box p={3} style={{ width: '100%' }}>
+                                            <Alert severity="info">No hay cuadrantes facturados por gestionar.</Alert>
+                                        </Box>
+                                    ) : (
+                                        <Fragment>
+                                            <PendientesFacturados prHeightContenedores={heightContenedoresGra} prWidthContenedores={widthContenedores} prOpenLoading={openLoading} />
+                                        </Fragment>
+                                    )}
+                                </Grid>
+                            </Paper>
+                        </TabPanel>
+                    </Grid>
                 </Grid>
                 <Grid item xs={6}>
                     <Grid className={classes.mb20}>
                         <Box
-                            p={1.5}
+                            p={1.6}
                             m={1}
                             color="secondary.contrastText"
                             bgcolor="secondary.main"
+                            className={classes.sombraBox}
                         >
                             <Typography variant="body2">Cómputo de ingresos anual</Typography>
                         </Box>
@@ -114,10 +295,11 @@ const PantallaCuadrantes = () => {
                     </Grid>
                     <Grid>
                         <Box
-                            p={1.5}
+                            p={1.6}
                             m={1}
                             color="secondary.contrastText"
                             bgcolor="secondary.main"
+                            className={classes.sombraBox}
                             style={{ maxHeight: 45, minHeight: 45, display: 'flex', flexDirection: 'row', justifycontent: 'space-between', alignItems: 'center' }}
                         >
                             <Grid item xs={11}>
@@ -140,7 +322,12 @@ const PantallaCuadrantes = () => {
                     </Grid>
                 </Grid>
             </Grid>
-            {/* {console.log(retornaCuadrantesPendientesParent)} */}
+            <Snackbar open={openSnack} autoHideDuration={12000} onClose={handleCloseSnack}>
+                <Alert severity={alert.tipo} onClose={handleCloseSnack}>
+                    {alert.mensaje}
+                </Alert>
+            </Snackbar>
+            {/* {console.log(numeroCuadrantesPendientes)} */}
         </div>
     )
 }

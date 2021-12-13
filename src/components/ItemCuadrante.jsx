@@ -84,8 +84,8 @@ const ItemCuadrante = (props) => {
     };
 
     //retorno componentes
-    
-    const retornaBotonVariaciones = () => {        
+
+    const retornaBotonVariaciones = () => {
         if (!props.prVisibleVariaciones) {
             if ((props.prTipo === 'rango' && !props.prValueTimePickerInicio) || (props.prTipo === 'rangoDescanso' && !props.prValueTimePickerInicio1) || (props.prTipo === 'cantidad' && !props.prValueCantidadHoras)) {
                 return (
@@ -133,6 +133,7 @@ const ItemCuadrante = (props) => {
             <FormControl
                 variant="outlined"
                 className={classes.formTipo2}
+                size="small"
             >
                 <InputLabel>Tipo Servicio</InputLabel>
                 <Select
@@ -174,6 +175,7 @@ const ItemCuadrante = (props) => {
                     <Grid item xs={6}>
                         <MuiPickersUtilsProvider utils={DateFnsUtils}>
                             <TimePicker
+                                size="small"
                                 inputVariant="outlined"
                                 clearable={true}
                                 cancelLabel="Cancelar"
@@ -190,6 +192,7 @@ const ItemCuadrante = (props) => {
                     <Grid item xs={6} style={{ marginLeft: 10 }}>
                         <MuiPickersUtilsProvider utils={DateFnsUtils}>
                             <TimePicker
+                                size="small"
                                 inputVariant="outlined"
                                 clearable={true}
                                 cancelLabel="Cancelar"
@@ -202,45 +205,47 @@ const ItemCuadrante = (props) => {
                                 onChange={handleChangeTimePickerFinCuadrante(props.prIdFin, props.prIndex, props.prValueTimePickerInicio)}
                             />
                         </MuiPickersUtilsProvider>
-                    </Grid>                   
+                    </Grid>
                 </Box>
             ) : props.prTipo === 'cantidad' ? (
                 <Fragment>
-                <Grid item xs={12}>
-                    <FormControl
-                        variant="outlined"
-                        className={classes.formTipo2}
-                    >
-                        <InputLabel>Cantidad horas</InputLabel>
-                        <Select
-                            fullWidth
-                            name={props.prIdCantidad}
-                            label="Cantidad horas"
-                            id={props.prIdCantidad}
-                            value={props.prValueCantidadHoras}
-                            onChange={handleChangeSelectCantidad(props.prIndex)}
-                            helpertext="Cantidad horas"
+                    <Grid item xs={12}>
+                        <FormControl
+                            variant="outlined"
+                            className={classes.formTipo2}
+                            size="small"
                         >
-                            <MenuItem value=''>
-                                <em>No</em>
-                            </MenuItem>
-                            {
-                                cantidadHoras.map((option) => (
-                                    <MenuItem key={option.value} value={option.value}>
-                                        {option.label}
-                                    </MenuItem>
-                                ))
-                            }
-                        </Select>
-                    </FormControl>
-                </Grid>
-               </Fragment>
-            ) : props.prTipo === "rangoDescanso" ? (                
+                            <InputLabel>Cantidad horas</InputLabel>
+                            <Select
+                                fullWidth
+                                name={props.prIdCantidad}
+                                label="Cantidad horas"
+                                id={props.prIdCantidad}
+                                value={props.prValueCantidadHoras}
+                                onChange={handleChangeSelectCantidad(props.prIndex)}
+                                helpertext="Cantidad horas"
+                            >
+                                <MenuItem value=''>
+                                    <em>No</em>
+                                </MenuItem>
+                                {
+                                    cantidadHoras.map((option) => (
+                                        <MenuItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </MenuItem>
+                                    ))
+                                }
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                </Fragment>
+            ) : props.prTipo === "rangoDescanso" ? (
                 <Fragment>
                     <Box style={{ display: 'flex', flexDirection: 'row', justifycontent: 'flex-start', alignItems: 'flex-start' }}>
                         <Grid item xs={6}>
                             <MuiPickersUtilsProvider utils={DateFnsUtils}>
                                 <TimePicker
+                                    size="small"
                                     inputVariant="outlined"
                                     clearable={true}
                                     cancelLabel="Cancelar"
@@ -257,6 +262,7 @@ const ItemCuadrante = (props) => {
                         <Grid item xs={6} style={{ marginLeft: 10 }}>
                             <MuiPickersUtilsProvider utils={DateFnsUtils}>
                                 <TimePicker
+                                    size="small"
                                     inputVariant="outlined"
                                     clearable={true}
                                     cancelLabel="Cancelar"
@@ -274,6 +280,7 @@ const ItemCuadrante = (props) => {
                         <Grid item xs={6}>
                             <MuiPickersUtilsProvider utils={DateFnsUtils}>
                                 <TimePicker
+                                    size="small"
                                     inputVariant="outlined"
                                     clearable={true}
                                     cancelLabel="Cancelar"
@@ -290,6 +297,7 @@ const ItemCuadrante = (props) => {
                         <Grid item xs={6} style={{ marginLeft: 10 }}>
                             <MuiPickersUtilsProvider utils={DateFnsUtils}>
                                 <TimePicker
+                                    size="small"
                                     inputVariant="outlined"
                                     clearable={true}
                                     cancelLabel="Cancelar"
@@ -307,8 +315,8 @@ const ItemCuadrante = (props) => {
                 </Fragment>
             ) : null}
             <Box className={classes.mt15}>
-            {retornaSelectTipoServicio()}
-            </Box>          
+                {retornaSelectTipoServicio()}
+            </Box>
             <Box className={classes.mt15}>
                 <TextField
                     label="Observaciones"
@@ -329,6 +337,7 @@ const ItemCuadrante = (props) => {
                     variant="outlined"
                     fullWidth
                     className={classes.mt15}
+                    size="small"
                 >
                     <InputLabel>Variaciones</InputLabel>
                     <Select
@@ -361,7 +370,7 @@ const ItemCuadrante = (props) => {
                 onClick={() => props.prTipo === 'rango' ? (handleRegistrarCambioEnCasilla(props.prIdInicio, props.prIndex, props.prTipo)) : props.prTipo === 'rangoDescanso' ? (handleRegistrarCambioEnCasilla(props.prIdInicio1, props.prIndex, props.prTipo)) : (handleRegistrarCambioEnCasilla(props.prIdCantidad, props.prIndex, props.prTipo))}
             >
                 Registrar cambio
-            </Button>            
+            </Button>
         </div>
     )
 }

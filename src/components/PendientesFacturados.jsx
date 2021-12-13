@@ -2,68 +2,73 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 //importaciones acciones
-import { obtenerCentroAccion } from '../redux/centrosDucks';
 import { cambioEstadoInicioCuadrantesAccion } from '../redux/cuadrantesDucks';
 import { activarDesactivarCambioBotonRegistrarAccion } from '../redux/cuadrantesDucks';
 import { registrarIntervencionCuadranteNuevoAccion } from '../redux/cuadrantesDucks';
-import { cambiarACuadranteNoRegistradoAccion } from '../redux/cuadrantesDucks';
-import { venimosDePendientesAccion } from '../redux/pendientesDucks';
+import { venimosDeRegistradosAccion } from '../redux/pendientesDucks';
 import { setCentroAccion } from '../redux/cuadrantesDucks';
+import { obtenerCentroAccion } from '../redux/centrosDucks';
+import { obtenerObjetoPorIdAccion } from '../redux/appDucks';
 
 //estilos
 import Clases from "../clases";
 
-const Pendientes = (props) => {
+const PendientesFacturados = (props) => {
 
     const classes = Clases();
     const dispatch = useDispatch();
+    const cuadrantesFacturadosArray = useSelector(store => store.variablesPendientes.cuadrantesFacturadosArray);
     const listadoCentros = useSelector(store => store.variablesCentros.arrayCentros);
-    const cuadrantesPendientesArray = useSelector(store => store.variablesPendientes.cuadrantesPendientesArray);
+
+    //states    
+
+    //useEffect
 
     //funciones
 
-    const handleCuadrantesPendientes = (centro) => {
+    const handleCuadrantesFacturados = (centro) => {
         dispatch(setCentroAccion(centro));
         dispatch(obtenerCentroAccion('centros', centro));
         dispatch(cambioEstadoInicioCuadrantesAccion(false));
         dispatch(activarDesactivarCambioBotonRegistrarAccion(false));
-        dispatch(registrarIntervencionCuadranteNuevoAccion(false));
-        dispatch(cambiarACuadranteNoRegistradoAccion());
-        dispatch(venimosDePendientesAccion(true));
+        dispatch(registrarIntervencionCuadranteNuevoAccion(true));
+        dispatch(venimosDeRegistradosAccion(true));
     };
 
     //retorno componentes
 
-    const retornaCentroGestionado = (centro, index) => {
-        if (cuadrantesPendientesArray.includes(centro.id)) {
-            return (
-                <Box
-                    key={'listaCuadrantes' + index}
-                    onClick={() => handleCuadrantesPendientes(centro.id)}
+    const retornaCuadranteFacturado = (cuadrante, index) => {
+        let nombreSplitted;
+        nombreSplitted = cuadrante.nombre.split("-");
+        const nombreCentro = dispatch(obtenerObjetoPorIdAccion(listadoCentros, parseInt(nombreSplitted[2])));
+        return (
+            <Box
+                key={'listaCuadrantes' + index}
+            >
+                <ListItem
+                    className={classes.casilla}
+                    style={{ display: 'flex', alignItems: 'flex-start' }}
                 >
-                    <ListItem
-                        className={classes.casilla}
-                    >
-                        <ListItemText
-                            primary={centro.nombre}
+                    <ListItemText
+                        primary={nombreCentro} secondary={'Facturado el ' + cuadrante.actualizacion}
+                        onClick={() => handleCuadrantesFacturados(parseInt(nombreSplitted[2]))}
+                    />
+                    <ListItemSecondaryAction>
+                        <ExitToAppIcon
+                            className={classes.gris}
                         />
-                        <ListItemSecondaryAction>
-                            <ExitToAppIcon
-                                className={classes.gris}
-                            />
-                        </ListItemSecondaryAction>
-                    </ListItem >
-                </Box >
-            )
-        }
+                    </ListItemSecondaryAction>
+                </ListItem >
+            </Box >
+        )
     };
 
     return (
@@ -72,8 +77,8 @@ const Pendientes = (props) => {
                 spacing={1}
                 container
                 direction="column"
-                justify="center"
                 alignItems="center"
+                justify="center"
                 p={2}
                 className={classes.rootPendientes}
                 style={{ minHeight: props.prHeightContenedores, maxHeight: props.prHeightContenedores, width: props.prWidthContenedores + 10 }}
@@ -91,16 +96,16 @@ const Pendientes = (props) => {
                     >
                         <List dense={true}
                             style={{ padding: 15 }}>
-                            {listadoCentros.map((centro, index) => (
-                                retornaCentroGestionado(centro, index)
+                            {cuadrantesFacturadosArray.map((cuadrante, index) => (
+                                retornaCuadranteFacturado(cuadrante, index)
                             ))}
                         </List>
                     </Box>
                 )}
             </Grid>
-            {/* {console.log(cuadrantesPendientesArray)} */}
+            {/* {console.log(checked)} */}
         </div>
     )
 }
 
-export default Pendientes
+export default PendientesFacturados

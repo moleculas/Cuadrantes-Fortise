@@ -669,11 +669,13 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                                     fullWidth
                                     renderInput={(params) => <TextField {...params} label="Selecciona trabajador" variant="outlined" />}
                                     className={classes.mb15}
+                                    size="small"
                                 />
                             </FormControl>
                             <FormControl
                                 variant="outlined"
                                 className={classes.form}
+                                size="small"
                             >
                                 <InputLabel>Nombre</InputLabel>
                                 <OutlinedInput
@@ -689,6 +691,7 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                             <FormControl
                                 variant="outlined"
                                 className={classes.form}
+                                size="small"
                             >
                                 <InputLabel>DNI - NIE</InputLabel>
                                 <OutlinedInput
@@ -703,6 +706,7 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                             <FormControl
                                 variant="outlined"
                                 className={classes.form}
+                                size="small"
                             >
                                 <InputLabel>Seg. Social</InputLabel>
                                 <OutlinedInput
@@ -717,6 +721,7 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                             <FormControl
                                 variant="outlined"
                                 className={classes.form}
+                                size="small"
                             >
                                 <InputLabel>Teléfono</InputLabel>
                                 <OutlinedInput
@@ -743,6 +748,7 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                         <FormControl
                             variant="outlined"
                             className={classes.form}
+                            size="small"
                         >
                             <InputLabel>Estado Trabajador</InputLabel>
                             <Select
@@ -781,6 +787,7 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                                             onChange={(newValue) => {
                                                 handleChangeDatePickerInicioEdicion(newValue);
                                             }}
+                                            size="small"
                                         />
                                     </MuiPickersUtilsProvider>
                                     <MuiPickersUtilsProvider locale={es} utils={DateFnsUtils}>
@@ -797,6 +804,7 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                                             onChange={(newValue) => {
                                                 handleChangeDatePickerFinEdicion(newValue);
                                             }}
+                                            size="small"
                                         />
                                     </MuiPickersUtilsProvider>
                                 </Fragment>

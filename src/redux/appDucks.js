@@ -496,7 +496,7 @@ export const obtenerUltimasIntervencionesAccion = () => async (dispatch, getStat
             }
         });
         const respuesta = res.data;
-        respuesta.sort((a, b) => a.actualizacion.localeCompare(b.actualizacion));
+        respuesta.sort((a, b) => a.actualizacion.localeCompare(b.actualizacion)).reverse();
         dispatch({
             type: OBTENER_ULTIMAS_INTERVENCIONES_EXITO,
             payload: {

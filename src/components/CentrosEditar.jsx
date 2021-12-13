@@ -2694,6 +2694,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                         variant="outlined"
                         fullWidth
                         className={classes.mb20}
+                        size="small"
                     >
                         <InputLabel>{`Trabajador-` + index}</InputLabel>
                         <Select
@@ -2719,6 +2720,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                     <FormControl
                         variant="outlined"
                         fullWidth
+                        size="small"
                     >
                         <InputLabel>{`Suplente-` + index}</InputLabel>
                         <Select
@@ -2772,7 +2774,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                             </Box>
                             <FormControl
                                 variant="outlined"
-                                className={classes.form}
+                                className={classes.form}                               
                             >
                                 <Autocomplete
                                     id="form-select-centros"
@@ -2783,11 +2785,13 @@ const CentrosEditar = forwardRef((props, ref) => {
                                     fullWidth
                                     renderInput={(params) => <TextField {...params} label="Selecciona centro" variant="outlined" />}
                                     className={classes.mb15}
+                                    size="small"
                                 />
                             </FormControl>
                             <FormControl
                                 variant="outlined"
                                 className={classes.form}
+                                size="small"
                             >
                                 <InputLabel>Nombre</InputLabel>
                                 <OutlinedInput
@@ -2804,6 +2808,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                             <FormControl
                                 variant="outlined"
                                 className={classes.form}
+                                size="small"
                             >
                                 <InputLabel>Categoría Centro</InputLabel>
                                 <Select
@@ -2830,6 +2835,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                     <FormControl
                                         variant="outlined"
                                         className={classes.form}
+                                        size="small"
                                     >
                                         <InputLabel>Código</InputLabel>
                                         <OutlinedInput
@@ -2847,6 +2853,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                     <FormControl
                                         variant="outlined"
                                         className={classes.form}
+                                        size="small"
                                     >
                                         <InputLabel>NIF</InputLabel>
                                         <OutlinedInput
@@ -2864,6 +2871,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                             <FormControl
                                 variant="outlined"
                                 className={classes.form}
+                                size="small"
                             >
                                 <InputLabel>E-mail</InputLabel>
                                 <OutlinedInput
@@ -2879,6 +2887,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                             <FormControl
                                 variant="outlined"
                                 className={classes.form}
+                                size="small"
                             >
                                 <InputLabel>Domicilio</InputLabel>
                                 <OutlinedInput
@@ -2896,6 +2905,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                     <FormControl
                                         variant="outlined"
                                         className={classes.form}
+                                        size="small"
                                     >
                                         <InputLabel>Población</InputLabel>
                                         <OutlinedInput
@@ -2913,6 +2923,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                     <FormControl
                                         variant="outlined"
                                         className={classes.form}
+                                        size="small"
                                     >
                                         <InputLabel>Provincia</InputLabel>
                                         <OutlinedInput
@@ -2932,6 +2943,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                     <FormControl
                                         variant="outlined"
                                         className={classes.form}
+                                        size="small"
                                     >
                                         <InputLabel>Código Postal</InputLabel>
                                         <OutlinedInput
@@ -2949,6 +2961,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                     <FormControl
                                         variant="outlined"
                                         className={classes.form}
+                                        size="small"
                                     >
                                         <InputLabel>Teléfono</InputLabel>
                                         <OutlinedInput
@@ -2975,6 +2988,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                             <FormControl
                                 variant="outlined"
                                 className={classes.form}
+                                size="small"
                             >
                                 <InputLabel>Trabajadores asignados</InputLabel>
                                 <Select
@@ -3020,6 +3034,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                 <FormControl
                                     variant="outlined"
                                     className={classes.form}
+                                    size="small"
                                 >
                                     <InputLabel>Modo entrada datos</InputLabel>
                                     <Select
@@ -3044,6 +3059,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                 <FormControl
                                     variant="outlined"
                                     className={classes.form}
+                                    size="small"
                                 >
                                     <InputLabel>Variaciones</InputLabel>
                                     <Select
@@ -3077,6 +3093,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                 <FormControl
                                     variant="outlined"
                                     className={classes.form}
+                                    size="small"
                                 >
                                     <InputLabel>Tipo cómputo</InputLabel>
                                     <Select
@@ -3102,6 +3119,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                     <FormControl
                                         variant="outlined"
                                         className={classes.form}
+                                        size="small"
                                     >
                                         <InputLabel>Mensual pactado</InputLabel>
                                         <OutlinedInput
@@ -3120,6 +3138,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         <FormControl
                                             variant="outlined"
                                             className={classes.form}
+                                            size="small"
                                         >
                                             <InputLabel>Precio hora LIM</InputLabel>
                                             <OutlinedInput
@@ -3135,6 +3154,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         <FormControl
                                             variant="outlined"
                                             className={classes.form}
+                                            size="small"
                                         >
                                             <InputLabel>Precio hora CRIS</InputLabel>
                                             <OutlinedInput
@@ -3150,6 +3170,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         <FormControl
                                             variant="outlined"
                                             className={classes.form}
+                                            size="small"
                                         >
                                             <InputLabel>Precio hora CRISE</InputLabel>
                                             <OutlinedInput
@@ -3165,6 +3186,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         <FormControl
                                             variant="outlined"
                                             className={classes.form}
+                                            size="small"
                                         >
                                             <InputLabel>Precio hora CRISI</InputLabel>
                                             <OutlinedInput
@@ -3180,6 +3202,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         <FormControl
                                             variant="outlined"
                                             className={classes.form}
+                                            size="small"
                                         >
                                             <InputLabel>Precio hora LIME</InputLabel>
                                             <OutlinedInput
@@ -3195,6 +3218,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         <FormControl
                                             variant="outlined"
                                             className={classes.form}
+                                            size="small"
                                         >
                                             <InputLabel>Precio hora TOL</InputLabel>
                                             <OutlinedInput
@@ -3210,6 +3234,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         <FormControl
                                             variant="outlined"
                                             className={classes.form}
+                                            size="small"
                                         >
                                             <InputLabel>Precio hora LIMP</InputLabel>
                                             <OutlinedInput
@@ -3236,6 +3261,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                 <FormControl
                                     variant="outlined"
                                     className={classes.form}
+                                    size="small"
                                 >
                                     <InputLabel>Forma pago</InputLabel>
                                     <Select

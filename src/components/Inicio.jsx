@@ -177,7 +177,7 @@ const Inicio = (props) => {
                         className={classes.casilla}
                     >
                         <ListItemText
-                            secondary={centro.nombre}
+                            primary={centro.nombre}
                         />
                         <ListItemSecondaryAction>
                             <ExitToAppIcon
@@ -198,7 +198,7 @@ const Inicio = (props) => {
                         className={trabajador.estado !== 'alta' ? classes.casillaBajasInicio : classes.casilla}
                     >
                         <ListItemText
-                            secondary={trabajador.estado !== 'alta' ? trabajador.nombre + ' (' + trabajador.estado + ')' : trabajador.nombre}
+                            primary={trabajador.estado !== 'alta' ? trabajador.nombre + ' (' + trabajador.estado + ')' : trabajador.nombre}
                         />
                         <ListItemSecondaryAction>
                             <ExitToAppIcon

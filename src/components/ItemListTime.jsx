@@ -57,6 +57,7 @@ const ItemListTime = (props) => {
             <FormControl
                 variant="outlined"
                 className={props.prTipo === 'cantidad' ? classes.form : classes.formTipo}
+                size="small"
             >
                 <InputLabel>Tipo Servicio</InputLabel>
                 <Select
@@ -108,6 +109,7 @@ const ItemListTime = (props) => {
                                         id={props.prIdInicio}
                                         value={props.prValueTimePickerInicio}
                                         onChange={onEstem === 'editarCentros' ? (handleChangeTimePickerInicioEdicion(props.prIdInicio)) : (handleChangeTimePickerInicioRegistro(props.prIdInicio))}
+                                        size="small"
                                     />
                                 </MuiPickersUtilsProvider>
                             </Grid>
@@ -124,6 +126,7 @@ const ItemListTime = (props) => {
                                         id={props.prIdFin}
                                         value={props.prValueTimePickerFin}
                                         onChange={onEstem === 'editarCentros' ? (handleChangeTimePickerFinEdicion(props.prIdFin)) : (handleChangeTimePickerFinRegistro(props.prIdFin))}
+                                        size="small"
                                     />
                                 </MuiPickersUtilsProvider>
                             </Grid>
@@ -152,6 +155,7 @@ const ItemListTime = (props) => {
                                 <FormControl
                                     variant="outlined"
                                     className={classes.form}
+                                    size="small"
                                 >
                                     <InputLabel>Cantidad horas</InputLabel>
                                     <Select
@@ -209,6 +213,7 @@ const ItemListTime = (props) => {
                                         id={props.prIdInicio1}
                                         value={props.prValueTimePickerInicio1}
                                         onChange={onEstem === 'editarCentros' ? (handleChangeTimePickerInicioEdicion(props.prIdInicio1)) : (handleChangeTimePickerInicioRegistro(props.prIdInicio1))}
+                                        size="small"
                                     />
                                 </MuiPickersUtilsProvider>
                             </Grid>
@@ -225,6 +230,7 @@ const ItemListTime = (props) => {
                                         id={props.prIdFin1}
                                         value={props.prValueTimePickerFin1}
                                         onChange={onEstem === 'editarCentros' ? (handleChangeTimePickerFinEdicion(props.prIdFin1)) : (handleChangeTimePickerFinRegistro(props.prIdFin1))}
+                                        size="small"
                                     />
                                 </MuiPickersUtilsProvider>
                             </Grid>
@@ -242,6 +248,7 @@ const ItemListTime = (props) => {
                                         id={props.prIdInicio2}
                                         value={props.prValueTimePickerInicio2}
                                         onChange={onEstem === 'editarCentros' ? (handleChangeTimePickerInicioEdicion(props.prIdInicio2)) : (handleChangeTimePickerInicioRegistro(props.prIdInicio2))}
+                                        size="small"
                                     />
                                 </MuiPickersUtilsProvider>
                             </Grid>
@@ -258,6 +265,7 @@ const ItemListTime = (props) => {
                                         id={props.prIdFin2}
                                         value={props.prValueTimePickerFin2}
                                         onChange={onEstem === 'editarCentros' ? (handleChangeTimePickerFinEdicion(props.prIdFin2)) : (handleChangeTimePickerFinRegistro(props.prIdFin2))}
+                                        size="small"
                                     />
                                 </MuiPickersUtilsProvider>
                             </Grid>

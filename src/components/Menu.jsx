@@ -41,6 +41,8 @@ import { retornaAnoMesAccion } from '../redux/appDucks';
 import { vaciarDatosFaltantesAccion } from '../redux/faltantesDucks';
 import { setCalendarioAGestionarNominasAccion } from '../redux/nominasDucks';
 import { vaciarDatosUltimasIntervencionesAccion } from '../redux/appDucks';
+import { vaciarDatosCentroAccion } from '../redux/centrosDucks';
+import { vaciarDatosTrabajadorAccion } from '../redux/trabajadoresDucks';
 
 const Menu = (props) => {
 
@@ -90,6 +92,8 @@ const Menu = (props) => {
         dispatch(cambioEstadoInicioNominasAccion(true));
         dispatch(registrarIntervencionAccion(true));
         dispatch(vaciarDatosUltimasIntervencionesAccion());
+        dispatch(vaciarDatosCentroAccion());
+        dispatch(vaciarDatosTrabajadorAccion());
     };
 
     const handleClick = (link) => {

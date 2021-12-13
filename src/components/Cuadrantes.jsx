@@ -108,12 +108,14 @@ import { enviarMailAccion } from '../redux/appDucks';
 import { obtenerObjetoPorIdAccion } from '../redux/appDucks';
 import { vaciarDatosCentroAccion } from '../redux/centrosDucks';
 import { vaciarDatosPendientesAccion } from '../redux/pendientesDucks';
+import { venimosDeRegistradosAccion } from '../redux/pendientesDucks';
+import { vaciarDatosTrabajadorAccion } from '../redux/trabajadoresDucks';
 
 const categorias = Constantes.CATEGORIAS_CENTROS;
 const arrayFestivos = Constantes.CALENDARIO_FESTIVOS;
 const variaciones = Constantes.VARIACIONES_CUADRANTES;
 
-const getHeightScrollable = () => (window.innerHeight - 235) || (document.documentElement.clientHeight - 235) || (document.body.clientHeight - 235);
+const getHeightScrollable = () => (window.innerHeight - 217) || (document.documentElement.clientHeight - 217) || (document.body.clientHeight - 217);
 
 //accordion
 const Accordion = withStyles({
@@ -170,7 +172,7 @@ const StyledMenu = withStyles({
 const Cuadrantes = (props) => {
 
     const classes = Clases();
-    const dispatch = useDispatch();        
+    const dispatch = useDispatch();
     const centrosPorCategoria = useSelector(store => store.variablesCentros.arrayCentrosPorCategoria);
     const logged = useSelector(store => store.variablesUsuario.activo);
     const openLoadingCentros = useSelector(store => store.variablesCentros.loadingCentros);
@@ -205,11 +207,12 @@ const Cuadrantes = (props) => {
     const categoriaPorCentro = useSelector(store => store.variablesCentros.categoriaPorCentro);
     const calendarioAGestionar = useSelector(store => store.variablesCuadrantes.calendarioAGestionar);
     const objetoUsuarioActivo = useSelector(store => store.variablesUsuario.usuarioActivo);
+    const estadoVenimosDeRegistrados = useSelector(store => store.variablesPendientes.estadoVenimosDeRegistrados);
 
     //refs
 
-    const scrollable =useRef();
-    const boxes=useRef([]);
+    const scrollable = useRef();
+    const boxes = useRef([]);
 
     //states
 
@@ -288,12 +291,12 @@ const Cuadrantes = (props) => {
     }, []);
 
     useEffect(() => {
-        dispatch(setCalendarioAGestionarAccion(dispatch(retornaAnoMesAccion())));        
+        dispatch(setCalendarioAGestionarAccion(dispatch(retornaAnoMesAccion())));
         dispatch(forzarRecargaGraficosCuadrantesAccion(true));
         dispatch(onEstemAccion('cuadrantes'));
         if (listadoTrabajadores.length === 0) {
             dispatch(obtenerTrabajadoresAccion('trabajadores'));
-        };  
+        };
     }, [dispatch]);
 
     //secuencia gestión meses
@@ -350,16 +353,19 @@ const Cuadrantes = (props) => {
         if (cuadranteRegistrado === 'no') {
             if (!estadoVenimosDePendientes) {
                 dispatch(obtenerCentroAccion('centros', centro));
+                dispatch(cambioEstadoInicioCuadrantesAccion(false));
+                dispatch(activarDesactivarCambioBotonRegistrarAccion(false));
+                dispatch(registrarIntervencionCuadranteNuevoAccion(false));
             };
-            dispatch(cambioEstadoInicioCuadrantesAccion(false));
-            dispatch(activarDesactivarCambioBotonRegistrarAccion(false));
-            dispatch(registrarIntervencionCuadranteNuevoAccion(false));
             dispatch(activarDesactivarCambioBotonResetearAccion(true));
         };
         if (cuadranteRegistrado === 'si') {
-            dispatch(obtenerCentroAccion('centros', centro));
-            dispatch(cambioEstadoInicioCuadrantesAccion(false));
-            dispatch(registrarIntervencionCuadranteNuevoAccion(true));
+            if (!estadoVenimosDeRegistrados) {
+                dispatch(obtenerCentroAccion('centros', centro));
+                dispatch(cambioEstadoInicioCuadrantesAccion(false));
+                dispatch(activarDesactivarCambioBotonRegistrarAccion(false));
+                dispatch(registrarIntervencionCuadranteNuevoAccion(true));
+            };  
             dispatch(activarDesactivarCambioBotonResetearAccion(false));
         };
     }, [cuadranteRegistrado]);
@@ -395,7 +401,6 @@ const Cuadrantes = (props) => {
                                 precioHora_T: centroAGestionar.horario.precioHora_T,
                                 precioHora_P: centroAGestionar.horario.precioHora_P,
                                 arrayTrabajadores: [],
-                                facturado: 'no',
                                 totalFacturado_M: null,
                                 totalFacturado_L: null,
                                 totalFacturado_C: null,
@@ -585,7 +590,7 @@ const Cuadrantes = (props) => {
         };
     }, [cuadrante]);
 
-    //secuencia venimos de pendientes    
+    //secuencia venimos de pendientes o registrados
 
     useEffect(() => {
         if (estadoVenimosDePendientes) {
@@ -595,18 +600,35 @@ const Cuadrantes = (props) => {
                 const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, centro: centro, arrayCuadrante: [] };
                 dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, id: null, nombre: nombreCuadrante, actualizacion: '', datosCuadrante: losDatosCuadrante }));
             };
-            
+
         }
     }, [estadoVenimosDePendientes]);
 
     useEffect(() => {
-        if (estadoVenimosDePendientes) {
+        if (estadoVenimosDeRegistrados) {
+            if (centro) {
+                dispatch(obtenerCategoriaPorCentroAccion('centros', centro));
+                const nombreCuadrante = calendarioAGestionar + '-' + centro;
+                const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, centro: centro };
+                dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, nombre: nombreCuadrante, actualizacion: '', datosCuadrante: losDatosCuadrante }));
+                dispatch(obtenerCuadranteAccion('cuadrantes', nombreCuadrante));
+            };
+        }
+    }, [estadoVenimosDeRegistrados]);    
+
+    useEffect(() => {
+        if (estadoVenimosDePendientes || estadoVenimosDeRegistrados) {
             if (categoriaPorCentro) {
                 dispatch(setCategoriaAccion(categoriaPorCentro));
                 dispatch(obtenerCentrosPorCategoriaAccion('centros', categoriaPorCentro));
                 setDisableSelectCentros(false);
             };
-            dispatch(venimosDePendientesAccion(false));
+            if (estadoVenimosDePendientes) {
+                dispatch(venimosDePendientesAccion(false));
+            };
+            if (estadoVenimosDeRegistrados) {
+                dispatch(venimosDeRegistradosAccion(false));
+            };
         }
     }, [categoriaPorCentro]);
 
@@ -716,8 +738,8 @@ const Cuadrantes = (props) => {
                     dispatch(cambioEstadoInicioCuadrantesAccion(true));
                 }
             }
-        };  
-        dispatch(vaciarDatosPendientesAccion());            
+        };
+        dispatch(vaciarDatosPendientesAccion());
     };
 
     const handleChangeSelectCategoria = (e) => {
@@ -826,12 +848,11 @@ const Cuadrantes = (props) => {
     const reseteaContenidoCuadrante = () => {
         reseteaContenidoCentro();
         setStateFestivo({});
-        //dispatch(vaciarDatosCentrosAccion());        
-        dispatch(vaciarDatosCentroAccion());        
+        dispatch(vaciarDatosCentroAccion());
+        dispatch(vaciarDatosTrabajadorAccion());
     };
 
     const reseteaContenidoCentro = () => {
-        //dispatch(vaciarDatosCuadrantesAccion());
         dispatch(vaciarDatosCuadranteRegistradoAccion());
         setTrabajadoresEnCuadrante([]);
         setSuplentesEnCuadrante([]);
@@ -860,6 +881,7 @@ const Cuadrantes = (props) => {
         setArrayDatosInforme([]);
         setArrayInformeLineas([]);
         setEsFacturacion(false);
+        dispatch(registrarIntervencionCuadranteNuevoAccion(true));
     };
 
     const handleClickAddColumna = (tipo, columna) => {
@@ -1723,7 +1745,6 @@ const Cuadrantes = (props) => {
         setAnchorElDias(null);
         scrollable.current.classList.remove(classes.openAccordion);
         if (lastEditado) {
-            //const casilla = getRef(lastEditado);
             lastEditado.current.classList.remove(classes.editando);
             setLastEditado(null);
         }
@@ -1744,8 +1765,8 @@ const Cuadrantes = (props) => {
             dia: dia,
             columna: columna,
             indexColumna: indexColumna
-        });       
-        if (!cuadrante[indexColumna][postRef].modificado) {          
+        });
+        if (!cuadrante[indexColumna][postRef].modificado) {
             boxes.current[ref].classList.add(classes.editando);
         };
         setLastEditado(ref);
@@ -1753,7 +1774,7 @@ const Cuadrantes = (props) => {
 
     const handleClosePopoverGeneral = () => {
         setAnchorElGeneral(null);
-        scrollable.current.classList.remove(classes.openAccordion);        
+        scrollable.current.classList.remove(classes.openAccordion);
         boxes.current[lastEditado].classList.remove(classes.editando);
         setLastEditado(null);
         if (itemPrevioEditando) {
@@ -3355,6 +3376,7 @@ const Cuadrantes = (props) => {
     };
 
     const procesarDatosCuadrante = (source, totalFacturado) => {
+        handleCloseMenu();
         //revisamos que el cuadrante no esté a 0
         let sumatorioHoras = 0;
         if (arrayDatosInforme.length > 0) {
@@ -3411,7 +3433,7 @@ const Cuadrantes = (props) => {
             });
             if (objetoCuadrante.datosInforme.computo === 1) {
                 elTotalAAFacturar_M = objetoCuadrante.datosInforme.mensualPactado;
-                elTotalAAFacturarTotal=elTotalAAFacturar_M;
+                elTotalAAFacturarTotal = elTotalAAFacturar_M;
             };
             if (objetoCuadrante.datosInforme.computo === 2) {
                 if (sumatorioHoras_L) {
@@ -3440,7 +3462,7 @@ const Cuadrantes = (props) => {
             if (objetoCuadrante.datosInforme.computo === 3) {
                 if (objetoCuadrante.datosInforme.mensualPactado) {
                     elTotalAAFacturar_M = objetoCuadrante.datosInforme.mensualPactado;
-                    elTotalAAFacturarTotal=elTotalAAFacturar_M;
+                    elTotalAAFacturarTotal = elTotalAAFacturar_M;
                 } else {
                     if (sumatorioHoras_L) {
                         elTotalAAFacturar_L = parseInt(objetoCuadrante.datosInforme.precioHora_L * sumatorioHoras_L);
@@ -3488,7 +3510,6 @@ const Cuadrantes = (props) => {
             precioHora_T: objetoCuadrante.datosInforme.precioHora_T,
             precioHora_P: objetoCuadrante.datosInforme.precioHora_P,
             arrayTrabajadores: arrayDatosInforme,
-            facturado: source === 'informe' ? 'si' : objetoCuadrante.datosInforme.facturado,
             totalFacturado_M: elTotalAAFacturar_M,
             totalFacturado_L: elTotalAAFacturar_L,
             totalFacturado_C: elTotalAAFacturar_C,
@@ -3504,7 +3525,8 @@ const Cuadrantes = (props) => {
             actualizacion: laFirmaActualizacion,
             datos_cuadrante: JSON.stringify(objetoFinalCuadrante.datosCuadrante),
             datos_informe: JSON.stringify(objetoFinalInforme),
-            total: source === 'informe' ? elTotalAAFacturarTotal : objetoCuadrante.datosInforme.facturado==='si' ? elTotalAAFacturarTotal : null,
+            estado: source === 'informe' ? 'facturado' : objetoCuadrante.estado,
+            total: source === 'informe' ? elTotalAAFacturarTotal : objetoCuadrante.estado === 'facturado' ? elTotalAAFacturarTotal : null,
         };
         if (cuadranteRegistrado === 'no') {
             dispatch(registrarCuadranteAccion('cuadrantes', cuadranteAGuardar.id, cuadranteAGuardar));
@@ -3519,8 +3541,7 @@ const Cuadrantes = (props) => {
             dispatch(actualizarCuadranteAccion('cuadrantes', cuadranteAGuardar.id, cuadranteAGuardar));
             dispatch(activarDesactivarCambioBotonActualizarAccion(true));
         };
-        dispatch(registrarIntervencionAccion(true));
-        handleCloseMenu();
+        dispatch(registrarIntervencionAccion(true));        
     };
 
     const goToInicioCuadrantes = () => {
@@ -3534,7 +3555,7 @@ const Cuadrantes = (props) => {
                 reseteaContenidoCuadrante();
                 setDisableSelectCentros(true);
                 dispatch(vaciarDatosCuadrantesAccion());
-                dispatch(cambioEstadoInicioCuadrantesAccion(true));   
+                dispatch(cambioEstadoInicioCuadrantesAccion(true));
                 dispatch(setCategoriaAccion(''));
             }
         };
@@ -3925,8 +3946,8 @@ const Cuadrantes = (props) => {
             elTotalFacturado = sumatorioHoras * objetoCuadrante.datosInforme.precioHora;
         };
         const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, arrayCuadrante: cuadrante };
-        const losDatosInforme = { ...objetoCuadrante.datosInforme, facturado: 'si', totalFacturado: elTotalFacturado };
-        dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, datosCuadrante: losDatosCuadrante, datosInforme: losDatosInforme }));
+        const losDatosInforme = { ...objetoCuadrante.datosInforme, totalFacturado: elTotalFacturado };
+        dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, estado: 'facturado', datosCuadrante: losDatosCuadrante, datosInforme: losDatosInforme }));
         procesarDatosCuadrante('informe', elTotalFacturado);
         //dispatch(registrarIntervencionAccion(false));        
     };
@@ -4014,6 +4035,7 @@ const Cuadrantes = (props) => {
 
     const handleClickOpenDialogCuadrantes1 = () => {
         dispatch(abreObjetoDialogAccion('4'));
+        handleCloseMenu();
     };
 
     const handleClickOpenDialogCuadrantes2 = () => {
@@ -4038,7 +4060,7 @@ const Cuadrantes = (props) => {
             dispatch(cambiarACuadranteNoRegistradoAccion());
             const nombreCuadrante = calendarioAGestionar + '-' + centroId;
             const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, centro: centroId, arrayCuadrante: [] };
-            dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, id: null, nombre: nombreCuadrante, actualizacion: '', datosCuadrante: losDatosCuadrante }));
+            dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, id: null, nombre: nombreCuadrante, actualizacion: '', datosCuadrante: losDatosCuadrante, estado: 'registrado' }));
             dispatch(activarDesactivarCambioBotonResetearAccion(true));
             setControladorDeEstado('venimosDeResetear');
         }
@@ -4068,7 +4090,7 @@ const Cuadrantes = (props) => {
                 reseteaContenidoCuadrante();
                 setDisableSelectCentros(true);
                 dispatch(vaciarDatosCuadrantesAccion());
-                dispatch(cambioEstadoInicioCuadrantesAccion(true));               
+                dispatch(cambioEstadoInicioCuadrantesAccion(true));
                 dispatch(forzarRecargaGraficosCuadrantesAccion(true));
             }
         }
@@ -4095,7 +4117,7 @@ const Cuadrantes = (props) => {
             >
                 <Box
                     m={0.3}
-                    p={1.5}                    
+                    p={1.5}
                     className={clsx(classes.inicio, classes.blanc, classes.mb_5, dia[1][0] === 'Domingo' || stateFestivo['estadoFestivoDia' + (index + 1)] ? classes.diaFestivo : classes.diaLaboral)}
                     onClick={abrePopoverDias(postRef, index, dia[1][0])}
                 >
@@ -4117,8 +4139,8 @@ const Cuadrantes = (props) => {
             >
                 < Box
                     m={0.3}
-                    p={1.5}                   
-                    ref={ref => { boxes.current[indexColumna]=ref }}
+                    p={1.5}
+                    ref={ref => { boxes.current[indexColumna] = ref }}
                     className={gestionaClassesColoresGeneral(indexDia + 1, columna[postRef].baja, columna[postRef].modificado, columna.nombreTrabajador) || null}
                     style={{ width: dimensionsColumna.width, display: 'flex', flexDirection: 'row', justifycontent: 'space-between', alignItems: 'center' }}
                     onClick={abrePopoverGeneral(postRef, indexDia, dia[1][0], columna, indexColumna, indexColumna)}
@@ -4161,9 +4183,9 @@ const Cuadrantes = (props) => {
                                 overlap="circle"
                                 classes={{
                                     badge:
-                                        firmaActualizacion && centroAGestionar.nombre && intervencionRegistrada && objetoCuadrante.datosInforme.facturado === 'si' ?
+                                        firmaActualizacion && centroAGestionar.nombre && intervencionRegistrada && objetoCuadrante.estado === 'facturado' ?
                                             classes.badgeVerd :
-                                            firmaActualizacion && centroAGestionar.nombre && intervencionRegistrada && objetoCuadrante.datosInforme.facturado === 'no' ?
+                                            firmaActualizacion && centroAGestionar.nombre && intervencionRegistrada && objetoCuadrante.estado === 'registrado' ?
                                                 classes.badgeTaronja :
                                                 firmaActualizacion && centroAGestionar.nombre && !intervencionRegistrada ?
                                                     classes.badgeVermell :
@@ -4180,9 +4202,9 @@ const Cuadrantes = (props) => {
                                 <Chip style={{ padding: 5 }} icon={<AssignmentIcon />} label={`Gestión de cuadrantes ` + (
                                     centroAGestionar.nombre ?
                                         ' - Centro: ' + centroAGestionar.nombre + (
-                                            firmaActualizacion && intervencionRegistrada && objetoCuadrante.datosInforme.facturado === 'no' ?
+                                            firmaActualizacion && intervencionRegistrada && objetoCuadrante.estado === 'registrado' ?
                                                 ' - Estado: Actualizado el ' + firmaActualizacion :
-                                                firmaActualizacion && intervencionRegistrada && objetoCuadrante.datosInforme.facturado === 'si' ?
+                                                firmaActualizacion && intervencionRegistrada && objetoCuadrante.estado === 'facturado' ?
                                                     ' - Estado: Facturado el ' + firmaActualizacion :
                                                     firmaActualizacion && !intervencionRegistrada ?
                                                         ' - Estado: Pendiente de actualizar' :
@@ -4261,13 +4283,14 @@ const Cuadrantes = (props) => {
                     </Box>
                     <Box
                         className={classes.root1}
-                        mt={3}
+                        mt={2}
                         mb={3}
                     >
                         <Grid item lg={4}>
                             <Box pr={2}>
                                 <MuiPickersUtilsProvider locale={es} utils={DateFnsUtils}>
                                     <KeyboardDatePicker
+                                        size="small"
                                         views={['month', 'year']}
                                         inputVariant="outlined"
                                         fullWidth
@@ -4288,6 +4311,7 @@ const Cuadrantes = (props) => {
                                 <FormControl
                                     variant="outlined"
                                     fullWidth
+                                    size="small"
                                 >
                                     <InputLabel>Categoria Centro</InputLabel>
                                     <Select
@@ -4315,6 +4339,7 @@ const Cuadrantes = (props) => {
                                     variant="outlined"
                                     fullWidth
                                     disabled={disableSelectCentros}
+                                    size="small"
                                 >
                                     <InputLabel>Centro</InputLabel>
                                     <Select
@@ -4723,7 +4748,7 @@ const Cuadrantes = (props) => {
                 prFullWidth={true}
                 prMaxWidth={true}
             />
-            {/* {console.log(categoriaPorCentro)} */}
+            {/* {console.log('cuadrante: ',cuadranteNuevoRegistrado)} */}
         </div>
     )
 }

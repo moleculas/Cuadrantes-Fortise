@@ -393,6 +393,10 @@ const Clases = makeStyles((theme) => ({
         bottom: theme.spacing(4),
         right: theme.spacing(8),
     },
+    fabPendientes: {
+        position: 'absolute',
+        bottom: theme.spacing(6),        
+    },
     typoFab: {
         textTransform: 'none',
         marginRight: 10
@@ -407,7 +411,7 @@ const Clases = makeStyles((theme) => ({
     centrado: {
         minHeight: "20vh",
         display: "flex",
-        alignItems: "center"
+        alignItems: "center",
     },
     fuentePequena: {
         fontSize: '0.7rem'
@@ -469,6 +473,10 @@ const Clases = makeStyles((theme) => ({
         color: 'white',
         backgroundColor: green[500],
     },
+    orange: {
+        color: theme.palette.getContrastText(amber[500]),
+        backgroundColor: amber[500],
+    },
     small: {
         width: theme.spacing(4),
         height: theme.spacing(4),
@@ -528,7 +536,7 @@ const Clases = makeStyles((theme) => ({
         paddingLeft: 15,
         backgroundColor: theme.palette.primary.light,
         color: theme.palette.primary.contrastText
-    },
+    },   
     secLight: {
         color: 'white',
         backgroundColor: theme.palette.primary.light,

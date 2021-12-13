@@ -6620,3 +6620,35 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
     });
     return arrayResultante;
 };
+<div>
+    <Box
+        p={1.5}
+        m={1}
+        color="secondary.contrastText"
+        bgcolor="secondary.main"
+        style={{ maxHeight: 45, minHeight: 45, display: 'flex', flexDirection: 'row', justifycontent: 'space-between', alignItems: 'center' }}
+    >
+        <Grid item xs={11}>
+            <Typography variant="body2">Cuadrantes del mes de {monthLet} pendientes de gestionar</Typography>
+        </Grid>
+        <Grid item xs={1} className={classes.alignRight}>
+            <Avatar
+                className={clsx(classes.small, numeroCentrosPendientes === 0 ? classes.green : classes.red)}
+            >
+                <Typography variant='body2'>{numeroCentrosPendientes}</Typography>
+            </Avatar>
+        </Grid>
+    </Box>
+    <Paper
+        elevation={1}
+        style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra, margin: 8 }}
+    >
+        {numeroCentrosPendientes === 0 ? (
+            <Box p={3}>
+                No quedan cuadrantes pendientes por gestionar.
+            </Box>
+        ) : (
+            <Pendientes prHeightContenedores={heightContenedoresGra} />
+        )}
+    </Paper>
+</div>

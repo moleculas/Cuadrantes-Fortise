@@ -81,6 +81,7 @@ import { cambioEstadoNominaSinDatosAccion } from '../redux/nominasDucks';
 import { venimosDeFaltantesAccion } from '../redux/faltantesDucks';
 import { forzarRecargaGraficosNominasAccion } from '../redux/graficosDucks';
 import { vaciarDatosFaltantesAccion } from '../redux/faltantesDucks';
+import { venimosDeRegistradosFaltantesAccion } from '../redux/faltantesDucks';
 
 const getHeightScrollable = () => (window.innerHeight - 220) || (document.documentElement.clientHeight - 220) || (document.body.clientHeight - 220);
 
@@ -143,6 +144,7 @@ const Nominas = (props) => {
     const openDialog9 = useSelector(store => store.variablesApp.openDialog[8]);
     const openDialog10 = useSelector(store => store.variablesApp.openDialog[9]);
     const nominaSinDatosEstado = useSelector(store => store.variablesNominas.nominaSinDatosEstado);
+    const estadoVenimosDeRegistradosFaltantes = useSelector(store => store.variablesFaltantes.estadoVenimosDeRegistradosFaltantes);
 
     //states
 
@@ -217,17 +219,20 @@ const Nominas = (props) => {
         if (nominaRegistrada === 'no') {
             if (!estadoVenimosDeFaltantes) {
                 dispatch(obtenerTrabajadorAccion('trabajadores', trabajador));
+                dispatch(cambioEstadoInicioNominasAccion(false));
+                dispatch(activarDesactivarCambioBotonRegistrarNominaAccion(false));
+                dispatch(registrarIntervencionNominaNuevaAccion(false));
             };
-            dispatch(cambioEstadoInicioNominasAccion(false));
-            dispatch(activarDesactivarCambioBotonRegistrarNominaAccion(false));
             dispatch(activarDesactivarCambioBotonEliminarNominaAccion(true));
-            dispatch(registrarIntervencionNominaNuevaAccion(false));
         };
         if (nominaRegistrada === 'si') {
-            dispatch(obtenerTrabajadorAccion('trabajadores', trabajador));
-            dispatch(cambioEstadoInicioNominasAccion(false));
-            dispatch(activarDesactivarCambioBotonEliminarNominaAccion(false));
-            dispatch(registrarIntervencionNominaNuevaAccion(true));
+            if (!estadoVenimosDeRegistradosFaltantes) {
+                dispatch(obtenerTrabajadorAccion('trabajadores', trabajador));
+                dispatch(cambioEstadoInicioNominasAccion(false));
+                dispatch(activarDesactivarCambioBotonEliminarNominaAccion(false));
+                dispatch(registrarIntervencionNominaNuevaAccion(true));
+            }
+            dispatch(activarDesactivarCambioBotonEliminarNominaAccion(true));
         };
     }, [nominaRegistrada]);
 
@@ -282,7 +287,6 @@ const Nominas = (props) => {
                                 totalHorasExtra: elTotalHorasExtra
                             })
                         } else {
-                            console.log(elTotalHorasNormal)
                             setAlert({
                                 mensaje: "La consulta no ha devuelto resultados.",
                                 tipo: 'warning'
@@ -300,7 +304,7 @@ const Nominas = (props) => {
         }
     }, [cuadrantesVinculadosATrabajador]);
 
-    //secuencia venimos de pendientes    
+   //secuencia venimos de faltantes o registrados faltantes
 
     useEffect(() => {
         if (estadoVenimosDeFaltantes) {
@@ -312,6 +316,18 @@ const Nominas = (props) => {
             };
         }
     }, [estadoVenimosDeFaltantes]);
+
+    useEffect(() => {
+        if (estadoVenimosDeRegistradosFaltantes) {
+            if (trabajador) {               
+                const nombreNomina = calendarioAGestionarNominas + '-' + trabajador;
+                const losDatosNomina = { ...objetoNomina.datosNomina, arrayDatos: [] };
+                dispatch(actualizarObjetoNominaAccion({ ...objetoNomina, nombre: nombreNomina, actualizacion: '', trabajador: trabajador, datosNomina: losDatosNomina }));
+                dispatch(obtenerNominaAccion('nominas', nombreNomina));
+                dispatch(venimosDeRegistradosFaltantesAccion(false));
+            };
+        }
+    }, [estadoVenimosDeRegistradosFaltantes]); 
 
     //secuencia alertas
 
@@ -454,11 +470,12 @@ const Nominas = (props) => {
         dispatch(cambioEstadoNominaSinDatosAccion(false));
         setEsEmision(false);
         setArrayInformeLineas([]);
-        dispatch(vaciarDatosTrabajadorAccion());       
-
+        dispatch(vaciarDatosTrabajadorAccion());
+        dispatch(registrarIntervencionNominaNuevaAccion(true));
     };
 
     const procesarDatosNomina = (source, totalEmitido) => {
+        handleCloseMenu();
         //firmamos
         let fechaHoy = new Date().toLocaleString() + '';
         let laFirmaActualizacion = fechaHoy + ' por ' + objetoUsuarioActivo.nombre.charAt(0).toUpperCase() + objetoUsuarioActivo.nombre.slice(1);
@@ -475,7 +492,8 @@ const Nominas = (props) => {
             actualizacion: laFirmaActualizacion,
             trabajador: objetoNomina.trabajador,
             datos_nomina: JSON.stringify(objetoFinalNomina),
-            total: source === 'informe' ? totalEmitido : objetoNomina.datosNomina.emitida === 'si' ? objetoNomina.datosNomina.totalEmitido : null,
+            estado: source === 'informe' ? 'emitido' : objetoNomina.estado,
+            total: source === 'informe' ? totalEmitido : objetoNomina.estado === 'facturado' ? objetoNomina.datosNomina.totalEmitido : null,
         };
         if (nominaRegistrada === 'no') {
             dispatch(registrarNominaAccion('nominas', nominaAGuardar.id, nominaAGuardar));
@@ -499,7 +517,7 @@ const Nominas = (props) => {
                 reseteaContenidoNominas();
                 dispatch(vaciarDatosNominasAccion());
                 dispatch(cambioEstadoInicioNominasAccion(true));
-                dispatch(cambioEstadoNominaSinDatosAccion(true));
+                dispatch(cambioEstadoNominaSinDatosAccion(false));
             };
         };
         setAnchorElMenu(null);
@@ -566,8 +584,8 @@ const Nominas = (props) => {
         if (sumatorioHorasExtra > 0) {
             elTotalEmitido += (sumatorioHorasExtra * objetoConfiguracion.precioHoraExtra);
         };
-        const losDatosNomina = { ...objetoNomina.datosNomina, emitida: 'si', totalEmitido: elTotalEmitido };
-        dispatch(actualizarObjetoNominaAccion({ ...objetoNomina, datosNomina: losDatosNomina }));
+        const losDatosNomina = { ...objetoNomina.datosNomina, totalEmitido: elTotalEmitido };
+        dispatch(actualizarObjetoNominaAccion({ ...objetoNomina, estado: 'emitido', datosNomina: losDatosNomina }));
         procesarDatosNomina('informe', elTotalEmitido);
     };
 
@@ -609,7 +627,7 @@ const Nominas = (props) => {
             dispatch(cambiarANominaNoRegistradaAccion());
             const nombreNomina = calendarioAGestionarNominas + '-' + trabajadorId;
             const losDatosNomina = { ...objetoNomina.datosNomina, arrayDatos: [] };
-            dispatch(actualizarObjetoNominaAccion({ ...objetoNomina, id: null, nombre: nombreNomina, actualizacion: '', trabajador: trabajadorId, datosNomina: losDatosNomina }));
+            dispatch(actualizarObjetoNominaAccion({ ...objetoNomina, id: null, nombre: nombreNomina, actualizacion: '', trabajador: trabajadorId, datosNomina: losDatosNomina, estado: 'registrado' }));
             dispatch(activarDesactivarCambioBotonEliminarNominaAccion(true));
             setControladorDeEstado('venimosDeResetear');
         }
@@ -812,9 +830,9 @@ const Nominas = (props) => {
                             overlap="circle"
                             classes={{
                                 badge:
-                                    firmaActualizacion && trabajadorAGestionar.nombre && intervencionRegistrada && objetoNomina.datosNomina.emitida === 'si' ?
+                                    firmaActualizacion && trabajadorAGestionar.nombre && intervencionRegistrada && objetoNomina.estado === 'emitido' ?
                                         classes.badgeVerd :
-                                        firmaActualizacion && trabajadorAGestionar.nombre && intervencionRegistrada && objetoNomina.datosNomina.emitida === 'no' ?
+                                        firmaActualizacion && trabajadorAGestionar.nombre && intervencionRegistrada && objetoNomina.estado === 'registrado' ?
                                             classes.badgeTaronja :
                                             firmaActualizacion && trabajadorAGestionar.nombre && !intervencionRegistrada ?
                                                 classes.badgeVermell :
@@ -831,9 +849,9 @@ const Nominas = (props) => {
                             <Chip style={{ padding: 5 }} icon={<AssignmentIndIcon />} label={`Gestión de nóminas ` + (
                                 trabajadorAGestionar.nombre ?
                                     ' - Trabajador: ' + trabajadorAGestionar.nombre + (
-                                        firmaActualizacion && intervencionRegistrada && objetoNomina.datosNomina.emitida === 'no' ?
+                                        firmaActualizacion && intervencionRegistrada && objetoNomina.estado === 'registrado' ?
                                             ' - Estado: Registrada el ' + firmaActualizacion :
-                                            firmaActualizacion && intervencionRegistrada && objetoNomina.datosNomina.emitida === 'si' ?
+                                            firmaActualizacion && intervencionRegistrada && objetoNomina.estado === 'emitido' ?
                                                 ' - Estado: Emitida el ' + firmaActualizacion :
                                                 firmaActualizacion && !intervencionRegistrada ?
                                                     ' - Estado: Pendiente de actualizar' :
@@ -903,13 +921,14 @@ const Nominas = (props) => {
                 </Box>
                 <Box
                     className={classes.root11}
-                    mt={3.4}
+                    mt={2.4}
                     mb={3}
                 >
                     <Grid item lg={4}>
                         <Box pr={2}>
                             <MuiPickersUtilsProvider locale={es} utils={DateFnsUtils}>
                                 <KeyboardDatePicker
+                                    size="small"
                                     views={['month', 'year']}
                                     inputVariant="outlined"
                                     fullWidth
@@ -930,6 +949,7 @@ const Nominas = (props) => {
                             <FormControl
                                 variant="outlined"
                                 fullWidth
+                                size="small"
                             >
                                 <InputLabel>Trabajador</InputLabel>
                                 <Select
@@ -1055,7 +1075,7 @@ const Nominas = (props) => {
                 prDescripcionDialog={descripcionDialogNominas2}
                 prNoTieneBotones={true}
             />
-            {/* {console.log(listadoCentros)} */}
+            {/* {console.log('nominas: ',nominaNuevaRegistrada)} */}
         </div>
     )
 }

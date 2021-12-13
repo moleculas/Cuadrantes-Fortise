@@ -405,6 +405,7 @@ const Configuracion = (props) => {
                                             <FormControl
                                                 variant="outlined"
                                                 className={classes.form}
+                                                size="small"
                                             >
                                                 <InputLabel>Precio hora normal</InputLabel>
                                                 <OutlinedInput
@@ -413,13 +414,14 @@ const Configuracion = (props) => {
                                                     id="form-configuracion-hora-normal"
                                                     value={valuesFormConfiguracion.precioHoraNormal || ''}
                                                     onChange={handleChangeFormConfiguracion('precioHoraNormal')}
-                                                    labelWidth={130}
+                                                    labelWidth={145}
                                                     startAdornment={<InputAdornment position="start">€</InputAdornment>}
                                                 />
                                             </FormControl>
                                             <FormControl
                                                 variant="outlined"
                                                 className={classes.form}
+                                                size="small"
                                             >
                                                 <InputLabel>Precio hora extra</InputLabel>
                                                 <OutlinedInput
@@ -505,6 +507,7 @@ const Configuracion = (props) => {
                                             <FormControl
                                                 variant="outlined"
                                                 className={classes.form}
+                                                size="small"
                                             >
                                                 <InputLabel>Nombre del banco</InputLabel>
                                                 <OutlinedInput
@@ -521,6 +524,7 @@ const Configuracion = (props) => {
                                                     <FormControl
                                                         variant="outlined"
                                                         className={classes.form}
+                                                        size="small"
                                                     >
                                                         <InputLabel>IBAN</InputLabel>
                                                         <OutlinedInput
@@ -537,6 +541,7 @@ const Configuracion = (props) => {
                                                     <FormControl
                                                         variant="outlined"
                                                         className={classes.form}
+                                                        size="small"
                                                     >
                                                         <InputLabel>BIC</InputLabel>
                                                         <OutlinedInput

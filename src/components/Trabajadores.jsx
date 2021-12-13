@@ -35,6 +35,7 @@ import { registrarIntervencionAccion } from '../redux/appDucks';
 import { abreObjetoDialogAccion } from '../redux/appDucks';
 import { cierraObjetoDialogAccion } from '../redux/appDucks';
 import { activarDesactivarAccion } from '../redux/appDucks';
+import { vaciarDatosTrabajadorAccion } from '../redux/trabajadoresDucks';
 
 const getHeightScrollable = () => (window.innerHeight - 220) || (document.documentElement.clientHeight - 220) || (document.body.clientHeight - 220);
 
@@ -157,7 +158,10 @@ const Trabajadores = (props) => {
         } else {
             dispatch(activarDesactivarAccion(true));
             setValueTab(newValue)
-        }
+        };
+        dispatch(vaciarDatosTrabajadorAccion());
+        setVenimosTrabajadorFuera(null);
+        props.history.push('/trabajadores');
     };
 
     const procesarDatosEdicionParent = () => {

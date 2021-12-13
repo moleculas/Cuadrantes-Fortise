@@ -129,6 +129,7 @@ const Login = (props) => {
                                 <FormControl
                                     variant="outlined"
                                     className={classes.form}
+                                    size="small"
                                 >
                                     <InputLabel>Usuario</InputLabel>
                                     <OutlinedInput
@@ -137,13 +138,14 @@ const Login = (props) => {
                                         id="form-usuario"
                                         value={valuesForm.nom}
                                         onChange={handleChangeForm('nom')}
-                                        labelWidth={50}
+                                        labelWidth={60}
 
                                     />
                                 </FormControl>
                                 <FormControl
                                     variant="outlined"
                                     className={classes.form}
+                                    size="small"
                                 >
                                     <InputLabel>Password</InputLabel>
                                     <OutlinedInput
@@ -153,7 +155,7 @@ const Login = (props) => {
                                         type={valuesForm.showPassword ? 'text' : 'password'}
                                         value={valuesForm.password}
                                         onChange={handleChangeForm('password')}
-                                        labelWidth={70}
+                                        labelWidth={75}
                                         endAdornment={
                                             <InputAdornment position="end">
                                                 <IconButton
