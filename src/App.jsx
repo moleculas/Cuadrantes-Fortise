@@ -4,11 +4,13 @@ import theme from './temaConfig';
 import Contenedor from './components/Contenedor';
 import { Provider } from 'react-redux';
 import generateStore from './redux/store';
-
+import { leerUsuarioAccion } from './redux/usuarioDucks';
 
 function App() {
 
-  const store=generateStore();
+  const store = generateStore();
+
+  leerUsuarioAccion()(store.dispatch);
 
   return (
     <Provider store={store}>

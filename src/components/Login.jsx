@@ -15,6 +15,7 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import { withRouter } from "react-router-dom";
+
 //importaciones acciones
 import { ingresoUsuarioAccion } from '../redux/usuarioDucks';
 
@@ -30,7 +31,7 @@ const estilos = makeStyles((theme) => ({
     },
     formInput: {
         marginBottom: '10px',
-    },   
+    },
 
 }));
 
@@ -45,8 +46,9 @@ const Login = (props) => {
     const dispatch = useDispatch();
     const errorDeAcceso = useSelector(store => store.variablesUsuario.errorDeAcceso);
     const logged = useSelector(store => store.variablesUsuario.activo);
+    
 
-    useEffect(() => {
+    useEffect(() => {       
         if (logged) {
             props.history.push('/')
         }
@@ -118,7 +120,7 @@ const Login = (props) => {
                 style={{ minHeight: '60vh' }}
             >
                 <Grid item xs={12} md={6} lg={4}>
-                    <Paper elevation={3}>                      
+                    <Paper elevation={3}>
                         <Box
                             p={5}
                             mt={2}

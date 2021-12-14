@@ -6,7 +6,7 @@ const rutaApi = Constantes.RUTA_API;
 const dataInicial = {
     activo: false,
     errorDeAcceso: false,
-    objetUsuarioActivo: {
+    usuarioActivo: {
         nombre: '',
         rol: ''
     },
@@ -48,10 +48,12 @@ export const ingresoUsuarioAccion = (nombre, password) => async (dispatch, getSt
                 payload: {
                     objetoUsuarioActivo: {
                         nombre: nombre,
-                        rol: res.data.rol
+                        rol: res.data.rol                       
                     }
                 }
-            })
+            });
+            const elUsuario = { nombre: res.data.nombre, rol: res.data.rol, activo: true };
+            localStorage.setItem('usuario', JSON.stringify(elUsuario));
         } else {
             dispatch({
                 type: USUARIO_ERROR
@@ -67,5 +69,17 @@ export const ingresoUsuarioAccion = (nombre, password) => async (dispatch, getSt
 export const logoutUsuarioAccion = () => (dispatch, getState) => {
     dispatch({
         type: LOGOUT
-    })
+    });
+    localStorage.removeItem('usuario')
+}
+
+export const leerUsuarioAccion = () => async (dispatch) => {
+    if(localStorage.getItem('usuario')){
+        dispatch({
+            type: USUARIO_EXITO,
+            payload: {
+                objetoUsuarioActivo: JSON.parse(localStorage.getItem('usuario'))
+            }
+        })
+    }
 }

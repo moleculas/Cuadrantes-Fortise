@@ -8,7 +8,7 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
     rutaApi = rutaServer + "/api/";
 }
 
-const subdirectoriProduccio = '/gestio';
+const subdirectoriProduccio = '/';
 //afegir a package.json: "homepage": "https://domini/subdomini",
 
 const retornaDiaMes = (fecha) => {

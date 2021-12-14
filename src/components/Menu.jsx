@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState, Fragment, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     List,
@@ -65,6 +65,7 @@ const Menu = (props) => {
     const tancarSessio = () => {
         limpiezaGeneral();
         dispatch(logoutUsuarioAccion());
+        localStorage.clear();
         props.history.push('/login');
     };
 
@@ -77,10 +78,10 @@ const Menu = (props) => {
         };
         //gestión pendientes
         dispatch(vaciarDatosPendientesAccion());
-        dispatch(setCalendarioAGestionarAccion(dispatch(retornaAnoMesAccion()))); 
+        dispatch(setCalendarioAGestionarAccion(dispatch(retornaAnoMesAccion())));
         //gestión faltantes
         dispatch(vaciarDatosFaltantesAccion());
-        dispatch(setCalendarioAGestionarNominasAccion(dispatch(retornaAnoMesAccion()))); 
+        dispatch(setCalendarioAGestionarNominasAccion(dispatch(retornaAnoMesAccion())));
         //
         dispatch(activarDesactivarAccion(true));
         dispatch(vaciarDatosCuadrantesAccion());
@@ -234,7 +235,7 @@ const Menu = (props) => {
             dispatch(cierraObjetoDialogAccion());
         };
     };
-    // {logged ? (
+
     return (
         <div>
             <List component='nav'>

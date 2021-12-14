@@ -213,7 +213,7 @@ const Inicio = (props) => {
 
     const retornaUltimasIntervenciones = (intervencion, index) => {
 
-        let nombreSplitted;        
+        let nombreSplitted;
         if (Object.keys(intervencion)[0] === 'nombre_cuadrante') {
             nombreSplitted = intervencion.nombre_cuadrante.split("-");
             const nombreCentro = dispatch(obtenerObjetoPorIdAccion(listadoCentros, parseInt(nombreSplitted[2])));
