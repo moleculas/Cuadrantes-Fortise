@@ -395,7 +395,7 @@ const Clases = makeStyles((theme) => ({
     },
     fabPendientes: {
         position: 'absolute',
-        bottom: theme.spacing(6),        
+        bottom: theme.spacing(6),
     },
     typoFab: {
         textTransform: 'none',
@@ -536,13 +536,19 @@ const Clases = makeStyles((theme) => ({
         paddingLeft: 15,
         backgroundColor: theme.palette.primary.light,
         color: theme.palette.primary.contrastText
-    },   
+    },
     secLight: {
         color: 'white',
         backgroundColor: theme.palette.primary.light,
     },
     sombraBox: {
         boxShadow: '0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%)'
+    },
+    nested: {
+        paddingLeft: theme.spacing(4),
+    },
+    colorText:{
+        color: 'rgba(0, 0, 0, 0.54)'
     }
 }));
 

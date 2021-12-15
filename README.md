@@ -64,6 +64,12 @@ Para la comunicación con la Api (Gestión de data).
 
 `npm install axios`
 
+### `SheetJS`
+
+Librería parseadora y generadora de hojas de cálculo.
+
+`npm install xlsx`
+
 
 ## Available Scripts
 

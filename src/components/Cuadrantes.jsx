@@ -44,17 +44,16 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import DescriptionIcon from '@material-ui/icons/Description';
 import Badge from '@material-ui/core/Badge';
-import GetAppIcon from '@material-ui/icons/GetApp';
 import Divider from '@material-ui/core/Divider';
 import Fab from '@material-ui/core/Fab';
 import AssessmentIcon from '@material-ui/icons/Assessment';
-import ReplyIcon from '@material-ui/icons/Reply';
-import EmailIcon from '@material-ui/icons/Email';
 import Avatar from '@material-ui/core/Avatar';
-
-//pdf
-import { PDFDownloadLink, PDFViewer, pdf } from "@react-pdf/renderer";
-import FacturaPDF from "./FacturaPDF";
+import Collapse from '@material-ui/core/Collapse';
+import ExpandLess from '@material-ui/icons/ExpandLess';
+import ExpandMore from '@material-ui/icons/ExpandMore';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import EditIcon from '@material-ui/icons/Edit';
+import { TextField } from '@material-ui/core';
 
 //carga componentes
 import ItemCuadrante from './ItemCuadrante';
@@ -104,12 +103,12 @@ import { obtenerCategoriaPorCentroAccion } from '../redux/centrosDucks';
 import { setCalendarioAGestionarAccion } from '../redux/cuadrantesDucks';
 import { retornaAnoMesCuadranteAccion } from '../redux/appDucks';
 import { gestionarInformeAccion } from '../redux/cuadrantesDucks';
-import { enviarMailAccion } from '../redux/appDucks';
 import { obtenerObjetoPorIdAccion } from '../redux/appDucks';
 import { vaciarDatosCentroAccion } from '../redux/centrosDucks';
 import { vaciarDatosPendientesAccion } from '../redux/pendientesDucks';
 import { venimosDeRegistradosAccion } from '../redux/pendientesDucks';
 import { vaciarDatosTrabajadorAccion } from '../redux/trabajadoresDucks';
+import { generarArchivosXLSAccion } from '../redux/appDucks';
 
 const categorias = Constantes.CATEGORIAS_CENTROS;
 const arrayFestivos = Constantes.CALENDARIO_FESTIVOS;
@@ -208,6 +207,7 @@ const Cuadrantes = (props) => {
     const calendarioAGestionar = useSelector(store => store.variablesCuadrantes.calendarioAGestionar);
     const objetoUsuarioActivo = useSelector(store => store.variablesUsuario.usuarioActivo);
     const estadoVenimosDeRegistrados = useSelector(store => store.variablesPendientes.estadoVenimosDeRegistrados);
+    const exitoGenerarArchivos = useSelector(store => store.variablesApp.exitoGenerarArchivos);    
 
     //refs
 
@@ -262,8 +262,10 @@ const Cuadrantes = (props) => {
     const [arrayDatosInforme, setArrayDatosInforme] = useState(objetoCuadrante.datosInforme.arrayTrabajadores);
     const [arrayInformeLineas, setArrayInformeLineas] = useState([]);
     const [heightScrollable, setHeightScrollable] = useState(getHeightScrollable());
-    const [esFacturacion, setEsFacturacion] = useState(false);
     const [venimosDeActualizarCentro, setVenimosDeActualizarCentro] = useState(false);
+    const [openFacturacion, setOpenFacturacion] = useState(false);
+    const [openFacturacionInterior, setOpenFacturacionInterior] = useState(false);
+    const [numeroFactusol, setNumeroFactusol] = useState(null);
 
     //useEffect
 
@@ -365,7 +367,7 @@ const Cuadrantes = (props) => {
                 dispatch(cambioEstadoInicioCuadrantesAccion(false));
                 dispatch(activarDesactivarCambioBotonRegistrarAccion(false));
                 dispatch(registrarIntervencionCuadranteNuevoAccion(true));
-            };  
+            };
             dispatch(activarDesactivarCambioBotonResetearAccion(false));
         };
     }, [cuadranteRegistrado]);
@@ -614,7 +616,7 @@ const Cuadrantes = (props) => {
                 dispatch(obtenerCuadranteAccion('cuadrantes', nombreCuadrante));
             };
         }
-    }, [estadoVenimosDeRegistrados]);    
+    }, [estadoVenimosDeRegistrados]);
 
     useEffect(() => {
         if (estadoVenimosDePendientes || estadoVenimosDeRegistrados) {
@@ -675,6 +677,16 @@ const Cuadrantes = (props) => {
     }, [exitoResetearCuadrante]);
 
     useEffect(() => {
+        if (exitoGenerarArchivos) {
+            setAlert({
+                mensaje: "Archivos para FACTUSOL generados exitosamente, revisa la carpeta de descargas para localizar: FAC.xls y LFA.xls.",
+                tipo: 'success'
+            })
+            setOpenSnack(true);
+        }
+    }, [exitoGenerarArchivos]);
+
+    useEffect(() => {
         if (!openLoadingCentros || !openLoadingTrabajadores || !openLoadingCuadrantes) {
             setOpenLoading(false)
         } else {
@@ -683,9 +695,9 @@ const Cuadrantes = (props) => {
     }, [openLoadingCentros, openLoadingTrabajadores, openLoadingCuadrantes]);
 
     useEffect(() => {
-        if (esFacturacion || openDialog8)
+        if (openDialog8)
             generaInformacionCuadrantes();
-    }, [esFacturacion, openDialog8]);
+    }, [openDialog8]);
 
     //funciones
 
@@ -695,6 +707,9 @@ const Cuadrantes = (props) => {
 
     const handleCloseMenu = () => {
         setAnchorElMenu(null);
+        setOpenFacturacion(false);
+        setOpenFacturacionInterior(false);
+        setNumeroFactusol(null);
     };
 
     const esFestivoFuncion = (elDia) => {
@@ -880,7 +895,6 @@ const Cuadrantes = (props) => {
         setFirmaActualizacion('');
         setArrayDatosInforme([]);
         setArrayInformeLineas([]);
-        setEsFacturacion(false);
         dispatch(registrarIntervencionCuadranteNuevoAccion(true));
     };
 
@@ -3403,14 +3417,7 @@ const Cuadrantes = (props) => {
                 arrayCuadrante.splice(i, 1);
             }
         };
-        let sumatorioHoras_L = 0;
-        let sumatorioHoras_C = 0;
-        let sumatorioHoras_E = 0;
-        let sumatorioHoras_I = 0;
-        let sumatorioHoras_Z = 0;
-        let sumatorioHoras_T = 0;
-        let sumatorioHoras_P = 0;
-        let sumatorioTotal = 0;
+        const { sumatorioHoras_L, sumatorioHoras_C, sumatorioHoras_E, sumatorioHoras_I, sumatorioHoras_Z, sumatorioHoras_T, sumatorioHoras_P, sumatorioTotal } = calculoTotalHoras();
         let elTotalAAFacturar_M = null;
         let elTotalAAFacturar_L = null;
         let elTotalAAFacturar_C = null;
@@ -3420,22 +3427,40 @@ const Cuadrantes = (props) => {
         let elTotalAAFacturar_T = null;
         let elTotalAAFacturar_P = null;
         let elTotalAAFacturarTotal = null;
-        if (arrayDatosInforme.length > 0) {
-            arrayDatosInforme.forEach((dato, index) => {
-                sumatorioHoras_L += (dato.totalHorasNormal_L + dato.totalHorasExtra_L);
-                sumatorioHoras_C += (dato.totalHorasNormal_C + dato.totalHorasExtra_C);
-                sumatorioHoras_E += (dato.totalHorasNormal_E + dato.totalHorasExtra_E);
-                sumatorioHoras_I += (dato.totalHorasNormal_I + dato.totalHorasExtra_I);
-                sumatorioHoras_Z += (dato.totalHorasNormal_Z + dato.totalHorasExtra_Z);
-                sumatorioHoras_T += (dato.totalHorasNormal_T + dato.totalHorasExtra_T);
-                sumatorioHoras_P += (dato.totalHorasNormal_P + dato.totalHorasExtra_P);
-                sumatorioTotal += dato.totalHoras;
-            });
-            if (objetoCuadrante.datosInforme.computo === 1) {
+
+        if (objetoCuadrante.datosInforme.computo === 1) {
+            elTotalAAFacturar_M = objetoCuadrante.datosInforme.mensualPactado;
+            elTotalAAFacturarTotal = elTotalAAFacturar_M;
+        };
+        if (objetoCuadrante.datosInforme.computo === 2) {
+            if (sumatorioHoras_L) {
+                elTotalAAFacturar_L = parseInt(objetoCuadrante.datosInforme.precioHora_L * sumatorioHoras_L);
+            };
+            if (sumatorioHoras_C) {
+                elTotalAAFacturar_C = parseInt(objetoCuadrante.datosInforme.precioHora_C * sumatorioHoras_C);
+            };
+            if (sumatorioHoras_E) {
+                elTotalAAFacturar_E = parseInt(objetoCuadrante.datosInforme.precioHora_E * sumatorioHoras_E);
+            };
+            if (sumatorioHoras_I) {
+                elTotalAAFacturar_I = parseInt(objetoCuadrante.datosInforme.precioHora_I * sumatorioHoras_I);
+            };
+            if (sumatorioHoras_Z) {
+                elTotalAAFacturar_Z = parseInt(objetoCuadrante.datosInforme.precioHora_Z * sumatorioHoras_Z);
+            };
+            if (sumatorioHoras_T) {
+                elTotalAAFacturar_T = parseInt(objetoCuadrante.datosInforme.precioHora_T * sumatorioHoras_T);
+            };
+            if (sumatorioHoras_P) {
+                elTotalAAFacturar_P = parseInt(objetoCuadrante.datosInforme.precioHora_P * sumatorioHoras_P);
+            };
+            elTotalAAFacturarTotal = parseInt((objetoCuadrante.datosInforme.precioHora_L * sumatorioHoras_L) + (objetoCuadrante.datosInforme.precioHora_C * sumatorioHoras_C) + (objetoCuadrante.datosInforme.precioHora_E * sumatorioHoras_E) + (objetoCuadrante.datosInforme.precioHora_I * sumatorioHoras_I) + (objetoCuadrante.datosInforme.precioHora_Z * sumatorioHoras_Z) + (objetoCuadrante.datosInforme.precioHora_T * sumatorioHoras_T) + (objetoCuadrante.datosInforme.precioHora_P * sumatorioHoras_P));
+        };
+        if (objetoCuadrante.datosInforme.computo === 3) {
+            if (objetoCuadrante.datosInforme.mensualPactado) {
                 elTotalAAFacturar_M = objetoCuadrante.datosInforme.mensualPactado;
                 elTotalAAFacturarTotal = elTotalAAFacturar_M;
-            };
-            if (objetoCuadrante.datosInforme.computo === 2) {
+            } else {
                 if (sumatorioHoras_L) {
                     elTotalAAFacturar_L = parseInt(objetoCuadrante.datosInforme.precioHora_L * sumatorioHoras_L);
                 };
@@ -3459,36 +3484,8 @@ const Cuadrantes = (props) => {
                 };
                 elTotalAAFacturarTotal = parseInt((objetoCuadrante.datosInforme.precioHora_L * sumatorioHoras_L) + (objetoCuadrante.datosInforme.precioHora_C * sumatorioHoras_C) + (objetoCuadrante.datosInforme.precioHora_E * sumatorioHoras_E) + (objetoCuadrante.datosInforme.precioHora_I * sumatorioHoras_I) + (objetoCuadrante.datosInforme.precioHora_Z * sumatorioHoras_Z) + (objetoCuadrante.datosInforme.precioHora_T * sumatorioHoras_T) + (objetoCuadrante.datosInforme.precioHora_P * sumatorioHoras_P));
             };
-            if (objetoCuadrante.datosInforme.computo === 3) {
-                if (objetoCuadrante.datosInforme.mensualPactado) {
-                    elTotalAAFacturar_M = objetoCuadrante.datosInforme.mensualPactado;
-                    elTotalAAFacturarTotal = elTotalAAFacturar_M;
-                } else {
-                    if (sumatorioHoras_L) {
-                        elTotalAAFacturar_L = parseInt(objetoCuadrante.datosInforme.precioHora_L * sumatorioHoras_L);
-                    };
-                    if (sumatorioHoras_C) {
-                        elTotalAAFacturar_C = parseInt(objetoCuadrante.datosInforme.precioHora_C * sumatorioHoras_C);
-                    };
-                    if (sumatorioHoras_E) {
-                        elTotalAAFacturar_E = parseInt(objetoCuadrante.datosInforme.precioHora_E * sumatorioHoras_E);
-                    };
-                    if (sumatorioHoras_I) {
-                        elTotalAAFacturar_I = parseInt(objetoCuadrante.datosInforme.precioHora_I * sumatorioHoras_I);
-                    };
-                    if (sumatorioHoras_Z) {
-                        elTotalAAFacturar_Z = parseInt(objetoCuadrante.datosInforme.precioHora_Z * sumatorioHoras_Z);
-                    };
-                    if (sumatorioHoras_T) {
-                        elTotalAAFacturar_T = parseInt(objetoCuadrante.datosInforme.precioHora_T * sumatorioHoras_T);
-                    };
-                    if (sumatorioHoras_P) {
-                        elTotalAAFacturar_P = parseInt(objetoCuadrante.datosInforme.precioHora_P * sumatorioHoras_P);
-                    };
-                    elTotalAAFacturarTotal = parseInt((objetoCuadrante.datosInforme.precioHora_L * sumatorioHoras_L) + (objetoCuadrante.datosInforme.precioHora_C * sumatorioHoras_C) + (objetoCuadrante.datosInforme.precioHora_E * sumatorioHoras_E) + (objetoCuadrante.datosInforme.precioHora_I * sumatorioHoras_I) + (objetoCuadrante.datosInforme.precioHora_Z * sumatorioHoras_Z) + (objetoCuadrante.datosInforme.precioHora_T * sumatorioHoras_T) + (objetoCuadrante.datosInforme.precioHora_P * sumatorioHoras_P));
-                };
-            };
-        }
+        };
+
         const objetoFinalCuadrante = {
             ...objetoCuadrante,
             datosCuadrante: {
@@ -3518,7 +3515,18 @@ const Cuadrantes = (props) => {
             totalFacturado_Z: elTotalAAFacturar_Z,
             totalFacturado_T: elTotalAAFacturar_T,
             totalFacturado_P: elTotalAAFacturar_P,
-        }
+        };
+        const objetoFinalHoras = {
+            objeto: 'horas',
+            M: objetoCuadrante.datosInforme.mensualPactado ? 1 : null,
+            L: sumatorioHoras_L ? sumatorioHoras_L : null,
+            C: sumatorioHoras_C ? sumatorioHoras_C : null,
+            E: sumatorioHoras_E ? sumatorioHoras_E : null,
+            I: sumatorioHoras_I ? sumatorioHoras_I : null,
+            Z: sumatorioHoras_Z ? sumatorioHoras_Z : null,
+            T: sumatorioHoras_T ? sumatorioHoras_T : null,
+            P: sumatorioHoras_P ? sumatorioHoras_P : null
+        };
         const cuadranteAGuardar = {
             id: objetoCuadrante.id,
             nombre: objetoCuadrante.nombre,
@@ -3527,6 +3535,7 @@ const Cuadrantes = (props) => {
             datos_informe: JSON.stringify(objetoFinalInforme),
             estado: source === 'informe' ? 'facturado' : objetoCuadrante.estado,
             total: source === 'informe' ? elTotalAAFacturarTotal : objetoCuadrante.estado === 'facturado' ? elTotalAAFacturarTotal : null,
+            horas: source === 'informe' ? JSON.stringify(objetoFinalHoras) : objetoCuadrante.estado === 'facturado' ? JSON.stringify(objetoFinalHoras) : null
         };
         if (cuadranteRegistrado === 'no') {
             dispatch(registrarCuadranteAccion('cuadrantes', cuadranteAGuardar.id, cuadranteAGuardar));
@@ -3541,7 +3550,7 @@ const Cuadrantes = (props) => {
             dispatch(actualizarCuadranteAccion('cuadrantes', cuadranteAGuardar.id, cuadranteAGuardar));
             dispatch(activarDesactivarCambioBotonActualizarAccion(true));
         };
-        dispatch(registrarIntervencionAccion(true));        
+        dispatch(registrarIntervencionAccion(true));
     };
 
     const goToInicioCuadrantes = () => {
@@ -3929,36 +3938,77 @@ const Cuadrantes = (props) => {
         )
     };
 
-    const handleClickFacturarCuadrante = () => {
-        setEsFacturacion(true);
-        handleCloseMenu();
-    };
+    const calculoTotalAFacturar = () => {
 
-    const handleActualizaCuadranteFacturado = () => {
-        let sumatorioHoras = 0;
-        let elTotalFacturado;
-        arrayDatosInforme.map((dato, index) => {
-            sumatorioHoras += dato.totalHoras;
-        });
-        if (objetoCuadrante.datosInforme.mensualPactado) {
-            elTotalFacturado = objetoCuadrante.datosInforme.mensualPactado;
-        } else {
-            elTotalFacturado = sumatorioHoras * objetoCuadrante.datosInforme.precioHora;
+        let elTotalFacturado = 0;
+        if (objetoCuadrante.datosInforme.totalFacturado_M) {
+            elTotalFacturado += objetoCuadrante.datosInforme.totalFacturado_M
         };
-        const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, arrayCuadrante: cuadrante };
-        const losDatosInforme = { ...objetoCuadrante.datosInforme, totalFacturado: elTotalFacturado };
-        dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, estado: 'facturado', datosCuadrante: losDatosCuadrante, datosInforme: losDatosInforme }));
-        procesarDatosCuadrante('informe', elTotalFacturado);
-        //dispatch(registrarIntervencionAccion(false));        
+        if (objetoCuadrante.datosInforme.totalFacturado_L) {
+            elTotalFacturado += objetoCuadrante.datosInforme.totalFacturado_L
+        };
+        if (objetoCuadrante.datosInforme.totalFacturado_C) {
+            elTotalFacturado += objetoCuadrante.datosInforme.totalFacturado_C
+        };
+        if (objetoCuadrante.datosInforme.totalFacturado_E) {
+            elTotalFacturado += objetoCuadrante.datosInforme.totalFacturado_E
+        };
+        if (objetoCuadrante.datosInforme.totalFacturado_I) {
+            elTotalFacturado += objetoCuadrante.datosInforme.totalFacturado_I
+        };
+        if (objetoCuadrante.datosInforme.totalFacturado_Z) {
+            elTotalFacturado += objetoCuadrante.datosInforme.totalFacturado_Z
+        };
+        if (objetoCuadrante.datosInforme.totalFacturado_T) {
+            elTotalFacturado += objetoCuadrante.datosInforme.totalFacturado_T
+        };
+        if (objetoCuadrante.datosInforme.totalFacturado_P) {
+            elTotalFacturado += objetoCuadrante.datosInforme.totalFacturado_P
+        };
+        return elTotalFacturado;
     };
 
-    const handleEnviarEmail = async () => {
-        const element = <FacturaPDF arrayFacturaPDF={arrayInformeLineas} />;
-        const myPdf = pdf([]);
-        myPdf.updateContainer(element);
-        const blob = await myPdf.toBlob();
-        let file = new File([blob], 'Factura-' + objetoCuadrante.nombre + '.pdf', { lastModified: (new Date()).getTime() });
-        //dispatch(enviarMailAccion('artikaweb@gmail.com', 'isaiasherreroflorensa@gmail.com', file))        
+    const calculoTotalHoras = () => {
+        let sumatorioHoras_L = 0;
+        let sumatorioHoras_C = 0;
+        let sumatorioHoras_E = 0;
+        let sumatorioHoras_I = 0;
+        let sumatorioHoras_Z = 0;
+        let sumatorioHoras_T = 0;
+        let sumatorioHoras_P = 0;
+        let sumatorioTotal = 0;
+        if (arrayDatosInforme.length > 0) {
+            arrayDatosInforme.forEach((dato, index) => {
+                sumatorioHoras_L += (dato.totalHorasNormal_L + dato.totalHorasExtra_L);
+                sumatorioHoras_C += (dato.totalHorasNormal_C + dato.totalHorasExtra_C);
+                sumatorioHoras_E += (dato.totalHorasNormal_E + dato.totalHorasExtra_E);
+                sumatorioHoras_I += (dato.totalHorasNormal_I + dato.totalHorasExtra_I);
+                sumatorioHoras_Z += (dato.totalHorasNormal_Z + dato.totalHorasExtra_Z);
+                sumatorioHoras_T += (dato.totalHorasNormal_T + dato.totalHorasExtra_T);
+                sumatorioHoras_P += (dato.totalHorasNormal_P + dato.totalHorasExtra_P);
+                sumatorioTotal += dato.totalHoras;
+            });
+        };
+        return { sumatorioHoras_L, sumatorioHoras_C, sumatorioHoras_E, sumatorioHoras_I, sumatorioHoras_Z, sumatorioHoras_T, sumatorioHoras_P, sumatorioTotal }
+    };
+
+    const handleClickFacturarCuadrante = () => {
+        const elTotalFacturado = calculoTotalAFacturar();
+        const { sumatorioHoras_L, sumatorioHoras_C, sumatorioHoras_E, sumatorioHoras_I, sumatorioHoras_Z, sumatorioHoras_T, sumatorioHoras_P, sumatorioTotal } = calculoTotalHoras();
+        const objetoFinalHoras = {
+            objeto: 'horas',
+            M: objetoCuadrante.datosInforme.mensualPactado ? 1 : null,
+            L: sumatorioHoras_L ? sumatorioHoras_L : null,
+            C: sumatorioHoras_C ? sumatorioHoras_C : null,
+            E: sumatorioHoras_E ? sumatorioHoras_E : null,
+            I: sumatorioHoras_I ? sumatorioHoras_I : null,
+            Z: sumatorioHoras_Z ? sumatorioHoras_Z : null,
+            T: sumatorioHoras_T ? sumatorioHoras_T : null,
+            P: sumatorioHoras_P ? sumatorioHoras_P : null
+        };
+        dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, estado: 'facturado', total: elTotalFacturado, horas: objetoFinalHoras }));
+        procesarDatosCuadrante('informe', elTotalFacturado);
+        handleCloseMenu();
     };
 
     const retornaIconoTipoServicio = (tipo) => {
@@ -4020,6 +4070,55 @@ const Cuadrantes = (props) => {
         setVenimosDeActualizarCentro(true);
         dispatch(obtenerCentroAccion('centros', objetoCuadrante.datosCuadrante.centro));
         handleCloseMenu();
+    };
+
+    const handleClickFacturacionMenu = () => {
+        setOpenFacturacion(!openFacturacion);
+    };
+
+    const handleClickFacturacionInteriorMenu = () => {
+        setOpenFacturacionInterior(!openFacturacionInterior);
+    };
+
+    function IsNumeric(num) {
+        return (num >= 0 || num < 0);
+    };
+
+    const handleChangeFormNumumeroFactusol = (e) => {
+        if (IsNumeric(e.target.value)) {
+            setNumeroFactusol(e.target.value);
+        }
+    };
+
+    const handleGenerarArchivos = () => {
+        if (numeroFactusol) {
+            const objetoDesgloseConceptos = {
+                MT: objetoCuadrante.datosInforme.totalFacturado_M ? objetoCuadrante.datosInforme.totalFacturado_M : null,
+                LT: objetoCuadrante.datosInforme.totalFacturado_L ? objetoCuadrante.datosInforme.totalFacturado_L : null,
+                CT: objetoCuadrante.datosInforme.totalFacturado_C ? objetoCuadrante.datosInforme.totalFacturado_C : null,
+                ET: objetoCuadrante.datosInforme.totalFacturado_E ? objetoCuadrante.datosInforme.totalFacturado_E : null,
+                IT: objetoCuadrante.datosInforme.totalFacturado_I ? objetoCuadrante.datosInforme.totalFacturado_I : null,
+                ZT: objetoCuadrante.datosInforme.totalFacturado_Z ? objetoCuadrante.datosInforme.totalFacturado_Z : null,
+                TT: objetoCuadrante.datosInforme.totalFacturado_T ? objetoCuadrante.datosInforme.totalFacturado_T : null,
+                PT: objetoCuadrante.datosInforme.totalFacturado_P ? objetoCuadrante.datosInforme.totalFacturado_P : null,
+                MH: objetoCuadrante.datosInforme.totalFacturado_M ? 1 : null,
+                LH: objetoCuadrante.horas.L,
+                CH: objetoCuadrante.horas.C,
+                EH: objetoCuadrante.horas.E,
+                IH: objetoCuadrante.horas.I,
+                ZH: objetoCuadrante.horas.Z,
+                TH: objetoCuadrante.horas.T,
+                PH: objetoCuadrante.horas.P
+            };
+            dispatch(generarArchivosXLSAccion('centros', numeroFactusol, centro, calculoTotalAFacturar(), objetoDesgloseConceptos));
+        } else {
+            setAlert({
+                mensaje: "Debes introducir el último número de factura emitida en FACTUSOL para generar los archivos.",
+                tipo: 'error'
+            })
+            setOpenSnack(true);
+            return;
+        };
     };
 
     //dialog
@@ -4251,14 +4350,63 @@ const Cuadrantes = (props) => {
                                             <ListItemText primary={cuadranteRegistrado === 'si' ? 'Actualizar Cuadrante' : 'Registrar Cuadrante'} />
                                         </MenuItem>
                                         <MenuItem
-                                            onClick={handleClickFacturarCuadrante}
+                                            onClick={handleClickFacturacionMenu}
                                             disabled={cuadranteRegistrado === 'no' ? true : false}
                                         >
                                             <ListItemIcon>
                                                 <DescriptionIcon fontSize="small" />
                                             </ListItemIcon>
-                                            <ListItemText primary="Facturar Cuadrante" />
+                                            <ListItemText primary="Facturar" />
+                                            {openFacturacion ? <ExpandLess /> : <ExpandMore />}
                                         </MenuItem>
+                                        <Collapse in={openFacturacion} timeout="auto" unmountOnExit>
+                                            <MenuItem
+                                                className={classes.nested}
+                                                onClick={handleClickFacturarCuadrante}
+                                            >
+                                                <ListItemText primary="Registrar factura" />
+                                            </MenuItem>
+                                            <MenuItem
+                                                className={classes.nested}
+                                                onClick={handleClickFacturacionInteriorMenu}
+                                                disabled={objetoCuadrante.estado === 'facturado' ? false : true}
+                                            >
+                                                <ListItemText primary="Generar archivos" />
+                                                {openFacturacionInterior ? <ExpandLess /> : <ExpandMore />}
+                                            </MenuItem>
+                                            <Collapse in={openFacturacionInterior} timeout="auto" unmountOnExit>
+                                                <MenuItem
+                                                    className={classes.nested}
+                                                >
+                                                    <FormControl
+                                                        size="small"
+                                                        style={{ marginRight: 15, width: 90, marginBottom: 5, }}
+                                                    >
+                                                        <Tooltip title="Último nº de factura emitida en FACTUSOL" placement="left" arrow>
+                                                            <TextField
+                                                                id="form-numero-factusol-cuadrantes"
+                                                                value={numeroFactusol || ''}
+                                                                onChange={handleChangeFormNumumeroFactusol}
+                                                                InputProps={{
+                                                                    startAdornment: (
+                                                                        <InputAdornment position="start">
+                                                                            <EditIcon className={classes.colorText} />
+                                                                        </InputAdornment>
+                                                                    ),
+                                                                }}
+                                                            />
+                                                        </Tooltip>
+                                                    </FormControl>
+                                                    <ListItemText
+                                                        onClick={handleGenerarArchivos}
+                                                        primary="Procesar"
+                                                    />
+                                                </MenuItem>
+                                            </Collapse>
+                                            {/* <MenuItem disabled={true} className={classes.nested}>                                                   
+                                                    <ListItemText secondary="Imprimir factura" />
+                                                </MenuItem> */}
+                                        </Collapse>
                                         <MenuItem
                                             onClick={handleClickActualizarCentro}
                                         >
@@ -4363,225 +4511,170 @@ const Cuadrantes = (props) => {
                         </Grid>
                     </Box>
                     {cuadrante.length > 0 ? (
-                        esFacturacion ? (
-                            <Grid style={{ marginRight: 8, marginTop: -8 }}>
-                                <Box className={clsx(classes.alignRight, classes.mb20)}>
-                                    <Tooltip title="Volver al Cuadrante" placement="top" arrow>
-                                        <Fab
-                                            color="secondary"
-                                            size="small"
-                                            style={{ marginLeft: 8 }}
-                                            onClick={() => setEsFacturacion(false)}
-                                        >
-                                            <ReplyIcon />
-                                        </Fab>
-                                    </Tooltip>
-                                    <Tooltip title="Registrar Factura" placement="top" arrow>
-                                        <Fab
-                                            color="primary"
-                                            size="small"
-                                            style={{ marginLeft: 8 }}
-                                            onClick={handleActualizaCuadranteFacturado}
-                                        >
-                                            <SaveIcon />
-                                        </Fab>
-                                    </Tooltip>
-                                    <PDFDownloadLink
-                                        document={<FacturaPDF arrayFacturaPDF={arrayInformeLineas} />}
-                                        fileName={'Factura-' + objetoCuadrante.nombre + '.pdf'}
-                                        style={{ textDecoration: 'none' }}
-                                    >
-                                        <Tooltip title="Descargar Factura" placement="top" arrow>
-                                            <Fab
-                                                color="primary"
-                                                size="small"
-                                                style={{ marginLeft: 8 }}
-                                            >
-                                                <GetAppIcon />
-                                            </Fab>
-                                        </Tooltip>
-                                    </PDFDownloadLink>
-                                    <Tooltip title="Enviar Factura por mail" placement="top" arrow>
-                                        <Fab
-                                            color="primary"
-                                            size="small"
-                                            style={{ marginLeft: 8 }}
-                                            onClick={handleEnviarEmail}
-                                        >
-                                            <EmailIcon />
-                                        </Fab>
-                                    </Tooltip>
-                                </Box>
-                                <PDFViewer showToolbar={false} style={{ width: "100%", height: "70vh" }}>
-                                    <FacturaPDF arrayFacturaPDF={arrayInformeLineas} />
-                                </PDFViewer>
-                            </Grid>
-                        ) : (
-                            <Grid
-                                className={clsx(classes.scrollable, classes.scrollableScroll)}
-                                ref={scrollable}
-                                style={{ height: heightScrollable }}
+                        <Grid
+                            className={clsx(classes.scrollable, classes.scrollableScroll)}
+                            ref={scrollable}
+                            style={{ height: heightScrollable }}
+                        >
+                            <Box
+                                p={0}
+                                mt={0}
                             >
-                                <Box
-                                    p={0}
-                                    mt={0}
+                                <Grid
+                                    container
+                                    direction="row"
+                                    justifycontent="flex-start"
+                                    alignItems="flex-start"
+                                    style={{ position: 'fixed', zIndex: 3, marginTop: -45 }}
                                 >
-                                    <Grid
-                                        container
-                                        direction="row"
-                                        justifycontent="flex-start"
-                                        alignItems="flex-start"
-                                        style={{ position: 'fixed', zIndex: 3, marginTop: -45 }}
+                                    <Box
+                                        p={1.5}
+                                        mx={0.3}
+                                        className={clsx(classes.cabecera, classes.inicio)}
+                                        color="secondary.contrastText"
+                                        style={{ minHeight: 38, maxHeight: 38, padding: 9 }}
                                     >
+                                        <Typography variant="body2">Día</Typography>
+                                    </Box>
+                                    {cuadrante.map((columnaCabecera, index) => (
                                         <Box
-                                            p={1.5}
+                                            key={`box_header_` + (index + 1)}
                                             mx={0.3}
-                                            className={clsx(classes.cabecera, classes.inicio)}
-                                            color="secondary.contrastText"
-                                            style={{ minHeight: 38, maxHeight: 38, padding: 9 }}
                                         >
-                                            <Typography variant="body2">Día</Typography>
-                                        </Box>
-                                        {cuadrante.map((columnaCabecera, index) => (
-                                            <Box
-                                                key={`box_header_` + (index + 1)}
-                                                mx={0.3}
+                                            <Accordion
+                                                expanded={expandedAccordion === 'panel_' + (index + 1)}
+                                                className={gestionaClassesColoresTrabajadores(columnaCabecera.tipoTrabajador)}
+                                                style={{ width: dimensionsColumna.width }}
+                                                onChange={(e, expandedAccordion) => { handleCambioAccordionHeader(expandedAccordion, 'panel_' + (index + 1), index) }}
                                             >
-                                                <Accordion
-                                                    expanded={expandedAccordion === 'panel_' + (index + 1)}
-                                                    className={gestionaClassesColoresTrabajadores(columnaCabecera.tipoTrabajador)}
-                                                    style={{ width: dimensionsColumna.width }}
-                                                    onChange={(e, expandedAccordion) => { handleCambioAccordionHeader(expandedAccordion, 'panel_' + (index + 1), index) }}
+                                                <AccordionSummary
+                                                    expandIcon={<ExpandMoreIcon className={classes.blanc} />}
                                                 >
-                                                    <AccordionSummary
-                                                        expandIcon={<ExpandMoreIcon className={classes.blanc} />}
-                                                    >
-                                                        <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{columnaCabecera.nombreTrabajador}</Typography>
-                                                    </AccordionSummary>
-                                                    <AccordionDetails>
-                                                        <Grid container className={classes.mt5}>
-                                                            <Grid
-                                                                container
-                                                                direction="column"
-                                                                justifycontent="flex-start"
-                                                                alignItems="flex-start"
+                                                    <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{columnaCabecera.nombreTrabajador}</Typography>
+                                                </AccordionSummary>
+                                                <AccordionDetails>
+                                                    <Grid container className={classes.mt5}>
+                                                        <Grid
+                                                            container
+                                                            direction="column"
+                                                            justifycontent="flex-start"
+                                                            alignItems="flex-start"
+                                                        >
+                                                            <Box
+                                                                style={{ width: '100%', display: 'flex' }}
+                                                                className={estadoFlex === 'fila' ? classes.flexRow : classes.flexColumn}
                                                             >
-                                                                <Box
-                                                                    style={{ width: '100%', display: 'flex' }}
-                                                                    className={estadoFlex === 'fila' ? classes.flexRow : classes.flexColumn}
-                                                                >
-                                                                    <Grid item xs={false}>
-                                                                    </Grid>
-                                                                    <Grid item xs={12}>
-                                                                        <Box
-                                                                            display="flex"
-                                                                            alignItems="center"
-                                                                            justifyContent="flex-end"
-                                                                        >
-                                                                            <Tooltip title="Añadir suplente" placement="top-end" arrow>
-                                                                                <IconButton
-                                                                                    className={clsx(classes.btnAddSuplente, classes.blanc, classes.mb10)}
-                                                                                    onClick={() => handleClickAddColumna('suplente', index)}
-                                                                                >
-                                                                                    <PersonAddIcon style={{ fontSize: 18 }} />
-                                                                                </IconButton>
-                                                                            </Tooltip>
-                                                                            <Tooltip title="Actualizar trabajador" placement="top-end" arrow>
-                                                                                <IconButton
-                                                                                    className={clsx(classes.btnVariacion, classes.blanc, classes.mb10)}
-                                                                                    size="small"
-                                                                                    onClick={() => handleActualizarTrabajadores(index, columnaCabecera.tipoTrabajador, columnaCabecera.idTrabajador)}
-                                                                                >
-                                                                                    <CachedIcon />
-                                                                                </IconButton>
-                                                                            </Tooltip>
-                                                                            <Tooltip title="Eliminar trabajador" placement="top-end" arrow>
-                                                                                <IconButton
-                                                                                    className={clsx(classes.btnError, classes.mb10)}
-                                                                                    size="small"
-                                                                                    onClick={() => eliminarColumna(index, columnaCabecera.idTrabajador)}
-                                                                                >
-                                                                                    <DeleteIcon />
-                                                                                </IconButton>
-                                                                            </Tooltip>
-                                                                        </Box>
-                                                                    </Grid>
-                                                                </Box>
-                                                                <FormControl
-                                                                    variant="outlined"
-                                                                    fullWidth
-                                                                    className={classes.mt15}
-                                                                >
-                                                                    <InputLabel>{(columnaCabecera.tipoTrabajador === 'trabajador' || !columnaCabecera.tipoTrabajador) ? 'Trabajador' : 'Suplente'}</InputLabel>
-                                                                    <Select
-                                                                        id={`form-trabajador-` + (index + 1)}
-                                                                        value={columnaCabecera.idTrabajador || ''}
-                                                                        onChange={handleChangeFormTrabajadores(index, columnaCabecera.tipoTrabajador)}
-                                                                        onOpen={() => setValorPrevioAccordionAbierto(columnaCabecera.idTrabajador)}
-                                                                        input={
-                                                                            <OutlinedInput
-                                                                                labelWidth={80}
-                                                                            />
-                                                                        }
+                                                                <Grid item xs={false}>
+                                                                </Grid>
+                                                                <Grid item xs={12}>
+                                                                    <Box
+                                                                        display="flex"
+                                                                        alignItems="center"
+                                                                        justifyContent="flex-end"
                                                                     >
-                                                                        {listadoTrabajadores.map((option) => (
-                                                                            <MenuItem key={option.id} value={option.id}>
-                                                                                {option.nombre}
-                                                                            </MenuItem>
-                                                                        ))}
-                                                                    </Select>
-                                                                </FormControl>
-                                                            </Grid>
+                                                                        <Tooltip title="Añadir suplente" placement="top-end" arrow>
+                                                                            <IconButton
+                                                                                className={clsx(classes.btnAddSuplente, classes.blanc, classes.mb10)}
+                                                                                onClick={() => handleClickAddColumna('suplente', index)}
+                                                                            >
+                                                                                <PersonAddIcon style={{ fontSize: 18 }} />
+                                                                            </IconButton>
+                                                                        </Tooltip>
+                                                                        <Tooltip title="Actualizar trabajador" placement="top-end" arrow>
+                                                                            <IconButton
+                                                                                className={clsx(classes.btnVariacion, classes.blanc, classes.mb10)}
+                                                                                size="small"
+                                                                                onClick={() => handleActualizarTrabajadores(index, columnaCabecera.tipoTrabajador, columnaCabecera.idTrabajador)}
+                                                                            >
+                                                                                <CachedIcon />
+                                                                            </IconButton>
+                                                                        </Tooltip>
+                                                                        <Tooltip title="Eliminar trabajador" placement="top-end" arrow>
+                                                                            <IconButton
+                                                                                className={clsx(classes.btnError, classes.mb10)}
+                                                                                size="small"
+                                                                                onClick={() => eliminarColumna(index, columnaCabecera.idTrabajador)}
+                                                                            >
+                                                                                <DeleteIcon />
+                                                                            </IconButton>
+                                                                        </Tooltip>
+                                                                    </Box>
+                                                                </Grid>
+                                                            </Box>
+                                                            <FormControl
+                                                                variant="outlined"
+                                                                fullWidth
+                                                                className={classes.mt15}
+                                                            >
+                                                                <InputLabel>{(columnaCabecera.tipoTrabajador === 'trabajador' || !columnaCabecera.tipoTrabajador) ? 'Trabajador' : 'Suplente'}</InputLabel>
+                                                                <Select
+                                                                    id={`form-trabajador-` + (index + 1)}
+                                                                    value={columnaCabecera.idTrabajador || ''}
+                                                                    onChange={handleChangeFormTrabajadores(index, columnaCabecera.tipoTrabajador)}
+                                                                    onOpen={() => setValorPrevioAccordionAbierto(columnaCabecera.idTrabajador)}
+                                                                    input={
+                                                                        <OutlinedInput
+                                                                            labelWidth={80}
+                                                                        />
+                                                                    }
+                                                                >
+                                                                    {listadoTrabajadores.map((option) => (
+                                                                        <MenuItem key={option.id} value={option.id}>
+                                                                            {option.nombre}
+                                                                        </MenuItem>
+                                                                    ))}
+                                                                </Select>
+                                                            </FormControl>
                                                         </Grid>
-                                                    </AccordionDetails>
-                                                </Accordion>
-                                            </Box>
-                                        ))}
-                                        <Box
-                                            m={0.3}
-                                        >
-                                            <Tooltip title="Añadir trabajador" placement="right" arrow>
-                                                <IconButton
-                                                    className={clsx(classes.btnAddTrabajador, classes.blanc)}
-                                                    onClick={() => handleClickAddColumna('trabajador', null)}
-                                                >
-                                                    <PersonAddIcon style={{ fontSize: 18 }} />
-                                                </IconButton>
-                                            </Tooltip>
+                                                    </Grid>
+                                                </AccordionDetails>
+                                            </Accordion>
                                         </Box>
-                                    </Grid>
-                                    <Grid container
-                                        style={{ marginTop: 45 }}
+                                    ))}
+                                    <Box
+                                        m={0.3}
                                     >
+                                        <Tooltip title="Añadir trabajador" placement="right" arrow>
+                                            <IconButton
+                                                className={clsx(classes.btnAddTrabajador, classes.blanc)}
+                                                onClick={() => handleClickAddColumna('trabajador', null)}
+                                            >
+                                                <PersonAddIcon style={{ fontSize: 18 }} />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Box>
+                                </Grid>
+                                <Grid container
+                                    style={{ marginTop: 45 }}
+                                >
+                                    <Box
+                                    >
+                                        {losDiasDelMes.map((dia, index) => (
+                                            retornaCasillasDias(dia, index)
+                                        ))}
+                                    </Box>
+                                    {cuadrante.map((columna, indexColumna) => (
                                         <Box
+                                            key={'Box_' + indexColumna}
                                         >
-                                            {losDiasDelMes.map((dia, index) => (
-                                                retornaCasillasDias(dia, index)
+                                            {losDiasDelMes.map((dia, indexDia) => (
+                                                retornaCasillasGeneral(dia, indexDia, columna, indexColumna)
                                             ))}
                                         </Box>
-                                        {cuadrante.map((columna, indexColumna) => (
-                                            <Box
-                                                key={'Box_' + indexColumna}
-                                            >
-                                                {losDiasDelMes.map((dia, indexDia) => (
-                                                    retornaCasillasGeneral(dia, indexDia, columna, indexColumna)
-                                                ))}
-                                            </Box>
-                                        ))}
-                                    </Grid>
-                                </Box>
-                                <Tooltip title="Informe Cuadrante" placement="left" arrow>
-                                    <Fab
-                                        variant="extended"
-                                        className={classes.fab}
-                                        onClick={handleClickOpenDialogCuadrantes4}
-                                    >
-                                        <Typography variant="body2" className={classes.typoFab}>{retornaInfoFabButton()}</Typography>
-                                        <AssessmentIcon />
-                                    </Fab>
-                                </Tooltip>
-                            </Grid>
-                        )
+                                    ))}
+                                </Grid>
+                            </Box>
+                            <Tooltip title="Informe Cuadrante" placement="left" arrow>
+                                <Fab
+                                    variant="extended"
+                                    className={classes.fab}
+                                    onClick={handleClickOpenDialogCuadrantes4}
+                                >
+                                    <Typography variant="body2" className={classes.typoFab}>{retornaInfoFabButton()}</Typography>
+                                    <AssessmentIcon />
+                                </Fab>
+                            </Tooltip>
+                        </Grid>
                     ) : (
                         esInicioCuadrantes ? <PantallaCuadrantes /> : null
                     )}
@@ -4748,7 +4841,7 @@ const Cuadrantes = (props) => {
                 prFullWidth={true}
                 prMaxWidth={true}
             />
-            {/* {console.log('cuadrante: ',cuadranteNuevoRegistrado)} */}
+            {/* {console.log(centro)} */}
         </div>
     )
 }

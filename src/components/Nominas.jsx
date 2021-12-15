@@ -31,16 +31,6 @@ import ListItem from '@material-ui/core/ListItem';
 import List from '@material-ui/core/List';
 import Badge from '@material-ui/core/Badge';
 import DescriptionIcon from '@material-ui/icons/Description';
-import clsx from 'clsx';
-import Tooltip from '@material-ui/core/Tooltip';
-import Fab from '@material-ui/core/Fab';
-import ReplyIcon from '@material-ui/icons/Reply';
-import EmailIcon from '@material-ui/icons/Email';
-import GetAppIcon from '@material-ui/icons/GetApp';
-
-//pdf
-import { PDFDownloadLink, PDFViewer, pdf } from "@react-pdf/renderer";
-import NominaPDF from "./NominaPDF";
 
 //carga componentes
 import PantallaNominas from './PantallaNominas';
@@ -159,7 +149,6 @@ const Nominas = (props) => {
     const [nominaAGestionar, setNominaAGestionar] = useState(objetoNomina.datosNomina.arrayDatos);
     const [controladorDeEstado, setControladorDeEstado] = useState('inicio');
     const [firmaActualizacion, setFirmaActualizacion] = useState('');
-    const [esEmision, setEsEmision] = useState(false);
     const [arrayInformeLineas, setArrayInformeLineas] = useState([]);
 
     //useEffect
@@ -304,7 +293,7 @@ const Nominas = (props) => {
         }
     }, [cuadrantesVinculadosATrabajador]);
 
-   //secuencia venimos de faltantes o registrados faltantes
+    //secuencia venimos de faltantes o registrados faltantes
 
     useEffect(() => {
         if (estadoVenimosDeFaltantes) {
@@ -319,7 +308,7 @@ const Nominas = (props) => {
 
     useEffect(() => {
         if (estadoVenimosDeRegistradosFaltantes) {
-            if (trabajador) {               
+            if (trabajador) {
                 const nombreNomina = calendarioAGestionarNominas + '-' + trabajador;
                 const losDatosNomina = { ...objetoNomina.datosNomina, arrayDatos: [] };
                 dispatch(actualizarObjetoNominaAccion({ ...objetoNomina, nombre: nombreNomina, actualizacion: '', trabajador: trabajador, datosNomina: losDatosNomina }));
@@ -327,7 +316,7 @@ const Nominas = (props) => {
                 dispatch(venimosDeRegistradosFaltantesAccion(false));
             };
         }
-    }, [estadoVenimosDeRegistradosFaltantes]); 
+    }, [estadoVenimosDeRegistradosFaltantes]);
 
     //secuencia alertas
 
@@ -389,12 +378,7 @@ const Nominas = (props) => {
         } else {
             setOpenLoading(true)
         }
-    }, [openLoadingNominas, openLoadingTrabajadores]);
-
-    useEffect(() => {
-        if (esEmision)
-            generaInformacionNominas();
-    }, [esEmision]);
+    }, [openLoadingNominas, openLoadingTrabajadores]);    
 
     //funciones    
 
@@ -468,7 +452,6 @@ const Nominas = (props) => {
         setControladorDeEstado('inicio');
         setFirmaActualizacion('');
         dispatch(cambioEstadoNominaSinDatosAccion(false));
-        setEsEmision(false);
         setArrayInformeLineas([]);
         dispatch(vaciarDatosTrabajadorAccion());
         dispatch(registrarIntervencionNominaNuevaAccion(true));
@@ -589,19 +572,9 @@ const Nominas = (props) => {
         procesarDatosNomina('informe', elTotalEmitido);
     };
 
-    const handleClickEmitirNomina = () => {
-        setEsEmision(true);
+    const handleClickEmitirNomina = () => {     
         handleCloseMenu();
-    };
-
-    const handleEnviarEmail = async () => {
-        const element = <NominaPDF arrayNominaPDF={arrayInformeLineas} />;
-        const myPdf = pdf([]);
-        myPdf.updateContainer(element);
-        const blob = await myPdf.toBlob();
-        let file = new File([blob], 'Nomina-' + objetoNomina.nombre + '.pdf', { lastModified: (new Date()).getTime() });
-        //dispatch(enviarMailAccion('artikaweb@gmail.com', 'isaiasherreroflorensa@gmail.com', file))        
-    };
+    };    
 
     //dialog
 
@@ -976,60 +949,7 @@ const Nominas = (props) => {
                     </Grid>
                 </Box>
                 {esInicioNominas ? <PantallaNominas /> :
-                    esEmision ? (
-                        <Grid style={{ marginRight: 8, marginTop: -8 }}>
-                            <Box className={clsx(classes.alignRight, classes.mb20)}>
-                                <Tooltip title="Volver a la Nómina" placement="top" arrow>
-                                    <Fab
-                                        color="secondary"
-                                        size="small"
-                                        style={{ marginLeft: 8 }}
-                                        onClick={() => setEsEmision(false)}
-                                    >
-                                        <ReplyIcon />
-                                    </Fab>
-                                </Tooltip>
-                                <Tooltip title="Emitir Nómina" placement="top" arrow>
-                                    <Fab
-                                        color="primary"
-                                        size="small"
-                                        style={{ marginLeft: 8 }}
-                                        onClick={handleActualizaNominaFacturada}
-                                    >
-                                        <SaveIcon />
-                                    </Fab>
-                                </Tooltip>
-                                <PDFDownloadLink
-                                    document={<NominaPDF arrayNominaPDF={arrayInformeLineas} />}
-                                    fileName={'Nomina-' + objetoNomina.nombre + '.pdf'}
-                                    style={{ textDecoration: 'none' }}
-                                >
-                                    <Tooltip title="Descargar Nómina" placement="top" arrow>
-                                        <Fab
-                                            color="primary"
-                                            size="small"
-                                            style={{ marginLeft: 8 }}
-                                        >
-                                            <GetAppIcon />
-                                        </Fab>
-                                    </Tooltip>
-                                </PDFDownloadLink>
-                                <Tooltip title="Enviar Nómina por mail" placement="top" arrow>
-                                    <Fab
-                                        color="primary"
-                                        size="small"
-                                        style={{ marginLeft: 8 }}
-                                        onClick={handleEnviarEmail}
-                                    >
-                                        <EmailIcon />
-                                    </Fab>
-                                </Tooltip>
-                            </Box>
-                            <PDFViewer showToolbar={false} style={{ width: "100%", height: "70vh" }}>
-                                <NominaPDF arrayNominaPDF={arrayInformeLineas} />
-                            </PDFViewer>
-                        </Grid>
-                    ) : (
+                    (
                         <Grid
                             spacing={1}
                             container
@@ -1055,7 +975,8 @@ const Nominas = (props) => {
                                 ) : null}
                             </Grid>
                         </Grid>
-                    )}
+                    )
+                }
             </Grid>
             <Snackbar open={openSnack} autoHideDuration={12000} onClose={handleCloseSnack}>
                 <Alert severity={alert.tipo} onClose={handleCloseSnack}>

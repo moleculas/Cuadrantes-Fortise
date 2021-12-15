@@ -1,9 +1,12 @@
 import axios from 'axios';
 import Constantes from "../constantes";
+import * as XLSX from "xlsx";
 
 //constantes
 const rutaApi = Constantes.RUTA_API;
 const meses = Constantes.MESES;
+const tipos = Constantes.TIPO_SERVICIO;
+const fileExtension = ".xls";
 
 const dataInicial = {
     loadingApp: false,
@@ -31,6 +34,7 @@ const dataInicial = {
     exitoActualizacionConfiguracion: false,
     arrayUltimasIntervenciones: [],
     errorDeCargaUltimasIntervenciones: false,
+    exitoGenerarArchivos: false,
 }
 
 //types
@@ -50,6 +54,7 @@ const RESETEA_EXITO_CONFIGURACION = 'RESETEA_EXITO_CONFIGURACION';
 const OBTENER_ULTIMAS_INTERVENCIONES_EXITO = 'OBTENER_ULTIMAS_INTERVENCIONES_EXITO';
 const VACIAR_DATOS_ULTIMAS_INTERVENCIONES = 'VACIAR_DATOS_ULTIMAS_INTERVENCIONES';
 const ERROR_DE_CARGA_ULTIMAS_INTERVENCIONES = 'ERROR_DE_CARGA_ULTIMAS_INTERVENCIONES';
+const GENERAR_ARCHIVOS_EXITO = 'GENERAR_ARCHIVOS_EXITO';
 
 //reducer
 export default function appReducer(state = dataInicial, action) {
@@ -79,7 +84,7 @@ export default function appReducer(state = dataInicial, action) {
         case ACTUALIZAR_CONFIGURACION_EXITO:
             return { ...state, errorDeCargaConfiguracion: false, loadingApp: false, exitoActualizacionConfiguracion: true }
         case RESETEA_EXITO_CONFIGURACION:
-            return { ...state, exitoActualizacionConfiguracion: false }
+            return { ...state, exitoActualizacionConfiguracion: false, exitoGenerarArchivos: false }
         case OBTENER_CONFIGURACION_EXITO:
             return { ...state, objetoConfiguracion: action.payload.objeto, errorDeCargaConfiguracion: false, loadingApp: false }
         case OBTENER_ULTIMAS_INTERVENCIONES_EXITO:
@@ -88,6 +93,8 @@ export default function appReducer(state = dataInicial, action) {
             return { ...state, errorDeCargaUltimasIntervenciones: true, loadingApp: false }
         case VACIAR_DATOS_ULTIMAS_INTERVENCIONES:
             return { ...state, arrayUltimasIntervenciones: [] }
+        case GENERAR_ARCHIVOS_EXITO:
+            return { ...state, exitoGenerarArchivos: true }
         default:
             return { ...state }
     }
@@ -514,4 +521,303 @@ export const vaciarDatosUltimasIntervencionesAccion = () => (dispatch, getState)
     dispatch({
         type: VACIAR_DATOS_ULTIMAS_INTERVENCIONES
     });
+}
+
+const exportarAExcel = (apiData, fileName) => {
+    const ws = XLSX.utils.aoa_to_sheet(apiData);
+    const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+    XLSX.writeFile(wb, fileName + fileExtension)
+}
+
+export const generarArchivosXLSAccion = (objeto, numFactusol, centro, totalFacturado, objetoDesgloseConceptos) => async (dispatch, getState) => {
+    try {
+        const formData = new FormData();
+        formData.append("objeto", objeto);
+        formData.append("id", centro);
+        let apiUrl = rutaApi + "obtener_para_parsear.php";
+        const res = await axios.post(apiUrl, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            }
+        });
+        const objetoCentroParsear = {
+            nombre: res.data.nombre,
+            codigo: res.data.codigo,
+            domicilio: res.data.domicilio,
+            codigoPostal: res.data.codigo_postal,
+            poblacion: res.data.poblacion,
+            provincia: res.data.provincia,
+            nif: res.data.nif,
+            formaPago: res.data.forma_pago,
+            horario: JSON.parse(res.data.horario)
+        };
+        let dateObj = new Date();
+        let month = dateObj.getUTCMonth() + 1;
+        let day = dateObj.getUTCDate();
+        let year = dateObj.getUTCFullYear();
+        const fechaHoy = day + "/" + month + "/" + year;
+        const dataFAC = [[
+            1,
+            numFactusol,
+            '',
+            fechaHoy,
+            0,
+            '',
+            1,
+            '',
+            objetoCentroParsear.codigo,
+            objetoCentroParsear.nombre,
+            objetoCentroParsear.domicilio,
+            objetoCentroParsear.poblacion,
+            objetoCentroParsear.codigoPostal,
+            objetoCentroParsear.provincia,
+            objetoCentroParsear.nif,
+            0,
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            totalFacturado,
+            objetoCentroParsear.formaPago,
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            'N',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            ''
+        ]];
+        exportarAExcel(dataFAC, 'FAC');
+        let precioArticulo_M, precioArticulo_L, precioArticulo_C, precioArticulo_E, precioArticulo_I, precioArticulo_Z, precioArticulo_T, precioArticulo_P;
+        let cantidad_M, cantidad_L, cantidad_C, cantidad_E, cantidad_I, cantidad_Z, cantidad_T, cantidad_P;
+        let contadorLineas = 0;
+        let precioArticulo, cantidad, articulo, descripcion, total;
+        const dataLFA = [];
+        console.log(objetoDesgloseConceptos)
+        if (objetoDesgloseConceptos.MT) {
+            precioArticulo_M = objetoCentroParsear.horario.mensualPactado;
+            cantidad_M = objetoDesgloseConceptos.MH;
+            contadorLineas++;
+        };
+        if (objetoDesgloseConceptos.LT) {
+            precioArticulo_L = objetoCentroParsear.horario.precioHora_L;
+            cantidad_L = objetoDesgloseConceptos.LH;
+            contadorLineas++;
+        };
+        if (objetoDesgloseConceptos.CT) {
+            precioArticulo_C = objetoCentroParsear.horario.precioHora_C;
+            cantidad_C = objetoDesgloseConceptos.CH;
+            contadorLineas++;
+        };
+        if (objetoDesgloseConceptos.ET) {
+            precioArticulo_E = objetoCentroParsear.horario.precioHora_E;
+            cantidad_E = objetoDesgloseConceptos.EH;
+            contadorLineas++;
+        };
+        if (objetoDesgloseConceptos.IT) {
+            precioArticulo_I = objetoCentroParsear.horario.precioHora_I;
+            cantidad_I = objetoDesgloseConceptos.IH;
+            contadorLineas++;
+        };
+        if (objetoDesgloseConceptos.ZT) {
+            precioArticulo_Z = objetoCentroParsear.horario.precioHora_Z;
+            cantidad_Z = objetoDesgloseConceptos.ZH;
+            contadorLineas++;
+        };
+        if (objetoDesgloseConceptos.TT) {
+            precioArticulo_T = objetoCentroParsear.horario.precioHora_T;
+            cantidad_T = objetoDesgloseConceptos.TH;
+            contadorLineas++;
+        };
+        if (objetoDesgloseConceptos.PT) {
+            precioArticulo_P = objetoCentroParsear.horario.precioHora_P;
+            cantidad_P = objetoDesgloseConceptos.PH;
+            contadorLineas++;
+        };
+        for (let i = 1; i <= contadorLineas; i++) {
+            if (objetoDesgloseConceptos.MT) {
+                precioArticulo = precioArticulo_M;
+                cantidad = cantidad_M;
+                articulo = tipos[0].value;
+                descripcion = tipos[0].label;
+                total = objetoDesgloseConceptos.MT;
+            };
+            if (objetoDesgloseConceptos.LT) {
+                precioArticulo = precioArticulo_L;
+                cantidad = cantidad_L;
+                articulo = tipos[0].value;
+                descripcion = tipos[0].label;
+                total = objetoDesgloseConceptos.LT;
+            };
+            if (objetoDesgloseConceptos.CT) {
+                precioArticulo = precioArticulo_C;
+                cantidad = cantidad_C;
+                articulo = tipos[1].value;
+                descripcion = tipos[1].label;
+                total = objetoDesgloseConceptos.CT;
+            };
+            if (objetoDesgloseConceptos.ET) {
+                precioArticulo = precioArticulo_E;
+                cantidad = cantidad_E;
+                articulo = tipos[2].value;
+                descripcion = tipos[2].label;
+                total = objetoDesgloseConceptos.ET;
+            };
+            if (objetoDesgloseConceptos.IT) {
+                precioArticulo = precioArticulo_I;
+                cantidad = cantidad_I;
+                articulo = tipos[3].value;
+                descripcion = tipos[3].label;
+                total = objetoDesgloseConceptos.IT;
+            };
+            if (objetoDesgloseConceptos.ZT) {
+                precioArticulo = precioArticulo_Z;
+                cantidad = cantidad_Z;
+                articulo = tipos[4].value;
+                descripcion = tipos[4].label;
+                total = objetoDesgloseConceptos.ZT;
+            };
+            if (objetoDesgloseConceptos.TT) {
+                precioArticulo = precioArticulo_T;
+                cantidad = cantidad_T;
+                articulo = tipos[5].value;
+                descripcion = tipos[5].label;
+                total = objetoDesgloseConceptos.TT;
+            };
+            if (objetoDesgloseConceptos.PT) {
+                precioArticulo = precioArticulo_P;
+                cantidad = cantidad_P;
+                articulo = tipos[6].value;
+                descripcion = tipos[6].label;
+                total = objetoDesgloseConceptos.PT;
+            };
+            dataLFA.push([
+                1,
+                numFactusol,
+                i,
+                articulo,
+                descripcion,
+                cantidad,
+                '',
+                '',
+                '',
+                precioArticulo,
+                total,
+                0,
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                ''
+            ]);
+        };
+        exportarAExcel(dataLFA, 'LFA');
+        dispatch({
+            type: GENERAR_ARCHIVOS_EXITO
+        });
+        dispatch({
+            type: RESETEA_EXITO_CONFIGURACION
+        });
+    } catch (error) {
+        dispatch({
+            type: ERROR_DE_CARGA_CONFIGURACION
+        })
+    }
 }

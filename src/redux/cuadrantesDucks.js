@@ -38,7 +38,18 @@ const dataInicial = {
             totalFacturado_P: null,
         },
         estado: 'registrado',
-        total: null
+        total: null,
+        horas: {
+            objeto: 'horas',
+            M: null,
+            L: null,
+            C: null,
+            E: null,
+            I: null,
+            Z: null,
+            T: null,
+            P: null
+        }
     },
     cuadranteRegistrado: '',
     categoria: '',
@@ -209,7 +220,18 @@ export const vaciarDatosCuadrantesAccion = () => (dispatch, getState) => {
                 totalFacturado_P: null,
             },
             estado: 'registrado',
-            total: null
+            total: null,
+            horas: {
+                objeto: 'horas',
+                M: null,
+                L: null,
+                C: null,
+                E: null,
+                I: null,
+                Z: null,
+                T: null,
+                P: null
+            }
         }
     });
 }
@@ -297,6 +319,7 @@ export const obtenerCuadranteAccion = (objeto, id) => async (dispatch, getState)
                     datosInforme: JSON.parse(res.data.datos_informe),
                     estado: res.data.estado,
                     total: res.data.total,
+                    horas: res.data.horas ? JSON.parse(res.data.horas) : dataInicial.horas
                 }
             });
         };
