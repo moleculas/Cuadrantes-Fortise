@@ -2472,14 +2472,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                         const elHorarioIntervencionEditadoRevisado = {
                             ...horarioIntervencionEdicionRevisado,
                             computo: valuesFormEdicion.computo,
-                            mensualPactado: parseInt(valuesFormEdicion.mensualPactado),
-                            precioHora_L:  parseInt(valuesFormEdicion.precioHora_L),
-                            precioHora_C:  parseInt(valuesFormEdicion.precioHora_C),
-                            precioHora_E:  parseInt(valuesFormEdicion.precioHora_E),
-                            precioHora_I:  parseInt(valuesFormEdicion.precioHora_I),
-                            precioHora_Z:  parseInt(valuesFormEdicion.precioHora_Z),
-                            precioHora_T:  parseInt(valuesFormEdicion.precioHora_T),
-                            precioHora_P:  parseInt(valuesFormEdicion.precioHora_P),
+                            mensualPactado: parseFloat(valuesFormEdicion.mensualPactado),
+                            precioHora_L:  parseFloat(valuesFormEdicion.precioHora_L),
+                            precioHora_C:  parseFloat(valuesFormEdicion.precioHora_C),
+                            precioHora_E:  parseFloat(valuesFormEdicion.precioHora_E),
+                            precioHora_I:  parseFloat(valuesFormEdicion.precioHora_I),
+                            precioHora_Z:  parseFloat(valuesFormEdicion.precioHora_Z),
+                            precioHora_T:  parseFloat(valuesFormEdicion.precioHora_T),
+                            precioHora_P:  parseFloat(valuesFormEdicion.precioHora_P),
                         }
                         //registramos
                         const centroAGuardar = {

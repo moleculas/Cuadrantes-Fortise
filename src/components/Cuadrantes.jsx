@@ -207,7 +207,7 @@ const Cuadrantes = (props) => {
     const calendarioAGestionar = useSelector(store => store.variablesCuadrantes.calendarioAGestionar);
     const objetoUsuarioActivo = useSelector(store => store.variablesUsuario.usuarioActivo);
     const estadoVenimosDeRegistrados = useSelector(store => store.variablesPendientes.estadoVenimosDeRegistrados);
-    const exitoGenerarArchivos = useSelector(store => store.variablesApp.exitoGenerarArchivos);    
+    const exitoGenerarArchivos = useSelector(store => store.variablesApp.exitoGenerarArchivos);
 
     //refs
 
@@ -769,7 +769,25 @@ const Cuadrantes = (props) => {
             dispatch(setCentroAccion(e.target.value));
             const nombreCuadrante = calendarioAGestionar + '-' + e.target.value;
             const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, centro: e.target.value };
-            dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, nombre: nombreCuadrante, actualizacion: '', datosCuadrante: losDatosCuadrante }));
+            dispatch(actualizarObjetoCuadranteAccion({
+                ...objetoCuadrante,
+                nombre: nombreCuadrante,
+                actualizacion: '',
+                datosCuadrante: losDatosCuadrante,
+                estado: 'registrado',
+                total: null,
+                horas: {
+                    objeto: 'horas',
+                    M: null,
+                    L: null,
+                    C: null,
+                    E: null,
+                    I: null,
+                    Z: null,
+                    T: null,
+                    P: null
+                }
+            }));
             dispatch(obtenerCuadranteAccion('cuadrantes', nombreCuadrante));
         } else {
             if (!cuadranteNuevoRegistrado) {
@@ -783,7 +801,26 @@ const Cuadrantes = (props) => {
                     dispatch(setCentroAccion(e.target.value));
                     const nombreCuadrante = calendarioAGestionar + '-' + e.target.value;
                     const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, centro: e.target.value, arrayCuadrante: [] };
-                    dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, id: null, nombre: nombreCuadrante, actualizacion: '', datosCuadrante: losDatosCuadrante }));
+                    dispatch(actualizarObjetoCuadranteAccion({
+                        ...objetoCuadrante,
+                        id: null,
+                        nombre: nombreCuadrante,
+                        actualizacion: '',
+                        datosCuadrante: losDatosCuadrante,
+                        estado: 'registrado',
+                        total: null,
+                        horas: {
+                            objeto: 'horas',
+                            M: null,
+                            L: null,
+                            C: null,
+                            E: null,
+                            I: null,
+                            Z: null,
+                            T: null,
+                            P: null
+                        }
+                    }));
                     dispatch(obtenerCuadranteAccion('cuadrantes', nombreCuadrante));
                 }
             }
@@ -3434,27 +3471,27 @@ const Cuadrantes = (props) => {
         };
         if (objetoCuadrante.datosInforme.computo === 2) {
             if (sumatorioHoras_L) {
-                elTotalAAFacturar_L = parseInt(objetoCuadrante.datosInforme.precioHora_L * sumatorioHoras_L);
+                elTotalAAFacturar_L = parseFloat(objetoCuadrante.datosInforme.precioHora_L * sumatorioHoras_L);
             };
             if (sumatorioHoras_C) {
-                elTotalAAFacturar_C = parseInt(objetoCuadrante.datosInforme.precioHora_C * sumatorioHoras_C);
+                elTotalAAFacturar_C = parseFloat(objetoCuadrante.datosInforme.precioHora_C * sumatorioHoras_C);
             };
             if (sumatorioHoras_E) {
-                elTotalAAFacturar_E = parseInt(objetoCuadrante.datosInforme.precioHora_E * sumatorioHoras_E);
+                elTotalAAFacturar_E = parseFloat(objetoCuadrante.datosInforme.precioHora_E * sumatorioHoras_E);
             };
             if (sumatorioHoras_I) {
-                elTotalAAFacturar_I = parseInt(objetoCuadrante.datosInforme.precioHora_I * sumatorioHoras_I);
+                elTotalAAFacturar_I = parseFloat(objetoCuadrante.datosInforme.precioHora_I * sumatorioHoras_I);
             };
             if (sumatorioHoras_Z) {
-                elTotalAAFacturar_Z = parseInt(objetoCuadrante.datosInforme.precioHora_Z * sumatorioHoras_Z);
+                elTotalAAFacturar_Z = parseFloat(objetoCuadrante.datosInforme.precioHora_Z * sumatorioHoras_Z);
             };
             if (sumatorioHoras_T) {
-                elTotalAAFacturar_T = parseInt(objetoCuadrante.datosInforme.precioHora_T * sumatorioHoras_T);
+                elTotalAAFacturar_T = parseFloat(objetoCuadrante.datosInforme.precioHora_T * sumatorioHoras_T);
             };
             if (sumatorioHoras_P) {
-                elTotalAAFacturar_P = parseInt(objetoCuadrante.datosInforme.precioHora_P * sumatorioHoras_P);
+                elTotalAAFacturar_P = parseFloat(objetoCuadrante.datosInforme.precioHora_P * sumatorioHoras_P);
             };
-            elTotalAAFacturarTotal = parseInt((objetoCuadrante.datosInforme.precioHora_L * sumatorioHoras_L) + (objetoCuadrante.datosInforme.precioHora_C * sumatorioHoras_C) + (objetoCuadrante.datosInforme.precioHora_E * sumatorioHoras_E) + (objetoCuadrante.datosInforme.precioHora_I * sumatorioHoras_I) + (objetoCuadrante.datosInforme.precioHora_Z * sumatorioHoras_Z) + (objetoCuadrante.datosInforme.precioHora_T * sumatorioHoras_T) + (objetoCuadrante.datosInforme.precioHora_P * sumatorioHoras_P));
+            elTotalAAFacturarTotal = parseFloat((objetoCuadrante.datosInforme.precioHora_L * sumatorioHoras_L) + (objetoCuadrante.datosInforme.precioHora_C * sumatorioHoras_C) + (objetoCuadrante.datosInforme.precioHora_E * sumatorioHoras_E) + (objetoCuadrante.datosInforme.precioHora_I * sumatorioHoras_I) + (objetoCuadrante.datosInforme.precioHora_Z * sumatorioHoras_Z) + (objetoCuadrante.datosInforme.precioHora_T * sumatorioHoras_T) + (objetoCuadrante.datosInforme.precioHora_P * sumatorioHoras_P));
         };
         if (objetoCuadrante.datosInforme.computo === 3) {
             if (objetoCuadrante.datosInforme.mensualPactado) {
@@ -3462,27 +3499,27 @@ const Cuadrantes = (props) => {
                 elTotalAAFacturarTotal = elTotalAAFacturar_M;
             } else {
                 if (sumatorioHoras_L) {
-                    elTotalAAFacturar_L = parseInt(objetoCuadrante.datosInforme.precioHora_L * sumatorioHoras_L);
+                    elTotalAAFacturar_L = parseFloat(objetoCuadrante.datosInforme.precioHora_L * sumatorioHoras_L);
                 };
                 if (sumatorioHoras_C) {
-                    elTotalAAFacturar_C = parseInt(objetoCuadrante.datosInforme.precioHora_C * sumatorioHoras_C);
+                    elTotalAAFacturar_C = parseFloat(objetoCuadrante.datosInforme.precioHora_C * sumatorioHoras_C);
                 };
                 if (sumatorioHoras_E) {
-                    elTotalAAFacturar_E = parseInt(objetoCuadrante.datosInforme.precioHora_E * sumatorioHoras_E);
+                    elTotalAAFacturar_E = parseFloat(objetoCuadrante.datosInforme.precioHora_E * sumatorioHoras_E);
                 };
                 if (sumatorioHoras_I) {
-                    elTotalAAFacturar_I = parseInt(objetoCuadrante.datosInforme.precioHora_I * sumatorioHoras_I);
+                    elTotalAAFacturar_I = parseFloat(objetoCuadrante.datosInforme.precioHora_I * sumatorioHoras_I);
                 };
                 if (sumatorioHoras_Z) {
-                    elTotalAAFacturar_Z = parseInt(objetoCuadrante.datosInforme.precioHora_Z * sumatorioHoras_Z);
+                    elTotalAAFacturar_Z = parseFloat(objetoCuadrante.datosInforme.precioHora_Z * sumatorioHoras_Z);
                 };
                 if (sumatorioHoras_T) {
-                    elTotalAAFacturar_T = parseInt(objetoCuadrante.datosInforme.precioHora_T * sumatorioHoras_T);
+                    elTotalAAFacturar_T = parseFloat(objetoCuadrante.datosInforme.precioHora_T * sumatorioHoras_T);
                 };
                 if (sumatorioHoras_P) {
-                    elTotalAAFacturar_P = parseInt(objetoCuadrante.datosInforme.precioHora_P * sumatorioHoras_P);
+                    elTotalAAFacturar_P = parseFloat(objetoCuadrante.datosInforme.precioHora_P * sumatorioHoras_P);
                 };
-                elTotalAAFacturarTotal = parseInt((objetoCuadrante.datosInforme.precioHora_L * sumatorioHoras_L) + (objetoCuadrante.datosInforme.precioHora_C * sumatorioHoras_C) + (objetoCuadrante.datosInforme.precioHora_E * sumatorioHoras_E) + (objetoCuadrante.datosInforme.precioHora_I * sumatorioHoras_I) + (objetoCuadrante.datosInforme.precioHora_Z * sumatorioHoras_Z) + (objetoCuadrante.datosInforme.precioHora_T * sumatorioHoras_T) + (objetoCuadrante.datosInforme.precioHora_P * sumatorioHoras_P));
+                elTotalAAFacturarTotal = parseFloat((objetoCuadrante.datosInforme.precioHora_L * sumatorioHoras_L) + (objetoCuadrante.datosInforme.precioHora_C * sumatorioHoras_C) + (objetoCuadrante.datosInforme.precioHora_E * sumatorioHoras_E) + (objetoCuadrante.datosInforme.precioHora_I * sumatorioHoras_I) + (objetoCuadrante.datosInforme.precioHora_Z * sumatorioHoras_Z) + (objetoCuadrante.datosInforme.precioHora_T * sumatorioHoras_T) + (objetoCuadrante.datosInforme.precioHora_P * sumatorioHoras_P));
             };
         };
 
@@ -3534,8 +3571,8 @@ const Cuadrantes = (props) => {
             datos_cuadrante: JSON.stringify(objetoFinalCuadrante.datosCuadrante),
             datos_informe: JSON.stringify(objetoFinalInforme),
             estado: source === 'informe' ? 'facturado' : objetoCuadrante.estado,
-            total: source === 'informe' ? elTotalAAFacturarTotal : objetoCuadrante.estado === 'facturado' ? elTotalAAFacturarTotal : null,
-            horas: source === 'informe' ? JSON.stringify(objetoFinalHoras) : objetoCuadrante.estado === 'facturado' ? JSON.stringify(objetoFinalHoras) : null
+            total: source === 'informe' ? elTotalAAFacturarTotal : objetoCuadrante.estado === 'facturado' ? elTotalAAFacturarTotal : null,          
+            horas: JSON.stringify(objetoFinalHoras)
         };
         if (cuadranteRegistrado === 'no') {
             dispatch(registrarCuadranteAccion('cuadrantes', cuadranteAGuardar.id, cuadranteAGuardar));
@@ -3551,6 +3588,21 @@ const Cuadrantes = (props) => {
             dispatch(activarDesactivarCambioBotonActualizarAccion(true));
         };
         dispatch(registrarIntervencionAccion(true));
+        if (source !== 'informe') {
+            const losDatosInforme = {
+                ...objetoCuadrante.datosInforme,
+                totalFacturado_M: elTotalAAFacturar_M,
+                totalFacturado_L: elTotalAAFacturar_L,
+                totalFacturado_C: elTotalAAFacturar_C,
+                totalFacturado_E: elTotalAAFacturar_E,
+                totalFacturado_I: elTotalAAFacturar_I,
+                totalFacturado_Z: elTotalAAFacturar_Z,
+                totalFacturado_T: elTotalAAFacturar_T,
+                totalFacturado_P: elTotalAAFacturar_P
+            };
+            const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, arrayCuadrante: cuadrante };
+            dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, actualizacion: laFirmaActualizacion, datosCuadrante: losDatosCuadrante, datosInforme: losDatosInforme, horas: objetoFinalHoras }));
+        }
     };
 
     const goToInicioCuadrantes = () => {
@@ -3598,14 +3650,14 @@ const Cuadrantes = (props) => {
             };
             if (objetoCuadrante.datosInforme.computo === 2) {
                 return 'Horas: ' + sumatorioTotal + ' - Total: ' +
-                    parseInt((objetoCuadrante.datosInforme.precioHora_L * sumatorioHoras_L) + (objetoCuadrante.datosInforme.precioHora_C * sumatorioHoras_C) + (objetoCuadrante.datosInforme.precioHora_E * sumatorioHoras_E) + (objetoCuadrante.datosInforme.precioHora_I * sumatorioHoras_I) + (objetoCuadrante.datosInforme.precioHora_Z * sumatorioHoras_Z) + (objetoCuadrante.datosInforme.precioHora_T * sumatorioHoras_T) + (objetoCuadrante.datosInforme.precioHora_P * sumatorioHoras_P)) + ' €'
+                    parseFloat((objetoCuadrante.datosInforme.precioHora_L * sumatorioHoras_L) + (objetoCuadrante.datosInforme.precioHora_C * sumatorioHoras_C) + (objetoCuadrante.datosInforme.precioHora_E * sumatorioHoras_E) + (objetoCuadrante.datosInforme.precioHora_I * sumatorioHoras_I) + (objetoCuadrante.datosInforme.precioHora_Z * sumatorioHoras_Z) + (objetoCuadrante.datosInforme.precioHora_T * sumatorioHoras_T) + (objetoCuadrante.datosInforme.precioHora_P * sumatorioHoras_P)) + ' €'
             };
             if (objetoCuadrante.datosInforme.computo === 3) {
                 if (objetoCuadrante.datosInforme.mensualPactado) {
                     return 'Horas: ' + sumatorioTotal + ' - Total: ' + objetoCuadrante.datosInforme.mensualPactado + ' €'
                 } else {
                     return 'Horas: ' + sumatorioTotal + ' - Total: ' +
-                        parseInt((objetoCuadrante.datosInforme.precioHora_L * sumatorioHoras_L) + (objetoCuadrante.datosInforme.precioHora_C * sumatorioHoras_C) + (objetoCuadrante.datosInforme.precioHora_E * sumatorioHoras_E) + (objetoCuadrante.datosInforme.precioHora_I * sumatorioHoras_I) + (objetoCuadrante.datosInforme.precioHora_Z * sumatorioHoras_Z) + (objetoCuadrante.datosInforme.precioHora_T * sumatorioHoras_T) + (objetoCuadrante.datosInforme.precioHora_P * sumatorioHoras_P)) + ' €'
+                        parseFloat((objetoCuadrante.datosInforme.precioHora_L * sumatorioHoras_L) + (objetoCuadrante.datosInforme.precioHora_C * sumatorioHoras_C) + (objetoCuadrante.datosInforme.precioHora_E * sumatorioHoras_E) + (objetoCuadrante.datosInforme.precioHora_I * sumatorioHoras_I) + (objetoCuadrante.datosInforme.precioHora_Z * sumatorioHoras_Z) + (objetoCuadrante.datosInforme.precioHora_T * sumatorioHoras_T) + (objetoCuadrante.datosInforme.precioHora_P * sumatorioHoras_P)) + ' €'
                 };
             };
         }
@@ -3994,19 +4046,7 @@ const Cuadrantes = (props) => {
 
     const handleClickFacturarCuadrante = () => {
         const elTotalFacturado = calculoTotalAFacturar();
-        const { sumatorioHoras_L, sumatorioHoras_C, sumatorioHoras_E, sumatorioHoras_I, sumatorioHoras_Z, sumatorioHoras_T, sumatorioHoras_P, sumatorioTotal } = calculoTotalHoras();
-        const objetoFinalHoras = {
-            objeto: 'horas',
-            M: objetoCuadrante.datosInforme.mensualPactado ? 1 : null,
-            L: sumatorioHoras_L ? sumatorioHoras_L : null,
-            C: sumatorioHoras_C ? sumatorioHoras_C : null,
-            E: sumatorioHoras_E ? sumatorioHoras_E : null,
-            I: sumatorioHoras_I ? sumatorioHoras_I : null,
-            Z: sumatorioHoras_Z ? sumatorioHoras_Z : null,
-            T: sumatorioHoras_T ? sumatorioHoras_T : null,
-            P: sumatorioHoras_P ? sumatorioHoras_P : null
-        };
-        dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, estado: 'facturado', total: elTotalFacturado, horas: objetoFinalHoras }));
+        dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, estado: 'facturado', total: elTotalFacturado }));
         procesarDatosCuadrante('informe', elTotalFacturado);
         handleCloseMenu();
     };
@@ -4111,6 +4151,7 @@ const Cuadrantes = (props) => {
                 PH: objetoCuadrante.horas.P
             };
             dispatch(generarArchivosXLSAccion('centros', numeroFactusol, centro, calculoTotalAFacturar(), objetoDesgloseConceptos));
+            handleCloseMenu();
         } else {
             setAlert({
                 mensaje: "Debes introducir el último número de factura emitida en FACTUSOL para generar los archivos.",
@@ -4159,7 +4200,26 @@ const Cuadrantes = (props) => {
             dispatch(cambiarACuadranteNoRegistradoAccion());
             const nombreCuadrante = calendarioAGestionar + '-' + centroId;
             const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, centro: centroId, arrayCuadrante: [] };
-            dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, id: null, nombre: nombreCuadrante, actualizacion: '', datosCuadrante: losDatosCuadrante, estado: 'registrado' }));
+            dispatch(actualizarObjetoCuadranteAccion({
+                ...objetoCuadrante,
+                id: null,
+                nombre: nombreCuadrante,
+                actualizacion: '',
+                datosCuadrante: losDatosCuadrante,
+                estado: 'registrado',
+                total: null,
+                horas: {
+                    objeto: 'horas',
+                    M: null,
+                    L: null,
+                    C: null,
+                    E: null,
+                    I: null,
+                    Z: null,
+                    T: null,
+                    P: null
+                }
+            }));
             dispatch(activarDesactivarCambioBotonResetearAccion(true));
             setControladorDeEstado('venimosDeResetear');
         }
@@ -4174,7 +4234,26 @@ const Cuadrantes = (props) => {
                 dispatch(setCentroAccion(preValueValor.valor));
                 const nombreCuadrante = calendarioAGestionar + '-' + preValueValor.valor;
                 const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, centro: preValueValor.valor, arrayCuadrante: [] };
-                dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, id: null, nombre: nombreCuadrante, actualizacion: '', datosCuadrante: losDatosCuadrante }));
+                dispatch(actualizarObjetoCuadranteAccion({
+                    ...objetoCuadrante,
+                    id: null,
+                    nombre: nombreCuadrante,
+                    actualizacion: '',
+                    datosCuadrante: losDatosCuadrante,
+                    estado: 'registrado',
+                    total: null,
+                    horas: {
+                        objeto: 'horas',
+                        M: null,
+                        L: null,
+                        C: null,
+                        E: null,
+                        I: null,
+                        Z: null,
+                        T: null,
+                        P: null
+                    }
+                }));
                 dispatch(obtenerCuadranteAccion('cuadrantes', nombreCuadrante));
             };
             if (preValueValor.origen === 'cuadrantes') {
@@ -4841,7 +4920,7 @@ const Cuadrantes = (props) => {
                 prFullWidth={true}
                 prMaxWidth={true}
             />
-            {/* {console.log(centro)} */}
+            {/* {console.log(objetoCuadrante)} */}
         </div>
     )
 }

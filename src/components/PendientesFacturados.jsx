@@ -8,6 +8,7 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import MuiAlert from '@material-ui/lab/Alert';
 
 //importaciones acciones
 import { cambioEstadoInicioCuadrantesAccion } from '../redux/cuadrantesDucks';
@@ -21,12 +22,18 @@ import { obtenerObjetoPorIdAccion } from '../redux/appDucks';
 //estilos
 import Clases from "../clases";
 
+//snackbar y alert
+const Alert = (props) => {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 const PendientesFacturados = (props) => {
 
     const classes = Clases();
     const dispatch = useDispatch();
     const cuadrantesFacturadosArray = useSelector(store => store.variablesPendientes.cuadrantesFacturadosArray);
     const listadoCentros = useSelector(store => store.variablesCentros.arrayCentros);
+    const numeroCuadrantesFacturados = useSelector(store => store.variablesPendientes.numeroCuadrantesFacturados);
 
     //states    
 
@@ -89,8 +96,12 @@ const PendientesFacturados = (props) => {
                     >
                         <CircularProgress />
                     </Box>
-                ) : (
-                    <Box
+                ) : (numeroCuadrantesFacturados < 1 ? (
+                    <Box p={3} style={{ width: '100%', minHeight: props.prHeightContenedores, maxHeight: props.prHeightContenedores }}>
+                            <Alert severity="info">No hay cuadrantes facturados por gestionar.</Alert>
+                        </Box>
+                    ) : (
+                        <Box
                         className={classes.scrollable}
                         style={{ width: props.prWidthContenedores, height: props.prHeightContenedores - 10, margin: 10 }}
                     >
@@ -101,7 +112,7 @@ const PendientesFacturados = (props) => {
                             ))}
                         </List>
                     </Box>
-                )}
+                    ))}
             </Grid>
             {/* {console.log(checked)} */}
         </div>

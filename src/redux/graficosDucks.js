@@ -82,7 +82,7 @@ export const obtenerCuadrantesPorAnyoAccion = (objeto) => (dispatch, getState) =
                     if (mes.length > 0) {
                         mes.forEach((mesInt, index) => {
                             if (mesInt.total) {
-                                sumatorio += parseInt(mesInt.total);
+                                sumatorio += parseFloat(mesInt.total);
                             }
                         });
                         array.push({

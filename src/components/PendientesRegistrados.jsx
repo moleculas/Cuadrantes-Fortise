@@ -24,6 +24,8 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 
 //importaciones acciones
 import { cambioEstadoInicioCuadrantesAccion } from '../redux/cuadrantesDucks';
@@ -33,6 +35,10 @@ import { venimosDeRegistradosAccion } from '../redux/pendientesDucks';
 import { setCentroAccion } from '../redux/cuadrantesDucks';
 import { obtenerCentroAccion } from '../redux/centrosDucks';
 import { obtenerObjetoPorIdAccion } from '../redux/appDucks';
+import { generarArchivosXLSLoteAccion } from '../redux/appDucks';
+import { finalizarArchivosXLSLoteAccion } from '../redux/appDucks';
+import { forzarRecargaGraficosCuadrantesAccion } from '../redux/graficosDucks';
+import { emitirArchivosXLSLoteAccion } from '../redux/appDucks';
 
 //estilos
 import Clases from "../clases";
@@ -65,16 +71,27 @@ const AccordionSummary = withStyles({
     }
 })(MuiAccordionSummary);
 
+//snackbar y alert
+const Alert = (props) => {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+};
+
 const PendientesRegistrados = (props) => {
 
     const classes = Clases();
     const dispatch = useDispatch();
     const cuadrantesRegistradosArray = useSelector(store => store.variablesPendientes.cuadrantesRegistradosArray);
     const listadoCentros = useSelector(store => store.variablesCentros.arrayCentros);
+    const objetoUsuarioActivo = useSelector(store => store.variablesUsuario.usuarioActivo);
+    const laDataFAC = useSelector(store => store.variablesApp.laDataFAC);
+    const laDataLFA = useSelector(store => store.variablesApp.laDataLFA);
+    const numeroCuadrantesRegistrados = useSelector(store => store.variablesPendientes.numeroCuadrantesRegistrados);
 
     //states
 
     const [checked, setChecked] = useState({});
+    const [openSnack, setOpenSnack] = useState(false);
+    const [alert, setAlert] = useState({});
     const [marcarTodosVisible, setMarcarTodosVisible] = useState(true);
     const [expandedAccordion, setExpandedAccordion] = useState(false);
     const [heightContenedoresGra, setHeightContenedoresGra] = useState(getHeightContenedoresGra());
@@ -82,6 +99,8 @@ const PendientesRegistrados = (props) => {
         scroller: heightContenedoresGra - 90,
         accordion: 0
     });
+    const [numeroFactusolPendientes, setNumeroFactusolPendientes] = useState(null);
+    const [arrayCuadrantesDefsParaCheck, setArrayCuadrantesDefsParaCheck] = useState([]);
 
     //useEffect
 
@@ -105,7 +124,23 @@ const PendientesRegistrados = (props) => {
         }
     }, [cuadrantesRegistradosArray]);
 
+    useEffect(() => {
+        if ((laDataFAC.length > 0) && (laDataFAC.length === arrayCuadrantesDefsParaCheck.length)) {
+            setArrayCuadrantesDefsParaCheck([]);
+            dispatch(finalizarArchivosXLSLoteAccion(true));
+            dispatch(forzarRecargaGraficosCuadrantesAccion(true));
+            dispatch(emitirArchivosXLSLoteAccion(laDataFAC, laDataLFA));
+        }
+    }, [laDataFAC]);
+
     //funciones
+
+    const handleCloseSnack = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenSnack(false);
+    };
 
     const handleChangeChecked = (e) => {
         setChecked({ ...checked, [e.target.name]: e.target.checked });
@@ -149,7 +184,7 @@ const PendientesRegistrados = (props) => {
     const selectAllChecked = () => {
         let object = {};
         for (let i = 0; i < cuadrantesRegistradosArray.length; i++) {
-            object['checked' + cuadrantesRegistradosArray[i]['id']] = true;
+            object['checked-' + cuadrantesRegistradosArray[i]['id']] = true;
         }
         setChecked(object);
         setMarcarTodosVisible(false);
@@ -158,7 +193,7 @@ const PendientesRegistrados = (props) => {
     const selectNoneChecked = () => {
         let object = {};
         for (let i = 0; i < cuadrantesRegistradosArray.length; i++) {
-            object['checked' + cuadrantesRegistradosArray[i]['id']] = false;
+            object['checked-' + cuadrantesRegistradosArray[i]['id']] = false;
         }
         setChecked(object);
         setMarcarTodosVisible(true);
@@ -166,13 +201,57 @@ const PendientesRegistrados = (props) => {
 
     const handleCambioAccordionPendientes = (expandedAccordion, panel) => {
         setExpandedAccordion(expandedAccordion ? panel : true);
-        expandedAccordion ? setHeighCambio({
-            scroller: heighCambio.scroller - 70,
-            accordion: heighCambio.accordion + 0
-        }) : setHeighCambio({
-            scroller: heighCambio.scroller + 70,
-            accordion: heighCambio.accordion - 0
-        });
+        if (expandedAccordion) {
+            setHeighCambio({
+                scroller: heighCambio.scroller - 70,
+                accordion: heighCambio.accordion + 0
+            });
+        } else {
+            setHeighCambio({
+                scroller: heighCambio.scroller + 70,
+                accordion: heighCambio.accordion - 0
+            });
+            setNumeroFactusolPendientes(null);
+        };
+    };
+
+    function IsNumeric(num) {
+        return (num >= 0 || num < 0);
+    };
+
+    const handleChangeFormNumumeroFactusolPendientes = (e) => {
+        if (IsNumeric(e.target.value)) {
+            setNumeroFactusolPendientes(e.target.value);
+        }
+    };
+
+    const handleGenerarLoteArchivos = () => {
+        if (numeroFactusolPendientes) {
+            let fechaHoy = new Date().toLocaleString() + '';
+            let laFirmaActualizacion = fechaHoy + ' por ' + objetoUsuarioActivo.nombre.charAt(0).toUpperCase() + objetoUsuarioActivo.nombre.slice(1);
+            let arrayIdsCuadrantes = [];
+            let arrayCuadrantesDef = [];
+            for (const prop in checked) {
+                if (checked[prop]) {
+                    let myObjSplit = prop.split("-");
+                    arrayIdsCuadrantes.push(parseInt(myObjSplit[1]));
+                }
+            };
+            cuadrantesRegistradosArray.forEach((cuadrante, index) => {
+                if (arrayIdsCuadrantes.includes(cuadrante.id)) {
+                    arrayCuadrantesDef.push(cuadrante)
+                }
+            });
+            setArrayCuadrantesDefsParaCheck(arrayCuadrantesDef);
+            dispatch(generarArchivosXLSLoteAccion(numeroFactusolPendientes, arrayCuadrantesDef, laFirmaActualizacion));
+        } else {
+            setAlert({
+                mensaje: "Debes introducir el último número de factura emitida en FACTUSOL para generar los archivos.",
+                tipo: 'error'
+            })
+            setOpenSnack(true);
+            return;
+        };
     };
 
     //retorno componentes
@@ -191,8 +270,8 @@ const PendientesRegistrados = (props) => {
                 >
                     <Checkbox
                         edge="start"
-                        checked={checked['checked' + cuadrante.id] || false}
-                        name={'checked' + cuadrante.id}
+                        checked={checked['checked-' + cuadrante.id] || false}
+                        name={'checked-' + cuadrante.id}
                         onChange={handleChangeChecked}
                         style={{ marginTop: -3 }}
                     />
@@ -227,6 +306,10 @@ const PendientesRegistrados = (props) => {
                         className={classes.centrado}
                     >
                         <CircularProgress />
+                    </Box>
+                ) : (numeroCuadrantesRegistrados < 1 ? (
+                    <Box p={3} style={{ width: '100%', minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra }}>
+                        <Alert severity="info">No hay cuadrantes registrados por gestionar.</Alert>
                     </Box>
                 ) : (
                     <Fragment>
@@ -282,9 +365,9 @@ const PendientesRegistrados = (props) => {
                                                     fullWidth
                                                     color='secondary'
                                                     id="form-numero-factusol"
-                                                    // value={valuesFormEdicion.precioHora_P || ''}
-                                                    // onChange={handleChangeFormEdicion('precioHora_P')}
-                                                    labelWidth={70}
+                                                    value={numeroFactusolPendientes || ''}
+                                                    onChange={handleChangeFormNumumeroFactusolPendientes}
+                                                    labelWidth={40}
                                                 />
                                             </Tooltip>
                                         </FormControl>
@@ -296,7 +379,7 @@ const PendientesRegistrados = (props) => {
                                             variant="contained"
                                             style={{ marginRight: 8, paddingTop: 7, paddingBottom: 7 }}
                                             startIcon={<DynamicFeedIcon />}
-                                        //onClick={handleClickMenu}
+                                            onClick={handleGenerarLoteArchivos}
                                         >
                                             Procesar lote {retornaCantidadChecked()}
                                         </Button>
@@ -316,9 +399,14 @@ const PendientesRegistrados = (props) => {
                             </List>
                         </Box>
                     </Fragment>
-                )}
+                ))}
             </Grid>
-            {/* {console.log(checked)} */}
+            <Snackbar open={openSnack} autoHideDuration={12000} onClose={handleCloseSnack}>
+                <Alert severity={alert.tipo} onClose={handleCloseSnack}>
+                    {alert.mensaje}
+                </Alert>
+            </Snackbar>
+            {/* {console.log(laDataFAC.length)} */}
         </div>
     )
 }

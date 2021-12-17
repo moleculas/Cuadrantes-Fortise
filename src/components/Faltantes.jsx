@@ -8,6 +8,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import MuiAlert from '@material-ui/lab/Alert';
 
 //importaciones acciones
 import { setTrabajadorAccion } from '../redux/nominasDucks';
@@ -21,12 +22,18 @@ import { venimosDeFaltantesAccion } from '../redux/faltantesDucks';
 //estilos
 import Clases from "../clases";
 
+//snackbar y alert
+const Alert = (props) => {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+};
+
 const Faltantes = (props) => {
 
     const classes = Clases();
-    const dispatch = useDispatch(); 
+    const dispatch = useDispatch();
     const nominasFaltantesArray = useSelector(store => store.variablesFaltantes.nominasFaltantesArray);
     const listadoTrabajadores = useSelector(store => store.variablesTrabajadores.arrayTrabajadores);
+    const numeroNominasFaltantes = useSelector(store => store.variablesFaltantes.numeroNominasFaltantes);
 
     //states
 
@@ -86,6 +93,10 @@ const Faltantes = (props) => {
                     >
                         <CircularProgress />
                     </Box>
+                ) : (numeroNominasFaltantes < 1 ? (
+                    <Box p={3} style={{ width: '100%', minHeight: props.prHeightContenedores, maxHeight: props.prHeightContenedores }}>
+                        <Alert severity="info">No quedan nóminas pendientes por gestionar.</Alert>
+                    </Box>
                 ) : (
                     <Box
                         className={classes.scrollable}
@@ -98,8 +109,8 @@ const Faltantes = (props) => {
                             ))}
                         </List>
                     </Box>
-                )}
-            </Grid>           
+                ))}
+            </Grid>
             {/* {console.log(trabajadoresFaltantesArray)} */}
         </div>
     )

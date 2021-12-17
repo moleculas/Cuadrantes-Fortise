@@ -29,6 +29,8 @@ import { obtenerCentrosAccion } from '../redux/centrosDucks';
 import { obtenerCuadrantesPendientesAccion } from '../redux/pendientesDucks';
 import { obtenerCuadrantesRegistradosFacturadosAccion } from '../redux/pendientesDucks';
 import { vaciarDatosPendientesAccion } from '../redux/pendientesDucks';
+import { finalizarArchivosXLSLoteAccion } from '../redux/appDucks';
+import { forzarRecargaGraficosCuadrantesAccion } from '../redux/graficosDucks';
 
 const getHeightContenedoresPeq = () => ((window.innerHeight / 2) - 168) || ((document.documentElement.clientHeight / 2) - 168) || ((document.body.clientHeight / 2) - 168);
 const getHeightContenedoresGra = () => ((window.innerHeight) - 272) || ((document.documentElement.clientHeight) - 272) || ((document.body.clientHeight) - 272);
@@ -77,6 +79,7 @@ const PantallaCuadrantes = () => {
     const errorDeCargaCuadrantes = useSelector(store => store.variablesCuadrantes.errorDeCargaCuadrantes);
     const listadoCentros = useSelector(store => store.variablesCentros.arrayCentros);
     const cuadrantesPendientesArray = useSelector(store => store.variablesPendientes.cuadrantesPendientesArray);
+    const finalizandoLoteEstado = useSelector(store => store.variablesApp.finalizandoLoteEstado);
 
     //states
 
@@ -111,7 +114,11 @@ const PantallaCuadrantes = () => {
 
     useEffect(() => {
         dispatch(vaciarDatosPendientesAccion());
-    }, [calendarioAGestionar]);
+        if (finalizandoLoteEstado) {
+            dispatch(finalizarArchivosXLSLoteAccion(false));
+            dispatch(forzarRecargaGraficosCuadrantesAccion(false));
+        };
+    }, [calendarioAGestionar, finalizandoLoteEstado]);
 
     useEffect(() => {
         if (listadoCentros.length > 0) {
@@ -122,7 +129,7 @@ const PantallaCuadrantes = () => {
                 dispatch(obtenerCuadrantesRegistradosFacturadosAccion('cuadrantes', anyoMes, listadoCentros));
             }
         }
-    }, [listadoCentros, calendarioAGestionar]);
+    }, [listadoCentros, calendarioAGestionar, finalizandoLoteEstado]);
 
     useEffect(() => {
         if (errorDeCargaCentros || errorDeCargaCuadrantes) {
@@ -209,15 +216,9 @@ const PantallaCuadrantes = () => {
                                     p={0}
                                     style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra }}
                                 >
-                                    {numeroCuadrantesPendientes === 0 ? (
-                                        <Box p={3} style={{ width: '100%' }}>
-                                            <Alert severity="info">No quedan cuadrantes pendientes por gestionar.</Alert>
-                                        </Box>
-                                    ) : (
-                                        <Fragment>
-                                            <Pendientes prHeightContenedores={heightContenedoresGra} prWidthContenedores={widthContenedores} prOpenLoading={openLoading} />
-                                        </Fragment>
-                                    )}
+                                    <Fragment>
+                                        <Pendientes prHeightContenedores={heightContenedoresGra} prWidthContenedores={widthContenedores} prOpenLoading={openLoading} />
+                                    </Fragment>
                                 </Grid>
                             </Paper>
                         </TabPanel>
@@ -235,15 +236,9 @@ const PantallaCuadrantes = () => {
                                     p={0}
                                     style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra }}
                                 >
-                                    {numeroCuadrantesRegistrados === 0 || !numeroCuadrantesRegistrados ? (
-                                        <Box p={3} style={{ width: '100%' }}>
-                                            <Alert severity="info">No hay cuadrantes registrados por gestionar.</Alert>
-                                        </Box>
-                                    ) : (
-                                        <Fragment>
-                                            <PendientesRegistrados prWidthContenedores={widthContenedores} prOpenLoading={openLoading} />
-                                        </Fragment>
-                                    )}
+                                    <Fragment>
+                                        <PendientesRegistrados prWidthContenedores={widthContenedores} prOpenLoading={openLoading} />
+                                    </Fragment>
                                 </Grid>
                             </Paper>
                         </TabPanel>
@@ -261,15 +256,9 @@ const PantallaCuadrantes = () => {
                                     p={0}
                                     style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra }}
                                 >
-                                    {numeroCuadrantesFacturados === 0 || !numeroCuadrantesFacturados ? (
-                                        <Box p={3} style={{ width: '100%' }}>
-                                            <Alert severity="info">No hay cuadrantes facturados por gestionar.</Alert>
-                                        </Box>
-                                    ) : (
-                                        <Fragment>
-                                            <PendientesFacturados prHeightContenedores={heightContenedoresGra} prWidthContenedores={widthContenedores} prOpenLoading={openLoading} />
-                                        </Fragment>
-                                    )}
+                                    <Fragment>
+                                        <PendientesFacturados prHeightContenedores={heightContenedoresGra} prWidthContenedores={widthContenedores} prOpenLoading={openLoading} />
+                                    </Fragment>
                                 </Grid>
                             </Paper>
                         </TabPanel>
@@ -327,7 +316,7 @@ const PantallaCuadrantes = () => {
                     {alert.mensaje}
                 </Alert>
             </Snackbar>
-            {/* {console.log(numeroCuadrantesPendientes)} */}
+            {/* {console.log(numeroCuadrantesRegistrados)} */}
         </div>
     )
 }

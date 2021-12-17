@@ -8,6 +8,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import MuiAlert from '@material-ui/lab/Alert';
 
 //importaciones acciones
 import { obtenerCentroAccion } from '../redux/centrosDucks';
@@ -21,12 +22,18 @@ import { setCentroAccion } from '../redux/cuadrantesDucks';
 //estilos
 import Clases from "../clases";
 
+//snackbar y alert
+const Alert = (props) => {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 const Pendientes = (props) => {
 
     const classes = Clases();
     const dispatch = useDispatch();
     const listadoCentros = useSelector(store => store.variablesCentros.arrayCentros);
     const cuadrantesPendientesArray = useSelector(store => store.variablesPendientes.cuadrantesPendientesArray);
+    const numeroCuadrantesPendientes = useSelector(store => store.variablesPendientes.numeroCuadrantesPendientes);
 
     //funciones
 
@@ -84,6 +91,10 @@ const Pendientes = (props) => {
                     >
                         <CircularProgress />
                     </Box>
+                ) : (numeroCuadrantesPendientes < 1 ? (
+                    <Box p={3} style={{ width: '100%', minHeight: props.prHeightContenedores, maxHeight: props.prHeightContenedores }}>
+                        <Alert severity="info">No quedan cuadrantes pendientes por gestionar.</Alert>
+                    </Box>
                 ) : (
                     <Box
                         className={classes.scrollable}
@@ -96,7 +107,7 @@ const Pendientes = (props) => {
                             ))}
                         </List>
                     </Box>
-                )}
+                ))}
             </Grid>
             {/* {console.log(cuadrantesPendientesArray)} */}
         </div>

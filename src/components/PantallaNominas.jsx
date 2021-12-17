@@ -211,15 +211,9 @@ const PantallaNominas = () => {
                                     p={0}
                                     style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra }}
                                 >
-                                    {numeroNominasFaltantes === 0 ? (
-                                        <Box p={3} style={{ width: '100%' }}>
-                                            <Alert severity="info">No quedan nóminas pendientes por gestionar.</Alert>
-                                        </Box>
-                                    ) : (
-                                        <Fragment>
-                                            <Faltantes prHeightContenedores={heightContenedoresGra} prWidthContenedores={widthContenedores} prOpenLoading={openLoading} />
-                                        </Fragment>
-                                    )}
+                                    <Fragment>
+                                        <Faltantes prHeightContenedores={heightContenedoresGra} prWidthContenedores={widthContenedores} prOpenLoading={openLoading} />
+                                    </Fragment>
                                 </Grid>
                             </Paper>
                         </TabPanel>
@@ -237,15 +231,9 @@ const PantallaNominas = () => {
                                     p={0}
                                     style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra }}
                                 >
-                                    {numeroNominasRegistradas === 0 || !numeroNominasRegistradas ? (
-                                        <Box p={3} style={{ width: '100%' }}>
-                                            <Alert severity="info">No hay nóminas registradas por gestionar.</Alert>
-                                        </Box>
-                                    ) : (
-                                        <Fragment>
-                                            <FaltantesRegistrados prWidthContenedores={widthContenedores} prOpenLoading={openLoading} />
-                                        </Fragment>
-                                    )}
+                                    <Fragment>
+                                        <FaltantesRegistrados prWidthContenedores={widthContenedores} prOpenLoading={openLoading} />
+                                    </Fragment>
                                 </Grid>
                             </Paper>
                         </TabPanel>
@@ -263,15 +251,9 @@ const PantallaNominas = () => {
                                     p={0}
                                     style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra }}
                                 >
-                                    {numeroNominasEmitidas === 0 || !numeroNominasEmitidas ? (
-                                        <Box p={3} style={{ width: '100%' }}>
-                                            <Alert severity="info">No hay nóminas emitidas por gestionar.</Alert>
-                                        </Box>
-                                    ) : (
-                                        <Fragment>
-                                            <FaltantesEmitidos prHeightContenedores={heightContenedoresGra} prWidthContenedores={widthContenedores} prOpenLoading={openLoading} />
-                                        </Fragment>
-                                    )}
+                                    <Fragment>
+                                        <FaltantesEmitidos prHeightContenedores={heightContenedoresGra} prWidthContenedores={widthContenedores} prOpenLoading={openLoading} />
+                                    </Fragment>
                                 </Grid>
                             </Paper>
                         </TabPanel>
@@ -327,7 +309,7 @@ const PantallaNominas = () => {
                     {alert.mensaje}
                 </Alert>
             </Snackbar>
-            {/* {console.log(retornaCuadrantesPendientesParent)} */}
+            {/* {console.log(numeroNominasFaltantes)} */}
         </div>
     )
 }

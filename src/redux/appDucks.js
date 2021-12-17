@@ -35,6 +35,10 @@ const dataInicial = {
     arrayUltimasIntervenciones: [],
     errorDeCargaUltimasIntervenciones: false,
     exitoGenerarArchivos: false,
+    procesandoLoteEstado: false,
+    laDataFAC: [],
+    laDataLFA: [],
+    finalizandoLoteEstado: false,
 }
 
 //types
@@ -55,6 +59,9 @@ const OBTENER_ULTIMAS_INTERVENCIONES_EXITO = 'OBTENER_ULTIMAS_INTERVENCIONES_EXI
 const VACIAR_DATOS_ULTIMAS_INTERVENCIONES = 'VACIAR_DATOS_ULTIMAS_INTERVENCIONES';
 const ERROR_DE_CARGA_ULTIMAS_INTERVENCIONES = 'ERROR_DE_CARGA_ULTIMAS_INTERVENCIONES';
 const GENERAR_ARCHIVOS_EXITO = 'GENERAR_ARCHIVOS_EXITO';
+const PROCESANDO_LOTE = 'PROCESANDO_LOTE';
+const ITERACION_XLS_EXITO = 'ITERACION_XLS_EXITO';
+const FINALIZANDO_LOTE = 'FINALIZANDO_LOTE';
 
 //reducer
 export default function appReducer(state = dataInicial, action) {
@@ -84,7 +91,7 @@ export default function appReducer(state = dataInicial, action) {
         case ACTUALIZAR_CONFIGURACION_EXITO:
             return { ...state, errorDeCargaConfiguracion: false, loadingApp: false, exitoActualizacionConfiguracion: true }
         case RESETEA_EXITO_CONFIGURACION:
-            return { ...state, exitoActualizacionConfiguracion: false, exitoGenerarArchivos: false }
+            return { ...state, exitoActualizacionConfiguracion: false, exitoGenerarArchivos: false, procesandoLoteEstado: false }
         case OBTENER_CONFIGURACION_EXITO:
             return { ...state, objetoConfiguracion: action.payload.objeto, errorDeCargaConfiguracion: false, loadingApp: false }
         case OBTENER_ULTIMAS_INTERVENCIONES_EXITO:
@@ -94,7 +101,13 @@ export default function appReducer(state = dataInicial, action) {
         case VACIAR_DATOS_ULTIMAS_INTERVENCIONES:
             return { ...state, arrayUltimasIntervenciones: [] }
         case GENERAR_ARCHIVOS_EXITO:
-            return { ...state, exitoGenerarArchivos: true }
+            return { ...state, exitoGenerarArchivos: true, laDataFAC: [], laDataLFA: [] }
+        case PROCESANDO_LOTE:
+            return { ...state, procesandoLoteEstado: true }
+        case FINALIZANDO_LOTE:
+            return { ...state, finalizandoLoteEstado: action.payload.estado }
+        case ITERACION_XLS_EXITO:
+            return { ...state, laDataFAC: [...state.laDataFAC, action.payload.elementoArray1], laDataLFA: [...state.laDataLFA, action.payload.elementoArray2] }
         default:
             return { ...state }
     }
@@ -530,6 +543,7 @@ const exportarAExcel = (apiData, fileName) => {
 }
 
 export const generarArchivosXLSAccion = (objeto, numFactusol, centro, totalFacturado, objetoDesgloseConceptos) => async (dispatch, getState) => {
+    const elNumFactusol = parseInt(numFactusol) + 1;
     try {
         const formData = new FormData();
         formData.append("objeto", objeto);
@@ -558,14 +572,14 @@ export const generarArchivosXLSAccion = (objeto, numFactusol, centro, totalFactu
         const fechaHoy = day + "/" + month + "/" + year;
         const dataFAC = [[
             1,
-            numFactusol,
+            elNumFactusol,
             '',
             fechaHoy,
             0,
             '',
             1,
             '',
-            objetoCentroParsear.codigo,
+            parseInt(objetoCentroParsear.codigo),
             objetoCentroParsear.nombre,
             objetoCentroParsear.domicilio,
             objetoCentroParsear.poblacion,
@@ -671,121 +685,45 @@ export const generarArchivosXLSAccion = (objeto, numFactusol, centro, totalFactu
             ''
         ]];
         exportarAExcel(dataFAC, 'FAC');
-        let precioArticulo_M, precioArticulo_L, precioArticulo_C, precioArticulo_E, precioArticulo_I, precioArticulo_Z, precioArticulo_T, precioArticulo_P;
-        let cantidad_M, cantidad_L, cantidad_C, cantidad_E, cantidad_I, cantidad_Z, cantidad_T, cantidad_P;
-        let contadorLineas = 0;
-        let precioArticulo, cantidad, articulo, descripcion, total;
         const dataLFA = [];
-        console.log(objetoDesgloseConceptos)
+        let arrayElementos = [];
         if (objetoDesgloseConceptos.MT) {
-            precioArticulo_M = objetoCentroParsear.horario.mensualPactado;
-            cantidad_M = objetoDesgloseConceptos.MH;
-            contadorLineas++;
+            arrayElementos.push([tipos[0].value, tipos[0].label, objetoDesgloseConceptos.MT, objetoCentroParsear.horario.mensualPactado, objetoDesgloseConceptos.MH]);
         };
         if (objetoDesgloseConceptos.LT) {
-            precioArticulo_L = objetoCentroParsear.horario.precioHora_L;
-            cantidad_L = objetoDesgloseConceptos.LH;
-            contadorLineas++;
+            arrayElementos.push([tipos[0].value, tipos[0].label, objetoDesgloseConceptos.LT, objetoCentroParsear.horario.precioHora_L, objetoDesgloseConceptos.LH]);
         };
         if (objetoDesgloseConceptos.CT) {
-            precioArticulo_C = objetoCentroParsear.horario.precioHora_C;
-            cantidad_C = objetoDesgloseConceptos.CH;
-            contadorLineas++;
+            arrayElementos.push([tipos[1].value, tipos[1].label, objetoDesgloseConceptos.CT, objetoCentroParsear.horario.precioHora_C, objetoDesgloseConceptos.CH]);
         };
         if (objetoDesgloseConceptos.ET) {
-            precioArticulo_E = objetoCentroParsear.horario.precioHora_E;
-            cantidad_E = objetoDesgloseConceptos.EH;
-            contadorLineas++;
+            arrayElementos.push([tipos[2].value, tipos[2].label, objetoDesgloseConceptos.ET, objetoCentroParsear.horario.precioHora_E, objetoDesgloseConceptos.EH]);
         };
         if (objetoDesgloseConceptos.IT) {
-            precioArticulo_I = objetoCentroParsear.horario.precioHora_I;
-            cantidad_I = objetoDesgloseConceptos.IH;
-            contadorLineas++;
+            arrayElementos.push([tipos[3].value, tipos[3].label, objetoDesgloseConceptos.IT, objetoCentroParsear.horario.precioHora_I, objetoDesgloseConceptos.IH]);
         };
         if (objetoDesgloseConceptos.ZT) {
-            precioArticulo_Z = objetoCentroParsear.horario.precioHora_Z;
-            cantidad_Z = objetoDesgloseConceptos.ZH;
-            contadorLineas++;
+            arrayElementos.push([tipos[4].value, tipos[4].label, objetoDesgloseConceptos.ZT, objetoCentroParsear.horario.precioHora_Z, objetoDesgloseConceptos.ZH]);
         };
         if (objetoDesgloseConceptos.TT) {
-            precioArticulo_T = objetoCentroParsear.horario.precioHora_T;
-            cantidad_T = objetoDesgloseConceptos.TH;
-            contadorLineas++;
+            arrayElementos.push([tipos[5].value, tipos[5].label, objetoDesgloseConceptos.TT, objetoCentroParsear.horario.precioHora_T, objetoDesgloseConceptos.TH]);
         };
         if (objetoDesgloseConceptos.PT) {
-            precioArticulo_P = objetoCentroParsear.horario.precioHora_P;
-            cantidad_P = objetoDesgloseConceptos.PH;
-            contadorLineas++;
+            arrayElementos.push([tipos[6].value, tipos[6].label, objetoDesgloseConceptos.PT, objetoCentroParsear.horario.precioHora_P, objetoDesgloseConceptos.PH]);
         };
-        for (let i = 1; i <= contadorLineas; i++) {
-            if (objetoDesgloseConceptos.MT) {
-                precioArticulo = precioArticulo_M;
-                cantidad = cantidad_M;
-                articulo = tipos[0].value;
-                descripcion = tipos[0].label;
-                total = objetoDesgloseConceptos.MT;
-            };
-            if (objetoDesgloseConceptos.LT) {
-                precioArticulo = precioArticulo_L;
-                cantidad = cantidad_L;
-                articulo = tipos[0].value;
-                descripcion = tipos[0].label;
-                total = objetoDesgloseConceptos.LT;
-            };
-            if (objetoDesgloseConceptos.CT) {
-                precioArticulo = precioArticulo_C;
-                cantidad = cantidad_C;
-                articulo = tipos[1].value;
-                descripcion = tipos[1].label;
-                total = objetoDesgloseConceptos.CT;
-            };
-            if (objetoDesgloseConceptos.ET) {
-                precioArticulo = precioArticulo_E;
-                cantidad = cantidad_E;
-                articulo = tipos[2].value;
-                descripcion = tipos[2].label;
-                total = objetoDesgloseConceptos.ET;
-            };
-            if (objetoDesgloseConceptos.IT) {
-                precioArticulo = precioArticulo_I;
-                cantidad = cantidad_I;
-                articulo = tipos[3].value;
-                descripcion = tipos[3].label;
-                total = objetoDesgloseConceptos.IT;
-            };
-            if (objetoDesgloseConceptos.ZT) {
-                precioArticulo = precioArticulo_Z;
-                cantidad = cantidad_Z;
-                articulo = tipos[4].value;
-                descripcion = tipos[4].label;
-                total = objetoDesgloseConceptos.ZT;
-            };
-            if (objetoDesgloseConceptos.TT) {
-                precioArticulo = precioArticulo_T;
-                cantidad = cantidad_T;
-                articulo = tipos[5].value;
-                descripcion = tipos[5].label;
-                total = objetoDesgloseConceptos.TT;
-            };
-            if (objetoDesgloseConceptos.PT) {
-                precioArticulo = precioArticulo_P;
-                cantidad = cantidad_P;
-                articulo = tipos[6].value;
-                descripcion = tipos[6].label;
-                total = objetoDesgloseConceptos.PT;
-            };
+        arrayElementos.forEach((elemento, index) => {
             dataLFA.push([
                 1,
-                numFactusol,
-                i,
-                articulo,
-                descripcion,
-                cantidad,
+                elNumFactusol,
+                index + 1,
+                elemento[0],
+                elemento[1],
+                elemento[4],
                 '',
                 '',
                 '',
-                precioArticulo,
-                total,
+                elemento[3],
+                elemento[2],
                 0,
                 '',
                 '',
@@ -806,8 +744,8 @@ export const generarArchivosXLSAccion = (objeto, numFactusol, centro, totalFactu
                 '',
                 '',
                 ''
-            ]);
-        };
+            ])
+        });
         exportarAExcel(dataLFA, 'LFA');
         dispatch({
             type: GENERAR_ARCHIVOS_EXITO
@@ -820,4 +758,346 @@ export const generarArchivosXLSAccion = (objeto, numFactusol, centro, totalFactu
             type: ERROR_DE_CARGA_CONFIGURACION
         })
     }
+}
+
+const actualizarCuadrante = async (datos) => {
+    try {
+        const losDatos = JSON.stringify(datos);
+        const formData = new FormData();
+        formData.append("objeto", 'cuadrantes');
+        formData.append("id", datos.id);
+        formData.append("datos", losDatos);
+        let apiUrl = rutaApi + "actualizar_lote.php";
+        await axios.post(apiUrl, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            }
+        });
+    } catch (err) {
+        console.error(err)
+    }
+}
+
+export const generarArchivosXLSLoteAccion = (numFactusol, arrayCuadrantes, laFirmaActualizacion) => (dispatch, getState) => {
+    dispatch({
+        type: PROCESANDO_LOTE
+    });
+    try {
+        const elNumFactusol = parseInt(numFactusol) + 1;
+        const dataFAC = [];
+        const dataLFA = [];
+        arrayCuadrantes.map(async (cuadranteIterado, index, arr) => {
+            let nombreCuadranteSplit = cuadranteIterado.nombre.split("-");
+            const formData1 = new FormData();
+            formData1.append("objeto", 'centros');
+            formData1.append("id", nombreCuadranteSplit[2]);
+            let apiUrl = rutaApi + "obtener_para_parsear.php";
+            const res1 = await axios.post(apiUrl, formData1, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                }
+            });
+            const objetoCentroParsear = {
+                nombre: res1.data.nombre,
+                codigo: res1.data.codigo,
+                domicilio: res1.data.domicilio,
+                codigoPostal: res1.data.codigo_postal,
+                poblacion: res1.data.poblacion,
+                provincia: res1.data.provincia,
+                nif: res1.data.nif,
+                formaPago: res1.data.forma_pago,
+                horario: JSON.parse(res1.data.horario)
+            };
+            let dateObj = new Date();
+            let month = dateObj.getUTCMonth() + 1;
+            let day = dateObj.getUTCDate();
+            let year = dateObj.getUTCFullYear();
+            const fechaHoy = day + "/" + month + "/" + year;
+            let totalFacturado;
+            let totalFacturado_M, totalFacturado_L, totalFacturado_C, totalFacturado_E, totalFacturado_I, totalFacturado_Z, totalFacturado_T, totalFacturado_P;
+            let sumatorioTotalFacturado = 0;
+            if (objetoCentroParsear.horario.computo === 1) {
+                totalFacturado = objetoCentroParsear.horario.mensualPactado;
+                totalFacturado_M = totalFacturado;
+            };
+            if (objetoCentroParsear.horario.computo === 2) {
+                if (cuadranteIterado.horas.L) {
+                    sumatorioTotalFacturado += (parseFloat(objetoCentroParsear.horario.precioHora_L) * cuadranteIterado.horas.L);
+                    totalFacturado_L = (parseFloat(objetoCentroParsear.horario.precioHora_L) * cuadranteIterado.horas.L);
+                };
+                if (cuadranteIterado.horas.C) {
+                    sumatorioTotalFacturado += (parseFloat(objetoCentroParsear.horario.precioHora_C) * cuadranteIterado.horas.C);
+                    totalFacturado_C = (parseFloat(objetoCentroParsear.horario.precioHora_C) * cuadranteIterado.horas.C);
+                };
+                if (cuadranteIterado.horas.E) {
+                    sumatorioTotalFacturado += (parseFloat(objetoCentroParsear.horario.precioHora_E) * cuadranteIterado.horas.E);
+                    totalFacturado_E = (parseFloat(objetoCentroParsear.horario.precioHora_E) * cuadranteIterado.horas.E);
+                };
+                if (cuadranteIterado.horas.I) {
+                    sumatorioTotalFacturado += (parseFloat(objetoCentroParsear.horario.precioHora_I) * cuadranteIterado.horas.I);
+                    totalFacturado_I = (parseFloat(objetoCentroParsear.horario.precioHora_I) * cuadranteIterado.horas.I);
+                };
+                if (cuadranteIterado.horas.Z) {
+                    sumatorioTotalFacturado += (parseFloat(objetoCentroParsear.horario.precioHora_Z) * cuadranteIterado.horas.Z);
+                    totalFacturado_Z = (parseFloat(objetoCentroParsear.horario.precioHora_Z) * cuadranteIterado.horas.Z);
+                };
+                if (cuadranteIterado.horas.T) {
+                    sumatorioTotalFacturado += (parseFloat(objetoCentroParsear.horario.precioHora_T) * cuadranteIterado.horas.T);
+                    totalFacturado_T = (parseFloat(objetoCentroParsear.horario.precioHora_T) * cuadranteIterado.horas.T);
+                };
+                if (cuadranteIterado.horas.P) {
+                    sumatorioTotalFacturado += (parseFloat(objetoCentroParsear.horario.precioHora_P) * cuadranteIterado.horas.P);
+                    totalFacturado_P = (parseFloat(objetoCentroParsear.horario.precioHora_P) * cuadranteIterado.horas.P);
+                };
+                totalFacturado = sumatorioTotalFacturado;
+            };
+            if (objetoCentroParsear.horario.computo === 3) {
+                if (objetoCentroParsear.horario.mensualPactado) {
+                    totalFacturado = objetoCentroParsear.horario.mensualPactado;
+                } else {
+                    if (cuadranteIterado.horas.L) {
+                        sumatorioTotalFacturado += (parseFloat(objetoCentroParsear.horario.precioHora_L) * cuadranteIterado.horas.L);
+                        totalFacturado_L = (parseFloat(objetoCentroParsear.horario.precioHora_L) * cuadranteIterado.horas.L);
+                    };
+                    if (cuadranteIterado.horas.C) {
+                        sumatorioTotalFacturado += (parseFloat(objetoCentroParsear.horario.precioHora_C) * cuadranteIterado.horas.C);
+                        totalFacturado_C = (parseFloat(objetoCentroParsear.horario.precioHora_C) * cuadranteIterado.horas.C);
+                    };
+                    if (cuadranteIterado.horas.E) {
+                        sumatorioTotalFacturado += (parseFloat(objetoCentroParsear.horario.precioHora_E) * cuadranteIterado.horas.E);
+                        totalFacturado_E = (parseFloat(objetoCentroParsear.horario.precioHora_E) * cuadranteIterado.horas.E);
+                    };
+                    if (cuadranteIterado.horas.I) {
+                        sumatorioTotalFacturado += (parseFloat(objetoCentroParsear.horario.precioHora_I) * cuadranteIterado.horas.I);
+                        totalFacturado_I = (parseFloat(objetoCentroParsear.horario.precioHora_I) * cuadranteIterado.horas.I);
+                    };
+                    if (cuadranteIterado.horas.Z) {
+                        sumatorioTotalFacturado += (parseFloat(objetoCentroParsear.horario.precioHora_Z) * cuadranteIterado.horas.Z);
+                        totalFacturado_Z = (parseFloat(objetoCentroParsear.horario.precioHora_Z) * cuadranteIterado.horas.Z);
+                    };
+                    if (cuadranteIterado.horas.T) {
+                        sumatorioTotalFacturado += (parseFloat(objetoCentroParsear.horario.precioHora_T) * cuadranteIterado.horas.T);
+                        totalFacturado_T = (parseFloat(objetoCentroParsear.horario.precioHora_T) * cuadranteIterado.horas.T);
+                    };
+                    if (cuadranteIterado.horas.P) {
+                        sumatorioTotalFacturado += (parseFloat(objetoCentroParsear.horario.precioHora_P) * cuadranteIterado.horas.P);
+                        totalFacturado_P = (parseFloat(objetoCentroParsear.horario.precioHora_P) * cuadranteIterado.horas.P);
+                    };
+                    totalFacturado = sumatorioTotalFacturado;
+                }
+            };
+            dataFAC.push([
+                1,
+                elNumFactusol + index,
+                '',
+                fechaHoy,
+                0,
+                '',
+                1,
+                '',
+                parseInt(objetoCentroParsear.codigo),
+                objetoCentroParsear.nombre,
+                objetoCentroParsear.domicilio,
+                objetoCentroParsear.poblacion,
+                objetoCentroParsear.codigoPostal,
+                objetoCentroParsear.provincia,
+                objetoCentroParsear.nif,
+                0,
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                totalFacturado,
+                objetoCentroParsear.formaPago,
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                'N',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                ''
+            ]);
+            let arrayElementos = [];
+            if (totalFacturado_M) {
+                arrayElementos.push([tipos[0].value, tipos[0].label, totalFacturado_M, objetoCentroParsear.horario.mensualPactado, 1]);
+            };
+            if (totalFacturado_L) {
+                arrayElementos.push([tipos[0].value, tipos[0].label, totalFacturado_L, objetoCentroParsear.horario.precioHora_L, cuadranteIterado.horas.L]);
+            };
+            if (totalFacturado_C) {
+                arrayElementos.push([tipos[1].value, tipos[1].label, totalFacturado_C, objetoCentroParsear.horario.precioHora_C, cuadranteIterado.horas.C]);
+            };
+            if (totalFacturado_E) {
+                arrayElementos.push([tipos[2].value, tipos[2].label, totalFacturado_E, objetoCentroParsear.horario.precioHora_E, cuadranteIterado.horas.E]);
+            };
+            if (totalFacturado_I) {
+                arrayElementos.push([tipos[3].value, tipos[3].label, totalFacturado_I, objetoCentroParsear.horario.precioHora_I, cuadranteIterado.horas.I]);
+            };
+            if (totalFacturado_Z) {
+                arrayElementos.push([tipos[4].value, tipos[4].label, totalFacturado_Z, objetoCentroParsear.horario.precioHora_Z, cuadranteIterado.horas.Z]);
+            };
+            if (totalFacturado_T) {
+                arrayElementos.push([tipos[5].value, tipos[5].label, totalFacturado_T, objetoCentroParsear.horario.precioHora_T, cuadranteIterado.horas.T]);
+            };
+            if (totalFacturado_P) {
+                arrayElementos.push([tipos[6].value, tipos[6].label, totalFacturado_P, objetoCentroParsear.horario.precioHora_P, cuadranteIterado.horas.P]);
+            };
+            arrayElementos.forEach((elemento, index2) => {
+                dataLFA.push([
+                    1,
+                    elNumFactusol + index,
+                    index2 + 1,
+                    elemento[0],
+                    elemento[1],
+                    elemento[4],
+                    '',
+                    '',
+                    '',
+                    elemento[3],
+                    elemento[2],
+                    0,
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    ''
+                ])
+            });
+            const cuadranteAGuardar = {
+                id: cuadranteIterado.id,
+                actualizacion: laFirmaActualizacion,
+                estado: 'facturado',
+                total: totalFacturado
+            };
+            actualizarCuadrante(cuadranteAGuardar);
+            dispatch({
+                type: ITERACION_XLS_EXITO,
+                payload: {
+                    elementoArray1: dataFAC,
+                    elementoArray2: dataLFA
+                }
+            });
+        });
+    } catch (error) {
+        dispatch({
+            type: ERROR_DE_CARGA_CONFIGURACION
+        })
+    }
+}
+
+export const finalizarArchivosXLSLoteAccion = (estado) => (dispatch, getState) => {
+    dispatch({
+        type: FINALIZANDO_LOTE,
+        payload: {
+            estado: estado
+        }
+    });
+}
+
+export const emitirArchivosXLSLoteAccion = (laDataFAC, laDataLFA ) => (dispatch, getState) => {     
+    exportarAExcel(laDataFAC[0], 'FAC');
+    exportarAExcel(laDataLFA[0], 'LFA');
+    dispatch({
+        type: GENERAR_ARCHIVOS_EXITO
+    });
+    dispatch({
+        type: RESETEA_EXITO_CONFIGURACION
+    });   
 }

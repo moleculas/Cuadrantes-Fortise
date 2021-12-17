@@ -545,7 +545,7 @@ const Nominas = (props) => {
         if (sumatorioHorasExtra > 0) {
             totalGeneral += ' + ' + sumatorioHorasExtra + ' horas extra';
         }
-        arrayInforme.push('Total general: ' + totalGeneral + ' -> ' + parseInt((sumatorioHorasNormal * objetoConfiguracion.precioHoraNormal) + (sumatorioHorasExtra * objetoConfiguracion.precioHoraExtra)) + ' €');
+        arrayInforme.push('Total general: ' + totalGeneral + ' -> ' + parseFloat((sumatorioHorasNormal * objetoConfiguracion.precioHoraNormal) + (sumatorioHorasExtra * objetoConfiguracion.precioHoraExtra)) + ' €');
         setArrayInformeLineas(arrayInforme);
     };
 

@@ -8,6 +8,7 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import MuiAlert from '@material-ui/lab/Alert';
 
 //importaciones acciones
 import { cambioEstadoInicioNominasAccion } from '../redux/nominasDucks';
@@ -21,12 +22,18 @@ import { obtenerObjetoPorIdAccion } from '../redux/appDucks';
 //estilos
 import Clases from "../clases";
 
+//snackbar y alert
+const Alert = (props) => {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+};
+
 const FaltantesEmitidos = (props) => {
 
     const classes = Clases();
     const dispatch = useDispatch();
     const nominasEmitidasArray = useSelector(store => store.variablesFaltantes.nominasEmitidasArray);
     const listadoTrabajadores = useSelector(store => store.variablesTrabajadores.arrayTrabajadores);
+    const numeroNominasEmitidas = useSelector(store => store.variablesFaltantes.numeroNominasEmitidas);
 
     //states    
 
@@ -89,6 +96,10 @@ const FaltantesEmitidos = (props) => {
                     >
                         <CircularProgress />
                     </Box>
+                ) : (numeroNominasEmitidas < 1 ? (
+                    <Box p={3} style={{ width: '100%', minHeight: props.prHeightContenedores, maxHeight: props.prHeightContenedores }}>
+                        <Alert severity="info">No hay nóminas emitidas por gestionar.</Alert>
+                    </Box>
                 ) : (
                     <Box
                         className={classes.scrollable}
@@ -101,7 +112,7 @@ const FaltantesEmitidos = (props) => {
                             ))}
                         </List>
                     </Box>
-                )}
+                ))}
             </Grid>
             {/* {console.log(checked)} */}
         </div>

@@ -81,7 +81,7 @@ export const obtenerCuadrantesPendientesAccion = (objeto, mes, arrayCentros) => 
                         contador: contadorPendientes
                     }
                 })
-            }           
+            }
         });
     } catch (error) {
         dispatch({
@@ -117,7 +117,14 @@ export const obtenerCuadrantesRegistradosFacturadosAccion = (objeto, mes, arrayC
                 dispatch({
                     type: OBTENER_CUADRANTE_REGISTRADO,
                     payload: {
-                        elementoArray: res.data,
+                        elementoArray: {
+                            id: res.data.id,
+                            nombre: res.data.nombre,
+                            actualizacion: res.data.actualizacion,
+                            estado: res.data.estado,
+                            total: res.data.total,
+                            horas: JSON.parse(res.data.horas)
+                        },
                         contador: contadorRegistrados
                     }
                 })
@@ -127,11 +134,18 @@ export const obtenerCuadrantesRegistradosFacturadosAccion = (objeto, mes, arrayC
                 dispatch({
                     type: OBTENER_CUADRANTE_FACTURADO,
                     payload: {
-                        elementoArray: res.data,
+                        elementoArray: {
+                            id: res.data.id,
+                            nombre: res.data.nombre,
+                            actualizacion: res.data.actualizacion,
+                            estado: res.data.estado,
+                            total: res.data.total,
+                            horas: JSON.parse(res.data.horas)
+                        },
                         contador: contadorFacturados
                     }
                 })
-            };
+            } 
         });
     } catch (error) {
         dispatch({

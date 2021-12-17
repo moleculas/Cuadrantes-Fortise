@@ -24,6 +24,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import MuiAlert from '@material-ui/lab/Alert';
 
 //importaciones acciones
 import { cambioEstadoInicioNominasAccion } from '../redux/nominasDucks';
@@ -36,6 +37,11 @@ import { obtenerObjetoPorIdAccion } from '../redux/appDucks';
 
 //estilos
 import Clases from "../clases";
+
+//snackbar y alert
+const Alert = (props) => {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+};
 
 const getHeightContenedoresGra = () => ((window.innerHeight) - 280) || ((document.documentElement.clientHeight) - 280) || ((document.body.clientHeight) - 280);
 
@@ -71,6 +77,7 @@ const FaltantesRegistrados = (props) => {
     const dispatch = useDispatch();
     const nominasRegistradasArray = useSelector(store => store.variablesFaltantes.nominasRegistradasArray);
     const listadoTrabajadores = useSelector(store => store.variablesTrabajadores.arrayTrabajadores);
+    const numeroNominasRegistradas = useSelector(store => store.variablesFaltantes.numeroNominasRegistradas);
 
     //states
 
@@ -149,7 +156,7 @@ const FaltantesRegistrados = (props) => {
     const selectAllChecked = () => {
         let object = {};
         for (let i = 0; i < nominasRegistradasArray.length; i++) {
-            object['checked' + nominasRegistradasArray[i]['id']] = true;
+            object['checked-' + nominasRegistradasArray[i]['id']] = true;
         }
         setChecked(object);
         setMarcarTodosVisible(false);
@@ -158,7 +165,7 @@ const FaltantesRegistrados = (props) => {
     const selectNoneChecked = () => {
         let object = {};
         for (let i = 0; i < nominasRegistradasArray.length; i++) {
-            object['checked' + nominasRegistradasArray[i]['id']] = false;
+            object['checked-' + nominasRegistradasArray[i]['id']] = false;
         }
         setChecked(object);
         setMarcarTodosVisible(true);
@@ -191,8 +198,8 @@ const FaltantesRegistrados = (props) => {
                 >
                     <Checkbox
                         edge="start"
-                        checked={checked['checked' + nomina.id] || false}
-                        name={'checked' + nomina.id}
+                        checked={checked['checked-' + nomina.id] || false}
+                        name={'checked-' + nomina.id}
                         onChange={handleChangeChecked}
                         style={{ marginTop: -3 }}
                     />
@@ -222,100 +229,104 @@ const FaltantesRegistrados = (props) => {
                 className={classes.rootPendientes}
                 style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra, width: props.prWidthContenedores + 10 }}
             >{props.prOpenLoading ? (
-                        <Box
-                            className={classes.centrado}
+                <Box
+                    className={classes.centrado}
+                >
+                    <CircularProgress />
+                </Box>
+            ) : (numeroNominasRegistradas < 1 ? (
+                <Box p={3} style={{ width: '100%', minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra }}>
+                    <Alert severity="info">No hay nóminas registradas por gestionar.</Alert>
+                </Box>
+            ) : (
+                <Fragment>
+                    <Accordion
+                        expanded={expandedAccordion === 'panelPendientes'}
+                        className={classes.suplente}
+                        style={{ marginTop: (heighCambio.accordion + 20), width: '100%', marginLeft: 25, marginRight: 15, marginBottom: -10 }}
+                        onChange={(e, expandedAccordion) => { handleCambioAccordionPendientes(expandedAccordion, 'panelPendientes') }}
+                    >
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon className={classes.blanc} />}
                         >
-                            <CircularProgress />
-                        </Box>
-                    ) : (
-                        <Fragment>
-                            <Accordion
-                                expanded={expandedAccordion === 'panelPendientes'}
-                                className={classes.suplente}
-                                style={{ marginTop: (heighCambio.accordion + 20), width: '100%', marginLeft: 25, marginRight: 15, marginBottom: -10 }}
-                                onChange={(e, expandedAccordion) => { handleCambioAccordionPendientes(expandedAccordion, 'panelPendientes') }}
-                            >
-                                <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon className={classes.blanc} />}
-                                >
-                                    <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>Procesar lote de nóminas registradas para emitir</Typography>
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                    <Grid container style={{ paddingTop: 5, paddingBottom: 0 }}>
-                                        <Grid item xs={5}>
-                                            {marcarTodosVisible ? (
-                                                <Chip
-                                                    variant='outlined'
-                                                    style={{ padding: 5, marginTop: 5 }}
-                                                    icon={<CheckBoxOutlinedIcon />}
-                                                    label="Seleccionar todas"
-                                                    clickable
-                                                    onClick={() => selectAllChecked()}
+                            <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>Procesar lote de nóminas registradas para emitir</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Grid container style={{ paddingTop: 5, paddingBottom: 0 }}>
+                                <Grid item xs={5}>
+                                    {marcarTodosVisible ? (
+                                        <Chip
+                                            variant='outlined'
+                                            style={{ padding: 5, marginTop: 5 }}
+                                            icon={<CheckBoxOutlinedIcon />}
+                                            label="Seleccionar todas"
+                                            clickable
+                                            onClick={() => selectAllChecked()}
 
-                                                />
-                                            ) : (
-                                                <Chip
-                                                    variant='outlined'
-                                                    style={{ padding: 5, marginTop: 5 }}
-                                                    icon={<CheckBoxOutlineBlankOutlinedIcon />}
-                                                    label="Desmarcar todas"
-                                                    clickable
-                                                    onClick={() => selectNoneChecked()}
-                                                />
-                                            )}
-                                        </Grid>
-                                        <Grid item xs={2}>
-                                            <FormControl
-                                                variant="outlined"
-                                                size="small"
-                                                style={{ marginRight: 8 }}
-                                            >
-                                                <InputLabel
-                                                    color='secondary'
-                                                >
-                                                    Núm.
-                                                </InputLabel>
-                                                <Tooltip title="Último nº de factura emitida en FACTUSOL" placement="top-start" arrow>
-                                                    <OutlinedInput
-                                                        disabled={retornaDisabledChecked()}
-                                                        fullWidth
-                                                        color='secondary'
-                                                        id="form-numero-factusol"
-                                                        // value={valuesFormEdicion.precioHora_P || ''}
-                                                        // onChange={handleChangeFormEdicion('precioHora_P')}
-                                                        labelWidth={70}
-                                                    />
-                                                </Tooltip>
-                                            </FormControl>
-                                        </Grid>
-                                        <Grid item xs={5}>
-                                            <Button
+                                        />
+                                    ) : (
+                                        <Chip
+                                            variant='outlined'
+                                            style={{ padding: 5, marginTop: 5 }}
+                                            icon={<CheckBoxOutlineBlankOutlinedIcon />}
+                                            label="Desmarcar todas"
+                                            clickable
+                                            onClick={() => selectNoneChecked()}
+                                        />
+                                    )}
+                                </Grid>
+                                <Grid item xs={2}>
+                                    <FormControl
+                                        variant="outlined"
+                                        size="small"
+                                        style={{ marginRight: 8 }}
+                                    >
+                                        <InputLabel
+                                            color='secondary'
+                                        >
+                                            Núm.
+                                        </InputLabel>
+                                        <Tooltip title="Último nº de factura emitida en FACTUSOL" placement="top-start" arrow>
+                                            <OutlinedInput
                                                 disabled={retornaDisabledChecked()}
                                                 fullWidth
-                                                variant="contained"
-                                                style={{ marginRight: 8, paddingTop: 7, paddingBottom: 7 }}
-                                                startIcon={<DynamicFeedIcon />}
-                                            //onClick={handleClickMenu}
-                                            >
-                                                Procesar lote {retornaCantidadChecked()}
-                                            </Button>
-                                        </Grid>
-                                    </Grid>
-                                </AccordionDetails>
-                            </Accordion>
-                            <Box
-                                className={classes.scrollable}
-                                style={{ width: props.prWidthContenedores, height: heighCambio.scroller, margin: 10 }}
-                            >
-                                <List dense={true}
-                                    style={{ padding: 15 }}>
-                                    {nominasRegistradasArray.map((nomina, index) => (
-                                        retornaNominaRegistrada(nomina, index)
-                                    ))}
-                                </List>
-                            </Box>
-                        </Fragment>
-                    )}
+                                                color='secondary'
+                                                id="form-numero-factusol"
+                                                // value={valuesFormEdicion.precioHora_P || ''}
+                                                // onChange={handleChangeFormEdicion('precioHora_P')}
+                                                labelWidth={70}
+                                            />
+                                        </Tooltip>
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={5}>
+                                    <Button
+                                        disabled={retornaDisabledChecked()}
+                                        fullWidth
+                                        variant="contained"
+                                        style={{ marginRight: 8, paddingTop: 7, paddingBottom: 7 }}
+                                        startIcon={<DynamicFeedIcon />}
+                                    //onClick={handleClickMenu}
+                                    >
+                                        Procesar lote {retornaCantidadChecked()}
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        </AccordionDetails>
+                    </Accordion>
+                    <Box
+                        className={classes.scrollable}
+                        style={{ width: props.prWidthContenedores, height: heighCambio.scroller, margin: 10 }}
+                    >
+                        <List dense={true}
+                            style={{ padding: 15 }}>
+                            {nominasRegistradasArray.map((nomina, index) => (
+                                retornaNominaRegistrada(nomina, index)
+                            ))}
+                        </List>
+                    </Box>
+                </Fragment>
+            ))}
             </Grid>
             {/* {console.log(nominasRegistradasArray)} */}
         </div>

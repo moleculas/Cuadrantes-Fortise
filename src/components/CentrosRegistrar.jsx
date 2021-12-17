@@ -2209,14 +2209,14 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                         const elHorarioIntervencionRegistradoRevisado = {
                             ...horarioIntervencionRegistroRevisado,
                             computo: valuesFormRegistro.computo,
-                            mensualPactado: parseInt(valuesFormRegistro.mensualPactado),
-                            precioHora_L: parseInt(valuesFormRegistro.precioHora_L),
-                            precioHora_C: parseInt(valuesFormRegistro.precioHora_C),
-                            precioHora_E: parseInt(valuesFormRegistro.precioHora_E),
-                            precioHora_I: parseInt(valuesFormRegistro.precioHora_I),
-                            precioHora_Z: parseInt(valuesFormRegistro.precioHora_Z),
-                            precioHora_T: parseInt(valuesFormRegistro.precioHora_T),
-                            precioHora_P: parseInt(valuesFormRegistro.precioHora_P),
+                            mensualPactado: parseFloat(valuesFormRegistro.mensualPactado),
+                            precioHora_L: parseFloat(valuesFormRegistro.precioHora_L),
+                            precioHora_C: parseFloat(valuesFormRegistro.precioHora_C),
+                            precioHora_E: parseFloat(valuesFormRegistro.precioHora_E),
+                            precioHora_I: parseFloat(valuesFormRegistro.precioHora_I),
+                            precioHora_Z: parseFloat(valuesFormRegistro.precioHora_Z),
+                            precioHora_T: parseFloat(valuesFormRegistro.precioHora_T),
+                            precioHora_P: parseFloat(valuesFormRegistro.precioHora_P),
                         }
                         //registramos
                         const centroAGuardar = {
