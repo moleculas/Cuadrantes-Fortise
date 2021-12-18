@@ -625,6 +625,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                         cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].lunesInicioRango) ||
                                         (tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
                                             cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                             !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -679,6 +680,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                     cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].lunesInicioRango) ||
                                     (tipoTrabajador === 'suplente' &&
+                                        cuadrante[posicionAnterior] &&
                                         cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                         !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -766,6 +768,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                         cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].martesInicioRango) ||
                                         (tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
                                             cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                             !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -820,6 +823,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                     cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].martesInicioRango) ||
                                     (tipoTrabajador === 'suplente' &&
+                                        cuadrante[posicionAnterior] &&
                                         cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                         !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -907,6 +911,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                         cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].miercolesInicioRango) ||
                                         (tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
                                             cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                             !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -961,6 +966,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                     cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].miercolesInicioRango) ||
                                     (tipoTrabajador === 'suplente' &&
+                                        cuadrante[posicionAnterior] &&
                                         cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                         !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -1048,6 +1054,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                         cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].juevesInicioRango) ||
                                         (tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
                                             cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                             !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -1102,6 +1109,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                     cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].juevesInicioRango) ||
                                     (tipoTrabajador === 'suplente' &&
+                                        cuadrante[posicionAnterior] &&
                                         cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                         !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -1189,6 +1197,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                         cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].viernesInicioRango) ||
                                         (tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
                                             cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                             !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -1243,6 +1252,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                     cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].viernesInicioRango) ||
                                     (tipoTrabajador === 'suplente' &&
+                                        cuadrante[posicionAnterior] &&
                                         cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                         !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -1330,6 +1340,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                         cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].sabadoInicioRango) ||
                                         (tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
                                             cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                             !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -1384,6 +1395,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                     cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].sabadoInicioRango) ||
                                     (tipoTrabajador === 'suplente' &&
+                                        cuadrante[posicionAnterior] &&
                                         cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                         !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -1471,6 +1483,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                         cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].domingoInicioRango) ||
                                         (tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
                                             cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                             !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -1525,6 +1538,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                     cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].domingoInicioRango) ||
                                     (tipoTrabajador === 'suplente' &&
+                                        cuadrante[posicionAnterior] &&
                                         cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                         !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -1623,6 +1637,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                         cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].lunesInicio1RangoDescanso) ||
                                         (tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
                                             cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                             !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -1683,6 +1698,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                     cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].lunesInicio1RangoDescanso) ||
                                     (tipoTrabajador === 'suplente' &&
+                                        cuadrante[posicionAnterior] &&
                                         cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                         !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -1780,6 +1796,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                         cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].martesInicio1RangoDescanso) ||
                                         (tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
                                             cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                             !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -1840,6 +1857,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                     cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].martesInicio1RangoDescanso) ||
                                     (tipoTrabajador === 'suplente' &&
+                                        cuadrante[posicionAnterior] &&
                                         cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                         !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -1937,6 +1955,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                         cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].miercolesInicio1RangoDescanso) ||
                                         (tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
                                             cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                             !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -1997,6 +2016,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                     cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].miercolesInicio1RangoDescanso) ||
                                     (tipoTrabajador === 'suplente' &&
+                                        cuadrante[posicionAnterior] &&
                                         cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                         !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -2094,6 +2114,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                         cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].juevesInicio1RangoDescanso) ||
                                         (tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
                                             cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                             !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -2154,6 +2175,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                     cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].juevesInicio1RangoDescanso) ||
                                     (tipoTrabajador === 'suplente' &&
+                                        cuadrante[posicionAnterior] &&
                                         cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                         !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -2251,6 +2273,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                         cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].viernesInicio1RangoDescanso) ||
                                         (tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
                                             cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                             !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -2311,6 +2334,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                     cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].viernesInicio1RangoDescanso) ||
                                     (tipoTrabajador === 'suplente' &&
+                                        cuadrante[posicionAnterior] &&
                                         cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                         !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -2408,6 +2432,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                         cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].sabadoInicio1RangoDescanso) ||
                                         (tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
                                             cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                             !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -2468,6 +2493,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                     cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].sabadoInicio1RangoDescanso) ||
                                     (tipoTrabajador === 'suplente' &&
+                                        cuadrante[posicionAnterior] &&
                                         cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                         !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -2565,6 +2591,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                         cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].domingoInicio1RangoDescanso) ||
                                         (tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
                                             cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                             !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -2625,6 +2652,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                     cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].domingoInicio1RangoDescanso) ||
                                     (tipoTrabajador === 'suplente' &&
+                                        cuadrante[posicionAnterior] &&
                                         cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                         !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -2718,6 +2746,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                         cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].lunesCantidad) ||
                                         (tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
                                             cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                             !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -2769,6 +2798,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                     cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].lunesCantidad) ||
                                     (tipoTrabajador === 'suplente' &&
+                                        cuadrante[posicionAnterior] &&
                                         cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                         !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -2851,6 +2881,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                         cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].martesCantidad) ||
                                         (tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
                                             cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                             !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -2902,6 +2933,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                     cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].martesCantidad) ||
                                     (tipoTrabajador === 'suplente' &&
+                                        cuadrante[posicionAnterior] &&
                                         cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                         !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -2984,6 +3016,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                         cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].miercolesCantidad) ||
                                         (tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
                                             cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                             !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -3035,6 +3068,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                     cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].miercolesCantidad) ||
                                     (tipoTrabajador === 'suplente' &&
+                                        cuadrante[posicionAnterior] &&
                                         cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                         !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -3117,6 +3151,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                         cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].juevesCantidad) ||
                                         (tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
                                             cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                             !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -3168,6 +3203,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                     cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].juevesCantidad) ||
                                     (tipoTrabajador === 'suplente' &&
+                                        cuadrante[posicionAnterior] &&
                                         cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                         !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -3250,6 +3286,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                         cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].viernesCantidad) ||
                                         (tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
                                             cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                             !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -3301,6 +3338,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                     cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].viernesCantidad) ||
                                     (tipoTrabajador === 'suplente' &&
+                                        cuadrante[posicionAnterior] &&
                                         cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                         !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -3383,6 +3421,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                         cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].sabadoCantidad) ||
                                         (tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
                                             cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                             !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -3434,6 +3473,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                     cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].sabadoCantidad) ||
                                     (tipoTrabajador === 'suplente' &&
+                                        cuadrante[posicionAnterior] &&
                                         cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                         !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -3516,6 +3556,7 @@ export const gestionaColumnaCuadranteInterior = (
                                         cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                         cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].domingoCantidad) ||
                                         (tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
                                             cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                             !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -3567,6 +3608,7 @@ export const gestionaColumnaCuadranteInterior = (
                                     cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
                                     cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].domingoCantidad) ||
                                     (tipoTrabajador === 'suplente' &&
+                                        cuadrante[posicionAnterior] &&
                                         cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                         !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {

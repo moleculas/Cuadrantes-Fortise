@@ -145,7 +145,7 @@ export const obtenerCuadrantesRegistradosFacturadosAccion = (objeto, mes, arrayC
                         contador: contadorFacturados
                     }
                 })
-            } 
+            }
         });
     } catch (error) {
         dispatch({

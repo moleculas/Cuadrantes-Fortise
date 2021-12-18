@@ -6796,3 +6796,326 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
             dh:,
 
         ]]
+
+        try {
+            let arrayCuadrantes = [];
+            arrayMeses.forEach(async (mesIterado, index, arr) => {
+                const nombreCuadrante = mesIterado;
+                const formData = new FormData();
+                formData.append("objeto", objeto);
+                formData.append("nombre", nombreCuadrante);
+                let apiUrl = rutaApi + "obtener_por_anyo.php";
+                const res = await axios.post(apiUrl, formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
+                });
+                console.log(res.data)
+                arrayCuadrantes.push(res.data);
+                let array = [];
+                let sumatorio = 0;
+                if (arrayCuadrantes.length > 0) {
+                    arrayCuadrantes.forEach((mes, index) => {
+                        if (mes.length > 0) {
+                            mes.forEach((mesInt, index) => {
+                                if (mesInt.total) {
+                                    sumatorio += parseFloat(mesInt.total);
+                                }
+                            });
+                            array.push({
+                                name: meses[index].substr(0, 3) + '.',
+                                Ingresos: sumatorio,
+                            });
+                            sumatorio = 0;
+                        } else {
+                            array.push({
+                                name: meses[index].substr(0, 3) + '.',
+                                Ingresos: 0,
+                            })
+                        }
+                    });
+                };
+                dispatch({
+                    type: OBTENER_CUADRANTES_POR_ANYO_GRAFICOS_EXITO,
+                    payload: {
+                        elementoArray: array,
+                    }
+                })
+            });
+        }
+        catch (error) {
+            dispatch({
+                type: ERROR_DE_CARGA_GRAFICOS_CUADRANTES
+            })
+        }
+
+        try {
+            let arrayNominas = [];
+            arrayMeses.forEach(async (mesIterado, index, arr) => {
+                const nombreNomina = mesIterado;
+                const formData = new FormData();
+                formData.append("objeto", objeto);
+                formData.append("nombre", nombreNomina);
+                let apiUrl = rutaApi + "obtener_por_anyo.php";
+                const res = await axios.post(apiUrl, formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
+                });
+                arrayNominas.push(res.data);
+                let array = [];
+                let sumatorio = 0;
+                if (arrayNominas.length > 0) {
+                    arrayNominas.forEach((mes, index) => {
+                        if (mes.length > 0) {
+                            mes.forEach((mesInt, index) => {
+                                if (mesInt.total) {
+                                    sumatorio += parseInt(mesInt.total);
+                                }
+                            });
+                            array.push({
+                                name: meses[index].substr(0, 3) + '.',
+                                Gastos: sumatorio,
+                            });
+                            sumatorio = 0;
+                        } else {
+                            array.push({
+                                name: meses[index].substr(0, 3) + '.',
+                                Gastos: 0,
+                            })
+                        }
+                    });
+                };
+                dispatch({
+                    type: OBTENER_NOMINAS_POR_ANYO_GRAFICOS_EXITO,
+                    payload: {
+                        elementoArray: array,
+                    }
+                })
+            });
+        }
+        catch (error) {
+            dispatch({
+                type: ERROR_DE_CARGA_GRAFICOS_NOMINAS
+            })
+        }
+
+        try {
+            let contadorPendientes = 0;
+            arrayCentros.forEach(async (centroIterado, index, arr) => {
+                const nombreCuadrante = mes + '-' + centroIterado.id;
+                const formData = new FormData();
+                formData.append("objeto", objeto);
+                formData.append("id", nombreCuadrante);
+                let apiUrl = rutaApi + "obtener_pendientes.php";
+                const res = await axios.post(apiUrl, formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
+                });
+                if (res.data === false) {
+                    contadorPendientes++;
+                    dispatch({
+                        type: OBTENER_CUADRANTE_PENDIENTE,
+                        payload: {
+                            elementoArray: centroIterado.id,
+                            contador: contadorPendientes
+                        }
+                    })
+                }
+            });
+        } catch (error) {
+            dispatch({
+                type: ERROR_DE_CARGA_CUADRANTES_PENDIENTES
+            });
+        } finally {
+            dispatch({
+                type: CLOSE_LOADING_PENDIENTES
+            });
+        }
+
+        try {
+            let contadorRegistrados = 0;
+            let contadorFacturados = 0;
+            arrayCentros.forEach(async (centroIterado, index, arr) => {
+                const nombreCuadrante = mes + '-' + centroIterado.id;
+                const formData = new FormData();
+                formData.append("objeto", objeto);
+                formData.append("id", nombreCuadrante);
+                let apiUrl = rutaApi + "obtener_pendientes.php";
+                const res = await axios.post(apiUrl, formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
+                });
+                if (res.data.estado === 'registrado') {
+                    contadorRegistrados++;
+                    dispatch({
+                        type: OBTENER_CUADRANTE_REGISTRADO,
+                        payload: {
+                            elementoArray: {
+                                id: res.data.id,
+                                nombre: res.data.nombre,
+                                actualizacion: res.data.actualizacion,
+                                estado: res.data.estado,
+                                total: res.data.total,
+                                horas: JSON.parse(res.data.horas)
+                            },
+                            contador: contadorRegistrados
+                        }
+                    })
+                };
+                if (res.data.estado === 'facturado') {
+                    contadorFacturados++;
+                    dispatch({
+                        type: OBTENER_CUADRANTE_FACTURADO,
+                        payload: {
+                            elementoArray: {
+                                id: res.data.id,
+                                nombre: res.data.nombre,
+                                actualizacion: res.data.actualizacion,
+                                estado: res.data.estado,
+                                total: res.data.total,
+                                horas: JSON.parse(res.data.horas)
+                            },
+                            contador: contadorFacturados
+                        }
+                    })
+                }
+            });
+        } catch (error) {
+            dispatch({
+                type: ERROR_DE_CARGA_CUADRANTES_PENDIENTES
+            });
+        } finally {
+            dispatch({
+                type: CLOSE_LOADING_PENDIENTES
+            });
+        }
+
+
+
+
+
+
+        export const obtenerCuadrantesPendientesAccion = (objeto, mes, arrayCentros) => (dispatch, getState) => {
+            dispatch({
+                type: LOADING_PENDIENTES
+            });
+            const formData = [];
+            const axiosArray = [];
+            const centrosIds = [];
+            arrayCentros.forEach((centroIterado, index, arr) => {
+                const nombreCuadrante = mes + '-' + centroIterado.id;
+                formData[index] = new FormData();
+                formData[index].append("objeto", objeto);
+                formData[index].append("id", nombreCuadrante);
+                let apiUrl = rutaApi + "obtener_pendientes.php";
+                let newPromise = axios.post(apiUrl, formData[index], {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
+                });
+                axiosArray.push(newPromise);
+                centrosIds.push(centroIterado.id);
+            });
+            let contadorPendientes = 0;
+            axios
+                .all(axiosArray)
+                .then(axios.spread((...responses) => {
+                    responses.forEach((res, index) => {
+                        if (res.data === false) {
+                            contadorPendientes++;
+                            dispatch({
+                                type: OBTENER_CUADRANTE_PENDIENTE,
+                                payload: {
+                                    elementoArray: centrosIds[index],
+                                    contador: contadorPendientes
+                                }
+                            })
+                        }
+                    })
+                    //finished all queries
+                    dispatch({
+                        type: CLOSE_LOADING_PENDIENTES
+                    });
+                }))
+                .catch(errors => {
+                    dispatch({
+                        type: ERROR_DE_CARGA_CUADRANTES_PENDIENTES
+                    })
+                });
+        }
+        
+        export const obtenerCuadrantesRegistradosFacturadosAccion = (objeto, mes, arrayCentros) => (dispatch, getState) => {
+            dispatch({
+                type: LOADING_PENDIENTES
+            });
+            const formData = [];
+            const axiosArray = [];
+            const centrosIds = [];
+            arrayCentros.forEach((centroIterado, index, arr) => {
+                const nombreCuadrante = mes + '-' + centroIterado.id;
+                formData[index] = new FormData();
+                formData[index].append("objeto", objeto);
+                formData[index].append("id", nombreCuadrante);
+                let apiUrl = rutaApi + "obtener_pendientes.php";
+                let newPromise = axios.post(apiUrl, formData[index], {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
+                });
+                axiosArray.push(newPromise);
+                centrosIds.push(centroIterado.id);
+            });
+            let contadorRegistrados = 0;
+            let contadorFacturados = 0;
+            axios
+                .all(axiosArray)
+                .then(axios.spread((...responses) => {
+                    responses.forEach((res, index) => {
+                        if (res.data.estado === 'registrado') {
+                            contadorRegistrados++;
+                            dispatch({
+                                type: OBTENER_CUADRANTE_REGISTRADO,
+                                payload: {
+                                    elementoArray: {
+                                        id: res.data.id,
+                                        nombre: res.data.nombre,
+                                        actualizacion: res.data.actualizacion,
+                                        estado: res.data.estado,
+                                        total: res.data.total,
+                                        horas: JSON.parse(res.data.horas)
+                                    },
+                                    contador: contadorRegistrados
+                                }
+                            })
+                        };
+                        if (res.data.estado === 'facturado') {
+                            contadorFacturados++;
+                            dispatch({
+                                type: OBTENER_CUADRANTE_FACTURADO,
+                                payload: {
+                                    elementoArray: {
+                                        id: res.data.id,
+                                        nombre: res.data.nombre,
+                                        actualizacion: res.data.actualizacion,
+                                        estado: res.data.estado,
+                                        total: res.data.total,
+                                        horas: JSON.parse(res.data.horas)
+                                    },
+                                    contador: contadorFacturados
+                                }
+                            })
+                        }
+                    })
+                    //finished all queries
+                    dispatch({
+                        type: CLOSE_LOADING_PENDIENTES
+                    });
+                }))
+                .catch(errors => {
+                    dispatch({
+                        type: ERROR_DE_CARGA_CUADRANTES_PENDIENTES
+                    })
+          

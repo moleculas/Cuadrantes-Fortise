@@ -15,7 +15,7 @@ const estilos = makeStyles(theme => ({
         width: 200,
     },
     toolbar: theme.mixins.toolbar
-}))
+}), {index: 1})
 
 const Cajon = (props) => {
 

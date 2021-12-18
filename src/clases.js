@@ -572,6 +572,6 @@ const Clases = makeStyles((theme) => ({
         paddingTop: 8,
         paddingLeft: 12,       
     }
-}));
+}), {index: 1});
 
 export default Clases;

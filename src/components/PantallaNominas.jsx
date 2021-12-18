@@ -177,7 +177,7 @@ const PantallaNominas = () => {
                                     <Tab label={'Pendientes'} {...a11yProps(0)} style={{ paddingBottom: 10 }}/>
                                 </Tooltip>
                                 <Tooltip title={'Nóminas del mes de ' + monthLet + ' registradas'} placement="top-start" arrow>
-                                    <Tab label={'Registradas'} {...a11yProps(1)} v/>
+                                    <Tab label={'Registradas'} {...a11yProps(1)} style={{ paddingBottom: 10 }}/>
                                 </Tooltip>
                                 <Tooltip title={'Nóminas del mes de ' + monthLet + ' emitidas'} placement="top-start" arrow>
                                     <Tab label={'Emitidas'} {...a11yProps(2)} style={{ paddingBottom: 10 }}/>

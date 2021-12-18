@@ -55,121 +55,127 @@ export default function graficosReducer(state = dataInicial, action) {
 
 //acciones
 export const obtenerCuadrantesPorAnyoAccion = (objeto) => (dispatch, getState) => {
-    const d = new Date();
-    const year = d.getFullYear().toString();
-    const arrayMeses = [year + '-1-', year + '-2-', year + '-3-', year + '-4-', year + '-5-', year + '-6-', year + '-7-', year + '-8-', year + '-9-', year + '-10-', year + '-11-', year + '-12-'];
     dispatch({
         type: LOADING_GRAFICOS
     });
-    try {
-        let arrayCuadrantes = [];
-        arrayMeses.forEach(async (mesIterado, index, arr) => {
-            const nombreCuadrante = mesIterado;
-            const formData = new FormData();
-            formData.append("objeto", objeto);
-            formData.append("nombre", nombreCuadrante);
-            let apiUrl = rutaApi + "obtener_por_anyo.php";
-            const res = await axios.post(apiUrl, formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                }
-            });
-            arrayCuadrantes.push(res.data);
+    const d = new Date();
+    const year = d.getFullYear().toString();
+    const arrayMeses = [year + '-1-', year + '-2-', year + '-3-', year + '-4-', year + '-5-', year + '-6-', year + '-7-', year + '-8-', year + '-9-', year + '-10-', year + '-11-', year + '-12-'];
+    let apiUrl = rutaApi + "obtener_por_anyo.php";
+    const formData = [];
+    const axiosArray = [];
+    const arrayCuadrantes = [];
+    for (let i = 0; i < arrayMeses.length; i++) {
+        formData[i] = new FormData();
+        formData[i].append("objeto", objeto);
+        formData[i].append("nombre", arrayMeses[i]);
+        let newPromise = axios.post(apiUrl, formData[i], {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            }
+        });
+        axiosArray.push(newPromise);
+    };
+    axios
+        .all(axiosArray)
+        .then(axios.spread((...responses) => {
+            responses.forEach(res => arrayCuadrantes.push(res.data))
+            //finished all queries
             let array = [];
             let sumatorio = 0;
-            if (arrayCuadrantes.length > 0) {
-                arrayCuadrantes.forEach((mes, index) => {
-                    if (mes.length > 0) {
-                        mes.forEach((mesInt, index) => {
-                            if (mesInt.total) {
-                                sumatorio += parseFloat(mesInt.total);
-                            }
-                        });
-                        array.push({
-                            name: meses[index].substr(0, 3) + '.',
-                            Ingresos: sumatorio,
-                        });
-                        sumatorio = 0;
-                    } else {
-                        array.push({
-                            name: meses[index].substr(0, 3) + '.',
-                            Ingresos: 0,
-                        })
-                    }
-                });
-            };
+            arrayCuadrantes.forEach((mes, index) => {
+                if (mes.length > 0) {
+                    mes.forEach((mesInt, index) => {
+                        if (mesInt.total) {
+                            sumatorio += parseFloat(mesInt.total);
+                        }
+                    });
+                    array.push({
+                        name: meses[index].substr(0, 3) + '.',
+                        Ingresos: sumatorio,
+                    });
+                    sumatorio = 0;
+                } else {
+                    array.push({
+                        name: meses[index].substr(0, 3) + '.',
+                        Ingresos: 0,
+                    })
+                }
+            });
             dispatch({
                 type: OBTENER_CUADRANTES_POR_ANYO_GRAFICOS_EXITO,
                 payload: {
                     elementoArray: array,
                 }
             })
+        }))
+        .catch(errors => {
+            dispatch({
+                type: ERROR_DE_CARGA_GRAFICOS_CUADRANTES
+            })
         });
-    }
-    catch (error) {
-        dispatch({
-            type: ERROR_DE_CARGA_GRAFICOS_CUADRANTES
-        })
-    }
 }
 
 export const obtenerNominasPorAnyoAccion = (objeto) => (dispatch, getState) => {
-    const d = new Date();
-    const year = d.getFullYear().toString();
-    const arrayMeses = [year + '-1-', year + '-2-', year + '-3-', year + '-4-', year + '-5-', year + '-6-', year + '-7-', year + '-8-', year + '-9-', year + '-10-', year + '-11-', year + '-12-'];
     dispatch({
         type: LOADING_GRAFICOS
     });
-    try {
-        let arrayNominas = [];
-        arrayMeses.forEach(async (mesIterado, index, arr) => {
-            const nombreNomina = mesIterado;
-            const formData = new FormData();
-            formData.append("objeto", objeto);
-            formData.append("nombre", nombreNomina);
-            let apiUrl = rutaApi + "obtener_por_anyo.php";
-            const res = await axios.post(apiUrl, formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                }
-            });
-            arrayNominas.push(res.data);
+    const d = new Date();
+    const year = d.getFullYear().toString();
+    const arrayMeses = [year + '-1-', year + '-2-', year + '-3-', year + '-4-', year + '-5-', year + '-6-', year + '-7-', year + '-8-', year + '-9-', year + '-10-', year + '-11-', year + '-12-'];
+    let apiUrl = rutaApi + "obtener_por_anyo.php";
+    const formData = [];
+    const axiosArray = [];
+    const arrayNominas = [];
+    for (let i = 0; i < arrayMeses.length; i++) {
+        formData[i] = new FormData();
+        formData[i].append("objeto", objeto);
+        formData[i].append("nombre", arrayMeses[i]);
+        let newPromise = axios.post(apiUrl, formData[i], {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            }
+        });
+        axiosArray.push(newPromise);
+    };
+    axios
+        .all(axiosArray)
+        .then(axios.spread((...responses) => {
+            responses.forEach(res => arrayNominas.push(res.data))
+            //finished all queries
             let array = [];
             let sumatorio = 0;
-            if (arrayNominas.length > 0) {
-                arrayNominas.forEach((mes, index) => {
-                    if (mes.length > 0) {
-                        mes.forEach((mesInt, index) => {
-                            if (mesInt.total) {
-                                sumatorio += parseInt(mesInt.total);
-                            }
-                        });
-                        array.push({
-                            name: meses[index].substr(0, 3) + '.',
-                            Gastos: sumatorio,
-                        });
-                        sumatorio = 0;
-                    } else {
-                        array.push({
-                            name: meses[index].substr(0, 3) + '.',
-                            Gastos: 0,
-                        })
-                    }
-                });
-            };
+            arrayNominas.forEach((mes, index) => {
+                if (mes.length > 0) {
+                    mes.forEach((mesInt, index) => {
+                        if (mesInt.total) {
+                            sumatorio += parseFloat(mesInt.total);
+                        }
+                    });
+                    array.push({
+                        name: meses[index].substr(0, 3) + '.',
+                        Gastos: sumatorio,
+                    });
+                    sumatorio = 0;
+                } else {
+                    array.push({
+                        name: meses[index].substr(0, 3) + '.',
+                        Gastos: 0,
+                    })
+                }
+            });
             dispatch({
                 type: OBTENER_NOMINAS_POR_ANYO_GRAFICOS_EXITO,
                 payload: {
                     elementoArray: array,
                 }
             })
+        }))
+        .catch(errors => {
+            dispatch({
+                type: ERROR_DE_CARGA_GRAFICOS_NOMINAS
+            })
         });
-    }
-    catch (error) {
-        dispatch({
-            type: ERROR_DE_CARGA_GRAFICOS_NOMINAS
-        })
-    }
 }
 
 export const venimosDeGraficosCuadrantesAccion = (estado) => (dispatch, getState) => {

@@ -33,7 +33,7 @@ const estilos = makeStyles((theme) => ({
         marginBottom: '10px',
     },
 
-}));
+}), {index: 1});
 
 //snackbar y alert
 const Alert = (props) => {

@@ -48,7 +48,7 @@ const useStyle = makeStyles((theme) => ({
         },
     }
 
-}));
+}), {index: 1});
 
 const Navbar = (props) => {
 
