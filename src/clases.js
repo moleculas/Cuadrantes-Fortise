@@ -480,7 +480,7 @@ const Clases = makeStyles((theme) => ({
     small: {
         width: theme.spacing(4),
         height: theme.spacing(4),
-    },
+    },    
     small2: {
         width: theme.spacing(2.75),
         height: theme.spacing(2.75),
@@ -549,6 +549,28 @@ const Clases = makeStyles((theme) => ({
     },
     colorText:{
         color: 'rgba(0, 0, 0, 0.54)'
+    },
+    small3: {
+        width: theme.spacing(3.75),
+        height: theme.spacing(3.75),
+    },
+    tabsStl: {
+        minHeight: 40, 
+        maxHeight: 40
+    },
+    boxStl: {
+        minHeight: 40, 
+        maxHeight: 40,
+        paddingTop: 10,
+        paddingLeft: 10,
+        paddingBottom: 10, 
+        paddingRight: 8,
+    },
+    boxStl2: {
+        minHeight: 40, 
+        maxHeight: 40,
+        paddingTop: 8,
+        paddingLeft: 12,       
     }
 }));
 

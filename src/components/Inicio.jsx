@@ -38,8 +38,8 @@ import { obtenerObjetoPorIdAccion } from '../redux/appDucks';
 
 const meses = Constantes.MESES;
 
-const getHeightContenedoresPeq = () => ((window.innerHeight / 2) - 120) || ((document.documentElement.clientHeight / 2) - 120) || ((document.body.clientHeight / 2) - 120);
-const getHeightContenedoresGra = () => ((window.innerHeight) - 175) || ((document.documentElement.clientHeight) - 175) || ((document.body.clientHeight) - 175);
+const getHeightContenedoresPeq = () => ((window.innerHeight / 2) - 107) || ((document.documentElement.clientHeight / 2) - 107) || ((document.body.clientHeight / 2) - 107);
+const getHeightContenedoresGra = () => ((window.innerHeight) - 155) || ((document.documentElement.clientHeight) - 155) || ((document.body.clientHeight) - 155);
 const getWidthContenedores = () => ((window.innerWidth - 300) / 2) || ((document.documentElement.clientWidth - 300) / 2) || ((document.body.clientWidth - 300) / 2);
 
 //tabs
@@ -250,19 +250,18 @@ const Inicio = (props) => {
                 direction="row"
                 justifycontent="flex-start"
                 alignItems="flex-start"
-                style={{ padding: 10 }}
             >
                 <Grid item xs={6}>
                     <Grid style={{ padding: 8 }}>
                         <AppBar position="static"
                             style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
                         >
-                            <Tabs value={valueTab} onChange={handleChangeTab}>
-                                <Tab label="Centros" {...a11yProps(0)} />
-                                <Tab label="Trabajadores" {...a11yProps(1)} />
+                            <Tabs value={valueTab} onChange={handleChangeTab} className={classes.tabsStl}>
+                                <Tab label="Centros" {...a11yProps(0)} style={{paddingBottom: 10}}/>
+                                <Tab label="Trabajadores" {...a11yProps(1)} style={{paddingBottom: 10}} />
                             </Tabs>
                             <Avatar
-                                className={clsx(classes.small, classes.secLight)}
+                                className={clsx(classes.small3, classes.secLight)}
                                 style={{ marginRight: 8 }}
                             >
                                 <Typography variant='body2'>{valueTab === 0 ? listadoCentros.length : listadoTrabajadores.length}</Typography>
@@ -346,12 +345,11 @@ const Inicio = (props) => {
                 </Grid>
                 <Grid item xs={6}>
                     <Grid className={classes.mb20}>
-                        <Box
-                            p={1.6}
+                        <Box                            
                             m={1}
                             color="primary.contrastText"
                             bgcolor="primary.main"
-                            className={classes.sombraBox}
+                            className={clsx(classes.sombraBox, classes.boxStl)}
                         >
                             <Typography variant="body2">Cómputo anual de ingresos vs gastos</Typography>
                         </Box>
@@ -364,11 +362,10 @@ const Inicio = (props) => {
                     </Grid>
                     <Grid>
                         <Box
-                            p={1.6}
-                            m={1}
-                            color="primary.contrastText"
-                            bgcolor="primary.main"
-                            className={classes.sombraBox}
+                           m={1}
+                           color="primary.contrastText"
+                           bgcolor="primary.main"
+                           className={clsx(classes.sombraBox, classes.boxStl)}
                         >
                             <Typography variant="body2">Últimas intervenciones en la base de datos</Typography>
                         </Box>

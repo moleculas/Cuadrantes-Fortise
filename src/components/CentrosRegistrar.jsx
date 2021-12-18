@@ -2500,11 +2500,10 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     <Grid item lg={4} sm={6} xs={12}>
                         <Box>
                             <Box
-                                p={1.5}
                                 m={0.5}
                                 bgcolor="secondary.light"
                                 color="secondary.contrastText"
-                                className={classes.mb25}
+                                className={clsx(classes.boxStl2, classes.mb20)}
                             >
                                 Datos generales
                             </Box>
@@ -2686,11 +2685,10 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                 </Grid>
                             </Grid>
                             <Box
-                                p={1.5}
                                 m={0.5}
                                 bgcolor="secondary.light"
                                 color="secondary.contrastText"
-                                className={classes.mb25}
+                                className={clsx(classes.boxStl2, classes.mb20)}
                             >
                                 Trabajadores
                             </Box>
@@ -2723,11 +2721,10 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     </Grid>
                     <Grid item lg={8} sm={6} xs={12}>
                         <Box
-                            p={1.5}
                             m={0.5}
                             bgcolor="secondary.light"
                             color="secondary.contrastText"
-                            className={classes.mb25}
+                            className={clsx(classes.boxStl2, classes.mb20)}
                         >
                             Horario de intervención
                         </Box>
@@ -2788,11 +2785,10 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                     </Select>
                                 </FormControl>
                                 <Box
-                                    p={1.5}
-                                    m={0.5}
-                                    bgcolor="secondary.light"
-                                    color="secondary.contrastText"
-                                    className={classes.mb25}
+                                     m={0.5}
+                                     bgcolor="secondary.light"
+                                     color="secondary.contrastText"
+                                     className={clsx(classes.boxStl2, classes.mb20)}
                                 >
                                     Cómputo de horas
                                 </Box>
@@ -2955,11 +2951,10 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                     </Fragment>
                                 ) : null}
                                 <Box
-                                    p={1.5}
                                     m={0.5}
                                     bgcolor="secondary.light"
                                     color="secondary.contrastText"
-                                    className={clsx(classes.mb25, classes.mt15)}
+                                    className={clsx(classes.boxStl2, classes.mb20, classes.mt15)}
                                 >
                                     Forma de pago
                                 </Box>

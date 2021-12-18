@@ -32,8 +32,8 @@ import { vaciarDatosPendientesAccion } from '../redux/pendientesDucks';
 import { finalizarArchivosXLSLoteAccion } from '../redux/appDucks';
 import { forzarRecargaGraficosCuadrantesAccion } from '../redux/graficosDucks';
 
-const getHeightContenedoresPeq = () => ((window.innerHeight / 2) - 168) || ((document.documentElement.clientHeight / 2) - 168) || ((document.body.clientHeight / 2) - 168);
-const getHeightContenedoresGra = () => ((window.innerHeight) - 272) || ((document.documentElement.clientHeight) - 272) || ((document.body.clientHeight) - 272);
+const getHeightContenedoresPeq = () => ((window.innerHeight / 2) - 162) || ((document.documentElement.clientHeight / 2) - 162) || ((document.body.clientHeight / 2) - 162);
+const getHeightContenedoresGra = () => ((window.innerHeight) - 264) || ((document.documentElement.clientHeight) - 264) || ((document.body.clientHeight) - 264);
 const getWidthContenedores = () => ((window.innerWidth - 300) / 2) || ((document.documentElement.clientWidth - 300) / 2) || ((document.body.clientWidth - 300) / 2);
 
 //tabs
@@ -178,19 +178,19 @@ const PantallaCuadrantes = () => {
                             style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
                             color="secondary"
                         >
-                            <Tabs value={valueTab} onChange={handleChangeTab}>
+                            <Tabs value={valueTab} onChange={handleChangeTab} className={classes.tabsStl}>
                                 <Tooltip title={'Cuadrantes del mes de ' + monthLet + ' pendientes de gestionar'} placement="top-start" arrow>
-                                    <Tab label={'Pendientes'} {...a11yProps(0)} />
+                                    <Tab label={'Pendientes'} {...a11yProps(0)} style={{ paddingBottom: 10 }} />
                                 </Tooltip>
                                 <Tooltip title={'Cuadrantes del mes de ' + monthLet + ' registrados'} placement="top-start" arrow>
-                                    <Tab label={'Registrados'} {...a11yProps(1)} />
+                                    <Tab label={'Registrados'} {...a11yProps(1)} style={{ paddingBottom: 10 }} />
                                 </Tooltip>
                                 <Tooltip title={'Cuadrantes del mes de ' + monthLet + ' facturados'} placement="top-start" arrow>
-                                    <Tab label={'Facturados'} {...a11yProps(2)} />
+                                    <Tab label={'Facturados'} {...a11yProps(2)} style={{ paddingBottom: 10 }} />
                                 </Tooltip>
                             </Tabs>
                             <Avatar
-                                className={clsx(classes.small, valueTab === 0 ? classes.red : valueTab === 1 ? classes.orange : classes.green)}
+                                className={clsx(classes.small3, valueTab === 0 ? classes.red : valueTab === 1 ? classes.orange : classes.green)}
                                 style={{ marginRight: 8 }}
                             >
                                 <Typography variant='body2'>{
@@ -267,11 +267,10 @@ const PantallaCuadrantes = () => {
                 <Grid item xs={6}>
                     <Grid className={classes.mb20}>
                         <Box
-                            p={1.6}
                             m={1}
                             color="secondary.contrastText"
                             bgcolor="secondary.main"
-                            className={classes.sombraBox}
+                            className={clsx(classes.sombraBox, classes.boxStl)}
                         >
                             <Typography variant="body2">Cómputo de ingresos anual</Typography>
                         </Box>
@@ -284,19 +283,18 @@ const PantallaCuadrantes = () => {
                     </Grid>
                     <Grid>
                         <Box
-                            p={1.6}
                             m={1}
                             color="secondary.contrastText"
                             bgcolor="secondary.main"
-                            className={classes.sombraBox}
-                            style={{ maxHeight: 45, minHeight: 45, display: 'flex', flexDirection: 'row', justifycontent: 'space-between', alignItems: 'center' }}
+                            className={clsx(classes.sombraBox, classes.boxStl)}
+                            style={{ display: 'flex', flexDirection: 'row', justifycontent: 'space-between', alignItems: 'center' }}
                         >
                             <Grid item xs={11}>
                                 <Typography variant="body2">Trabajadores de baja</Typography>
                             </Grid>
                             <Grid item xs={1} className={classes.alignRight}>
                                 <Avatar
-                                    className={clsx(classes.small, listadoTrabajadoresBaja.length === 0 ? classes.green : classes.red)}
+                                    className={clsx(classes.small3, listadoTrabajadoresBaja.length === 0 ? classes.green : classes.red)}
                                 >
                                     <Typography variant='body2'>{listadoTrabajadoresBaja.length}</Typography>
                                 </Avatar>

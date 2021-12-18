@@ -43,7 +43,7 @@ import { cierraObjetoDialogAccion } from '../redux/appDucks';
 import { obtenerConfiguracionAccion } from '../redux/appDucks';
 import { actualizarConfiguracionAccion } from '../redux/appDucks';
 
-const getHeightScrollable = () => (window.innerHeight - 220) || (document.documentElement.clientHeight - 220) || (document.body.clientHeight - 220);
+const getHeightScrollable = () => (window.innerHeight - 200) || (document.documentElement.clientHeight - 200) || (document.body.clientHeight - 200);
 
 //menu
 const StyledMenu = withStyles({
@@ -143,6 +143,10 @@ const Configuracion = (props) => {
             props.history.push('/login')
         }
     }, [logged, props.history]);
+
+    useEffect(() => {
+        document.body.classList.add(classes.sinScroll);
+    }, []);
 
     useEffect(() => {
         dispatch(onEstemAccion('configuracion'));
@@ -249,20 +253,21 @@ const Configuracion = (props) => {
         if (prop === "bic" || prop === "nombreBanco") {
             let objetoCuenta = { ...valuesFormConfiguracion.cuenta1, [prop]: e.target.value };
             setValuesFormConfiguracion({ ...valuesFormConfiguracion, cuenta1: objetoCuenta });
-        };       
-        if (prop === "iban") {           
-            const elIban = e.target.value;            
+        };
+        if (prop === "iban") {
+            const elIban = e.target.value;
             const decEntidad = elIban.substr(4, 4);
             const decOficina = elIban.substr(8, 4);
             const decDigitosControl = elIban.substr(12, 2);
             const decNumeroCuenta = elIban.substr(14, 10);
-            let objetoCuenta = { ...valuesFormConfiguracion.cuenta1, 
+            let objetoCuenta = {
+                ...valuesFormConfiguracion.cuenta1,
                 [prop]: e.target.value,
                 entidad: decEntidad,
                 oficina: decOficina,
                 digitosControl: decDigitosControl,
                 numeroCuenta: decNumeroCuenta
-            };           
+            };
             setValuesFormConfiguracion({ ...valuesFormConfiguracion, cuenta1: objetoCuenta });
         };
         dispatch(activarDesactivarAccion(false));
@@ -302,7 +307,7 @@ const Configuracion = (props) => {
             setOpenSnack(true);
             return;
         };
-        if (valuesFormConfiguracion.cuenta1.iban.length !==24) {
+        if (valuesFormConfiguracion.cuenta1.iban.length !== 24) {
             setAlert({
                 mensaje: "El formato del IBAN es incorrecto.",
                 tipo: 'error'
@@ -342,7 +347,7 @@ const Configuracion = (props) => {
                                         startIcon={<SettingsIcon />}
                                         onClick={handleClickMenu}
                                     >
-                                        Configuración general
+                                        Configuración
                                     </Button>
                                     <StyledMenu
                                         id="customized-menu"
@@ -358,7 +363,7 @@ const Configuracion = (props) => {
                                             <ListItemIcon>
                                                 <SaveIcon fontSize="small" />
                                             </ListItemIcon>
-                                            <ListItemText primary="Actualizar Configuración" />
+                                            <ListItemText primary="Actualizar" />
                                         </MenuItem>
                                     </StyledMenu>
                                 </FormControl>
@@ -371,15 +376,15 @@ const Configuracion = (props) => {
                     >
                         <div className={classes.root2} >
                             <AppBar position="static">
-                                <Tabs value={valueTab} onChange={handleChangeTab}>
+                                <Tabs value={valueTab} onChange={handleChangeTab} className={classes.tabsStl}>
                                     <Tooltip title="Modificar los precios/hora establecidos" placement="top-end" arrow>
-                                        <Tab label="Precios" {...a11yProps(0)} />
+                                        <Tab label="Precios" {...a11yProps(0)} style={{ paddingBottom: 10 }} />
                                     </Tooltip>
                                     <Tooltip title="Modificar mensajes predeterminados en mails" placement="top-end" arrow>
-                                        <Tab label="Plantillas mails" {...a11yProps(1)} />
+                                        <Tab label="Plantillas mails" {...a11yProps(1)} style={{ paddingBottom: 10 }} />
                                     </Tooltip>
                                     <Tooltip title="Modificar datos bancarios" placement="top-end" arrow>
-                                        <Tab label="Datos bancarios" {...a11yProps(2)} />
+                                        <Tab label="Datos bancarios" {...a11yProps(2)} style={{ paddingBottom: 10 }} />
                                     </Tooltip>
                                 </Tabs>
                             </AppBar>
@@ -394,11 +399,10 @@ const Configuracion = (props) => {
                                     <Grid item lg={4} sm={4} xs={12}>
                                         <Box>
                                             <Box
-                                                p={1.5}
                                                 m={0.5}
                                                 bgcolor="secondary.light"
                                                 color="secondary.contrastText"
-                                                className={classes.mb25}
+                                                className={clsx(classes.boxStl2, classes.mb20)}
                                             >
                                                 Configuración precios/hora trabajadores
                                             </Box>
@@ -449,11 +453,10 @@ const Configuracion = (props) => {
                                     <Grid item lg={4} sm={4} xs={12}>
                                         <Box>
                                             <Box
-                                                p={1.5}
                                                 m={0.5}
                                                 bgcolor="secondary.light"
                                                 color="secondary.contrastText"
-                                                className={classes.mb25}
+                                                className={clsx(classes.boxStl2, classes.mb20)}
                                             >
                                                 Configuración mensajes predeterminados mails
                                             </Box>
@@ -490,11 +493,10 @@ const Configuracion = (props) => {
                                     <Grid item lg={4} sm={4} xs={12}>
                                         <Box>
                                             <Box
-                                                p={1.5}
                                                 m={0.5}
                                                 bgcolor="secondary.light"
                                                 color="secondary.contrastText"
-                                                className={classes.mb25}
+                                                className={clsx(classes.boxStl2, classes.mb20)}
                                             >
                                                 Datos bancarios
                                             </Box>
@@ -518,7 +520,7 @@ const Configuracion = (props) => {
                                                     onChange={handleChangeFormConfiguracion('nombreBanco')}
                                                     labelWidth={135}
                                                 />
-                                            </FormControl>                                           
+                                            </FormControl>
                                             <Grid container>
                                                 <Grid item xs={8}>
                                                     <FormControl
@@ -554,7 +556,7 @@ const Configuracion = (props) => {
                                                         />
                                                     </FormControl>
                                                 </Grid>
-                                            </Grid>                                            
+                                            </Grid>
                                         </Box>
                                     </Grid>
                                 </Grid>

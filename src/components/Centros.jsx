@@ -37,7 +37,7 @@ import { cierraObjetoDialogAccion } from '../redux/appDucks';
 import { activarDesactivarAccion } from '../redux/appDucks';
 import { vaciarDatosCentroAccion } from '../redux/centrosDucks';
 
-const getHeightScrollable = () => (window.innerHeight - 220) || (document.documentElement.clientHeight - 220) || (document.body.clientHeight - 220);
+const getHeightScrollable = () => (window.innerHeight - 200) || (document.documentElement.clientHeight - 200) || (document.body.clientHeight - 200);
 
 //menu
 const StyledMenu = withStyles({
@@ -122,6 +122,10 @@ const Centros = (props) => {
             props.history.push('/login')
         }
     }, [logged, props.history]);
+
+    useEffect(() => {
+        document.body.classList.add(classes.sinScroll);
+    }, []);
 
     useEffect(() => {
         const resizeListener = () => {
@@ -280,12 +284,12 @@ const Centros = (props) => {
                     >
                         <div className={classes.root2} >
                             <AppBar position="static">
-                                <Tabs value={valueTab} onChange={handleChangeTab}>
+                                <Tabs value={valueTab} onChange={handleChangeTab} className={classes.tabsStl}>
                                     <Tooltip title="Modificar los datos de un centro registrado" placement="top-end" arrow>
-                                        <Tab label="Editar" {...a11yProps(0)} />
+                                        <Tab label="Editar" {...a11yProps(0)} style={{paddingBottom: 10}}/>
                                     </Tooltip>
                                     <Tooltip title="Registrar un nuevo centro" placement="top-end" arrow>
-                                        <Tab label="Registrar" {...a11yProps(1)} />
+                                        <Tab label="Registrar" {...a11yProps(1)} style={{paddingBottom: 10}}/>
                                     </Tooltip>
                                 </Tabs>
                             </AppBar>

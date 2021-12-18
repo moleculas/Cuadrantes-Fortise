@@ -29,6 +29,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Tooltip from '@material-ui/core/Tooltip';
+import clsx from 'clsx';
 
 //carga componentes
 import DialogComponente from './DialogComponente';
@@ -648,11 +649,10 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                     <Grid item lg={4} sm={4} xs={12}>
                         <Box>
                             <Box
-                                p={1.5}
                                 m={0.5}
                                 bgcolor="secondary.light"
                                 color="secondary.contrastText"
-                                className={classes.mb25}
+                                className={clsx(classes.boxStl2, classes.mb20)}
                             >
                                 Datos generales
                             </Box>
@@ -737,11 +737,10 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                     </Grid>
                     <Grid item lg={4} sm={4} xs={12}>
                         <Box
-                            p={1.5}
-                            m={0.5}
-                            bgcolor="secondary.light"
-                            color="secondary.contrastText"
-                            className={classes.mb25}
+                          m={0.5}
+                          bgcolor="secondary.light"
+                          color="secondary.contrastText"
+                          className={clsx(classes.boxStl2, classes.mb20)}
                         >
                             Estado laboral
                         </Box>
@@ -816,11 +815,10 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                         {visibleCentros ? (
                             <Fragment>
                                 <Box
-                                    p={1.5}
                                     m={0.5}
                                     bgcolor="secondary.light"
                                     color="secondary.contrastText"
-                                    className={classes.mb25}
+                                    className={clsx(classes.boxStl2, classes.mb20)}
                                 >
                                     Centros
                                 </Box>

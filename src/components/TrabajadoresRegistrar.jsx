@@ -15,6 +15,7 @@ import Select from '@material-ui/core/Select';
 import DateFnsUtils from '@date-io/date-fns';
 import { es } from "date-fns/locale";
 import { MuiPickersUtilsProvider, KeyboardDatePicker, } from '@material-ui/pickers';
+import clsx from 'clsx';
 
 //estilos
 import Clases from "../clases";
@@ -288,11 +289,10 @@ const TrabajadoresRegistrar = forwardRef((props, ref) => {
                     <Grid item lg={4} sm={4} xs={12}>
                         <Box>
                             <Box
-                                p={1.5}
                                 m={0.5}
                                 bgcolor="secondary.light"
                                 color="secondary.contrastText"
-                                className={classes.mb25}
+                                className={clsx(classes.boxStl2, classes.mb20)}
                             >
                                 Datos generales
                             </Box>
@@ -360,11 +360,10 @@ const TrabajadoresRegistrar = forwardRef((props, ref) => {
                     </Grid>
                     <Grid item lg={4} sm={4} xs={12}>
                         <Box
-                            p={1.5}
-                            m={0.5}
-                            bgcolor="secondary.light"
-                            color="secondary.contrastText"
-                            className={classes.mb25}
+                           m={0.5}
+                           bgcolor="secondary.light"
+                           color="secondary.contrastText"
+                           className={clsx(classes.boxStl2, classes.mb20)}
                         >
                             Estado laboral
                         </Box>

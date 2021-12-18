@@ -243,7 +243,7 @@ const CentrosEditar = forwardRef((props, ref) => {
         trabajadores: []
     });
     const [openLoading, setOpenLoading] = useState(false);
-    
+
     //useEffect
 
     useEffect(() => {
@@ -254,7 +254,7 @@ const CentrosEditar = forwardRef((props, ref) => {
         };
         if (listadoTrabajadores.length === 0) {
             dispatch(obtenerTrabajadoresAccion('trabajadores'));
-        };  
+        };
     }, [dispatch]);
 
     useEffect(() => {
@@ -332,7 +332,7 @@ const CentrosEditar = forwardRef((props, ref) => {
             precioHora_Z: centroAEditar.horario.precioHora_Z,
             precioHora_T: centroAEditar.horario.precioHora_T,
             precioHora_P: centroAEditar.horario.precioHora_P,
-        });        
+        });
         if (centroAEditar.horario.tipo === "rango") {
             setValueTimePickerInicioEdicion({
                 ...valueTimePickerInicioEdicion,
@@ -484,7 +484,7 @@ const CentrosEditar = forwardRef((props, ref) => {
             cantidad: centroAEditar.trabajadores.cantidad,
             trabajadores: centroAEditar.trabajadores.trabajadores
         });
-    }, [centroAEditar]);    
+    }, [centroAEditar]);
 
     useEffect(() => {
         if (!openLoadingCentros && !openLoadingTrabajadores) {
@@ -2473,13 +2473,13 @@ const CentrosEditar = forwardRef((props, ref) => {
                             ...horarioIntervencionEdicionRevisado,
                             computo: valuesFormEdicion.computo,
                             mensualPactado: parseFloat(valuesFormEdicion.mensualPactado),
-                            precioHora_L:  parseFloat(valuesFormEdicion.precioHora_L),
-                            precioHora_C:  parseFloat(valuesFormEdicion.precioHora_C),
-                            precioHora_E:  parseFloat(valuesFormEdicion.precioHora_E),
-                            precioHora_I:  parseFloat(valuesFormEdicion.precioHora_I),
-                            precioHora_Z:  parseFloat(valuesFormEdicion.precioHora_Z),
-                            precioHora_T:  parseFloat(valuesFormEdicion.precioHora_T),
-                            precioHora_P:  parseFloat(valuesFormEdicion.precioHora_P),
+                            precioHora_L: parseFloat(valuesFormEdicion.precioHora_L),
+                            precioHora_C: parseFloat(valuesFormEdicion.precioHora_C),
+                            precioHora_E: parseFloat(valuesFormEdicion.precioHora_E),
+                            precioHora_I: parseFloat(valuesFormEdicion.precioHora_I),
+                            precioHora_Z: parseFloat(valuesFormEdicion.precioHora_Z),
+                            precioHora_T: parseFloat(valuesFormEdicion.precioHora_T),
+                            precioHora_P: parseFloat(valuesFormEdicion.precioHora_P),
                         }
                         //registramos
                         const centroAGuardar = {
@@ -2764,17 +2764,16 @@ const CentrosEditar = forwardRef((props, ref) => {
                     <Grid item lg={4} sm={6} xs={12}>
                         <Box>
                             <Box
-                                p={1.5}
                                 m={0.5}
                                 bgcolor="secondary.light"
                                 color="secondary.contrastText"
-                                className={classes.mb25}
+                                className={clsx(classes.boxStl2, classes.mb20)}
                             >
                                 Datos generales
                             </Box>
                             <FormControl
                                 variant="outlined"
-                                className={classes.form}                               
+                                className={classes.form}
                             >
                                 <Autocomplete
                                     id="form-select-centros"
@@ -2977,11 +2976,10 @@ const CentrosEditar = forwardRef((props, ref) => {
                                 </Grid>
                             </Grid>
                             <Box
-                                p={1.5}
                                 m={0.5}
                                 bgcolor="secondary.light"
                                 color="secondary.contrastText"
-                                className={classes.mb25}
+                                className={clsx(classes.boxStl2, classes.mb20)}
                             >
                                 Trabajadores
                             </Box>
@@ -3015,11 +3013,10 @@ const CentrosEditar = forwardRef((props, ref) => {
                     </Grid>
                     <Grid item lg={8} sm={6} xs={12}>
                         <Box
-                            p={1.5}
                             m={0.5}
                             bgcolor="secondary.light"
                             color="secondary.contrastText"
-                            className={classes.mb25}
+                            className={clsx(classes.boxStl2, classes.mb20)}
                         >
                             Horario de intervención
                         </Box>
@@ -3082,11 +3079,10 @@ const CentrosEditar = forwardRef((props, ref) => {
                                     </Select>
                                 </FormControl>
                                 <Box
-                                    p={1.5}
                                     m={0.5}
                                     bgcolor="secondary.light"
                                     color="secondary.contrastText"
-                                    className={classes.mb25}
+                                    className={clsx(classes.boxStl2, classes.mb20)}
                                 >
                                     Cómputo de horas
                                 </Box>
@@ -3250,11 +3246,10 @@ const CentrosEditar = forwardRef((props, ref) => {
                                     </Fragment>
                                 ) : null}
                                 <Box
-                                    p={1.5}
                                     m={0.5}
                                     bgcolor="secondary.light"
                                     color="secondary.contrastText"
-                                    className={clsx(classes.mb25, classes.mt15)}
+                                    className={clsx(classes.boxStl2, classes.mb20, classes.mt15)}
                                 >
                                     Forma de pago
                                 </Box>

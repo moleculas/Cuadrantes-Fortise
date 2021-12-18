@@ -37,7 +37,7 @@ import { cierraObjetoDialogAccion } from '../redux/appDucks';
 import { activarDesactivarAccion } from '../redux/appDucks';
 import { vaciarDatosTrabajadorAccion } from '../redux/trabajadoresDucks';
 
-const getHeightScrollable = () => (window.innerHeight - 220) || (document.documentElement.clientHeight - 220) || (document.body.clientHeight - 220);
+const getHeightScrollable = () => (window.innerHeight - 200) || (document.documentElement.clientHeight - 200) || (document.body.clientHeight - 200);
 
 //tabs
 function TabPanel(props) {
@@ -124,6 +124,10 @@ const Trabajadores = (props) => {
     }, [logged, props.history]);
 
     useEffect(() => {
+        document.body.classList.add(classes.sinScroll);
+    }, []);
+
+    useEffect(() => {
         const resizeListener = () => {
             setHeightScrollable(getHeightScrollable());
         };
@@ -131,7 +135,7 @@ const Trabajadores = (props) => {
         return () => {
             window.removeEventListener('resize', resizeListener);
         }
-    }, []);
+    }, []);    
 
     useEffect(() => {
         if (id) {
@@ -281,12 +285,12 @@ const Trabajadores = (props) => {
                     >
                         <div className={classes.root2}>
                             <AppBar position="static">
-                                <Tabs value={valueTab} onChange={handleChangeTab}>
+                                <Tabs value={valueTab} onChange={handleChangeTab} className={classes.tabsStl}>
                                     <Tooltip title="Modificar los datos de un trabajador registrado" placement="top-end" arrow>
-                                        <Tab label="Editar" {...a11yProps(0)} />
+                                        <Tab label="Editar" {...a11yProps(0)} style={{paddingBottom: 10}}/>
                                     </Tooltip>
                                     <Tooltip title="Registrar un nuevo trabajador" placement="top-end" arrow>
-                                        <Tab label="Registrar" {...a11yProps(1)} />
+                                        <Tab label="Registrar" {...a11yProps(1)} style={{paddingBottom: 10}}/>
                                     </Tooltip>
                                 </Tabs>
                             </AppBar>
