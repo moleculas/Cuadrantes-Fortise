@@ -314,7 +314,7 @@ const PantallaCuadrantes = () => {
                     {alert.mensaje}
                 </Alert>
             </Snackbar>
-            {console.log(openLoading)}
+            {/* {console.log(openLoading)} */}
         </div>
     )
 }

@@ -1,14 +1,13 @@
 let rutaApi, rutaServer
 if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
     rutaApi = "http://localhost/api_quadrants/";
-    //rutaServer = window.location.protocol + "//" + window.location.host    
-
+    //rutaServer = window.location.protocol + "//" + window.location.host   
 } else {
     rutaServer = window.location.protocol + "//" + window.location.host;
     rutaApi = rutaServer + "/api/";
 }
 
-const subdirectoriProduccio = '/';
+const subdirectoriProduccio = '';
 //afegir a package.json: "homepage": "https://domini/subdomini",
 
 const retornaDiaMes = (fecha) => {

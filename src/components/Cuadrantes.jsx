@@ -312,7 +312,7 @@ const Cuadrantes = (props) => {
         for (let i = 0; i < diasMes; i++) {
             const dateStr = mesAGest + '-' + (i + 1) + '-' + anyoAGest;
             array.push([[i + 1], [dispatch(diaDeLaSemanaAccion(dateStr))]]);
-        }
+        };        
         setLosDiasDelMes(array);
     }, [calendarioAGestionar]);
 
@@ -3571,7 +3571,7 @@ const Cuadrantes = (props) => {
             datos_cuadrante: JSON.stringify(objetoFinalCuadrante.datosCuadrante),
             datos_informe: JSON.stringify(objetoFinalInforme),
             estado: source === 'informe' ? 'facturado' : objetoCuadrante.estado,
-            total: source === 'informe' ? elTotalAAFacturarTotal : objetoCuadrante.estado === 'facturado' ? elTotalAAFacturarTotal : null,          
+            total: source === 'informe' ? elTotalAAFacturarTotal : objetoCuadrante.estado === 'facturado' ? elTotalAAFacturarTotal : null,
             horas: JSON.stringify(objetoFinalHoras)
         };
         if (cuadranteRegistrado === 'no') {
@@ -4305,8 +4305,8 @@ const Cuadrantes = (props) => {
         )
     };
 
-    const retornaCasillasGeneral = (dia, indexDia, columna, indexColumna) => {
-        let postRef = dia[1][0] + dia[0][0];
+    const retornaCasillasGeneral = (dia, indexDia, columna, indexColumna) => {           
+        let postRef = dia[1][0] + dia[0][0];   
         return (
             <Grid
                 container
@@ -4920,7 +4920,7 @@ const Cuadrantes = (props) => {
                 prFullWidth={true}
                 prMaxWidth={true}
             />
-            {/* {console.log(objetoCuadrante)} */}
+            {/* {console.log(calendarioAGestionar)} */}
         </div>
     )
 }

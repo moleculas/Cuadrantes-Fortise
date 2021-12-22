@@ -201,9 +201,18 @@ export const diasEnElMesAccion = (fecha) => (dispatch, getState) => {
     return new Date(anyo, mes, 0).getDate();
 }
 
-export const diaDeLaSemanaAccion = (dateStr) => (dispatch, getState) => {
-    //formato dateStr=MM-DD-YYYY
-    let date = new Date(dateStr);
+const conversorFechas = (fecha) => {
+    let myFechaSplit = fecha.split("-");
+    let elMes = myFechaSplit[0];
+    let elDia = myFechaSplit[1];
+    let elAnyo = myFechaSplit[2];
+    return elAnyo + '/' + elMes + '/' + elDia + ' 00:00:00'
+}
+
+export const diaDeLaSemanaAccion = (dateStr) => (dispatch, getState) => {    
+    //formato dateStr=MM-DD-YYYY    
+    //formato válido firefox dateStr=yyyy/MM/dd HH:mm:ss
+    let date = new Date(conversorFechas(dateStr));
     let locale = "es-ES";
     const str = date.toLocaleDateString(locale, { weekday: 'long' });
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -1091,7 +1100,7 @@ export const finalizarArchivosXLSLoteAccion = (estado) => (dispatch, getState) =
     });
 }
 
-export const emitirArchivosXLSLoteAccion = (laDataFAC, laDataLFA ) => (dispatch, getState) => {     
+export const emitirArchivosXLSLoteAccion = (laDataFAC, laDataLFA) => (dispatch, getState) => {
     exportarAExcel(laDataFAC[0], 'FAC');
     exportarAExcel(laDataLFA[0], 'LFA');
     dispatch({
@@ -1099,5 +1108,5 @@ export const emitirArchivosXLSLoteAccion = (laDataFAC, laDataLFA ) => (dispatch,
     });
     dispatch({
         type: RESETEA_EXITO_CONFIGURACION
-    });   
+    });
 }

@@ -69,7 +69,7 @@ export const obtenerCuadrantesPendientesAccion = (objeto, mes, arrayCentros) => 
             let apiUrl = rutaApi + "obtener_pendientes.php";
             const res = await axios.post(apiUrl, formData, {
                 headers: {
-                    "Content-Type": "multipart/form-data",
+                    "Content-Type": "multipart/form-data"             
                 }
             });
             if (res.data === false) {
@@ -109,7 +109,7 @@ export const obtenerCuadrantesRegistradosFacturadosAccion = (objeto, mes, arrayC
             let apiUrl = rutaApi + "obtener_pendientes.php";
             const res = await axios.post(apiUrl, formData, {
                 headers: {
-                    "Content-Type": "multipart/form-data",
+                    "Content-Type": "multipart/form-data"
                 }
             });
             if (res.data.estado === 'registrado') {

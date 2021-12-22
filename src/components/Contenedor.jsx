@@ -117,17 +117,16 @@ const Contenedor = () => {
                         <Grid item xs={6}>
                             <Box mt={4}>
                                 <img src={sadEmoji} style={{ width: '100%', filter: 'sepia(100%)' }} alt="sadEmoji" />
-                            </Box>                            
+                            </Box>
                         </Grid>
-                        <Grid item xs={10}>                            
+                        <Grid item xs={10}>
                             <Box mt={2} textAlign="center">
                                 <Typography variant="h6">
-                                   Aplicación no disponible para dispositivos móviles
+                                    Aplicación no disponible para dispositivos móviles
                                 </Typography>
                             </Box>
                         </Grid>
                     </Grid></div>)}
-
             </Router>
         </div>
     )

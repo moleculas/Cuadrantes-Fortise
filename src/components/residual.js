@@ -7118,4 +7118,109 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                     dispatch({
                         type: ERROR_DE_CARGA_CUADRANTES_PENDIENTES
                     })
-          
+                });
+        }
+                
+
+                    export const obtenerCuadrantesPendientesAccion = (objeto, mes, arrayCentros) => (dispatch, getState) => {
+                        dispatch({
+                            type: LOADING_PENDIENTES
+                        });
+                        try {
+                            let contadorPendientes = 0;
+                            arrayCentros.forEach(async (centroIterado, index, arr) => {
+                                const nombreCuadrante = mes + '-' + centroIterado.id;
+                                const formData = new FormData();
+                                formData.append("objeto", objeto);
+                                formData.append("id", nombreCuadrante);
+                                let apiUrl = rutaApi + "obtener_pendientes.php";
+                                const res = await axios.post(apiUrl, formData, {
+                                    headers: {
+                                        "Content-Type": "multipart/form-data"             
+                                    }
+                                });
+                                if (res.data === false) {
+                                    contadorPendientes++;
+                                    dispatch({
+                                        type: OBTENER_CUADRANTE_PENDIENTE,
+                                        payload: {
+                                            elementoArray: centroIterado.id,
+                                            contador: contadorPendientes
+                                        }
+                                    })
+                                }
+                            });
+                        } catch (error) {
+                            dispatch({
+                                type: ERROR_DE_CARGA_CUADRANTES_PENDIENTES
+                            });
+                        } finally {
+                            dispatch({
+                                type: CLOSE_LOADING_PENDIENTES
+                            });
+                        }
+                    }
+                    
+                    export const obtenerCuadrantesRegistradosFacturadosAccion = (objeto, mes, arrayCentros) => (dispatch, getState) => {
+                        dispatch({
+                            type: LOADING_PENDIENTES
+                        });
+                        try {
+                            let contadorRegistrados = 0;
+                            let contadorFacturados = 0;
+                            arrayCentros.forEach(async (centroIterado, index, arr) => {
+                                const nombreCuadrante = mes + '-' + centroIterado.id;
+                                const formData = new FormData();
+                                formData.append("objeto", objeto);
+                                formData.append("id", nombreCuadrante);
+                                let apiUrl = rutaApi + "obtener_pendientes.php";
+                                const res = await axios.post(apiUrl, formData, {
+                                    headers: {
+                                        "Content-Type": "multipart/form-data"
+                                    }
+                                });
+                                if (res.data.estado === 'registrado') {
+                                    contadorRegistrados++;
+                                    dispatch({
+                                        type: OBTENER_CUADRANTE_REGISTRADO,
+                                        payload: {
+                                            elementoArray: {
+                                                id: res.data.id,
+                                                nombre: res.data.nombre,
+                                                actualizacion: res.data.actualizacion,
+                                                estado: res.data.estado,
+                                                total: res.data.total,
+                                                horas: JSON.parse(res.data.horas)
+                                            },
+                                            contador: contadorRegistrados
+                                        }
+                                    })
+                                };
+                                if (res.data.estado === 'facturado') {
+                                    contadorFacturados++;
+                                    dispatch({
+                                        type: OBTENER_CUADRANTE_FACTURADO,
+                                        payload: {
+                                            elementoArray: {
+                                                id: res.data.id,
+                                                nombre: res.data.nombre,
+                                                actualizacion: res.data.actualizacion,
+                                                estado: res.data.estado,
+                                                total: res.data.total,
+                                                horas: JSON.parse(res.data.horas)
+                                            },
+                                            contador: contadorFacturados
+                                        }
+                                    })
+                                }
+                            });
+                        } catch (error) {
+                            dispatch({
+                                type: ERROR_DE_CARGA_CUADRANTES_PENDIENTES
+                            });
+                        } finally {
+                            dispatch({
+                                type: CLOSE_LOADING_PENDIENTES
+                            });
+                        }
+                    }

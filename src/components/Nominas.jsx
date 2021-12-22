@@ -568,11 +568,12 @@ const Nominas = (props) => {
             elTotalEmitido += (sumatorioHorasExtra * objetoConfiguracion.precioHoraExtra);
         };
         const losDatosNomina = { ...objetoNomina.datosNomina, totalEmitido: elTotalEmitido };
-        dispatch(actualizarObjetoNominaAccion({ ...objetoNomina, estado: 'emitido', datosNomina: losDatosNomina }));
+        dispatch(actualizarObjetoNominaAccion({ ...objetoNomina, estado: 'emitido', datosNomina: losDatosNomina, total: elTotalEmitido }));
         procesarDatosNomina('informe', elTotalEmitido);
     };
 
     const handleClickEmitirNomina = () => {     
+        handleActualizaNominaFacturada();
         handleCloseMenu();
     };    
 
