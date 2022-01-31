@@ -11,6 +11,7 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
+import clsx from 'clsx';
 
 //estilos
 import Clases from "../clases";
@@ -142,7 +143,7 @@ const ItemListTime = (props) => {
                     </Grid>
                 </ListItem>
             ) : props.prTipo === 'cantidad' ? (
-                <ListItem button className={classes.root4} style={{ paddingTop: 8, paddingLeft: 12, paddingBottom: 8 }} disabled={props.prDisabledItem}>
+                <ListItem button className={clsx(classes.cursorDefault, classes.root4)} style={{ paddingTop: 8, paddingLeft: 12, paddingBottom: 8 }} disabled={props.prDisabledItem}>
                     <Grid
                         container
                         direction="column"
@@ -191,7 +192,7 @@ const ItemListTime = (props) => {
                     </Grid>
                 </ListItem>
             ) : props.prTipo === "rangoDescanso" ? (
-                <ListItem button className={classes.root4} style={{ padding: 12 }} disabled={props.prDisabledItem}>
+                <ListItem button className={clsx(classes.cursorDefault,classes.root4)} style={{ padding: 12 }} disabled={props.prDisabledItem}>
                     <Grid
                         container
                         direction="column"

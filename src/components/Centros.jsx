@@ -161,11 +161,11 @@ const Centros = (props) => {
             handleClickOpenDialog();
         } else {
             dispatch(activarDesactivarAccion(true));
-            setValueTab(newValue)
-        };
-        dispatch(vaciarDatosCentroAccion());
-        setVenimosCentroFuera(null);
-        props.history.push('/centros');
+            setValueTab(newValue);
+            dispatch(vaciarDatosCentroAccion());
+            setVenimosCentroFuera(null);
+            props.history.push('/centros');
+        };      
     };
 
     const procesarDatosEdicionParent = () => {

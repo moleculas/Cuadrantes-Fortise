@@ -112,6 +112,14 @@ const Constantes = {
         { value: 420, label: '7 horas' },
         { value: 450, label: '7.5 horas' },
         { value: 480, label: '8 horas' },
+        { value: 510, label: '8.5 horas' },
+        { value: 540, label: '9 horas' },
+        { value: 570, label: '9.5 horas' },
+        { value: 600, label: '10 horas' },
+        { value: 630, label: '10.5 horas' },
+        { value: 660, label: '11 horas' },
+        { value: 690, label: '11.5 horas' },
+        { value: 720, label: '12 horas' }
     ],
     VARIACIONES_HORARIOS_CENTROS: [
         { value: 'todasSemanas', label: 'Todas las semanas' },

@@ -177,6 +177,14 @@ export const retornaAnoMesAccion = (fecha) => (dispatch, getState) => {
     return laData;
 }
 
+export const gestionaMaxDateCalendarAccion = (numeroDias) => (dispatch, getState) =>{
+    let data = new Date();
+    const mes = data.getMonth() + 1 + numeroDias;
+    const any = data.getFullYear();
+    const laData = any + '-' + mes;
+    return laData;
+};
+
 export const retornaAnoMesCuadranteAccion = (cuadrante) => (dispatch, getState) => {
     let myArrSplit = cuadrante.split("-");
     const monthNum = myArrSplit[1];
@@ -209,7 +217,7 @@ const conversorFechas = (fecha) => {
     return elAnyo + '/' + elMes + '/' + elDia + ' 00:00:00'
 }
 
-export const diaDeLaSemanaAccion = (dateStr) => (dispatch, getState) => {    
+export const diaDeLaSemanaAccion = (dateStr) => (dispatch, getState) => {
     //formato dateStr=MM-DD-YYYY    
     //formato válido firefox dateStr=yyyy/MM/dd HH:mm:ss
     let date = new Date(conversorFechas(dateStr));

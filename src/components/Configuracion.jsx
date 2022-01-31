@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { withRouter } from "react-router-dom";
 import { withStyles } from '@material-ui/core/styles';
@@ -17,6 +17,8 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -386,6 +388,9 @@ const Configuracion = (props) => {
                                     <Tooltip title="Modificar datos bancarios" placement="top-end" arrow>
                                         <Tab label="Datos bancarios" {...a11yProps(2)} style={{ paddingBottom: 10 }} />
                                     </Tooltip>
+                                    <Tooltip title="Informe cambios en versiones" placement="top-end" arrow>
+                                        <Tab label="Control de versiones" {...a11yProps(3)} style={{ paddingBottom: 10 }} />
+                                    </Tooltip>
                                 </Tabs>
                             </AppBar>
                             <TabPanel value={valueTab} index={0} className={classes.scrollable} style={{ height: heightScrollable }}>
@@ -557,6 +562,60 @@ const Configuracion = (props) => {
                                                     </FormControl>
                                                 </Grid>
                                             </Grid>
+                                        </Box>
+                                    </Grid>
+                                </Grid>
+                            </TabPanel>
+                            <TabPanel value={valueTab} index={3} className={classes.scrollable} style={{ height: heightScrollable }}>
+                                <Grid
+                                    container
+                                    direction="row"
+                                    justifycontent="flex-start"
+                                    alignItems="flex-start"
+                                    spacing={2}
+                                >
+                                    <Grid item lg={8} sm={8} xs={12}>
+                                        <Box>
+                                            <Box
+                                                m={0.5}
+                                                bgcolor="secondary.light"
+                                                color="secondary.contrastText"
+                                                className={clsx(classes.boxStl2, classes.mb20)}
+                                            >
+                                                Control de versiones
+                                            </Box>
+                                            <Box
+                                                className={classes.paper}
+                                            >
+                                                <List dense={true}>
+                                                    <ListItem>
+                                                        <ListItemText
+                                                            primary="V. 1.01 - 19/01/2022"
+                                                            secondary={
+                                                                <Fragment>
+                                                                <Typography component="span" variant="body2">1.- Implementación segundo campo de registro para mail y teléfono en fichas centros.</Typography>
+                                                                <br />
+                                                                <Typography component="span" variant="body2">2.- Añadida posibilidad de insertar centros que no computen en FACTUSOL (con registros vacíos) en fichas centros.</Typography>
+                                                                </Fragment>
+                                                            }
+                                                        />
+                                                    </ListItem >
+                                                    <ListItem>
+                                                        <ListItemText
+                                                            primary="V. 1.02 - 31/01/2022"
+                                                            secondary={
+                                                                <Fragment>
+                                                                <Typography component="span" variant="body2">1.- Implementada funcionalidad que permite añadir más de un horario por trabajador / centro en fichas centros.</Typography>
+                                                                <br />  
+                                                                <Typography component="span" variant="body2">2.- Añadida posibilidad de gestionar cuadrantes con 3 meses de adelanto desde el mes actual en pantalla cuadrantes.</Typography>                                                              
+                                                                <br />  
+                                                                <Typography component="span" variant="body2">3.- Cambio en selector de Modo entrada de datos (Cantidad de horas) de 8 h. a 12h. en fichas centros.</Typography>                                                              
+                                                                </Fragment>
+                                                            }
+                                                        />
+                                                    </ListItem >
+                                                </List>
+                                            </Box>
                                         </Box>
                                     </Grid>
                                 </Grid>

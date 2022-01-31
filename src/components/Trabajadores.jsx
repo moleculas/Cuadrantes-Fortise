@@ -135,7 +135,7 @@ const Trabajadores = (props) => {
         return () => {
             window.removeEventListener('resize', resizeListener);
         }
-    }, []);    
+    }, []);
 
     useEffect(() => {
         if (id) {
@@ -161,11 +161,11 @@ const Trabajadores = (props) => {
             handleClickOpenDialog();
         } else {
             dispatch(activarDesactivarAccion(true));
-            setValueTab(newValue)
+            setValueTab(newValue);
+            dispatch(vaciarDatosTrabajadorAccion());
+            setVenimosTrabajadorFuera(null);
+            props.history.push('/trabajadores');
         };
-        dispatch(vaciarDatosTrabajadorAccion());
-        setVenimosTrabajadorFuera(null);
-        props.history.push('/trabajadores');
     };
 
     const procesarDatosEdicionParent = () => {
@@ -287,10 +287,10 @@ const Trabajadores = (props) => {
                             <AppBar position="static">
                                 <Tabs value={valueTab} onChange={handleChangeTab} className={classes.tabsStl}>
                                     <Tooltip title="Modificar los datos de un trabajador registrado" placement="top-end" arrow>
-                                        <Tab label="Editar" {...a11yProps(0)} style={{paddingBottom: 10}}/>
+                                        <Tab label="Editar" {...a11yProps(0)} style={{ paddingBottom: 10 }} />
                                     </Tooltip>
                                     <Tooltip title="Registrar un nuevo trabajador" placement="top-end" arrow>
-                                        <Tab label="Registrar" {...a11yProps(1)} style={{paddingBottom: 10}}/>
+                                        <Tab label="Registrar" {...a11yProps(1)} style={{ paddingBottom: 10 }} />
                                     </Tooltip>
                                 </Tabs>
                             </AppBar>

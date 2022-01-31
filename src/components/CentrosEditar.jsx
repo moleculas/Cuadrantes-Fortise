@@ -17,6 +17,13 @@ import Select from '@material-ui/core/Select';
 import List from '@material-ui/core/List';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import clsx from 'clsx';
+import Switch from '@material-ui/core/Switch';
+import Typography from '@material-ui/core/Typography';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import { withStyles } from '@material-ui/core/styles';
+import MuiAccordion from '@material-ui/core/Accordion';
+import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 //carga componentes
 import ItemListTime from './ItemListTime';
@@ -40,7 +47,6 @@ import { eliminarCentroAccion } from '../redux/centrosDucks';
 import { abreObjetoDialogAccion } from '../redux/appDucks';
 import { cierraObjetoDialogAccion } from '../redux/appDucks';
 import { activarDesactivarActualizarCentroAccion } from '../redux/centrosDucks';
-//import { vaciarDatosCentrosAccion } from '../redux/centrosDucks';
 import { validarMailAccion } from '../redux/appDucks';
 
 const categorias = Constantes.CATEGORIAS_CENTROS;
@@ -49,6 +55,42 @@ const tipos = Constantes.MODO_ENTRADA_HORARIOS;
 const totalTrabajadores = Constantes.TRABAJADORES_ASIGNADOS_CENTRO;
 const computoHoras = Constantes.COMPUTO_HORAS;
 const formasDePago = Constantes.FORMA_DE_PAGO;
+
+//accordion
+const Accordion = withStyles({
+    root: {
+        border: '1px solid rgba(0, 0, 0, .125)',
+        boxShadow: 'none',
+        '&:not(:last-child)': {
+            borderBottom: 0,
+        },
+        '&:before': {
+            display: 'none',
+        },
+        '&$expanded': {
+            margin: 'auto',
+        },
+    },
+    expanded: {},
+})(MuiAccordion);
+
+const AccordionSummary = withStyles({
+    root: {
+        backgroundColor: 'rgba(0, 0, 0, .02)',
+        borderBottom: '1px solid rgba(0, 0, 0, .125)',
+        marginBottom: -1,
+        minHeight: 46,
+        '&$expanded': {
+            minHeight: 46,
+        },
+    },
+    content: {
+        '&$expanded': {
+            margin: '12px 0',
+        },
+    },
+    expanded: {},
+})(MuiAccordionSummary);
 
 //snackbar y alert
 const Alert = (props) => {
@@ -89,7 +131,9 @@ const CentrosEditar = forwardRef((props, ref) => {
         provincia: '',
         nif: '',
         mail: '',
+        mail2: '',
         telefono: '',
+        telefono2: '',
         formaPago: '',
         variacion: '',
         tipo: '',
@@ -106,148 +150,173 @@ const CentrosEditar = forwardRef((props, ref) => {
         precioHora_T: null,
         precioHora_P: null
     });
-    const [valueTimePickerInicioEdicion, setValueTimePickerInicioEdicion] = useState({
-        lunes: null,
-        martes: null,
-        miercoles: null,
-        jueves: null,
-        viernes: null,
-        sabado: null,
-        domingo: null
-    });
-    const [valueTimePickerFinEdicion, setValueTimePickerFinEdicion] = useState({
-        lunes: null,
-        martes: null,
-        miercoles: null,
-        jueves: null,
-        viernes: null,
-        sabado: null,
-        domingo: null
-    });
-    const [valueTimePickerInicioDescanso1Edicion, setValueTimePickerInicioDescanso1Edicion] = useState({
-        lunes: null,
-        martes: null,
-        miercoles: null,
-        jueves: null,
-        viernes: null,
-        sabado: null,
-        domingo: null
-    });
-    const [valueTimePickerFinDescanso1Edicion, setValueTimePickerFinDescanso1Edicion] = useState({
-        lunes: null,
-        martes: null,
-        miercoles: null,
-        jueves: null,
-        viernes: null,
-        sabado: null,
-        domingo: null
-    });
-    const [valueTimePickerInicioDescanso2Edicion, setValueTimePickerInicioDescanso2Edicion] = useState({
-        lunes: null,
-        martes: null,
-        miercoles: null,
-        jueves: null,
-        viernes: null,
-        sabado: null,
-        domingo: null
-    });
-    const [valueTimePickerFinDescanso2Edicion, setValueTimePickerFinDescanso2Edicion] = useState({
-        lunes: null,
-        martes: null,
-        miercoles: null,
-        jueves: null,
-        viernes: null,
-        sabado: null,
-        domingo: null
-    });
-    const [valueCantidadHorasEdicion, setValueCantidadHorasEdicion] = useState({
-        lunes: '',
-        martes: '',
-        miercoles: '',
-        jueves: '',
-        viernes: '',
-        sabado: '',
-        domingo: ''
-    });
-    const [valueTipoServicioEdicion, setValueTipoServicioEdicion] = useState({
-        lunesTipoServicio: '',
-        martesTipoServicio: '',
-        miercolesTipoServicio: '',
-        juevesTipoServicio: '',
-        viernesTipoServicio: '',
-        sabadoTipoServicio: '',
-        domingoTipoServicio: '',
-    });
+    const [valueTimePickerInicioEdicion, setValueTimePickerInicioEdicion] = useState([
+        {
+            lunes: null,
+            martes: null,
+            miercoles: null,
+            jueves: null,
+            viernes: null,
+            sabado: null,
+            domingo: null
+        }
+    ]);
+    const [valueTimePickerFinEdicion, setValueTimePickerFinEdicion] = useState([
+        {
+            lunes: null,
+            martes: null,
+            miercoles: null,
+            jueves: null,
+            viernes: null,
+            sabado: null,
+            domingo: null
+        }
+    ]);
+    const [valueTimePickerInicioDescanso1Edicion, setValueTimePickerInicioDescanso1Edicion] = useState([
+        {
+            lunes: null,
+            martes: null,
+            miercoles: null,
+            jueves: null,
+            viernes: null,
+            sabado: null,
+            domingo: null
+        }
+    ]);
+    const [valueTimePickerFinDescanso1Edicion, setValueTimePickerFinDescanso1Edicion] = useState([
+        {
+            lunes: null,
+            martes: null,
+            miercoles: null,
+            jueves: null,
+            viernes: null,
+            sabado: null,
+            domingo: null
+        }
+    ]);
+    const [valueTimePickerInicioDescanso2Edicion, setValueTimePickerInicioDescanso2Edicion] = useState([
+        {
+            lunes: null,
+            martes: null,
+            miercoles: null,
+            jueves: null,
+            viernes: null,
+            sabado: null,
+            domingo: null
+        }
+    ]);
+    const [valueTimePickerFinDescanso2Edicion, setValueTimePickerFinDescanso2Edicion] = useState([
+        {
+            lunes: null,
+            martes: null,
+            miercoles: null,
+            jueves: null,
+            viernes: null,
+            sabado: null,
+            domingo: null
+        }
+    ]);
+    const [valueCantidadHorasEdicion, setValueCantidadHorasEdicion] = useState([
+        {
+            lunes: '',
+            martes: '',
+            miercoles: '',
+            jueves: '',
+            viernes: '',
+            sabado: '',
+            domingo: ''
+        }
+    ]);
+    const [valueTipoServicioEdicion, setValueTipoServicioEdicion] = useState([
+        {
+            lunesTipoServicio: '',
+            martesTipoServicio: '',
+            miercolesTipoServicio: '',
+            juevesTipoServicio: '',
+            viernesTipoServicio: '',
+            sabadoTipoServicio: '',
+            domingoTipoServicio: '',
+        }
+    ]);
     const [horarioIntervencionEdicion, setHorarioIntervencionEdicion] = useState({
         tipo: '',
         variacion: '',
-        lunesInicioRango: null,
-        lunesFinRango: null,
-        martesInicioRango: null,
-        martesFinRango: null,
-        miercolesInicioRango: null,
-        miercolesFinRango: null,
-        juevesInicioRango: null,
-        juevesFinRango: null,
-        viernesInicioRango: null,
-        viernesFinRango: null,
-        sabadoInicioRango: null,
-        sabadoFinRango: null,
-        domingoInicioRango: null,
-        domingoFinRango: null,
-        lunesInicio1RangoDescanso: null,
-        lunesInicio2RangoDescanso: null,
-        lunesFin1RangoDescanso: null,
-        lunesFin2RangoDescanso: null,
-        martesInicio1RangoDescanso: null,
-        martesInicio2RangoDescanso: null,
-        martesFin1RangoDescanso: null,
-        martesFin2RangoDescanso: null,
-        miercolesInicio1RangoDescanso: null,
-        miercolesInicio2RangoDescanso: null,
-        miercolesFin1RangoDescanso: null,
-        miercolesFin2RangoDescanso: null,
-        juevesInicio1RangoDescanso: null,
-        juevesInicio2RangoDescanso: null,
-        juevesFin1RangoDescanso: null,
-        juevesFin2RangoDescanso: null,
-        viernesInicio1RangoDescanso: null,
-        viernesInicio2RangoDescanso: null,
-        viernesFin1RangoDescanso: null,
-        viernesFin2RangoDescanso: null,
-        sabadoInicio1RangoDescanso: null,
-        sabadoInicio2RangoDescanso: null,
-        sabadoFin1RangoDescanso: null,
-        sabadoFin2RangoDescanso: null,
-        domingoInicio1RangoDescanso: null,
-        domingoInicio2RangoDescanso: null,
-        domingoFin1RangoDescanso: null,
-        domingoFin2RangoDescanso: null,
-        lunesCantidad: '',
-        martesCantidad: '',
-        miercolesCantidad: '',
-        juevesCantidad: '',
-        viernesCantidad: '',
-        sabadoCantidad: '',
-        domingoCantidad: '',
-        lunesTipoServicio: '',
-        martesTipoServicio: '',
-        miercolesTipoServicio: '',
-        juevesTipoServicio: '',
-        viernesTipoServicio: '',
-        sabadoTipoServicio: '',
-        domingoTipoServicio: '',
+        tipoRegistro: 'comun',
+        tipoRegistroTrabajador: [
+            {
+                lunesInicioRango: null,
+                lunesFinRango: null,
+                martesInicioRango: null,
+                martesFinRango: null,
+                miercolesInicioRango: null,
+                miercolesFinRango: null,
+                juevesInicioRango: null,
+                juevesFinRango: null,
+                viernesInicioRango: null,
+                viernesFinRango: null,
+                sabadoInicioRango: null,
+                sabadoFinRango: null,
+                domingoInicioRango: null,
+                domingoFinRango: null,
+                lunesInicio1RangoDescanso: null,
+                lunesInicio2RangoDescanso: null,
+                lunesFin1RangoDescanso: null,
+                lunesFin2RangoDescanso: null,
+                martesInicio1RangoDescanso: null,
+                martesInicio2RangoDescanso: null,
+                martesFin1RangoDescanso: null,
+                martesFin2RangoDescanso: null,
+                miercolesInicio1RangoDescanso: null,
+                miercolesInicio2RangoDescanso: null,
+                miercolesFin1RangoDescanso: null,
+                miercolesFin2RangoDescanso: null,
+                juevesInicio1RangoDescanso: null,
+                juevesInicio2RangoDescanso: null,
+                juevesFin1RangoDescanso: null,
+                juevesFin2RangoDescanso: null,
+                viernesInicio1RangoDescanso: null,
+                viernesInicio2RangoDescanso: null,
+                viernesFin1RangoDescanso: null,
+                viernesFin2RangoDescanso: null,
+                sabadoInicio1RangoDescanso: null,
+                sabadoInicio2RangoDescanso: null,
+                sabadoFin1RangoDescanso: null,
+                sabadoFin2RangoDescanso: null,
+                domingoInicio1RangoDescanso: null,
+                domingoInicio2RangoDescanso: null,
+                domingoFin1RangoDescanso: null,
+                domingoFin2RangoDescanso: null,
+                lunesCantidad: '',
+                martesCantidad: '',
+                miercolesCantidad: '',
+                juevesCantidad: '',
+                viernesCantidad: '',
+                sabadoCantidad: '',
+                domingoCantidad: '',
+                lunesTipoServicio: '',
+                martesTipoServicio: '',
+                miercolesTipoServicio: '',
+                juevesTipoServicio: '',
+                viernesTipoServicio: '',
+                sabadoTipoServicio: '',
+                domingoTipoServicio: '',
+            }
+        ],
     });
     const [trabajadoresEdicion, setTrabajadoresEdicion] = useState({
         cantidad: '',
         trabajadores: []
     });
     const [openLoading, setOpenLoading] = useState(false);
+    const [stateSwitchTipoRegistro, setStateSwitchTipoRegistro] = useState(false);
+    const [expandedRango, setExpandedRango] = useState(false);
+    const [expandedRangoDescanso, setExpandedRangoDescanso] = useState(false);
+    const [expandedCantidad, setExpandedCantidad] = useState(false);
+    const [estamosCargandoDatos, setEstamosCargandoDatos] = useState(true);
 
     //useEffect
 
     useEffect(() => {
-        //dispatch(vaciarDatosCentrosAccion());
         dispatch(onEstemAccion('editarCentros'));
         if (listadoCentros.length === 0) {
             dispatch(obtenerCentrosAccion('centros'));
@@ -303,7 +372,10 @@ const CentrosEditar = forwardRef((props, ref) => {
                 arrayTr.push(trabajadorIterado['trabajador_' + (index + 1)]);
                 arraySu.push(trabajadorIterado['suplente_' + (index + 1)]);
             });
-        }
+        };
+        if (centroAEditar.horario.tipoRegistro === 'individual') {
+            setStateSwitchTipoRegistro(true);
+        };
         setValuesFormEdicion({
             ...valuesFormEdicion,
             id: centroAEditar.id,
@@ -316,7 +388,9 @@ const CentrosEditar = forwardRef((props, ref) => {
             provincia: centroAEditar.provincia || '',
             nif: centroAEditar.nif || '',
             mail: centroAEditar.mail || '',
+            mail2: centroAEditar.mail2 || '',
             telefono: centroAEditar.telefono || '',
+            telefono2: centroAEditar.telefono2 || '',
             formaPago: centroAEditar.formaPago || '',
             variacion: centroAEditar.horario.variacion || '',
             tipo: centroAEditar.horario.tipo,
@@ -334,150 +408,319 @@ const CentrosEditar = forwardRef((props, ref) => {
             precioHora_P: centroAEditar.horario.precioHora_P,
         });
         if (centroAEditar.horario.tipo === "rango") {
-            setValueTimePickerInicioEdicion({
-                ...valueTimePickerInicioEdicion,
-                lunes: (centroAEditar.horario.lunesInicioRango ? generaFecha(centroAEditar.horario.lunesInicioRango) : null),
-                martes: (centroAEditar.horario.martesInicioRango ? generaFecha(centroAEditar.horario.martesInicioRango) : null),
-                miercoles: (centroAEditar.horario.miercolesInicioRango ? generaFecha(centroAEditar.horario.miercolesInicioRango) : null),
-                jueves: (centroAEditar.horario.juevesInicioRango ? generaFecha(centroAEditar.horario.juevesInicioRango) : null),
-                viernes: (centroAEditar.horario.viernesInicioRango ? generaFecha(centroAEditar.horario.viernesInicioRango) : null),
-                sabado: (centroAEditar.horario.sabadoInicioRango ? generaFecha(centroAEditar.horario.sabadoInicioRango) : null),
-                domingo: (centroAEditar.horario.domingoInicioRango ? generaFecha(centroAEditar.horario.domingoInicioRango) : null),
-            });
-            setValueTimePickerFinEdicion({
-                ...valueTimePickerFinEdicion,
-                lunes: (centroAEditar.horario.lunesFinRango ? generaFecha(centroAEditar.horario.lunesFinRango) : null),
-                martes: (centroAEditar.horario.martesFinRango ? generaFecha(centroAEditar.horario.martesFinRango) : null),
-                miercoles: (centroAEditar.horario.miercolesFinRango ? generaFecha(centroAEditar.horario.miercolesFinRango) : null),
-                jueves: (centroAEditar.horario.juevesFinRango ? generaFecha(centroAEditar.horario.juevesFinRango) : null),
-                viernes: (centroAEditar.horario.viernesFinRango ? generaFecha(centroAEditar.horario.viernesFinRango) : null),
-                sabado: (centroAEditar.horario.sabadoFinRango ? generaFecha(centroAEditar.horario.sabadoFinRango) : null),
-                domingo: (centroAEditar.horario.domingoFinRango ? generaFecha(centroAEditar.horario.domingoFinRango) : null),
-            })
+            let arrayValoresTimePicker1 = [];
+            let arrayValoresTimePicker2 = [];
+            let arrayValoresTimePickerT = [];
+            for (let i = 0; i < centroAEditar.horario.tipoRegistroTrabajador.length; i++) {
+                let objetoValoresTimePicker1 = {};
+                let objetoValoresTimePicker2 = {};
+                let objetoValoresTimePickerT = {};
+                objetoValoresTimePicker1['lunes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesInicioRango ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].lunesInicioRango) : null);
+                objetoValoresTimePicker2['lunes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesFinRango ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].lunesFinRango) : null);
+                objetoValoresTimePickerT['lunesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesTipoServicio ?
+                    centroAEditar.horario.tipoRegistroTrabajador[i].lunesTipoServicio : '');
+                objetoValoresTimePicker1['martes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesInicioRango ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].martesInicioRango) : null);
+                objetoValoresTimePicker2['martes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesFinRango ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].martesFinRango) : null);
+                objetoValoresTimePickerT['martesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesTipoServicio ?
+                    centroAEditar.horario.tipoRegistroTrabajador[i].martesTipoServicio : '');
+                objetoValoresTimePicker1['miercoles'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesInicioRango ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].miercolesInicioRango) : null);
+                objetoValoresTimePicker2['miercoles'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesFinRango ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].miercolesFinRango) : null);
+                objetoValoresTimePickerT['miercolesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio ?
+                    centroAEditar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio : '');
+                objetoValoresTimePicker1['jueves'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesInicioRango ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].juevesInicioRango) : null);
+                objetoValoresTimePicker2['jueves'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesFinRango ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].juevesFinRango) : null);
+                objetoValoresTimePickerT['juevesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesTipoServicio ?
+                    centroAEditar.horario.tipoRegistroTrabajador[i].juevesTipoServicio : '');
+                objetoValoresTimePicker1['viernes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesInicioRango ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].viernesInicioRango) : null);
+                objetoValoresTimePicker2['viernes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesFinRango ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].viernesFinRango) : null);
+                objetoValoresTimePickerT['viernesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesTipoServicio ?
+                    centroAEditar.horario.tipoRegistroTrabajador[i].viernesTipoServicio : '');
+                objetoValoresTimePicker1['sabado'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoInicioRango ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].sabadoInicioRango) : null);
+                objetoValoresTimePicker2['sabado'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoFinRango ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].sabadoFinRango) : null);
+                objetoValoresTimePickerT['sabadoTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio ?
+                    centroAEditar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio : '');
+                objetoValoresTimePicker1['domingo'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoInicioRango ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].domingoInicioRango) : null);
+                objetoValoresTimePicker2['domingo'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoFinRango ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].domingoFinRango) : null);
+                objetoValoresTimePickerT['domingoTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoTipoServicio ?
+                    centroAEditar.horario.tipoRegistroTrabajador[i].domingoTipoServicio : '');
+                arrayValoresTimePicker1.push(objetoValoresTimePicker1);
+                arrayValoresTimePicker2.push(objetoValoresTimePicker2);
+                arrayValoresTimePickerT.push(objetoValoresTimePickerT);
+            };
+            setValueTimePickerInicioEdicion(arrayValoresTimePicker1);
+            setValueTimePickerFinEdicion(arrayValoresTimePicker2);
+            setValueTipoServicioEdicion(arrayValoresTimePickerT);
         };
         if (centroAEditar.horario.tipo === "cantidad") {
-            setValueCantidadHorasEdicion({
-                ...valueCantidadHorasEdicion,
-                lunes: centroAEditar.horario.lunesCantidad,
-                martes: centroAEditar.horario.martesCantidad,
-                miercoles: centroAEditar.horario.miercolesCantidad,
-                jueves: centroAEditar.horario.juevesCantidad,
-                viernes: centroAEditar.horario.viernesCantidad,
-                sabado: centroAEditar.horario.sabadoCantidad,
-                domingo: centroAEditar.horario.domingoCantidad,
-            })
+            let arrayValoresTimePicker1 = [];
+            let arrayValoresTimePickerT = [];
+            for (let i = 0; i < centroAEditar.horario.tipoRegistroTrabajador.length; i++) {
+                let objetoValoresTimePicker1 = {};
+                let objetoValoresTimePickerT = {};
+                objetoValoresTimePicker1['lunes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesCantidad ?
+                    centroAEditar.horario.tipoRegistroTrabajador[i].lunesCantidad : '');
+                objetoValoresTimePickerT['lunesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesTipoServicio ?
+                    centroAEditar.horario.tipoRegistroTrabajador[i].lunesTipoServicio : '');
+                objetoValoresTimePicker1['martes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesCantidad ?
+                    centroAEditar.horario.tipoRegistroTrabajador[i].martesCantidad : '');
+                objetoValoresTimePickerT['martesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesTipoServicio ?
+                    centroAEditar.horario.tipoRegistroTrabajador[i].martesTipoServicio : '');
+                objetoValoresTimePicker1['miercoles'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesCantidad ?
+                    centroAEditar.horario.tipoRegistroTrabajador[i].miercolesCantidad : '');
+                objetoValoresTimePickerT['miercolesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio ?
+                    centroAEditar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio : '');
+                objetoValoresTimePicker1['jueves'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesCantidad ?
+                    centroAEditar.horario.tipoRegistroTrabajador[i].juevesCantidad : '');
+                objetoValoresTimePickerT['juevesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesTipoServicio ?
+                    centroAEditar.horario.tipoRegistroTrabajador[i].juevesTipoServicio : '');
+                objetoValoresTimePicker1['viernes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesCantidad ?
+                    centroAEditar.horario.tipoRegistroTrabajador[i].viernesCantidad : '');
+                objetoValoresTimePickerT['viernesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesTipoServicio ?
+                    centroAEditar.horario.tipoRegistroTrabajador[i].viernesTipoServicio : '');
+                objetoValoresTimePicker1['sabado'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoCantidad ?
+                    centroAEditar.horario.tipoRegistroTrabajador[i].sabadoCantidad : '');
+                objetoValoresTimePickerT['sabadoTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio ?
+                    centroAEditar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio : '');
+                objetoValoresTimePicker1['domingo'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoCantidad ?
+                    centroAEditar.horario.tipoRegistroTrabajador[i].domingoCantidad : '');
+                objetoValoresTimePickerT['domingoTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoTipoServicio ?
+                    centroAEditar.horario.tipoRegistroTrabajador[i].domingoTipoServicio : '');
+                arrayValoresTimePicker1.push(objetoValoresTimePicker1);
+                arrayValoresTimePickerT.push(objetoValoresTimePickerT);
+            };
+            setValueCantidadHorasEdicion(arrayValoresTimePicker1);
+            setValueTipoServicioEdicion(arrayValoresTimePickerT);
         };
         if (centroAEditar.horario.tipo === "rangoDescanso") {
-            setValueTimePickerInicioDescanso1Edicion({
-                ...valueTimePickerInicioDescanso1Edicion,
-                lunes: (centroAEditar.horario.lunesInicio1RangoDescanso ? generaFecha(centroAEditar.horario.lunesInicio1RangoDescanso) : null),
-                martes: (centroAEditar.horario.martesInicio1RangoDescanso ? generaFecha(centroAEditar.horario.martesInicio1RangoDescanso) : null),
-                miercoles: (centroAEditar.horario.miercolesInicio1RangoDescanso ? generaFecha(centroAEditar.horario.miercolesInicio1RangoDescanso) : null),
-                jueves: (centroAEditar.horario.juevesInicio1RangoDescanso ? generaFecha(centroAEditar.horario.juevesInicio1RangoDescanso) : null),
-                viernes: (centroAEditar.horario.viernesInicio1RangoDescanso ? generaFecha(centroAEditar.horario.viernesInicio1RangoDescanso) : null),
-                sabado: (centroAEditar.horario.sabadoInicio1RangoDescanso ? generaFecha(centroAEditar.horario.sabadoInicio1RangoDescanso) : null),
-                domingo: (centroAEditar.horario.domingoInicio1RangoDescanso ? generaFecha(centroAEditar.horario.domingoInicio1RangoDescanso) : null),
-            });
-            setValueTimePickerFinDescanso1Edicion({
-                ...valueTimePickerFinDescanso1Edicion,
-                lunes: (centroAEditar.horario.lunesFin1RangoDescanso ? generaFecha(centroAEditar.horario.lunesFin1RangoDescanso) : null),
-                martes: (centroAEditar.horario.martesFin1RangoDescanso ? generaFecha(centroAEditar.horario.martesFin1RangoDescanso) : null),
-                miercoles: (centroAEditar.horario.miercolesFin1RangoDescanso ? generaFecha(centroAEditar.horario.miercolesFin1RangoDescanso) : null),
-                jueves: (centroAEditar.horario.juevesFin1RangoDescanso ? generaFecha(centroAEditar.horario.juevesFin1RangoDescanso) : null),
-                viernes: (centroAEditar.horario.viernesFin1RangoDescanso ? generaFecha(centroAEditar.horario.viernesFin1RangoDescanso) : null),
-                sabado: (centroAEditar.horario.sabadoFin1RangoDescanso ? generaFecha(centroAEditar.horario.sabadoFin1RangoDescanso) : null),
-                domingo: (centroAEditar.horario.domingoFin1RangoDescanso ? generaFecha(centroAEditar.horario.domingoFin1RangoDescanso) : null),
-            });
-            setValueTimePickerInicioDescanso2Edicion({
-                ...valueTimePickerInicioDescanso2Edicion,
-                lunes: (centroAEditar.horario.lunesInicio2RangoDescanso ? generaFecha(centroAEditar.horario.lunesInicio2RangoDescanso) : null),
-                martes: (centroAEditar.horario.martesInicio2RangoDescanso ? generaFecha(centroAEditar.horario.martesInicio2RangoDescanso) : null),
-                miercoles: (centroAEditar.horario.miercolesInicio2RangoDescanso ? generaFecha(centroAEditar.horario.miercolesInicio2RangoDescanso) : null),
-                jueves: (centroAEditar.horario.juevesInicio2RangoDescanso ? generaFecha(centroAEditar.horario.juevesInicio2RangoDescanso) : null),
-                viernes: (centroAEditar.horario.viernesInicio2RangoDescanso ? generaFecha(centroAEditar.horario.viernesInicio2RangoDescanso) : null),
-                sabado: (centroAEditar.horario.sabadoInicio2RangoDescanso ? generaFecha(centroAEditar.horario.sabadoInicio2RangoDescanso) : null),
-                domingo: (centroAEditar.horario.domingoInicio2RangoDescanso ? generaFecha(centroAEditar.horario.domingoInicio2RangoDescanso) : null),
-            });
-            setValueTimePickerFinDescanso2Edicion({
-                ...valueTimePickerFinDescanso2Edicion,
-                lunes: (centroAEditar.horario.lunesFin2RangoDescanso ? generaFecha(centroAEditar.horario.lunesFin2RangoDescanso) : null),
-                martes: (centroAEditar.horario.martesFin2RangoDescanso ? generaFecha(centroAEditar.horario.martesFin2RangoDescanso) : null),
-                miercoles: (centroAEditar.horario.miercolesFin2RangoDescanso ? generaFecha(centroAEditar.horario.miercolesFin2RangoDescanso) : null),
-                jueves: (centroAEditar.horario.juevesFin2RangoDescanso ? generaFecha(centroAEditar.horario.juevesFin2RangoDescanso) : null),
-                viernes: (centroAEditar.horario.viernesFin2RangoDescanso ? generaFecha(centroAEditar.horario.viernesFin2RangoDescanso) : null),
-                sabado: (centroAEditar.horario.sabadoFin2RangoDescanso ? generaFecha(centroAEditar.horario.sabadoFin2RangoDescanso) : null),
-                domingo: (centroAEditar.horario.domingoFin2RangoDescanso ? generaFecha(centroAEditar.horario.domingoFin2RangoDescanso) : null),
-            });
+            let arrayValoresTimePicker1 = [];
+            let arrayValoresTimePicker2 = [];
+            let arrayValoresTimePicker3 = [];
+            let arrayValoresTimePicker4 = [];
+            let arrayValoresTimePickerT = [];
+            for (let i = 0; i < centroAEditar.horario.tipoRegistroTrabajador.length; i++) {
+                let objetoValoresTimePicker1 = {};
+                let objetoValoresTimePicker2 = {};
+                let objetoValoresTimePicker3 = {};
+                let objetoValoresTimePicker4 = {};
+                let objetoValoresTimePickerT = {};
+                objetoValoresTimePicker1['lunes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso) : null);
+                objetoValoresTimePicker2['lunes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesFin1RangoDescanso ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].lunesFin1RangoDescanso) : null);
+                objetoValoresTimePicker3['lunes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso) : null);
+                objetoValoresTimePicker4['lunes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesFin2RangoDescanso ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].lunesFin2RangoDescanso) : null);
+                objetoValoresTimePickerT['lunesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesTipoServicio ?
+                    centroAEditar.horario.tipoRegistroTrabajador[i].lunesTipoServicio : '');
+                objetoValoresTimePicker1['martes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesInicio1RangoDescanso ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].martesInicio1RangoDescanso) : null);
+                objetoValoresTimePicker2['martes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesFin1RangoDescanso ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].martesFin1RangoDescanso) : null);
+                objetoValoresTimePicker3['martes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesInicio2RangoDescanso ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].martesInicio2RangoDescanso) : null);
+                objetoValoresTimePicker4['martes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesFin2RangoDescanso ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].martesFin2RangoDescanso) : null);
+                objetoValoresTimePickerT['martesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesTipoServicio ?
+                    centroAEditar.horario.tipoRegistroTrabajador[i].martesTipoServicio : '');
+                objetoValoresTimePicker1['miercoles'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso) : null);
+                objetoValoresTimePicker2['miercoles'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso) : null);
+                objetoValoresTimePicker3['miercoles'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso) : null);
+                objetoValoresTimePicker4['miercoles'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso) : null);
+                objetoValoresTimePickerT['miercolesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio ?
+                    centroAEditar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio : '');
+                objetoValoresTimePicker1['jueves'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso) : null);
+                objetoValoresTimePicker2['jueves'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesFin1RangoDescanso ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].juevesFin1RangoDescanso) : null);
+                objetoValoresTimePicker3['jueves'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso) : null);
+                objetoValoresTimePicker4['jueves'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesFin2RangoDescanso ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].juevesFin2RangoDescanso) : null);
+                objetoValoresTimePickerT['juevesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesTipoServicio ?
+                    centroAEditar.horario.tipoRegistroTrabajador[i].juevesTipoServicio : '');
+                objetoValoresTimePicker1['viernes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso) : null);
+                objetoValoresTimePicker2['viernes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesFin1RangoDescanso ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].viernesFin1RangoDescanso) : null);
+                objetoValoresTimePicker3['viernes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso) : null);
+                objetoValoresTimePicker4['viernes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesFin2RangoDescanso ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].viernesFin2RangoDescanso) : null);
+                objetoValoresTimePickerT['viernesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesTipoServicio ?
+                    centroAEditar.horario.tipoRegistroTrabajador[i].viernesTipoServicio : '');
+                objetoValoresTimePicker1['sabado'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso) : null);
+                objetoValoresTimePicker2['sabado'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso) : null);
+                objetoValoresTimePicker3['sabado'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso) : null);
+                objetoValoresTimePicker4['sabado'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso) : null);
+                objetoValoresTimePickerT['sabadoTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio ?
+                    centroAEditar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio : '');
+                objetoValoresTimePicker1['domingo'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso) : null);
+                objetoValoresTimePicker2['domingo'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoFin1RangoDescanso ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].domingoFin1RangoDescanso) : null);
+                objetoValoresTimePicker3['domingo'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso) : null);
+                objetoValoresTimePicker4['domingo'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoFin2RangoDescanso ?
+                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].domingoFin2RangoDescanso) : null);
+                objetoValoresTimePickerT['domingoTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoTipoServicio ?
+                    centroAEditar.horario.tipoRegistroTrabajador[i].domingoTipoServicio : '');
+                arrayValoresTimePicker1.push(objetoValoresTimePicker1);
+                arrayValoresTimePicker2.push(objetoValoresTimePicker2);
+                arrayValoresTimePicker3.push(objetoValoresTimePicker3);
+                arrayValoresTimePicker4.push(objetoValoresTimePicker4);
+                arrayValoresTimePickerT.push(objetoValoresTimePickerT);
+            };
+            setValueTimePickerInicioDescanso1Edicion(arrayValoresTimePicker1);
+            setValueTimePickerFinDescanso1Edicion(arrayValoresTimePicker2);
+            setValueTimePickerInicioDescanso2Edicion(arrayValoresTimePicker3);
+            setValueTimePickerFinDescanso2Edicion(arrayValoresTimePicker4);
+            setValueTipoServicioEdicion(arrayValoresTimePickerT);
         };
-        setValueTipoServicioEdicion({
-            ...valueTipoServicioEdicion,
-            lunesTipoServicio: centroAEditar.horario.lunesTipoServicio,
-            martesTipoServicio: centroAEditar.horario.martesTipoServicio,
-            miercolesTipoServicio: centroAEditar.horario.miercolesTipoServicio,
-            juevesTipoServicio: centroAEditar.horario.juevesTipoServicio,
-            viernesTipoServicio: centroAEditar.horario.viernesTipoServicio,
-            sabadoTipoServicio: centroAEditar.horario.sabadoTipoServicio,
-            domingoTipoServicio: centroAEditar.horario.domingoTipoServicio,
-        });
+        let arrayValoresHorario = [];
+        for (let i = 0; i < centroAEditar.horario.tipoRegistroTrabajador.length; i++) {
+            let objetoValoresHorario = {};
+            objetoValoresHorario['lunesInicioRango'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesInicioRango ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].lunesInicioRango : null);
+            objetoValoresHorario['lunesFinRango'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesFinRango ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].lunesFinRango : null);
+            objetoValoresHorario['martesInicioRango'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesInicioRango ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].martesInicioRango : null);
+            objetoValoresHorario['martesFinRango'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesFinRango ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].martesFinRango : null);
+            objetoValoresHorario['miercolesInicioRango'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesInicioRango ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].miercolesInicioRango : null);
+            objetoValoresHorario['miercolesFinRango'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesFinRango ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].miercolesFinRango : null);
+            objetoValoresHorario['juevesInicioRango'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesInicioRango ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].juevesInicioRango : null);
+            objetoValoresHorario['juevesFinRango'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesFinRango ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].juevesFinRango : null);
+            objetoValoresHorario['viernesInicioRango'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesInicioRango ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].viernesInicioRango : null);
+            objetoValoresHorario['viernesFinRango'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesFinRango ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].viernesFinRango : null);
+            objetoValoresHorario['sabadoInicioRango'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoInicioRango ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].sabadoInicioRango : null);
+            objetoValoresHorario['sabadoFinRango'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoFinRango ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].sabadoFinRango : null);
+            objetoValoresHorario['domingoInicioRango'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoInicioRango ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].domingoInicioRango : null);
+            objetoValoresHorario['domingoFinRango'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoFinRango ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].domingoFinRango : null);
+            objetoValoresHorario['lunesInicio1RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso : null);
+            objetoValoresHorario['lunesFin1RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesFin1RangoDescanso ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].lunesFin1RangoDescanso : null);
+            objetoValoresHorario['lunesInicio2RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso : null);
+            objetoValoresHorario['lunesFin2RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesFin2RangoDescanso ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].lunesFin2RangoDescanso : null);
+            objetoValoresHorario['martesInicio1RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesInicio1RangoDescanso ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].martesInicio1RangoDescanso : null);
+            objetoValoresHorario['martesFin1RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesFin1RangoDescanso ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].martesFin1RangoDescanso : null);
+            objetoValoresHorario['martesInicio2RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesInicio2RangoDescanso ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].martesInicio2RangoDescanso : null);
+            objetoValoresHorario['martesFin2RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesFin2RangoDescanso ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].martesFin2RangoDescanso : null);
+            objetoValoresHorario['miercolesInicio1RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso : null);
+            objetoValoresHorario['miercolesFin1RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso : null);
+            objetoValoresHorario['miercolesInicio2RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso : null);
+            objetoValoresHorario['miercolesFin2RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso : null);
+            objetoValoresHorario['juevesInicio1RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso : null);
+            objetoValoresHorario['juevesFin1RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesFin1RangoDescanso ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].juevesFin1RangoDescanso : null);
+            objetoValoresHorario['juevesInicio2RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso : null);
+            objetoValoresHorario['juevesFin2RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesFin2RangoDescanso ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].juevesFin2RangoDescanso : null);
+            objetoValoresHorario['viernesInicio1RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso : null);
+            objetoValoresHorario['viernesFin1RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesFin1RangoDescanso ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].viernesFin1RangoDescanso : null);
+            objetoValoresHorario['viernesInicio2RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso : null);
+            objetoValoresHorario['viernesFin2RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesFin2RangoDescanso ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].viernesFin2RangoDescanso : null);
+            objetoValoresHorario['sabadoInicio1RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso : null);
+            objetoValoresHorario['sabadoFin1RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso : null);
+            objetoValoresHorario['sabadoInicio2RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso : null);
+            objetoValoresHorario['sabadoFin2RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso : null);
+            objetoValoresHorario['domingoInicio1RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso : null);
+            objetoValoresHorario['domingoFin1RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoFin1RangoDescanso ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].domingoFin1RangoDescanso : null);
+            objetoValoresHorario['domingoInicio2RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso : null);
+            objetoValoresHorario['domingoFin2RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoFin2RangoDescanso ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].domingoFin2RangoDescanso : null);
+            objetoValoresHorario['lunesCantidad'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesCantidad ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].lunesCantidad : '');
+            objetoValoresHorario['martesCantidad'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesCantidad ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].martesCantidad : '');
+            objetoValoresHorario['miercolesCantidad'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesCantidad ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].miercolesCantidad : '');
+            objetoValoresHorario['juevesCantidad'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesCantidad ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].juevesCantidad : '');
+            objetoValoresHorario['viernesCantidad'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesCantidad ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].viernesCantidad : '');
+            objetoValoresHorario['sabadoCantidad'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoCantidad ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].sabadoCantidad : '');
+            objetoValoresHorario['domingoCantidad'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoCantidad ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].domingoCantidad : '');
+            objetoValoresHorario['lunesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesTipoServicio ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].lunesTipoServicio : '');
+            objetoValoresHorario['martesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesTipoServicio ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].martesTipoServicio : '');
+            objetoValoresHorario['miercolesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio : '');
+            objetoValoresHorario['juevesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesTipoServicio ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].juevesTipoServicio : '');
+            objetoValoresHorario['viernesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesTipoServicio ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].viernesTipoServicio : '');
+            objetoValoresHorario['sabadoTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio : '');
+            objetoValoresHorario['domingoTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoTipoServicio ?
+                centroAEditar.horario.tipoRegistroTrabajador[i].domingoTipoServicio : '');
+            arrayValoresHorario.push(objetoValoresHorario);
+        };
         setHorarioIntervencionEdicion({
             tipo: centroAEditar.horario.tipo,
             variacion: centroAEditar.horario.variacion,
-            lunesInicioRango: centroAEditar.horario.lunesInicioRango ? centroAEditar.horario.lunesInicioRango : null,
-            lunesFinRango: centroAEditar.horario.lunesFinRango ? centroAEditar.horario.lunesFinRango : null,
-            martesInicioRango: centroAEditar.horario.martesInicioRango ? centroAEditar.horario.martesInicioRango : null,
-            martesFinRango: centroAEditar.horario.martesFinRango ? centroAEditar.horario.martesFinRango : null,
-            miercolesInicioRango: centroAEditar.horario.miercolesInicioRango ? centroAEditar.horario.miercolesInicioRango : null,
-            miercolesFinRango: centroAEditar.horario.miercolesFinRango ? centroAEditar.horario.miercolesFinRango : null,
-            juevesInicioRango: centroAEditar.horario.juevesInicioRango ? centroAEditar.horario.juevesInicioRango : null,
-            juevesFinRango: centroAEditar.horario.juevesFinRango ? centroAEditar.horario.juevesFinRango : null,
-            viernesInicioRango: centroAEditar.horario.viernesInicioRango ? centroAEditar.horario.viernesInicioRango : null,
-            viernesFinRango: centroAEditar.horario.viernesFinRango ? centroAEditar.horario.viernesFinRango : null,
-            sabadoInicioRango: centroAEditar.horario.sabadoInicioRango ? centroAEditar.horario.sabadoInicioRango : null,
-            sabadoFinRango: centroAEditar.horario.sabadoFinRango ? centroAEditar.horario.sabadoFinRango : null,
-            domingoInicioRango: centroAEditar.horario.domingoInicioRango ? centroAEditar.horario.domingoInicioRango : null,
-            domingoFinRango: centroAEditar.horario.domingoFinRango ? centroAEditar.horario.domingoFinRango : null,
-            lunesInicio1RangoDescanso: centroAEditar.horario.lunesInicio1RangoDescanso ? centroAEditar.horario.lunesInicio1RangoDescanso : null,
-            lunesInicio2RangoDescanso: centroAEditar.horario.lunesInicio2RangoDescanso ? centroAEditar.horario.lunesInicio2RangoDescanso : null,
-            lunesFin1RangoDescanso: centroAEditar.horario.lunesFin2RangoDescanso ? centroAEditar.horario.lunesFin2RangoDescanso : null,
-            lunesFin2RangoDescanso: centroAEditar.horario.lunesFin2RangoDescanso ? centroAEditar.horario.lunesFin2RangoDescanso : null,
-            martesInicio1RangoDescanso: centroAEditar.horario.martesInicio1RangoDescanso ? centroAEditar.horario.martesInicio1RangoDescanso : null,
-            martesInicio2RangoDescanso: centroAEditar.horario.martesInicio2RangoDescanso ? centroAEditar.horario.martesInicio2RangoDescanso : null,
-            martesFin1RangoDescanso: centroAEditar.horario.martesFin1RangoDescanso ? centroAEditar.horario.martesFin1RangoDescanso : null,
-            martesFin2RangoDescanso: centroAEditar.horario.martesFin2RangoDescanso ? centroAEditar.horario.martesFin2RangoDescanso : null,
-            miercolesInicio1RangoDescanso: centroAEditar.horario.miercolesInicio1RangoDescanso ? centroAEditar.horario.miercolesInicio1RangoDescanso : null,
-            miercolesInicio2RangoDescanso: centroAEditar.horario.miercolesInicio2RangoDescanso ? centroAEditar.horario.miercolesInicio2RangoDescanso : null,
-            miercolesFin1RangoDescanso: centroAEditar.horario.miercolesFin1RangoDescanso ? centroAEditar.horario.miercolesFin1RangoDescanso : null,
-            miercolesFin2RangoDescanso: centroAEditar.horario.miercolesFin2RangoDescanso ? centroAEditar.horario.miercolesFin2RangoDescanso : null,
-            juevesInicio1RangoDescanso: centroAEditar.horario.juevesInicio1RangoDescanso ? centroAEditar.horario.juevesInicio1RangoDescanso : null,
-            juevesInicio2RangoDescanso: centroAEditar.horario.juevesInicio2RangoDescanso ? centroAEditar.horario.juevesInicio2RangoDescanso : null,
-            juevesFin1RangoDescanso: centroAEditar.horario.juevesFin1RangoDescanso ? centroAEditar.horario.juevesFin1RangoDescanso : null,
-            juevesFin2RangoDescanso: centroAEditar.horario.juevesFin2RangoDescanso ? centroAEditar.horario.juevesFin2RangoDescanso : null,
-            viernesInicio1RangoDescanso: centroAEditar.horario.viernesInicio1RangoDescanso ? centroAEditar.horario.viernesInicio1RangoDescanso : null,
-            viernesInicio2RangoDescanso: centroAEditar.horario.viernesInicio2RangoDescanso ? centroAEditar.horario.viernesInicio2RangoDescanso : null,
-            viernesFin1RangoDescanso: centroAEditar.horario.viernesFin1RangoDescanso ? centroAEditar.horario.viernesFin1RangoDescanso : null,
-            viernesFin2RangoDescanso: centroAEditar.horario.viernesFin2RangoDescanso ? centroAEditar.horario.viernesFin2RangoDescanso : null,
-            sabadoInicio1RangoDescanso: centroAEditar.horario.sabadoInicio1RangoDescanso ? centroAEditar.horario.sabadoInicio1RangoDescanso : null,
-            sabadoInicio2RangoDescanso: centroAEditar.horario.sabadoInicio2RangoDescanso ? centroAEditar.horario.sabadoInicio2RangoDescanso : null,
-            sabadoFin1RangoDescanso: centroAEditar.horario.sabadoFin1RangoDescanso ? centroAEditar.horario.sabadoFin1RangoDescanso : null,
-            sabadoFin2RangoDescanso: centroAEditar.horario.sabadoFin2RangoDescanso ? centroAEditar.horario.sabadoFin2RangoDescanso : null,
-            domingoInicio1RangoDescanso: centroAEditar.horario.domingoInicio1RangoDescanso ? centroAEditar.horario.domingoInicio1RangoDescanso : null,
-            domingoInicio2RangoDescanso: centroAEditar.horario.domingoInicio2RangoDescanso ? centroAEditar.horario.domingoInicio2RangoDescanso : null,
-            domingoFin1RangoDescanso: centroAEditar.horario.domingoFin1RangoDescanso ? centroAEditar.horario.domingoFin1RangoDescanso : null,
-            domingoFin2RangoDescanso: centroAEditar.horario.domingoFin2RangoDescanso ? centroAEditar.horario.domingoFin2RangoDescanso : null,
-            lunesCantidad: centroAEditar.horario.lunesCantidad ? centroAEditar.horario.lunesCantidad : '',
-            martesCantidad: centroAEditar.horario.martesCantidad ? centroAEditar.horario.martesCantidad : '',
-            miercolesCantidad: centroAEditar.horario.miercolesCantidad ? centroAEditar.horario.miercolesCantidad : '',
-            juevesCantidad: centroAEditar.horario.juevesCantidad ? centroAEditar.horario.juevesCantidad : '',
-            viernesCantidad: centroAEditar.horario.viernesCantidad ? centroAEditar.horario.viernesCantidad : '',
-            sabadoCantidad: centroAEditar.horario.sabadoCantidad ? centroAEditar.horario.sabadoCantidad : '',
-            domingoCantidad: centroAEditar.horario.domingoCantidad ? centroAEditar.horario.domingoCantidad : '',
-            lunesTipoServicio: centroAEditar.horario.lunesTipoServicio ? centroAEditar.horario.lunesTipoServicio : '',
-            martesTipoServicio: centroAEditar.horario.martesTipoServicio ? centroAEditar.horario.martesTipoServicio : '',
-            miercolesTipoServicio: centroAEditar.horario.miercolesTipoServicio ? centroAEditar.horario.miercolesTipoServicio : '',
-            juevesTipoServicio: centroAEditar.horario.juevesTipoServicio ? centroAEditar.horario.juevesTipoServicio : '',
-            viernesTipoServicio: centroAEditar.horario.viernesTipoServicio ? centroAEditar.horario.viernesTipoServicio : '',
-            sabadoTipoServicio: centroAEditar.horario.sabadoTipoServicio ? centroAEditar.horario.sabadoTipoServicio : '',
-            domingoTipoServicio: centroAEditar.horario.domingoTipoServicio ? centroAEditar.horario.domingoTipoServicio : '',
+            tipoRegistro: centroAEditar.horario.tipoRegistro,
+            tipoRegistroTrabajador: arrayValoresHorario
         });
         setTrabajadoresEdicion({
             ...trabajadoresEdicion,
@@ -485,6 +728,179 @@ const CentrosEditar = forwardRef((props, ref) => {
             trabajadores: centroAEditar.trabajadores.trabajadores
         });
     }, [centroAEditar]);
+
+    useEffect(() => {
+        if (horarioIntervencionEdicion.tipoRegistro === 'individual' && !estamosCargandoDatos) {
+            let myArray1 = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
+            let myArray2 = [...valueTimePickerInicioEdicion];
+            let myArray3 = [...valueTimePickerFinEdicion];
+            let myArray4 = [...valueTimePickerInicioDescanso1Edicion];
+            let myArray5 = [...valueTimePickerFinDescanso1Edicion];
+            let myArray6 = [...valueTimePickerInicioDescanso2Edicion];
+            let myArray7 = [...valueTimePickerFinDescanso2Edicion];
+            let myArray8 = [...valueCantidadHorasEdicion];
+            let myArray9 = [...valueTipoServicioEdicion];
+            for (let i = 1; i < trabajadoresEdicion.cantidad; i++) {
+                myArray1.push(
+                    {
+                        lunesInicioRango: null,
+                        lunesFinRango: null,
+                        martesInicioRango: null,
+                        martesFinRango: null,
+                        miercolesInicioRango: null,
+                        miercolesFinRango: null,
+                        juevesInicioRango: null,
+                        juevesFinRango: null,
+                        viernesInicioRango: null,
+                        viernesFinRango: null,
+                        sabadoInicioRango: null,
+                        sabadoFinRango: null,
+                        domingoInicioRango: null,
+                        domingoFinRango: null,
+                        lunesInicio1RangoDescanso: null,
+                        lunesInicio2RangoDescanso: null,
+                        lunesFin1RangoDescanso: null,
+                        lunesFin2RangoDescanso: null,
+                        martesInicio1RangoDescanso: null,
+                        martesInicio2RangoDescanso: null,
+                        martesFin1RangoDescanso: null,
+                        martesFin2RangoDescanso: null,
+                        miercolesInicio1RangoDescanso: null,
+                        miercolesInicio2RangoDescanso: null,
+                        miercolesFin1RangoDescanso: null,
+                        miercolesFin2RangoDescanso: null,
+                        juevesInicio1RangoDescanso: null,
+                        juevesInicio2RangoDescanso: null,
+                        juevesFin1RangoDescanso: null,
+                        juevesFin2RangoDescanso: null,
+                        viernesInicio1RangoDescanso: null,
+                        viernesInicio2RangoDescanso: null,
+                        viernesFin1RangoDescanso: null,
+                        viernesFin2RangoDescanso: null,
+                        sabadoInicio1RangoDescanso: null,
+                        sabadoInicio2RangoDescanso: null,
+                        sabadoFin1RangoDescanso: null,
+                        sabadoFin2RangoDescanso: null,
+                        domingoInicio1RangoDescanso: null,
+                        domingoInicio2RangoDescanso: null,
+                        domingoFin1RangoDescanso: null,
+                        domingoFin2RangoDescanso: null,
+                        lunesCantidad: '',
+                        martesCantidad: '',
+                        miercolesCantidad: '',
+                        juevesCantidad: '',
+                        viernesCantidad: '',
+                        sabadoCantidad: '',
+                        domingoCantidad: '',
+                        lunesTipoServicio: '',
+                        martesTipoServicio: '',
+                        miercolesTipoServicio: '',
+                        juevesTipoServicio: '',
+                        viernesTipoServicio: '',
+                        sabadoTipoServicio: '',
+                        domingoTipoServicio: '',
+                    }
+                );
+                myArray2.push(
+                    {
+                        lunes: null,
+                        martes: null,
+                        miercoles: null,
+                        jueves: null,
+                        viernes: null,
+                        sabado: null,
+                        domingo: null
+                    }
+                );
+                myArray3.push(
+                    {
+                        lunes: null,
+                        martes: null,
+                        miercoles: null,
+                        jueves: null,
+                        viernes: null,
+                        sabado: null,
+                        domingo: null
+                    }
+                );
+                myArray4.push(
+                    {
+                        lunes: null,
+                        martes: null,
+                        miercoles: null,
+                        jueves: null,
+                        viernes: null,
+                        sabado: null,
+                        domingo: null
+                    }
+                );
+                myArray5.push(
+                    {
+                        lunes: null,
+                        martes: null,
+                        miercoles: null,
+                        jueves: null,
+                        viernes: null,
+                        sabado: null,
+                        domingo: null
+                    }
+                );
+                myArray6.push(
+                    {
+                        lunes: null,
+                        martes: null,
+                        miercoles: null,
+                        jueves: null,
+                        viernes: null,
+                        sabado: null,
+                        domingo: null
+                    }
+                );
+                myArray7.push(
+                    {
+                        lunes: null,
+                        martes: null,
+                        miercoles: null,
+                        jueves: null,
+                        viernes: null,
+                        sabado: null,
+                        domingo: null
+                    }
+                );
+                myArray8.push(
+                    {
+                        lunes: '',
+                        martes: '',
+                        miercoles: '',
+                        jueves: '',
+                        viernes: '',
+                        sabado: '',
+                        domingo: ''
+                    }
+                );
+                myArray9.push(
+                    {
+                        lunesTipoServicio: '',
+                        martesTipoServicio: '',
+                        miercolesTipoServicio: '',
+                        juevesTipoServicio: '',
+                        viernesTipoServicio: '',
+                        sabadoTipoServicio: '',
+                        domingoTipoServicio: '',
+                    }
+                );
+            };
+            setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: myArray1 });
+            setValueTimePickerInicioEdicion(myArray2);
+            setValueTimePickerFinEdicion(myArray3);
+            setValueTimePickerInicioDescanso1Edicion(myArray4);
+            setValueTimePickerFinDescanso1Edicion(myArray5);
+            setValueTimePickerInicioDescanso2Edicion(myArray6);
+            setValueTimePickerFinDescanso2Edicion(myArray7);
+            setValueCantidadHorasEdicion(myArray8);
+            setValueTipoServicioEdicion(myArray9);
+        };
+    }, [horarioIntervencionEdicion.tipoRegistro, estamosCargandoDatos]);
 
     useEffect(() => {
         if (!openLoadingCentros && !openLoadingTrabajadores) {
@@ -495,6 +911,18 @@ const CentrosEditar = forwardRef((props, ref) => {
     }, [openLoadingCentros, openLoadingTrabajadores]);
 
     //funciones
+
+    const handleChangeAccordion = (panel, tipo) => (event, isExpanded) => {
+        if (tipo === 'rango') {
+            setExpandedRango(isExpanded ? panel : false);
+        };
+        if (tipo === 'cantidad') {
+            setExpandedCantidad(isExpanded ? panel : false);
+        };
+        if (tipo === 'rangoDescanso') {
+            setExpandedRangoDescanso(isExpanded ? panel : false);
+        };
+    };
 
     const retornaHoraRango = (laHora) => {
         return dispatch(retornaHoraRangoAccion(laHora));
@@ -517,6 +945,7 @@ const CentrosEditar = forwardRef((props, ref) => {
 
     const handleChangeSelectCentrosEdicion = (e, values) => {
         if (values) {
+            setEstamosCargandoDatos(true);
             setValuesAutocompleteCentrosValores(values)
             dispatch(obtenerCentroAccion('centros', values.id));
             dispatch(activarDesactivarAccion(false));
@@ -579,143 +1008,176 @@ const CentrosEditar = forwardRef((props, ref) => {
         };
         if (prop === "tipo") {
             setValuesFormEdicion({ ...valuesFormEdicion, [prop]: e.target.value });
+            setStateSwitchTipoRegistro(false);
             setHorarioIntervencionEdicion({
                 ...horarioIntervencionEdicion,
                 tipo: e.target.value,
-                lunesInicioRango: null,
-                lunesFinRango: null,
-                martesInicioRango: null,
-                martesFinRango: null,
-                miercolesInicioRango: null,
-                miercolesFinRango: null,
-                juevesInicioRango: null,
-                juevesFinRango: null,
-                viernesInicioRango: null,
-                viernesFinRango: null,
-                sabadoInicioRango: null,
-                sabadoFinRango: null,
-                domingoInicioRango: null,
-                domingoFinRango: null,
-                lunesInicio1RangoDescanso: null,
-                lunesInicio2RangoDescanso: null,
-                lunesFin1RangoDescanso: null,
-                lunesFin2RangoDescanso: null,
-                martesInicio1RangoDescanso: null,
-                martesInicio2RangoDescanso: null,
-                martesFin1RangoDescanso: null,
-                martesFin2RangoDescanso: null,
-                miercolesInicio1RangoDescanso: null,
-                miercolesInicio2RangoDescanso: null,
-                miercolesFin1RangoDescanso: null,
-                miercolesFin2RangoDescanso: null,
-                juevesInicio1RangoDescanso: null,
-                juevesInicio2RangoDescanso: null,
-                juevesFin1RangoDescanso: null,
-                juevesFin2RangoDescanso: null,
-                viernesInicio1RangoDescanso: null,
-                viernesInicio2RangoDescanso: null,
-                viernesFin1RangoDescanso: null,
-                viernesFin2RangoDescanso: null,
-                sabadoInicio1RangoDescanso: null,
-                sabadoInicio2RangoDescanso: null,
-                sabadoFin1RangoDescanso: null,
-                sabadoFin2RangoDescanso: null,
-                domingoInicio1RangoDescanso: null,
-                domingoInicio2RangoDescanso: null,
-                domingoFin1RangoDescanso: null,
-                domingoFin2RangoDescanso: null,
-                lunesCantidad: '',
-                martesCantidad: '',
-                miercolesCantidad: '',
-                juevesCantidad: '',
-                viernesCantidad: '',
-                sabadoCantidad: '',
-                domingoCantidad: '',
-                lunesTipoServicio: '',
-                martesTipoServicio: '',
-                miercolesTipoServicio: '',
-                juevesTipoServicio: '',
-                viernesTipoServicio: '',
-                sabadoTipoServicio: '',
-                domingoTipoServicio: '',
+                tipoRegistro: 'comun',
+                tipoRegistroTrabajador: [
+                    {
+                        lunesInicioRango: null,
+                        lunesFinRango: null,
+                        martesInicioRango: null,
+                        martesFinRango: null,
+                        miercolesInicioRango: null,
+                        miercolesFinRango: null,
+                        juevesInicioRango: null,
+                        juevesFinRango: null,
+                        viernesInicioRango: null,
+                        viernesFinRango: null,
+                        sabadoInicioRango: null,
+                        sabadoFinRango: null,
+                        domingoInicioRango: null,
+                        domingoFinRango: null,
+                        lunesInicio1RangoDescanso: null,
+                        lunesInicio2RangoDescanso: null,
+                        lunesFin1RangoDescanso: null,
+                        lunesFin2RangoDescanso: null,
+                        martesInicio1RangoDescanso: null,
+                        martesInicio2RangoDescanso: null,
+                        martesFin1RangoDescanso: null,
+                        martesFin2RangoDescanso: null,
+                        miercolesInicio1RangoDescanso: null,
+                        miercolesInicio2RangoDescanso: null,
+                        miercolesFin1RangoDescanso: null,
+                        miercolesFin2RangoDescanso: null,
+                        juevesInicio1RangoDescanso: null,
+                        juevesInicio2RangoDescanso: null,
+                        juevesFin1RangoDescanso: null,
+                        juevesFin2RangoDescanso: null,
+                        viernesInicio1RangoDescanso: null,
+                        viernesInicio2RangoDescanso: null,
+                        viernesFin1RangoDescanso: null,
+                        viernesFin2RangoDescanso: null,
+                        sabadoInicio1RangoDescanso: null,
+                        sabadoInicio2RangoDescanso: null,
+                        sabadoFin1RangoDescanso: null,
+                        sabadoFin2RangoDescanso: null,
+                        domingoInicio1RangoDescanso: null,
+                        domingoInicio2RangoDescanso: null,
+                        domingoFin1RangoDescanso: null,
+                        domingoFin2RangoDescanso: null,
+                        lunesCantidad: '',
+                        martesCantidad: '',
+                        miercolesCantidad: '',
+                        juevesCantidad: '',
+                        viernesCantidad: '',
+                        sabadoCantidad: '',
+                        domingoCantidad: '',
+                        lunesTipoServicio: '',
+                        martesTipoServicio: '',
+                        miercolesTipoServicio: '',
+                        juevesTipoServicio: '',
+                        viernesTipoServicio: '',
+                        sabadoTipoServicio: '',
+                        domingoTipoServicio: '',
+                    }
+                ],
             });
-            setValueTimePickerInicioEdicion({
-                lunes: null,
-                martes: null,
-                miercoles: null,
-                jueves: null,
-                viernes: null,
-                sabado: null,
-                domingo: null
-            });
-            setValueTimePickerFinEdicion({
-                lunes: null,
-                martes: null,
-                miercoles: null,
-                jueves: null,
-                viernes: null,
-                sabado: null,
-                domingo: null
-            });
-            setValueTimePickerInicioDescanso1Edicion({
-                lunes: null,
-                martes: null,
-                miercoles: null,
-                jueves: null,
-                viernes: null,
-                sabado: null,
-                domingo: null
-            });
-            setValueTimePickerFinDescanso1Edicion({
-                lunes: null,
-                martes: null,
-                miercoles: null,
-                jueves: null,
-                viernes: null,
-                sabado: null,
-                domingo: null
-            });
-            setValueTimePickerInicioDescanso2Edicion({
-                lunes: null,
-                martes: null,
-                miercoles: null,
-                jueves: null,
-                viernes: null,
-                sabado: null,
-                domingo: null
-            });
-            setValueTimePickerFinDescanso2Edicion({
-                lunes: null,
-                martes: null,
-                miercoles: null,
-                jueves: null,
-                viernes: null,
-                sabado: null,
-                domingo: null
-            });
-            setValueCantidadHorasEdicion({
-                lunes: '',
-                martes: '',
-                miercoles: '',
-                jueves: '',
-                viernes: '',
-                sabado: '',
-                domingo: ''
-            });
-            setValueTipoServicioEdicion({
-                lunesTipoServicio: '',
-                martesTipoServicio: '',
-                miercolesTipoServicio: '',
-                juevesTipoServicio: '',
-                viernesTipoServicio: '',
-                sabadoTipoServicio: '',
-                domingoTipoServicio: ''
-            });
+            setValueTimePickerInicioEdicion([
+                {
+                    lunes: null,
+                    martes: null,
+                    miercoles: null,
+                    jueves: null,
+                    viernes: null,
+                    sabado: null,
+                    domingo: null
+                }
+            ]);
+            setValueTimePickerFinEdicion([
+                {
+                    lunes: null,
+                    martes: null,
+                    miercoles: null,
+                    jueves: null,
+                    viernes: null,
+                    sabado: null,
+                    domingo: null
+                }
+            ]);
+            setValueTimePickerInicioDescanso1Edicion([
+                {
+                    lunes: null,
+                    martes: null,
+                    miercoles: null,
+                    jueves: null,
+                    viernes: null,
+                    sabado: null,
+                    domingo: null
+                }
+            ]);
+            setValueTimePickerFinDescanso1Edicion([
+                {
+                    lunes: null,
+                    martes: null,
+                    miercoles: null,
+                    jueves: null,
+                    viernes: null,
+                    sabado: null,
+                    domingo: null
+                }
+            ]);
+            setValueTimePickerInicioDescanso2Edicion([
+                {
+                    lunes: null,
+                    martes: null,
+                    miercoles: null,
+                    jueves: null,
+                    viernes: null,
+                    sabado: null,
+                    domingo: null
+                }
+            ]);
+            setValueTimePickerFinDescanso2Edicion([
+                {
+                    lunes: null,
+                    martes: null,
+                    miercoles: null,
+                    jueves: null,
+                    viernes: null,
+                    sabado: null,
+                    domingo: null
+                }
+            ]);
+            setValueCantidadHorasEdicion([
+                {
+                    lunes: '',
+                    martes: '',
+                    miercoles: '',
+                    jueves: '',
+                    viernes: '',
+                    sabado: '',
+                    domingo: ''
+                }
+            ]);
+            setValueTipoServicioEdicion([
+                {
+                    lunesTipoServicio: '',
+                    martesTipoServicio: '',
+                    miercolesTipoServicio: '',
+                    juevesTipoServicio: '',
+                    viernesTipoServicio: '',
+                    sabadoTipoServicio: '',
+                    domingoTipoServicio: '',
+                }
+            ]);
             dispatch(registrarIntervencionAccion(false));
             dispatch(activarDesactivarActualizarCentroAccion(false));
             return;
         }
         if (prop === "numeroTrabajadores") {
+            if (horarioIntervencionEdicion.tipoRegistro !== 'comun') {
+                if (e.target.value === 1) {
+                    setAlert({
+                        mensaje: "El número de trabajadores en tipo de registro individual debe ser mayor que uno.",
+                        tipo: 'warning'
+                    })
+                    setOpenSnack(true);
+                    return;
+                };
+                gestionaTipoRegistroNumTrabajadoresEdicion(e.target.value);
+            };
             if (e.target.value > valuesFormEdicion.datosTrabajadores.length) {
                 let vecesMayor = e.target.value - valuesFormEdicion.datosTrabajadores.length;
                 let arrayTr = [...valuesFormEdicion.datosTrabajadores];
@@ -753,385 +1215,485 @@ const CentrosEditar = forwardRef((props, ref) => {
     };
 
     const handleChangeFormEdicionSelectsTrabajadores = (tipo, index) => (e) => {
-        if (tipo === "trabajador") {
-            let arrayTr = [...valuesFormEdicion.datosTrabajadores];
-            arrayTr[index] = e.target.value;
-            let arrayTrEd = [...trabajadoresEdicion.trabajadores];
-            arrayTrEd[index]['trabajador_' + (index + 1)] = e.target.value;
-            setValuesFormEdicion({ ...valuesFormEdicion, datosTrabajadores: arrayTr });
-            setTrabajadoresEdicion({ ...trabajadoresEdicion, trabajadores: arrayTrEd });
-        }
-        if (tipo === "suplente") {
-            let arraySu = [...valuesFormEdicion.datosSuplentes];
-            arraySu[index] = e.target.value;
-            let arrayTrEd = [...trabajadoresEdicion.trabajadores];
-            arrayTrEd[index]['suplente_' + (index + 1)] = e.target.value;
-            setValuesFormEdicion({ ...valuesFormEdicion, datosSuplentes: arraySu });
-            setTrabajadoresEdicion({ ...trabajadoresEdicion, trabajadores: arrayTrEd });
+        let encontrado = false;
+        trabajadoresEdicion.trabajadores.map((trabajador, index) => {
+            if ((trabajador['trabajador_' + (index + 1)] === e.target.value || trabajador['suplente_' + (index + 1)] === e.target.value) && e.target.value) {
+                setAlert({
+                    mensaje: "Este trabajador ya consta como registrado, selecciona otro.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return encontrado = true;
+            };
+        });
+        if (!encontrado) {
+            if (tipo === "trabajador") {
+                let arrayTr = [...valuesFormEdicion.datosTrabajadores];
+                arrayTr[index] = e.target.value;
+                let arrayTrEd = [...trabajadoresEdicion.trabajadores];
+                arrayTrEd[index]['trabajador_' + (index + 1)] = e.target.value;
+                setValuesFormEdicion({ ...valuesFormEdicion, datosTrabajadores: arrayTr });
+                setTrabajadoresEdicion({ ...trabajadoresEdicion, trabajadores: arrayTrEd });
+            }
+            if (tipo === "suplente") {
+                let arraySu = [...valuesFormEdicion.datosSuplentes];
+                arraySu[index] = e.target.value;
+                let arrayTrEd = [...trabajadoresEdicion.trabajadores];
+                arrayTrEd[index]['suplente_' + (index + 1)] = e.target.value;
+                setValuesFormEdicion({ ...valuesFormEdicion, datosSuplentes: arraySu });
+                setTrabajadoresEdicion({ ...trabajadoresEdicion, trabajadores: arrayTrEd });
+            };
+            dispatch(registrarIntervencionAccion(false));
+            dispatch(activarDesactivarActualizarCentroAccion(false));
         };
-        dispatch(registrarIntervencionAccion(false));
-        dispatch(activarDesactivarActualizarCentroAccion(false));
     };
 
     const handleChangeTimePickerInicioEdicion = (id, hora) => {
-        switch (id) {
+        const idSplitted = id.split("-");
+        const idCaso = idSplitted[0] + "-" + idSplitted[1] + "-" + idSplitted[2];
+        const idIndex = idSplitted[3];
+        let arrayValoresTimePicker, arrayValoresHorario;
+        switch (idCaso) {
             case 'timePickerInicio-edicion-lunes':
-                if (valueTimePickerFinEdicion.lunes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinEdicion.lunes))) < 0) {
+                if (valueTimePickerFinEdicion[idIndex].lunes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinEdicion[idIndex].lunes))) < 0) {
                     setAlert({
                         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerInicioEdicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerInicioEdicion({ ...valueTimePickerInicioEdicion, lunes: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, lunesInicioRango: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['lunes'] = hora;
+                    arrayValoresHorario[idIndex]['lunesInicioRango'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerInicioEdicion({ ...valueTimePickerInicioEdicion, lunes: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, lunesInicioRango: null });
-                }
-
+                    arrayValoresTimePicker[idIndex]['lunes'] = null;
+                    arrayValoresHorario[idIndex]['lunesInicioRango'] = null;
+                };
+                setValueTimePickerInicioEdicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio-edicion-martes':
-                if (valueTimePickerFinEdicion.martes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinEdicion.martes))) < 0) {
+                if (valueTimePickerFinEdicion[idIndex].martes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinEdicion[idIndex].martes))) < 0) {
                     setAlert({
                         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerInicioEdicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerInicioEdicion({ ...valueTimePickerInicioEdicion, martes: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, martesInicioRango: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['martes'] = hora;
+                    arrayValoresHorario[idIndex]['martesInicioRango'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerInicioEdicion({ ...valueTimePickerInicioEdicion, martes: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, martesInicioRango: null });
-                }
+                    arrayValoresTimePicker[idIndex]['martes'] = null;
+                    arrayValoresHorario[idIndex]['martesInicioRango'] = null;
+                };
+                setValueTimePickerInicioEdicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio-edicion-miercoles':
-                if (valueTimePickerFinEdicion.miercoles !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinEdicion.miercoles))) < 0) {
+                if (valueTimePickerFinEdicion[idIndex].miercoles !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinEdicion[idIndex].miercoles))) < 0) {
                     setAlert({
                         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerInicioEdicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerInicioEdicion({ ...valueTimePickerInicioEdicion, miercoles: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, miercolesInicioRango: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['miercoles'] = hora;
+                    arrayValoresHorario[idIndex]['miercolesInicioRango'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerInicioEdicion({ ...valueTimePickerInicioEdicion, miercoles: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, miercolesInicioRango: null });
-                }
+                    arrayValoresTimePicker[idIndex]['miercoles'] = null;
+                    arrayValoresHorario[idIndex]['miercolesInicioRango'] = null;
+                };
+                setValueTimePickerInicioEdicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio-edicion-jueves':
-                if (valueTimePickerFinEdicion.jueves !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinEdicion.jueves))) < 0) {
+                if (valueTimePickerFinEdicion[idIndex].jueves !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinEdicion[idIndex].jueves))) < 0) {
                     setAlert({
                         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerInicioEdicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerInicioEdicion({ ...valueTimePickerInicioEdicion, jueves: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, juevesInicioRango: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['jueves'] = hora;
+                    arrayValoresHorario[idIndex]['juevesInicioRango'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerInicioEdicion({ ...valueTimePickerInicioEdicion, jueves: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, juevesInicioRango: null });
-                }
+                    arrayValoresTimePicker[idIndex]['jueves'] = null;
+                    arrayValoresHorario[idIndex]['juevesInicioRango'] = null;
+                };
+                setValueTimePickerInicioEdicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio-edicion-viernes':
-                if (valueTimePickerFinEdicion.viernes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinEdicion.viernes))) < 0) {
+                if (valueTimePickerFinEdicion[idIndex].viernes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinEdicion[idIndex].viernes))) < 0) {
                     setAlert({
                         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerInicioEdicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerInicioEdicion({ ...valueTimePickerInicioEdicion, viernes: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, viernesInicioRango: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['viernes'] = hora;
+                    arrayValoresHorario[idIndex]['viernesInicioRango'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerInicioEdicion({ ...valueTimePickerInicioEdicion, viernes: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, viernesInicioRango: null });
-                }
+                    arrayValoresTimePicker[idIndex]['viernes'] = null;
+                    arrayValoresHorario[idIndex]['viernesInicioRango'] = null;
+                };
+                setValueTimePickerInicioEdicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio-edicion-sabado':
-                if (valueTimePickerFinEdicion.sabado !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinEdicion.sabado))) < 0) {
+                if (valueTimePickerFinEdicion[idIndex].sabado !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinEdicion[idIndex].sabado))) < 0) {
                     setAlert({
                         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerInicioEdicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerInicioEdicion({ ...valueTimePickerInicioEdicion, sabado: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, sabadoInicioRango: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['sabado'] = hora;
+                    arrayValoresHorario[idIndex]['sabadoInicioRango'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerInicioEdicion({ ...valueTimePickerInicioEdicion, sabado: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, sabadoInicioRango: null });
-                }
+                    arrayValoresTimePicker[idIndex]['sabado'] = null;
+                    arrayValoresHorario[idIndex]['sabadoInicioRango'] = null;
+                };
+                setValueTimePickerInicioEdicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio-edicion-domingo':
-                if (valueTimePickerFinEdicion.domingo !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinEdicion.domingo))) < 0) {
+                if (valueTimePickerFinEdicion[idIndex].domingo !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinEdicion[idIndex].domingo))) < 0) {
                     setAlert({
                         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerInicioEdicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerInicioEdicion({ ...valueTimePickerInicioEdicion, domingo: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, domingoInicioRango: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['domingo'] = hora;
+                    arrayValoresHorario[idIndex]['domingoInicioRango'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerInicioEdicion({ ...valueTimePickerInicioEdicion, domingo: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, domingoInicioRango: null });
-                }
+                    arrayValoresTimePicker[idIndex]['domingo'] = null;
+                    arrayValoresHorario[idIndex]['domingoInicioRango'] = null;
+                };
+                setValueTimePickerInicioEdicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio1Descanso-edicion-lunes':
-                if (valueTimePickerFinDescanso1Edicion.lunes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso1Edicion.lunes))) < 0) {
+                if (valueTimePickerFinDescanso1Edicion[idIndex].lunes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso1Edicion[idIndex].lunes))) < 0) {
                     setAlert({
                         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerInicioDescanso1Edicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerInicioDescanso1Edicion({ ...valueTimePickerInicioDescanso1Edicion, lunes: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, lunesInicio1RangoDescanso: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['lunes'] = hora;
+                    arrayValoresHorario[idIndex]['lunesInicio1RangoDescanso'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerInicioDescanso1Edicion({ ...valueTimePickerInicioDescanso1Edicion, lunes: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, lunesInicio1RangoDescanso: null });
-                }
+                    arrayValoresTimePicker[idIndex]['lunes'] = null;
+                    arrayValoresHorario[idIndex]['lunesInicio1RangoDescanso'] = null;
+                };
+                setValueTimePickerInicioDescanso1Edicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio2Descanso-edicion-lunes':
-                if (valueTimePickerFinDescanso2Edicion.lunes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso2Edicion.lunes))) < 0) {
+                if (valueTimePickerFinDescanso2Edicion[idIndex].lunes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso2Edicion[idIndex].lunes))) < 0) {
                     setAlert({
                         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerInicioDescanso2Edicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerInicioDescanso2Edicion({ ...valueTimePickerInicioDescanso2Edicion, lunes: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, lunesInicio2RangoDescanso: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['lunes'] = hora;
+                    arrayValoresHorario[idIndex]['lunesInicio2RangoDescanso'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerInicioDescanso2Edicion({ ...valueTimePickerInicioDescanso2Edicion, lunes: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, lunesInicio2RangoDescanso: null });
-                }
+                    arrayValoresTimePicker[idIndex]['lunes'] = null;
+                    arrayValoresHorario[idIndex]['lunesInicio2RangoDescanso'] = null;
+                };
+                setValueTimePickerInicioDescanso2Edicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio1Descanso-edicion-martes':
-                if (valueTimePickerFinDescanso1Edicion.martes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso1Edicion.martes))) < 0) {
+                if (valueTimePickerFinDescanso1Edicion[idIndex].martes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso1Edicion[idIndex].martes))) < 0) {
                     setAlert({
                         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerInicioDescanso1Edicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerInicioDescanso1Edicion({ ...valueTimePickerInicioDescanso1Edicion, martes: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, martesInicio1RangoDescanso: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['martes'] = hora;
+                    arrayValoresHorario[idIndex]['martesInicio1RangoDescanso'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerInicioDescanso1Edicion({ ...valueTimePickerInicioDescanso1Edicion, martes: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, martesInicio1RangoDescanso: null });
-                }
+                    arrayValoresTimePicker[idIndex]['martes'] = null;
+                    arrayValoresHorario[idIndex]['martesInicio1RangoDescanso'] = null;
+                };
+                setValueTimePickerInicioDescanso1Edicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio2Descanso-edicion-martes':
-                if (valueTimePickerFinDescanso2Edicion.martes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso2Edicion.martes))) < 0) {
+                if (valueTimePickerFinDescanso2Edicion[idIndex].martes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso2Edicion[idIndex].martes))) < 0) {
                     setAlert({
                         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerInicioDescanso2Edicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerInicioDescanso2Edicion({ ...valueTimePickerInicioDescanso2Edicion, martes: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, martesInicio2RangoDescanso: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['martes'] = hora;
+                    arrayValoresHorario[idIndex]['martesInicio2RangoDescanso'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerInicioDescanso2Edicion({ ...valueTimePickerInicioDescanso2Edicion, martes: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, martesInicio2RangoDescanso: null });
-                }
+                    arrayValoresTimePicker[idIndex]['martes'] = null;
+                    arrayValoresHorario[idIndex]['martesInicio2RangoDescanso'] = null;
+                };
+                setValueTimePickerInicioDescanso2Edicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio1Descanso-edicion-miercoles':
-                if (valueTimePickerFinDescanso1Edicion.miercoles !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso1Edicion.miercoles))) < 0) {
+                if (valueTimePickerFinDescanso1Edicion[idIndex].miercoles !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso1Edicion[idIndex].miercoles))) < 0) {
                     setAlert({
                         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerInicioDescanso1Edicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerInicioDescanso1Edicion({ ...valueTimePickerInicioDescanso1Edicion, miercoles: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, miercolesInicio1RangoDescanso: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['miercoles'] = hora;
+                    arrayValoresHorario[idIndex]['miercolesInicio1RangoDescanso'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerInicioDescanso1Edicion({ ...valueTimePickerInicioDescanso1Edicion, miercoles: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, miercolesInicio1RangoDescanso: null });
-                }
+                    arrayValoresTimePicker[idIndex]['miercoles'] = null;
+                    arrayValoresHorario[idIndex]['miercolesInicio1RangoDescanso'] = null;
+                };
+                setValueTimePickerInicioDescanso1Edicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio2Descanso-edicion-miercoles':
-                if (valueTimePickerFinDescanso2Edicion.miercoles !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso2Edicion.miercoles))) < 0) {
+                if (valueTimePickerFinDescanso2Edicion[idIndex].miercoles !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso2Edicion[idIndex].miercoles))) < 0) {
                     setAlert({
                         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerInicioDescanso2Edicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerInicioDescanso2Edicion({ ...valueTimePickerInicioDescanso2Edicion, miercoles: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, miercolesInicio2RangoDescanso: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['miercoles'] = hora;
+                    arrayValoresHorario[idIndex]['miercolesInicio2RangoDescanso'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerInicioDescanso2Edicion({ ...valueTimePickerInicioDescanso2Edicion, miercoles: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, miercolesInicio2RangoDescanso: null });
-                }
+                    arrayValoresTimePicker[idIndex]['miercoles'] = null;
+                    arrayValoresHorario[idIndex]['miercolesInicio2RangoDescanso'] = null;
+                };
+                setValueTimePickerInicioDescanso2Edicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio1Descanso-edicion-jueves':
-                if (valueTimePickerFinDescanso1Edicion.jueves !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso1Edicion.jueves))) < 0) {
+                if (valueTimePickerFinDescanso1Edicion[idIndex].jueves !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso1Edicion[idIndex].jueves))) < 0) {
                     setAlert({
                         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerInicioDescanso1Edicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerInicioDescanso1Edicion({ ...valueTimePickerInicioDescanso1Edicion, jueves: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, juevesInicio1RangoDescanso: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['jueves'] = hora;
+                    arrayValoresHorario[idIndex]['juevesInicio1RangoDescanso'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerInicioDescanso1Edicion({ ...valueTimePickerInicioDescanso1Edicion, jueves: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, juevesInicio1RangoDescanso: null });
-                }
+                    arrayValoresTimePicker[idIndex]['jueves'] = null;
+                    arrayValoresHorario[idIndex]['juevesInicio1RangoDescanso'] = null;
+                };
+                setValueTimePickerInicioDescanso1Edicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio2Descanso-edicion-jueves':
-                if (valueTimePickerFinDescanso2Edicion.jueves !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso2Edicion.jueves))) < 0) {
+                if (valueTimePickerFinDescanso2Edicion[idIndex].jueves !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso2Edicion[idIndex].jueves))) < 0) {
                     setAlert({
                         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerInicioDescanso2Edicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerInicioDescanso2Edicion({ ...valueTimePickerInicioDescanso2Edicion, jueves: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, juevesInicio2RangoDescanso: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['jueves'] = hora;
+                    arrayValoresHorario[idIndex]['juevesInicio2RangoDescanso'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerInicioDescanso2Edicion({ ...valueTimePickerInicioDescanso2Edicion, jueves: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, juevesInicio2RangoDescanso: null });
-                }
+                    arrayValoresTimePicker[idIndex]['jueves'] = null;
+                    arrayValoresHorario[idIndex]['juevesInicio2RangoDescanso'] = null;
+                };
+                setValueTimePickerInicioDescanso2Edicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio1Descanso-edicion-viernes':
-                if (valueTimePickerFinDescanso1Edicion.viernes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso1Edicion.viernes))) < 0) {
+                if (valueTimePickerFinDescanso1Edicion[idIndex].viernes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso1Edicion[idIndex].viernes))) < 0) {
                     setAlert({
                         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerInicioDescanso1Edicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerInicioDescanso1Edicion({ ...valueTimePickerInicioDescanso1Edicion, viernes: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, viernesInicio1RangoDescanso: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['viernes'] = hora;
+                    arrayValoresHorario[idIndex]['viernesInicio1RangoDescanso'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerInicioDescanso1Edicion({ ...valueTimePickerInicioDescanso1Edicion, viernes: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, viernesInicio1RangoDescanso: null });
-                }
+                    arrayValoresTimePicker[idIndex]['viernes'] = null;
+                    arrayValoresHorario[idIndex]['viernesInicio1RangoDescanso'] = null;
+                };
+                setValueTimePickerInicioDescanso1Edicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio2Descanso-edicion-viernes':
-                if (valueTimePickerFinDescanso2Edicion.viernes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso2Edicion.viernes))) < 0) {
+                if (valueTimePickerFinDescanso2Edicion[idIndex].viernes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso2Edicion[idIndex].viernes))) < 0) {
                     setAlert({
                         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerInicioDescanso2Edicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerInicioDescanso2Edicion({ ...valueTimePickerInicioDescanso2Edicion, viernes: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, viernesInicio2RangoDescanso: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['viernes'] = hora;
+                    arrayValoresHorario[idIndex]['viernesInicio2RangoDescanso'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerInicioDescanso2Edicion({ ...valueTimePickerInicioDescanso2Edicion, viernes: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, viernesInicio2RangoDescanso: null });
-                }
+                    arrayValoresTimePicker[idIndex]['viernes'] = null;
+                    arrayValoresHorario[idIndex]['viernesInicio2RangoDescanso'] = null;
+                };
+                setValueTimePickerInicioDescanso2Edicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio1Descanso-edicion-sabado':
-                if (valueTimePickerFinDescanso1Edicion.sabado !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso1Edicion.sabado))) < 0) {
+                if (valueTimePickerFinDescanso1Edicion[idIndex].sabado !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso1Edicion[idIndex].sabado))) < 0) {
                     setAlert({
                         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerInicioDescanso1Edicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerInicioDescanso1Edicion({ ...valueTimePickerInicioDescanso1Edicion, sabado: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, sabadoInicio1RangoDescanso: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['sabado'] = hora;
+                    arrayValoresHorario[idIndex]['sabadoInicio1RangoDescanso'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerInicioDescanso1Edicion({ ...valueTimePickerInicioDescanso1Edicion, sabado: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, sabadoInicio1RangoDescanso: null });
-                }
+                    arrayValoresTimePicker[idIndex]['sabado'] = null;
+                    arrayValoresHorario[idIndex]['sabadoInicio1RangoDescanso'] = null;
+                };
+                setValueTimePickerInicioDescanso1Edicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio2Descanso-edicion-sabado':
-                if (valueTimePickerFinDescanso2Edicion.sabado !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso2Edicion.sabado))) < 0) {
+                if (valueTimePickerFinDescanso2Edicion[idIndex].sabado !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso2Edicion[idIndex].sabado))) < 0) {
                     setAlert({
                         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerInicioDescanso2Edicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerInicioDescanso2Edicion({ ...valueTimePickerInicioDescanso2Edicion, sabado: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, sabadoInicio2RangoDescanso: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['sabado'] = hora;
+                    arrayValoresHorario[idIndex]['sabadoInicio2RangoDescanso'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerInicioDescanso2Edicion({ ...valueTimePickerInicioDescanso2Edicion, sabado: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, sabadoInicio2RangoDescanso: null });
-                }
+                    arrayValoresTimePicker[idIndex]['sabado'] = null;
+                    arrayValoresHorario[idIndex]['sabadoInicio2RangoDescanso'] = null;
+                };
+                setValueTimePickerInicioDescanso2Edicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio1Descanso-edicion-domingo':
-                if (valueTimePickerFinDescanso1Edicion.domingo !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso1Edicion.domingo))) < 0) {
+                if (valueTimePickerFinDescanso1Edicion[idIndex].domingo !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso1Edicion[idIndex].domingo))) < 0) {
                     setAlert({
                         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerInicioDescanso1Edicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerInicioDescanso1Edicion({ ...valueTimePickerInicioDescanso1Edicion, domingo: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, domingoInicio1RangoDescanso: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['domingo'] = hora;
+                    arrayValoresHorario[idIndex]['domingoInicio1RangoDescanso'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerInicioDescanso1Edicion({ ...valueTimePickerInicioDescanso1Edicion, domingo: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, domingoInicio1RangoDescanso: null });
-                }
+                    arrayValoresTimePicker[idIndex]['domingo'] = null;
+                    arrayValoresHorario[idIndex]['domingoInicio1RangoDescanso'] = null;
+                };
+                setValueTimePickerInicioDescanso1Edicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio2Descanso-edicion-domingo':
-                if (valueTimePickerFinDescanso2Edicion.domingo !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso2Edicion.domingo))) < 0) {
+                if (valueTimePickerFinDescanso2Edicion[idIndex].domingo !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso2Edicion[idIndex].domingo))) < 0) {
                     setAlert({
                         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerInicioDescanso2Edicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerInicioDescanso2Edicion({ ...valueTimePickerInicioDescanso2Edicion, domingo: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, domingoInicio2RangoDescanso: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['domingo'] = hora;
+                    arrayValoresHorario[idIndex]['domingoInicio2RangoDescanso'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerInicioDescanso2Edicion({ ...valueTimePickerInicioDescanso2Edicion, domingo: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, domingoInicio2RangoDescanso: null });
-                }
+                    arrayValoresTimePicker[idIndex]['domingo'] = null;
+                    arrayValoresHorario[idIndex]['domingoInicio2RangoDescanso'] = null;
+                };
+                setValueTimePickerInicioDescanso2Edicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             default:
         }
@@ -1140,363 +1702,451 @@ const CentrosEditar = forwardRef((props, ref) => {
     };
 
     const handleChangeTimePickerFinEdicion = (id, hora) => {
-        switch (id) {
+        const idSplitted = id.split("-");
+        const idCaso = idSplitted[0] + "-" + idSplitted[1] + "-" + idSplitted[2];
+        const idIndex = idSplitted[3];
+        let arrayValoresTimePicker, arrayValoresHorario;
+        switch (idCaso) {
             case 'timePickerFin-edicion-lunes':
-                if (valueTimePickerInicioEdicion.lunes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioEdicion.lunes), retornaHoraRango(hora))) < 0) {
+                if (valueTimePickerInicioEdicion[idIndex].lunes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioEdicion[idIndex].lunes), retornaHoraRango(hora))) < 0) {
                     setAlert({
                         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerFinEdicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerFinEdicion({ ...valueTimePickerFinEdicion, lunes: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, lunesFinRango: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['lunes'] = hora;
+                    arrayValoresHorario[idIndex]['lunesFinRango'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerFinEdicion({ ...valueTimePickerFinEdicion, lunes: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, lunesFinRango: null });
-                }
+                    arrayValoresTimePicker[idIndex]['lunes'] = null;
+                    arrayValoresHorario[idIndex]['lunesFinRango'] = null;
+                };
+                setValueTimePickerFinEdicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin-edicion-martes':
-                if (valueTimePickerInicioEdicion.martes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioEdicion.martes), retornaHoraRango(hora))) < 0) {
+                if (valueTimePickerInicioEdicion[idIndex].martes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioEdicion[idIndex].martes), retornaHoraRango(hora))) < 0) {
                     setAlert({
                         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerFinEdicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerFinEdicion({ ...valueTimePickerFinEdicion, martes: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, martesFinRango: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['martes'] = hora;
+                    arrayValoresHorario[idIndex]['martesFinRango'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerFinEdicion({ ...valueTimePickerFinEdicion, martes: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, martesFinRango: null });
-                }
+                    arrayValoresTimePicker[idIndex]['martes'] = null;
+                    arrayValoresHorario[idIndex]['martesFinRango'] = null;
+                };
+                setValueTimePickerFinEdicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin-edicion-miercoles':
-                if (valueTimePickerInicioEdicion.miercoles !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioEdicion.miercoles), retornaHoraRango(hora))) < 0) {
+                if (valueTimePickerInicioEdicion[idIndex].miercoles !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioEdicion[idIndex].miercoles), retornaHoraRango(hora))) < 0) {
                     setAlert({
                         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerFinEdicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerFinEdicion({ ...valueTimePickerFinEdicion, miercoles: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, miercolesFinRango: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['miercoles'] = hora;
+                    arrayValoresHorario[idIndex]['miercolesFinRango'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerFinEdicion({ ...valueTimePickerFinEdicion, miercoles: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, miercolesFinRango: null });
-                }
+                    arrayValoresTimePicker[idIndex]['miercoles'] = null;
+                    arrayValoresHorario[idIndex]['miercolesFinRango'] = null;
+                };
+                setValueTimePickerFinEdicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin-edicion-jueves':
-                if (valueTimePickerInicioEdicion.jueves !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioEdicion.jueves), retornaHoraRango(hora))) < 0) {
+                if (valueTimePickerInicioEdicion[idIndex].jueves !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioEdicion[idIndex].jueves), retornaHoraRango(hora))) < 0) {
                     setAlert({
                         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerFinEdicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerFinEdicion({ ...valueTimePickerFinEdicion, jueves: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, juevesFinRango: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['jueves'] = hora;
+                    arrayValoresHorario[idIndex]['juevesFinRango'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerFinEdicion({ ...valueTimePickerFinEdicion, jueves: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, juevesFinRango: null });
-                }
+                    arrayValoresTimePicker[idIndex]['jueves'] = null;
+                    arrayValoresHorario[idIndex]['juevesFinRango'] = null;
+                };
+                setValueTimePickerFinEdicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin-edicion-viernes':
-                if (valueTimePickerInicioEdicion.viernes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioEdicion.viernes), retornaHoraRango(hora))) < 0) {
+                if (valueTimePickerInicioEdicion[idIndex].viernes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioEdicion[idIndex].viernes), retornaHoraRango(hora))) < 0) {
                     setAlert({
                         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerFinEdicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerFinEdicion({ ...valueTimePickerFinEdicion, viernes: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, viernesFinRango: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['viernes'] = hora;
+                    arrayValoresHorario[idIndex]['viernesFinRango'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerFinEdicion({ ...valueTimePickerFinEdicion, viernes: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, viernesFinRango: null });
-                }
+                    arrayValoresTimePicker[idIndex]['viernes'] = null;
+                    arrayValoresHorario[idIndex]['viernesFinRango'] = null;
+                };
+                setValueTimePickerFinEdicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin-edicion-sabado':
-                if (valueTimePickerInicioEdicion.sabado !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioEdicion.sabado), retornaHoraRango(hora))) < 0) {
+                if (valueTimePickerInicioEdicion[idIndex].sabado !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioEdicion[idIndex].sabado), retornaHoraRango(hora))) < 0) {
                     setAlert({
                         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerFinEdicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerFinEdicion({ ...valueTimePickerFinEdicion, sabado: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, sabadoFinRango: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['sabado'] = hora;
+                    arrayValoresHorario[idIndex]['sabadoFinRango'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerFinEdicion({ ...valueTimePickerFinEdicion, sabado: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, sabadoFinRango: null });
-                }
+                    arrayValoresTimePicker[idIndex]['sabado'] = null;
+                    arrayValoresHorario[idIndex]['sabadoFinRango'] = null;
+                };
+                setValueTimePickerFinEdicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin-edicion-domingo':
-                if (valueTimePickerInicioEdicion.domingo !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioEdicion.domingo), retornaHoraRango(hora))) < 0) {
+                if (valueTimePickerInicioEdicion[idIndex].domingo !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioEdicion[idIndex].domingo), retornaHoraRango(hora))) < 0) {
                     setAlert({
                         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerFinEdicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerFinEdicion({ ...valueTimePickerFinEdicion, domingo: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, domingoFinRango: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['domingo'] = hora;
+                    arrayValoresHorario[idIndex]['domingoFinRango'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerFinEdicion({ ...valueTimePickerFinEdicion, domingo: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, domingoFinRango: null });
-                }
+                    arrayValoresTimePicker[idIndex]['domingo'] = null;
+                    arrayValoresHorario[idIndex]['domingoFinRango'] = null;
+                };
+                setValueTimePickerFinEdicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin1Descanso-edicion-lunes':
-                if (valueTimePickerInicioDescanso1Edicion.lunes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso1Edicion.lunes), retornaHoraRango(hora))) < 0) {
+                if (valueTimePickerInicioDescanso1Edicion[idIndex].lunes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso1Edicion[idIndex].lunes), retornaHoraRango(hora))) < 0) {
                     setAlert({
                         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerFinDescanso1Edicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerFinDescanso1Edicion({ ...valueTimePickerFinDescanso1Edicion, lunes: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, lunesFin1RangoDescanso: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['lunes'] = hora;
+                    arrayValoresHorario[idIndex]['lunesFin1RangoDescanso'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerFinDescanso1Edicion({ ...valueTimePickerFinDescanso1Edicion, lunes: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, lunesFin1RangoDescanso: null });
-                }
+                    arrayValoresTimePicker[idIndex]['lunes'] = null;
+                    arrayValoresHorario[idIndex]['lunesFin1RangoDescanso'] = null;
+                };
+                setValueTimePickerFinDescanso1Edicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin2Descanso-edicion-lunes':
-                if (valueTimePickerInicioDescanso2Edicion.lunes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2Edicion.lunes), retornaHoraRango(hora))) < 0) {
+                if (valueTimePickerInicioDescanso2Edicion[idIndex].lunes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2Edicion[idIndex].lunes), retornaHoraRango(hora))) < 0) {
                     setAlert({
                         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerFinDescanso2Edicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerFinDescanso2Edicion({ ...valueTimePickerFinDescanso2Edicion, lunes: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, lunesFin2RangoDescanso: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['lunes'] = hora;
+                    arrayValoresHorario[idIndex]['lunesFin2RangoDescanso'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerFinDescanso2Edicion({ ...valueTimePickerFinDescanso2Edicion, lunes: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, lunesFin2RangoDescanso: null });
-                }
+                    arrayValoresTimePicker[idIndex]['lunes'] = null;
+                    arrayValoresHorario[idIndex]['lunesFin2RangoDescanso'] = null;
+                };
+                setValueTimePickerFinDescanso2Edicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin1Descanso-edicion-martes':
-                if (valueTimePickerInicioDescanso1Edicion.martes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso1Edicion.martes), retornaHoraRango(hora))) < 0) {
+                if (valueTimePickerInicioDescanso1Edicion[idIndex].martes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso1Edicion[idIndex].martes), retornaHoraRango(hora))) < 0) {
                     setAlert({
                         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerFinDescanso1Edicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerFinDescanso1Edicion({ ...valueTimePickerFinDescanso1Edicion, martes: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, martesFin1RangoDescanso: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['martes'] = hora;
+                    arrayValoresHorario[idIndex]['martesFin1RangoDescanso'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerFinDescanso1Edicion({ ...valueTimePickerFinDescanso1Edicion, martes: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, martesFin1RangoDescanso: null });
-                }
+                    arrayValoresTimePicker[idIndex]['martes'] = null;
+                    arrayValoresHorario[idIndex]['martesFin1RangoDescanso'] = null;
+                };
+                setValueTimePickerFinDescanso1Edicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin2Descanso-edicion-martes':
-                if (valueTimePickerInicioDescanso2Edicion.martes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2Edicion.martes), retornaHoraRango(hora))) < 0) {
+                if (valueTimePickerInicioDescanso2Edicion[idIndex].martes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2Edicion[idIndex].martes), retornaHoraRango(hora))) < 0) {
                     setAlert({
                         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerFinDescanso2Edicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerFinDescanso2Edicion({ ...valueTimePickerFinDescanso2Edicion, martes: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, martesFin2RangoDescanso: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['martes'] = hora;
+                    arrayValoresHorario[idIndex]['martesFin2RangoDescanso'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerFinDescanso2Edicion({ ...valueTimePickerFinDescanso2Edicion, martes: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, martesFin2RangoDescanso: null });
-                }
+                    arrayValoresTimePicker[idIndex]['martes'] = null;
+                    arrayValoresHorario[idIndex]['martesFin2RangoDescanso'] = null;
+                };
+                setValueTimePickerFinDescanso2Edicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin1Descanso-edicion-miercoles':
-                if (valueTimePickerInicioDescanso1Edicion.miercoles !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso1Edicion.miercoles), retornaHoraRango(hora))) < 0) {
+                if (valueTimePickerInicioDescanso1Edicion[idIndex].miercoles !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso1Edicion[idIndex].miercoles), retornaHoraRango(hora))) < 0) {
                     setAlert({
                         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerFinDescanso1Edicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerFinDescanso1Edicion({ ...valueTimePickerFinDescanso1Edicion, miercoles: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, miercolesFin1RangoDescanso: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['miercoles'] = hora;
+                    arrayValoresHorario[idIndex]['miercolesFin1RangoDescanso'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerFinDescanso1Edicion({ ...valueTimePickerFinDescanso1Edicion, miercoles: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, miercolesFin1RangoDescanso: null });
-                }
+                    arrayValoresTimePicker[idIndex]['miercoles'] = null;
+                    arrayValoresHorario[idIndex]['miercolesFin1RangoDescanso'] = null;
+                };
+                setValueTimePickerFinDescanso1Edicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin2Descanso-edicion-miercoles':
-                if (valueTimePickerInicioDescanso2Edicion.miercoles !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2Edicion.miercoles), retornaHoraRango(hora))) < 0) {
+                if (valueTimePickerInicioDescanso2Edicion[idIndex].miercoles !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2Edicion[idIndex].miercoles), retornaHoraRango(hora))) < 0) {
                     setAlert({
                         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerFinDescanso2Edicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerFinDescanso2Edicion({ ...valueTimePickerFinDescanso2Edicion, miercoles: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, miercolesFin2RangoDescanso: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['miercoles'] = hora;
+                    arrayValoresHorario[idIndex]['miercolesFin2RangoDescanso'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerFinDescanso2Edicion({ ...valueTimePickerFinDescanso2Edicion, miercoles: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, miercolesFin2RangoDescanso: null });
-                }
+                    arrayValoresTimePicker[idIndex]['miercoles'] = null;
+                    arrayValoresHorario[idIndex]['miercolesFin2RangoDescanso'] = null;
+                };
+                setValueTimePickerFinDescanso2Edicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin1Descanso-edicion-jueves':
-                if (valueTimePickerInicioDescanso1Edicion.jueves !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso1Edicion.jueves), retornaHoraRango(hora))) < 0) {
+                if (valueTimePickerInicioDescanso1Edicion[idIndex].jueves !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso1Edicion[idIndex].jueves), retornaHoraRango(hora))) < 0) {
                     setAlert({
                         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerFinDescanso1Edicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerFinDescanso1Edicion({ ...valueTimePickerFinDescanso1Edicion, jueves: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, juevesFin1RangoDescanso: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['jueves'] = hora;
+                    arrayValoresHorario[idIndex]['juevesFin1RangoDescanso'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerFinDescanso1Edicion({ ...valueTimePickerFinDescanso1Edicion, jueves: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, juevesFin1RangoDescanso: null });
-                }
+                    arrayValoresTimePicker[idIndex]['jueves'] = null;
+                    arrayValoresHorario[idIndex]['juevesFin1RangoDescanso'] = null;
+                };
+                setValueTimePickerFinDescanso1Edicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin2Descanso-edicion-jueves':
-                if (valueTimePickerInicioDescanso2Edicion.jueves !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2Edicion.jueves), retornaHoraRango(hora))) < 0) {
+                if (valueTimePickerInicioDescanso2Edicion[idIndex].jueves !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2Edicion[idIndex].jueves), retornaHoraRango(hora))) < 0) {
                     setAlert({
                         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerFinDescanso2Edicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerFinDescanso2Edicion({ ...valueTimePickerFinDescanso2Edicion, jueves: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, juevesFin2RangoDescanso: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['jueves'] = hora;
+                    arrayValoresHorario[idIndex]['juevesFin2RangoDescanso'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerFinDescanso2Edicion({ ...valueTimePickerFinDescanso2Edicion, jueves: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, juevesFin2RangoDescanso: null });
-                }
+                    arrayValoresTimePicker[idIndex]['jueves'] = null;
+                    arrayValoresHorario[idIndex]['juevesFin2RangoDescanso'] = null;
+                };
+                setValueTimePickerFinDescanso2Edicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin1Descanso-edicion-viernes':
-                if (valueTimePickerInicioDescanso1Edicion.viernes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso1Edicion.viernes), retornaHoraRango(hora))) < 0) {
+                if (valueTimePickerInicioDescanso1Edicion[idIndex].viernes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso1Edicion[idIndex].viernes), retornaHoraRango(hora))) < 0) {
                     setAlert({
                         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerFinDescanso1Edicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerFinDescanso1Edicion({ ...valueTimePickerFinDescanso1Edicion, viernes: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, viernesFin1RangoDescanso: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['viernes'] = hora;
+                    arrayValoresHorario[idIndex]['viernesFin1RangoDescanso'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerFinDescanso1Edicion({ ...valueTimePickerFinDescanso1Edicion, viernes: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, viernesFin1RangoDescanso: null });
-                }
+                    arrayValoresTimePicker[idIndex]['viernes'] = null;
+                    arrayValoresHorario[idIndex]['viernesFin1RangoDescanso'] = null;
+                };
+                setValueTimePickerFinDescanso1Edicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin2Descanso-edicion-viernes':
-                if (valueTimePickerInicioDescanso2Edicion.viernes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2Edicion.viernes), retornaHoraRango(hora))) < 0) {
+                if (valueTimePickerInicioDescanso2Edicion[idIndex].viernes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2Edicion[idIndex].viernes), retornaHoraRango(hora))) < 0) {
                     setAlert({
                         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerFinDescanso2Edicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerFinDescanso2Edicion({ ...valueTimePickerFinDescanso2Edicion, viernes: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, viernesFin2RangoDescanso: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['viernes'] = hora;
+                    arrayValoresHorario[idIndex]['viernesFin2RangoDescanso'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerFinDescanso2Edicion({ ...valueTimePickerFinDescanso2Edicion, viernes: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, viernesFin2RangoDescanso: null });
-                }
+                    arrayValoresTimePicker[idIndex]['viernes'] = null;
+                    arrayValoresHorario[idIndex]['viernesFin2RangoDescanso'] = null;
+                };
+                setValueTimePickerFinDescanso2Edicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin1Descanso-edicion-sabado':
-                if (valueTimePickerInicioDescanso1Edicion.sabado !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso1Edicion.sabado), retornaHoraRango(hora))) < 0) {
+                if (valueTimePickerInicioDescanso1Edicion[idIndex].sabado !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso1Edicion[idIndex].sabado), retornaHoraRango(hora))) < 0) {
                     setAlert({
                         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerFinDescanso1Edicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerFinDescanso1Edicion({ ...valueTimePickerFinDescanso1Edicion, sabado: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, sabadoFin1RangoDescanso: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['sabado'] = hora;
+                    arrayValoresHorario[idIndex]['sabadoFin1RangoDescanso'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerFinDescanso1Edicion({ ...valueTimePickerFinDescanso1Edicion, sabado: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, sabadoFin1RangoDescanso: null });
-                }
+                    arrayValoresTimePicker[idIndex]['sabado'] = null;
+                    arrayValoresHorario[idIndex]['sabadoFin1RangoDescanso'] = null;
+                };
+                setValueTimePickerFinDescanso1Edicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin2Descanso-edicion-sabado':
-                if (valueTimePickerInicioDescanso2Edicion.sabado !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2Edicion.sabado), retornaHoraRango(hora))) < 0) {
+                if (valueTimePickerInicioDescanso2Edicion[idIndex].sabado !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2Edicion[idIndex].sabado), retornaHoraRango(hora))) < 0) {
                     setAlert({
                         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerFinDescanso2Edicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerFinDescanso2Edicion({ ...valueTimePickerFinDescanso2Edicion, sabado: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, sabadoFin2RangoDescanso: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['sabado'] = hora;
+                    arrayValoresHorario[idIndex]['sabadoFin2RangoDescanso'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerFinDescanso2Edicion({ ...valueTimePickerFinDescanso2Edicion, sabado: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, sabadoFin2RangoDescanso: null });
-                }
+                    arrayValoresTimePicker[idIndex]['sabado'] = null;
+                    arrayValoresHorario[idIndex]['sabadoFin2RangoDescanso'] = null;
+                };
+                setValueTimePickerFinDescanso2Edicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin1Descanso-edicion-domingo':
-                if (valueTimePickerInicioDescanso1Edicion.domingo !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso1Edicion.domingo), retornaHoraRango(hora))) < 0) {
+                if (valueTimePickerInicioDescanso1Edicion[idIndex].domingo !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso1Edicion[idIndex].domingo), retornaHoraRango(hora))) < 0) {
                     setAlert({
                         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerFinDescanso1Edicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerFinDescanso1Edicion({ ...valueTimePickerFinDescanso1Edicion, domingo: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, domingoFin1RangoDescanso: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['domingo'] = hora;
+                    arrayValoresHorario[idIndex]['domingoFin1RangoDescanso'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerFinDescanso1Edicion({ ...valueTimePickerFinDescanso1Edicion, domingo: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, domingoFin1RangoDescanso: null });
-                }
+                    arrayValoresTimePicker[idIndex]['domingo'] = null;
+                    arrayValoresHorario[idIndex]['domingoFin1RangoDescanso'] = null;
+                };
+                setValueTimePickerFinDescanso1Edicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin2Descanso-edicion-domingo':
-                if (valueTimePickerInicioDescanso2Edicion.domingo !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2Edicion.domingo), retornaHoraRango(hora))) < 0) {
+                if (valueTimePickerInicioDescanso2Edicion[idIndex].domingo !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2Edicion[idIndex].domingo), retornaHoraRango(hora))) < 0) {
                     setAlert({
                         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
                         tipo: 'error'
                     })
                     setOpenSnack(true);
                     return;
-                }
+                };
+                arrayValoresTimePicker = [...valueTimePickerFinDescanso2Edicion];
+                arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
-                    setValueTimePickerFinDescanso2Edicion({ ...valueTimePickerFinDescanso2Edicion, domingo: hora });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, domingoFin2RangoDescanso: retornaHoraRango(hora) });
+                    arrayValoresTimePicker[idIndex]['domingo'] = hora;
+                    arrayValoresHorario[idIndex]['domingoFin2RangoDescanso'] = retornaHoraRango(hora);
                 } else {
-                    setValueTimePickerFinDescanso2Edicion({ ...valueTimePickerFinDescanso2Edicion, domingo: null });
-                    setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, domingoFin2RangoDescanso: null });
-                }
+                    arrayValoresTimePicker[idIndex]['domingo'] = null;
+                    arrayValoresHorario[idIndex]['domingoFin2RangoDescanso'] = null;
+                };
+                setValueTimePickerFinDescanso2Edicion(arrayValoresTimePicker);
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             default:
         }
@@ -1505,76 +2155,317 @@ const CentrosEditar = forwardRef((props, ref) => {
     };
 
     const handleChangeSelectCantidadEdicion = (e) => {
-        switch (e.target.name) {
+        const idSplitted = e.target.name.split("-");
+        const idCaso = idSplitted[0] + "-" + idSplitted[1] + "-" + idSplitted[2];
+        const idIndex = idSplitted[3];
+        let arrayValoresSelect, arrayValoresHorario;
+        arrayValoresSelect = [...valueCantidadHorasEdicion];
+        arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
+        switch (idCaso) {
             case 'selectCantidad-edicion-lunes':
-                setValueCantidadHorasEdicion({ ...valueCantidadHorasEdicion, lunes: e.target.value });
-                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, lunesCantidad: e.target.value });
+                arrayValoresSelect[idIndex]['lunes'] = e.target.value;
+                arrayValoresHorario[idIndex]['lunesCantidad'] = e.target.value;
                 break;
             case 'selectCantidad-edicion-martes':
-                setValueCantidadHorasEdicion({ ...valueCantidadHorasEdicion, martes: e.target.value });
-                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, martesCantidad: e.target.value });
+                arrayValoresSelect[idIndex]['martes'] = e.target.value;
+                arrayValoresHorario[idIndex]['martesCantidad'] = e.target.value;
                 break;
             case 'selectCantidad-edicion-miercoles':
-                setValueCantidadHorasEdicion({ ...valueCantidadHorasEdicion, miercoles: e.target.value });
-                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, miercolesCantidad: e.target.value });
+                arrayValoresSelect[idIndex]['miercoles'] = e.target.value;
+                arrayValoresHorario[idIndex]['miercolesCantidad'] = e.target.value;
                 break;
             case 'selectCantidad-edicion-jueves':
-                setValueCantidadHorasEdicion({ ...valueCantidadHorasEdicion, jueves: e.target.value });
-                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, juevesCantidad: e.target.value });
+                arrayValoresSelect[idIndex]['jueves'] = e.target.value;
+                arrayValoresHorario[idIndex]['juevesCantidad'] = e.target.value;
                 break;
             case 'selectCantidad-edicion-viernes':
-                setValueCantidadHorasEdicion({ ...valueCantidadHorasEdicion, viernes: e.target.value });
-                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, viernesCantidad: e.target.value });
+                arrayValoresSelect[idIndex]['viernes'] = e.target.value;
+                arrayValoresHorario[idIndex]['viernesCantidad'] = e.target.value;
                 break;
             case 'selectCantidad-edicion-sabado':
-                setValueCantidadHorasEdicion({ ...valueCantidadHorasEdicion, sabado: e.target.value });
-                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, sabadoCantidad: e.target.value });
+                arrayValoresSelect[idIndex]['sabado'] = e.target.value;
+                arrayValoresHorario[idIndex]['sabadoCantidad'] = e.target.value;
                 break;
             case 'selectCantidad-edicion-domingo':
-                setValueCantidadHorasEdicion({ ...valueCantidadHorasEdicion, domingo: e.target.value });
-                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, domingoCantidad: e.target.value });
+                arrayValoresSelect[idIndex]['domingo'] = e.target.value;
+                arrayValoresHorario[idIndex]['domingoCantidad'] = e.target.value;
                 break;
             default:
         }
+        setValueCantidadHorasEdicion(arrayValoresSelect);
+        setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
         dispatch(registrarIntervencionAccion(false));
         dispatch(activarDesactivarActualizarCentroAccion(false));
     };
 
     const handleChangeSelectTipoServicioEdicion = (e) => {
-        switch (e.target.name) {
+        const idSplitted = e.target.name.split("-");
+        const idCaso = idSplitted[0] + "-" + idSplitted[1] + "-" + idSplitted[2];
+        const idIndex = idSplitted[3];
+        let arrayValoresSelect, arrayValoresHorario;
+        arrayValoresSelect = [...valueTipoServicioEdicion];
+        arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
+        switch (idCaso) {
             case 'selectTipoServicio-edicion-lunes':
-                setValueTipoServicioEdicion({ ...valueTipoServicioEdicion, lunesTipoServicio: e.target.value });
-                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, lunesTipoServicio: e.target.value });
+                arrayValoresSelect[idIndex]['lunesTipoServicio'] = e.target.value;
+                arrayValoresHorario[idIndex]['lunesTipoServicio'] = e.target.value;
                 break;
             case 'selectTipoServicio-edicion-martes':
-                setValueTipoServicioEdicion({ ...valueTipoServicioEdicion, martesTipoServicio: e.target.value });
-                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, martesTipoServicio: e.target.value });
+                arrayValoresSelect[idIndex]['martesTipoServicio'] = e.target.value;
+                arrayValoresHorario[idIndex]['martesTipoServicio'] = e.target.value;
                 break;
             case 'selectTipoServicio-edicion-miercoles':
-                setValueTipoServicioEdicion({ ...valueTipoServicioEdicion, miercolesTipoServicio: e.target.value });
-                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, miercolesTipoServicio: e.target.value });
+                arrayValoresSelect[idIndex]['miercolesTipoServicio'] = e.target.value;
+                arrayValoresHorario[idIndex]['miercolesTipoServicio'] = e.target.value;
                 break;
             case 'selectTipoServicio-edicion-jueves':
-                setValueTipoServicioEdicion({ ...valueTipoServicioEdicion, juevesTipoServicio: e.target.value });
-                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, juevesTipoServicio: e.target.value });
+                arrayValoresSelect[idIndex]['juevesTipoServicio'] = e.target.value;
+                arrayValoresHorario[idIndex]['juevesTipoServicio'] = e.target.value;
                 break;
             case 'selectTipoServicio-edicion-viernes':
-                setValueTipoServicioEdicion({ ...valueTipoServicioEdicion, viernesTipoServicio: e.target.value });
-                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, viernesTipoServicio: e.target.value });
+                arrayValoresSelect[idIndex]['viernesTipoServicio'] = e.target.value;
+                arrayValoresHorario[idIndex]['viernesTipoServicio'] = e.target.value;
                 break;
             case 'selectTipoServicio-edicion-sabado':
-                setValueTipoServicioEdicion({ ...valueTipoServicioEdicion, sabadoTipoServicio: e.target.value });
-                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, sabadoTipoServicio: e.target.value });
+                arrayValoresSelect[idIndex]['sabadoTipoServicio'] = e.target.value;
+                arrayValoresHorario[idIndex]['sabadoTipoServicio'] = e.target.value;
                 break;
             case 'selectTipoServicio-edicion-domingo':
-                setValueTipoServicioEdicion({ ...valueTipoServicioEdicion, domingoTipoServicio: e.target.value });
-                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, domingoTipoServicio: e.target.value });
+                arrayValoresSelect[idIndex]['domingoTipoServicio'] = e.target.value;
+                arrayValoresHorario[idIndex]['domingoTipoServicio'] = e.target.value;
                 break;
             default:
-        };
-
+        }
+        setValueTipoServicioEdicion(arrayValoresSelect);
+        setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
         dispatch(registrarIntervencionAccion(false));
         dispatch(activarDesactivarActualizarCentroAccion(false));
+    };
+
+    const handleChangeSwitchTipoRegistroEdicion = (e) => {
+        setEstamosCargandoDatos(false);
+        if (e.target.checked) {
+            if (trabajadoresEdicion.cantidad > 1) {
+                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistro: 'individual' });
+            } else {
+                setAlert({
+                    mensaje: "Para seleccionar este tipo de registro debe haber más de un trabajador asignado.",
+                    tipo: 'warning'
+                })
+                setOpenSnack(true);
+                return;
+            };
+        } else {
+            let myArray1 = [horarioIntervencionEdicion.tipoRegistroTrabajador[0]];
+            let myArray2 = [valueTimePickerInicioEdicion[0]];
+            let myArray3 = [valueTimePickerFinEdicion[0]];
+            let myArray4 = [valueTimePickerInicioDescanso1Edicion[0]];
+            let myArray5 = [valueTimePickerFinDescanso1Edicion[0]];
+            let myArray6 = [valueTimePickerInicioDescanso2Edicion[0]];
+            let myArray7 = [valueTimePickerFinDescanso2Edicion[0]];
+            let myArray8 = [valueCantidadHorasEdicion[0]];
+            let myArray9 = [valueTipoServicioEdicion[0]];
+            setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistro: 'comun', tipoRegistroTrabajador: myArray1 });
+            setValueTimePickerInicioEdicion(myArray2);
+            setValueTimePickerFinEdicion(myArray3);
+            setValueTimePickerInicioDescanso1Edicion(myArray4);
+            setValueTimePickerFinDescanso1Edicion(myArray5);
+            setValueTimePickerInicioDescanso2Edicion(myArray6);
+            setValueTimePickerFinDescanso2Edicion(myArray7);
+            setValueCantidadHorasEdicion(myArray8);
+            setValueTipoServicioEdicion(myArray9);
+        };
+        setStateSwitchTipoRegistro(e.target.checked);
+        dispatch(registrarIntervencionAccion(false));
+        dispatch(activarDesactivarActualizarCentroAccion(false));
+    };
+
+    const gestionaTipoRegistroNumTrabajadoresEdicion = (numTrab) => {
+        let diferencia;
+        let myArray1 = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
+        let myArray2 = [...valueTimePickerInicioEdicion];
+        let myArray3 = [...valueTimePickerFinEdicion];
+        let myArray4 = [...valueTimePickerInicioDescanso1Edicion];
+        let myArray5 = [...valueTimePickerFinDescanso1Edicion];
+        let myArray6 = [...valueTimePickerInicioDescanso2Edicion];
+        let myArray7 = [...valueTimePickerFinDescanso2Edicion];
+        let myArray8 = [...valueCantidadHorasEdicion];
+        let myArray9 = [...valueTipoServicioEdicion];
+        if (numTrab > trabajadoresEdicion.cantidad) {
+            diferencia = numTrab - trabajadoresEdicion.cantidad;
+            for (let i = 0; i < diferencia; i++) {
+                myArray1.push(
+                    {
+                        lunesInicioRango: null,
+                        lunesFinRango: null,
+                        martesInicioRango: null,
+                        martesFinRango: null,
+                        miercolesInicioRango: null,
+                        miercolesFinRango: null,
+                        juevesInicioRango: null,
+                        juevesFinRango: null,
+                        viernesInicioRango: null,
+                        viernesFinRango: null,
+                        sabadoInicioRango: null,
+                        sabadoFinRango: null,
+                        domingoInicioRango: null,
+                        domingoFinRango: null,
+                        lunesInicio1RangoDescanso: null,
+                        lunesInicio2RangoDescanso: null,
+                        lunesFin1RangoDescanso: null,
+                        lunesFin2RangoDescanso: null,
+                        martesInicio1RangoDescanso: null,
+                        martesInicio2RangoDescanso: null,
+                        martesFin1RangoDescanso: null,
+                        martesFin2RangoDescanso: null,
+                        miercolesInicio1RangoDescanso: null,
+                        miercolesInicio2RangoDescanso: null,
+                        miercolesFin1RangoDescanso: null,
+                        miercolesFin2RangoDescanso: null,
+                        juevesInicio1RangoDescanso: null,
+                        juevesInicio2RangoDescanso: null,
+                        juevesFin1RangoDescanso: null,
+                        juevesFin2RangoDescanso: null,
+                        viernesInicio1RangoDescanso: null,
+                        viernesInicio2RangoDescanso: null,
+                        viernesFin1RangoDescanso: null,
+                        viernesFin2RangoDescanso: null,
+                        sabadoInicio1RangoDescanso: null,
+                        sabadoInicio2RangoDescanso: null,
+                        sabadoFin1RangoDescanso: null,
+                        sabadoFin2RangoDescanso: null,
+                        domingoInicio1RangoDescanso: null,
+                        domingoInicio2RangoDescanso: null,
+                        domingoFin1RangoDescanso: null,
+                        domingoFin2RangoDescanso: null,
+                        lunesCantidad: '',
+                        martesCantidad: '',
+                        miercolesCantidad: '',
+                        juevesCantidad: '',
+                        viernesCantidad: '',
+                        sabadoCantidad: '',
+                        domingoCantidad: '',
+                        lunesTipoServicio: '',
+                        martesTipoServicio: '',
+                        miercolesTipoServicio: '',
+                        juevesTipoServicio: '',
+                        viernesTipoServicio: '',
+                        sabadoTipoServicio: '',
+                        domingoTipoServicio: '',
+                    }
+                );
+                myArray2.push(
+                    {
+                        lunes: null,
+                        martes: null,
+                        miercoles: null,
+                        jueves: null,
+                        viernes: null,
+                        sabado: null,
+                        domingo: null
+                    }
+                );
+                myArray3.push(
+                    {
+                        lunes: null,
+                        martes: null,
+                        miercoles: null,
+                        jueves: null,
+                        viernes: null,
+                        sabado: null,
+                        domingo: null
+                    }
+                );
+                myArray4.push(
+                    {
+                        lunes: null,
+                        martes: null,
+                        miercoles: null,
+                        jueves: null,
+                        viernes: null,
+                        sabado: null,
+                        domingo: null
+                    }
+                );
+                myArray5.push(
+                    {
+                        lunes: null,
+                        martes: null,
+                        miercoles: null,
+                        jueves: null,
+                        viernes: null,
+                        sabado: null,
+                        domingo: null
+                    }
+                );
+                myArray6.push(
+                    {
+                        lunes: null,
+                        martes: null,
+                        miercoles: null,
+                        jueves: null,
+                        viernes: null,
+                        sabado: null,
+                        domingo: null
+                    }
+                );
+                myArray7.push(
+                    {
+                        lunes: null,
+                        martes: null,
+                        miercoles: null,
+                        jueves: null,
+                        viernes: null,
+                        sabado: null,
+                        domingo: null
+                    }
+                );
+                myArray8.push(
+                    {
+                        lunes: '',
+                        martes: '',
+                        miercoles: '',
+                        jueves: '',
+                        viernes: '',
+                        sabado: '',
+                        domingo: ''
+                    }
+                );
+                myArray9.push(
+                    {
+                        lunesTipoServicio: '',
+                        martesTipoServicio: '',
+                        miercolesTipoServicio: '',
+                        juevesTipoServicio: '',
+                        viernesTipoServicio: '',
+                        sabadoTipoServicio: '',
+                        domingoTipoServicio: '',
+                    }
+                );
+            };
+        } else {
+            diferencia = trabajadoresEdicion.cantidad - numTrab;
+            for (let i = 0; i < diferencia; i++) {
+                myArray1.pop();
+                myArray2.pop();
+                myArray3.pop();
+                myArray4.pop();
+                myArray5.pop();
+                myArray6.pop();
+                myArray7.pop();
+                myArray8.pop();
+                myArray9.pop();
+            };
+        };
+        setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: myArray1 });
+        setValueTimePickerInicioEdicion(myArray2);
+        setValueTimePickerFinEdicion(myArray3);
+        setValueTimePickerInicioDescanso1Edicion(myArray4);
+        setValueTimePickerFinDescanso1Edicion(myArray5);
+        setValueTimePickerInicioDescanso2Edicion(myArray6);
+        setValueTimePickerFinDescanso2Edicion(myArray7);
+        setValueCantidadHorasEdicion(myArray8);
+        setValueTipoServicioEdicion(myArray9);
     };
 
     const tituloDialog = "¿Estás seguro que quieres eliminar el Centro?";
@@ -1605,611 +2496,13 @@ const CentrosEditar = forwardRef((props, ref) => {
                     break;
                 case 'procesarDatosEdicion':
                     const procesarDatosEdicion = () => {
-                        if (horarioIntervencionEdicion.tipo === "rango") {
-                            //primera comprobación, que todos los campos esten vacíos
-                            if (!horarioIntervencionEdicion.lunesInicioRango &&
-                                !horarioIntervencionEdicion.lunesFinRango &&
-                                !horarioIntervencionEdicion.martesInicioRango &&
-                                !horarioIntervencionEdicion.martesFinRango &&
-                                !horarioIntervencionEdicion.miercolesInicioRango &&
-                                !horarioIntervencionEdicion.miercolesFinRango &&
-                                !horarioIntervencionEdicion.juevesInicioRango &&
-                                !horarioIntervencionEdicion.juevesFinRango &&
-                                !horarioIntervencionEdicion.viernesInicioRango &&
-                                !horarioIntervencionEdicion.viernesFinRango &&
-                                !horarioIntervencionEdicion.sabadoInicioRango &&
-                                !horarioIntervencionEdicion.sabadoFinRango &&
-                                !horarioIntervencionEdicion.domingoInicioRango &&
-                                !horarioIntervencionEdicion.domingoFinRango) {
-                                setAlert({
-                                    mensaje: "No has introducido ningún dato horario para registrar.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            //segunda comprobación, coinciden ambas casillas en registro
-                            if (!horarioIntervencionEdicion.lunesInicioRango && horarioIntervencionEdicion.lunesFinRango) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (horarioIntervencionEdicion.lunesInicioRango && !horarioIntervencionEdicion.lunesFinRango) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.martesInicioRango && horarioIntervencionEdicion.martesFinRango) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (horarioIntervencionEdicion.martesInicioRango && !horarioIntervencionEdicion.martesFinRango) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.miercolesInicioRango && horarioIntervencionEdicion.miercolesFinRango) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (horarioIntervencionEdicion.miercolesInicioRango && !horarioIntervencionEdicion.miercolesFinRango) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.juevesInicioRango && horarioIntervencionEdicion.juevesFinRango) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (horarioIntervencionEdicion.juevesInicioRango && !horarioIntervencionEdicion.juevesFinRango) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.viernesInicioRango && horarioIntervencionEdicion.viernesFinRango) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (horarioIntervencionEdicion.viernesInicioRango && !horarioIntervencionEdicion.viernesFinRango) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.sabadoInicioRango && horarioIntervencionEdicion.sabadoFinRango) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (horarioIntervencionEdicion.sabadoInicioRango && !horarioIntervencionEdicion.sabadoFinRango) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.domingoInicioRango && horarioIntervencionEdicion.domingoFinRango) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (horarioIntervencionEdicion.domingoInicioRango && !horarioIntervencionEdicion.domingoFinRango) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            //tercera comprobación, pasamos rango a minutos
-                            if (horarioIntervencionEdicion.lunesInicioRango) {
-                                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, lunesCantidad: retornaMinutos(horarioIntervencionEdicion.lunesInicioRango, horarioIntervencionEdicion.lunesFinRango) });
-                            };
-                            if (horarioIntervencionEdicion.martesInicioRango) {
-                                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, martesCantidad: retornaMinutos(horarioIntervencionEdicion.martesInicioRango, horarioIntervencionEdicion.martesFinRango) });
-                            };
-                            if (horarioIntervencionEdicion.miercolesInicioRango) {
-                                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, miercolesCantidad: retornaMinutos(horarioIntervencionEdicion.miercolesInicioRango, horarioIntervencionEdicion.miercolesFinRango) });
-                            };
-                            if (horarioIntervencionEdicion.juevesInicioRango) {
-                                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, juevesCantidad: retornaMinutos(horarioIntervencionEdicion.juevesInicioRango, horarioIntervencionEdicion.juevesFinRango) });
-                            };
-                            if (horarioIntervencionEdicion.viernesInicioRango) {
-                                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, viernesCantidad: retornaMinutos(horarioIntervencionEdicion.viernesInicioRango, horarioIntervencionEdicion.viernesFinRango) });
-                            };
-                            if (horarioIntervencionEdicion.sabadoInicioRango) {
-                                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, sabadoCantidad: retornaMinutos(horarioIntervencionEdicion.sabadoInicioRango, horarioIntervencionEdicion.sabadoFinRango) });
-                            };
-                            if (horarioIntervencionEdicion.domingoInicioRango) {
-                                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, domingoCantidad: retornaMinutos(horarioIntervencionEdicion.domingoInicioRango, horarioIntervencionEdicion.domingoFinRango) });
-                            };
-                            //cuarta comprobacion que no falte tipo de servicio
-                            if ((horarioIntervencionEdicion.lunesInicioRango && !horarioIntervencionEdicion.lunesTipoServicio) ||
-                                (!horarioIntervencionEdicion.lunesInicioRango && horarioIntervencionEdicion.lunesTipoServicio) ||
-                                (horarioIntervencionEdicion.martesInicioRango && !horarioIntervencionEdicion.martesTipoServicio) ||
-                                (!horarioIntervencionEdicion.martesInicioRango && horarioIntervencionEdicion.martesTipoServicio) ||
-                                (horarioIntervencionEdicion.miercolesInicioRango && !horarioIntervencionEdicion.miercolesTipoServicio) ||
-                                (!horarioIntervencionEdicion.miercolesInicioRango && horarioIntervencionEdicion.miercolesTipoServicio) ||
-                                (horarioIntervencionEdicion.juevesInicioRango && !horarioIntervencionEdicion.juevesTipoServicio) ||
-                                (!horarioIntervencionEdicion.juevesInicioRango && horarioIntervencionEdicion.juevesTipoServicio) ||
-                                (horarioIntervencionEdicion.viernesInicioRango && !horarioIntervencionEdicion.viernesTipoServicio) ||
-                                (!horarioIntervencionEdicion.viernesInicioRango && horarioIntervencionEdicion.viernesTipoServicio) ||
-                                (horarioIntervencionEdicion.sabadoInicioRango && !horarioIntervencionEdicion.sabadoTipoServicio) ||
-                                (!horarioIntervencionEdicion.sabadoInicioRango && horarioIntervencionEdicion.sabadoTipoServicio) ||
-                                (horarioIntervencionEdicion.domingoInicioRango && !horarioIntervencionEdicion.domingoTipoServicio) ||
-                                (!horarioIntervencionEdicion.domingoInicioRango && horarioIntervencionEdicion.domingoTipoServicio)) {
-                                setAlert({
-                                    mensaje: "Falta seleccionar el tipo de servicio para el rango horario o viceversa.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                        };
-
-                        if (horarioIntervencionEdicion.tipo === "rangoDescanso") {
-                            //primera comprobación, que todos los campos esten vacíos
-                            if (!horarioIntervencionEdicion.lunesInicio1RangoDescanso &&
-                                !horarioIntervencionEdicion.lunesInicio2RangoDescanso &&
-                                !horarioIntervencionEdicion.lunesFin1RangoDescanso &&
-                                !horarioIntervencionEdicion.lunesFin2RangoDescanso &&
-                                !horarioIntervencionEdicion.martesInicio1RangoDescanso &&
-                                !horarioIntervencionEdicion.martesInicio2RangoDescanso &&
-                                !horarioIntervencionEdicion.martesFin1RangoDescanso &&
-                                !horarioIntervencionEdicion.martesFin2RangoDescanso &&
-                                !horarioIntervencionEdicion.miercolesInicio1RangoDescanso &&
-                                !horarioIntervencionEdicion.miercolesInicio2RangoDescanso &&
-                                !horarioIntervencionEdicion.miercolesFin1RangoDescanso &&
-                                !horarioIntervencionEdicion.miercolesFin2RangoDescanso &&
-                                !horarioIntervencionEdicion.juevesInicio1RangoDescanso &&
-                                !horarioIntervencionEdicion.juevesInicio2RangoDescanso &&
-                                !horarioIntervencionEdicion.juevesFin1RangoDescanso &&
-                                !horarioIntervencionEdicion.juevesFin2RangoDescanso &&
-                                !horarioIntervencionEdicion.viernesInicio1RangoDescanso &&
-                                !horarioIntervencionEdicion.viernesInicio2RangoDescanso &&
-                                !horarioIntervencionEdicion.viernesFin1RangoDescanso &&
-                                !horarioIntervencionEdicion.viernesFin2RangoDescanso &&
-                                !horarioIntervencionEdicion.sabadoInicio1RangoDescanso &&
-                                !horarioIntervencionEdicion.sabadoInicio2RangoDescanso &&
-                                !horarioIntervencionEdicion.sabadoFin1RangoDescanso &&
-                                !horarioIntervencionEdicion.sabadoFin2RangoDescanso &&
-                                !horarioIntervencionEdicion.domingoInicio1RangoDescanso &&
-                                !horarioIntervencionEdicion.domingoInicio2RangoDescanso &&
-                                !horarioIntervencionEdicion.domingoFin1RangoDescanso &&
-                                !horarioIntervencionEdicion.domingoFin2RangoDescanso) {
-                                setAlert({
-                                    mensaje: "No has introducido ningún dato horario para registrar.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            //segunda comprobación, coinciden todas las casillas en registro
-                            if (!horarioIntervencionEdicion.lunesInicio1RangoDescanso && horarioIntervencionEdicion.lunesFin1RangoDescanso) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.lunesFin1RangoDescanso && horarioIntervencionEdicion.lunesInicio1RangoDescanso) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.lunesInicio2RangoDescanso && horarioIntervencionEdicion.lunesFin2RangoDescanso) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.lunesFin2RangoDescanso && horarioIntervencionEdicion.lunesInicio2RangoDescanso) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.martesInicio1RangoDescanso && horarioIntervencionEdicion.martesFin1RangoDescanso) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.martesFin1RangoDescanso && horarioIntervencionEdicion.martesInicio1RangoDescanso) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.martesInicio2RangoDescanso && horarioIntervencionEdicion.martesFin2RangoDescanso) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.martesFin2RangoDescanso && horarioIntervencionEdicion.martesInicio2RangoDescanso) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.miercolesInicio1RangoDescanso && horarioIntervencionEdicion.miercolesFin1RangoDescanso) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.miercolesFin1RangoDescanso && horarioIntervencionEdicion.miercolesInicio1RangoDescanso) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.miercolesInicio2RangoDescanso && horarioIntervencionEdicion.miercolesFin2RangoDescanso) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.miercolesFin2RangoDescanso && horarioIntervencionEdicion.miercolesInicio2RangoDescanso) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.juevesInicio1RangoDescanso && horarioIntervencionEdicion.juevesFin1RangoDescanso) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.juevesFin1RangoDescanso && horarioIntervencionEdicion.juevesInicio1RangoDescanso) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.juevesInicio2RangoDescanso && horarioIntervencionEdicion.juevesFin2RangoDescanso) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.juevesFin2RangoDescanso && horarioIntervencionEdicion.juevesInicio2RangoDescanso) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.viernesInicio1RangoDescanso && horarioIntervencionEdicion.viernesFin1RangoDescanso) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.viernesFin1RangoDescanso && horarioIntervencionEdicion.viernesInicio1RangoDescanso) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.viernesInicio2RangoDescanso && horarioIntervencionEdicion.viernesFin2RangoDescanso) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.viernesFin2RangoDescanso && horarioIntervencionEdicion.viernesInicio2RangoDescanso) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.sabadoInicio1RangoDescanso && horarioIntervencionEdicion.sabadoFin1RangoDescanso) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.sabadoFin1RangoDescanso && horarioIntervencionEdicion.sabadoInicio1RangoDescanso) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.sabadoInicio2RangoDescanso && horarioIntervencionEdicion.sabadoFin2RangoDescanso) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.sabadoFin2RangoDescanso && horarioIntervencionEdicion.sabadoInicio2RangoDescanso) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.domingoInicio1RangoDescanso && horarioIntervencionEdicion.domingoFin1RangoDescanso) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.domingoFin1RangoDescanso && horarioIntervencionEdicion.domingoInicio1RangoDescanso) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.domingoInicio2RangoDescanso && horarioIntervencionEdicion.domingoFin2RangoDescanso) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if (!horarioIntervencionEdicion.domingoFin2RangoDescanso && horarioIntervencionEdicion.domingoInicio2RangoDescanso && horarioIntervencionEdicion.domingoInicio1RangoDescanso && horarioIntervencionEdicion.domingoFin1RangoDescanso) {
-                                setAlert({
-                                    mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            //tercera comprobación, pasamos rango a minutos
-                            let cantidadRango1;
-                            let cantidadRango2;
-                            let cantidadTotalRango;
-                            if (horarioIntervencionEdicion.lunesInicio1RangoDescanso) {
-                                cantidadRango1 = retornaMinutos(horarioIntervencionEdicion.lunesInicio1RangoDescanso, horarioIntervencionEdicion.lunesFin1RangoDescanso);
-                                if (horarioIntervencionEdicion.lunesInicio2RangoDescanso) {
-                                    cantidadRango2 = retornaMinutos(horarioIntervencionEdicion.lunesInicio2RangoDescanso, horarioIntervencionEdicion.lunesFin2RangoDescanso);
-                                } else {
-                                    cantidadRango2 = 0;
-                                }
-                                cantidadTotalRango = cantidadRango1 + cantidadRango2;
-                                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, lunesCantidad: cantidadTotalRango });
-                            };
-                            if (horarioIntervencionEdicion.martesInicio1RangoDescanso) {
-                                cantidadRango1 = retornaMinutos(horarioIntervencionEdicion.martesInicio1RangoDescanso, horarioIntervencionEdicion.martesFin1RangoDescanso);
-                                if (horarioIntervencionEdicion.martesInicio2RangoDescanso) {
-                                    cantidadRango2 = retornaMinutos(horarioIntervencionEdicion.martesInicio2RangoDescanso, horarioIntervencionEdicion.martesFin2RangoDescanso);
-                                } else {
-                                    cantidadRango2 = 0;
-                                }
-                                cantidadTotalRango = cantidadRango1 + cantidadRango2;
-                                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, martesCantidad: cantidadTotalRango });
-                            };
-                            if (horarioIntervencionEdicion.miercolesInicio1RangoDescanso) {
-                                cantidadRango1 = retornaMinutos(horarioIntervencionEdicion.miercolesInicio1RangoDescanso, horarioIntervencionEdicion.miercolesFin1RangoDescanso);
-                                if (horarioIntervencionEdicion.miercolesInicio2RangoDescanso) {
-                                    cantidadRango2 = retornaMinutos(horarioIntervencionEdicion.miercolesInicio2RangoDescanso, horarioIntervencionEdicion.miercolesFin2RangoDescanso);
-                                } else {
-                                    cantidadRango2 = 0;
-                                }
-                                cantidadTotalRango = cantidadRango1 + cantidadRango2;
-                                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, miercolesCantidad: cantidadTotalRango });
-                            };
-                            if (horarioIntervencionEdicion.juevesInicio1RangoDescanso) {
-                                cantidadRango1 = retornaMinutos(horarioIntervencionEdicion.juevesInicio1RangoDescanso, horarioIntervencionEdicion.juevesFin1RangoDescanso);
-                                if (horarioIntervencionEdicion.juevesInicio2RangoDescanso) {
-                                    cantidadRango2 = retornaMinutos(horarioIntervencionEdicion.juevesInicio2RangoDescanso, horarioIntervencionEdicion.juevesFin2RangoDescanso);
-                                } else {
-                                    cantidadRango2 = 0;
-                                }
-                                cantidadTotalRango = cantidadRango1 + cantidadRango2;
-                                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, juevesCantidad: cantidadTotalRango });
-                            };
-                            if (horarioIntervencionEdicion.viernesInicio1RangoDescanso) {
-                                cantidadRango1 = retornaMinutos(horarioIntervencionEdicion.viernesInicio1RangoDescanso, horarioIntervencionEdicion.viernesFin1RangoDescanso);
-                                if (horarioIntervencionEdicion.viernesInicio2RangoDescanso) {
-                                    cantidadRango2 = retornaMinutos(horarioIntervencionEdicion.viernesInicio2RangoDescanso, horarioIntervencionEdicion.viernesFin2RangoDescanso);
-                                } else {
-                                    cantidadRango2 = 0;
-                                }
-                                cantidadTotalRango = cantidadRango1 + cantidadRango2;
-                                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, viernesCantidad: cantidadTotalRango });
-                            };
-                            if (horarioIntervencionEdicion.sabadoInicio1RangoDescanso) {
-                                cantidadRango1 = retornaMinutos(horarioIntervencionEdicion.sabadoInicio1RangoDescanso, horarioIntervencionEdicion.sabadoFin1RangoDescanso);
-                                if (horarioIntervencionEdicion.sabadoInicio2RangoDescanso) {
-                                    cantidadRango2 = retornaMinutos(horarioIntervencionEdicion.sabadoInicio2RangoDescanso, horarioIntervencionEdicion.sabadoFin2RangoDescanso);
-                                } else {
-                                    cantidadRango2 = 0;
-                                }
-                                cantidadTotalRango = cantidadRango1 + cantidadRango2;
-                                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, sabadoCantidad: cantidadTotalRango });
-                            };
-                            if (horarioIntervencionEdicion.domingoInicio1RangoDescanso) {
-                                cantidadRango1 = retornaMinutos(horarioIntervencionEdicion.domingoInicio1RangoDescanso, horarioIntervencionEdicion.domingoFin1RangoDescanso);
-                                if (horarioIntervencionEdicion.domingoInicio2RangoDescanso) {
-                                    cantidadRango2 = retornaMinutos(horarioIntervencionEdicion.domingoInicio2RangoDescanso, horarioIntervencionEdicion.domingoFin2RangoDescanso);
-                                } else {
-                                    cantidadRango2 = 0;
-                                }
-                                cantidadTotalRango = cantidadRango1 + cantidadRango2;
-                                setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, domingoCantidad: cantidadTotalRango });
-                            };
-                            //cuarta comprobacion que no falte tipo de servicio
-                            if ((horarioIntervencionEdicion.lunesInicio1RangoDescanso && !horarioIntervencionEdicion.lunesTipoServicio) ||
-                                (!horarioIntervencionEdicion.lunesInicio1RangoDescanso && horarioIntervencionEdicion.lunesTipoServicio) ||
-                                (horarioIntervencionEdicion.martesInicio1RangoDescanso && !horarioIntervencionEdicion.martesTipoServicio) ||
-                                (!horarioIntervencionEdicion.martesInicio1RangoDescanso && horarioIntervencionEdicion.martesTipoServicio) ||
-                                (horarioIntervencionEdicion.miercolesInicio1RangoDescanso && !horarioIntervencionEdicion.miercolesTipoServicio) ||
-                                (!horarioIntervencionEdicion.miercolesInicio1RangoDescanso && horarioIntervencionEdicion.miercolesTipoServicio) ||
-                                (horarioIntervencionEdicion.juevesInicio1RangoDescanso && !horarioIntervencionEdicion.juevesTipoServicio) ||
-                                (!horarioIntervencionEdicion.juevesInicio1RangoDescanso && horarioIntervencionEdicion.juevesTipoServicio) ||
-                                (horarioIntervencionEdicion.viernesInicio1RangoDescanso && !horarioIntervencionEdicion.viernesTipoServicio) ||
-                                (!horarioIntervencionEdicion.viernesInicio1RangoDescanso && horarioIntervencionEdicion.viernesTipoServicio) ||
-                                (horarioIntervencionEdicion.sabadoInicio1RangoDescanso && !horarioIntervencionEdicion.sabadoTipoServicio) ||
-                                (!horarioIntervencionEdicion.sabadoInicio1RangoDescanso && horarioIntervencionEdicion.sabadoTipoServicio) ||
-                                (horarioIntervencionEdicion.domingoInicio1RangoDescanso && !horarioIntervencionEdicion.domingoTipoServicio) ||
-                                (!horarioIntervencionEdicion.domingoInicio1RangoDescanso && horarioIntervencionEdicion.domingoTipoServicio)) {
-                                setAlert({
-                                    mensaje: "Falta seleccionar el tipo de servicio para el rango horario o viceversa.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                        };
-
-                        if (horarioIntervencionEdicion.tipo === "cantidad") {
-                            //comprobamos que no haya campos vacíos
-                            if (horarioIntervencionEdicion.lunesCantidad === '' &&
-                                horarioIntervencionEdicion.martesCantidad === '' &&
-                                horarioIntervencionEdicion.miercolesCantidad === '' &&
-                                horarioIntervencionEdicion.juevesCantidad === '' &&
-                                horarioIntervencionEdicion.viernesCantidad === '' &&
-                                horarioIntervencionEdicion.sabadoCantidad === '' &&
-                                horarioIntervencionEdicion.domingoCantidad === '') {
-                                setAlert({
-                                    mensaje: "No has introducido ningún dato horario para registrar.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            //cuarta comprobacion que no falte tipo de servicio
-                            if ((horarioIntervencionEdicion.lunesCantidad && !horarioIntervencionEdicion.lunesTipoServicio) ||
-                                (!horarioIntervencionEdicion.lunesCantidad && horarioIntervencionEdicion.lunesTipoServicio) ||
-                                (horarioIntervencionEdicion.martesCantidad && !horarioIntervencionEdicion.martesTipoServicio) ||
-                                (!horarioIntervencionEdicion.martesCantidad && horarioIntervencionEdicion.martesTipoServicio) ||
-                                (horarioIntervencionEdicion.miercolesCantidad && !horarioIntervencionEdicion.miercolesTipoServicio) ||
-                                (!horarioIntervencionEdicion.miercolesCantidad && horarioIntervencionEdicion.miercolesTipoServicio) ||
-                                (horarioIntervencionEdicion.juevesCantidad && !horarioIntervencionEdicion.juevesTipoServicio) ||
-                                (!horarioIntervencionEdicion.juevesCantidad && horarioIntervencionEdicion.juevesTipoServicio) ||
-                                (horarioIntervencionEdicion.viernesCantidad && !horarioIntervencionEdicion.viernesTipoServicio) ||
-                                (!horarioIntervencionEdicion.viernesCantidad && horarioIntervencionEdicion.viernesTipoServicio) ||
-                                (horarioIntervencionEdicion.sabadoCantidad && !horarioIntervencionEdicion.sabadoTipoServicio) ||
-                                (!horarioIntervencionEdicion.sabadoCantidad && horarioIntervencionEdicion.sabadoTipoServicio) ||
-                                (horarioIntervencionEdicion.domingoCantidad && !horarioIntervencionEdicion.domingoTipoServicio) ||
-                                (!horarioIntervencionEdicion.domingoCantidad && horarioIntervencionEdicion.domingoTipoServicio)) {
-                                setAlert({
-                                    mensaje: "Falta seleccionar el tipo de servicio para el rango horario o viceversa.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                        };
-
-                        //comprobamos que array objetos trabajadores no tenga elementos vacíos
-
-                        for (let i = 0; i < trabajadoresEdicion.cantidad; i++) {
-                            if (trabajadoresEdicion.trabajadores[i]['trabajador_' + (i + 1)] === '' && trabajadoresEdicion.trabajadores[i]['suplente_' + (i + 1)] === '') {
-                                setAlert({
-                                    mensaje: "Alguno de los registros Trabajadores - Suplentes está vacío. Completa o cambia la cantidad de trabajadores asignados.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            }
-                        };
-
-                        //comprobamos que no haya elementos vacíos
                         if (valuesFormEdicion.nombre === '' ||
                             valuesFormEdicion.categoria === '' ||
-                            valuesFormEdicion.codigo === '' ||
-                            valuesFormEdicion.domicilio === '' ||
-                            valuesFormEdicion.codigoPostal === '' ||
-                            valuesFormEdicion.poblacion === '' ||
-                            valuesFormEdicion.provincia === '' ||
-                            valuesFormEdicion.nif === '' ||
-                            valuesFormEdicion.formaPago === '') {
+                            valuesFormEdicion.variacion === '' ||
+                            valuesFormEdicion.formaPago === '' ||
+                            valuesFormEdicion.tipo === '' ||
+                            valuesFormEdicion.numeroTrabajadores === ''
+                        ) {
                             setAlert({
                                 mensaje: "Faltan datos por completar. Revisa el formulario.",
                                 tipo: 'error'
@@ -2258,113 +2551,117 @@ const CentrosEditar = forwardRef((props, ref) => {
                             setOpenSnack(true);
                             return;
                         };
-                        if (valuesFormEdicion.computo === 2 || (valuesFormEdicion.computo === 3 && !valuesFormEdicion.mensualPactado)) {
-                            if ((horarioIntervencionEdicion.lunesTipoServicio === 'LIM' ||
-                                horarioIntervencionEdicion.martesTipoServicio === 'LIM' ||
-                                horarioIntervencionEdicion.miercolesTipoServicio === 'LIM' ||
-                                horarioIntervencionEdicion.juevesTipoServicio === 'LIM' ||
-                                horarioIntervencionEdicion.viernesTipoServicio === 'LIM' ||
-                                horarioIntervencionEdicion.sabadoTipoServicio === 'LIM' ||
-                                horarioIntervencionEdicion.domingoTipoServicio === 'LIM')
-                                && !valuesFormEdicion.precioHora_L) {
-                                setAlert({
-                                    mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if ((horarioIntervencionEdicion.lunesTipoServicio === 'CRIS' ||
-                                horarioIntervencionEdicion.martesTipoServicio === 'CRIS' ||
-                                horarioIntervencionEdicion.miercolesTipoServicio === 'CRIS' ||
-                                horarioIntervencionEdicion.juevesTipoServicio === 'CRIS' ||
-                                horarioIntervencionEdicion.viernesTipoServicio === 'CRIS' ||
-                                horarioIntervencionEdicion.sabadoTipoServicio === 'CRIS' ||
-                                horarioIntervencionEdicion.domingoTipoServicio === 'CRIS')
-                                && !valuesFormEdicion.precioHora_C) {
-                                setAlert({
-                                    mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if ((horarioIntervencionEdicion.lunesTipoServicio === 'CRISE' ||
-                                horarioIntervencionEdicion.martesTipoServicio === 'CRISE' ||
-                                horarioIntervencionEdicion.miercolesTipoServicio === 'CRISE' ||
-                                horarioIntervencionEdicion.juevesTipoServicio === 'CRISE' ||
-                                horarioIntervencionEdicion.viernesTipoServicio === 'CRISE' ||
-                                horarioIntervencionEdicion.sabadoTipoServicio === 'CRISE' ||
-                                horarioIntervencionEdicion.domingoTipoServicio === 'CRISE')
-                                && !valuesFormEdicion.precioHora_E) {
-                                setAlert({
-                                    mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if ((horarioIntervencionEdicion.lunesTipoServicio === 'CRISI' ||
-                                horarioIntervencionEdicion.martesTipoServicio === 'CRISI' ||
-                                horarioIntervencionEdicion.miercolesTipoServicio === 'CRISI' ||
-                                horarioIntervencionEdicion.juevesTipoServicio === 'CRISI' ||
-                                horarioIntervencionEdicion.viernesTipoServicio === 'CRISI' ||
-                                horarioIntervencionEdicion.sabadoTipoServicio === 'CRISI' ||
-                                horarioIntervencionEdicion.domingoTipoServicio === 'CRISI')
-                                && !valuesFormEdicion.precioHora_I) {
-                                setAlert({
-                                    mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if ((horarioIntervencionEdicion.lunesTipoServicio === 'LIME' ||
-                                horarioIntervencionEdicion.martesTipoServicio === 'LIME' ||
-                                horarioIntervencionEdicion.miercolesTipoServicio === 'LIME' ||
-                                horarioIntervencionEdicion.juevesTipoServicio === 'LIME' ||
-                                horarioIntervencionEdicion.viernesTipoServicio === 'LIME' ||
-                                horarioIntervencionEdicion.sabadoTipoServicio === 'LIME' ||
-                                horarioIntervencionEdicion.domingoTipoServicio === 'LIME')
-                                && !valuesFormEdicion.precioHora_Z) {
-                                setAlert({
-                                    mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if ((horarioIntervencionEdicion.lunesTipoServicio === 'TOL' ||
-                                horarioIntervencionEdicion.martesTipoServicio === 'TOL' ||
-                                horarioIntervencionEdicion.miercolesTipoServicio === 'TOL' ||
-                                horarioIntervencionEdicion.juevesTipoServicio === 'TOL' ||
-                                horarioIntervencionEdicion.viernesTipoServicio === 'TOL' ||
-                                horarioIntervencionEdicion.sabadoTipoServicio === 'TOL' ||
-                                horarioIntervencionEdicion.domingoTipoServicio === 'TOL')
-                                && !valuesFormEdicion.precioHora_T) {
-                                setAlert({
-                                    mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                            if ((horarioIntervencionEdicion.lunesTipoServicio === 'LIMP' ||
-                                horarioIntervencionEdicion.martesTipoServicio === 'LIMP' ||
-                                horarioIntervencionEdicion.miercolesTipoServicio === 'LIMP' ||
-                                horarioIntervencionEdicion.juevesTipoServicio === 'LIMP' ||
-                                horarioIntervencionEdicion.viernesTipoServicio === 'LIMP' ||
-                                horarioIntervencionEdicion.sabadoTipoServicio === 'LIMP' ||
-                                horarioIntervencionEdicion.domingoTipoServicio === 'LIMP')
-                                && !valuesFormEdicion.precioHora_P) {
-                                setAlert({
-                                    mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                        }
+
+                        //comprobación que el tipo de servicio seleccionado corresponda con el precio/hora estipulado
+                        for (let i = 0; i < horarioIntervencionEdicion.tipoRegistroTrabajador.length; i++) {
+                            if (valuesFormEdicion.computo === 2 || (valuesFormEdicion.computo === 3 && !valuesFormEdicion.mensualPactado)) {
+                                if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio === 'LIM' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio === 'LIM' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio === 'LIM' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio === 'LIM' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio === 'LIM' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio === 'LIM' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio === 'LIM')
+                                    && !valuesFormEdicion.precioHora_L) {
+                                    setAlert({
+                                        mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio === 'CRIS' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio === 'CRIS' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio === 'CRIS' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio === 'CRIS' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio === 'CRIS' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio === 'CRIS' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio === 'CRIS')
+                                    && !valuesFormEdicion.precioHora_C) {
+                                    setAlert({
+                                        mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio === 'CRISE' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio === 'CRISE' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio === 'CRISE' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio === 'CRISE' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio === 'CRISE' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio === 'CRISE' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio === 'CRISE')
+                                    && !valuesFormEdicion.precioHora_E) {
+                                    setAlert({
+                                        mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio === 'CRISI' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio === 'CRISI' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio === 'CRISI' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio === 'CRISI' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio === 'CRISI' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio === 'CRISI' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio === 'CRISI')
+                                    && !valuesFormEdicion.precioHora_I) {
+                                    setAlert({
+                                        mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio === 'LIME' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio === 'LIME' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio === 'LIME' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio === 'LIME' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio === 'LIME' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio === 'LIME' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio === 'LIME')
+                                    && !valuesFormEdicion.precioHora_Z) {
+                                    setAlert({
+                                        mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio === 'TOL' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio === 'TOL' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio === 'TOL' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio === 'TOL' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio === 'TOL' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio === 'TOL' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio === 'TOL')
+                                    && !valuesFormEdicion.precioHora_T) {
+                                    setAlert({
+                                        mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio === 'LIMP' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio === 'LIMP' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio === 'LIMP' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio === 'LIMP' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio === 'LIMP' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio === 'LIMP' ||
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio === 'LIMP')
+                                    && !valuesFormEdicion.precioHora_P) {
+                                    setAlert({
+                                        mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                            }
+                        };
 
                         //validacion mail
                         if (valuesFormEdicion.mail) {
@@ -2378,122 +2675,733 @@ const CentrosEditar = forwardRef((props, ref) => {
                                 return;
                             };
                         }
+                        if (valuesFormEdicion.mail2) {
+                            const validacionMail2 = dispatch(validarMailAccion(valuesFormEdicion.mail2));
+                            if (!validacionMail2) {
+                                setAlert({
+                                    mensaje: "El campo E-mail es incorrecto. Revisa el formulario.",
+                                    tipo: 'error'
+                                })
+                                setOpenSnack(true);
+                                return;
+                            };
+                        }
+
+                        if (horarioIntervencionEdicion.tipo === "rango") {
+                            for (let i = 0; i < horarioIntervencionEdicion.tipoRegistroTrabajador.length; i++) {
+                                //primera comprobación, que todos los campos esten vacíos
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicioRango &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFinRango &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicioRango &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFinRango &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicioRango &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFinRango &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicioRango &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFinRango &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicioRango &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFinRango &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicioRango &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFinRango &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicioRango &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFinRango) {
+                                    setAlert({
+                                        mensaje: "No has introducido ningún dato horario para registrar.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                //segunda comprobación, coinciden ambas casillas en registro
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFinRango) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFinRango) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFinRango) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFinRango) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFinRango) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFinRango) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFinRango) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFinRango) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFinRango) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFinRango) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFinRango) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFinRango) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFinRango) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFinRango) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                //tercera comprobacion que no falte tipo de servicio
+                                if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio) ||
+                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio) ||
+                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio) ||
+                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio) ||
+                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio) ||
+                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio) ||
+                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio) ||
+                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio) ||
+                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio) ||
+                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio) ||
+                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio) ||
+                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio) ||
+                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio) ||
+                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio)) {
+                                    setAlert({
+                                        mensaje: "Falta seleccionar el tipo de servicio para el rango horario o viceversa.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                            };
+                        };
+
+                        if (horarioIntervencionEdicion.tipo === "rangoDescanso") {
+                            for (let i = 0; i < horarioIntervencionEdicion.tipoRegistroTrabajador.length; i++) {
+                                //primera comprobación, que todos los campos esten vacíos
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFin1RangoDescanso &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFin2RangoDescanso &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio1RangoDescanso &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio2RangoDescanso &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFin1RangoDescanso &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFin2RangoDescanso &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFin1RangoDescanso &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFin2RangoDescanso &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFin1RangoDescanso &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFin2RangoDescanso &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFin1RangoDescanso &&
+                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFin2RangoDescanso) {
+                                    setAlert({
+                                        mensaje: "No has introducido ningún dato horario para registrar.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                //segunda comprobación, coinciden todas las casillas en registro
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFin1RangoDescanso) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFin1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFin2RangoDescanso) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFin2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFin1RangoDescanso) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFin1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio1RangoDescanso) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFin2RangoDescanso) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFin2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio2RangoDescanso) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFin1RangoDescanso) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFin1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFin2RangoDescanso) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFin2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFin1RangoDescanso) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFin1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFin2RangoDescanso) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFin2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFin1RangoDescanso) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFin1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFin2RangoDescanso) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFin2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso) {
+                                    setAlert({
+                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+
+                                //tercera comprobacion que no falte tipo de servicio
+                                if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio) ||
+                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio) ||
+                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio1RangoDescanso && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio) ||
+                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio) ||
+                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio) ||
+                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio) ||
+                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio) ||
+                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio) ||
+                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio) ||
+                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio) ||
+                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio) ||
+                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio) ||
+                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio) ||
+                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio)) {
+                                    setAlert({
+                                        mensaje: "Falta seleccionar el tipo de servicio para el rango horario o viceversa.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                            }
+                        };
+
+                        if (horarioIntervencionEdicion.tipo === "cantidad") {
+                            for (let i = 0; i < horarioIntervencionEdicion.tipoRegistroTrabajador.length; i++) {
+                                //comprobamos que no haya campos vacíos
+                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesCantidad === '' &&
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesCantidad === '' &&
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesCantidad === '' &&
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesCantidad === '' &&
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesCantidad === '' &&
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoCantidad === '' &&
+                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoCantidad === '') {
+                                    setAlert({
+                                        mensaje: "No has introducido ningún dato horario para registrar.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                                //tercera comprobacion que no falte tipo de servicio
+                                if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesCantidad && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio) ||
+                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesCantidad && horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio) ||
+                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesCantidad && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio) ||
+                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesCantidad && horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio) ||
+                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesCantidad && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio) ||
+                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesCantidad && horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio) ||
+                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesCantidad && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio) ||
+                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesCantidad && horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio) ||
+                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesCantidad && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio) ||
+                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesCantidad && horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio) ||
+                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoCantidad && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio) ||
+                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoCantidad && horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio) ||
+                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoCantidad && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio) ||
+                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoCantidad && horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio)) {
+                                    setAlert({
+                                        mensaje: "Falta seleccionar el tipo de servicio para el rango horario o viceversa.",
+                                        tipo: 'error'
+                                    })
+                                    setOpenSnack(true);
+                                    return;
+                                };
+                            }
+                        };
+
+                        //comprobamos que array objetos trabajadores no tenga elementos vacíos
+                        for (let i = 0; i < trabajadoresEdicion.cantidad; i++) {
+                            if (trabajadoresEdicion.trabajadores[i]['trabajador_' + (i + 1)] === '' && trabajadoresEdicion.trabajadores[i]['suplente_' + (i + 1)] === '') {
+                                setAlert({
+                                    mensaje: "Alguno de los registros Trabajadores - Suplentes está vacío. Completa o cambia la cantidad de trabajadores asignados.",
+                                    tipo: 'error'
+                                })
+                                setOpenSnack(true);
+                                return;
+                            }
+                        };
+
                         //limpieza final  
                         let horarioIntervencionEdicionRevisado;
+                        let elArrayTipoRegistroTrabajador = [];
                         if (horarioIntervencionEdicion.tipo === 'rango') {
+                            for (let i = 0; i < horarioIntervencionEdicion.tipoRegistroTrabajador.length; i++) {
+                                let elObjetoTipoRegistroTrabajador = {};
+                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicioRango) {
+                                    elObjetoTipoRegistroTrabajador['lunesInicioRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicioRango;
+                                    elObjetoTipoRegistroTrabajador['lunesFinRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFinRango;
+                                    elObjetoTipoRegistroTrabajador['lunesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio;
+                                };
+                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicioRango) {
+                                    elObjetoTipoRegistroTrabajador['martesInicioRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicioRango;
+                                    elObjetoTipoRegistroTrabajador['martesFinRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFinRango;
+                                    elObjetoTipoRegistroTrabajador['martesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio;
+                                };
+                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicioRango) {
+                                    elObjetoTipoRegistroTrabajador['miercolesInicioRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicioRango;
+                                    elObjetoTipoRegistroTrabajador['miercolesFinRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFinRango;
+                                    elObjetoTipoRegistroTrabajador['miercolesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio;
+                                };
+                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicioRango) {
+                                    elObjetoTipoRegistroTrabajador['juevesInicioRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicioRango;
+                                    elObjetoTipoRegistroTrabajador['juevesFinRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFinRango;
+                                    elObjetoTipoRegistroTrabajador['juevesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio;
+                                };
+                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicioRango) {
+                                    elObjetoTipoRegistroTrabajador['viernesInicioRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicioRango;
+                                    elObjetoTipoRegistroTrabajador['viernesFinRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFinRango;
+                                    elObjetoTipoRegistroTrabajador['viernesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio;
+                                };
+                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicioRango) {
+                                    elObjetoTipoRegistroTrabajador['sabadoInicioRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicioRango;
+                                    elObjetoTipoRegistroTrabajador['sabadoFinRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFinRango;
+                                    elObjetoTipoRegistroTrabajador['sabadoTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio;
+                                };
+                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicioRango) {
+                                    elObjetoTipoRegistroTrabajador['domingoInicioRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicioRango;
+                                    elObjetoTipoRegistroTrabajador['domingoFinRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFinRango;
+                                    elObjetoTipoRegistroTrabajador['domingoTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio;
+                                };
+                                elArrayTipoRegistroTrabajador.push(elObjetoTipoRegistroTrabajador);
+                            };
                             horarioIntervencionEdicionRevisado = {
                                 tipo: horarioIntervencionEdicion.tipo,
+                                tipoRegistro: horarioIntervencionEdicion.tipoRegistro,
                                 variacion: horarioIntervencionEdicion.variacion,
-                                lunesInicioRango: horarioIntervencionEdicion.lunesInicioRango,
-                                lunesFinRango: horarioIntervencionEdicion.lunesFinRango,
-                                martesInicioRango: horarioIntervencionEdicion.martesInicioRango,
-                                martesFinRango: horarioIntervencionEdicion.martesFinRango,
-                                miercolesInicioRango: horarioIntervencionEdicion.miercolesInicioRango,
-                                miercolesFinRango: horarioIntervencionEdicion.miercolesFinRango,
-                                juevesInicioRango: horarioIntervencionEdicion.juevesInicioRango,
-                                juevesFinRango: horarioIntervencionEdicion.juevesFinRango,
-                                viernesInicioRango: horarioIntervencionEdicion.viernesInicioRango,
-                                viernesFinRango: horarioIntervencionEdicion.viernesFinRango,
-                                sabadoInicioRango: horarioIntervencionEdicion.sabadoInicioRango,
-                                sabadoFinRango: horarioIntervencionEdicion.sabadoFinRango,
-                                domingoInicioRango: horarioIntervencionEdicion.domingoInicioRango,
-                                domingoFinRango: horarioIntervencionEdicion.domingoFinRango,
-                                lunesTipoServicio: horarioIntervencionEdicion.lunesTipoServicio,
-                                martesTipoServicio: horarioIntervencionEdicion.martesTipoServicio,
-                                miercolesTipoServicio: horarioIntervencionEdicion.miercolesTipoServicio,
-                                juevesTipoServicio: horarioIntervencionEdicion.juevesTipoServicio,
-                                viernesTipoServicio: horarioIntervencionEdicion.viernesTipoServicio,
-                                sabadoTipoServicio: horarioIntervencionEdicion.sabadoTipoServicio,
-                                domingoTipoServicio: horarioIntervencionEdicion.domingoTipoServicio
+                                tipoRegistroTrabajador: elArrayTipoRegistroTrabajador
                             };
                         };
                         if (horarioIntervencionEdicion.tipo === 'rangoDescanso') {
+                            for (let i = 0; i < horarioIntervencionEdicion.tipoRegistroTrabajador.length; i++) {
+                                let elObjetoTipoRegistroTrabajador = {};
+                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso) {
+                                    elObjetoTipoRegistroTrabajador['lunesInicio1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso;
+                                    elObjetoTipoRegistroTrabajador['lunesFin1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFin1RangoDescanso;
+                                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso) {
+                                        elObjetoTipoRegistroTrabajador['lunesInicio2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso;
+                                        elObjetoTipoRegistroTrabajador['lunesFin2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFin2RangoDescanso;
+                                    };
+                                    elObjetoTipoRegistroTrabajador['lunesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio;
+                                };
+                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio1RangoDescanso) {
+                                    elObjetoTipoRegistroTrabajador['martesInicio1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio1RangoDescanso;
+                                    elObjetoTipoRegistroTrabajador['martesFin1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFin1RangoDescanso;
+                                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio2RangoDescanso) {
+                                        elObjetoTipoRegistroTrabajador['martesInicio2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio2RangoDescanso;
+                                        elObjetoTipoRegistroTrabajador['martesFin2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFin2RangoDescanso;
+                                    };
+                                    elObjetoTipoRegistroTrabajador['martesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio;
+                                };
+                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso) {
+                                    elObjetoTipoRegistroTrabajador['miercolesInicio1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso;
+                                    elObjetoTipoRegistroTrabajador['miercolesFin1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso;
+                                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso) {
+                                        elObjetoTipoRegistroTrabajador['miercolesInicio2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso;
+                                        elObjetoTipoRegistroTrabajador['miercolesFin2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso;
+                                    };
+                                    elObjetoTipoRegistroTrabajador['miercolesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio;
+                                };
+                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso) {
+                                    elObjetoTipoRegistroTrabajador['juevesInicio1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso;
+                                    elObjetoTipoRegistroTrabajador['juevesFin1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFin1RangoDescanso;
+                                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso) {
+                                        elObjetoTipoRegistroTrabajador['juevesInicio2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso;
+                                        elObjetoTipoRegistroTrabajador['juevesFin2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFin2RangoDescanso;
+                                    };
+                                    elObjetoTipoRegistroTrabajador['juevesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio;
+                                };
+                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso) {
+                                    elObjetoTipoRegistroTrabajador['viernesInicio1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso;
+                                    elObjetoTipoRegistroTrabajador['viernesFin1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFin1RangoDescanso;
+                                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso) {
+                                        elObjetoTipoRegistroTrabajador['viernesInicio2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso;
+                                        elObjetoTipoRegistroTrabajador['viernesFin2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFin2RangoDescanso;
+                                    };
+                                    elObjetoTipoRegistroTrabajador['viernesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio;
+                                };
+                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso) {
+                                    elObjetoTipoRegistroTrabajador['sabadoInicio1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso;
+                                    elObjetoTipoRegistroTrabajador['sabadoFin1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso;
+                                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso) {
+                                        elObjetoTipoRegistroTrabajador['sabadoInicio2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso;
+                                        elObjetoTipoRegistroTrabajador['sabadoFin2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso;
+                                    };
+                                    elObjetoTipoRegistroTrabajador['sabadoTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio;
+                                };
+                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso) {
+                                    elObjetoTipoRegistroTrabajador['domingoInicio1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso;
+                                    elObjetoTipoRegistroTrabajador['domingoFin1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFin1RangoDescanso;
+                                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso) {
+                                        elObjetoTipoRegistroTrabajador['domingoInicio2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso;
+                                        elObjetoTipoRegistroTrabajador['domingoFin2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFin2RangoDescanso;
+                                    };
+                                    elObjetoTipoRegistroTrabajador['domingoTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio;
+                                };
+                                elArrayTipoRegistroTrabajador.push(elObjetoTipoRegistroTrabajador);
+                            };
                             horarioIntervencionEdicionRevisado = {
                                 tipo: horarioIntervencionEdicion.tipo,
+                                tipoRegistro: horarioIntervencionEdicion.tipoRegistro,
                                 variacion: horarioIntervencionEdicion.variacion,
-                                lunesInicio1RangoDescanso: horarioIntervencionEdicion.lunesInicio1RangoDescanso,
-                                lunesInicio2RangoDescanso: horarioIntervencionEdicion.lunesInicio2RangoDescanso,
-                                lunesFin1RangoDescanso: horarioIntervencionEdicion.lunesFin1RangoDescanso,
-                                lunesFin2RangoDescanso: horarioIntervencionEdicion.lunesFin2RangoDescanso,
-                                martesInicio1RangoDescanso: horarioIntervencionEdicion.martesInicio1RangoDescanso,
-                                martesInicio2RangoDescanso: horarioIntervencionEdicion.martesInicio2RangoDescanso,
-                                martesFin1RangoDescanso: horarioIntervencionEdicion.martesFin1RangoDescanso,
-                                martesFin2RangoDescanso: horarioIntervencionEdicion.martesFin2RangoDescanso,
-                                miercolesInicio1RangoDescanso: horarioIntervencionEdicion.miercolesInicio1RangoDescanso,
-                                miercolesInicio2RangoDescanso: horarioIntervencionEdicion.miercolesInicio2RangoDescanso,
-                                miercolesFin1RangoDescanso: horarioIntervencionEdicion.miercolesFin1RangoDescanso,
-                                miercolesFin2RangoDescanso: horarioIntervencionEdicion.miercolesFin2RangoDescanso,
-                                juevesInicio1RangoDescanso: horarioIntervencionEdicion.juevesInicio1RangoDescanso,
-                                juevesInicio2RangoDescanso: horarioIntervencionEdicion.juevesInicio2RangoDescanso,
-                                juevesFin1RangoDescanso: horarioIntervencionEdicion.juevesFin1RangoDescanso,
-                                juevesFin2RangoDescanso: horarioIntervencionEdicion.juevesFin2RangoDescanso,
-                                viernesInicio1RangoDescanso: horarioIntervencionEdicion.viernesInicio1RangoDescanso,
-                                viernesInicio2RangoDescanso: horarioIntervencionEdicion.viernesInicio2RangoDescanso,
-                                viernesFin1RangoDescanso: horarioIntervencionEdicion.viernesFin1RangoDescanso,
-                                viernesFin2RangoDescanso: horarioIntervencionEdicion.viernesFin2RangoDescanso,
-                                sabadoInicio1RangoDescanso: horarioIntervencionEdicion.sabadoInicio1RangoDescanso,
-                                sabadoInicio2RangoDescanso: horarioIntervencionEdicion.sabadoInicio2RangoDescanso,
-                                sabadoFin1RangoDescanso: horarioIntervencionEdicion.sabadoFin1RangoDescanso,
-                                sabadoFin2RangoDescanso: horarioIntervencionEdicion.sabadoFin2RangoDescanso,
-                                domingoInicio1RangoDescanso: horarioIntervencionEdicion.domingoInicio1RangoDescanso,
-                                domingoInicio2RangoDescanso: horarioIntervencionEdicion.domingoInicio2RangoDescanso,
-                                domingoFin1RangoDescanso: horarioIntervencionEdicion.domingoFin1RangoDescanso,
-                                domingoFin2RangoDescanso: horarioIntervencionEdicion.domingoFin2RangoDescanso,
-                                lunesTipoServicio: horarioIntervencionEdicion.lunesTipoServicio,
-                                martesTipoServicio: horarioIntervencionEdicion.martesTipoServicio,
-                                miercolesTipoServicio: horarioIntervencionEdicion.miercolesTipoServicio,
-                                juevesTipoServicio: horarioIntervencionEdicion.juevesTipoServicio,
-                                viernesTipoServicio: horarioIntervencionEdicion.viernesTipoServicio,
-                                sabadoTipoServicio: horarioIntervencionEdicion.sabadoTipoServicio,
-                                domingoTipoServicio: horarioIntervencionEdicion.domingoTipoServicio
+                                tipoRegistroTrabajador: elArrayTipoRegistroTrabajador
                             };
                         };
                         if (horarioIntervencionEdicion.tipo === 'cantidad') {
+                            for (let i = 0; i < horarioIntervencionEdicion.tipoRegistroTrabajador.length; i++) {
+                                let elObjetoTipoRegistroTrabajador = {};
+                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesCantidad) {
+                                    elObjetoTipoRegistroTrabajador['lunesCantidad'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesCantidad;
+                                    elObjetoTipoRegistroTrabajador['lunesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio;
+                                };
+                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesCantidad) {
+                                    elObjetoTipoRegistroTrabajador['martesCantidad'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesCantidad;
+                                    elObjetoTipoRegistroTrabajador['martesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio;
+                                };
+                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesCantidad) {
+                                    elObjetoTipoRegistroTrabajador['miercolesCantidad'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesCantidad;
+                                    elObjetoTipoRegistroTrabajador['miercolesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio;
+                                };
+                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesCantidad) {
+                                    elObjetoTipoRegistroTrabajador['juevesCantidad'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesCantidad;
+                                    elObjetoTipoRegistroTrabajador['juevesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio;
+                                };
+                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesCantidad) {
+                                    elObjetoTipoRegistroTrabajador['viernesCantidad'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesCantidad;
+                                    elObjetoTipoRegistroTrabajador['viernesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio;
+                                };
+                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoCantidad) {
+                                    elObjetoTipoRegistroTrabajador['sabadoCantidad'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoCantidad;
+                                    elObjetoTipoRegistroTrabajador['sabadoTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio;
+                                };
+                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoCantidad) {
+                                    elObjetoTipoRegistroTrabajador['domingoCantidad'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoCantidad;
+                                    elObjetoTipoRegistroTrabajador['domingoTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio;
+                                };
+                                elArrayTipoRegistroTrabajador.push(elObjetoTipoRegistroTrabajador);
+                            };
                             horarioIntervencionEdicionRevisado = {
                                 tipo: horarioIntervencionEdicion.tipo,
+                                tipoRegistro: horarioIntervencionEdicion.tipoRegistro,
                                 variacion: horarioIntervencionEdicion.variacion,
-                                lunesCantidad: horarioIntervencionEdicion.lunesCantidad,
-                                martesCantidad: horarioIntervencionEdicion.martesCantidad,
-                                miercolesCantidad: horarioIntervencionEdicion.miercolesCantidad,
-                                juevesCantidad: horarioIntervencionEdicion.juevesCantidad,
-                                viernesCantidad: horarioIntervencionEdicion.viernesCantidad,
-                                sabadoCantidad: horarioIntervencionEdicion.sabadoCantidad,
-                                domingoCantidad: horarioIntervencionEdicion.domingoCantidad,
-                                lunesTipoServicio: horarioIntervencionEdicion.lunesTipoServicio,
-                                martesTipoServicio: horarioIntervencionEdicion.martesTipoServicio,
-                                miercolesTipoServicio: horarioIntervencionEdicion.miercolesTipoServicio,
-                                juevesTipoServicio: horarioIntervencionEdicion.juevesTipoServicio,
-                                viernesTipoServicio: horarioIntervencionEdicion.viernesTipoServicio,
-                                sabadoTipoServicio: horarioIntervencionEdicion.sabadoTipoServicio,
-                                domingoTipoServicio: horarioIntervencionEdicion.domingoTipoServicio
+                                tipoRegistroTrabajador: elArrayTipoRegistroTrabajador
                             };
                         };
                         //añadimos cómputo final                           
-                        const elHorarioIntervencionEditadoRevisado = {
+                        let elHorarioIntervencionEditadoRevisado = {
                             ...horarioIntervencionEdicionRevisado,
-                            computo: valuesFormEdicion.computo,
-                            mensualPactado: parseFloat(valuesFormEdicion.mensualPactado),
-                            precioHora_L: parseFloat(valuesFormEdicion.precioHora_L),
-                            precioHora_C: parseFloat(valuesFormEdicion.precioHora_C),
-                            precioHora_E: parseFloat(valuesFormEdicion.precioHora_E),
-                            precioHora_I: parseFloat(valuesFormEdicion.precioHora_I),
-                            precioHora_Z: parseFloat(valuesFormEdicion.precioHora_Z),
-                            precioHora_T: parseFloat(valuesFormEdicion.precioHora_T),
-                            precioHora_P: parseFloat(valuesFormEdicion.precioHora_P),
-                        }
+                            computo: valuesFormEdicion.computo
+                        };
+                        if (valuesFormEdicion.mensualPactado) {
+                            elHorarioIntervencionEditadoRevisado['mensualPactado'] = parseFloat(valuesFormEdicion.mensualPactado);
+                        };
+                        if (valuesFormEdicion.precioHora_L) {
+                            elHorarioIntervencionEditadoRevisado['precioHora_L'] = parseFloat(valuesFormEdicion.precioHora_L);
+                        };
+                        if (valuesFormEdicion.precioHora_C) {
+                            elHorarioIntervencionEditadoRevisado['precioHora_C'] = parseFloat(valuesFormEdicion.precioHora_C);
+                        };
+                        if (valuesFormEdicion.precioHora_E) {
+                            elHorarioIntervencionEditadoRevisado['precioHora_E'] = parseFloat(valuesFormEdicion.precioHora_E);
+                        };
+                        if (valuesFormEdicion.precioHora_I) {
+                            elHorarioIntervencionEditadoRevisado['precioHora_I'] = parseFloat(valuesFormEdicion.precioHora_I);
+                        };
+                        if (valuesFormEdicion.precioHora_Z) {
+                            elHorarioIntervencionEditadoRevisado['precioHora_Z'] = parseFloat(valuesFormEdicion.precioHora_Z);
+                        };
+                        if (valuesFormEdicion.precioHora_T) {
+                            elHorarioIntervencionEditadoRevisado['precioHora_T'] = parseFloat(valuesFormEdicion.precioHora_T);
+                        };
+                        if (valuesFormEdicion.precioHora_P) {
+                            elHorarioIntervencionEditadoRevisado['precioHora_P'] = parseFloat(valuesFormEdicion.precioHora_P);
+                        };
+
                         //registramos
                         const centroAGuardar = {
                             id: valuesFormEdicion.id,
                             nombre: valuesFormEdicion.nombre,
                             categoria: valuesFormEdicion.categoria,
-                            codigo: valuesFormEdicion.codigo,
-                            domicilio: valuesFormEdicion.domicilio,
-                            codigo_postal: valuesFormEdicion.codigoPostal,
-                            poblacion: valuesFormEdicion.poblacion,
-                            provincia: valuesFormEdicion.provincia,
-                            nif: valuesFormEdicion.nif,
-                            mail: valuesFormEdicion.mail,
-                            telefono: valuesFormEdicion.telefono,
+                            codigo: valuesFormEdicion.codigo ? valuesFormEdicion.codigo : null,
+                            domicilio: valuesFormEdicion.domicilio ? valuesFormEdicion.domicilio : null,
+                            codigo_postal: valuesFormEdicion.codigoPostal ? valuesFormEdicion.codigoPostal : null,
+                            poblacion: valuesFormEdicion.poblacion ? valuesFormEdicion.poblacion : null,
+                            provincia: valuesFormEdicion.provincia ? valuesFormEdicion.provincia : null,
+                            nif: valuesFormEdicion.nif ? valuesFormEdicion.nif : null,
+                            mail: valuesFormEdicion.mail ? valuesFormEdicion.mail : null,
+                            mail_2: valuesFormEdicion.mail2 ? valuesFormEdicion.mail2 : null,
+                            telefono: valuesFormEdicion.telefono ? valuesFormEdicion.telefono : null,
+                            telefono_2: valuesFormEdicion.telefono2 ? valuesFormEdicion.telefono2 : null,
                             forma_pago: valuesFormEdicion.formaPago,
                             horario: JSON.stringify(elHorarioIntervencionEditadoRevisado),
                             trabajadores: JSON.stringify(trabajadoresEdicion)
@@ -2509,7 +3417,7 @@ const CentrosEditar = forwardRef((props, ref) => {
         }
     }));
     const reseteaContenidoEdicion = () => {
-        //dispatch(obtenerCentrosAccion('centros'));
+        setEstamosCargandoDatos(true);
         forceUpdate();
         setValuesAutocompleteCentrosValores(null);
         setValuesFormEdicion({
@@ -2523,7 +3431,9 @@ const CentrosEditar = forwardRef((props, ref) => {
             provincia: '',
             nif: '',
             mail: '',
+            mail2: '',
             telefono: '',
+            telefono2: '',
             formaPago: '',
             variacion: '',
             tipo: '',
@@ -2540,137 +3450,158 @@ const CentrosEditar = forwardRef((props, ref) => {
             precioHora_T: null,
             precioHora_P: null,
         });
-        setValueTimePickerInicioEdicion({
-            lunes: null,
-            martes: null,
-            miercoles: null,
-            jueves: null,
-            viernes: null,
-            sabado: null,
-            domingo: null
-        });
-        setValueTimePickerFinEdicion({
-            lunes: null,
-            martes: null,
-            miercoles: null,
-            jueves: null,
-            viernes: null,
-            sabado: null,
-            domingo: null
-        });
-        setValueTimePickerInicioDescanso1Edicion({
-            lunes: null,
-            martes: null,
-            miercoles: null,
-            jueves: null,
-            viernes: null,
-            sabado: null,
-            domingo: null
-        });
-        setValueTimePickerFinDescanso1Edicion({
-            lunes: null,
-            martes: null,
-            miercoles: null,
-            jueves: null,
-            viernes: null,
-            sabado: null,
-            domingo: null
-        });
-        setValueTimePickerInicioDescanso2Edicion({
-            lunes: null,
-            martes: null,
-            miercoles: null,
-            jueves: null,
-            viernes: null,
-            sabado: null,
-            domingo: null
-        });
-        setValueTimePickerFinDescanso2Edicion({
-            lunes: null,
-            martes: null,
-            miercoles: null,
-            jueves: null,
-            viernes: null,
-            sabado: null,
-            domingo: null
-        });
-        setValueCantidadHorasEdicion({
-            lunes: '',
-            martes: '',
-            miercoles: '',
-            jueves: '',
-            viernes: '',
-            sabado: '',
-            domingo: ''
-        });
-        setValueTipoServicioEdicion({
-            lunesTipoServicio: '',
-            martesTipoServicio: '',
-            miercolesTipoServicio: '',
-            juevesTipoServicio: '',
-            viernesTipoServicio: '',
-            sabadoTipoServicio: '',
-            domingoTipoServicio: ''
-        });
+        setValueTimePickerInicioEdicion([
+            {
+                lunes: null,
+                martes: null,
+                miercoles: null,
+                jueves: null,
+                viernes: null,
+                sabado: null,
+                domingo: null
+            }
+        ]);
+        setValueTimePickerFinEdicion([
+            {
+                lunes: null,
+                martes: null,
+                miercoles: null,
+                jueves: null,
+                viernes: null,
+                sabado: null,
+                domingo: null
+            }
+        ]);
+        setValueTimePickerInicioDescanso1Edicion([
+            {
+                lunes: null,
+                martes: null,
+                miercoles: null,
+                jueves: null,
+                viernes: null,
+                sabado: null,
+                domingo: null
+            }
+        ]);
+        setValueTimePickerFinDescanso1Edicion([
+            {
+                lunes: null,
+                martes: null,
+                miercoles: null,
+                jueves: null,
+                viernes: null,
+                sabado: null,
+                domingo: null
+            }
+        ]);
+        setValueTimePickerInicioDescanso2Edicion([
+            {
+                lunes: null,
+                martes: null,
+                miercoles: null,
+                jueves: null,
+                viernes: null,
+                sabado: null,
+                domingo: null
+            }
+        ]);
+        setValueTimePickerFinDescanso2Edicion([
+            {
+                lunes: null,
+                martes: null,
+                miercoles: null,
+                jueves: null,
+                viernes: null,
+                sabado: null,
+                domingo: null
+            }
+        ]);
+        setValueCantidadHorasEdicion([
+            {
+                lunes: '',
+                martes: '',
+                miercoles: '',
+                jueves: '',
+                viernes: '',
+                sabado: '',
+                domingo: ''
+            }
+        ]);
+        setValueTipoServicioEdicion([
+            {
+                lunesTipoServicio: '',
+                martesTipoServicio: '',
+                miercolesTipoServicio: '',
+                juevesTipoServicio: '',
+                viernesTipoServicio: '',
+                sabadoTipoServicio: '',
+                domingoTipoServicio: '',
+            }
+        ]);
         setHorarioIntervencionEdicion({
             tipo: '',
             variacion: '',
-            lunesInicioRango: null,
-            lunesFinRango: null,
-            martesInicioRango: null,
-            martesFinRango: null,
-            miercolesInicioRango: null,
-            miercolesFinRango: null,
-            juevesInicioRango: null,
-            juevesFinRango: null,
-            viernesInicioRango: null,
-            viernesFinRango: null,
-            sabadoInicioRango: null,
-            sabadoFinRango: null,
-            domingoInicioRango: null,
-            domingoFinRango: null,
-            lunesInicio1RangoDescanso: null,
-            lunesInicio2RangoDescanso: null,
-            lunesFin1RangoDescanso: null,
-            lunesFin2RangoDescanso: null,
-            martesInicio1RangoDescanso: null,
-            martesInicio2RangoDescanso: null,
-            martesFin1RangoDescanso: null,
-            martesFin2RangoDescanso: null,
-            miercolesInicio1RangoDescanso: null,
-            miercolesInicio2RangoDescanso: null,
-            miercolesFin1RangoDescanso: null,
-            miercolesFin2RangoDescanso: null,
-            juevesInicio1RangoDescanso: null,
-            juevesInicio2RangoDescanso: null,
-            juevesFin1RangoDescanso: null,
-            juevesFin2RangoDescanso: null,
-            viernesInicio1RangoDescanso: null,
-            viernesInicio2RangoDescanso: null,
-            viernesFin1RangoDescanso: null,
-            viernesFin2RangoDescanso: null,
-            sabadoInicio1RangoDescanso: null,
-            sabadoInicio2RangoDescanso: null,
-            sabadoFin1RangoDescanso: null,
-            sabadoFin2RangoDescanso: null,
-            domingoInicio1RangoDescanso: null,
-            domingoInicio2RangoDescanso: null,
-            domingoFin1RangoDescanso: null,
-            domingoFin2RangoDescanso: null,
-            lunesCantidad: '',
-            martesCantidad: '',
-            miercolesCantidad: '',
-            juevesCantidad: '',
-            viernesCantidad: '',
-            sabadoCantidad: '',
-            domingoCantidad: '',
-            lunesTipoServicio: '',
-            martesTipoServicio: '',
-            miercolesTipoServicio: '',
-            juevesTipoServicio: '',
-            viernesTipoServicio: '',
-            sabadoTipoServicio: '',
-            domingoTipoServicio: ''
+            tipoRegistro: 'comun',
+            tipoRegistroTrabajador: [
+                {
+                    lunesInicioRango: null,
+                    lunesFinRango: null,
+                    martesInicioRango: null,
+                    martesFinRango: null,
+                    miercolesInicioRango: null,
+                    miercolesFinRango: null,
+                    juevesInicioRango: null,
+                    juevesFinRango: null,
+                    viernesInicioRango: null,
+                    viernesFinRango: null,
+                    sabadoInicioRango: null,
+                    sabadoFinRango: null,
+                    domingoInicioRango: null,
+                    domingoFinRango: null,
+                    lunesInicio1RangoDescanso: null,
+                    lunesInicio2RangoDescanso: null,
+                    lunesFin1RangoDescanso: null,
+                    lunesFin2RangoDescanso: null,
+                    martesInicio1RangoDescanso: null,
+                    martesInicio2RangoDescanso: null,
+                    martesFin1RangoDescanso: null,
+                    martesFin2RangoDescanso: null,
+                    miercolesInicio1RangoDescanso: null,
+                    miercolesInicio2RangoDescanso: null,
+                    miercolesFin1RangoDescanso: null,
+                    miercolesFin2RangoDescanso: null,
+                    juevesInicio1RangoDescanso: null,
+                    juevesInicio2RangoDescanso: null,
+                    juevesFin1RangoDescanso: null,
+                    juevesFin2RangoDescanso: null,
+                    viernesInicio1RangoDescanso: null,
+                    viernesInicio2RangoDescanso: null,
+                    viernesFin1RangoDescanso: null,
+                    viernesFin2RangoDescanso: null,
+                    sabadoInicio1RangoDescanso: null,
+                    sabadoInicio2RangoDescanso: null,
+                    sabadoFin1RangoDescanso: null,
+                    sabadoFin2RangoDescanso: null,
+                    domingoInicio1RangoDescanso: null,
+                    domingoInicio2RangoDescanso: null,
+                    domingoFin1RangoDescanso: null,
+                    domingoFin2RangoDescanso: null,
+                    lunesCantidad: '',
+                    martesCantidad: '',
+                    miercolesCantidad: '',
+                    juevesCantidad: '',
+                    viernesCantidad: '',
+                    sabadoCantidad: '',
+                    domingoCantidad: '',
+                    lunesTipoServicio: '',
+                    martesTipoServicio: '',
+                    miercolesTipoServicio: '',
+                    juevesTipoServicio: '',
+                    viernesTipoServicio: '',
+                    sabadoTipoServicio: '',
+                    domingoTipoServicio: '',
+                }
+            ],
         });
         setTrabajadoresEdicion({
             cantidad: '',
@@ -2746,6 +3677,374 @@ const CentrosEditar = forwardRef((props, ref) => {
                 </Box>
             ))
         )
+    };
+
+    const generaRetornoHorario = (tipo, index) => {
+        if (tipo === 'rango') {
+            return (
+                <Box m={0.5} key={'boxRango' + index}>
+                    <Accordion
+                        expanded={expandedRango === 'panelRango' + index} onChange={handleChangeAccordion('panelRango' + index, tipo)}
+                    >
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                        >
+                            {horarioIntervencionEdicion.tipoRegistro === 'individual' ? (
+                                <Typography className={classes.heading}> {'Horario trabajador ' + (index + 1)}</Typography>
+                            ) : (
+                                <Typography className={classes.heading}>Horario trabajadores</Typography>
+                            )}
+                        </AccordionSummary>
+                        <Box m={2} >
+                            <ItemListTime
+                                prTipo={'rango'}
+                                prDisabledItem={disabledItem}
+                                prDia={'Lunes'}
+                                prIdInicio={'timePickerInicio-edicion-lunes-' + index}
+                                prIdFin={'timePickerFin-edicion-lunes-' + index}
+                                prValueTimePickerInicio={valueTimePickerInicioEdicion[index].lunes}
+                                prValueTimePickerFin={valueTimePickerFinEdicion[index].lunes}
+                                prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
+                                prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
+                                prIdTipoServicio={'selectTipoServicio-edicion-lunes-' + index}
+                                prValueTipoServicio={valueTipoServicioEdicion[index].lunesTipoServicio}
+                                prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
+                            />
+                            <ItemListTime
+                                prTipo={'rango'}
+                                prDisabledItem={disabledItem}
+                                prDia={'Martes'}
+                                prIdInicio={'timePickerInicio-edicion-martes-' + index}
+                                prIdFin={'timePickerFin-edicion-martes-' + index}
+                                prValueTimePickerInicio={valueTimePickerInicioEdicion[index].martes}
+                                prValueTimePickerFin={valueTimePickerFinEdicion[index].martes}
+                                prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
+                                prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
+                                prIdTipoServicio={'selectTipoServicio-edicion-martes-' + index}
+                                prValueTipoServicio={valueTipoServicioEdicion[index].martesTipoServicio}
+                                prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
+                            />
+                            <ItemListTime
+                                prTipo={'rango'}
+                                prDisabledItem={disabledItem}
+                                prDia={'Miércoles'}
+                                prIdInicio={'timePickerInicio-edicion-miercoles-' + index}
+                                prIdFin={'timePickerFin-edicion-miercoles-' + index}
+                                prValueTimePickerInicio={valueTimePickerInicioEdicion[index].miercoles}
+                                prValueTimePickerFin={valueTimePickerFinEdicion[index].miercoles}
+                                prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
+                                prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
+                                prIdTipoServicio={'selectTipoServicio-edicion-miercoles-' + index}
+                                prValueTipoServicio={valueTipoServicioEdicion[index].miercolesTipoServicio}
+                                prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
+                            />
+                            <ItemListTime
+                                prTipo={'rango'}
+                                prDisabledItem={disabledItem}
+                                prDia={'Jueves'}
+                                prIdInicio={'timePickerInicio-edicion-jueves-' + index}
+                                prIdFin={'timePickerFin-edicion-jueves-' + index}
+                                prValueTimePickerInicio={valueTimePickerInicioEdicion[index].jueves}
+                                prValueTimePickerFin={valueTimePickerFinEdicion[index].jueves}
+                                prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
+                                prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
+                                prIdTipoServicio={'selectTipoServicio-edicion-jueves-' + index}
+                                prValueTipoServicio={valueTipoServicioEdicion[index].juevesTipoServicio}
+                                prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
+                            />
+                            <ItemListTime
+                                prTipo={'rango'}
+                                prDisabledItem={disabledItem}
+                                prDia={'Viernes'}
+                                prIdInicio={'timePickerInicio-edicion-viernes-' + index}
+                                prIdFin={'timePickerFin-edicion-viernes-' + index}
+                                prValueTimePickerInicio={valueTimePickerInicioEdicion[index].viernes}
+                                prValueTimePickerFin={valueTimePickerFinEdicion[index].viernes}
+                                prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
+                                prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
+                                prIdTipoServicio={'selectTipoServicio-edicion-viernes-' + index}
+                                prValueTipoServicio={valueTipoServicioEdicion[index].viernesTipoServicio}
+                                prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
+                            />
+                            <ItemListTime
+                                prTipo={'rango'}
+                                prDisabledItem={disabledItem}
+                                prDia={'Sábado'}
+                                prIdInicio={'timePickerInicio-edicion-sabado-' + index}
+                                prIdFin={'timePickerFin-edicion-sabado-' + index}
+                                prValueTimePickerInicio={valueTimePickerInicioEdicion[index].sabado}
+                                prValueTimePickerFin={valueTimePickerFinEdicion[index].sabado}
+                                prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
+                                prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
+                                prIdTipoServicio={'selectTipoServicio-edicion-sabado-' + index}
+                                prValueTipoServicio={valueTipoServicioEdicion[index].sabadoTipoServicio}
+                                prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
+                            />
+                            <ItemListTime
+                                prTipo={'rango'}
+                                prDisabledItem={disabledItem}
+                                prDia={'Domingo'}
+                                prIdInicio={'timePickerInicio-edicion-domingo-' + index}
+                                prIdFin={'timePickerFin-edicion-domingo-' + index}
+                                prValueTimePickerInicio={valueTimePickerInicioEdicion[index].domingo}
+                                prValueTimePickerFin={valueTimePickerFinEdicion[index].domingo}
+                                prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
+                                prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
+                                prIdTipoServicio={'selectTipoServicio-edicion-domingo-' + index}
+                                prValueTipoServicio={valueTipoServicioEdicion[index].domingoTipoServicio}
+                                prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
+                            />
+                        </Box>
+                    </Accordion>
+                </Box>
+            )
+        };
+        if (tipo === 'cantidad') {
+            return (
+                <Box m={0.5} key={'boxCantidad' + index}>
+                    <Accordion
+                        expanded={expandedCantidad === 'panelCantidad' + index} onChange={handleChangeAccordion('panelCantidad' + index, tipo)}
+                    >
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                        >
+                            {horarioIntervencionEdicion.tipoRegistro === 'individual' ? (
+                                <Typography className={classes.heading}> {'Horario trabajador ' + (index + 1)}</Typography>
+                            ) : (
+                                <Typography className={classes.heading}>Horario trabajadores</Typography>
+                            )}
+                        </AccordionSummary>
+                        <Box m={2} >
+                            <ItemListTime
+                                prTipo={'cantidad'}
+                                prDisabledItem={disabledItem}
+                                prDia={'Lunes'}
+                                prIdCantidad={'selectCantidad-edicion-lunes-' + index}
+                                prValueCantidadHoras={valueCantidadHorasEdicion[index].lunes}
+                                prHandleChangeSelectCantidadEdicion={handleChangeSelectCantidadEdicion}
+                                prIdTipoServicio={'selectTipoServicio-edicion-lunes-' + index}
+                                prValueTipoServicio={valueTipoServicioEdicion[index].lunesTipoServicio}
+                                prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
+                            />
+                            <ItemListTime
+                                prTipo={'cantidad'}
+                                prDisabledItem={disabledItem}
+                                prDia={'Martes'}
+                                prIdCantidad={'selectCantidad-edicion-martes-' + index}
+                                prValueCantidadHoras={valueCantidadHorasEdicion[index].martes}
+                                prHandleChangeSelectCantidadEdicion={handleChangeSelectCantidadEdicion}
+                                prIdTipoServicio={'selectTipoServicio-edicion-martes-' + index}
+                                prValueTipoServicio={valueTipoServicioEdicion[index].martesTipoServicio}
+                                prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
+                            />
+                            <ItemListTime
+                                prTipo={'cantidad'}
+                                prDisabledItem={disabledItem}
+                                prDia={'Miércoles'}
+                                prIdCantidad={'selectCantidad-edicion-miercoles-' + index}
+                                prValueCantidadHoras={valueCantidadHorasEdicion[index].miercoles}
+                                prHandleChangeSelectCantidadEdicion={handleChangeSelectCantidadEdicion}
+                                prIdTipoServicio={'selectTipoServicio-edicion-miercoles-' + index}
+                                prValueTipoServicio={valueTipoServicioEdicion[index].miercolesTipoServicio}
+                                prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
+                            />
+                            <ItemListTime
+                                prTipo={'cantidad'}
+                                prDisabledItem={disabledItem}
+                                prDia={'Jueves'}
+                                prIdCantidad={'selectCantidad-edicion-jueves-' + index}
+                                prValueCantidadHoras={valueCantidadHorasEdicion[index].jueves}
+                                prHandleChangeSelectCantidadEdicion={handleChangeSelectCantidadEdicion}
+                                prIdTipoServicio={'selectTipoServicio-edicion-jueves-' + index}
+                                prValueTipoServicio={valueTipoServicioEdicion[index].juevesTipoServicio}
+                                prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
+                            />
+                            <ItemListTime
+                                prTipo={'cantidad'}
+                                prDisabledItem={disabledItem}
+                                prDia={'Viernes'}
+                                prIdCantidad={'selectCantidad-edicion-viernes-' + index}
+                                prValueCantidadHoras={valueCantidadHorasEdicion[index].viernes}
+                                prHandleChangeSelectCantidadEdicion={handleChangeSelectCantidadEdicion}
+                                prIdTipoServicio={'selectTipoServicio-edicion-viernes-' + index}
+                                prValueTipoServicio={valueTipoServicioEdicion[index].viernesTipoServicio}
+                                prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
+
+                            />
+                            <ItemListTime
+                                prTipo={'cantidad'}
+                                prDisabledItem={disabledItem}
+                                prDia={'Sábado'}
+                                prIdCantidad={'selectCantidad-edicion-sabado-' + index}
+                                prValueCantidadHoras={valueCantidadHorasEdicion[index].sabado}
+                                prHandleChangeSelectCantidadEdicion={handleChangeSelectCantidadEdicion}
+                                prIdTipoServicio={'selectTipoServicio-edicion-sabado-' + index}
+                                prValueTipoServicio={valueTipoServicioEdicion[index].sabadoTipoServicio}
+                                prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
+                            />
+                            <ItemListTime
+                                prTipo={'cantidad'}
+                                prDisabledItem={disabledItem}
+                                prDia={'Domingo'}
+                                prIdCantidad={'selectCantidad-edicion-domingo-' + index}
+                                prValueCantidadHoras={valueCantidadHorasEdicion[index].domingo}
+                                prHandleChangeSelectCantidadEdicion={handleChangeSelectCantidadEdicion}
+                                prIdTipoServicio={'selectTipoServicio-edicion-domingo-' + index}
+                                prValueTipoServicio={valueTipoServicioEdicion[index].domingoTipoServicio}
+                                prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
+                            />
+                        </Box>
+                    </Accordion>
+                </Box>
+            )
+        };
+        if (tipo === 'rangoDescanso') {
+            return (
+                <Box m={0.5} key={'boxRangoDescanso' + index}>
+                    <Accordion
+                        expanded={expandedRangoDescanso === 'panelRangoDescanso' + index} onChange={handleChangeAccordion('panelRangoDescanso' + index, tipo)}
+                    >
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                        >
+                            {horarioIntervencionEdicion.tipoRegistro === 'individual' ? (
+                                <Typography className={classes.heading}> {'Horario trabajador ' + (index + 1)}</Typography>
+                            ) : (
+                                <Typography className={classes.heading}>Horario trabajadores</Typography>
+                            )}
+                        </AccordionSummary>
+                        <Box m={2} >
+                            <ItemListTime
+                                prTipo={'rangoDescanso'}
+                                prDisabledItem={disabledItem}
+                                prDia={'Lun.'}
+                                prIdInicio1={'timePickerInicio1Descanso-edicion-lunes-' + index}
+                                prIdFin1={'timePickerFin1Descanso-edicion-lunes-' + index}
+                                prIdInicio2={'timePickerInicio2Descanso-edicion-lunes-' + index}
+                                prIdFin2={'timePickerFin2Descanso-edicion-lunes-' + index}
+                                prValueTimePickerInicio1={valueTimePickerInicioDescanso1Edicion[index].lunes}
+                                prValueTimePickerFin1={valueTimePickerFinDescanso1Edicion[index].lunes}
+                                prValueTimePickerInicio2={valueTimePickerInicioDescanso2Edicion[index].lunes}
+                                prValueTimePickerFin2={valueTimePickerFinDescanso2Edicion[index].lunes}
+                                prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
+                                prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
+                                prIdTipoServicio={'selectTipoServicio-edicion-lunes-' + index}
+                                prValueTipoServicio={valueTipoServicioEdicion[index].lunesTipoServicio}
+                                prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
+                            />
+                            <ItemListTime
+                                prTipo={'rangoDescanso'}
+                                prDisabledItem={disabledItem}
+                                prDia={'Mar.'}
+                                prIdInicio1={'timePickerInicio1Descanso-edicion-martes-' + index}
+                                prIdFin1={'timePickerFin1Descanso-edicion-martes-' + index}
+                                prIdInicio2={'timePickerInicio2Descanso-edicion-martes-' + index}
+                                prIdFin2={'timePickerFin2Descanso-edicion-martes-' + index}
+                                prValueTimePickerInicio1={valueTimePickerInicioDescanso1Edicion[index].martes}
+                                prValueTimePickerFin1={valueTimePickerFinDescanso1Edicion[index].martes}
+                                prValueTimePickerInicio2={valueTimePickerInicioDescanso2Edicion[index].martes}
+                                prValueTimePickerFin2={valueTimePickerFinDescanso2Edicion[index].martes}
+                                prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
+                                prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
+                                prIdTipoServicio={'selectTipoServicio-edicion-martes-' + index}
+                                prValueTipoServicio={valueTipoServicioEdicion[index].martesTipoServicio}
+                                prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
+                            />
+                            <ItemListTime
+                                prTipo={'rangoDescanso'}
+                                prDisabledItem={disabledItem}
+                                prDia={'Mié.'}
+                                prIdInicio1={'timePickerInicio1Descanso-edicion-miercoles-' + index}
+                                prIdFin1={'timePickerFin1Descanso-edicion-miercoles-' + index}
+                                prIdInicio2={'timePickerInicio2Descanso-edicion-miercoles-' + index}
+                                prIdFin2={'timePickerFin2Descanso-edicion-miercoles-' + index}
+                                prValueTimePickerInicio1={valueTimePickerInicioDescanso1Edicion[index].miercoles}
+                                prValueTimePickerFin1={valueTimePickerFinDescanso1Edicion[index].miercoles}
+                                prValueTimePickerInicio2={valueTimePickerInicioDescanso2Edicion[index].miercoles}
+                                prValueTimePickerFin2={valueTimePickerFinDescanso2Edicion[index].miercoles}
+                                prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
+                                prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
+                                prIdTipoServicio={'selectTipoServicio-edicion-miercoles-' + index}
+                                prValueTipoServicio={valueTipoServicioEdicion[index].miercolesTipoServicio}
+                                prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
+                            />
+                            <ItemListTime
+                                prTipo={'rangoDescanso'}
+                                prDisabledItem={disabledItem}
+                                prDia={'Jue.'}
+                                prIdInicio1={'timePickerInicio1Descanso-edicion-jueves-' + index}
+                                prIdFin1={'timePickerFin1Descanso-edicion-jueves-' + index}
+                                prIdInicio2={'timePickerInicio2Descanso-edicion-jueves-' + index}
+                                prIdFin2={'timePickerFin2Descanso-edicion-jueves-' + index}
+                                prValueTimePickerInicio1={valueTimePickerInicioDescanso1Edicion[index].jueves}
+                                prValueTimePickerFin1={valueTimePickerFinDescanso1Edicion[index].jueves}
+                                prValueTimePickerInicio2={valueTimePickerInicioDescanso2Edicion[index].jueves}
+                                prValueTimePickerFin2={valueTimePickerFinDescanso2Edicion[index].jueves}
+                                prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
+                                prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
+                                prIdTipoServicio={'selectTipoServicio-edicion-jueves-' + index}
+                                prValueTipoServicio={valueTipoServicioEdicion[index].juevesTipoServicio}
+                                prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
+                            />
+                            <ItemListTime
+                                prTipo={'rangoDescanso'}
+                                prDisabledItem={disabledItem}
+                                prDia={'Vie.'}
+                                prIdInicio1={'timePickerInicio1Descanso-edicion-viernes-' + index}
+                                prIdFin1={'timePickerFin1Descanso-edicion-viernes-' + index}
+                                prIdInicio2={'timePickerInicio2Descanso-edicion-viernes-' + index}
+                                prIdFin2={'timePickerFin2Descanso-edicion-viernes-' + index}
+                                prValueTimePickerInicio1={valueTimePickerInicioDescanso1Edicion[index].viernes}
+                                prValueTimePickerFin1={valueTimePickerFinDescanso1Edicion[index].viernes}
+                                prValueTimePickerInicio2={valueTimePickerInicioDescanso2Edicion[index].viernes}
+                                prValueTimePickerFin2={valueTimePickerFinDescanso2Edicion[index].viernes}
+                                prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
+                                prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
+                                prIdTipoServicio={'selectTipoServicio-edicion-viernes-' + index}
+                                prValueTipoServicio={valueTipoServicioEdicion[index].viernesTipoServicio}
+                                prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
+                            />
+                            <ItemListTime
+                                prTipo={'rangoDescanso'}
+                                prDisabledItem={disabledItem}
+                                prDia={'Sáb.'}
+                                prIdInicio1={'timePickerInicio1Descanso-edicion-sabado-' + index}
+                                prIdFin1={'timePickerFin1Descanso-edicion-sabado-' + index}
+                                prIdInicio2={'timePickerInicio2Descanso-edicion-sabado-' + index}
+                                prIdFin2={'timePickerFin2Descanso-edicion-sabado-' + index}
+                                prValueTimePickerInicio1={valueTimePickerInicioDescanso1Edicion[index].sabado}
+                                prValueTimePickerFin1={valueTimePickerFinDescanso1Edicion[index].sabado}
+                                prValueTimePickerInicio2={valueTimePickerInicioDescanso2Edicion[index].sabado}
+                                prValueTimePickerFin2={valueTimePickerFinDescanso2Edicion[index].sabado}
+                                prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
+                                prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
+                                prIdTipoServicio={'selectTipoServicio-edicion-sabado-' + index}
+                                prValueTipoServicio={valueTipoServicioEdicion[index].sabadoTipoServicio}
+                                prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
+                            />
+                            <ItemListTime
+                                prTipo={'rangoDescanso'}
+                                prDisabledItem={disabledItem}
+                                prDia={'Dom.'}
+                                prIdInicio1={'timePickerInicio1Descanso-edicion-domingo-' + index}
+                                prIdFin1={'timePickerFin1Descanso-edicion-domingo-' + index}
+                                prIdInicio2={'timePickerInicio2Descanso-edicion-domingo-' + index}
+                                prIdFin2={'timePickerFin2Descanso-edicion-domingo-' + index}
+                                prValueTimePickerInicio1={valueTimePickerInicioDescanso1Edicion[index].domingo}
+                                prValueTimePickerFin1={valueTimePickerFinDescanso1Edicion[index].domingo}
+                                prValueTimePickerInicio2={valueTimePickerInicioDescanso2Edicion[index].domingo}
+                                prValueTimePickerFin2={valueTimePickerFinDescanso2Edicion[index].domingo}
+                                prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
+                                prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
+                                prIdTipoServicio={'selectTipoServicio-edicion-domingo-' + index}
+                                prValueTipoServicio={valueTipoServicioEdicion[index].domingoTipoServicio}
+                                prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
+                            />
+                        </Box>
+                    </Accordion>
+                </Box>
+            )
+        };
     };
 
     return (
@@ -2888,6 +4187,22 @@ const CentrosEditar = forwardRef((props, ref) => {
                                 className={classes.form}
                                 size="small"
                             >
+                                <InputLabel>E-mail 2</InputLabel>
+                                <OutlinedInput
+                                    className={classes.mb15}
+                                    fullWidth
+                                    id="form-mail2-centro-edicion"
+                                    value={valuesFormEdicion.mail2}
+                                    onChange={handleChangeFormEdicion('mail2')}
+                                    labelWidth={65}
+                                    disabled={disabledItem}
+                                />
+                            </FormControl>
+                            <FormControl
+                                variant="outlined"
+                                className={classes.form}
+                                size="small"
+                            >
                                 <InputLabel>Domicilio</InputLabel>
                                 <OutlinedInput
                                     className={classes.mb15}
@@ -2899,26 +4214,24 @@ const CentrosEditar = forwardRef((props, ref) => {
                                     disabled={disabledItem}
                                 />
                             </FormControl>
+                            <FormControl
+                                variant="outlined"
+                                className={classes.form}
+                                size="small"
+                            >
+                                <InputLabel>Población</InputLabel>
+                                <OutlinedInput
+                                    className={classes.mb15}
+                                    fullWidth
+                                    id="form-poblacion-centro-edicion"
+                                    value={valuesFormEdicion.poblacion}
+                                    onChange={handleChangeFormEdicion('poblacion')}
+                                    labelWidth={75}
+                                    disabled={disabledItem}
+                                />
+                            </FormControl>
                             <Grid container>
-                                <Grid item xs={6}>
-                                    <FormControl
-                                        variant="outlined"
-                                        className={classes.form}
-                                        size="small"
-                                    >
-                                        <InputLabel>Población</InputLabel>
-                                        <OutlinedInput
-                                            className={classes.mb15}
-                                            fullWidth
-                                            id="form-poblacion-centro-edicion"
-                                            value={valuesFormEdicion.poblacion}
-                                            onChange={handleChangeFormEdicion('poblacion')}
-                                            labelWidth={75}
-                                            disabled={disabledItem}
-                                        />
-                                    </FormControl>
-                                </Grid>
-                                <Grid item xs={6}>
+                                <Grid item xs={8}>
                                     <FormControl
                                         variant="outlined"
                                         className={classes.form}
@@ -2936,9 +4249,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         />
                                     </FormControl>
                                 </Grid>
-                            </Grid>
-                            <Grid container>
-                                <Grid item xs={6}>
+                                <Grid item xs={4}>
                                     <FormControl
                                         variant="outlined"
                                         className={classes.form}
@@ -2956,20 +4267,40 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         />
                                     </FormControl>
                                 </Grid>
+                            </Grid>
+                            <Grid container>
                                 <Grid item xs={6}>
                                     <FormControl
                                         variant="outlined"
                                         className={classes.form}
                                         size="small"
                                     >
-                                        <InputLabel>Teléfono</InputLabel>
+                                        <InputLabel>Teléfono 1</InputLabel>
                                         <OutlinedInput
-                                            className={classes.mb25}
+                                            className={classes.mb15}
                                             fullWidth
                                             id="form-telefono-centro-edicion"
                                             value={valuesFormEdicion.telefono}
                                             onChange={handleChangeFormEdicion('telefono')}
-                                            labelWidth={65}
+                                            labelWidth={80}
+                                            disabled={disabledItem}
+                                        />
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <FormControl
+                                        variant="outlined"
+                                        className={classes.form}
+                                        size="small"
+                                    >
+                                        <InputLabel>Teléfono 2</InputLabel>
+                                        <OutlinedInput
+                                            className={classes.mb25}
+                                            fullWidth
+                                            id="form-telefono2-centro-edicion"
+                                            value={valuesFormEdicion.telefono2}
+                                            onChange={handleChangeFormEdicion('telefono2')}
+                                            labelWidth={80}
                                             disabled={disabledItem}
                                         />
                                     </FormControl>
@@ -3027,7 +4358,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                             alignItems="flex-start"
                             spacing={4}
                         >
-                            <Grid item lg={5} sm={6} xs={12}>
+                            <Grid item lg={4} sm={4} xs={12}>
                                 <FormControl
                                     variant="outlined"
                                     className={classes.form}
@@ -3279,320 +4610,40 @@ const CentrosEditar = forwardRef((props, ref) => {
                                     </Select>
                                 </FormControl>
                             </Grid>
-                            <Grid item lg={7} sm={6} xs={12}>
+                            <Grid item lg={8} sm={8} xs={12}>
                                 <Box style={{ marginTop: -10 }}>
+                                    {valuesFormEdicion.tipo !== '' ? (
+                                        <Box
+                                            m={0.5}
+                                            bgcolor="secondary.light"
+                                            color="secondary.contrastText"
+                                            className={clsx(classes.boxStl2, classes.mb10, classes.mt15)}
+                                            style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}
+                                        >
+                                            <Box>Tipo de registro</Box>
+                                            <Box
+                                                className={clsx(classes.mt_5, classes.mr15)}
+                                            >
+                                                <FormControlLabel
+                                                    control={
+                                                        <Switch
+                                                            checked={stateSwitchTipoRegistro}
+                                                            color="secondary"
+                                                            onChange={handleChangeSwitchTipoRegistroEdicion}
+                                                        />
+                                                    }
+                                                    label={<Typography variant="body2">Común/Individual</Typography>}
+                                                    labelPlacement="start"
+                                                />
+                                            </Box>
+                                        </Box>
+                                    ) : null}
                                     <List >
-                                        {valuesFormEdicion.tipo === 'rango' ? (
-                                            <Fragment>
-                                                <ItemListTime
-                                                    prTipo={'rango'}
-                                                    prDisabledItem={disabledItem}
-                                                    prDia={'Lunes'}
-                                                    prIdInicio={'timePickerInicio-edicion-lunes'}
-                                                    prIdFin={'timePickerFin-edicion-lunes'}
-                                                    prValueTimePickerInicio={valueTimePickerInicioEdicion.lunes}
-                                                    prValueTimePickerFin={valueTimePickerFinEdicion.lunes}
-                                                    prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
-                                                    prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
-                                                    prIdTipoServicio={'selectTipoServicio-edicion-lunes'}
-                                                    prValueTipoServicio={valueTipoServicioEdicion.lunesTipoServicio}
-                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
-                                                />
-                                                <ItemListTime
-                                                    prTipo={'rango'}
-                                                    prDisabledItem={disabledItem}
-                                                    prDia={'Martes'}
-                                                    prIdInicio={'timePickerInicio-edicion-martes'}
-                                                    prIdFin={'timePickerFin-edicion-martes'}
-                                                    prValueTimePickerInicio={valueTimePickerInicioEdicion.martes}
-                                                    prValueTimePickerFin={valueTimePickerFinEdicion.martes}
-                                                    prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
-                                                    prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
-                                                    prIdTipoServicio={'selectTipoServicio-edicion-martes'}
-                                                    prValueTipoServicio={valueTipoServicioEdicion.martesTipoServicio}
-                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
-                                                />
-                                                <ItemListTime
-                                                    prTipo={'rango'}
-                                                    prDisabledItem={disabledItem}
-                                                    prDia={'Miércoles'}
-                                                    prIdInicio={'timePickerInicio-edicion-miercoles'}
-                                                    prIdFin={'timePickerFin-edicion-miercoles'}
-                                                    prValueTimePickerInicio={valueTimePickerInicioEdicion.miercoles}
-                                                    prValueTimePickerFin={valueTimePickerFinEdicion.miercoles}
-                                                    prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
-                                                    prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
-                                                    prIdTipoServicio={'selectTipoServicio-edicion-miercoles'}
-                                                    prValueTipoServicio={valueTipoServicioEdicion.miercolesTipoServicio}
-                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
-                                                />
-                                                <ItemListTime
-                                                    prTipo={'rango'}
-                                                    prDisabledItem={disabledItem}
-                                                    prDia={'Jueves'}
-                                                    prIdInicio={'timePickerInicio-edicion-jueves'}
-                                                    prIdFin={'timePickerFin-edicion-jueves'}
-                                                    prValueTimePickerInicio={valueTimePickerInicioEdicion.jueves}
-                                                    prValueTimePickerFin={valueTimePickerFinEdicion.jueves}
-                                                    prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
-                                                    prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
-                                                    prIdTipoServicio={'selectTipoServicio-edicion-jueves'}
-                                                    prValueTipoServicio={valueTipoServicioEdicion.juevesTipoServicio}
-                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
-                                                />
-                                                <ItemListTime
-                                                    prTipo={'rango'}
-                                                    prDisabledItem={disabledItem}
-                                                    prDia={'Viernes'}
-                                                    prIdInicio={'timePickerInicio-edicion-viernes'}
-                                                    prIdFin={'timePickerFin-edicion-viernes'}
-                                                    prValueTimePickerInicio={valueTimePickerInicioEdicion.viernes}
-                                                    prValueTimePickerFin={valueTimePickerFinEdicion.viernes}
-                                                    prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
-                                                    prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
-                                                    prIdTipoServicio={'selectTipoServicio-edicion-viernes'}
-                                                    prValueTipoServicio={valueTipoServicioEdicion.viernesTipoServicio}
-                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
-                                                />
-                                                <ItemListTime
-                                                    prTipo={'rango'}
-                                                    prDisabledItem={disabledItem}
-                                                    prDia={'Sábado'}
-                                                    prIdInicio={'timePickerInicio-edicion-sabado'}
-                                                    prIdFin={'timePickerFin-edicion-sabado'}
-                                                    prValueTimePickerInicio={valueTimePickerInicioEdicion.sabado}
-                                                    prValueTimePickerFin={valueTimePickerFinEdicion.sabado}
-                                                    prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
-                                                    prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
-                                                    prIdTipoServicio={'selectTipoServicio-edicion-sabado'}
-                                                    prValueTipoServicio={valueTipoServicioEdicion.sabadoTipoServicio}
-                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
-                                                />
-                                                <ItemListTime
-                                                    prTipo={'rango'}
-                                                    prDisabledItem={disabledItem}
-                                                    prDia={'Domingo'}
-                                                    prIdInicio={'timePickerInicio-edicion-domingo'}
-                                                    prIdFin={'timePickerFin-edicion-domingo'}
-                                                    prValueTimePickerInicio={valueTimePickerInicioEdicion.domingo}
-                                                    prValueTimePickerFin={valueTimePickerFinEdicion.domingo}
-                                                    prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
-                                                    prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
-                                                    prIdTipoServicio={'selectTipoServicio-edicion-domingo'}
-                                                    prValueTipoServicio={valueTipoServicioEdicion.domingoTipoServicio}
-                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
-                                                />
-                                            </Fragment>
-                                        ) : valuesFormEdicion.tipo === 'cantidad' ? (
-                                            <Fragment>
-                                                <ItemListTime
-                                                    prTipo={'cantidad'}
-                                                    prDisabledItem={disabledItem}
-                                                    prDia={'Lunes'}
-                                                    prIdCantidad={'selectCantidad-edicion-lunes'}
-                                                    prValueCantidadHoras={valueCantidadHorasEdicion.lunes}
-                                                    prHandleChangeSelectCantidadEdicion={handleChangeSelectCantidadEdicion}
-                                                    prIdTipoServicio={'selectTipoServicio-edicion-lunes'}
-                                                    prValueTipoServicio={valueTipoServicioEdicion.lunesTipoServicio}
-                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
-                                                />
-                                                <ItemListTime
-                                                    prTipo={'cantidad'}
-                                                    prDisabledItem={disabledItem}
-                                                    prDia={'Martes'}
-                                                    prIdCantidad={'selectCantidad-edicion-martes'}
-                                                    prValueCantidadHoras={valueCantidadHorasEdicion.martes}
-                                                    prHandleChangeSelectCantidadEdicion={handleChangeSelectCantidadEdicion}
-                                                    prIdTipoServicio={'selectTipoServicio-edicion-martes'}
-                                                    prValueTipoServicio={valueTipoServicioEdicion.martesTipoServicio}
-                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
-                                                />
-                                                <ItemListTime
-                                                    prTipo={'cantidad'}
-                                                    prDisabledItem={disabledItem}
-                                                    prDia={'Miércoles'}
-                                                    prIdCantidad={'selectCantidad-edicion-miercoles'}
-                                                    prValueCantidadHoras={valueCantidadHorasEdicion.miercoles}
-                                                    prHandleChangeSelectCantidadEdicion={handleChangeSelectCantidadEdicion}
-                                                    prIdTipoServicio={'selectTipoServicio-edicion-miercoles'}
-                                                    prValueTipoServicio={valueTipoServicioEdicion.miercolesTipoServicio}
-                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
-                                                />
-                                                <ItemListTime
-                                                    prTipo={'cantidad'}
-                                                    prDisabledItem={disabledItem}
-                                                    prDia={'Jueves'}
-                                                    prIdCantidad={'selectCantidad-edicion-jueves'}
-                                                    prValueCantidadHoras={valueCantidadHorasEdicion.jueves}
-                                                    prHandleChangeSelectCantidadEdicion={handleChangeSelectCantidadEdicion}
-                                                    prIdTipoServicio={'selectTipoServicio-edicion-jueves'}
-                                                    prValueTipoServicio={valueTipoServicioEdicion.juevesTipoServicio}
-                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
-                                                />
-                                                <ItemListTime
-                                                    prTipo={'cantidad'}
-                                                    prDisabledItem={disabledItem}
-                                                    prDia={'Viernes'}
-                                                    prIdCantidad={'selectCantidad-edicion-viernes'}
-                                                    prValueCantidadHoras={valueCantidadHorasEdicion.viernes}
-                                                    prHandleChangeSelectCantidadEdicion={handleChangeSelectCantidadEdicion}
-                                                    prIdTipoServicio={'selectTipoServicio-edicion-viernes'}
-                                                    prValueTipoServicio={valueTipoServicioEdicion.viernesTipoServicio}
-                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
-                                                />
-                                                <ItemListTime
-                                                    prTipo={'cantidad'}
-                                                    prDisabledItem={disabledItem}
-                                                    prDia={'Sábado'}
-                                                    prIdCantidad={'selectCantidad-edicion-sabado'}
-                                                    prValueCantidadHoras={valueCantidadHorasEdicion.sabado}
-                                                    prHandleChangeSelectCantidadEdicion={handleChangeSelectCantidadEdicion}
-                                                    prIdTipoServicio={'selectTipoServicio-edicion-sabado'}
-                                                    prValueTipoServicio={valueTipoServicioEdicion.sabadoTipoServicio}
-                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
-                                                />
-                                                <ItemListTime
-                                                    prTipo={'cantidad'}
-                                                    prDisabledItem={disabledItem}
-                                                    prDia={'Domingo'}
-                                                    prIdCantidad={'selectCantidad-edicion-domingo'}
-                                                    prValueCantidadHoras={valueCantidadHorasEdicion.domingo}
-                                                    prHandleChangeSelectCantidadEdicion={handleChangeSelectCantidadEdicion}
-                                                    prIdTipoServicio={'selectTipoServicio-edicion-domingo'}
-                                                    prValueTipoServicio={valueTipoServicioEdicion.domingoTipoServicio}
-                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
-                                                />
-                                            </Fragment>
-                                        ) : valuesFormEdicion.tipo === 'rangoDescanso' ? (
-                                            <Fragment>
-                                                <ItemListTime
-                                                    prTipo={'rangoDescanso'}
-                                                    prDisabledItem={disabledItem}
-                                                    prDia={'Lun.'}
-                                                    prIdInicio1={'timePickerInicio1Descanso-edicion-lunes'}
-                                                    prIdFin1={'timePickerFin1Descanso-edicion-lunes'}
-                                                    prIdInicio2={'timePickerInicio2Descanso-edicion-lunes'}
-                                                    prIdFin2={'timePickerFin2Descanso-edicion-lunes'}
-                                                    prValueTimePickerInicio1={valueTimePickerInicioDescanso1Edicion.lunes}
-                                                    prValueTimePickerFin1={valueTimePickerFinDescanso1Edicion.lunes}
-                                                    prValueTimePickerInicio2={valueTimePickerInicioDescanso2Edicion.lunes}
-                                                    prValueTimePickerFin2={valueTimePickerFinDescanso2Edicion.lunes}
-                                                    prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
-                                                    prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
-                                                    prIdTipoServicio={'selectTipoServicio-edicion-lunes'}
-                                                    prValueTipoServicio={valueTipoServicioEdicion.lunesTipoServicio}
-                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
-                                                />
-                                                <ItemListTime
-                                                    prTipo={'rangoDescanso'}
-                                                    prDisabledItem={disabledItem}
-                                                    prDia={'Mar.'}
-                                                    prIdInicio1={'timePickerInicio1Descanso-edicion-martes'}
-                                                    prIdFin1={'timePickerFin1Descanso-edicion-martes'}
-                                                    prIdInicio2={'timePickerInicio2Descanso-edicion-martes'}
-                                                    prIdFin2={'timePickerFin2Descanso-edicion-martes'}
-                                                    prValueTimePickerInicio1={valueTimePickerInicioDescanso1Edicion.martes}
-                                                    prValueTimePickerFin1={valueTimePickerFinDescanso1Edicion.martes}
-                                                    prValueTimePickerInicio2={valueTimePickerInicioDescanso2Edicion.martes}
-                                                    prValueTimePickerFin2={valueTimePickerFinDescanso2Edicion.martes}
-                                                    prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
-                                                    prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
-                                                    prIdTipoServicio={'selectTipoServicio-edicion-martes'}
-                                                    prValueTipoServicio={valueTipoServicioEdicion.martesTipoServicio}
-                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
-                                                />
-                                                <ItemListTime
-                                                    prTipo={'rangoDescanso'}
-                                                    prDisabledItem={disabledItem}
-                                                    prDia={'Mié.'}
-                                                    prIdInicio1={'timePickerInicio1Descanso-edicion-miercoles'}
-                                                    prIdFin1={'timePickerFin1Descanso-edicion-miercoles'}
-                                                    prIdInicio2={'timePickerInicio2Descanso-edicion-miercoles'}
-                                                    prIdFin2={'timePickerFin2Descanso-edicion-miercoles'}
-                                                    prValueTimePickerInicio1={valueTimePickerInicioDescanso1Edicion.miercoles}
-                                                    prValueTimePickerFin1={valueTimePickerFinDescanso1Edicion.miercoles}
-                                                    prValueTimePickerInicio2={valueTimePickerInicioDescanso2Edicion.miercoles}
-                                                    prValueTimePickerFin2={valueTimePickerFinDescanso2Edicion.miercoles}
-                                                    prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
-                                                    prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
-                                                    prIdTipoServicio={'selectTipoServicio-edicion-miercoles'}
-                                                    prValueTipoServicio={valueTipoServicioEdicion.miercolesTipoServicio}
-                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
-                                                />
-                                                <ItemListTime
-                                                    prTipo={'rangoDescanso'}
-                                                    prDisabledItem={disabledItem}
-                                                    prDia={'Jue.'}
-                                                    prIdInicio1={'timePickerInicio1Descanso-edicion-jueves'}
-                                                    prIdFin1={'timePickerFin1Descanso-edicion-jueves'}
-                                                    prIdInicio2={'timePickerInicio2Descanso-edicion-jueves'}
-                                                    prIdFin2={'timePickerFin2Descanso-edicion-jueves'}
-                                                    prValueTimePickerInicio1={valueTimePickerInicioDescanso1Edicion.jueves}
-                                                    prValueTimePickerFin1={valueTimePickerFinDescanso1Edicion.jueves}
-                                                    prValueTimePickerInicio2={valueTimePickerInicioDescanso2Edicion.jueves}
-                                                    prValueTimePickerFin2={valueTimePickerFinDescanso2Edicion.jueves}
-                                                    prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
-                                                    prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
-                                                    prIdTipoServicio={'selectTipoServicio-edicion-jueves'}
-                                                    prValueTipoServicio={valueTipoServicioEdicion.juevesTipoServicio}
-                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
-                                                />
-                                                <ItemListTime
-                                                    prTipo={'rangoDescanso'}
-                                                    prDisabledItem={disabledItem}
-                                                    prDia={'Vie.'}
-                                                    prIdInicio1={'timePickerInicio1Descanso-edicion-viernes'}
-                                                    prIdFin1={'timePickerFin1Descanso-edicion-viernes'}
-                                                    prIdInicio2={'timePickerInicio2Descanso-edicion-viernes'}
-                                                    prIdFin2={'timePickerFin2Descanso-edicion-viernes'}
-                                                    prValueTimePickerInicio1={valueTimePickerInicioDescanso1Edicion.viernes}
-                                                    prValueTimePickerFin1={valueTimePickerFinDescanso1Edicion.viernes}
-                                                    prValueTimePickerInicio2={valueTimePickerInicioDescanso2Edicion.viernes}
-                                                    prValueTimePickerFin2={valueTimePickerFinDescanso2Edicion.viernes}
-                                                    prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
-                                                    prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
-                                                    prIdTipoServicio={'selectTipoServicio-edicion-viernes'}
-                                                    prValueTipoServicio={valueTipoServicioEdicion.viernesTipoServicio}
-                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
-                                                />
-                                                <ItemListTime
-                                                    prTipo={'rangoDescanso'}
-                                                    prDisabledItem={disabledItem}
-                                                    prDia={'Sáb.'}
-                                                    prIdInicio1={'timePickerInicio1Descanso-edicion-sabado'}
-                                                    prIdFin1={'timePickerFin1Descanso-edicion-sabado'}
-                                                    prIdInicio2={'timePickerInicio2Descanso-edicion-sabado'}
-                                                    prIdFin2={'timePickerFin2Descanso-edicion-sabado'}
-                                                    prValueTimePickerInicio1={valueTimePickerInicioDescanso1Edicion.sabado}
-                                                    prValueTimePickerFin1={valueTimePickerFinDescanso1Edicion.sabado}
-                                                    prValueTimePickerInicio2={valueTimePickerInicioDescanso2Edicion.sabado}
-                                                    prValueTimePickerFin2={valueTimePickerFinDescanso2Edicion.sabado}
-                                                    prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
-                                                    prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
-                                                    prIdTipoServicio={'selectTipoServicio-edicion-sabado'}
-                                                    prValueTipoServicio={valueTipoServicioEdicion.sabadoTipoServicio}
-                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
-                                                />
-                                                <ItemListTime
-                                                    prTipo={'rangoDescanso'}
-                                                    prDisabledItem={disabledItem}
-                                                    prDia={'Dom.'}
-                                                    prIdInicio1={'timePickerInicio1Descanso-edicion-domingo'}
-                                                    prIdFin1={'timePickerFin1Descanso-edicion-domingo'}
-                                                    prIdInicio2={'timePickerInicio2Descanso-edicion-domingo'}
-                                                    prIdFin2={'timePickerFin2Descanso-edicion-domingo'}
-                                                    prValueTimePickerInicio1={valueTimePickerInicioDescanso1Edicion.domingo}
-                                                    prValueTimePickerFin1={valueTimePickerFinDescanso1Edicion.domingo}
-                                                    prValueTimePickerInicio2={valueTimePickerInicioDescanso2Edicion.domingo}
-                                                    prValueTimePickerFin2={valueTimePickerFinDescanso2Edicion.domingo}
-                                                    prHandleChangeTimePickerInicioEdicion={handleChangeTimePickerInicioEdicion}
-                                                    prHandleChangeTimePickerFinEdicion={handleChangeTimePickerFinEdicion}
-                                                    prIdTipoServicio={'selectTipoServicio-edicion-domingo'}
-                                                    prValueTipoServicio={valueTipoServicioEdicion.domingoTipoServicio}
-                                                    prHandleChangeSelectTipoServicioEdicion={handleChangeSelectTipoServicioEdicion}
-                                                />
-                                            </Fragment>
-                                        ) : null}
+                                        {
+                                            horarioIntervencionEdicion.tipoRegistroTrabajador.map((item, index) => (
+                                                generaRetornoHorario(valuesFormEdicion.tipo, index)
+                                            ))
+                                        }
                                     </List>
                                 </Box>
                             </Grid>
@@ -3611,7 +4662,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                 prTituloDialog={tituloDialog}
                 prDescripcionDialog={descripcionDialog}
             />
-            {/* {console.log(listadoCentros)} */}
+            {/* {console.log('estamoscargando: ',estamosCargandoDatos)} */}
         </div>
     )
 })

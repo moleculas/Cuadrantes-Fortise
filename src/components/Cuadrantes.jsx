@@ -109,6 +109,7 @@ import { vaciarDatosPendientesAccion } from '../redux/pendientesDucks';
 import { venimosDeRegistradosAccion } from '../redux/pendientesDucks';
 import { vaciarDatosTrabajadorAccion } from '../redux/trabajadoresDucks';
 import { generarArchivosXLSAccion } from '../redux/appDucks';
+import { gestionaMaxDateCalendarAccion } from '../redux/appDucks';
 
 const categorias = Constantes.CATEGORIAS_CENTROS;
 const arrayFestivos = Constantes.CALENDARIO_FESTIVOS;
@@ -266,6 +267,11 @@ const Cuadrantes = (props) => {
     const [openFacturacion, setOpenFacturacion] = useState(false);
     const [openFacturacionInterior, setOpenFacturacionInterior] = useState(false);
     const [numeroFactusol, setNumeroFactusol] = useState(null);
+    const [posicionTrabajadorPrevioACambiar, setPosicionTrabajadorPrevioACambiar] = useState(null);
+    const [posicionSuplentePrevioACambiar, setPosicionSuplentePrevioACambiar] = useState(null);
+    const [estamosActualizandoCuadrante, setEstamosActualizandoCuadrante] = useState({ estado: false, columna: null });
+    const [openLoadingActualizandoCuadrante, setOpenLoadingActualizandoCuadrante] = useState(false);
+    const [gestionadoColumna, setGestionadoColumna] = useState(true);
 
     //useEffect
 
@@ -312,7 +318,7 @@ const Cuadrantes = (props) => {
         for (let i = 0; i < diasMes; i++) {
             const dateStr = mesAGest + '-' + (i + 1) + '-' + anyoAGest;
             array.push([[i + 1], [dispatch(diaDeLaSemanaAccion(dateStr))]]);
-        };        
+        };
         setLosDiasDelMes(array);
     }, [calendarioAGestionar]);
 
@@ -380,12 +386,19 @@ const Cuadrantes = (props) => {
                     if (cuadranteRegistrado === 'no') {
                         if (centroAGestionar.trabajadores.trabajadores.length > 0) {
                             centroAGestionar.trabajadores.trabajadores.forEach((trabajadorIterado, index) => {
-                                if (trabajadorIterado['trabajador_' + (index + 1)]) {
-                                    dispatch(obtenerTrabajadorAccion('trabajadores', trabajadorIterado['trabajador_' + (index + 1)]));
-                                };
-                                if (trabajadorIterado['suplente_' + (index + 1)]) {
-                                    dispatch(obtenerSuplenteAccion('trabajadores', trabajadorIterado['suplente_' + (index + 1)]));
-                                };
+                                setTimeout(
+                                    function () {
+                                        if (trabajadorIterado['trabajador_' + (index + 1)]) {
+                                            setTimeout(() => {
+                                                dispatch(obtenerTrabajadorAccion('trabajadores', trabajadorIterado['trabajador_' + (index + 1)]));
+                                            }, 1);
+                                        };
+                                        if (trabajadorIterado['suplente_' + (index + 1)]) {
+                                            setTimeout(() => {
+                                                dispatch(obtenerSuplenteAccion('trabajadores', trabajadorIterado['suplente_' + (index + 1)]));
+                                            }, 500);
+                                        };
+                                    }, index * 1000);
                             });
                         };
                         dispatch(actualizarObjetoCuadranteAccion({
@@ -394,14 +407,14 @@ const Cuadrantes = (props) => {
                                 objeto: 'informe',
                                 centro: centroAGestionar.id,
                                 computo: centroAGestionar.horario.computo,
-                                mensualPactado: centroAGestionar.horario.mensualPactado,
-                                precioHora_L: centroAGestionar.horario.precioHora_L,
-                                precioHora_C: centroAGestionar.horario.precioHora_C,
-                                precioHora_E: centroAGestionar.horario.precioHora_E,
-                                precioHora_I: centroAGestionar.horario.precioHora_I,
-                                precioHora_Z: centroAGestionar.horario.precioHora_Z,
-                                precioHora_T: centroAGestionar.horario.precioHora_T,
-                                precioHora_P: centroAGestionar.horario.precioHora_P,
+                                mensualPactado: centroAGestionar.horario.mensualPactado ? centroAGestionar.horario.mensualPactado : null,
+                                precioHora_L: centroAGestionar.horario.precioHora_L ? centroAGestionar.horario.precioHora_L : null,
+                                precioHora_C: centroAGestionar.horario.precioHora_C ? centroAGestionar.horario.precioHora_C : null,
+                                precioHora_E: centroAGestionar.horario.precioHora_E ? centroAGestionar.horario.precioHora_E : null,
+                                precioHora_I: centroAGestionar.horario.precioHora_I ? centroAGestionar.horario.precioHora_I : null,
+                                precioHora_Z: centroAGestionar.horario.precioHora_Z ? centroAGestionar.horario.precioHora_Z : null,
+                                precioHora_T: centroAGestionar.horario.precioHora_T ? centroAGestionar.horario.precioHora_T : null,
+                                precioHora_P: centroAGestionar.horario.precioHora_P ? centroAGestionar.horario.precioHora_P : null,
                                 arrayTrabajadores: [],
                                 totalFacturado_M: null,
                                 totalFacturado_L: null,
@@ -429,14 +442,14 @@ const Cuadrantes = (props) => {
                     const losDatosInforme = {
                         ...objetoCuadrante.datosInforme,
                         computo: centroAGestionar.horario.computo,
-                        mensualPactado: centroAGestionar.horario.mensualPactado,
-                        precioHora_L: centroAGestionar.horario.precioHora_L,
-                        precioHora_C: centroAGestionar.horario.precioHora_C,
-                        precioHora_E: centroAGestionar.horario.precioHora_E,
-                        precioHora_I: centroAGestionar.horario.precioHora_I,
-                        precioHora_Z: centroAGestionar.horario.precioHora_Z,
-                        precioHora_T: centroAGestionar.horario.precioHora_T,
-                        precioHora_P: centroAGestionar.horario.precioHora_P,
+                        mensualPactado: centroAGestionar.horario.mensualPactado ? centroAGestionar.horario.mensualPactado : null,
+                        precioHora_L: centroAGestionar.horario.precioHora_L ? centroAGestionar.horario.precioHora_L : null,
+                        precioHora_C: centroAGestionar.horario.precioHora_C ? centroAGestionar.horario.precioHora_C : null,
+                        precioHora_E: centroAGestionar.horario.precioHora_E ? centroAGestionar.horario.precioHora_E : null,
+                        precioHora_I: centroAGestionar.horario.precioHora_I ? centroAGestionar.horario.precioHora_I : null,
+                        precioHora_Z: centroAGestionar.horario.precioHora_Z ? centroAGestionar.horario.precioHora_Z : null,
+                        precioHora_T: centroAGestionar.horario.precioHora_T ? centroAGestionar.horario.precioHora_T : null,
+                        precioHora_P: centroAGestionar.horario.precioHora_P ? centroAGestionar.horario.precioHora_P : null
                     }
                     const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, arrayCuadrante: cuadrante };
                     dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, actualizacion: firmaActualizacion, datosCuadrante: losDatosCuadrante, datosInforme: losDatosInforme }));
@@ -456,25 +469,42 @@ const Cuadrantes = (props) => {
     }, [centroAGestionar]);
 
     useEffect(() => {
+        setGestionadoColumna(false);
         if (trabajadorAGestionar.nombre !== '') {
-            let arrayTr;
+            let arrayTr = [];
             if (esInicioTra) {
+                arrayTr = [...trabajadoresEnCuadrante];
+                if (centroAGestionar.horario.tipoRegistro === 'individual') {
+                    trabajadorAGestionar['laPosicionDelTrabajador'] = arrayTr.length + 1;
+                };
                 if (cuadranteRegistrado === 'no') {
-                    const arrayCuadrante = [...cuadrante];
-                    const laColumnaAnadir = gestionaColumnaCuadrante(trabajadorAGestionar, 'trabajador', false, null, false);
-                    if (laColumnaAnadir) {
-                        arrayCuadrante.push(laColumnaAnadir);
-                        arrayTr = [...trabajadoresEnCuadrante];
-                        arrayTr.push(trabajadorAGestionar);
-                        setTrabajadoresEnCuadrante(arrayTr);
-                    };
-                    setCuadrante(arrayCuadrante);
-                }
+                    gestionaColumnaCuadrante(trabajadorAGestionar, 'trabajador', false, null, false)
+                        .then(values => {
+                            if (!values.devuelto) {
+                                gestionaResultadoColumnaCuadrante_1(values.columnaAnadir)
+                                    .then(values => {
+                                        arrayTr.push(trabajadorAGestionar);
+                                        setTrabajadoresEnCuadrante(arrayTr);
+                                        cuadrante.push(values.columnaAnadir);
+                                        if (values.resuelto) {
+                                            setGestionadoColumna(true);
+                                        }
+                                    });
+                            };
+                        });
+                } else {
+                    arrayTr.push(trabajadorAGestionar);
+                    setTrabajadoresEnCuadrante(arrayTr);
+                };
             }
             if (esCambioTra) {
                 arrayTr = [...trabajadoresEnCuadrante];
-                const repetidoTrabajador = trabajadoresEnCuadrante.find(trabajador => trabajador.id === trabajadorAGestionar.id);
-                const repetidoSuplente = suplentesEnCuadrante.find(suplente => suplente.id === trabajadorAGestionar.id);
+                if (centroAGestionar.horario.tipoRegistro === 'individual') {
+                    trabajadorAGestionar['laPosicionDelTrabajador'] = posicionTrabajadorPrevioACambiar;
+                };
+                let repetidoTrabajador, repetidoSuplente;
+                repetidoTrabajador = trabajadoresEnCuadrante.find(trabajador => trabajador.id === trabajadorAGestionar.id);
+                repetidoSuplente = suplentesEnCuadrante.find(suplente => suplente.id === trabajadorAGestionar.id);
                 if (trabajadorAGestionar.estado !== 'alta') {
                     setAlert({
                         mensaje: "Este trabajador se encuentra de baja, selecciona otro.",
@@ -492,18 +522,37 @@ const Cuadrantes = (props) => {
                         const posicionTrabajador = trabajadoresEnCuadrante.indexOf(trabajadoresEnCuadrante.find(trabajador => trabajador.id === valorPrevioAccordionAbierto));
                         arrayTr.splice(posicionTrabajador, 1);
                     };
-                    gestionaColumnaCuadrante(trabajadorAGestionar, 'trabajador', true, columnaIndiceAGestionar, false);
-                    arrayTr.push(trabajadorAGestionar);
-                    setTrabajadoresEnCuadrante(arrayTr);
+                    gestionaColumnaCuadrante(trabajadorAGestionar, 'trabajador', true, columnaIndiceAGestionar, false)
+                        .then(values => {
+                            if (!values.devuelto) {
+                                gestionaResultadoColumnaCuadrante_2(
+                                    values.columnaAnadir,
+                                    values.hayTrabajador,
+                                    values.tipoTrabajador,
+                                    values.columna,
+                                    values.esRevision)
+                                    .then(values => {
+                                        if (values.resuelto) {
+                                            setGestionadoColumna(true);
+                                        }
+                                    });
+                            };
+                        });
+                    if (!esUnaActualizacionTrabajador) {
+                        arrayTr.insert(posicionTrabajadorPrevioACambiar - 1, trabajadorAGestionar);
+                        setTrabajadoresEnCuadrante(arrayTr);
+                    };
                     setEsCambioTra(false);
                     setColumnaIndiceAGestionar(null);
                 };
                 if (esUnaActualizacionTrabajador) {
-                    setAlert({
-                        mensaje: "Trabajador actualizado exitosamente.",
-                        tipo: 'success'
-                    })
-                    setOpenSnack(true);
+                    if (!openLoadingActualizandoCuadrante) {
+                        setAlert({
+                            mensaje: "Trabajador actualizado exitosamente.",
+                            tipo: 'success'
+                        })
+                        setOpenSnack(true);
+                    };
                     setEsUnaActualizacionTrabajador(false);
                 };
             }
@@ -511,25 +560,42 @@ const Cuadrantes = (props) => {
     }, [trabajadorAGestionar]);
 
     useEffect(() => {
+        setGestionadoColumna(false);
         if (suplenteAGestionar.nombre !== '') {
-            let arraySu;
+            let arraySu = [];
             if (esInicioSup) {
-                if (cuadranteRegistrado === 'no') {
-                    const arrayCuadrante = [...cuadrante];
-                    const laColumnaAnadir = gestionaColumnaCuadrante(suplenteAGestionar, 'suplente', false, null, false);
-                    if (laColumnaAnadir) {
-                        arrayCuadrante.push(laColumnaAnadir);
-                        arraySu = [...suplentesEnCuadrante];
-                        arraySu.push(suplenteAGestionar);
-                        setSuplentesEnCuadrante(arraySu);
-                    };
-                    setCuadrante(arrayCuadrante);
+                arraySu = [...suplentesEnCuadrante];
+                if (centroAGestionar.horario.tipoRegistro === 'individual') {
+                    suplenteAGestionar['laPosicionDelTrabajador'] = arraySu.length + 1;
                 }
+                if (cuadranteRegistrado === 'no') {
+                    gestionaColumnaCuadrante(suplenteAGestionar, 'suplente', false, null, false)
+                        .then(values => {
+                            if (!values.devuelto) {
+                                gestionaResultadoColumnaCuadrante_1(values.columnaAnadir)
+                                    .then(values => {
+                                        arraySu.push(suplenteAGestionar);
+                                        setSuplentesEnCuadrante(arraySu);
+                                        cuadrante.push(values.columnaAnadir);
+                                        if (values.resuelto) {
+                                            setGestionadoColumna(true);
+                                        }
+                                    });
+                            };
+                        });
+                } else {
+                    arraySu.push(suplenteAGestionar);
+                    setSuplentesEnCuadrante(arraySu);
+                };
             };
             if (esCambioSup) {
                 arraySu = [...suplentesEnCuadrante];
-                const repetidoSuplente = suplentesEnCuadrante.find(suplente => suplente.id === suplenteAGestionar.id);
-                const repetidoTrabajador = trabajadoresEnCuadrante.find(trabajador => trabajador.id === suplenteAGestionar.id);
+                if (centroAGestionar.horario.tipoRegistro === 'individual') {
+                    suplenteAGestionar['laPosicionDelTrabajador'] = posicionSuplentePrevioACambiar;
+                };
+                let repetidoTrabajador, repetidoSuplente;
+                repetidoSuplente = suplentesEnCuadrante.find(suplente => suplente.id === suplenteAGestionar.id);
+                repetidoTrabajador = trabajadoresEnCuadrante.find(trabajador => trabajador.id === suplenteAGestionar.id);
                 if (suplenteAGestionar.estado !== 'alta') {
                     setAlert({
                         mensaje: "Este trabajador se encuentra de baja, selecciona otro.",
@@ -547,18 +613,38 @@ const Cuadrantes = (props) => {
                         const posicionSuplente = suplentesEnCuadrante.indexOf(suplentesEnCuadrante.find(suplente => suplente.id === valorPrevioAccordionAbierto));
                         arraySu.splice(posicionSuplente, 1);
                     };
-                    gestionaColumnaCuadrante(suplenteAGestionar, 'suplente', true, columnaIndiceAGestionar, false);
-                    arraySu.push(suplenteAGestionar);
+                    gestionaColumnaCuadrante(suplenteAGestionar, 'suplente', true, columnaIndiceAGestionar, false)
+                        .then(values => {
+                            if (!values.devuelto) {
+                                gestionaResultadoColumnaCuadrante_2(
+                                    values.columnaAnadir,
+                                    values.hayTrabajador,
+                                    values.tipoTrabajador,
+                                    values.columna,
+                                    values.esRevision)
+                                    .then(values => {
+                                        if (values.resuelto) {
+                                            setGestionadoColumna(true);
+                                        }
+                                    });
+                            };
+                        });
+                    if (!esUnaActualizacionTrabajador) {
+                        arraySu.insert(posicionSuplentePrevioACambiar - 1, suplenteAGestionar);
+                        //arraySu.push(suplenteAGestionar);                       
+                        setSuplentesEnCuadrante(arraySu);
+                    };
                     setEsCambioSup(false);
                     setColumnaIndiceAGestionar(null);
-                    setSuplentesEnCuadrante(arraySu);
                 };
                 if (esUnaActualizacionTrabajador) {
-                    setAlert({
-                        mensaje: "Trabajador actualizado exitosamente.",
-                        tipo: 'success'
-                    })
-                    setOpenSnack(true);
+                    if (!openLoadingActualizandoCuadrante) {
+                        setAlert({
+                            mensaje: "Trabajador actualizado exitosamente.",
+                            tipo: 'success'
+                        })
+                        setOpenSnack(true);
+                    };
                     setEsUnaActualizacionTrabajador(false);
                 };
             }
@@ -589,8 +675,11 @@ const Cuadrantes = (props) => {
             if (cuadrante[cuadrante.length - 1].nombreTrabajador) {
                 setArrayDatosInforme(dispatch(gestionarInformeAccion(cuadrante, objetoCuadrante.datosCuadrante.centro)));
             };
+            if (estamosActualizandoCuadrante.estado) {
+                handleActualizarTrabajadoresGeneral();
+            };
         };
-    }, [cuadrante]);
+    }, [cuadrante.length]);
 
     //secuencia venimos de pendientes o registrados
 
@@ -699,7 +788,7 @@ const Cuadrantes = (props) => {
             generaInformacionCuadrantes();
     }, [openDialog8]);
 
-    //funciones
+    //funciones   
 
     const handleClickMenu = (e) => {
         setAnchorElMenu(anchorElMenu ? null : e.currentTarget);
@@ -832,69 +921,167 @@ const Cuadrantes = (props) => {
     };
 
     const gestionaColumnaCuadrante = (trabajador, tipoTrabajador, esRevision, columna, esAnadirColumna) => {
+        let posicionTrabajador;
+        if (centroAGestionar.horario.tipoRegistro === 'individual') {
+            if (tipoTrabajador === 'trabajador') {
+                if (posicionTrabajadorPrevioACambiar) {
+                    posicionTrabajador = posicionTrabajadorPrevioACambiar;
+                    setPosicionTrabajadorPrevioACambiar(null);
+                } else {
+                    if (esAnadirColumna) {
+                        posicionTrabajador = cuadrante.length + 1;
+                    } else {
+                        posicionTrabajador = trabajador.laPosicionDelTrabajador;
+                    }
+                }
+            };
+            if (tipoTrabajador === 'suplente') {
+                if (posicionSuplentePrevioACambiar) {
+                    posicionTrabajador = posicionSuplentePrevioACambiar;
+                    setPosicionSuplentePrevioACambiar(null);
+                } else {
+                    if (esAnadirColumna) {
+                        posicionTrabajador = columna;
+                    } else {
+                        posicionTrabajador = trabajador.laPosicionDelTrabajador;
+                    }
+                }
+            };
+        };
         let posicionAnterior;
+        let esInicio = false;
         if (!esRevision && !esAnadirColumna) {
-            posicionAnterior = cuadrante.length - 1
+            posicionAnterior = cuadrante.length - 1;
+            esInicio = true;
         } else if (esRevision && esAnadirColumna) {
             posicionAnterior = columna
         } else {
-            posicionAnterior = columna - 1
+            posicionAnterior = columna - 1;
         };
-        if (cuadrante.length > 0) {
-            if (cuadrante[posicionAnterior]) {
-                if (tipoTrabajador === 'suplente' && !cuadrante[posicionAnterior].hayBaja && !esRevision) {
-                    setAlert({
-                        mensaje: "El trabajador no está o no ha estado de baja, no necesita suplente.",
-                        tipo: 'warning'
-                    })
-                    setOpenSnack(true);
-                    return;
+        return new Promise((resolve, reject) => {
+            if (cuadrante.length > 0) {
+                if (cuadrante[posicionAnterior]) {
+                    if (tipoTrabajador === 'suplente' && !cuadrante[posicionAnterior].hayBaja && !esRevision) {
+                        setAlert({
+                            mensaje: "El trabajador no está o no ha estado de baja, no necesita suplente.",
+                            tipo: 'warning'
+                        })
+                        setOpenSnack(true);
+                        return resolve({ devuelto: true });
+                    };
+                };
+                if (cuadrante[posicionAnterior]) {
+                    if (tipoTrabajador === 'suplente' && !cuadrante[posicionAnterior].hayBaja && esRevision && esAnadirColumna) {
+                        setAlert({
+                            mensaje: "El trabajador no está o no ha estado de baja, o no has asignado trabajador, no necesita suplente.",
+                            tipo: 'warning'
+                        })
+                        setOpenSnack(true);
+                        return resolve({ devuelto: true });
+                    };
                 };
             };
-            if (cuadrante[posicionAnterior]) {
-                if (tipoTrabajador === 'suplente' && !cuadrante[posicionAnterior].hayBaja && esRevision && esAnadirColumna) {
-                    setAlert({
-                        mensaje: "El trabajador no está o no ha estado de baja, o no has asignado trabajador, no necesita suplente.",
-                        tipo: 'warning'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
-            };
-        };
-        const { columnaAnadir, hayTrabajador } = dispatch(gestionaColumnaCuadranteInterior(
-            trabajador,
-            tipoTrabajador,
-            esRevision,
-            columna,
-            cuadrante,
-            centroAGestionar,
-            posicionAnterior,
-            calendarioAGestionar,
-            losDiasDelMes,
-            stateFestivo
-        ));
-        if (!hayTrabajador && tipoTrabajador === 'trabajador') {
-            const arrayCuadrante = [...cuadrante];
-            arrayCuadrante.push(columnaAnadir);
-            setCuadrante(arrayCuadrante);
-            setExpandedAccordion(false);
-        };
-        if (!hayTrabajador && tipoTrabajador === 'suplente') {
-            const arrayCuadrante = [...cuadrante];
-            arrayCuadrante.insert(columna + 1, columnaAnadir);
-            setCuadrante(arrayCuadrante);
-            setExpandedAccordion(false);
-        };
-        if (hayTrabajador) {
-            if (!esRevision) {
-                return columnaAnadir;
-            } else {
+
+            const { columnaAnadir, hayTrabajador } = dispatch(gestionaColumnaCuadranteInterior(
+                trabajador,
+                tipoTrabajador,
+                esRevision,
+                columna,
+                cuadrante,
+                centroAGestionar,
+                posicionAnterior,
+                calendarioAGestionar,
+                losDiasDelMes,
+                stateFestivo,
+                esInicio,
+                posicionTrabajador
+            ));
+            return resolve({ devuelto: false, columnaAnadir: columnaAnadir, hayTrabajador: hayTrabajador, tipoTrabajador: tipoTrabajador, columna: columna, esRevision: esRevision });
+        });
+    };
+
+    const gestionaResultadoColumnaCuadrante_2 = (columnaAnadir, hayTrabajador, tipoTrabajador, columna, esRevision) => {
+        return new Promise((resolve, reject) => {
+            if (!hayTrabajador && tipoTrabajador === 'trabajador') {
                 const arrayCuadrante = [...cuadrante];
-                arrayCuadrante[columna] = columnaAnadir;
+                let arrayTr = [...trabajadoresEnCuadrante];
+                let randomNumber = (Math.floor(Math.random() * 100)) + 1000;
+                if (centroAGestionar.horario.tipoRegistro === 'individual') {
+                    const idTrabajadorAnterior = arrayCuadrante[arrayCuadrante.length - 1].idTrabajador;
+                    const estadoTrabajadorAnterior = arrayCuadrante[arrayCuadrante.length - 1].tipoTrabajador;
+                    let laPosicion;
+                    if (estadoTrabajadorAnterior === 'trabajador') {
+                        const posicionTrabajadorPrevioAnteriorIndex = trabajadoresEnCuadrante.indexOf(trabajadoresEnCuadrante.find(trabajador => trabajador.id === idTrabajadorAnterior));
+                        laPosicion = trabajadoresEnCuadrante[posicionTrabajadorPrevioAnteriorIndex].laPosicionDelTrabajador;
+                    };
+                    if (estadoTrabajadorAnterior === 'suplente') {
+                        const posicionSuplentePrevioAnteriorIndex = suplentesEnCuadrante.indexOf(suplentesEnCuadrante.find(suplente => suplente.id === idTrabajadorAnterior));
+                        laPosicion = suplentesEnCuadrante[posicionSuplentePrevioAnteriorIndex].laPosicionDelTrabajador;
+                    };
+                    arrayTr.push({
+                        id: randomNumber,
+                        laPosicionDelTrabajador: laPosicion + 1,
+                        tipoTrabajador: 'trabajador'
+                    });
+                } else {
+                    arrayTr.push({
+                        id: randomNumber,
+                        tipoTrabajador: 'trabajador'
+                    });
+                };
+                setTrabajadoresEnCuadrante(arrayTr);
+                columnaAnadir['idTrabajador'] = randomNumber;
+                arrayCuadrante.push(columnaAnadir);
                 setCuadrante(arrayCuadrante);
-            }
-        };
+                setExpandedAccordion(false);
+            };
+            if (!hayTrabajador && tipoTrabajador === 'suplente') {
+                const arrayCuadrante = [...cuadrante];
+                let arraySu = [...suplentesEnCuadrante];
+                let randomNumber = (Math.floor(Math.random() * 100)) + 1000;
+                if (centroAGestionar.horario.tipoRegistro === 'individual') {
+                    const idTrabajadorAnterior = arrayCuadrante[arrayCuadrante.length - 1].idTrabajador;
+                    const estadoTrabajadorAnterior = arrayCuadrante[arrayCuadrante.length - 1].tipoTrabajador;
+                    let laPosicion;
+                    if (estadoTrabajadorAnterior === 'trabajador') {
+                        const posicionTrabajadorPrevioAnteriorIndex = trabajadoresEnCuadrante.indexOf(trabajadoresEnCuadrante.find(trabajador => trabajador.id === idTrabajadorAnterior));
+                        laPosicion = trabajadoresEnCuadrante[posicionTrabajadorPrevioAnteriorIndex].laPosicionDelTrabajador;
+                    };
+                    if (estadoTrabajadorAnterior === 'suplente') {
+                        const posicionSuplentePrevioAnteriorIndex = suplentesEnCuadrante.indexOf(suplentesEnCuadrante.find(suplente => suplente.id === idTrabajadorAnterior));
+                        laPosicion = suplentesEnCuadrante[posicionSuplentePrevioAnteriorIndex].laPosicionDelTrabajador;
+                    };
+                    arraySu.push({
+                        id: randomNumber,
+                        laPosicionDelTrabajador: laPosicion,
+                        tipoTrabajador: 'suplente'
+                    });
+                } else {
+                    arraySu.push({
+                        id: randomNumber,
+                        tipoTrabajador: 'suplente'
+                    });
+                };
+                setSuplentesEnCuadrante(arraySu);
+                columnaAnadir['idTrabajador'] = randomNumber;
+                arrayCuadrante.insert(columna + 1, columnaAnadir);
+                setCuadrante(arrayCuadrante);
+                setExpandedAccordion(false);
+            };
+            if (hayTrabajador) {
+                if (esRevision) {
+                    const arrayCuadrante = [...cuadrante];
+                    arrayCuadrante[columna] = columnaAnadir;
+                    setCuadrante(arrayCuadrante);
+                }
+            };
+            return resolve({ resuelto: true });
+        });
+    };
+    const gestionaResultadoColumnaCuadrante_1 = (columnaAnadir) => {
+        return new Promise((resolve, reject) => {
+            return resolve({ resuelto: true, columnaAnadir: columnaAnadir });
+        });
     };
 
     const reseteaContenidoCuadrante = () => {
@@ -936,14 +1123,52 @@ const Cuadrantes = (props) => {
     };
 
     const handleClickAddColumna = (tipo, columna) => {
-        setEsInicioTra(false);
-        setEsInicioSup(false);
-        setEsCambioTra(true);
-        setEsCambioSup(true);
+        if (tipo === 'suplente' && cuadrante[columna + 1] && cuadrante[columna + 1].tipoTrabajador === 'suplente') {
+            setAlert({
+                mensaje: "Este trabajador ya tiene asignado un suplente.",
+                tipo: 'error'
+            })
+            setOpenSnack(true);
+            return;
+        };
         if (tipo === 'trabajador') {
-            gestionaColumnaCuadrante(null, 'trabajador', true, null, true);
+            setEsInicioTra(false);
+            setEsCambioTra(true);
+            gestionaColumnaCuadrante(null, 'trabajador', true, null, true)
+                .then(values => {
+                    if (!values.devuelto) {
+                        gestionaResultadoColumnaCuadrante_2(
+                            values.columnaAnadir,
+                            values.hayTrabajador,
+                            values.tipoTrabajador,
+                            values.columna,
+                            values.esRevision)
+                            .then(values => {
+                                if (values.resuelto) {
+                                    setGestionadoColumna(true);
+                                }
+                            });
+                    }
+                });
         } else {
-            gestionaColumnaCuadrante(null, 'suplente', true, columna, true);
+            setEsInicioSup(false);
+            setEsCambioSup(true);
+            gestionaColumnaCuadrante(null, 'suplente', true, columna, true)
+                .then(values => {
+                    if (!values.devuelto) {
+                        gestionaResultadoColumnaCuadrante_2(
+                            values.columnaAnadir,
+                            values.hayTrabajador,
+                            values.tipoTrabajador,
+                            values.columna,
+                            values.esRevision)
+                            .then(values => {
+                                if (values.resuelto) {
+                                    setGestionadoColumna(true);
+                                }
+                            });
+                    }
+                });
         }
         if (cuadranteRegistrado === 'si') {
             dispatch(activarDesactivarCambioBotonActualizarAccion(false));
@@ -955,56 +1180,119 @@ const Cuadrantes = (props) => {
     const eliminarColumna = (columna, idTrabajador) => {
         let fromIndex;
         let arrayCuadrante = [...cuadrante];
-        let numTrabajadoresQuedan = 0;
+        let numTrabajadoresQuedanSinNombre = 0;
+        let numTrabajadoresQuedanConNombre = 0;
+
         arrayCuadrante.forEach((elemento) => {
-            if (elemento.tipoTrabajador === 'trabajador') {
-                numTrabajadoresQuedan++;
+            if (elemento.tipoTrabajador === 'trabajador' && !elemento.nombreTrabajador) {
+                numTrabajadoresQuedanSinNombre++;
+            }
+            if (elemento.tipoTrabajador === 'trabajador' && elemento.nombreTrabajador) {
+                numTrabajadoresQuedanConNombre++;
             }
         });
-        if ((numTrabajadoresQuedan === 1 && arrayCuadrante[columna].tipoTrabajador === 'trabajador') || (arrayCuadrante.length === 1)) {
+        if (numTrabajadoresQuedanSinNombre >= numTrabajadoresQuedanConNombre && arrayCuadrante[columna].nombreTrabajador && arrayCuadrante[columna].tipoTrabajador === 'trabajador') {
+            setAlert({
+                mensaje: "No es posible dejar un cuadrante sin trabajadores. Selecciona un trabajador para las columnas vacías antes de eliminar.",
+                tipo: 'warning'
+            })
+            setOpenSnack(true);
+            return;
+        }
+        if ((numTrabajadoresQuedanConNombre + numTrabajadoresQuedanSinNombre === 1 && arrayCuadrante[columna].tipoTrabajador === 'trabajador') || (arrayCuadrante.length === 1)) {
             setAlert({
                 mensaje: "No es posible dejar un cuadrante sin trabajadores.",
                 tipo: 'warning'
             })
             setOpenSnack(true);
             return;
-        } else {
-            if (arrayCuadrante[columna].tipoTrabajador === 'trabajador') {
-                const arrayTr = [...trabajadoresEnCuadrante];
-                const posicionTrabajador = trabajadoresEnCuadrante.indexOf(trabajadoresEnCuadrante.find(trabajador => trabajador.id === idTrabajador));
-                if (arrayCuadrante[columna + 1] && arrayCuadrante[columna + 1].tipoTrabajador === 'suplente') {
-                    const idSuplente = arrayCuadrante[columna].idTrabajador;
-                    const arraySu = [...suplentesEnCuadrante];
-                    const posicionSuplente = suplentesEnCuadrante.indexOf(suplentesEnCuadrante.find(suplente => suplente.id === idSuplente));
-                    arrayTr.splice(posicionTrabajador, 1);
-                    arraySu.splice(posicionSuplente, 1);
-                    setTrabajadoresEnCuadrante(arrayTr);
-                    setSuplentesEnCuadrante(arraySu);
-                    fromIndex = arrayCuadrante.indexOf(arrayCuadrante[columna]);
-                    arrayCuadrante.splice(fromIndex, 2);
-                } else {
-                    arrayTr.splice(posicionTrabajador, 1);
-                    setTrabajadoresEnCuadrante(arrayTr);
-                    fromIndex = arrayCuadrante.indexOf(arrayCuadrante[columna]);
-                    arrayCuadrante.splice(fromIndex, 1);
-                }
-                setCuadrante(arrayCuadrante);
-                setExpandedAccordion(false);
+        };
+        if (arrayCuadrante[columna].tipoTrabajador === 'trabajador') {
+            const posicionTrabajador = trabajadoresEnCuadrante.indexOf(trabajadoresEnCuadrante.find(trabajador => trabajador.id === idTrabajador));
+            if (arrayCuadrante[columna + 1] && arrayCuadrante[columna + 1].tipoTrabajador === 'suplente') {
+                let i = 1;
+                let idSuplente, posicionSuplente;
+                do {
+                    idSuplente = arrayCuadrante[columna + i].idTrabajador;
+                    posicionSuplente = suplentesEnCuadrante.indexOf(suplentesEnCuadrante.find(suplente => suplente.id === idSuplente));
+                    suplentesEnCuadrante.splice(posicionSuplente, 1);
+                    i++;
+                } while (arrayCuadrante[columna + i] && arrayCuadrante[columna + i].tipoTrabajador === 'suplente');
+                trabajadoresEnCuadrante.splice(posicionTrabajador, 1);
+                fromIndex = arrayCuadrante.indexOf(arrayCuadrante[columna]);
+                arrayCuadrante.splice(fromIndex, i);
+                if (centroAGestionar.horario.tipoRegistro === 'individual') {
+                    for (let i = 0; i < trabajadoresEnCuadrante.length; i++) {
+                        trabajadoresEnCuadrante[i]['laPosicionDelTrabajador'] = i + 1;
+                    };
+                    for (let i = 0; i < suplentesEnCuadrante.length; i++) {
+                        let posicionSuplenteIndex = arrayCuadrante.indexOf(arrayCuadrante.find(suplente => suplente.idTrabajador === suplentesEnCuadrante[i].id));
+                        let idTrabajadorAnterior = arrayCuadrante[posicionSuplenteIndex - 1].idTrabajador;
+                        let tipoTrabajadorAnterior = arrayCuadrante[posicionSuplenteIndex - 1].tipoTrabajador;
+                        let posicionIdTrabajadorAnterior;
+                        if (tipoTrabajadorAnterior === 'trabajador') {
+                            posicionIdTrabajadorAnterior = trabajadoresEnCuadrante.indexOf(trabajadoresEnCuadrante.find(trabajador => trabajador.id === idTrabajadorAnterior));
+                            suplentesEnCuadrante[i]['laPosicionDelTrabajador'] = trabajadoresEnCuadrante[posicionIdTrabajadorAnterior]['laPosicionDelTrabajador'];
+                        } else {
+                            posicionIdTrabajadorAnterior = suplentesEnCuadrante.indexOf(suplentesEnCuadrante.find(suplente => suplente.id === idTrabajadorAnterior));
+                            suplentesEnCuadrante[i]['laPosicionDelTrabajador'] = suplentesEnCuadrante[posicionIdTrabajadorAnterior]['laPosicionDelTrabajador'];
+                        }
+                    };
+                };
             } else {
-                const arraySu = [...suplentesEnCuadrante];
-                const posicionSuplente = suplentesEnCuadrante.indexOf(suplentesEnCuadrante.find(suplente => suplente.id === idTrabajador));
-                arraySu.splice(posicionSuplente, 1);
-                setSuplentesEnCuadrante(arraySu);
                 fromIndex = arrayCuadrante.indexOf(arrayCuadrante[columna]);
                 arrayCuadrante.splice(fromIndex, 1);
-                setCuadrante(arrayCuadrante);
-                setExpandedAccordion(false);
+                trabajadoresEnCuadrante.splice(posicionTrabajador, 1);
+                if (centroAGestionar.horario.tipoRegistro === 'individual') {
+                    for (let i = 0; i < trabajadoresEnCuadrante.length; i++) {
+                        trabajadoresEnCuadrante[i]['laPosicionDelTrabajador'] = i + 1;
+                    };
+                    for (let i = 0; i < suplentesEnCuadrante.length; i++) {
+                        let posicionSuplenteIndex = arrayCuadrante.indexOf(arrayCuadrante.find(suplente => suplente.idTrabajador === suplentesEnCuadrante[i].id));
+                        let idTrabajadorAnterior = arrayCuadrante[posicionSuplenteIndex - 1].idTrabajador;
+                        let tipoTrabajadorAnterior = arrayCuadrante[posicionSuplenteIndex - 1].tipoTrabajador;
+                        let posicionIdTrabajadorAnterior;
+                        if (tipoTrabajadorAnterior === 'trabajador') {
+                            posicionIdTrabajadorAnterior = trabajadoresEnCuadrante.indexOf(trabajadoresEnCuadrante.find(trabajador => trabajador.id === idTrabajadorAnterior));
+                            suplentesEnCuadrante[i]['laPosicionDelTrabajador'] = trabajadoresEnCuadrante[posicionIdTrabajadorAnterior]['laPosicionDelTrabajador'];
+                        } else {
+                            posicionIdTrabajadorAnterior = suplentesEnCuadrante.indexOf(suplentesEnCuadrante.find(suplente => suplente.id === idTrabajadorAnterior));
+                            suplentesEnCuadrante[i]['laPosicionDelTrabajador'] = suplentesEnCuadrante[posicionIdTrabajadorAnterior]['laPosicionDelTrabajador'];
+                        }
+                    };
+                };
             }
+            setCuadrante(arrayCuadrante);
+            setExpandedAccordion(false);
+        } else {
+            fromIndex = arrayCuadrante.indexOf(arrayCuadrante[columna]);
+            arrayCuadrante.splice(fromIndex, 1);
+            const posicionSuplente = suplentesEnCuadrante.indexOf(suplentesEnCuadrante.find(suplente => suplente.id === idTrabajador));
+            suplentesEnCuadrante.splice(posicionSuplente, 1);
+            if (centroAGestionar.horario.tipoRegistro === 'individual') {
+                for (let i = 0; i < suplentesEnCuadrante.length; i++) {
+                    let posicionSuplenteIndex = arrayCuadrante.indexOf(arrayCuadrante.find(suplente => suplente.idTrabajador === suplentesEnCuadrante[i].id));
+                    let idTrabajadorAnterior = arrayCuadrante[posicionSuplenteIndex - 1].idTrabajador;
+                    let tipoTrabajadorAnterior = arrayCuadrante[posicionSuplenteIndex - 1].tipoTrabajador;
+                    let posicionIdTrabajadorAnterior;
+                    if (tipoTrabajadorAnterior === 'trabajador') {
+                        posicionIdTrabajadorAnterior = trabajadoresEnCuadrante.indexOf(trabajadoresEnCuadrante.find(trabajador => trabajador.id === idTrabajadorAnterior));
+                        suplentesEnCuadrante[i]['laPosicionDelTrabajador'] = trabajadoresEnCuadrante[posicionIdTrabajadorAnterior]['laPosicionDelTrabajador'];
+                    } else {
+                        posicionIdTrabajadorAnterior = suplentesEnCuadrante.indexOf(suplentesEnCuadrante.find(suplente => suplente.id === idTrabajadorAnterior));
+                        suplentesEnCuadrante[i]['laPosicionDelTrabajador'] = suplentesEnCuadrante[posicionIdTrabajadorAnterior]['laPosicionDelTrabajador'];
+                    }
+                };
+            };
+            setCuadrante(arrayCuadrante);
+            setExpandedAccordion(false);
         }
+
         scrollable.current.classList.remove(classes.openAccordion);
         if (cuadranteRegistrado === 'si') {
             dispatch(activarDesactivarCambioBotonActualizarAccion(false));
         };
+        setEstamosActualizandoCuadrante({ estado: true, columna: columna });
         dispatch(registrarIntervencionAccion(false));
     };
 
@@ -1746,13 +2034,45 @@ const Cuadrantes = (props) => {
     };
 
     const handleChangeFormTrabajadores = (index, tipoTrabajador) => (e) => {
-
         setColumnaIndiceAGestionar(index);
         if (tipoTrabajador === 'trabajador' || !tipoTrabajador) {
+            if (centroAGestionar.horario.tipoRegistro === 'individual') {
+                if (index === 0) {
+                    setPosicionTrabajadorPrevioACambiar(1);
+                } else {
+                    const estadoTrabajadorAnterior = cuadrante[index - 1].tipoTrabajador;
+                    const idTrabajadorAnterior = cuadrante[index - 1].idTrabajador;
+                    if (estadoTrabajadorAnterior === 'trabajador') {
+                        const posicionTrabajadorPrevioAnteriorIndex = trabajadoresEnCuadrante.indexOf(trabajadoresEnCuadrante.find(trabajador => trabajador.id === idTrabajadorAnterior));
+                        const posicionTrabajadorPrevioAnterior = trabajadoresEnCuadrante[posicionTrabajadorPrevioAnteriorIndex].laPosicionDelTrabajador;
+                        setPosicionTrabajadorPrevioACambiar(posicionTrabajadorPrevioAnterior + 1);
+                    };
+                    if (estadoTrabajadorAnterior === 'suplente') {
+                        const posicionSuplentePrevioAnteriorIndex = suplentesEnCuadrante.indexOf(suplentesEnCuadrante.find(suplente => suplente.id === idTrabajadorAnterior));
+                        const posicionSuplentePrevioAnterior = suplentesEnCuadrante[posicionSuplentePrevioAnteriorIndex].laPosicionDelTrabajador;
+                        setPosicionTrabajadorPrevioACambiar(posicionSuplentePrevioAnterior + 1);
+
+                    };
+                };
+            };
             setEsCambioTra(true);
             setEsInicioTra(false);
             dispatch(obtenerTrabajadorAccion('trabajadores', e.target.value));
         } else {
+            if (centroAGestionar.horario.tipoRegistro === 'individual') {
+                const estadoTrabajadorAnterior = cuadrante[index - 1].tipoTrabajador;
+                const idTrabajadorAnterior = cuadrante[index - 1].idTrabajador;
+                if (estadoTrabajadorAnterior === 'trabajador') {
+                    const posicionTrabajadorPrevioAnteriorIndex = trabajadoresEnCuadrante.indexOf(trabajadoresEnCuadrante.find(trabajador => trabajador.id === idTrabajadorAnterior));
+                    const posicionTrabajadorPrevioAnterior = trabajadoresEnCuadrante[posicionTrabajadorPrevioAnteriorIndex].laPosicionDelTrabajador;
+                    setPosicionSuplentePrevioACambiar(posicionTrabajadorPrevioAnterior);
+                };
+                if (estadoTrabajadorAnterior === 'suplente') {
+                    const posicionSuplentePrevioAnteriorIndex = suplentesEnCuadrante.indexOf(suplentesEnCuadrante.find(suplente => suplente.id === idTrabajadorAnterior));
+                    const posicionSuplentePrevioAnterior = suplentesEnCuadrante[posicionSuplentePrevioAnteriorIndex].laPosicionDelTrabajador;
+                    setPosicionSuplentePrevioACambiar(posicionSuplentePrevioAnterior);
+                };
+            };
             setEsCambioSup(true);
             setEsInicioSup(false);
             dispatch(obtenerSuplenteAccion('trabajadores', e.target.value));
@@ -1767,10 +2087,22 @@ const Cuadrantes = (props) => {
         setEsUnaActualizacionTrabajador(true);
         setColumnaIndiceAGestionar(index);
         if (tipoTrabajador === 'trabajador' || !tipoTrabajador) {
+            if (centroAGestionar.horario.tipoRegistro === 'individual') {
+                const trabajadorPrevio = cuadrante[index].idTrabajador;
+                const posicionTrabajadorPrevioIndex = trabajadoresEnCuadrante.indexOf(trabajadoresEnCuadrante.find(trabajador => trabajador.id === trabajadorPrevio));
+                const posicionTrabajadorPrevio = trabajadoresEnCuadrante[posicionTrabajadorPrevioIndex].laPosicionDelTrabajador;
+                setPosicionTrabajadorPrevioACambiar(posicionTrabajadorPrevio);
+            };
             setEsCambioTra(true);
             setEsInicioTra(false);
             dispatch(obtenerTrabajadorAccion('trabajadores', idTrabajador));
         } else {
+            if (centroAGestionar.horario.tipoRegistro === 'individual') {
+                const trabajadorPrevio = cuadrante[index].idTrabajador;
+                const posicionSuplentePrevioIndex = suplentesEnCuadrante.indexOf(suplentesEnCuadrante.find(suplente => suplente.id === trabajadorPrevio));
+                const posicionSuplentePrevio = suplentesEnCuadrante[posicionSuplentePrevioIndex].laPosicionDelTrabajador;
+                setPosicionSuplentePrevioACambiar(posicionSuplentePrevio);
+            };
             setEsCambioSup(true);
             setEsInicioSup(false);
             dispatch(obtenerSuplenteAccion('trabajadores', idTrabajador));
@@ -1779,6 +2111,84 @@ const Cuadrantes = (props) => {
             dispatch(activarDesactivarCambioBotonActualizarAccion(false));
         };
         dispatch(registrarIntervencionAccion(false));
+    };
+
+    const handleActualizarTrabajadoresGeneral = () => {
+        if (centroAGestionar.horario.tipoRegistro === 'individual') {
+            setOpenLoadingActualizandoCuadrante(true);
+        };
+        for (let i = cuadrante.length - 1; i >= 0; --i) {
+            if (!cuadrante[i].nombreTrabajador) {
+                if (cuadrante[i].nombreTrabajador === 'trabajador') {
+                    let posicionTrabajador = trabajadoresEnCuadrante.indexOf(trabajadoresEnCuadrante.find(trabajador => trabajador.id === cuadrante[i].idTrabajador));
+                    cuadrante.splice(i, 1);
+                    trabajadoresEnCuadrante.splice(posicionTrabajador, 1);
+                    if (centroAGestionar.horario.tipoRegistro === 'individual') {
+                        for (let i = 0; i < trabajadoresEnCuadrante.length; i++) {
+                            trabajadoresEnCuadrante[i]['laPosicionDelTrabajador'] = i + 1;
+                        };
+                    };
+                } else {
+                    let posicionSuplente = suplentesEnCuadrante.indexOf(suplentesEnCuadrante.find(suplente => suplente.id === cuadrante[i].idTrabajador));
+                    cuadrante.splice(i, 1);
+                    suplentesEnCuadrante.splice(posicionSuplente, 1);
+                    if (centroAGestionar.horario.tipoRegistro === 'individual') {
+                        for (let i = 0; i < suplentesEnCuadrante.length; i++) {
+                            let posicionSuplenteIndex = cuadrante.indexOf(cuadrante.find(suplente => suplente.idTrabajador === suplentesEnCuadrante[i].id));
+                            let idTrabajadorAnterior = cuadrante[posicionSuplenteIndex - 1].idTrabajador;
+                            let tipoTrabajadorAnterior = cuadrante[posicionSuplenteIndex - 1].tipoTrabajador;
+                            let posicionIdTrabajadorAnterior;
+                            if (tipoTrabajadorAnterior === 'trabajador') {
+                                posicionIdTrabajadorAnterior = trabajadoresEnCuadrante.indexOf(trabajadoresEnCuadrante.find(trabajador => trabajador.id === idTrabajadorAnterior));
+                                suplentesEnCuadrante[i]['laPosicionDelTrabajador'] = trabajadoresEnCuadrante[posicionIdTrabajadorAnterior]['laPosicionDelTrabajador'];
+                            } else {
+                                posicionIdTrabajadorAnterior = suplentesEnCuadrante.indexOf(suplentesEnCuadrante.find(suplente => suplente.id === idTrabajadorAnterior));
+                                suplentesEnCuadrante[i]['laPosicionDelTrabajador'] = suplentesEnCuadrante[posicionIdTrabajadorAnterior]['laPosicionDelTrabajador'];
+                            }
+                        };
+                    }
+                }
+            }
+        };
+        if (centroAGestionar.horario.tipoRegistro === 'individual') {
+            cuadrante.forEach((item, index) => {
+                setTimeout(
+                    function () {
+                        if (item.tipoTrabajador === 'trabajador') {
+                            if (index >= estamosActualizandoCuadrante.columna) {
+                                setEsUnaActualizacionTrabajador(true);
+                                setColumnaIndiceAGestionar(index);
+                                const posicionTrabajadorPrevioIndex = trabajadoresEnCuadrante.indexOf(trabajadoresEnCuadrante.find(trabajador => trabajador.id === item.idTrabajador));
+                                const posicionTrabajadorPrevio = trabajadoresEnCuadrante[posicionTrabajadorPrevioIndex].laPosicionDelTrabajador;
+                                setPosicionTrabajadorPrevioACambiar(posicionTrabajadorPrevio);
+                                setEsCambioTra(true);
+                                setEsInicioTra(false);
+                                dispatch(obtenerTrabajadorAccion('trabajadores', item.idTrabajador));
+                            }
+                        };
+                        if (item.tipoTrabajador === 'suplente') {
+                            if (index >= estamosActualizandoCuadrante.columna) {
+                                setEsUnaActualizacionTrabajador(true);
+                                setColumnaIndiceAGestionar(index);
+                                const posicionSuplentePrevioIndex = suplentesEnCuadrante.indexOf(suplentesEnCuadrante.find(suplente => suplente.id === item.idTrabajador));
+                                const posicionSuplentePrevio = suplentesEnCuadrante[posicionSuplentePrevioIndex].laPosicionDelTrabajador;
+                                setPosicionSuplentePrevioACambiar(posicionSuplentePrevio);
+                                setEsCambioSup(true);
+                                setEsInicioSup(false);
+                                dispatch(obtenerSuplenteAccion('trabajadores', item.idTrabajador));
+                            }
+                        };
+                        if (index + 1 === cuadrante.length) {
+                            setTimeout(() => {
+                                setOpenLoadingActualizandoCuadrante(false);
+                                setEstamosActualizandoCuadrante({ estado: false, columna: null });
+                            }, 500);
+                        };
+                    }, index * (index < estamosActualizandoCuadrante.columna ? 1 : 1500));
+            });
+        } else {
+            setEstamosActualizandoCuadrante({ estado: false, columna: null });
+        };
     };
 
     const abrePopoverDias = (postRef, index, dia) => (e) => {
@@ -3443,17 +3853,24 @@ const Cuadrantes = (props) => {
             setOpenSnack(true);
             return;
         };
-        let arrayCuadrante = [...cuadrante];
         //firmamos
         let fechaHoy = new Date().toLocaleString() + '';
         let laFirmaActualizacion = fechaHoy + ' por ' + objetoUsuarioActivo.nombre.charAt(0).toUpperCase() + objetoUsuarioActivo.nombre.slice(1);
         setFirmaActualizacion(laFirmaActualizacion);
+
         //revisamos que no haya columnas vacías
-        for (let i = arrayCuadrante.length - 1; i >= 0; --i) {
-            if (!arrayCuadrante[i].nombreTrabajador) {
-                arrayCuadrante.splice(i, 1);
+        for (let i = cuadrante.length - 1; i >= 0; --i) {
+            if (!cuadrante[i].nombreTrabajador) {
+                cuadrante.splice(i, 1);
             }
         };
+        setTrabajadoresEnCuadrante([]);
+        setSuplentesEnCuadrante([]);
+        setEsCambioTra(false);
+        setEsCambioSup(false);
+        setEsInicioTra(true);
+        setEsInicioSup(true);
+
         const { sumatorioHoras_L, sumatorioHoras_C, sumatorioHoras_E, sumatorioHoras_I, sumatorioHoras_Z, sumatorioHoras_T, sumatorioHoras_P, sumatorioTotal } = calculoTotalHoras();
         let elTotalAAFacturar_M = null;
         let elTotalAAFacturar_L = null;
@@ -3528,7 +3945,7 @@ const Cuadrantes = (props) => {
             datosCuadrante: {
                 objeto: 'cuadrante',
                 centro: objetoCuadrante.datosCuadrante.centro,
-                arrayCuadrante: arrayCuadrante
+                arrayCuadrante: cuadrante
             }
         };
         const objetoFinalInforme = {
@@ -4160,7 +4577,7 @@ const Cuadrantes = (props) => {
             setOpenSnack(true);
             return;
         };
-    };
+    };    
 
     //dialog
 
@@ -4305,8 +4722,8 @@ const Cuadrantes = (props) => {
         )
     };
 
-    const retornaCasillasGeneral = (dia, indexDia, columna, indexColumna) => {           
-        let postRef = dia[1][0] + dia[0][0];   
+    const retornaCasillasGeneral = (dia, indexDia, columna, indexColumna) => {
+        let postRef = dia[1][0] + dia[0][0];
         return (
             <Grid
                 container
@@ -4350,8 +4767,8 @@ const Cuadrantes = (props) => {
 
     return (
         <div>
-            <Backdrop className={classes.loading} open={openLoading}>
-                <CircularProgress color="inherit" />
+            <Backdrop className={classes.loading} open={openLoading || openLoadingActualizandoCuadrante}>
+                <CircularProgress disableShrink color="inherit" />
             </Backdrop>
             <Grid container spacing={2} style={{ marginTop: -13 }}>
                 <Grid item xs={12}>
@@ -4524,7 +4941,7 @@ const Cuadrantes = (props) => {
                                         format="MM/yyyy"
                                         label="Mes a gestionar"
                                         minDate={new Date('2021-1')}
-                                        maxDate={new Date(dispatch(retornaAnoMesAccion()))}
+                                        maxDate={new Date(dispatch(gestionaMaxDateCalendarAccion(3)))}
                                         value={valueDatePicker}
                                         onChange={(newValue) => {
                                             handleChangeSelectCalendario(newValue);
@@ -4651,22 +5068,28 @@ const Cuadrantes = (props) => {
                                                                         alignItems="center"
                                                                         justifyContent="flex-end"
                                                                     >
-                                                                        <Tooltip title="Añadir suplente" placement="top-end" arrow>
-                                                                            <IconButton
-                                                                                className={clsx(classes.btnAddSuplente, classes.blanc, classes.mb10)}
-                                                                                onClick={() => handleClickAddColumna('suplente', index)}
-                                                                            >
-                                                                                <PersonAddIcon style={{ fontSize: 18 }} />
-                                                                            </IconButton>
+                                                                        <Tooltip title={columnaCabecera.nombreTrabajador ? "Añadir suplente" : ""} placement="top-end" arrow>
+                                                                            <div>
+                                                                                <IconButton
+                                                                                    className={clsx(classes.btnAddSuplente, classes.blanc, classes.mb10)}
+                                                                                    onClick={() => handleClickAddColumna('suplente', index)}
+                                                                                    disabled={columnaCabecera.nombreTrabajador ? false : true}
+                                                                                >
+                                                                                    <PersonAddIcon style={{ fontSize: 18 }} />
+                                                                                </IconButton>
+                                                                            </div>
                                                                         </Tooltip>
-                                                                        <Tooltip title="Actualizar trabajador" placement="top-end" arrow>
-                                                                            <IconButton
-                                                                                className={clsx(classes.btnVariacion, classes.blanc, classes.mb10)}
-                                                                                size="small"
-                                                                                onClick={() => handleActualizarTrabajadores(index, columnaCabecera.tipoTrabajador, columnaCabecera.idTrabajador)}
-                                                                            >
-                                                                                <CachedIcon />
-                                                                            </IconButton>
+                                                                        <Tooltip title={columnaCabecera.nombreTrabajador ? "Actualizar trabajador" : ""} placement="top-end" arrow>
+                                                                            <div>
+                                                                                <IconButton
+                                                                                    className={clsx(classes.btnVariacion, classes.blanc, classes.mb10)}
+                                                                                    size="small"
+                                                                                    onClick={() => handleActualizarTrabajadores(index, columnaCabecera.tipoTrabajador, columnaCabecera.idTrabajador)}
+                                                                                    disabled={columnaCabecera.nombreTrabajador ? false : true}
+                                                                                >
+                                                                                    <CachedIcon />
+                                                                                </IconButton>
+                                                                            </div>
                                                                         </Tooltip>
                                                                         <Tooltip title="Eliminar trabajador" placement="top-end" arrow>
                                                                             <IconButton
@@ -4688,7 +5111,7 @@ const Cuadrantes = (props) => {
                                                                 <InputLabel>{(columnaCabecera.tipoTrabajador === 'trabajador' || !columnaCabecera.tipoTrabajador) ? 'Trabajador' : 'Suplente'}</InputLabel>
                                                                 <Select
                                                                     id={`form-trabajador-` + (index + 1)}
-                                                                    value={columnaCabecera.idTrabajador || ''}
+                                                                    value={columnaCabecera.idTrabajador < 1000 ? columnaCabecera.idTrabajador : ''}
                                                                     onChange={handleChangeFormTrabajadores(index, columnaCabecera.tipoTrabajador)}
                                                                     onOpen={() => setValorPrevioAccordionAbierto(columnaCabecera.idTrabajador)}
                                                                     input={
@@ -4920,7 +5343,7 @@ const Cuadrantes = (props) => {
                 prFullWidth={true}
                 prMaxWidth={true}
             />
-            {/* {console.log(calendarioAGestionar)} */}
+            {/* {console.log('cuadrante: ', cuadrante, 'tra: ', trabajadoresEnCuadrante, 'sup: ', suplentesEnCuadrante)} */}
         </div>
     )
 }

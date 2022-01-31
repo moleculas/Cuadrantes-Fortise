@@ -222,6 +222,9 @@ const Clases = makeStyles((theme) => ({
     mt_25: {
         marginTop: -25,
     },
+    mr15: {
+        marginRight: 15,
+    },
     btnAddTrabajador: {
         backgroundColor: theme.palette.secondary.main,
         color: theme.palette.error.contrastText,
@@ -480,7 +483,7 @@ const Clases = makeStyles((theme) => ({
     small: {
         width: theme.spacing(4),
         height: theme.spacing(4),
-    },    
+    },
     small2: {
         width: theme.spacing(2.75),
         height: theme.spacing(2.75),
@@ -547,7 +550,7 @@ const Clases = makeStyles((theme) => ({
     nested: {
         paddingLeft: theme.spacing(4),
     },
-    colorText:{
+    colorText: {
         color: 'rgba(0, 0, 0, 0.54)'
     },
     small3: {
@@ -555,23 +558,23 @@ const Clases = makeStyles((theme) => ({
         height: theme.spacing(3.75),
     },
     tabsStl: {
-        minHeight: 40, 
+        minHeight: 40,
         maxHeight: 40
     },
     boxStl: {
-        minHeight: 40, 
+        minHeight: 40,
         maxHeight: 40,
         paddingTop: 10,
         paddingLeft: 10,
-        paddingBottom: 10, 
+        paddingBottom: 10,
         paddingRight: 8,
     },
     boxStl2: {
-        minHeight: 40, 
+        minHeight: 40,
         maxHeight: 40,
         paddingTop: 8,
-        paddingLeft: 12,       
+        paddingLeft: 12,
     }
-}), {index: 1});
+}), { index: 1 });
 
 export default Clases;

@@ -7224,3 +7224,30 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                             });
                         }
                     }
+
+
+                    if (arrayCuadrante[columna + 1] && arrayCuadrante[columna + 1].tipoTrabajador === 'suplente') {
+                        const idSuplente = arrayCuadrante[columna + 1].idTrabajador;
+                        const arraySu = [...suplentesEnCuadrante];
+                        const posicionSuplente = suplentesEnCuadrante.indexOf(suplentesEnCuadrante.find(suplente => suplente.id === idSuplente));
+                        arrayTr.splice(posicionTrabajador, 1);
+                        arraySu.splice(posicionSuplente, 1);
+                        for (let i = 0; i < arrayTr.length; i++) {
+                            arrayTr[i]['laPosicionDelTrabajador'] = i + 1;
+                        };
+                        for (let i = 0; i < arraySu.length; i++) {
+                            arraySu[i]['laPosicionDelTrabajador'] = i + 1;
+                        };
+                        setTrabajadoresEnCuadrante(arrayTr);
+                        setSuplentesEnCuadrante(arraySu);
+                        fromIndex = arrayCuadrante.indexOf(arrayCuadrante[columna]);
+                        arrayCuadrante.splice(fromIndex, 2);
+                    } else {
+                        arrayTr.splice(posicionTrabajador, 1);
+                        for (let i = 0; i < arrayTr.length; i++) {
+                            arrayTr[i]['laPosicionDelTrabajador'] = i + 1;
+                        };
+                        setTrabajadoresEnCuadrante(arrayTr);
+                        fromIndex = arrayCuadrante.indexOf(arrayCuadrante[columna]);
+                        arrayCuadrante.splice(fromIndex, 1);
+                    }
