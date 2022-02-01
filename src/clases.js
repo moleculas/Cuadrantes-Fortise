@@ -574,7 +574,14 @@ const Clases = makeStyles((theme) => ({
         maxHeight: 40,
         paddingTop: 8,
         paddingLeft: 12,
-    }
+    },
+    fondoBaja: {
+        backgroundColor: '#ffcdd2',
+        color: 'rgba(0, 0, 0, 0.87)'
+    },
+    fondoAlta: {
+        backgroundColor: theme.palette.secondary.light,
+    },
 }), { index: 1 });
 
 export default Clases;

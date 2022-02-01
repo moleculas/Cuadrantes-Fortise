@@ -108,7 +108,7 @@ const PantallaCuadrantes = () => {
 
     useEffect(() => {
         if (listadoCentros.length === 0) {
-            dispatch(obtenerCentrosAccion('centros'));
+            dispatch(obtenerCentrosAccion('centros', true));
         };
     }, [dispatch]);
 

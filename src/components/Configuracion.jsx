@@ -609,7 +609,15 @@ const Configuracion = (props) => {
                                                                 <br />  
                                                                 <Typography component="span" variant="body2">2.- Añadida posibilidad de gestionar cuadrantes con 3 meses de adelanto desde el mes actual en pantalla cuadrantes.</Typography>                                                              
                                                                 <br />  
-                                                                <Typography component="span" variant="body2">3.- Cambio en selector de Modo entrada de datos (Cantidad de horas) de 8 h. a 12h. en fichas centros.</Typography>                                                              
+                                                                <Typography component="span" variant="body2">3.- Cambio en selector de Modo entrada de datos (Cantidad de horas) de 8 h. a 12h. en fichas centros.</Typography>    
+                                                                <br />  
+                                                                <Typography component="span" variant="body2">4.- Implementada opción baja centros para que no genere cuadrantes en fichas centros.</Typography>                                                                                                                        
+                                                                <br />  
+                                                                <Typography component="span" variant="body2">5.- Añadido registro día vencimiento factura en fichas centros.</Typography>   
+                                                                <br />  
+                                                                <Typography component="span" variant="body2">6.- Añadido registro temporización pago (mensual / bimensual) en fichas centros.</Typography>                                                                                                                        
+                                                                <br />  
+                                                                <Typography component="span" variant="body2">7.- Añadida posibilidad de generar cuadrantes con 3 meses de adelanto en pantalla cuadrantes.</Typography>                                                                                                                        
                                                                 </Fragment>
                                                             }
                                                         />

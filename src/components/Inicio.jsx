@@ -110,7 +110,7 @@ const Inicio = (props) => {
     useEffect(() => {
         dispatch(onEstemAccion('inicio'));
         if (listadoCentros.length === 0) {
-            dispatch(obtenerCentrosAccion('centros'));
+            dispatch(obtenerCentrosAccion('centros', false));
         };
         if (listadoTrabajadores.length === 0) {
             dispatch(obtenerTrabajadoresAccion('trabajadores'));
@@ -174,7 +174,7 @@ const Inicio = (props) => {
             <Link key={'listaCentros' + index} to={`/centros/${centro.id}/${centro.nombre}`} className={classes.link}>
                 <Box >
                     <ListItem
-                        className={classes.casilla}
+                       className={centro.estado !== 'alta' ? classes.casillaBajasInicio : classes.casilla}
                     >
                         <ListItemText
                             primary={centro.nombre}

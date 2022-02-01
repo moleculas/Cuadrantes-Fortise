@@ -55,6 +55,8 @@ const tipos = Constantes.MODO_ENTRADA_HORARIOS;
 const totalTrabajadores = Constantes.TRABAJADORES_ASIGNADOS_CENTRO;
 const computoHoras = Constantes.COMPUTO_HORAS;
 const formasDePago = Constantes.FORMA_DE_PAGO;
+const temporizacionDelPago = Constantes.TEMPORIZACION_PAGO;
+const diaDelPago = Constantes.DIA_PAGO;
 
 //accordion
 const Accordion = withStyles({
@@ -123,6 +125,7 @@ const CentrosEditar = forwardRef((props, ref) => {
     const [valuesFormEdicion, setValuesFormEdicion] = useState({
         id: null,
         nombre: '',
+        estado: 'alta',
         categoria: '',
         codigo: '',
         domicilio: '',
@@ -135,6 +138,8 @@ const CentrosEditar = forwardRef((props, ref) => {
         telefono: '',
         telefono2: '',
         formaPago: '',
+        tempPago: '',
+        diaPago: '',
         variacion: '',
         tipo: '',
         numeroTrabajadores: '',
@@ -313,13 +318,14 @@ const CentrosEditar = forwardRef((props, ref) => {
     const [expandedRangoDescanso, setExpandedRangoDescanso] = useState(false);
     const [expandedCantidad, setExpandedCantidad] = useState(false);
     const [estamosCargandoDatos, setEstamosCargandoDatos] = useState(true);
+    const [stateSwitchEstado, setStateSwitchEstado] = useState(false);
 
     //useEffect
 
     useEffect(() => {
         dispatch(onEstemAccion('editarCentros'));
         if (listadoCentros.length === 0) {
-            dispatch(obtenerCentrosAccion('centros'));
+            dispatch(obtenerCentrosAccion('centros', false));
         };
         if (listadoTrabajadores.length === 0) {
             dispatch(obtenerTrabajadoresAccion('trabajadores'));
@@ -376,10 +382,14 @@ const CentrosEditar = forwardRef((props, ref) => {
         if (centroAEditar.horario.tipoRegistro === 'individual') {
             setStateSwitchTipoRegistro(true);
         };
+        if (centroAEditar.estado === 'baja') {
+            setStateSwitchEstado(true);
+        };
         setValuesFormEdicion({
             ...valuesFormEdicion,
             id: centroAEditar.id,
             nombre: centroAEditar.nombre || '',
+            estado: centroAEditar.estado || '',
             categoria: centroAEditar.categoria || '',
             codigo: centroAEditar.codigo || '',
             domicilio: centroAEditar.domicilio || '',
@@ -392,20 +402,22 @@ const CentrosEditar = forwardRef((props, ref) => {
             telefono: centroAEditar.telefono || '',
             telefono2: centroAEditar.telefono2 || '',
             formaPago: centroAEditar.formaPago || '',
+            tempPago: centroAEditar.tempPago || '',
+            diaPago:  centroAEditar.diaPago ? centroAEditar.diaPago: '',
             variacion: centroAEditar.horario.variacion || '',
             tipo: centroAEditar.horario.tipo,
             numeroTrabajadores: centroAEditar.trabajadores.cantidad,
             datosTrabajadores: arrayTr,
             datosSuplentes: arraySu,
             computo: centroAEditar.horario.computo,
-            mensualPactado: centroAEditar.horario.mensualPactado,
-            precioHora_L: centroAEditar.horario.precioHora_L,
-            precioHora_C: centroAEditar.horario.precioHora_C,
-            precioHora_E: centroAEditar.horario.precioHora_E,
-            precioHora_I: centroAEditar.horario.precioHora_I,
-            precioHora_Z: centroAEditar.horario.precioHora_Z,
-            precioHora_T: centroAEditar.horario.precioHora_T,
-            precioHora_P: centroAEditar.horario.precioHora_P,
+            mensualPactado: centroAEditar.horario.mensualPactado ? centroAEditar.horario.mensualPactado : null,
+            precioHora_L: centroAEditar.horario.precioHora_L ? centroAEditar.horario.precioHora_L : null,
+            precioHora_C: centroAEditar.horario.precioHora_C ? centroAEditar.horario.precioHora_C : null,
+            precioHora_E: centroAEditar.horario.precioHora_E ? centroAEditar.horario.precioHora_E : null,
+            precioHora_I: centroAEditar.horario.precioHora_I ? centroAEditar.horario.precioHora_I : null,
+            precioHora_Z: centroAEditar.horario.precioHora_Z ? centroAEditar.horario.precioHora_Z : null,
+            precioHora_T: centroAEditar.horario.precioHora_T ? centroAEditar.horario.precioHora_T : null,
+            precioHora_P: centroAEditar.horario.precioHora_P ? centroAEditar.horario.precioHora_P : null
         });
         if (centroAEditar.horario.tipo === "rango") {
             let arrayValoresTimePicker1 = [];
@@ -2280,6 +2292,17 @@ const CentrosEditar = forwardRef((props, ref) => {
         dispatch(activarDesactivarActualizarCentroAccion(false));
     };
 
+    const handleChangeSwitchEstadoEdicion = (e) => {
+        if (e.target.checked) {
+            setValuesFormEdicion({ ...valuesFormEdicion, estado: 'baja' });
+        } else {
+            setValuesFormEdicion({ ...valuesFormEdicion, estado: 'alta' });
+        };
+        setStateSwitchEstado(e.target.checked);
+        dispatch(registrarIntervencionAccion(false));
+        dispatch(activarDesactivarActualizarCentroAccion(false));
+    };
+
     const gestionaTipoRegistroNumTrabajadoresEdicion = (numTrab) => {
         let diferencia;
         let myArray1 = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
@@ -2500,6 +2523,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                             valuesFormEdicion.categoria === '' ||
                             valuesFormEdicion.variacion === '' ||
                             valuesFormEdicion.formaPago === '' ||
+                            valuesFormEdicion.tempPago === '' ||                            
                             valuesFormEdicion.tipo === '' ||
                             valuesFormEdicion.numeroTrabajadores === ''
                         ) {
@@ -3391,6 +3415,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                         const centroAGuardar = {
                             id: valuesFormEdicion.id,
                             nombre: valuesFormEdicion.nombre,
+                            estado: valuesFormEdicion.estado,
                             categoria: valuesFormEdicion.categoria,
                             codigo: valuesFormEdicion.codigo ? valuesFormEdicion.codigo : null,
                             domicilio: valuesFormEdicion.domicilio ? valuesFormEdicion.domicilio : null,
@@ -3403,6 +3428,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                             telefono: valuesFormEdicion.telefono ? valuesFormEdicion.telefono : null,
                             telefono_2: valuesFormEdicion.telefono2 ? valuesFormEdicion.telefono2 : null,
                             forma_pago: valuesFormEdicion.formaPago,
+                            temp_pago: valuesFormEdicion.tempPago,
+                            dia_pago: valuesFormEdicion.diaPago ? valuesFormEdicion.diaPago: null,
                             horario: JSON.stringify(elHorarioIntervencionEditadoRevisado),
                             trabajadores: JSON.stringify(trabajadoresEdicion)
                         };
@@ -3416,6 +3443,7 @@ const CentrosEditar = forwardRef((props, ref) => {
             }
         }
     }));
+
     const reseteaContenidoEdicion = () => {
         setEstamosCargandoDatos(true);
         forceUpdate();
@@ -3423,6 +3451,7 @@ const CentrosEditar = forwardRef((props, ref) => {
         setValuesFormEdicion({
             id: null,
             nombre: '',
+            estado: 'alta',
             categoria: '',
             codigo: '',
             domicilio: '',
@@ -3435,6 +3464,8 @@ const CentrosEditar = forwardRef((props, ref) => {
             telefono: '',
             telefono2: '',
             formaPago: '',
+            tempPago: '',
+            diaPago: '',
             variacion: '',
             tipo: '',
             numeroTrabajadores: '',
@@ -4064,11 +4095,28 @@ const CentrosEditar = forwardRef((props, ref) => {
                         <Box>
                             <Box
                                 m={0.5}
-                                bgcolor="secondary.light"
                                 color="secondary.contrastText"
-                                className={clsx(classes.boxStl2, classes.mb20)}
+                                className={valuesFormEdicion.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
+                                style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}
                             >
-                                Datos generales
+                                <Box>Datos generales</Box>
+                                <Box
+                                    className={clsx(classes.mt_5, classes.mr15)}
+                                >
+                                    <FormControlLabel
+                                        control={
+                                            <Switch
+                                                checked={stateSwitchEstado}
+                                                color="secondary"
+                                                style={valuesFormEdicion.estado === 'baja' ? { color: '#FFFFFF' } : null}
+                                                onChange={handleChangeSwitchEstadoEdicion}
+                                                disabled={disabledItem}
+                                            />
+                                        }
+                                        label={<Typography variant="body2">Alta / Baja</Typography>}
+                                        labelPlacement="start"
+                                    />
+                                </Box>
                             </Box>
                             <FormControl
                                 variant="outlined"
@@ -4308,9 +4356,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                             </Grid>
                             <Box
                                 m={0.5}
-                                bgcolor="secondary.light"
                                 color="secondary.contrastText"
-                                className={clsx(classes.boxStl2, classes.mb20)}
+                                className={valuesFormEdicion.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
                             >
                                 Trabajadores
                             </Box>
@@ -4345,9 +4392,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                     <Grid item lg={8} sm={6} xs={12}>
                         <Box
                             m={0.5}
-                            bgcolor="secondary.light"
                             color="secondary.contrastText"
-                            className={clsx(classes.boxStl2, classes.mb20)}
+                            className={valuesFormEdicion.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
                         >
                             Horario de intervención
                         </Box>
@@ -4411,9 +4457,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                                 </FormControl>
                                 <Box
                                     m={0.5}
-                                    bgcolor="secondary.light"
                                     color="secondary.contrastText"
-                                    className={clsx(classes.boxStl2, classes.mb20)}
+                                    className={valuesFormEdicion.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
                                 >
                                     Cómputo de horas
                                 </Box>
@@ -4578,9 +4623,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                                 ) : null}
                                 <Box
                                     m={0.5}
-                                    bgcolor="secondary.light"
                                     color="secondary.contrastText"
-                                    className={clsx(classes.boxStl2, classes.mb20, classes.mt15)}
+                                    className={valuesFormEdicion.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20, classes.mt15) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20, classes.mt15)}
                                 >
                                     Forma de pago
                                 </Box>
@@ -4609,15 +4653,67 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         }
                                     </Select>
                                 </FormControl>
+                                <FormControl
+                                    variant="outlined"
+                                    className={classes.form}
+                                    size="small"
+                                >
+                                    <InputLabel>Vencimiento</InputLabel>
+                                    <Select
+                                        fullWidth
+                                        className={classes.mb15}
+                                        id="form-diaPago-edicion"
+                                        label="Vencimiento"
+                                        value={valuesFormEdicion.diaPago || ''}
+                                        onChange={handleChangeFormEdicion('diaPago')}
+                                        helpertext="Selecciona día vencimiento"
+                                        disabled={disabledItem}
+                                    >
+                                        <MenuItem value=''>
+                                            <em>No</em>
+                                        </MenuItem>
+                                        {
+                                            diaDelPago.map((option) => (
+                                                <MenuItem key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </MenuItem>
+                                            ))
+                                        }
+                                    </Select>
+                                </FormControl>
+                                <FormControl
+                                    variant="outlined"
+                                    className={classes.form}
+                                    size="small"
+                                >
+                                    <InputLabel>Temporización</InputLabel>
+                                    <Select
+                                        fullWidth
+                                        className={classes.mb15}
+                                        id="form-tempPago-edicion"
+                                        label="Temporización"
+                                        value={valuesFormEdicion.tempPago || ''}
+                                        onChange={handleChangeFormEdicion('tempPago')}
+                                        helpertext="Selecciona temporización del pago"
+                                        disabled={disabledItem}
+                                    >
+                                        {
+                                            temporizacionDelPago.map((option) => (
+                                                <MenuItem key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </MenuItem>
+                                            ))
+                                        }
+                                    </Select>
+                                </FormControl>
                             </Grid>
                             <Grid item lg={8} sm={8} xs={12}>
                                 <Box style={{ marginTop: -10 }}>
                                     {valuesFormEdicion.tipo !== '' ? (
                                         <Box
                                             m={0.5}
-                                            bgcolor="secondary.light"
                                             color="secondary.contrastText"
-                                            className={clsx(classes.boxStl2, classes.mb10, classes.mt15)}
+                                            className={valuesFormEdicion.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb10, classes.mt15) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb10, classes.mt15)}
                                             style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}
                                         >
                                             <Box>Tipo de registro</Box>
@@ -4628,11 +4724,12 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                     control={
                                                         <Switch
                                                             checked={stateSwitchTipoRegistro}
+                                                            style={valuesFormEdicion.estado === 'baja' ? { color: '#FFFFFF' } : null}
                                                             color="secondary"
                                                             onChange={handleChangeSwitchTipoRegistroEdicion}
                                                         />
                                                     }
-                                                    label={<Typography variant="body2">Común/Individual</Typography>}
+                                                    label={<Typography variant="body2">Común / Individual</Typography>}
                                                     labelPlacement="start"
                                                 />
                                             </Box>
@@ -4662,7 +4759,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                 prTituloDialog={tituloDialog}
                 prDescripcionDialog={descripcionDialog}
             />
-            {/* {console.log('estamoscargando: ',estamosCargandoDatos)} */}
+            {console.log(valuesFormEdicion)}
         </div>
     )
 })

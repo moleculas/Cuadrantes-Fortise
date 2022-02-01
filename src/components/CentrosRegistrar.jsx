@@ -47,6 +47,8 @@ const tipos = Constantes.MODO_ENTRADA_HORARIOS;
 const totalTrabajadores = Constantes.TRABAJADORES_ASIGNADOS_CENTRO;
 const computoHoras = Constantes.COMPUTO_HORAS;
 const formasDePago = Constantes.FORMA_DE_PAGO;
+const temporizacionDelPago = Constantes.TEMPORIZACION_PAGO;
+const diaDelPago = Constantes.DIA_PAGO;
 
 //accordion
 const Accordion = withStyles({
@@ -107,6 +109,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
     const [valuesFormRegistro, setValuesFormRegistro] = useState({
         id: null,
         nombre: '',
+        estado: 'alta',
         categoria: '',
         codigo: '',
         domicilio: '',
@@ -119,6 +122,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
         telefono: '',
         telefono2: '',
         formaPago: '',
+        tempPago: '',
+        diaPago: '',
         variacion: '',
         tipo: '',
         numeroTrabajadores: '',
@@ -296,6 +301,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
     const [expandedRango, setExpandedRango] = useState(false);
     const [expandedRangoDescanso, setExpandedRangoDescanso] = useState(false);
     const [expandedCantidad, setExpandedCantidad] = useState(false);
+    const [stateSwitchEstado, setStateSwitchEstado] = useState(false);
 
     //useEffect
 
@@ -1853,6 +1859,19 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             setValueTipoServicioRegistro(myArray9);
         };
         setStateSwitchTipoRegistro(e.target.checked);
+        dispatch(registrarIntervencionAccion(false));
+        dispatch(activarDesactivarRegistrarCentroAccion(false));
+    };
+
+    const handleChangeSwitchEstadoRegistro = (e) => {
+        if (e.target.checked) {
+            setValuesFormRegistro({ ...valuesFormRegistro, estado: 'baja' });
+        } else {
+            setValuesFormRegistro({ ...valuesFormRegistro, estado: 'alta' });
+        };
+        setStateSwitchEstado(e.target.checked);
+        dispatch(registrarIntervencionAccion(false));
+        dispatch(activarDesactivarRegistrarCentroAccion(false));
     };
 
     const gestionaTipoRegistroNumTrabajadoresRegistro = (numTrab) => {
@@ -2059,6 +2078,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                             valuesFormRegistro.categoria === '' ||
                             valuesFormRegistro.variacion === '' ||
                             valuesFormRegistro.formaPago === '' ||
+                            valuesFormRegistro.tempPago === '' ||
                             valuesFormRegistro.tipo === '' ||
                             valuesFormRegistro.numeroTrabajadores === ''
                         ) {
@@ -2949,6 +2969,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                         const centroAGuardar = {
                             id: valuesFormRegistro.id,
                             nombre: valuesFormRegistro.nombre,
+                            estado: valuesFormRegistro.estado,
                             categoria: valuesFormRegistro.categoria,
                             codigo: valuesFormRegistro.codigo ? valuesFormRegistro.codigo : null,
                             domicilio: valuesFormRegistro.domicilio ? valuesFormRegistro.domicilio : null,
@@ -2961,6 +2982,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                             telefono: valuesFormRegistro.telefono ? valuesFormRegistro.telefono : null,
                             telefono_2: valuesFormRegistro.telefono2 ? valuesFormRegistro.telefono2 : null,
                             forma_pago: valuesFormRegistro.formaPago,
+                            temp_pago: valuesFormRegistro.tempPago,
+                            dia_pago: valuesFormRegistro.diaPago ? valuesFormRegistro.diaPago : null,
                             horario: JSON.stringify(elHorarioIntervencionRegistradoRevisado),
                             trabajadores: JSON.stringify(trabajadoresRegistro),
                         };
@@ -2980,6 +3003,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
         setValuesFormRegistro({
             id: null,
             nombre: '',
+            estado: 'alta',
             categoria: '',
             codigo: '',
             domicilio: '',
@@ -2992,6 +3016,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             telefono: '',
             telefono2: '',
             formaPago: '',
+            tempPago: '',
+            diaPago: '',
             variacion: '',
             tipo: '',
             numeroTrabajadores: '',
@@ -3621,11 +3647,27 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                         <Box>
                             <Box
                                 m={0.5}
-                                bgcolor="secondary.light"
                                 color="secondary.contrastText"
-                                className={clsx(classes.boxStl2, classes.mb20)}
+                                className={valuesFormRegistro.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
+                                style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}
                             >
-                                Datos generales
+                                <Box>Datos generales</Box>
+                                <Box
+                                    className={clsx(classes.mt_5, classes.mr15)}
+                                >
+                                    <FormControlLabel
+                                        control={
+                                            <Switch
+                                                checked={stateSwitchEstado}
+                                                color="secondary"
+                                                style={valuesFormRegistro.estado === 'baja' ? { color: '#FFFFFF' } : null}
+                                                onChange={handleChangeSwitchEstadoRegistro}
+                                            />
+                                        }
+                                        label={<Typography variant="body2">Alta / Baja</Typography>}
+                                        labelPlacement="start"
+                                    />
+                                </Box>
                             </Box>
                             <FormControl
                                 variant="outlined"
@@ -3836,9 +3878,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                             </Grid>
                             <Box
                                 m={0.5}
-                                bgcolor="secondary.light"
                                 color="secondary.contrastText"
-                                className={clsx(classes.boxStl2, classes.mb20)}
+                                className={valuesFormRegistro.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
                             >
                                 Trabajadores
                             </Box>
@@ -3872,9 +3913,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     <Grid item lg={8} sm={6} xs={12}>
                         <Box
                             m={0.5}
-                            bgcolor="secondary.light"
                             color="secondary.contrastText"
-                            className={clsx(classes.boxStl2, classes.mb20)}
+                            className={valuesFormRegistro.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
                         >
                             Horario de intervención
                         </Box>
@@ -3936,9 +3976,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                 </FormControl>
                                 <Box
                                     m={0.5}
-                                    bgcolor="secondary.light"
                                     color="secondary.contrastText"
-                                    className={clsx(classes.boxStl2, classes.mb20)}
+                                    className={valuesFormRegistro.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
                                 >
                                     Cómputo de horas
                                 </Box>
@@ -4101,10 +4140,9 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                     </Fragment>
                                 ) : null}
                                 <Box
-                                    m={0.5}
-                                    bgcolor="secondary.light"
+                                    m={0.5}                                  
                                     color="secondary.contrastText"
-                                    className={clsx(classes.boxStl2, classes.mb20, classes.mt15)}
+                                    className={valuesFormRegistro.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20, classes.mt15) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20, classes.mt15)}
                                 >
                                     Forma de pago
                                 </Box>
@@ -4132,15 +4170,65 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         }
                                     </Select>
                                 </FormControl>
+                                <FormControl
+                                    variant="outlined"
+                                    className={classes.form}
+                                    size="small"
+                                >
+                                    <InputLabel>Vencimiento</InputLabel>
+                                    <Select
+                                        fullWidth
+                                        className={classes.mb15}
+                                        id="form-diaPago-registro"
+                                        label="Vencimiento"
+                                        value={valuesFormRegistro.diaPago || ''}
+                                        onChange={handleChangeFormRegistro('diaPago')}
+                                        helpertext="Selecciona día vencimiento"
+                                    >
+                                        <MenuItem value=''>
+                                            <em>No</em>
+                                        </MenuItem>
+                                        {
+                                            diaDelPago.map((option) => (
+                                                <MenuItem key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </MenuItem>
+                                            ))
+                                        }
+                                    </Select>
+                                </FormControl>
+                                <FormControl
+                                    variant="outlined"
+                                    className={classes.form}
+                                    size="small"
+                                >
+                                    <InputLabel>Temporización</InputLabel>
+                                    <Select
+                                        fullWidth
+                                        className={classes.mb15}
+                                        id="form-tempPago-registro"
+                                        label="Temporización"
+                                        value={valuesFormRegistro.tempPago || ''}
+                                        onChange={handleChangeFormRegistro('tempPago')}
+                                        helpertext="Selecciona temporización del pago"
+                                    >
+                                        {
+                                            temporizacionDelPago.map((option) => (
+                                                <MenuItem key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </MenuItem>
+                                            ))
+                                        }
+                                    </Select>
+                                </FormControl>
                             </Grid>
                             <Grid item lg={8} sm={8} xs={12}>
                                 <Box style={{ marginTop: -10 }}>
                                     {valuesFormRegistro.tipo !== '' ? (
                                         <Box
                                             m={0.5}
-                                            bgcolor="secondary.light"
                                             color="secondary.contrastText"
-                                            className={clsx(classes.boxStl2, classes.mb10, classes.mt15)}
+                                            className={valuesFormRegistro.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb10, classes.mt15) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb10, classes.mt15)}
                                             style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}
                                         >
                                             <Box>Tipo de registro</Box>
@@ -4155,7 +4243,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                             onChange={handleChangeSwitchTipoRegistroRegistro}
                                                         />
                                                     }
-                                                    label={<Typography variant="body2">Común/Individual</Typography>}
+                                                    label={<Typography variant="body2">Común / Individual</Typography>}
                                                     labelPlacement="start"
                                                 />
                                             </Box>

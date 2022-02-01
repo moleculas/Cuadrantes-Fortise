@@ -179,7 +179,7 @@ const Nominas = (props) => {
         dispatch(setCalendarioAGestionarNominasAccion(dispatch(retornaAnoMesAccion())));
         dispatch(forzarRecargaGraficosNominasAccion(true));
         if (listadoCentros.length === 0) {
-            dispatch(obtenerCentrosAccion('centros'));
+            dispatch(obtenerCentrosAccion('centros', true));
         };
         dispatch(obtenerConfiguracionAccion('configuracion', 1));
     }, [dispatch]);
