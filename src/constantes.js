@@ -159,13 +159,32 @@ const Constantes = {
         { value: 3, label: 'Gestión especial horas' }
     ],
     TIPO_SERVICIO: [
-        { value: 'LIM', label: 'SERVICIO DE LIMPIEZA' },
+        { value: 'LIM', label: 'SERVICIO DE LIMPIEZA' },        
+        { value: 'LIME', label: 'SERVICIO DE LIMPIEZA ESPECIAL' },      
+        { value: 'LIMP', label: 'SERVICIO DE LIMPIEZA DEL PARKING' },
+        { value: 'NAVE2', label: 'SERVICIO DE LIMPIEZA NAVE 2' },
+        { value: 'REFZ', label: 'SERVICIO DE LIMPIEZA REFUERZO' },
+        { value: 'LIM1', label: 'SERVICIO DE LIMPIEZA_1' },  
+        { value: 'LIM2', label: 'SERVICIO DE LIMPIEZA_2' },  
+        { value: 'FEST', label: 'SERVICIO DE LIMPIEZA DÍA FESTIVO' }
+    ],
+    TIPO_SERVICIO_FIJO: [        
+        { value: 'TOL', label: 'SERVICIO DE LIMPIEZA DE TOLDOS' },
         { value: 'CRIS', label: 'SERVICIO DE LIMPIEZA DE CRISTALES' },
         { value: 'CRISE', label: 'LIMPIEZA CRISTALES EXTERIORES' },
         { value: 'CRISI', label: 'LIMPIEZA CRISTALES INTERIORES' },
-        { value: 'LIME', label: 'SERVICIO DE LIMPIEZA DE ESCALERA Y ZONAS COMUNES' },
-        { value: 'TOL', label: 'SERVICIO DE LIMPIEZA DE TOLDOS' },
-        { value: 'LIMP', label: 'SERVICIO DE LIMPIEZA DEL PARKING' }
+        { value: 'MOQ', label: 'SERVICIO DE LIMPIEZA MOQUETA' },
+        { value: 'OF', label: 'SERVICIO DE LIMPIEZA OFICINAS' },
+        { value: 'ALMC', label: 'SERVICIO DE LIMPIEZA ALMACENES' },
+        { value: 'LAB', label: 'SERVICIO DE LIMPIEZA LABORATORIO' },
+        { value: 'TELÑ', label: 'SERVICIO DE LIMPIEZA TELARAÑAS' },
+        { value: 'FCH.IN', label: 'SERVICIO DE LIMPIEZA FACHADA INTERIOR' },
+        { value: 'FCH.EX', label: 'SERVICIO DE LIMPIEZA FACHADA EXTERIOR' },
+        { value: 'ABRLL', label: 'SERVICIO DE LIMPIEZA ABRILLANTADO' },
+        { value: 'MANT', label: 'SERVICIO DE MANTENIMIENTO MÁQUINA' },
+        { value: 'PORT', label: 'SERVICIO DE LIMPIEZA PORTERÍA' },
+        { value: 'BACT', label: 'BOT. NOUBACT' },
+        { value: 'FEST', label: 'SERVICIO DE LIMPIEZA DÍA FESTIVO' }     
     ],
     FORMA_DE_PAGO: [
         { value: 'C1', label: 'Cheque bancario a 30 días' },

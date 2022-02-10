@@ -37,8 +37,6 @@ import { cierraObjetoDialogAccion } from '../redux/appDucks';
 import { activarDesactivarAccion } from '../redux/appDucks';
 import { vaciarDatosCentroAccion } from '../redux/centrosDucks';
 
-const getHeightScrollable = () => (window.innerHeight - 200) || (document.documentElement.clientHeight - 200) || (document.body.clientHeight - 200);
-
 //menu
 const StyledMenu = withStyles({
     paper: {
@@ -112,7 +110,7 @@ const Centros = (props) => {
     const [valueTab, setValueTab] = useState(0);
     const [preValueTab, setPreValueTab] = useState(null);
     const [anchorElMenu, setAnchorElMenu] = useState(null);
-    const [heightScrollable, setHeightScrollable] = useState(getHeightScrollable());
+    // const [heightScrollable, setHeightScrollable] = useState(getHeightScrollable());
     const [venimosCentroFuera, setVenimosCentroFuera] = useState(null);
 
     //useEffect
@@ -125,16 +123,6 @@ const Centros = (props) => {
 
     useEffect(() => {
         document.body.classList.add(classes.sinScroll);
-    }, []);
-
-    useEffect(() => {
-        const resizeListener = () => {
-            setHeightScrollable(getHeightScrollable());
-        };
-        window.addEventListener('resize', resizeListener);
-        return () => {
-            window.removeEventListener('resize', resizeListener);
-        }
     }, []);
 
     useEffect(() => {
@@ -293,10 +281,10 @@ const Centros = (props) => {
                                     </Tooltip>
                                 </Tabs>
                             </AppBar>
-                            <TabPanel value={valueTab} index={0} className={classes.scrollable} style={{ height: heightScrollable }}>
+                            <TabPanel value={valueTab} index={0} className={classes.scrollable}>
                                 <CentrosEditar ref={funcionesEnCentrosEditarRef} prVenimosCentroFuera={venimosCentroFuera} />
                             </TabPanel>
-                            <TabPanel value={valueTab} index={1} className={classes.scrollable} style={{ height: heightScrollable }}>
+                            <TabPanel value={valueTab} index={1} className={classes.scrollable}>
                                 <CentrosRegistrar ref={funcionesEnCentrosRegistrarRef} />
                             </TabPanel>
                         </div>

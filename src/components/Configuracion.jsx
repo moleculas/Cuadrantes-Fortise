@@ -622,6 +622,28 @@ const Configuracion = (props) => {
                                                             }
                                                         />
                                                     </ListItem >
+                                                    <ListItem>
+                                                        <ListItemText
+                                                            primary="V. 1.03 - 10/02/2022"
+                                                            secondary={
+                                                                <Fragment>
+                                                                <Typography component="span" variant="body2">1.- Cambiado layout en fichas centros para reorganizar espacio.</Typography>
+                                                                <br />  
+                                                                <Typography component="span" variant="body2">2.- Añadida sección en fichas centros para gestionar Servicios fijos en cuadrantes que no computan horas.</Typography>                                                              
+                                                                <br />  
+                                                                <Typography component="span" variant="body2">3.- Implementada posibilidad de registrar un centro sin cómputo de horas (siempre y cuando tenga servicios fijos añadidos).</Typography>    
+                                                                <br />  
+                                                                <Typography component="span" variant="body2">4.- Añadida sección servicios fijos en fichas cuadrantes y posibilidad de gestionarlos independientemente de la configuración del centro.</Typography>                                                                                                                        
+                                                                <br />  
+                                                                <Typography component="span" variant="body2">5.- Implementada funcionalidad para cambiar el Modo de entrada de datos para columnas trabajadores y posibilidad de gestionarlos independientemente de la configuración del centro.</Typography>   
+                                                                <br />  
+                                                                <Typography component="span" variant="body2">6.- Añadido botón para configuración personalizada en cuadrante y posibilidad de gestionarlo independientemente de la configuración del centro.</Typography>                                                                                                                        
+                                                                <br />  
+                                                                <Typography component="span" variant="body2">7.- Modificada funcionalidad para poder registrar cuadrantes sin trabajadores (siempre y cuando tenga servicios fijos añadidos).</Typography>        
+                                                                </Fragment>
+                                                            }
+                                                        />
+                                                    </ListItem >
                                                 </List>
                                             </Box>
                                         </Box>

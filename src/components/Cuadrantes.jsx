@@ -54,11 +54,15 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import EditIcon from '@material-ui/icons/Edit';
 import { TextField } from '@material-ui/core';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import NotificationsOffIcon from '@material-ui/icons/NotificationsOff';
 
 //carga componentes
 import ItemCuadrante from './ItemCuadrante';
 import PantallaCuadrantes from './PantallaCuadrantes';
 import DialogComponente from './DialogComponente';
+import ServiciosFijos from './ServiciosFijos';
+import ConfiguracionCuadrante from './ConfiguracionCuadrante';
 
 //estilos
 import Clases from "../clases";
@@ -110,10 +114,15 @@ import { venimosDeRegistradosAccion } from '../redux/pendientesDucks';
 import { vaciarDatosTrabajadorAccion } from '../redux/trabajadoresDucks';
 import { generarArchivosXLSAccion } from '../redux/appDucks';
 import { gestionaMaxDateCalendarAccion } from '../redux/appDucks';
+import { retornaFormaPagoAccion } from '../redux/cuadrantesDucks';
+import { limpiarCuadranteAccion } from '../redux/cuadrantesDucks';
+import { completarCuadranteAccion } from '../redux/cuadrantesDucks';
 
 const categorias = Constantes.CATEGORIAS_CENTROS;
 const arrayFestivos = Constantes.CALENDARIO_FESTIVOS;
 const variaciones = Constantes.VARIACIONES_CUADRANTES;
+const tiposDeServicio = Constantes.TIPO_SERVICIO_FIJO;
+const tipos = Constantes.MODO_ENTRADA_HORARIOS;
 
 const getHeightScrollable = () => (window.innerHeight - 217) || (document.documentElement.clientHeight - 217) || (document.body.clientHeight - 217);
 
@@ -169,6 +178,19 @@ const StyledMenu = withStyles({
     />
 ));
 
+//tooltip
+const LightTooltip = withStyles((theme) => ({
+    tooltip: {
+        backgroundColor: '#66bb6a',
+        color: '#ffffff',
+        fontSize: 11,
+        marginLeft: 5,
+        borderRadius: 0,
+        height: theme.spacing(3.5),
+    },
+
+}))(Tooltip);
+
 const Cuadrantes = (props) => {
 
     const classes = Clases();
@@ -187,6 +209,7 @@ const Cuadrantes = (props) => {
     const disabledItemBotonRegistrar = useSelector(store => store.variablesCuadrantes.estadoActivadoDesactivadoBotonRegistrar);
     const disabledItemBotonActualizar = useSelector(store => store.variablesCuadrantes.estadoActivadoDesactivadoBotonActualizar);
     const disabledItemBotonResetear = useSelector(store => store.variablesCuadrantes.estadoActivadoDesactivadoBotonResetear);
+    const disabledItem = useSelector(store => store.variablesCuadrantes.estadoActivadoDesactivadoCambio);
     const cuadranteRegistrado = useSelector(store => store.variablesCuadrantes.cuadranteRegistrado);
     const openDialog4 = useSelector(store => store.variablesApp.openDialog[3]);
     const openDialog5 = useSelector(store => store.variablesApp.openDialog[4]);
@@ -252,6 +275,10 @@ const Cuadrantes = (props) => {
         columna: null,
         indexColumna: null
     });
+    const [anchorElServiciosFijos, setAnchorElServiciosFijos] = useState(null);
+    const openServiciosFijos = Boolean(anchorElServiciosFijos);
+    const [anchorElConfiguracion, setAnchorElConfiguracion] = useState(null);
+    const openConfiguracion = Boolean(anchorElConfiguracion);
     const [lastEditado, setLastEditado] = useState(null);
     const [itemPrevioEditando, setItemPrevioEditando] = useState(null);
     const [estadoFlex, setEstadoFlex] = useState('fila');
@@ -269,9 +296,84 @@ const Cuadrantes = (props) => {
     const [numeroFactusol, setNumeroFactusol] = useState(null);
     const [posicionTrabajadorPrevioACambiar, setPosicionTrabajadorPrevioACambiar] = useState(null);
     const [posicionSuplentePrevioACambiar, setPosicionSuplentePrevioACambiar] = useState(null);
-    const [estamosActualizandoCuadrante, setEstamosActualizandoCuadrante] = useState({ estado: false, columna: null });
+    //const [estamosActualizandoCuadrante, setEstamosActualizandoCuadrante] = useState({ estado: false, columna: null });
     const [openLoadingActualizandoCuadrante, setOpenLoadingActualizandoCuadrante] = useState(false);
-    const [gestionadoColumna, setGestionadoColumna] = useState(true);
+    const [stateSwitchTipoServicioFijoCuadrante, setStateSwitchTipoServicioFijoCuadrante] = useState({
+        TO: false,
+        CR: false,
+        CE: false,
+        CI: false,
+        MO: false,
+        OF: false,
+        AL: false,
+        LA: false,
+        TE: false,
+        FI: false,
+        FE: false,
+        AB: false,
+        MA: false,
+        PO: false,
+        BA: false,
+        FT: false
+    });
+    const [losServiciosFijos, setLosServiciosFijos] = useState({});
+    const [cuadranteVacio, setCuadranteVacio] = useState(false);
+    const [itemPrevioEditandoServiciosFijos, setItemPrevioEditandoServiciosFijos] = useState(null);
+    const [itemEditandoServiciosFijos, setItemEditandoServiciosFijos] = useState({
+        switch: {
+            TO: false,
+            CR: false,
+            CE: false,
+            CI: false,
+            MO: false,
+            OF: false,
+            AL: false,
+            LA: false,
+            TE: false,
+            FI: false,
+            FE: false,
+            AB: false,
+            MA: false,
+            PO: false,
+            BA: false,
+            FT: false
+        },
+        servicios: {
+            precioHora_TO: '',
+            precioHora_CR: '',
+            precioHora_CE: '',
+            precioHora_CI: '',
+            precioHora_MO: '',
+            precioHora_OF: '',
+            precioHora_AL: '',
+            precioHora_LA: '',
+            precioHora_TE: '',
+            precioHora_FI: '',
+            precioHora_FE: '',
+            precioHora_AB: '',
+            precioHora_MA: '',
+            precioHora_PO: '',
+            precioHora_BA: '',
+            precioHora_FT: ''
+        }
+
+    });
+
+    const [itemPrevioEditandoConfiguracion, setItemPrevioEditandoConfiguracion] = useState(null);
+    const [itemEditandoConfiguracion, setItemEditandoConfiguracion] = useState({
+        tipoHorario: '',
+        computo: '',
+        mensualPactado: '',
+        precioHora_L: '',
+        precioHora_E: '',
+        precioHora_P: '',
+        precioHora_N: '',
+        precioHora_R: '',
+        precioHora_L1: '',
+        precioHora_L2: '',
+        precioHora_F: ''
+    });
+    const [preValueCalendarioAGestionarReseteo, setPreValueCalendarioAGestionarReseteo] = useState(null);
 
     //useEffect
 
@@ -343,6 +445,10 @@ const Cuadrantes = (props) => {
             setCuadrante(objetoCuadrante.datosCuadrante.arrayCuadrante);
             setFirmaActualizacion(objetoCuadrante.actualizacion);
             setControladorDeEstado('inicio');
+            if (controladorDeEstado === 'venimosDeResetear') {                
+                dispatch(setCalendarioAGestionarAccion(preValueCalendarioAGestionarReseteo));
+                setPreValueCalendarioAGestionarReseteo(null);
+            };
         };
         if (controladorDeEstado === 'venimosDeRegistrar') {
             //setFirmaActualizacion(objetoCuadrante.actualizacion);
@@ -350,6 +456,30 @@ const Cuadrantes = (props) => {
         };
         if (controladorDeEstado === 'venimosDeInforme') {
             setControladorDeEstado('inicio');
+        };
+        if (objetoCuadrante.datosInforme.computo && objetoCuadrante.datosCuadrante.tipoHorarioGeneral) {
+            setItemEditandoConfiguracion({
+                tipoHorario: objetoCuadrante.datosCuadrante.tipoHorarioGeneral,
+                computo: objetoCuadrante.datosInforme.computo,
+                mensualPactado: objetoCuadrante.datosInforme.mensualPactado ? objetoCuadrante.datosInforme.mensualPactado : '',
+                precioHora_L: objetoCuadrante.datosInforme.precioHora_L ? objetoCuadrante.datosInforme.precioHora_L : '',
+                precioHora_E: objetoCuadrante.datosInforme.precioHora_E ? objetoCuadrante.datosInforme.precioHora_E : '',
+                precioHora_P: objetoCuadrante.datosInforme.precioHora_P ? objetoCuadrante.datosInforme.precioHora_P : '',
+                precioHora_N: objetoCuadrante.datosInforme.precioHora_N ? objetoCuadrante.datosInforme.precioHora_N : '',
+                precioHora_R: objetoCuadrante.datosInforme.precioHora_R ? objetoCuadrante.datosInforme.precioHora_R : '',
+                precioHora_L1: objetoCuadrante.datosInforme.precioHora_L1 ? objetoCuadrante.datosInforme.precioHora_L1 : '',
+                precioHora_L2: objetoCuadrante.datosInforme.precioHora_L2 ? objetoCuadrante.datosInforme.precioHora_L2 : '',
+                precioHora_F: objetoCuadrante.datosInforme.precioHora_F ? objetoCuadrante.datosInforme.precioHora_F : ''
+            });
+        };
+        if (objetoCuadrante.datosCuadrante.arrayCuadrante.length > 0) {
+            const { arrayResultante, arrayFestivos } = dispatch(completarCuadranteAccion(losDiasDelMes, objetoCuadrante.datosCuadrante.arrayCuadrante));
+            setCuadrante(arrayResultante);
+            let object = { ...stateFestivo };
+            arrayFestivos.forEach((festivo, index) => {
+                object['estadoFestivoDia' + festivo[1]] = true;
+            });
+            setStateFestivo(object);
         };
     }, [objetoCuadrante]);
 
@@ -382,8 +512,113 @@ const Cuadrantes = (props) => {
         const fetchData = () => {
             setOpenLoading(true);
             if (centroAGestionar.nombre !== '') {
+                let myObjetoServiciosFijos = {
+                    precioHora_TO: null,
+                    precioHora_CR: null,
+                    precioHora_CE: null,
+                    precioHora_CI: null,
+                    precioHora_MO: null,
+                    precioHora_OF: null,
+                    precioHora_AL: null,
+                    precioHora_LA: null,
+                    precioHora_TE: null,
+                    precioHora_FI: null,
+                    precioHora_FE: null,
+                    precioHora_AB: null,
+                    precioHora_MA: null,
+                    precioHora_PO: null,
+                    precioHora_BA: null,
+                    precioHora_FT: null
+                };
+                let objetoEstadosSwitch = {
+                    TO: false,
+                    CR: false,
+                    CE: false,
+                    CI: false,
+                    MO: false,
+                    OF: false,
+                    AL: false,
+                    LA: false,
+                    TE: false,
+                    FI: false,
+                    FE: false,
+                    AB: false,
+                    MA: false,
+                    PO: false,
+                    BA: false,
+                    FT: false
+                };
                 if (!venimosDeActualizarCentro) {
                     if (cuadranteRegistrado === 'no') {
+                        if (!centroAGestionar.horario.tipo) {
+                            setCuadranteVacio(true);
+                        };
+                        centroAGestionar.serviciosFijos.servicio.forEach((servicio) => {
+                            if (servicio.precioHora_TO) {
+                                myObjetoServiciosFijos.precioHora_TO = servicio.precioHora_TO;
+                                objetoEstadosSwitch.TO = true;
+                            };
+                            if (servicio.precioHora_CR) {
+                                myObjetoServiciosFijos.precioHora_CR = servicio.precioHora_CR;
+                                objetoEstadosSwitch.CR = true;
+                            };
+                            if (servicio.precioHora_CE) {
+                                myObjetoServiciosFijos.precioHora_CE = servicio.precioHora_CE;
+                                objetoEstadosSwitch.CE = true;
+                            };
+                            if (servicio.precioHora_CI) {
+                                myObjetoServiciosFijos.precioHora_CI = servicio.precioHora_CI;
+                                objetoEstadosSwitch.CI = true;
+                            };
+                            if (servicio.precioHora_MO) {
+                                myObjetoServiciosFijos.precioHora_MO = servicio.precioHora_MO;
+                                objetoEstadosSwitch.MO = true;
+                            };
+                            if (servicio.precioHora_OF) {
+                                myObjetoServiciosFijos.precioHora_OF = servicio.precioHora_OF;
+                                objetoEstadosSwitch.OF = true;
+                            };
+                            if (servicio.precioHora_AL) {
+                                myObjetoServiciosFijos.precioHora_AL = servicio.precioHora_AL;
+                                objetoEstadosSwitch.AL = true;
+                            };
+                            if (servicio.precioHora_LA) {
+                                myObjetoServiciosFijos.precioHora_LA = servicio.precioHora_LA;
+                                objetoEstadosSwitch.LA = true;
+                            };
+                            if (servicio.precioHora_TE) {
+                                myObjetoServiciosFijos.precioHora_TE = servicio.precioHora_TE;
+                                objetoEstadosSwitch.TE = true;
+                            };
+                            if (servicio.precioHora_FI) {
+                                myObjetoServiciosFijos.precioHora_FI = servicio.precioHora_FI;
+                                objetoEstadosSwitch.FI = true;
+                            };
+                            if (servicio.precioHora_FE) {
+                                myObjetoServiciosFijos.precioHora_FE = servicio.precioHora_FE;
+                                objetoEstadosSwitch.FE = true;
+                            };
+                            if (servicio.precioHora_AB) {
+                                myObjetoServiciosFijos.precioHora_AB = servicio.precioHora_AB;
+                                objetoEstadosSwitch.AB = true;
+                            };
+                            if (servicio.precioHora_MA) {
+                                myObjetoServiciosFijos.precioHora_MA = servicio.precioHora_MA;
+                                objetoEstadosSwitch.MA = true;
+                            };
+                            if (servicio.precioHora_PO) {
+                                myObjetoServiciosFijos.precioHora_PO = servicio.precioHora_PO;
+                                objetoEstadosSwitch.PO = true;
+                            };
+                            if (servicio.precioHora_BA) {
+                                myObjetoServiciosFijos.precioHora_BA = servicio.precioHora_BA;
+                                objetoEstadosSwitch.BA = true;
+                            };
+                            if (servicio.precioHora_FT) {
+                                myObjetoServiciosFijos.precioHora_FT = servicio.precioHora_FT;
+                                objetoEstadosSwitch.FT = true;
+                            };
+                        });
                         if (centroAGestionar.trabajadores.trabajadores.length > 0) {
                             centroAGestionar.trabajadores.trabajadores.forEach((trabajadorIterado, index) => {
                                 setTimeout(
@@ -401,33 +636,108 @@ const Cuadrantes = (props) => {
                                     }, index * 1000);
                             });
                         };
+
+                        const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, tipoHorarioGeneral: centroAGestionar.horario.tipo };
                         dispatch(actualizarObjetoCuadranteAccion({
                             ...objetoCuadrante,
+                            datosCuadrante: losDatosCuadrante,
+                            datosServicios: centroAGestionar.serviciosFijos,
                             datosInforme: {
                                 objeto: 'informe',
                                 centro: centroAGestionar.id,
                                 computo: centroAGestionar.horario.computo,
                                 mensualPactado: centroAGestionar.horario.mensualPactado ? centroAGestionar.horario.mensualPactado : null,
                                 precioHora_L: centroAGestionar.horario.precioHora_L ? centroAGestionar.horario.precioHora_L : null,
-                                precioHora_C: centroAGestionar.horario.precioHora_C ? centroAGestionar.horario.precioHora_C : null,
                                 precioHora_E: centroAGestionar.horario.precioHora_E ? centroAGestionar.horario.precioHora_E : null,
-                                precioHora_I: centroAGestionar.horario.precioHora_I ? centroAGestionar.horario.precioHora_I : null,
-                                precioHora_Z: centroAGestionar.horario.precioHora_Z ? centroAGestionar.horario.precioHora_Z : null,
-                                precioHora_T: centroAGestionar.horario.precioHora_T ? centroAGestionar.horario.precioHora_T : null,
                                 precioHora_P: centroAGestionar.horario.precioHora_P ? centroAGestionar.horario.precioHora_P : null,
+                                precioHora_N: centroAGestionar.horario.precioHora_N ? centroAGestionar.horario.precioHora_N : null,
+                                precioHora_R: centroAGestionar.horario.precioHora_R ? centroAGestionar.horario.precioHora_R : null,
+                                precioHora_L1: centroAGestionar.horario.precioHora_L1 ? centroAGestionar.horario.precioHora_L1 : null,
+                                precioHora_L2: centroAGestionar.horario.precioHora_L2 ? centroAGestionar.horario.precioHora_L2 : null,
+                                precioHora_F: centroAGestionar.horario.precioHora_F ? centroAGestionar.horario.precioHora_F : null,
                                 arrayTrabajadores: [],
                                 totalFacturado_M: null,
                                 totalFacturado_L: null,
-                                totalFacturado_C: null,
                                 totalFacturado_E: null,
-                                totalFacturado_I: null,
-                                totalFacturado_Z: null,
-                                totalFacturado_T: null,
                                 totalFacturado_P: null,
+                                totalFacturado_N: null,
+                                totalFacturado_R: null,
+                                totalFacturado_L1: null,
+                                totalFacturado_L2: null,
+                                totalFacturado_F: null
                             }
                         }));
                     };
                     if (cuadranteRegistrado === 'si') {
+                        if (objetoCuadrante.datosCuadrante.arrayCuadrante.length === 0) {
+                            setCuadranteVacio(true);
+                        };
+                        objetoCuadrante.datosServicios.servicio.forEach((servicio) => {
+                            if (servicio.precioHora_TO) {
+                                myObjetoServiciosFijos.precioHora_TO = servicio.precioHora_TO;
+                                objetoEstadosSwitch.TO = true;
+                            };
+                            if (servicio.precioHora_CR) {
+                                myObjetoServiciosFijos.precioHora_CR = servicio.precioHora_CR;
+                                objetoEstadosSwitch.CR = true;
+                            };
+                            if (servicio.precioHora_CE) {
+                                myObjetoServiciosFijos.precioHora_CE = servicio.precioHora_CE;
+                                objetoEstadosSwitch.CE = true;
+                            };
+                            if (servicio.precioHora_CI) {
+                                myObjetoServiciosFijos.precioHora_CI = servicio.precioHora_CI;
+                                objetoEstadosSwitch.CI = true;
+                            };
+                            if (servicio.precioHora_MO) {
+                                myObjetoServiciosFijos.precioHora_MO = servicio.precioHora_MO;
+                                objetoEstadosSwitch.MO = true;
+                            };
+                            if (servicio.precioHora_OF) {
+                                myObjetoServiciosFijos.precioHora_OF = servicio.precioHora_OF;
+                                objetoEstadosSwitch.OF = true;
+                            };
+                            if (servicio.precioHora_AL) {
+                                myObjetoServiciosFijos.precioHora_AL = servicio.precioHora_AL;
+                                objetoEstadosSwitch.AL = true;
+                            };
+                            if (servicio.precioHora_LA) {
+                                myObjetoServiciosFijos.precioHora_LA = servicio.precioHora_LA;
+                                objetoEstadosSwitch.LA = true;
+                            };
+                            if (servicio.precioHora_TE) {
+                                myObjetoServiciosFijos.precioHora_TE = servicio.precioHora_TE;
+                                objetoEstadosSwitch.TE = true;
+                            };
+                            if (servicio.precioHora_FI) {
+                                myObjetoServiciosFijos.precioHora_FI = servicio.precioHora_FI;
+                                objetoEstadosSwitch.FI = true;
+                            };
+                            if (servicio.precioHora_FE) {
+                                myObjetoServiciosFijos.precioHora_FE = servicio.precioHora_FE;
+                                objetoEstadosSwitch.FE = true;
+                            };
+                            if (servicio.precioHora_AB) {
+                                myObjetoServiciosFijos.precioHora_AB = servicio.precioHora_AB;
+                                objetoEstadosSwitch.AB = true;
+                            };
+                            if (servicio.precioHora_MA) {
+                                myObjetoServiciosFijos.precioHora_MA = servicio.precioHora_MA;
+                                objetoEstadosSwitch.MA = true;
+                            };
+                            if (servicio.precioHora_PO) {
+                                myObjetoServiciosFijos.precioHora_PO = servicio.precioHora_PO;
+                                objetoEstadosSwitch.PO = true;
+                            };
+                            if (servicio.precioHora_BA) {
+                                myObjetoServiciosFijos.precioHora_BA = servicio.precioHora_BA;
+                                objetoEstadosSwitch.BA = true;
+                            };
+                            if (servicio.precioHora_FT) {
+                                myObjetoServiciosFijos.precioHora_FT = servicio.precioHora_FT;
+                                objetoEstadosSwitch.FT = true;
+                            };
+                        });
                         if (objetoCuadrante.datosCuadrante.arrayCuadrante.length > 0) {
                             objetoCuadrante.datosCuadrante.arrayCuadrante.forEach((trabajadorIterado, index) => {
                                 if (trabajadorIterado.tipoTrabajador === 'trabajador') {
@@ -439,20 +749,97 @@ const Cuadrantes = (props) => {
                         }
                     };
                 } else {
+                    if (!centroAGestionar.horario.tipo) {
+                        setCuadranteVacio(true);
+                    };
+                    centroAGestionar.serviciosFijos.servicio.forEach((servicio) => {
+                        if (servicio.precioHora_TO) {
+                            myObjetoServiciosFijos.precioHora_TO = servicio.precioHora_TO;
+                            objetoEstadosSwitch.TO = true;
+                        };
+                        if (servicio.precioHora_CR) {
+                            myObjetoServiciosFijos.precioHora_CR = servicio.precioHora_CR;
+                            objetoEstadosSwitch.CR = true;
+                        };
+                        if (servicio.precioHora_CE) {
+                            myObjetoServiciosFijos.precioHora_CE = servicio.precioHora_CE;
+                            objetoEstadosSwitch.CE = true;
+                        };
+                        if (servicio.precioHora_CI) {
+                            myObjetoServiciosFijos.precioHora_CI = servicio.precioHora_CI;
+                            objetoEstadosSwitch.CI = true;
+                        };
+                        if (servicio.precioHora_MO) {
+                            myObjetoServiciosFijos.precioHora_MO = servicio.precioHora_MO;
+                            objetoEstadosSwitch.MO = true;
+                        };
+                        if (servicio.precioHora_OF) {
+                            myObjetoServiciosFijos.precioHora_OF = servicio.precioHora_OF;
+                            objetoEstadosSwitch.OF = true;
+                        };
+                        if (servicio.precioHora_AL) {
+                            myObjetoServiciosFijos.precioHora_AL = servicio.precioHora_AL;
+                            objetoEstadosSwitch.AL = true;
+                        };
+                        if (servicio.precioHora_LA) {
+                            myObjetoServiciosFijos.precioHora_LA = servicio.precioHora_LA;
+                            objetoEstadosSwitch.LA = true;
+                        };
+                        if (servicio.precioHora_TE) {
+                            myObjetoServiciosFijos.precioHora_TE = servicio.precioHora_TE;
+                            objetoEstadosSwitch.TE = true;
+                        };
+                        if (servicio.precioHora_FI) {
+                            myObjetoServiciosFijos.precioHora_FI = servicio.precioHora_FI;
+                            objetoEstadosSwitch.FI = true;
+                        };
+                        if (servicio.precioHora_FE) {
+                            myObjetoServiciosFijos.precioHora_FE = servicio.precioHora_FE;
+                            objetoEstadosSwitch.FE = true;
+                        };
+                        if (servicio.precioHora_AB) {
+                            myObjetoServiciosFijos.precioHora_AB = servicio.precioHora_AB;
+                            objetoEstadosSwitch.AB = true;
+                        };
+                        if (servicio.precioHora_MA) {
+                            myObjetoServiciosFijos.precioHora_MA = servicio.precioHora_MA;
+                            objetoEstadosSwitch.MA = true;
+                        };
+                        if (servicio.precioHora_PO) {
+                            myObjetoServiciosFijos.precioHora_PO = servicio.precioHora_PO;
+                            objetoEstadosSwitch.PO = true;
+                        };
+                        if (servicio.precioHora_BA) {
+                            myObjetoServiciosFijos.precioHora_BA = servicio.precioHora_BA;
+                            objetoEstadosSwitch.BA = true;
+                        };
+                        if (servicio.precioHora_FT) {
+                            myObjetoServiciosFijos.precioHora_FT = servicio.precioHora_FT;
+                            objetoEstadosSwitch.FT = true;
+                        };
+                    });
+                    const losDatosServiciosFijos = centroAGestionar.serviciosFijos;
                     const losDatosInforme = {
                         ...objetoCuadrante.datosInforme,
                         computo: centroAGestionar.horario.computo,
                         mensualPactado: centroAGestionar.horario.mensualPactado ? centroAGestionar.horario.mensualPactado : null,
                         precioHora_L: centroAGestionar.horario.precioHora_L ? centroAGestionar.horario.precioHora_L : null,
-                        precioHora_C: centroAGestionar.horario.precioHora_C ? centroAGestionar.horario.precioHora_C : null,
                         precioHora_E: centroAGestionar.horario.precioHora_E ? centroAGestionar.horario.precioHora_E : null,
-                        precioHora_I: centroAGestionar.horario.precioHora_I ? centroAGestionar.horario.precioHora_I : null,
-                        precioHora_Z: centroAGestionar.horario.precioHora_Z ? centroAGestionar.horario.precioHora_Z : null,
-                        precioHora_T: centroAGestionar.horario.precioHora_T ? centroAGestionar.horario.precioHora_T : null,
-                        precioHora_P: centroAGestionar.horario.precioHora_P ? centroAGestionar.horario.precioHora_P : null
+                        precioHora_P: centroAGestionar.horario.precioHora_P ? centroAGestionar.horario.precioHora_P : null,
+                        precioHora_N: centroAGestionar.horario.precioHora_N ? centroAGestionar.horario.precioHora_N : null,
+                        precioHora_R: centroAGestionar.horario.precioHora_R ? centroAGestionar.horario.precioHora_R : null,
+                        precioHora_L1: centroAGestionar.horario.precioHora_L1 ? centroAGestionar.horario.precioHora_L1 : null,
+                        precioHora_L2: centroAGestionar.horario.precioHora_L2 ? centroAGestionar.horario.precioHora_L2 : null,
+                        precioHora_F: centroAGestionar.horario.precioHora_F ? centroAGestionar.horario.precioHora_F : null
                     }
-                    const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, arrayCuadrante: cuadrante };
-                    dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, actualizacion: firmaActualizacion, datosCuadrante: losDatosCuadrante, datosInforme: losDatosInforme }));
+                    const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, tipoHorarioGeneral: centroAGestionar.horario.tipo, arrayCuadrante: cuadrante };
+                    dispatch(actualizarObjetoCuadranteAccion({
+                        ...objetoCuadrante,
+                        actualizacion: firmaActualizacion,
+                        datosCuadrante: losDatosCuadrante,
+                        datosServicios: losDatosServiciosFijos,
+                        datosInforme: losDatosInforme
+                    }));
                     setVenimosDeActualizarCentro(false);
                     setAlert({
                         mensaje: "Datos del centro actualizados exitosamente.",
@@ -461,7 +848,13 @@ const Cuadrantes = (props) => {
                     setOpenSnack(true);
                     dispatch(activarDesactivarCambioBotonActualizarAccion(false));
                     dispatch(registrarIntervencionAccion(false));
-                }
+                };
+                setLosServiciosFijos(myObjetoServiciosFijos);
+                setStateSwitchTipoServicioFijoCuadrante(objetoEstadosSwitch);
+                setItemEditandoServiciosFijos({
+                    switch: objetoEstadosSwitch,
+                    servicios: myObjetoServiciosFijos
+                });
             };
             setOpenLoading(false);
         }
@@ -469,7 +862,6 @@ const Cuadrantes = (props) => {
     }, [centroAGestionar]);
 
     useEffect(() => {
-        setGestionadoColumna(false);
         if (trabajadorAGestionar.nombre !== '') {
             let arrayTr = [];
             if (esInicioTra) {
@@ -478,20 +870,14 @@ const Cuadrantes = (props) => {
                     trabajadorAGestionar['laPosicionDelTrabajador'] = arrayTr.length + 1;
                 };
                 if (cuadranteRegistrado === 'no') {
-                    gestionaColumnaCuadrante(trabajadorAGestionar, 'trabajador', false, null, false)
-                        .then(values => {
-                            if (!values.devuelto) {
-                                gestionaResultadoColumnaCuadrante_1(values.columnaAnadir)
-                                    .then(values => {
-                                        arrayTr.push(trabajadorAGestionar);
-                                        setTrabajadoresEnCuadrante(arrayTr);
-                                        cuadrante.push(values.columnaAnadir);
-                                        if (values.resuelto) {
-                                            setGestionadoColumna(true);
-                                        }
-                                    });
-                            };
-                        });
+                    const arrayCuadrante = [...cuadrante];
+                    const laColumnaAnadir = gestionaColumnaCuadrante(trabajadorAGestionar, 'trabajador', false, null, false, false, centroAGestionar.horario.tipo);
+                    if (laColumnaAnadir) {
+                        arrayCuadrante.push(laColumnaAnadir);
+                        arrayTr.push(trabajadorAGestionar);
+                        setTrabajadoresEnCuadrante(arrayTr);
+                    };
+                    setCuadrante(arrayCuadrante);
                 } else {
                     arrayTr.push(trabajadorAGestionar);
                     setTrabajadoresEnCuadrante(arrayTr);
@@ -522,22 +908,11 @@ const Cuadrantes = (props) => {
                         const posicionTrabajador = trabajadoresEnCuadrante.indexOf(trabajadoresEnCuadrante.find(trabajador => trabajador.id === valorPrevioAccordionAbierto));
                         arrayTr.splice(posicionTrabajador, 1);
                     };
-                    gestionaColumnaCuadrante(trabajadorAGestionar, 'trabajador', true, columnaIndiceAGestionar, false)
-                        .then(values => {
-                            if (!values.devuelto) {
-                                gestionaResultadoColumnaCuadrante_2(
-                                    values.columnaAnadir,
-                                    values.hayTrabajador,
-                                    values.tipoTrabajador,
-                                    values.columna,
-                                    values.esRevision)
-                                    .then(values => {
-                                        if (values.resuelto) {
-                                            setGestionadoColumna(true);
-                                        }
-                                    });
-                            };
-                        });
+                    if (!cuadranteVacio) {
+                        gestionaColumnaCuadrante(trabajadorAGestionar, 'trabajador', true, columnaIndiceAGestionar, false, false, objetoCuadrante.datosCuadrante.tipoHorarioGeneral);
+                    } else {
+                        gestionaColumnaCuadrante(trabajadorAGestionar, 'trabajador', true, columnaIndiceAGestionar, false, true, objetoCuadrante.datosCuadrante.tipoHorarioGeneral);
+                    };
                     if (!esUnaActualizacionTrabajador) {
                         arrayTr.insert(posicionTrabajadorPrevioACambiar - 1, trabajadorAGestionar);
                         setTrabajadoresEnCuadrante(arrayTr);
@@ -560,7 +935,6 @@ const Cuadrantes = (props) => {
     }, [trabajadorAGestionar]);
 
     useEffect(() => {
-        setGestionadoColumna(false);
         if (suplenteAGestionar.nombre !== '') {
             let arraySu = [];
             if (esInicioSup) {
@@ -569,20 +943,15 @@ const Cuadrantes = (props) => {
                     suplenteAGestionar['laPosicionDelTrabajador'] = arraySu.length + 1;
                 }
                 if (cuadranteRegistrado === 'no') {
-                    gestionaColumnaCuadrante(suplenteAGestionar, 'suplente', false, null, false)
-                        .then(values => {
-                            if (!values.devuelto) {
-                                gestionaResultadoColumnaCuadrante_1(values.columnaAnadir)
-                                    .then(values => {
-                                        arraySu.push(suplenteAGestionar);
-                                        setSuplentesEnCuadrante(arraySu);
-                                        cuadrante.push(values.columnaAnadir);
-                                        if (values.resuelto) {
-                                            setGestionadoColumna(true);
-                                        }
-                                    });
-                            };
-                        });
+                    const arrayCuadrante = [...cuadrante];
+                    const laColumnaAnadir = gestionaColumnaCuadrante(suplenteAGestionar, 'suplente', false, null, false, false, centroAGestionar.horario.tipo);
+                    if (laColumnaAnadir) {
+                        arrayCuadrante.push(laColumnaAnadir);
+                        arraySu.push(suplenteAGestionar);
+                        setSuplentesEnCuadrante(arraySu);
+                    };
+                    setCuadrante(arrayCuadrante);
+
                 } else {
                     arraySu.push(suplenteAGestionar);
                     setSuplentesEnCuadrante(arraySu);
@@ -613,25 +982,14 @@ const Cuadrantes = (props) => {
                         const posicionSuplente = suplentesEnCuadrante.indexOf(suplentesEnCuadrante.find(suplente => suplente.id === valorPrevioAccordionAbierto));
                         arraySu.splice(posicionSuplente, 1);
                     };
-                    gestionaColumnaCuadrante(suplenteAGestionar, 'suplente', true, columnaIndiceAGestionar, false)
-                        .then(values => {
-                            if (!values.devuelto) {
-                                gestionaResultadoColumnaCuadrante_2(
-                                    values.columnaAnadir,
-                                    values.hayTrabajador,
-                                    values.tipoTrabajador,
-                                    values.columna,
-                                    values.esRevision)
-                                    .then(values => {
-                                        if (values.resuelto) {
-                                            setGestionadoColumna(true);
-                                        }
-                                    });
-                            };
-                        });
+                    if (!cuadranteVacio) {
+                        gestionaColumnaCuadrante(suplenteAGestionar, 'suplente', true, columnaIndiceAGestionar, false, false, objetoCuadrante.datosCuadrante.tipoHorarioGeneral);
+                    } else {
+                        gestionaColumnaCuadrante(suplenteAGestionar, 'suplente', true, columnaIndiceAGestionar, false, true, objetoCuadrante.datosCuadrante.tipoHorarioGeneral);
+                        setCuadranteVacio(false);
+                    };
                     if (!esUnaActualizacionTrabajador) {
                         arraySu.insert(posicionSuplentePrevioACambiar - 1, suplenteAGestionar);
-                        //arraySu.push(suplenteAGestionar);                       
                         setSuplentesEnCuadrante(arraySu);
                     };
                     setEsCambioSup(false);
@@ -672,14 +1030,12 @@ const Cuadrantes = (props) => {
                     setEstadoFlex('fila');
                 };
             };
-            if (cuadrante[cuadrante.length - 1].nombreTrabajador) {
-                setArrayDatosInforme(dispatch(gestionarInformeAccion(cuadrante, objetoCuadrante.datosCuadrante.centro)));
-            };
-            if (estamosActualizandoCuadrante.estado) {
-                handleActualizarTrabajadoresGeneral();
-            };
+            setArrayDatosInforme(dispatch(gestionarInformeAccion(cuadrante, objetoCuadrante.datosCuadrante.centro)));
+            // if (estamosActualizandoCuadrante.estado) {
+            //     handleActualizarTrabajadoresGeneral();
+            // };
         };
-    }, [cuadrante.length]);
+    }, [cuadrante]);
 
     //secuencia venimos de pendientes o registrados
 
@@ -691,7 +1047,6 @@ const Cuadrantes = (props) => {
                 const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, centro: centro, arrayCuadrante: [] };
                 dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, id: null, nombre: nombreCuadrante, actualizacion: '', datosCuadrante: losDatosCuadrante }));
             };
-
         }
     }, [estadoVenimosDePendientes]);
 
@@ -869,12 +1224,13 @@ const Cuadrantes = (props) => {
                     objeto: 'horas',
                     M: null,
                     L: null,
-                    C: null,
                     E: null,
-                    I: null,
-                    Z: null,
-                    T: null,
-                    P: null
+                    P: null,
+                    N: null,
+                    R: null,
+                    L1: null,
+                    L2: null,
+                    F: null
                 }
             }));
             dispatch(obtenerCuadranteAccion('cuadrantes', nombreCuadrante));
@@ -902,12 +1258,13 @@ const Cuadrantes = (props) => {
                             objeto: 'horas',
                             M: null,
                             L: null,
-                            C: null,
                             E: null,
-                            I: null,
-                            Z: null,
-                            T: null,
-                            P: null
+                            P: null,
+                            N: null,
+                            R: null,
+                            L1: null,
+                            L2: null,
+                            F: null
                         }
                     }));
                     dispatch(obtenerCuadranteAccion('cuadrantes', nombreCuadrante));
@@ -920,7 +1277,7 @@ const Cuadrantes = (props) => {
         this.splice(index, 0, item);
     };
 
-    const gestionaColumnaCuadrante = (trabajador, tipoTrabajador, esRevision, columna, esAnadirColumna) => {
+    const gestionaColumnaCuadrante = (trabajador, tipoTrabajador, esRevision, columna, esAnadirColumna, esLimpieza, tipoHorario) => {
         let posicionTrabajador;
         if (centroAGestionar.horario.tipoRegistro === 'individual') {
             if (tipoTrabajador === 'trabajador') {
@@ -954,134 +1311,124 @@ const Cuadrantes = (props) => {
             posicionAnterior = cuadrante.length - 1;
             esInicio = true;
         } else if (esRevision && esAnadirColumna) {
-            posicionAnterior = columna
+            posicionAnterior = columna;
         } else {
             posicionAnterior = columna - 1;
         };
-        return new Promise((resolve, reject) => {
-            if (cuadrante.length > 0) {
-                if (cuadrante[posicionAnterior]) {
-                    if (tipoTrabajador === 'suplente' && !cuadrante[posicionAnterior].hayBaja && !esRevision) {
-                        setAlert({
-                            mensaje: "El trabajador no está o no ha estado de baja, no necesita suplente.",
-                            tipo: 'warning'
-                        })
-                        setOpenSnack(true);
-                        return resolve({ devuelto: true });
-                    };
-                };
-                if (cuadrante[posicionAnterior]) {
-                    if (tipoTrabajador === 'suplente' && !cuadrante[posicionAnterior].hayBaja && esRevision && esAnadirColumna) {
-                        setAlert({
-                            mensaje: "El trabajador no está o no ha estado de baja, o no has asignado trabajador, no necesita suplente.",
-                            tipo: 'warning'
-                        })
-                        setOpenSnack(true);
-                        return resolve({ devuelto: true });
-                    };
+        if (cuadrante.length > 0) {
+            if (cuadrante[posicionAnterior]) {
+                if (tipoTrabajador === 'suplente' && !cuadrante[posicionAnterior].hayBaja && !esRevision) {
+                    setAlert({
+                        mensaje: "El trabajador no está o no ha estado de baja, no necesita suplente.",
+                        tipo: 'warning'
+                    })
+                    setOpenSnack(true);
+                    return;
                 };
             };
-
-            const { columnaAnadir, hayTrabajador } = dispatch(gestionaColumnaCuadranteInterior(
-                trabajador,
-                tipoTrabajador,
-                esRevision,
-                columna,
-                cuadrante,
-                centroAGestionar,
-                posicionAnterior,
-                calendarioAGestionar,
-                losDiasDelMes,
-                stateFestivo,
-                esInicio,
-                posicionTrabajador
-            ));
-            return resolve({ devuelto: false, columnaAnadir: columnaAnadir, hayTrabajador: hayTrabajador, tipoTrabajador: tipoTrabajador, columna: columna, esRevision: esRevision });
-        });
-    };
-
-    const gestionaResultadoColumnaCuadrante_2 = (columnaAnadir, hayTrabajador, tipoTrabajador, columna, esRevision) => {
-        return new Promise((resolve, reject) => {
-            if (!hayTrabajador && tipoTrabajador === 'trabajador') {
+            if (cuadrante[posicionAnterior]) {
+                if (tipoTrabajador === 'suplente' && !cuadrante[posicionAnterior].hayBaja && esRevision && esAnadirColumna) {
+                    setAlert({
+                        mensaje: "El trabajador no está o no ha estado de baja, o no has asignado trabajador, no necesita suplente.",
+                        tipo: 'warning'
+                    })
+                    setOpenSnack(true);
+                    return;
+                };
+            };
+        };
+        const { columnaAnadir, hayTrabajador } = dispatch(gestionaColumnaCuadranteInterior(
+            trabajador,
+            tipoTrabajador,
+            esRevision,
+            columna,
+            cuadrante,
+            centroAGestionar,
+            posicionAnterior,
+            calendarioAGestionar,
+            losDiasDelMes,
+            stateFestivo,
+            esInicio,
+            posicionTrabajador,
+            esLimpieza,
+            tipoHorario
+        ));
+        if (!hayTrabajador && tipoTrabajador === 'trabajador') {
+            const arrayCuadrante = [...cuadrante];
+            let arrayTr = [...trabajadoresEnCuadrante];
+            let randomNumber = (Math.floor(Math.random() * 100)) + 1000;
+            if (centroAGestionar.horario.tipoRegistro === 'individual') {
+                const idTrabajadorAnterior = arrayCuadrante[arrayCuadrante.length - 1].idTrabajador;
+                const estadoTrabajadorAnterior = arrayCuadrante[arrayCuadrante.length - 1].tipoTrabajador;
+                let laPosicion;
+                if (estadoTrabajadorAnterior === 'trabajador') {
+                    const posicionTrabajadorPrevioAnteriorIndex = trabajadoresEnCuadrante.indexOf(trabajadoresEnCuadrante.find(trabajador => trabajador.id === idTrabajadorAnterior));
+                    laPosicion = trabajadoresEnCuadrante[posicionTrabajadorPrevioAnteriorIndex].laPosicionDelTrabajador;
+                };
+                if (estadoTrabajadorAnterior === 'suplente') {
+                    const posicionSuplentePrevioAnteriorIndex = suplentesEnCuadrante.indexOf(suplentesEnCuadrante.find(suplente => suplente.id === idTrabajadorAnterior));
+                    laPosicion = suplentesEnCuadrante[posicionSuplentePrevioAnteriorIndex].laPosicionDelTrabajador;
+                };
+                arrayTr.push({
+                    id: randomNumber,
+                    laPosicionDelTrabajador: laPosicion + 1,
+                    tipoTrabajador: 'trabajador'
+                });
+            } else {
+                arrayTr.push({
+                    id: randomNumber,
+                    tipoTrabajador: 'trabajador'
+                });
+            };
+            setTrabajadoresEnCuadrante(arrayTr);
+            columnaAnadir['idTrabajador'] = randomNumber;
+            arrayCuadrante.push(columnaAnadir);
+            setCuadrante(arrayCuadrante);
+            setExpandedAccordion(false);
+        };
+        if (!hayTrabajador && tipoTrabajador === 'suplente') {
+            const arrayCuadrante = [...cuadrante];
+            let arraySu = [...suplentesEnCuadrante];
+            let randomNumber = (Math.floor(Math.random() * 100)) + 1000;
+            if (centroAGestionar.horario.tipoRegistro === 'individual') {
+                const idTrabajadorAnterior = arrayCuadrante[arrayCuadrante.length - 1].idTrabajador;
+                const estadoTrabajadorAnterior = arrayCuadrante[arrayCuadrante.length - 1].tipoTrabajador;
+                let laPosicion;
+                if (estadoTrabajadorAnterior === 'trabajador') {
+                    const posicionTrabajadorPrevioAnteriorIndex = trabajadoresEnCuadrante.indexOf(trabajadoresEnCuadrante.find(trabajador => trabajador.id === idTrabajadorAnterior));
+                    laPosicion = trabajadoresEnCuadrante[posicionTrabajadorPrevioAnteriorIndex].laPosicionDelTrabajador;
+                };
+                if (estadoTrabajadorAnterior === 'suplente') {
+                    const posicionSuplentePrevioAnteriorIndex = suplentesEnCuadrante.indexOf(suplentesEnCuadrante.find(suplente => suplente.id === idTrabajadorAnterior));
+                    laPosicion = suplentesEnCuadrante[posicionSuplentePrevioAnteriorIndex].laPosicionDelTrabajador;
+                };
+                arraySu.push({
+                    id: randomNumber,
+                    laPosicionDelTrabajador: laPosicion,
+                    tipoTrabajador: 'suplente'
+                });
+            } else {
+                arraySu.push({
+                    id: randomNumber,
+                    tipoTrabajador: 'suplente'
+                });
+            };
+            setSuplentesEnCuadrante(arraySu);
+            columnaAnadir['idTrabajador'] = randomNumber;
+            arrayCuadrante.insert(columna + 1, columnaAnadir);
+            setCuadrante(arrayCuadrante);
+            setExpandedAccordion(false);
+        };
+        if (hayTrabajador) {
+            if (!esRevision) {
+                return columnaAnadir;
+            } else {
                 const arrayCuadrante = [...cuadrante];
-                let arrayTr = [...trabajadoresEnCuadrante];
-                let randomNumber = (Math.floor(Math.random() * 100)) + 1000;
-                if (centroAGestionar.horario.tipoRegistro === 'individual') {
-                    const idTrabajadorAnterior = arrayCuadrante[arrayCuadrante.length - 1].idTrabajador;
-                    const estadoTrabajadorAnterior = arrayCuadrante[arrayCuadrante.length - 1].tipoTrabajador;
-                    let laPosicion;
-                    if (estadoTrabajadorAnterior === 'trabajador') {
-                        const posicionTrabajadorPrevioAnteriorIndex = trabajadoresEnCuadrante.indexOf(trabajadoresEnCuadrante.find(trabajador => trabajador.id === idTrabajadorAnterior));
-                        laPosicion = trabajadoresEnCuadrante[posicionTrabajadorPrevioAnteriorIndex].laPosicionDelTrabajador;
-                    };
-                    if (estadoTrabajadorAnterior === 'suplente') {
-                        const posicionSuplentePrevioAnteriorIndex = suplentesEnCuadrante.indexOf(suplentesEnCuadrante.find(suplente => suplente.id === idTrabajadorAnterior));
-                        laPosicion = suplentesEnCuadrante[posicionSuplentePrevioAnteriorIndex].laPosicionDelTrabajador;
-                    };
-                    arrayTr.push({
-                        id: randomNumber,
-                        laPosicionDelTrabajador: laPosicion + 1,
-                        tipoTrabajador: 'trabajador'
-                    });
-                } else {
-                    arrayTr.push({
-                        id: randomNumber,
-                        tipoTrabajador: 'trabajador'
-                    });
-                };
-                setTrabajadoresEnCuadrante(arrayTr);
-                columnaAnadir['idTrabajador'] = randomNumber;
-                arrayCuadrante.push(columnaAnadir);
+                arrayCuadrante[columna] = columnaAnadir;
                 setCuadrante(arrayCuadrante);
-                setExpandedAccordion(false);
-            };
-            if (!hayTrabajador && tipoTrabajador === 'suplente') {
-                const arrayCuadrante = [...cuadrante];
-                let arraySu = [...suplentesEnCuadrante];
-                let randomNumber = (Math.floor(Math.random() * 100)) + 1000;
-                if (centroAGestionar.horario.tipoRegistro === 'individual') {
-                    const idTrabajadorAnterior = arrayCuadrante[arrayCuadrante.length - 1].idTrabajador;
-                    const estadoTrabajadorAnterior = arrayCuadrante[arrayCuadrante.length - 1].tipoTrabajador;
-                    let laPosicion;
-                    if (estadoTrabajadorAnterior === 'trabajador') {
-                        const posicionTrabajadorPrevioAnteriorIndex = trabajadoresEnCuadrante.indexOf(trabajadoresEnCuadrante.find(trabajador => trabajador.id === idTrabajadorAnterior));
-                        laPosicion = trabajadoresEnCuadrante[posicionTrabajadorPrevioAnteriorIndex].laPosicionDelTrabajador;
-                    };
-                    if (estadoTrabajadorAnterior === 'suplente') {
-                        const posicionSuplentePrevioAnteriorIndex = suplentesEnCuadrante.indexOf(suplentesEnCuadrante.find(suplente => suplente.id === idTrabajadorAnterior));
-                        laPosicion = suplentesEnCuadrante[posicionSuplentePrevioAnteriorIndex].laPosicionDelTrabajador;
-                    };
-                    arraySu.push({
-                        id: randomNumber,
-                        laPosicionDelTrabajador: laPosicion,
-                        tipoTrabajador: 'suplente'
-                    });
-                } else {
-                    arraySu.push({
-                        id: randomNumber,
-                        tipoTrabajador: 'suplente'
-                    });
-                };
-                setSuplentesEnCuadrante(arraySu);
-                columnaAnadir['idTrabajador'] = randomNumber;
-                arrayCuadrante.insert(columna + 1, columnaAnadir);
-                setCuadrante(arrayCuadrante);
-                setExpandedAccordion(false);
-            };
-            if (hayTrabajador) {
-                if (esRevision) {
-                    const arrayCuadrante = [...cuadrante];
-                    arrayCuadrante[columna] = columnaAnadir;
-                    setCuadrante(arrayCuadrante);
-                }
-            };
-            return resolve({ resuelto: true });
-        });
-    };
-    const gestionaResultadoColumnaCuadrante_1 = (columnaAnadir) => {
-        return new Promise((resolve, reject) => {
-            return resolve({ resuelto: true, columnaAnadir: columnaAnadir });
-        });
+            }
+        };
+
     };
 
     const reseteaContenidoCuadrante = () => {
@@ -1120,6 +1467,81 @@ const Cuadrantes = (props) => {
         setArrayDatosInforme([]);
         setArrayInformeLineas([]);
         dispatch(registrarIntervencionCuadranteNuevoAccion(true));
+        setLosServiciosFijos({});
+        setStateSwitchTipoServicioFijoCuadrante({
+            TO: false,
+            CR: false,
+            CE: false,
+            CI: false,
+            MO: false,
+            OF: false,
+            AL: false,
+            LA: false,
+            TE: false,
+            FI: false,
+            FE: false,
+            AB: false,
+            MA: false,
+            PO: false,
+            BA: false,
+            FT: false
+        });
+        setCuadranteVacio(false);
+        setItemPrevioEditandoServiciosFijos(null);
+        setItemEditandoServiciosFijos({
+            switch: {
+                TO: false,
+                CR: false,
+                CE: false,
+                CI: false,
+                MO: false,
+                OF: false,
+                AL: false,
+                LA: false,
+                TE: false,
+                FI: false,
+                FE: false,
+                AB: false,
+                MA: false,
+                PO: false,
+                BA: false,
+                FT: false
+            },
+            servicios: {
+                precioHora_TO: '',
+                precioHora_CR: '',
+                precioHora_CE: '',
+                precioHora_CI: '',
+                precioHora_MO: '',
+                precioHora_OF: '',
+                precioHora_AL: '',
+                precioHora_LA: '',
+                precioHora_TE: '',
+                precioHora_FI: '',
+                precioHora_FE: '',
+                precioHora_AB: '',
+                precioHora_MA: '',
+                precioHora_PO: '',
+                precioHora_BA: '',
+                precioHora_FT: ''
+            }
+
+        });
+        setItemPrevioEditandoConfiguracion(null);
+        setItemEditandoConfiguracion({
+            tipoHorario: '',
+            computo: '',
+            mensualPactado: '',
+            precioHora_L: '',
+            precioHora_E: '',
+            precioHora_P: '',
+            precioHora_N: '',
+            precioHora_R: '',
+            precioHora_L1: '',
+            precioHora_L2: '',
+            precioHora_F: ''
+        });
+        setStateFestivo({});
     };
 
     const handleClickAddColumna = (tipo, columna) => {
@@ -1134,41 +1556,38 @@ const Cuadrantes = (props) => {
         if (tipo === 'trabajador') {
             setEsInicioTra(false);
             setEsCambioTra(true);
-            gestionaColumnaCuadrante(null, 'trabajador', true, null, true)
-                .then(values => {
-                    if (!values.devuelto) {
-                        gestionaResultadoColumnaCuadrante_2(
-                            values.columnaAnadir,
-                            values.hayTrabajador,
-                            values.tipoTrabajador,
-                            values.columna,
-                            values.esRevision)
-                            .then(values => {
-                                if (values.resuelto) {
-                                    setGestionadoColumna(true);
-                                }
-                            });
-                    }
-                });
+            if (!cuadranteVacio) {
+                gestionaColumnaCuadrante(null, 'trabajador', true, null, true, false, objetoCuadrante.datosCuadrante.tipoHorarioGeneral);
+            } else {
+                if (objetoCuadrante.datosInforme.computo) {
+                    gestionaColumnaCuadrante(null, 'trabajador', true, null, true, true, objetoCuadrante.datosCuadrante.tipoHorarioGeneral);
+                } else {
+                    setAlert({
+                        mensaje: "Para añadir trabajadores a un cuadrante debes elegir Tipo cómputo y Modo entrada datos en Configuración general cuadrante.",
+                        tipo: 'error'
+                    })
+                    setOpenSnack(true);
+                    return;
+                };
+            };
+
         } else {
             setEsInicioSup(false);
             setEsCambioSup(true);
-            gestionaColumnaCuadrante(null, 'suplente', true, columna, true)
-                .then(values => {
-                    if (!values.devuelto) {
-                        gestionaResultadoColumnaCuadrante_2(
-                            values.columnaAnadir,
-                            values.hayTrabajador,
-                            values.tipoTrabajador,
-                            values.columna,
-                            values.esRevision)
-                            .then(values => {
-                                if (values.resuelto) {
-                                    setGestionadoColumna(true);
-                                }
-                            });
-                    }
-                });
+            if (!cuadranteVacio) {
+                gestionaColumnaCuadrante(null, 'suplente', true, columna, true, false, objetoCuadrante.datosCuadrante.tipoHorarioGeneral);
+            } else {
+                if (objetoCuadrante.datosInforme.computo) {
+                    gestionaColumnaCuadrante(null, 'suplente', true, columna, true, true, objetoCuadrante.datosCuadrante.tipoHorarioGeneral);
+                } else {
+                    setAlert({
+                        mensaje: "Para añadir trabajadores a un cuadrante debes elegir Tipo cómputo y Modo entrada datos en Configuración general cuadrante.",
+                        tipo: 'error'
+                    })
+                    setOpenSnack(true);
+                    return;
+                };
+            };
         }
         if (cuadranteRegistrado === 'si') {
             dispatch(activarDesactivarCambioBotonActualizarAccion(false));
@@ -1182,6 +1601,57 @@ const Cuadrantes = (props) => {
         let arrayCuadrante = [...cuadrante];
         let numTrabajadoresQuedanSinNombre = 0;
         let numTrabajadoresQuedanConNombre = 0;
+        let hayServiciosFijos=false;
+        for (const prop in losServiciosFijos) {
+            if (losServiciosFijos[prop] && prop === 'precioHora_TO') {                
+                hayServiciosFijos = true;
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_CR') {               
+                hayServiciosFijos = true;
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_CE') {                
+                hayServiciosFijos = true;
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_CI') {               
+                hayServiciosFijos = true;
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_MO') {               
+                hayServiciosFijos = true;
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_OF') {               
+                hayServiciosFijos = true;
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_AL') {                
+                hayServiciosFijos = true;
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_LA') {              
+                hayServiciosFijos = true;
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_TE') {             
+                hayServiciosFijos = true;
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_FI') {               
+                hayServiciosFijos = true;
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_FE') {            
+                hayServiciosFijos = true;
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_AB') {               
+                hayServiciosFijos = true;
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_MA') {               
+                hayServiciosFijos = true;
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_PO') {              
+                hayServiciosFijos = true;
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_BA') {               
+                hayServiciosFijos = true;
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_FT') {               
+                hayServiciosFijos = true;
+            };
+        };
 
         arrayCuadrante.forEach((elemento) => {
             if (elemento.tipoTrabajador === 'trabajador' && !elemento.nombreTrabajador) {
@@ -1206,7 +1676,7 @@ const Cuadrantes = (props) => {
             })
             setOpenSnack(true);
             return;
-        };
+        };        
         if (arrayCuadrante[columna].tipoTrabajador === 'trabajador') {
             const posicionTrabajador = trabajadoresEnCuadrante.indexOf(trabajadoresEnCuadrante.find(trabajador => trabajador.id === idTrabajador));
             if (arrayCuadrante[columna + 1] && arrayCuadrante[columna + 1].tipoTrabajador === 'suplente') {
@@ -1292,7 +1762,7 @@ const Cuadrantes = (props) => {
         if (cuadranteRegistrado === 'si') {
             dispatch(activarDesactivarCambioBotonActualizarAccion(false));
         };
-        setEstamosActualizandoCuadrante({ estado: true, columna: columna });
+        //setEstamosActualizandoCuadrante({ estado: true, columna: columna });
         dispatch(registrarIntervencionAccion(false));
     };
 
@@ -2113,84 +2583,6 @@ const Cuadrantes = (props) => {
         dispatch(registrarIntervencionAccion(false));
     };
 
-    const handleActualizarTrabajadoresGeneral = () => {
-        if (centroAGestionar.horario.tipoRegistro === 'individual') {
-            setOpenLoadingActualizandoCuadrante(true);
-        };
-        for (let i = cuadrante.length - 1; i >= 0; --i) {
-            if (!cuadrante[i].nombreTrabajador) {
-                if (cuadrante[i].nombreTrabajador === 'trabajador') {
-                    let posicionTrabajador = trabajadoresEnCuadrante.indexOf(trabajadoresEnCuadrante.find(trabajador => trabajador.id === cuadrante[i].idTrabajador));
-                    cuadrante.splice(i, 1);
-                    trabajadoresEnCuadrante.splice(posicionTrabajador, 1);
-                    if (centroAGestionar.horario.tipoRegistro === 'individual') {
-                        for (let i = 0; i < trabajadoresEnCuadrante.length; i++) {
-                            trabajadoresEnCuadrante[i]['laPosicionDelTrabajador'] = i + 1;
-                        };
-                    };
-                } else {
-                    let posicionSuplente = suplentesEnCuadrante.indexOf(suplentesEnCuadrante.find(suplente => suplente.id === cuadrante[i].idTrabajador));
-                    cuadrante.splice(i, 1);
-                    suplentesEnCuadrante.splice(posicionSuplente, 1);
-                    if (centroAGestionar.horario.tipoRegistro === 'individual') {
-                        for (let i = 0; i < suplentesEnCuadrante.length; i++) {
-                            let posicionSuplenteIndex = cuadrante.indexOf(cuadrante.find(suplente => suplente.idTrabajador === suplentesEnCuadrante[i].id));
-                            let idTrabajadorAnterior = cuadrante[posicionSuplenteIndex - 1].idTrabajador;
-                            let tipoTrabajadorAnterior = cuadrante[posicionSuplenteIndex - 1].tipoTrabajador;
-                            let posicionIdTrabajadorAnterior;
-                            if (tipoTrabajadorAnterior === 'trabajador') {
-                                posicionIdTrabajadorAnterior = trabajadoresEnCuadrante.indexOf(trabajadoresEnCuadrante.find(trabajador => trabajador.id === idTrabajadorAnterior));
-                                suplentesEnCuadrante[i]['laPosicionDelTrabajador'] = trabajadoresEnCuadrante[posicionIdTrabajadorAnterior]['laPosicionDelTrabajador'];
-                            } else {
-                                posicionIdTrabajadorAnterior = suplentesEnCuadrante.indexOf(suplentesEnCuadrante.find(suplente => suplente.id === idTrabajadorAnterior));
-                                suplentesEnCuadrante[i]['laPosicionDelTrabajador'] = suplentesEnCuadrante[posicionIdTrabajadorAnterior]['laPosicionDelTrabajador'];
-                            }
-                        };
-                    }
-                }
-            }
-        };
-        if (centroAGestionar.horario.tipoRegistro === 'individual') {
-            cuadrante.forEach((item, index) => {
-                setTimeout(
-                    function () {
-                        if (item.tipoTrabajador === 'trabajador') {
-                            if (index >= estamosActualizandoCuadrante.columna) {
-                                setEsUnaActualizacionTrabajador(true);
-                                setColumnaIndiceAGestionar(index);
-                                const posicionTrabajadorPrevioIndex = trabajadoresEnCuadrante.indexOf(trabajadoresEnCuadrante.find(trabajador => trabajador.id === item.idTrabajador));
-                                const posicionTrabajadorPrevio = trabajadoresEnCuadrante[posicionTrabajadorPrevioIndex].laPosicionDelTrabajador;
-                                setPosicionTrabajadorPrevioACambiar(posicionTrabajadorPrevio);
-                                setEsCambioTra(true);
-                                setEsInicioTra(false);
-                                dispatch(obtenerTrabajadorAccion('trabajadores', item.idTrabajador));
-                            }
-                        };
-                        if (item.tipoTrabajador === 'suplente') {
-                            if (index >= estamosActualizandoCuadrante.columna) {
-                                setEsUnaActualizacionTrabajador(true);
-                                setColumnaIndiceAGestionar(index);
-                                const posicionSuplentePrevioIndex = suplentesEnCuadrante.indexOf(suplentesEnCuadrante.find(suplente => suplente.id === item.idTrabajador));
-                                const posicionSuplentePrevio = suplentesEnCuadrante[posicionSuplentePrevioIndex].laPosicionDelTrabajador;
-                                setPosicionSuplentePrevioACambiar(posicionSuplentePrevio);
-                                setEsCambioSup(true);
-                                setEsInicioSup(false);
-                                dispatch(obtenerSuplenteAccion('trabajadores', item.idTrabajador));
-                            }
-                        };
-                        if (index + 1 === cuadrante.length) {
-                            setTimeout(() => {
-                                setOpenLoadingActualizandoCuadrante(false);
-                                setEstamosActualizandoCuadrante({ estado: false, columna: null });
-                            }, 500);
-                        };
-                    }, index * (index < estamosActualizandoCuadrante.columna ? 1 : 1500));
-            });
-        } else {
-            setEstamosActualizandoCuadrante({ estado: false, columna: null });
-        };
-    };
-
     const abrePopoverDias = (postRef, index, dia) => (e) => {
         setExpandedAccordion(false);
         scrollable.current.classList.add(classes.openAccordion);
@@ -2209,6 +2601,42 @@ const Cuadrantes = (props) => {
             lastEditado.current.classList.remove(classes.editando);
             setLastEditado(null);
         }
+    };
+
+    const abrePopoverServiciosFijos = () => (e) => {
+        setExpandedAccordion(false);
+        scrollable.current.classList.add(classes.openAccordion);
+        setAnchorElServiciosFijos(anchorElServiciosFijos ? null : e.currentTarget);
+    };
+
+    const handleClosePopoverServiciosFijos = () => {
+        if (itemPrevioEditandoServiciosFijos) {
+            if (itemPrevioEditandoServiciosFijos.modificado) {
+                setItemEditandoServiciosFijos(itemPrevioEditandoServiciosFijos);
+            };
+        };
+        setItemPrevioEditandoServiciosFijos(null);
+        dispatch(activarDesactivarCambioAccion(true));
+        setAnchorElServiciosFijos(null);
+        scrollable.current.classList.remove(classes.openAccordion);
+    };
+
+    const abrePopoverConfiguracion = () => (e) => {
+        setExpandedAccordion(false);
+        scrollable.current.classList.add(classes.openAccordion);
+        setAnchorElConfiguracion(anchorElConfiguracion ? null : e.currentTarget);
+    };
+
+    const handleClosePopoverConfiguracion = () => {
+        if (itemPrevioEditandoConfiguracion) {
+            if (itemPrevioEditandoConfiguracion.modificado) {
+                setItemEditandoConfiguracion(itemPrevioEditandoConfiguracion);
+            };
+        };
+        setItemPrevioEditandoConfiguracion(null);
+        dispatch(activarDesactivarCambioAccion(true));
+        setAnchorElConfiguracion(null);
+        scrollable.current.classList.remove(classes.openAccordion);
     };
 
     const abrePopoverGeneral = (postRef, indexDia, dia, columna, ref, indexColumna) => (e) => {
@@ -2450,8 +2878,7 @@ const Cuadrantes = (props) => {
                 arrayCuadrante[index][key].domingoInicio2RangoDescanso = laHoraInicio;
             }
         };
-        setItemPrevioEditando({ ...itemPrevioEditando, modificado: true })
-        //setCuadrante(arrayCuadrante);
+        setItemPrevioEditando({ ...itemPrevioEditando, modificado: true });
         dispatch(activarDesactivarCambioAccion(false));
     };
 
@@ -2553,7 +2980,6 @@ const Cuadrantes = (props) => {
             }
         };
         setItemPrevioEditando({ ...itemPrevioEditando, modificado: true });
-        //setCuadrante(arrayCuadrante);
         dispatch(activarDesactivarCambioAccion(false));
     };
 
@@ -2583,7 +3009,6 @@ const Cuadrantes = (props) => {
             arrayCuadrante[index][key].domingoCantidad = e.target.value;
         };
         setItemPrevioEditando({ ...itemPrevioEditando, modificado: true });
-        //setCuadrante(arrayCuadrante);
         dispatch(activarDesactivarCambioAccion(false));
     };
 
@@ -2593,7 +3018,6 @@ const Cuadrantes = (props) => {
         let arrayCuadrante = [...cuadrante];
         arrayCuadrante[index][key].observaciones = e.target.value;
         setItemPrevioEditando({ ...itemPrevioEditando, modificado: true });
-        //setCuadrante(arrayCuadrante);
         dispatch(activarDesactivarCambioAccion(false));
     };
 
@@ -2603,52 +3027,16 @@ const Cuadrantes = (props) => {
                 case 'LIM':
                     if (!objetoCuadrante.datosInforme.precioHora_L) {
                         setAlert({
-                            mensaje: "Debe asignarse un precio/hora para SERVICIO DE LIMPIEZA en la configuración del Centro para poder computar",
-                            tipo: 'warning'
-                        })
-                        setOpenSnack(true);
-                    }
-                    break;
-                case 'CRIS':
-                    if (!objetoCuadrante.datosInforme.precioHora_C) {
-                        setAlert({
-                            mensaje: "Debe asignarse un precio/hora para SERVICIO DE LIMPIEZA DE CRISTALES en la configuración del Centro para poder computar",
-                            tipo: 'warning'
-                        })
-                        setOpenSnack(true);
-                    }
-                    break;
-                case 'CRISE':
-                    if (!objetoCuadrante.datosInforme.precioHora_E) {
-                        setAlert({
-                            mensaje: "Debe asignarse un precio/hora para LIMPIEZA CRISTALES EXTERIORES en la configuración del Centro para poder computar",
-                            tipo: 'warning'
-                        })
-                        setOpenSnack(true);
-                    }
-                    break;
-                case 'CRISI':
-                    if (!objetoCuadrante.datosInforme.precioHora_I) {
-                        setAlert({
-                            mensaje: "Debe asignarse un precio/hora para LIMPIEZA CRISTALES INTERIORES en la configuración del Centro para poder computar",
+                            mensaje: "Debe asignarse un precio/hora para SERVICIO DE LIMPIEZA en la configuración del Centro o del Cuadranre para poder computar",
                             tipo: 'warning'
                         })
                         setOpenSnack(true);
                     }
                     break;
                 case 'LIME':
-                    if (!objetoCuadrante.datosInforme.precioHora_Z) {
+                    if (!objetoCuadrante.datosInforme.precioHora_E) {
                         setAlert({
-                            mensaje: "Debe asignarse un precio/hora para SERVICIO DE LIMPIEZA DE ESCALERA Y ZONAS COMUNES en la configuración del Centro para poder computar",
-                            tipo: 'warning'
-                        })
-                        setOpenSnack(true);
-                    }
-                    break;
-                case 'TOL':
-                    if (!objetoCuadrante.datosInforme.precioHora_T) {
-                        setAlert({
-                            mensaje: "Debe asignarse un precio/hora para SERVICIO DE LIMPIEZA DE TOLDOS en la configuración del Centro para poder computar",
+                            mensaje: "Debe asignarse un precio/hora para SERVICIO DE LIMPIEZA ESPECIAL en la configuración del Centro o del Cuadrante para poder computar",
                             tipo: 'warning'
                         })
                         setOpenSnack(true);
@@ -2657,7 +3045,52 @@ const Cuadrantes = (props) => {
                 case 'LIMP':
                     if (!objetoCuadrante.datosInforme.precioHora_P) {
                         setAlert({
-                            mensaje: "Debe asignarse un precio/hora para SERVICIO DE LIMPIEZA DEL PARKING en la configuración del Centro para poder computar",
+                            mensaje: "Debe asignarse un precio/hora para SERVICIO DE LIMPIEZA DEL PARKING en la configuración del Centro o del Cuadrante para poder computar",
+                            tipo: 'warning'
+                        })
+                        setOpenSnack(true);
+                    }
+                    break;
+                case 'NAVE2':
+                    if (!objetoCuadrante.datosInforme.precioHora_N) {
+                        setAlert({
+                            mensaje: "Debe asignarse un precio/hora para SERVICIO DE LIMPIEZA NAVE 2 en la configuración del Centro o del Cuadrante para poder computar",
+                            tipo: 'warning'
+                        })
+                        setOpenSnack(true);
+                    }
+                    break;
+                case 'REFZ':
+                    if (!objetoCuadrante.datosInforme.precioHora_R) {
+                        setAlert({
+                            mensaje: "Debe asignarse un precio/hora para SERVICIO DE LIMPIEZA REFUERZO en la configuración del Centro o del Cuadrante para poder computar",
+                            tipo: 'warning'
+                        })
+                        setOpenSnack(true);
+                    }
+                    break;
+                case 'LIM1':
+                    if (!objetoCuadrante.datosInforme.precioHora_L1) {
+                        setAlert({
+                            mensaje: "Debe asignarse un precio/hora para SERVICIO DE LIMPIEZA_1 en la configuración del Centro o del Cuadrante para poder computar",
+                            tipo: 'warning'
+                        })
+                        setOpenSnack(true);
+                    }
+                    break;
+                case 'LIM2':
+                    if (!objetoCuadrante.datosInforme.precioHora_L2) {
+                        setAlert({
+                            mensaje: "Debe asignarse un precio/hora para SERVICIO DE LIMPIEZA_2 en la configuración del Centro o del Cuadrante para poder computar",
+                            tipo: 'warning'
+                        })
+                        setOpenSnack(true);
+                    }
+                    break;
+                case 'FEST':
+                    if (!objetoCuadrante.datosInforme.precioHora_F) {
+                        setAlert({
+                            mensaje: "Debe asignarse un precio/hora para SERVICIO DE LIMPIEZA DÍA FESTIVO en la configuración del Centro o del Cuadrante para poder computar",
                             tipo: 'warning'
                         })
                         setOpenSnack(true);
@@ -2672,9 +3105,168 @@ const Cuadrantes = (props) => {
         let arrayCuadrante = [...cuadrante];
         arrayCuadrante[index][key].tipoServicio = e.target.value;
         setItemPrevioEditando({ ...itemPrevioEditando, modificado: true });
-        //setCuadrante(arrayCuadrante);
         dispatch(activarDesactivarCambioAccion(false));
+    };
 
+    const handleChangeFormConfiguracionCuadrante = (prop, e) => {
+        if (prop === "tipoHorario") {
+            setItemEditandoConfiguracion({ ...itemEditandoConfiguracion, [prop]: e.target.value });
+        };
+        if (prop === "computo" && e.target.value === 1) {
+            setItemEditandoConfiguracion({
+                ...itemEditandoConfiguracion,
+                [prop]: e.target.value,
+                precioHora_L: '',
+                precioHora_E: '',
+                precioHora_P: '',
+                precioHora_N: '',
+                precioHora_R: '',
+                precioHora_L1: '',
+                precioHora_L2: '',
+                precioHora_F: ''
+            });
+        };
+        if (prop === "computo" && e.target.value === 2) {
+            setItemEditandoConfiguracion({
+                ...itemEditandoConfiguracion,
+                [prop]: e.target.value,
+                mensualPactado: ''
+            });
+        };
+        if (prop === "computo" && e.target.value === 3) {
+            setItemEditandoConfiguracion({
+                ...itemEditandoConfiguracion,
+                [prop]: e.target.value
+            });
+        };
+        if (prop === "mensualPactado" ||
+            prop === "precioHora_L" ||
+            prop === "precioHora_E" ||
+            prop === "precioHora_P" ||
+            prop === "precioHora_N" ||
+            prop === "precioHora_R" ||
+            prop === "precioHora_L1" ||
+            prop === "precioHora_L2" ||
+            prop === "precioHora_F"
+        ) {
+            if (IsNumeric(e.target.value)) {
+                setItemEditandoConfiguracion({ ...itemEditandoConfiguracion, [prop]: e.target.value });
+            };
+        };
+        setItemPrevioEditandoConfiguracion({ ...itemPrevioEditandoConfiguracion, modificado: true });
+        dispatch(activarDesactivarCambioAccion(false));
+    };
+
+    const handleChangeFormConfiguracionServiciosFijos = (tipo, prop, e) => {
+        let losServicios = { ...itemEditandoServiciosFijos.servicios };
+        let losEstados = { ...itemEditandoServiciosFijos.switch };
+        if (tipo === "switch") {
+            if (e.target.name.includes('TO')) {
+                if (!e.target.checked) {
+                    losServicios['precioHora_TO'] = '';
+                };
+                losEstados['TO'] = e.target.checked;
+            };
+            if (e.target.name.includes('CR')) {
+                if (!e.target.checked) {
+                    losServicios['precioHora_CR'] = '';
+                };
+                losEstados['CR'] = e.target.checked;
+            };
+            if (e.target.name.includes('CE')) {
+                if (!e.target.checked) {
+                    losServicios['precioHora_CE'] = '';
+                };
+                losEstados['CE'] = e.target.checked;
+            };
+            if (e.target.name.includes('CI')) {
+                if (!e.target.checked) {
+                    losServicios['precioHora_CI'] = '';
+                };
+                losEstados['CI'] = e.target.checked;
+            };
+            if (e.target.name.includes('MO')) {
+                if (!e.target.checked) {
+                    losServicios['precioHora_MO'] = '';
+                };
+                losEstados['MO'] = e.target.checked;
+            };
+            if (e.target.name.includes('OF')) {
+                if (!e.target.checked) {
+                    losServicios['precioHora_OF'] = '';
+                };
+                losEstados['OF'] = e.target.checked;
+            };
+            if (e.target.name.includes('AL')) {
+                if (!e.target.checked) {
+                    losServicios['precioHora_AL'] = '';
+                };
+                losEstados['AL'] = e.target.checked;
+            };
+            if (e.target.name.includes('LA')) {
+                if (!e.target.checked) {
+                    losServicios['precioHora_LA'] = '';
+                };
+                losEstados['LA'] = e.target.checked;
+            };
+            if (e.target.name.includes('TE')) {
+                if (!e.target.checked) {
+                    losServicios['precioHora_TE'] = '';
+                };
+                losEstados['TE'] = e.target.checked;
+            };
+            if (e.target.name.includes('FI')) {
+                if (!e.target.checked) {
+                    losServicios['precioHora_FI'] = '';
+                };
+                losEstados['FI'] = e.target.checked;
+            };
+            if (e.target.name.includes('FE')) {
+                if (!e.target.checked) {
+                    losServicios['precioHora_FE'] = '';
+                };
+                losEstados['FE'] = e.target.checked;
+            };
+            if (e.target.name.includes('AB')) {
+                if (!e.target.checked) {
+                    losServicios['precioHora_AB'] = '';
+                };
+                losEstados['AB'] = e.target.checked;
+            };
+            if (e.target.name.includes('MA')) {
+                if (!e.target.checked) {
+                    losServicios['precioHora_MA'] = '';
+                };
+                losEstados['MA'] = e.target.checked;
+            };
+            if (e.target.name.includes('PO')) {
+                if (!e.target.checked) {
+                    losServicios['precioHora_PO'] = '';
+                };
+                losEstados['PO'] = e.target.checked;
+            };
+            if (e.target.name.includes('BA')) {
+                if (!e.target.checked) {
+                    losServicios['precioHora_BA'] = '';
+                };
+                losEstados['BA'] = e.target.checked;
+            };
+            if (e.target.name.includes('FT')) {
+                if (!e.target.checked) {
+                    losServicios['precioHora_FT'] = '';
+                };
+                losEstados['FT'] = e.target.checked;
+            };
+            setItemEditandoServiciosFijos({ switch: losEstados, servicios: losServicios });
+        };
+        if (tipo === "input") {
+            if (IsNumeric(e.target.value)) {
+                losServicios[prop] = e.target.value;
+                setItemEditandoServiciosFijos({ ...itemEditandoServiciosFijos, servicios: losServicios });
+            }
+        };
+        setItemPrevioEditandoServiciosFijos({ ...itemPrevioEditandoServiciosFijos, modificado: true });
+        dispatch(activarDesactivarCambioAccion(false));
     };
 
     const gestionItemPrevioEditando = (tipo, valores) => {
@@ -3678,7 +4270,147 @@ const Cuadrantes = (props) => {
             dispatch(activarDesactivarCambioBotonActualizarAccion(false));
         };
         dispatch(registrarIntervencionAccion(false));
-        //handleClosePopoverGeneral();
+    };
+
+    const gestionItemPrevioEditandoServiciosFijos = (valores) => {
+        setItemPrevioEditandoServiciosFijos({
+            switch: valores.switch,
+            servicios: valores.servicios
+        });
+    };
+
+    const handleRegistrarCambioEnCasillaServiciosFijos = () => {
+        if ((itemEditandoServiciosFijos.switch.TO && !itemEditandoServiciosFijos.servicios.precioHora_TO) ||
+            (itemEditandoServiciosFijos.switch.CR && !itemEditandoServiciosFijos.servicios.precioHora_CR) ||
+            (itemEditandoServiciosFijos.switch.CE && !itemEditandoServiciosFijos.servicios.precioHora_CE) ||
+            (itemEditandoServiciosFijos.switch.CI && !itemEditandoServiciosFijos.servicios.precioHora_CI) ||
+            (itemEditandoServiciosFijos.switch.MO && !itemEditandoServiciosFijos.servicios.precioHora_MO) ||
+            (itemEditandoServiciosFijos.switch.OF && !itemEditandoServiciosFijos.servicios.precioHora_OF) ||
+            (itemEditandoServiciosFijos.switch.AL && !itemEditandoServiciosFijos.servicios.precioHora_AL) ||
+            (itemEditandoServiciosFijos.switch.LA && !itemEditandoServiciosFijos.servicios.precioHora_LA) ||
+            (itemEditandoServiciosFijos.switch.TE && !itemEditandoServiciosFijos.servicios.precioHora_TE) ||
+            (itemEditandoServiciosFijos.switch.FI && !itemEditandoServiciosFijos.servicios.precioHora_FI) ||
+            (itemEditandoServiciosFijos.switch.FE && !itemEditandoServiciosFijos.servicios.precioHora_FE) ||
+            (itemEditandoServiciosFijos.switch.AB && !itemEditandoServiciosFijos.servicios.precioHora_AB) ||
+            (itemEditandoServiciosFijos.switch.MA && !itemEditandoServiciosFijos.servicios.precioHora_MA) ||
+            (itemEditandoServiciosFijos.switch.PO && !itemEditandoServiciosFijos.servicios.precioHora_PO) ||
+            (itemEditandoServiciosFijos.switch.BA && !itemEditandoServiciosFijos.servicios.precioHora_BA) ||
+            (itemEditandoServiciosFijos.switch.FT && !itemEditandoServiciosFijos.servicios.precioHora_FT)) {
+            setAlert({
+                mensaje: "Alguno de los servicios fijos seleccionados no tiene precio. Revisa el formulario.",
+                tipo: 'error'
+            })
+            setOpenSnack(true);
+            return;
+        };
+        setLosServiciosFijos({
+            precioHora_TO: itemEditandoServiciosFijos.servicios.precioHora_TO ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_TO) : null,
+            precioHora_CR: itemEditandoServiciosFijos.servicios.precioHora_CR ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CR) : null,
+            precioHora_CE: itemEditandoServiciosFijos.servicios.precioHora_CE ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CE) : null,
+            precioHora_CI: itemEditandoServiciosFijos.servicios.precioHora_CI ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CI) : null,
+            precioHora_MO: itemEditandoServiciosFijos.servicios.precioHora_MO ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_MO) : null,
+            precioHora_OF: itemEditandoServiciosFijos.servicios.precioHora_OF ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_OF) : null,
+            precioHora_AL: itemEditandoServiciosFijos.servicios.precioHora_AL ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_AL) : null,
+            precioHora_LA: itemEditandoServiciosFijos.servicios.precioHora_LA ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_LA) : null,
+            precioHora_TE: itemEditandoServiciosFijos.servicios.precioHora_TE ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_TE) : null,
+            precioHora_FI: itemEditandoServiciosFijos.servicios.precioHora_FI ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FI) : null,
+            precioHora_FE: itemEditandoServiciosFijos.servicios.precioHora_FE ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FE) : null,
+            precioHora_AB: itemEditandoServiciosFijos.servicios.precioHora_AB ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_AB) : null,
+            precioHora_MA: itemEditandoServiciosFijos.servicios.precioHora_MA ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_MA) : null,
+            precioHora_PO: itemEditandoServiciosFijos.servicios.precioHora_PO ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_PO) : null,
+            precioHora_BA: itemEditandoServiciosFijos.servicios.precioHora_BA ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_BA) : null,
+            precioHora_FT: itemEditandoServiciosFijos.servicios.precioHora_FT ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FT) : null,
+        });
+        setStateSwitchTipoServicioFijoCuadrante(itemEditandoServiciosFijos.switch);
+        setItemPrevioEditandoServiciosFijos(null);
+        dispatch(activarDesactivarCambioAccion(true));
+        if (cuadranteRegistrado === 'si') {
+            dispatch(activarDesactivarCambioBotonActualizarAccion(false));
+        };
+        dispatch(registrarIntervencionAccion(false));
+    };
+
+    const gestionItemPrevioEditandoConfiguracion = (valores) => {
+        setItemPrevioEditandoConfiguracion(valores);
+    };
+
+    const handleRegistrarCambioEnCasillaConfiguracion = () => {
+        if (!itemEditandoConfiguracion.computo || !itemEditandoConfiguracion.tipoHorario) {
+            setAlert({
+                mensaje: "Para registrar debes elegir Modo entrada datos y Tipo cómputo. Revisa el formulario.",
+                tipo: 'error'
+            })
+            setOpenSnack(true);
+            return;
+        };
+        if ((itemEditandoConfiguracion.computo === 1 && !itemEditandoConfiguracion.mensualPactado) ||
+            (itemEditandoConfiguracion.computo === 2 && (
+                !itemEditandoConfiguracion.precioHora_L &&
+                !itemEditandoConfiguracion.precioHora_E &&
+                !itemEditandoConfiguracion.precioHora_P &&
+                !itemEditandoConfiguracion.precioHora_N &&
+                !itemEditandoConfiguracion.precioHora_R &&
+                !itemEditandoConfiguracion.precioHora_L1 &&
+                !itemEditandoConfiguracion.precioHora_L2 &&
+                !itemEditandoConfiguracion.precioHora_F)) ||
+            (itemEditandoConfiguracion.computo === 3 && (
+                !itemEditandoConfiguracion.precioHora_L &&
+                !itemEditandoConfiguracion.precioHora_E &&
+                !itemEditandoConfiguracion.precioHora_P &&
+                !itemEditandoConfiguracion.precioHora_N &&
+                !itemEditandoConfiguracion.precioHora_R &&
+                !itemEditandoConfiguracion.precioHora_L1 &&
+                !itemEditandoConfiguracion.precioHora_L2 &&
+                !itemEditandoConfiguracion.precioHora_F &&
+                !itemEditandoConfiguracion.mensualPactado))) {
+            setAlert({
+                mensaje: "Faltan datos por completar. Revisa el cómputo de horas en el formulario.",
+                tipo: 'error'
+            })
+            setOpenSnack(true);
+            return;
+        };
+        if (itemEditandoConfiguracion.computo === 3 && ((
+            itemEditandoConfiguracion.precioHora_L ||
+            itemEditandoConfiguracion.precioHora_E ||
+            itemEditandoConfiguracion.precioHora_P ||
+            itemEditandoConfiguracion.precioHora_N ||
+            itemEditandoConfiguracion.precioHora_R ||
+            itemEditandoConfiguracion.precioHora_L1 ||
+            itemEditandoConfiguracion.precioHora_L2 ||
+            itemEditandoConfiguracion.precioHora_F) && itemEditandoConfiguracion.mensualPactado)) {
+            setAlert({
+                mensaje: "Revisa el formulario, solo puede haber un tipo de cómputo de horas.",
+                tipo: 'error'
+            })
+            setOpenSnack(true);
+            return;
+        };
+        const losDatosInforme = {
+            ...objetoCuadrante.datosInforme,
+            computo: parseFloat(itemEditandoConfiguracion.computo),
+            mensualPactado: itemEditandoConfiguracion.mensualPactado ? parseFloat(itemEditandoConfiguracion.mensualPactado) : null,
+            precioHora_L: itemEditandoConfiguracion.precioHora_L ? parseFloat(itemEditandoConfiguracion.precioHora_L) : null,
+            precioHora_E: itemEditandoConfiguracion.precioHora_E ? parseFloat(itemEditandoConfiguracion.precioHora_E) : null,
+            precioHora_P: itemEditandoConfiguracion.precioHora_P ? parseFloat(itemEditandoConfiguracion.precioHora_P) : null,
+            precioHora_N: itemEditandoConfiguracion.precioHora_N ? parseFloat(itemEditandoConfiguracion.precioHora_N) : null,
+            precioHora_R: itemEditandoConfiguracion.precioHora_R ? parseFloat(itemEditandoConfiguracion.precioHora_R) : null,
+            precioHora_L1: itemEditandoConfiguracion.precioHora_L1 ? parseFloat(itemEditandoConfiguracion.precioHora_L1) : null,
+            precioHora_L2: itemEditandoConfiguracion.precioHora_L2 ? parseFloat(itemEditandoConfiguracion.precioHora_L2) : null,
+            precioHora_F: itemEditandoConfiguracion.precioHora_F ? parseFloat(itemEditandoConfiguracion.precioHora_F) : null
+        }
+        const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, tipoHorarioGeneral: itemEditandoConfiguracion.tipoHorario, arrayCuadrante: cuadrante };
+        dispatch(actualizarObjetoCuadranteAccion({
+            ...objetoCuadrante,
+            datosCuadrante: losDatosCuadrante,
+            datosInforme: losDatosInforme
+        }));
+        setItemPrevioEditandoConfiguracion(null);
+        dispatch(activarDesactivarCambioAccion(true));
+        if (cuadranteRegistrado === 'si') {
+            dispatch(activarDesactivarCambioBotonActualizarAccion(false));
+        };
+        dispatch(registrarIntervencionAccion(false));
     };
 
     const retornaIconoVariacion = (columna, postRef, diaSemana) => {
@@ -3835,7 +4567,7 @@ const Cuadrantes = (props) => {
         }
 
     };
-
+    
     const procesarDatosCuadrante = (source, totalFacturado) => {
         handleCloseMenu();
         //revisamos que el cuadrante no esté a 0
@@ -3845,9 +4577,97 @@ const Cuadrantes = (props) => {
                 sumatorioHoras += dato.totalHoras;
             });
         }
-        if (sumatorioHoras < 1) {
+        let hayServiciosFijos = false;
+        let objetoFinalServiciosFijos = {
+            objeto: 'serviciosFijos',
+            servicio: []
+        };
+        let sumatorioServiciosFijos = 0;
+        for (const prop in losServiciosFijos) {
+            if (losServiciosFijos[prop] && prop === 'precioHora_TO') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'TOL', precioHora_TO: parseFloat(losServiciosFijos[prop]) });
+                hayServiciosFijos = true;
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_CR') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'CRIS', precioHora_CR: parseFloat(losServiciosFijos[prop]) });
+                hayServiciosFijos = true;
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_CE') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'CRISE', precioHora_CE: parseFloat(losServiciosFijos[prop]) });
+                hayServiciosFijos = true;
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_CI') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'CRISI', precioHora_CI: parseFloat(losServiciosFijos[prop]) });
+                hayServiciosFijos = true;
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_MO') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'MOQ', precioHora_MO: parseFloat(losServiciosFijos[prop]) });
+                hayServiciosFijos = true;
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_OF') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'OF', precioHora_OF: parseFloat(losServiciosFijos[prop]) });
+                hayServiciosFijos = true;
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_AL') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'ALMC', precioHora_AL: parseFloat(losServiciosFijos[prop]) });
+                hayServiciosFijos = true;
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_LA') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'LAB', precioHora_LA: parseFloat(losServiciosFijos[prop]) });
+                hayServiciosFijos = true;
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_TE') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'TELÑ', precioHora_TE: parseFloat(losServiciosFijos[prop]) });
+                hayServiciosFijos = true;
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_FI') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'FCH.IN', precioHora_FI: parseFloat(losServiciosFijos[prop]) });
+                hayServiciosFijos = true;
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_FE') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'FCH.EX', precioHora_FE: parseFloat(losServiciosFijos[prop]) });
+                hayServiciosFijos = true;
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_AB') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'ABRLL', precioHora_AB: parseFloat(losServiciosFijos[prop]) });
+                hayServiciosFijos = true;
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_MA') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'MANT', precioHora_MA: parseFloat(losServiciosFijos[prop]) });
+                hayServiciosFijos = true;
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_PO') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'PORT', precioHora_PO: parseFloat(losServiciosFijos[prop]) });
+                hayServiciosFijos = true;
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_BA') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'BACT', precioHora_BA: parseFloat(losServiciosFijos[prop]) });
+                hayServiciosFijos = true;
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_FT') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'FEST', precioHora_FT: parseFloat(losServiciosFijos[prop]) });
+                hayServiciosFijos = true;
+            };
+        };
+        if (sumatorioHoras < 1 && !hayServiciosFijos) {
             setAlert({
-                mensaje: "El cuadrante no se puede registrar a 0. El trabajador asignado está de baja, añade un suplente o un trabajador para computar.",
+                mensaje: "El cuadrante no se puede registrar a 0. El trabajador asignado está de baja, añade un suplente o un trabajador para computar o añade servicios fijos.",
                 tipo: 'error'
             })
             setOpenSnack(true);
@@ -3860,8 +4680,9 @@ const Cuadrantes = (props) => {
 
         //revisamos que no haya columnas vacías
         for (let i = cuadrante.length - 1; i >= 0; --i) {
-            if (!cuadrante[i].nombreTrabajador) {
+            if (!cuadrante[i].nombreTrabajador || arrayDatosInforme[i].totalHoras === 0) {
                 cuadrante.splice(i, 1);
+                arrayDatosInforme.splice(i, 1);
             }
         };
         setTrabajadoresEnCuadrante([]);
@@ -3871,15 +4692,16 @@ const Cuadrantes = (props) => {
         setEsInicioTra(true);
         setEsInicioSup(true);
 
-        const { sumatorioHoras_L, sumatorioHoras_C, sumatorioHoras_E, sumatorioHoras_I, sumatorioHoras_Z, sumatorioHoras_T, sumatorioHoras_P, sumatorioTotal } = calculoTotalHoras();
+        const { sumatorioHoras_L, sumatorioHoras_E, sumatorioHoras_P, sumatorioHoras_N, sumatorioHoras_R, sumatorioHoras_L1, sumatorioHoras_L2, sumatorioHoras_F, sumatorioTotal } = calculoTotalHoras();
         let elTotalAAFacturar_M = null;
         let elTotalAAFacturar_L = null;
-        let elTotalAAFacturar_C = null;
         let elTotalAAFacturar_E = null;
-        let elTotalAAFacturar_I = null;
-        let elTotalAAFacturar_Z = null;
-        let elTotalAAFacturar_T = null;
         let elTotalAAFacturar_P = null;
+        let elTotalAAFacturar_N = null;
+        let elTotalAAFacturar_R = null;
+        let elTotalAAFacturar_L1 = null;
+        let elTotalAAFacturar_L2 = null;
+        let elTotalAAFacturar_F = null;
         let elTotalAAFacturarTotal = null;
 
         if (objetoCuadrante.datosInforme.computo === 1) {
@@ -3890,25 +4712,35 @@ const Cuadrantes = (props) => {
             if (sumatorioHoras_L) {
                 elTotalAAFacturar_L = parseFloat(objetoCuadrante.datosInforme.precioHora_L * sumatorioHoras_L);
             };
-            if (sumatorioHoras_C) {
-                elTotalAAFacturar_C = parseFloat(objetoCuadrante.datosInforme.precioHora_C * sumatorioHoras_C);
-            };
             if (sumatorioHoras_E) {
                 elTotalAAFacturar_E = parseFloat(objetoCuadrante.datosInforme.precioHora_E * sumatorioHoras_E);
-            };
-            if (sumatorioHoras_I) {
-                elTotalAAFacturar_I = parseFloat(objetoCuadrante.datosInforme.precioHora_I * sumatorioHoras_I);
-            };
-            if (sumatorioHoras_Z) {
-                elTotalAAFacturar_Z = parseFloat(objetoCuadrante.datosInforme.precioHora_Z * sumatorioHoras_Z);
-            };
-            if (sumatorioHoras_T) {
-                elTotalAAFacturar_T = parseFloat(objetoCuadrante.datosInforme.precioHora_T * sumatorioHoras_T);
             };
             if (sumatorioHoras_P) {
                 elTotalAAFacturar_P = parseFloat(objetoCuadrante.datosInforme.precioHora_P * sumatorioHoras_P);
             };
-            elTotalAAFacturarTotal = parseFloat((objetoCuadrante.datosInforme.precioHora_L * sumatorioHoras_L) + (objetoCuadrante.datosInforme.precioHora_C * sumatorioHoras_C) + (objetoCuadrante.datosInforme.precioHora_E * sumatorioHoras_E) + (objetoCuadrante.datosInforme.precioHora_I * sumatorioHoras_I) + (objetoCuadrante.datosInforme.precioHora_Z * sumatorioHoras_Z) + (objetoCuadrante.datosInforme.precioHora_T * sumatorioHoras_T) + (objetoCuadrante.datosInforme.precioHora_P * sumatorioHoras_P));
+            if (sumatorioHoras_N) {
+                elTotalAAFacturar_N = parseFloat(objetoCuadrante.datosInforme.precioHora_N * sumatorioHoras_N);
+            };
+            if (sumatorioHoras_R) {
+                elTotalAAFacturar_R = parseFloat(objetoCuadrante.datosInforme.precioHora_R * sumatorioHoras_R);
+            };
+            if (sumatorioHoras_L1) {
+                elTotalAAFacturar_L1 = parseFloat(objetoCuadrante.datosInforme.precioHora_L1 * sumatorioHoras_L1);
+            };
+            if (sumatorioHoras_L2) {
+                elTotalAAFacturar_L2 = parseFloat(objetoCuadrante.datosInforme.precioHora_L2 * sumatorioHoras_L2);
+            };
+            if (sumatorioHoras_F) {
+                elTotalAAFacturar_F = parseFloat(objetoCuadrante.datosInforme.precioHora_F * sumatorioHoras_F);
+            };
+            elTotalAAFacturarTotal = parseFloat((objetoCuadrante.datosInforme.precioHora_L * sumatorioHoras_L) +
+                (objetoCuadrante.datosInforme.precioHora_E * sumatorioHoras_E) +
+                (objetoCuadrante.datosInforme.precioHora_P * sumatorioHoras_P) +
+                (objetoCuadrante.datosInforme.precioHora_N * sumatorioHoras_N) +
+                (objetoCuadrante.datosInforme.precioHora_R * sumatorioHoras_R) +
+                (objetoCuadrante.datosInforme.precioHora_L1 * sumatorioHoras_L1) +
+                (objetoCuadrante.datosInforme.precioHora_L2 * sumatorioHoras_L2) +
+                (objetoCuadrante.datosInforme.precioHora_F * sumatorioHoras_F));
         };
         if (objetoCuadrante.datosInforme.computo === 3) {
             if (objetoCuadrante.datosInforme.mensualPactado) {
@@ -3918,78 +4750,114 @@ const Cuadrantes = (props) => {
                 if (sumatorioHoras_L) {
                     elTotalAAFacturar_L = parseFloat(objetoCuadrante.datosInforme.precioHora_L * sumatorioHoras_L);
                 };
-                if (sumatorioHoras_C) {
-                    elTotalAAFacturar_C = parseFloat(objetoCuadrante.datosInforme.precioHora_C * sumatorioHoras_C);
-                };
                 if (sumatorioHoras_E) {
                     elTotalAAFacturar_E = parseFloat(objetoCuadrante.datosInforme.precioHora_E * sumatorioHoras_E);
-                };
-                if (sumatorioHoras_I) {
-                    elTotalAAFacturar_I = parseFloat(objetoCuadrante.datosInforme.precioHora_I * sumatorioHoras_I);
-                };
-                if (sumatorioHoras_Z) {
-                    elTotalAAFacturar_Z = parseFloat(objetoCuadrante.datosInforme.precioHora_Z * sumatorioHoras_Z);
-                };
-                if (sumatorioHoras_T) {
-                    elTotalAAFacturar_T = parseFloat(objetoCuadrante.datosInforme.precioHora_T * sumatorioHoras_T);
                 };
                 if (sumatorioHoras_P) {
                     elTotalAAFacturar_P = parseFloat(objetoCuadrante.datosInforme.precioHora_P * sumatorioHoras_P);
                 };
-                elTotalAAFacturarTotal = parseFloat((objetoCuadrante.datosInforme.precioHora_L * sumatorioHoras_L) + (objetoCuadrante.datosInforme.precioHora_C * sumatorioHoras_C) + (objetoCuadrante.datosInforme.precioHora_E * sumatorioHoras_E) + (objetoCuadrante.datosInforme.precioHora_I * sumatorioHoras_I) + (objetoCuadrante.datosInforme.precioHora_Z * sumatorioHoras_Z) + (objetoCuadrante.datosInforme.precioHora_T * sumatorioHoras_T) + (objetoCuadrante.datosInforme.precioHora_P * sumatorioHoras_P));
+                if (sumatorioHoras_N) {
+                    elTotalAAFacturar_N = parseFloat(objetoCuadrante.datosInforme.precioHora_N * sumatorioHoras_N);
+                };
+                if (sumatorioHoras_R) {
+                    elTotalAAFacturar_R = parseFloat(objetoCuadrante.datosInforme.precioHora_R * sumatorioHoras_R);
+                };
+                if (sumatorioHoras_L1) {
+                    elTotalAAFacturar_L1 = parseFloat(objetoCuadrante.datosInforme.precioHora_L1 * sumatorioHoras_L1);
+                };
+                if (sumatorioHoras_L2) {
+                    elTotalAAFacturar_L2 = parseFloat(objetoCuadrante.datosInforme.precioHora_L2 * sumatorioHoras_L2);
+                };
+                if (sumatorioHoras_F) {
+                    elTotalAAFacturar_F = parseFloat(objetoCuadrante.datosInforme.precioHora_F * sumatorioHoras_F);
+                };
+                elTotalAAFacturarTotal = parseFloat((objetoCuadrante.datosInforme.precioHora_L * sumatorioHoras_L) +
+                    (objetoCuadrante.datosInforme.precioHora_E * sumatorioHoras_E) +
+                    (objetoCuadrante.datosInforme.precioHora_P * sumatorioHoras_P) +
+                    (objetoCuadrante.datosInforme.precioHora_N * sumatorioHoras_N) +
+                    (objetoCuadrante.datosInforme.precioHora_R * sumatorioHoras_R) +
+                    (objetoCuadrante.datosInforme.precioHora_L1 * sumatorioHoras_L1) +
+                    (objetoCuadrante.datosInforme.precioHora_L2 * sumatorioHoras_L2) +
+                    (objetoCuadrante.datosInforme.precioHora_F * sumatorioHoras_F));
+            };
+        };
+        let objetoFinalCuadrante, objetoFinalInforme, objetoFinalHoras;
+        let hayInforme = true;
+        let hayHoras = true;
+        if (cuadrante.length === 0) {
+            objetoFinalCuadrante = {
+                ...objetoCuadrante,
+                datosCuadrante: {
+                    objeto: 'cuadrante',
+                    centro: objetoCuadrante.datosCuadrante.centro,
+                    tipoHorarioGeneral: objetoCuadrante.datosCuadrante.tipoHorarioGeneral,
+                    arrayCuadrante: []
+                }
+            };
+            objetoFinalInforme = null;
+            objetoFinalHoras = null;
+            hayInforme = false;
+            hayHoras = false;
+        } else {
+            objetoFinalCuadrante = {
+                ...objetoCuadrante,
+                datosCuadrante: {
+                    objeto: 'cuadrante',
+                    centro: objetoCuadrante.datosCuadrante.centro,
+                    tipoHorarioGeneral: objetoCuadrante.datosCuadrante.tipoHorarioGeneral,
+                    arrayCuadrante: dispatch(limpiarCuadranteAccion(cuadrante))
+                }
+            };
+            objetoFinalInforme = {
+                objeto: 'informe',
+                centro: objetoCuadrante.datosInforme.centro,
+                computo: objetoCuadrante.datosInforme.computo,
+                mensualPactado: objetoCuadrante.datosInforme.mensualPactado,
+                precioHora_L: objetoCuadrante.datosInforme.precioHora_L,
+                precioHora_E: objetoCuadrante.datosInforme.precioHora_E,
+                precioHora_P: objetoCuadrante.datosInforme.precioHora_P,
+                precioHora_N: objetoCuadrante.datosInforme.precioHora_N,
+                precioHora_R: objetoCuadrante.datosInforme.precioHora_R,
+                precioHora_L1: objetoCuadrante.datosInforme.precioHora_L1,
+                precioHora_L2: objetoCuadrante.datosInforme.precioHora_L2,
+                precioHora_F: objetoCuadrante.datosInforme.precioHora_F,
+                arrayTrabajadores: arrayDatosInforme,
+                totalFacturado_M: elTotalAAFacturar_M,
+                totalFacturado_L: elTotalAAFacturar_L,
+                totalFacturado_E: elTotalAAFacturar_E,
+                totalFacturado_P: elTotalAAFacturar_P,
+                totalFacturado_N: elTotalAAFacturar_N,
+                totalFacturado_R: elTotalAAFacturar_R,
+                totalFacturado_L1: elTotalAAFacturar_L1,
+                totalFacturado_L2: elTotalAAFacturar_L2,
+                totalFacturado_F: elTotalAAFacturar_F,
+            };
+            objetoFinalHoras = {
+                objeto: 'horas',
+                M: objetoCuadrante.datosInforme.mensualPactado ? 1 : null,
+                L: sumatorioHoras_L ? sumatorioHoras_L : null,
+                E: sumatorioHoras_E ? sumatorioHoras_E : null,
+                P: sumatorioHoras_P ? sumatorioHoras_P : null,
+                N: sumatorioHoras_N ? sumatorioHoras_N : null,
+                R: sumatorioHoras_R ? sumatorioHoras_R : null,
+                L1: sumatorioHoras_L1 ? sumatorioHoras_L1 : null,
+                L2: sumatorioHoras_L2 ? sumatorioHoras_L2 : null,
+                F: sumatorioHoras_F ? sumatorioHoras_F : null
             };
         };
 
-        const objetoFinalCuadrante = {
-            ...objetoCuadrante,
-            datosCuadrante: {
-                objeto: 'cuadrante',
-                centro: objetoCuadrante.datosCuadrante.centro,
-                arrayCuadrante: cuadrante
-            }
-        };
-        const objetoFinalInforme = {
-            objeto: 'informe',
-            centro: objetoCuadrante.datosInforme.centro,
-            computo: objetoCuadrante.datosInforme.computo,
-            mensualPactado: objetoCuadrante.datosInforme.mensualPactado,
-            precioHora_L: objetoCuadrante.datosInforme.precioHora_L,
-            precioHora_C: objetoCuadrante.datosInforme.precioHora_C,
-            precioHora_E: objetoCuadrante.datosInforme.precioHora_E,
-            precioHora_I: objetoCuadrante.datosInforme.precioHora_I,
-            precioHora_Z: objetoCuadrante.datosInforme.precioHora_Z,
-            precioHora_T: objetoCuadrante.datosInforme.precioHora_T,
-            precioHora_P: objetoCuadrante.datosInforme.precioHora_P,
-            arrayTrabajadores: arrayDatosInforme,
-            totalFacturado_M: elTotalAAFacturar_M,
-            totalFacturado_L: elTotalAAFacturar_L,
-            totalFacturado_C: elTotalAAFacturar_C,
-            totalFacturado_E: elTotalAAFacturar_E,
-            totalFacturado_I: elTotalAAFacturar_I,
-            totalFacturado_Z: elTotalAAFacturar_Z,
-            totalFacturado_T: elTotalAAFacturar_T,
-            totalFacturado_P: elTotalAAFacturar_P,
-        };
-        const objetoFinalHoras = {
-            objeto: 'horas',
-            M: objetoCuadrante.datosInforme.mensualPactado ? 1 : null,
-            L: sumatorioHoras_L ? sumatorioHoras_L : null,
-            C: sumatorioHoras_C ? sumatorioHoras_C : null,
-            E: sumatorioHoras_E ? sumatorioHoras_E : null,
-            I: sumatorioHoras_I ? sumatorioHoras_I : null,
-            Z: sumatorioHoras_Z ? sumatorioHoras_Z : null,
-            T: sumatorioHoras_T ? sumatorioHoras_T : null,
-            P: sumatorioHoras_P ? sumatorioHoras_P : null
-        };
+        elTotalAAFacturarTotal += sumatorioServiciosFijos;
+
         const cuadranteAGuardar = {
             id: objetoCuadrante.id,
             nombre: objetoCuadrante.nombre,
             actualizacion: laFirmaActualizacion,
             datos_cuadrante: JSON.stringify(objetoFinalCuadrante.datosCuadrante),
-            datos_informe: JSON.stringify(objetoFinalInforme),
+            datos_servicios: hayServiciosFijos ? JSON.stringify(objetoFinalServiciosFijos) : null,
+            datos_informe: hayInforme ? JSON.stringify(objetoFinalInforme) : null,
             estado: source === 'informe' ? 'facturado' : objetoCuadrante.estado,
             total: source === 'informe' ? elTotalAAFacturarTotal : objetoCuadrante.estado === 'facturado' ? elTotalAAFacturarTotal : null,
-            horas: JSON.stringify(objetoFinalHoras)
+            horas: hayHoras ? JSON.stringify(objetoFinalHoras) : null
         };
         if (cuadranteRegistrado === 'no') {
             dispatch(registrarCuadranteAccion('cuadrantes', cuadranteAGuardar.id, cuadranteAGuardar));
@@ -4010,12 +4878,13 @@ const Cuadrantes = (props) => {
                 ...objetoCuadrante.datosInforme,
                 totalFacturado_M: elTotalAAFacturar_M,
                 totalFacturado_L: elTotalAAFacturar_L,
-                totalFacturado_C: elTotalAAFacturar_C,
                 totalFacturado_E: elTotalAAFacturar_E,
-                totalFacturado_I: elTotalAAFacturar_I,
-                totalFacturado_Z: elTotalAAFacturar_Z,
-                totalFacturado_T: elTotalAAFacturar_T,
-                totalFacturado_P: elTotalAAFacturar_P
+                totalFacturado_P: elTotalAAFacturar_P,
+                totalFacturado_N: elTotalAAFacturar_N,
+                totalFacturado_R: elTotalAAFacturar_R,
+                totalFacturado_L1: elTotalAAFacturar_L1,
+                totalFacturado_L2: elTotalAAFacturar_L2,
+                totalFacturado_F: elTotalAAFacturar_F
             };
             const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, arrayCuadrante: cuadrante };
             dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, actualizacion: laFirmaActualizacion, datosCuadrante: losDatosCuadrante, datosInforme: losDatosInforme, horas: objetoFinalHoras }));
@@ -4043,51 +4912,79 @@ const Cuadrantes = (props) => {
     };
 
     const retornaInfoFabButton = () => {
+        let sumatorioServiciosFijos = 0;
         let sumatorioHoras_L = 0;
-        let sumatorioHoras_C = 0;
         let sumatorioHoras_E = 0;
-        let sumatorioHoras_I = 0;
-        let sumatorioHoras_Z = 0;
-        let sumatorioHoras_T = 0;
         let sumatorioHoras_P = 0;
+        let sumatorioHoras_N = 0;
+        let sumatorioHoras_R = 0;
+        let sumatorioHoras_L1 = 0;
+        let sumatorioHoras_L2 = 0;
+        let sumatorioHoras_F = 0;
         let sumatorioTotal = 0;
+        for (const prop in losServiciosFijos) {
+            if (losServiciosFijos[prop]) {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+            };
+        };
         if (arrayDatosInforme.length > 0) {
             arrayDatosInforme.forEach((dato, index) => {
                 sumatorioHoras_L += (dato.totalHorasNormal_L + dato.totalHorasExtra_L);
-                sumatorioHoras_C += (dato.totalHorasNormal_C + dato.totalHorasExtra_C);
                 sumatorioHoras_E += (dato.totalHorasNormal_E + dato.totalHorasExtra_E);
-                sumatorioHoras_I += (dato.totalHorasNormal_I + dato.totalHorasExtra_I);
-                sumatorioHoras_Z += (dato.totalHorasNormal_Z + dato.totalHorasExtra_Z);
-                sumatorioHoras_T += (dato.totalHorasNormal_T + dato.totalHorasExtra_T);
                 sumatorioHoras_P += (dato.totalHorasNormal_P + dato.totalHorasExtra_P);
+                sumatorioHoras_N += (dato.totalHorasNormal_N + dato.totalHorasExtra_N);
+                sumatorioHoras_R += (dato.totalHorasNormal_R + dato.totalHorasExtra_R);
+                sumatorioHoras_L1 += (dato.totalHorasNormal_L1 + dato.totalHorasExtra_L1);
+                sumatorioHoras_L2 += (dato.totalHorasNormal_L2 + dato.totalHorasExtra_L2);
+                sumatorioHoras_F += (dato.totalHorasNormal_F + dato.totalHorasExtra_F);
                 sumatorioTotal += dato.totalHoras;
             });
             if (objetoCuadrante.datosInforme.computo === 1) {
-                return 'Horas: ' + sumatorioTotal + ' - Total: ' + objetoCuadrante.datosInforme.mensualPactado + ' €'
+                return 'Horas: ' + sumatorioTotal + ' - Total: ' + parseFloat(objetoCuadrante.datosInforme.mensualPactado + sumatorioServiciosFijos) + ' €'
             };
             if (objetoCuadrante.datosInforme.computo === 2) {
                 return 'Horas: ' + sumatorioTotal + ' - Total: ' +
-                    parseFloat((objetoCuadrante.datosInforme.precioHora_L * sumatorioHoras_L) + (objetoCuadrante.datosInforme.precioHora_C * sumatorioHoras_C) + (objetoCuadrante.datosInforme.precioHora_E * sumatorioHoras_E) + (objetoCuadrante.datosInforme.precioHora_I * sumatorioHoras_I) + (objetoCuadrante.datosInforme.precioHora_Z * sumatorioHoras_Z) + (objetoCuadrante.datosInforme.precioHora_T * sumatorioHoras_T) + (objetoCuadrante.datosInforme.precioHora_P * sumatorioHoras_P)) + ' €'
+                    parseFloat((objetoCuadrante.datosInforme.precioHora_L * sumatorioHoras_L) +
+                        (objetoCuadrante.datosInforme.precioHora_E * sumatorioHoras_E) +
+                        (objetoCuadrante.datosInforme.precioHora_P * sumatorioHoras_P) +
+                        (objetoCuadrante.datosInforme.precioHora_N * sumatorioHoras_N) +
+                        (objetoCuadrante.datosInforme.precioHora_R * sumatorioHoras_R) +
+                        (objetoCuadrante.datosInforme.precioHora_L1 * sumatorioHoras_L1) +
+                        (objetoCuadrante.datosInforme.precioHora_L2 * sumatorioHoras_L2) +
+                        (objetoCuadrante.datosInforme.precioHora_F * sumatorioHoras_F) +
+                        sumatorioServiciosFijos) + ' €'
             };
             if (objetoCuadrante.datosInforme.computo === 3) {
                 if (objetoCuadrante.datosInforme.mensualPactado) {
-                    return 'Horas: ' + sumatorioTotal + ' - Total: ' + objetoCuadrante.datosInforme.mensualPactado + ' €'
+                    return 'Horas: ' + sumatorioTotal + ' - Total: ' + parseFloat(objetoCuadrante.datosInforme.mensualPactado + sumatorioServiciosFijos) + ' €'
                 } else {
                     return 'Horas: ' + sumatorioTotal + ' - Total: ' +
-                        parseFloat((objetoCuadrante.datosInforme.precioHora_L * sumatorioHoras_L) + (objetoCuadrante.datosInforme.precioHora_C * sumatorioHoras_C) + (objetoCuadrante.datosInforme.precioHora_E * sumatorioHoras_E) + (objetoCuadrante.datosInforme.precioHora_I * sumatorioHoras_I) + (objetoCuadrante.datosInforme.precioHora_Z * sumatorioHoras_Z) + (objetoCuadrante.datosInforme.precioHora_T * sumatorioHoras_T) + (objetoCuadrante.datosInforme.precioHora_P * sumatorioHoras_P)) + ' €'
+                        parseFloat((objetoCuadrante.datosInforme.precioHora_L * sumatorioHoras_L) +
+                            (objetoCuadrante.datosInforme.precioHora_E * sumatorioHoras_E) +
+                            (objetoCuadrante.datosInforme.precioHora_P * sumatorioHoras_P) +
+                            (objetoCuadrante.datosInforme.precioHora_N * sumatorioHoras_N) +
+                            (objetoCuadrante.datosInforme.precioHora_R * sumatorioHoras_R) +
+                            (objetoCuadrante.datosInforme.precioHora_L1 * sumatorioHoras_L1) +
+                            (objetoCuadrante.datosInforme.precioHora_L2 * sumatorioHoras_L2) +
+                            (objetoCuadrante.datosInforme.precioHora_F * sumatorioHoras_F) +
+                            sumatorioServiciosFijos) + ' €'
                 };
             };
         }
+        if (cuadranteVacio) {
+            return 'Horas: 0 - Total: ' + sumatorioServiciosFijos + ' €'
+        };
     };
 
     const generaInformacionCuadrantes = () => {
         let sumatorioHoras_L = 0;
-        let sumatorioHoras_C = 0;
         let sumatorioHoras_E = 0;
-        let sumatorioHoras_I = 0;
-        let sumatorioHoras_Z = 0;
-        let sumatorioHoras_T = 0;
         let sumatorioHoras_P = 0;
+        let sumatorioHoras_N = 0;
+        let sumatorioHoras_R = 0;
+        let sumatorioHoras_L1 = 0;
+        let sumatorioHoras_L2 = 0;
+        let sumatorioHoras_F = 0;
         let sumatorioTotal = 0;
         const arrayInforme = [];
         arrayInforme.push(['Mes: ' + calendarioAGestionar, 'normal']);
@@ -4106,23 +5003,26 @@ const Cuadrantes = (props) => {
             if (objetoCuadrante.datosInforme.precioHora_L) {
                 arrayInforme.push(['Cómputo de horas por precio/hora SERVICIO DE LIMPIEZA: ' + objetoCuadrante.datosInforme.precioHora_L + ' €', 'normal']);
             };
-            if (objetoCuadrante.datosInforme.precioHora_C) {
-                arrayInforme.push(['Cómputo de horas por precio/hora SERVICIO DE LIMPIEZA DE CRISTALES: ' + objetoCuadrante.datosInforme.precioHora_C + ' €', 'normal']);
-            };
             if (objetoCuadrante.datosInforme.precioHora_E) {
-                arrayInforme.push(['Cómputo de horas por precio/hora LIMPIEZA CRISTALES EXTERIORES: ' + objetoCuadrante.datosInforme.precioHora_E + ' €', 'normal']);
-            };
-            if (objetoCuadrante.datosInforme.precioHora_I) {
-                arrayInforme.push(['Cómputo de horas por precio/hora LIMPIEZA CRISTALES INTERIORES: ' + objetoCuadrante.datosInforme.precioHora_I + ' €', 'normal']);
-            };
-            if (objetoCuadrante.datosInforme.precioHora_Z) {
-                arrayInforme.push(['Cómputo de horas por precio/hora SERVICIO DE LIMPIEZA DE ESCALERA Y ZONAS COMUNES: ' + objetoCuadrante.datosInforme.precioHora_Z + ' €', 'normal']);
-            };
-            if (objetoCuadrante.datosInforme.precioHora_T) {
-                arrayInforme.push(['Cómputo de horas por precio/hora SERVICIO DE LIMPIEZA DE TOLDOS: ' + objetoCuadrante.datosInforme.precioHora_T + ' €', 'normal']);
+                arrayInforme.push(['Cómputo de horas por precio/hora SERVICIO DE LIMPIEZA ESPECIAL: ' + objetoCuadrante.datosInforme.precioHora_E + ' €', 'normal']);
             };
             if (objetoCuadrante.datosInforme.precioHora_P) {
                 arrayInforme.push(['Cómputo de horas por precio/hora SERVICIO DE LIMPIEZA DEL PARKING: ' + objetoCuadrante.datosInforme.precioHora_P + ' €', 'normal']);
+            };
+            if (objetoCuadrante.datosInforme.precioHora_N) {
+                arrayInforme.push(['Cómputo de horas por precio/hora SERVICIO DE LIMPIEZA NAVE 2: ' + objetoCuadrante.datosInforme.precioHora_N + ' €', 'normal']);
+            };
+            if (objetoCuadrante.datosInforme.precioHora_R) {
+                arrayInforme.push(['Cómputo de horas por precio/hora SERVICIO DE LIMPIEZA REFUERZO: ' + objetoCuadrante.datosInforme.precioHora_R + ' €', 'normal']);
+            };
+            if (objetoCuadrante.datosInforme.precioHora_L1) {
+                arrayInforme.push(['Cómputo de horas por precio/hora SERVICIO DE LIMPIEZA_1: ' + objetoCuadrante.datosInforme.precioHora_L1 + ' €', 'normal']);
+            };
+            if (objetoCuadrante.datosInforme.precioHora_L2) {
+                arrayInforme.push(['Cómputo de horas por precio/hora SERVICIO DE LIMPIEZA_2: ' + objetoCuadrante.datosInforme.precioHora_L2 + ' €', 'normal']);
+            };
+            if (objetoCuadrante.datosInforme.precioHora_F) {
+                arrayInforme.push(['Cómputo de horas por precio/hora SERVICIO DE LIMPIEZA DÍA FESTIVO: ' + objetoCuadrante.datosInforme.precioHora_F + ' €', 'normal']);
             };
         };
         if (objetoCuadrante.datosInforme.computo === 3) {
@@ -4132,23 +5032,26 @@ const Cuadrantes = (props) => {
                 if (objetoCuadrante.datosInforme.precioHora_L) {
                     arrayInforme.push(['Cómputo de horas por precio/hora SERVICIO DE LIMPIEZA: ' + objetoCuadrante.datosInforme.precioHora_L + ' €', 'normal']);
                 };
-                if (objetoCuadrante.datosInforme.precioHora_C) {
-                    arrayInforme.push(['Cómputo de horas por precio/hora SERVICIO DE LIMPIEZA DE CRISTALES: ' + objetoCuadrante.datosInforme.precioHora_C + ' €', 'normal']);
-                };
                 if (objetoCuadrante.datosInforme.precioHora_E) {
-                    arrayInforme.push(['Cómputo de horas por precio/hora LIMPIEZA CRISTALES EXTERIORES: ' + objetoCuadrante.datosInforme.precioHora_E + ' €', 'normal']);
-                };
-                if (objetoCuadrante.datosInforme.precioHora_I) {
-                    arrayInforme.push(['Cómputo de horas por precio/hora LIMPIEZA CRISTALES INTERIORES: ' + objetoCuadrante.datosInforme.precioHora_I + ' €', 'normal']);
-                };
-                if (objetoCuadrante.datosInforme.precioHora_Z) {
-                    arrayInforme.push(['Cómputo de horas por precio/hora SERVICIO DE LIMPIEZA DE ESCALERA Y ZONAS COMUNES: ' + objetoCuadrante.datosInforme.precioHora_Z + ' €', 'normal']);
-                };
-                if (objetoCuadrante.datosInforme.precioHora_T) {
-                    arrayInforme.push(['Cómputo de horas por precio/hora SERVICIO DE LIMPIEZA DE TOLDOS: ' + objetoCuadrante.datosInforme.precioHora_T + ' €', 'normal']);
+                    arrayInforme.push(['Cómputo de horas por precio/hora SERVICIO DE LIMPIEZA ESPECIAL: ' + objetoCuadrante.datosInforme.precioHora_E + ' €', 'normal']);
                 };
                 if (objetoCuadrante.datosInforme.precioHora_P) {
                     arrayInforme.push(['Cómputo de horas por precio/hora SERVICIO DE LIMPIEZA DEL PARKING: ' + objetoCuadrante.datosInforme.precioHora_P + ' €', 'normal']);
+                };
+                if (objetoCuadrante.datosInforme.precioHora_N) {
+                    arrayInforme.push(['Cómputo de horas por precio/hora SERVICIO DE LIMPIEZA NAVE 2: ' + objetoCuadrante.datosInforme.precioHora_N + ' €', 'normal']);
+                };
+                if (objetoCuadrante.datosInforme.precioHora_R) {
+                    arrayInforme.push(['Cómputo de horas por precio/hora SERVICIO DE LIMPIEZA REFUERZO: ' + objetoCuadrante.datosInforme.precioHora_R + ' €', 'normal']);
+                };
+                if (objetoCuadrante.datosInforme.precioHora_L1) {
+                    arrayInforme.push(['Cómputo de horas por precio/hora SERVICIO DE LIMPIEZA_1: ' + objetoCuadrante.datosInforme.precioHora_L1 + ' €', 'normal']);
+                };
+                if (objetoCuadrante.datosInforme.precioHora_L2) {
+                    arrayInforme.push(['Cómputo de horas por precio/hora SERVICIO DE LIMPIEZA_2: ' + objetoCuadrante.datosInforme.precioHora_L2 + ' €', 'normal']);
+                };
+                if (objetoCuadrante.datosInforme.precioHora_F) {
+                    arrayInforme.push(['Cómputo de horas por precio/hora SERVICIO DE LIMPIEZA DÍA FESTIVO: ' + objetoCuadrante.datosInforme.precioHora_F + ' €', 'normal']);
                 };
             };
         };
@@ -4173,55 +5076,15 @@ const Cuadrantes = (props) => {
                 };
                 sumatorioHoras_L += (dato.totalHorasNormal_L + dato.totalHorasExtra_L);
             };
-            if (dato.totalHorasExtra_C || dato.totalHorasNormal_C) {
-                if (dato.totalHorasExtra_C && dato.totalHorasNormal_C) {
-                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA DE CRISTALES: ' + dato.totalHorasNormal_C + ' horas + ' + dato.totalHorasExtra_C + ' horas extra', 'normal']);
-                } else if (!dato.totalHorasExtra_C && dato.totalHorasNormal_C) {
-                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA DE CRISTALES: ' + dato.totalHorasNormal_C + ' horas', 'normal']);
-                } else {
-                    arrayInforme.push(['Total horas extra trabajadas en concepto de SERVICIO DE LIMPIEZA DE CRISTALES: ' + dato.totalHorasExtra_C + ' horas extra', 'normal']);
-                };
-                sumatorioHoras_C += (dato.totalHorasNormal_C + dato.totalHorasExtra_C);
-            };
             if (dato.totalHorasExtra_E || dato.totalHorasNormal_E) {
                 if (dato.totalHorasExtra_E && dato.totalHorasNormal_E) {
-                    arrayInforme.push(['Total horas trabajadas en concepto de LIMPIEZA CRISTALES EXTERIORES: ' + dato.totalHorasNormal_E + ' horas + ' + dato.totalHorasExtra_E + ' horas extra', 'normal']);
+                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA ESPECIAL: ' + dato.totalHorasNormal_E + ' horas + ' + dato.totalHorasExtra_E + ' horas extra', 'normal']);
                 } else if (!dato.totalHorasExtra_E && dato.totalHorasNormal_E) {
-                    arrayInforme.push(['Total horas trabajadas en concepto de LIMPIEZA CRISTALES EXTERIORES: ' + dato.totalHorasNormal_E + ' horas', 'normal']);
+                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA ESPECIAL: ' + dato.totalHorasNormal_E + ' horas', 'normal']);
                 } else {
-                    arrayInforme.push(['Total horas extra trabajadas en concepto de LIMPIEZA CRISTALES EXTERIORES: ' + dato.totalHorasExtra_E + ' horas extra', 'normal']);
+                    arrayInforme.push(['Total horas extra trabajadas en concepto de SERVICIO DE LIMPIEZA ESPECIAL: ' + dato.totalHorasExtra_E + ' horas extra', 'normal']);
                 };
                 sumatorioHoras_E += (dato.totalHorasNormal_E + dato.totalHorasExtra_E);
-            };
-            if (dato.totalHorasExtra_I || dato.totalHorasNormal_I) {
-                if (dato.totalHorasExtra_I && dato.totalHorasNormal_I) {
-                    arrayInforme.push(['Total horas trabajadas en concepto de LIMPIEZA CRISTALES INTERIORES: ' + dato.totalHorasNormal_I + ' horas + ' + dato.totalHorasExtra_I + ' horas extra', 'normal']);
-                } else if (!dato.totalHorasExtra_I && dato.totalHorasNormal_I) {
-                    arrayInforme.push(['Total horas trabajadas en concepto de LIMPIEZA CRISTALES INTERIORES: ' + dato.totalHorasNormal_I + ' horas', 'normal']);
-                } else {
-                    arrayInforme.push(['Total horas extra trabajadas en concepto de LIMPIEZA CRISTALES INTERIORES: ' + dato.totalHorasExtra_I + ' horas extra', 'normal']);
-                };
-                sumatorioHoras_I += (dato.totalHorasNormal_I + dato.totalHorasExtra_I);
-            };
-            if (dato.totalHorasExtra_Z || dato.totalHorasNormal_Z) {
-                if (dato.totalHorasExtra_Z && dato.totalHorasNormal_Z) {
-                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA DE ESCALERA Y ZONAS COMUNES: ' + dato.totalHorasNormal_Z + ' horas + ' + dato.totalHorasExtra_Z + ' horas extra', 'normal']);
-                } else if (!dato.totalHorasExtra_Z && dato.totalHorasNormal_Z) {
-                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA DE ESCALERA Y ZONAS COMUNES: ' + dato.totalHorasNormal_Z + ' horas', 'normal']);
-                } else {
-                    arrayInforme.push(['Total horas extra trabajadas en concepto de SERVICIO DE LIMPIEZA DE ESCALERA Y ZONAS COMUNES: ' + dato.totalHorasExtra_Z + ' horas extra', 'normal']);
-                };
-                sumatorioHoras_Z += (dato.totalHorasNormal_Z + dato.totalHorasExtra_Z);
-            };
-            if (dato.totalHorasExtra_T || dato.totalHorasNormal_T) {
-                if (dato.totalHorasExtra_T && dato.totalHorasNormal_T) {
-                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA DE TOLDOS: ' + dato.totalHorasNormal_T + ' horas + ' + dato.totalHorasExtra_T + ' horas extra', 'normal']);
-                } else if (!dato.totalHorasExtra_T && dato.totalHorasNormal_T) {
-                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA DE TOLDOS: ' + dato.totalHorasNormal_T + ' horas', 'normal']);
-                } else {
-                    arrayInforme.push(['Total horas extra trabajadas en concepto de SERVICIO DE LIMPIEZA DE TOLDOS: ' + dato.totalHorasExtra_T + ' horas extra', 'normal']);
-                };
-                sumatorioHoras_T += (dato.totalHorasNormal_T + dato.totalHorasExtra_T);
             };
             if (dato.totalHorasExtra_P || dato.totalHorasNormal_P) {
                 if (dato.totalHorasExtra_P && dato.totalHorasNormal_P) {
@@ -4233,15 +5096,66 @@ const Cuadrantes = (props) => {
                 };
                 sumatorioHoras_P += (dato.totalHorasNormal_P + dato.totalHorasExtra_P);
             };
+            if (dato.totalHorasExtra_N || dato.totalHorasNormal_N) {
+                if (dato.totalHorasExtra_N && dato.totalHorasNormal_N) {
+                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA NAVE 2: ' + dato.totalHorasNormal_N + ' horas + ' + dato.totalHorasExtra_N + ' horas extra', 'normal']);
+                } else if (!dato.totalHorasExtra_N && dato.totalHorasNormal_N) {
+                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA NAVE 2: ' + dato.totalHorasNormal_N + ' horas', 'normal']);
+                } else {
+                    arrayInforme.push(['Total horas extra trabajadas en concepto de SERVICIO DE LIMPIEZA NAVE 2: ' + dato.totalHorasExtra_N + ' horas extra', 'normal']);
+                };
+                sumatorioHoras_N += (dato.totalHorasNormal_N + dato.totalHorasExtra_N);
+            };
+            if (dato.totalHorasExtra_R || dato.totalHorasNormal_R) {
+                if (dato.totalHorasExtra_R && dato.totalHorasNormal_R) {
+                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA REFUERZO: ' + dato.totalHorasNormal_R + ' horas + ' + dato.totalHorasExtra_R + ' horas extra', 'normal']);
+                } else if (!dato.totalHorasExtra_R && dato.totalHorasNormal_R) {
+                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA REFUERZO: ' + dato.totalHorasNormal_R + ' horas', 'normal']);
+                } else {
+                    arrayInforme.push(['Total horas extra trabajadas en concepto de SERVICIO DE LIMPIEZA REFUERZO: ' + dato.totalHorasExtra_R + ' horas extra', 'normal']);
+                };
+                sumatorioHoras_R += (dato.totalHorasNormal_R + dato.totalHorasExtra_R);
+            };
+            if (dato.totalHorasExtra_L1 || dato.totalHorasNormal_L1) {
+                if (dato.totalHorasExtra_L1 && dato.totalHorasNormal_L1) {
+                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA_1: ' + dato.totalHorasNormal_L1 + ' horas + ' + dato.totalHorasExtra_L1 + ' horas extra', 'normal']);
+                } else if (!dato.totalHorasExtra_L1 && dato.totalHorasNormal_L1) {
+                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA_1: ' + dato.totalHorasNormal_L1 + ' horas', 'normal']);
+                } else {
+                    arrayInforme.push(['Total horas extra trabajadas en concepto de SERVICIO DE LIMPIEZA_1: ' + dato.totalHorasExtra_L1 + ' horas extra', 'normal']);
+                };
+                sumatorioHoras_L1 += (dato.totalHorasNormal_L1 + dato.totalHorasExtra_L1);
+            };
+            if (dato.totalHorasExtra_L2 || dato.totalHorasNormal_L2) {
+                if (dato.totalHorasExtra_L2 && dato.totalHorasNormal_L2) {
+                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA_2: ' + dato.totalHorasNormal_L2 + ' horas + ' + dato.totalHorasExtra_L2 + ' horas extra', 'normal']);
+                } else if (!dato.totalHorasExtra_L2 && dato.totalHorasNormal_L2) {
+                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA_2: ' + dato.totalHorasNormal_L2 + ' horas', 'normal']);
+                } else {
+                    arrayInforme.push(['Total horas extra trabajadas en concepto de SERVICIO DE LIMPIEZA_2: ' + dato.totalHorasExtra_L2 + ' horas extra', 'normal']);
+                };
+                sumatorioHoras_L2 += (dato.totalHorasNormal_L2 + dato.totalHorasExtra_L2);
+            };
+            if (dato.totalHorasExtra_F || dato.totalHorasNormal_F) {
+                if (dato.totalHorasExtra_F && dato.totalHorasNormal_F) {
+                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA DÍA FESTIVO: ' + dato.totalHorasNormal_F + ' horas + ' + dato.totalHorasExtra_F + ' horas extra', 'normal']);
+                } else if (!dato.totalHorasExtra_F && dato.totalHorasNormal_F) {
+                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA DÍA FESTIVO: ' + dato.totalHorasNormal_F + ' horas', 'normal']);
+                } else {
+                    arrayInforme.push(['Total horas extra trabajadas en concepto de SERVICIO DE LIMPIEZA DÍA FESTIVO: ' + dato.totalHorasExtra_F + ' horas extra', 'normal']);
+                };
+                sumatorioHoras_F += (dato.totalHorasNormal_F + dato.totalHorasExtra_F);
+            };
         });
         sumatorioTotal =
             (sumatorioHoras_L * objetoCuadrante.datosInforme.precioHora_L) +
-            (sumatorioHoras_C * objetoCuadrante.datosInforme.precioHora_C) +
             (sumatorioHoras_E * objetoCuadrante.datosInforme.precioHora_E) +
-            (sumatorioHoras_I * objetoCuadrante.datosInforme.precioHora_I) +
-            (sumatorioHoras_Z * objetoCuadrante.datosInforme.precioHora_Z) +
-            (sumatorioHoras_T * objetoCuadrante.datosInforme.precioHora_T) +
-            (sumatorioHoras_P * objetoCuadrante.datosInforme.precioHora_P);
+            (sumatorioHoras_P * objetoCuadrante.datosInforme.precioHora_P) +
+            (sumatorioHoras_N * objetoCuadrante.datosInforme.precioHora_N) +
+            (sumatorioHoras_R * objetoCuadrante.datosInforme.precioHora_R) +
+            (sumatorioHoras_L1 * objetoCuadrante.datosInforme.precioHora_L1) +
+            (sumatorioHoras_L2 * objetoCuadrante.datosInforme.precioHora_L2) +
+            (sumatorioHoras_F * objetoCuadrante.datosInforme.precioHora_F);
         arrayInforme.push(['divider', 'normal']);
         if (objetoCuadrante.datosInforme.computo === 1) {
             arrayInforme.push(['Total a facturar según cómputo mensual pactado: ' + objetoCuadrante.datosInforme.mensualPactado + ' €', 'normal']);
@@ -4256,61 +5170,69 @@ const Cuadrantes = (props) => {
                     arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA: ' + (sumatorioHoras_L * objetoCuadrante.datosInforme.precioHora_L) + ' €', 'normal']);
                 }
             };
-            if (sumatorioHoras_C) {
-                arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA DE CRISTALES: ' + sumatorioHoras_C + ' horas', 'normal']);
-                if (!objetoCuadrante.datosInforme.precioHora_C) {
-                    arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA DE CRISTALES: ' + (sumatorioHoras_C * objetoCuadrante.datosInforme.precioHora_C) + ' €', 'error']);
-                    arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro para poder computar', 'error']);
-                } else {
-                    arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA DE CRISTALES: ' + (sumatorioHoras_C * objetoCuadrante.datosInforme.precioHora_C) + ' €', 'normal']);
-                }
-            };
             if (sumatorioHoras_E) {
-                arrayInforme.push(['Total horas mes cuadrante en concepto de LIMPIEZA CRISTALES EXTERIORES: ' + sumatorioHoras_E + ' horas', 'normal']);
+                arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA ESPECIAL: ' + sumatorioHoras_E + ' horas', 'normal']);
                 if (!objetoCuadrante.datosInforme.precioHora_E) {
-                    arrayInforme.push(['Total a facturar según cómputo precio/hora LIMPIEZA CRISTALES EXTERIORES: ' + (sumatorioHoras_E * objetoCuadrante.datosInforme.precioHora_E) + ' €', 'error']);
-                    arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro para poder computar', 'error']);
+                    arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA ESPECIAL: ' + (sumatorioHoras_E * objetoCuadrante.datosInforme.precioHora_E) + ' €', 'error']);
+                    arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro o del Cuadrante para poder computar', 'error']);
                 } else {
-                    arrayInforme.push(['Total a facturar según cómputo precio/hora LIMPIEZA CRISTALES EXTERIORES: ' + (sumatorioHoras_E * objetoCuadrante.datosInforme.precioHora_E) + ' €', 'normal']);
-                }
-            };
-            if (sumatorioHoras_I) {
-                arrayInforme.push(['Total horas mes cuadrante en concepto de LIMPIEZA CRISTALES INTERIORES: ' + sumatorioHoras_I + ' horas', 'normal']);
-                if (!objetoCuadrante.datosInforme.precioHora_I) {
-                    arrayInforme.push(['Total a facturar según cómputo precio/hora LIMPIEZA CRISTALES INTERIORES: ' + (sumatorioHoras_I * objetoCuadrante.datosInforme.precioHora_I) + ' €', 'error']);
-                    arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro para poder computar', 'error']);
-                } else {
-                    arrayInforme.push(['Total a facturar según cómputo precio/hora LIMPIEZA CRISTALES INTERIORES: ' + (sumatorioHoras_I * objetoCuadrante.datosInforme.precioHora_I) + ' €', 'normal']);
-                }
-            };
-            if (sumatorioHoras_Z) {
-                arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA DE ESCALERA Y ZONAS COMUNES: ' + sumatorioHoras_Z + ' horas', 'normal']);
-                if (!objetoCuadrante.datosInforme.precioHora_Z) {
-                    arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA DE ESCALERA Y ZONAS COMUNES: ' + (sumatorioHoras_Z * objetoCuadrante.datosInforme.precioHora_Z) + ' €', 'error']);
-                    arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro para poder computar', 'error']);
-                } else {
-                    arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA DE ESCALERA Y ZONAS COMUNES: ' + (sumatorioHoras_Z * objetoCuadrante.datosInforme.precioHora_Z) + ' €', 'normal']);
-                }
-            };
-            if (sumatorioHoras_T) {
-                arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA DE TOLDOS: ' + sumatorioHoras_T + ' horas', 'normal']);
-                if (!objetoCuadrante.datosInforme.precioHora_T) {
-                    arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA DE TOLDOS: ' + (sumatorioHoras_T * objetoCuadrante.datosInforme.precioHora_T) + ' €', 'error']);
-                    arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro para poder computar', 'error']);
-                } else {
-                    arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA DE TOLDOS: ' + (sumatorioHoras_T * objetoCuadrante.datosInforme.precioHora_T) + ' €', 'normal']);
+                    arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA ESPECIAL: ' + (sumatorioHoras_E * objetoCuadrante.datosInforme.precioHora_E) + ' €', 'normal']);
                 }
             };
             if (sumatorioHoras_P) {
                 arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA DEL PARKING: ' + sumatorioHoras_P + ' horas', 'normal']);
                 if (!objetoCuadrante.datosInforme.precioHora_P) {
-                    arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA DEL PARKING ' + (sumatorioHoras_P * objetoCuadrante.datosInforme.precioHora_P) + ' €', 'error']);
-                    arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro para poder computar', 'error']);
+                    arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA DEL PARKING: ' + (sumatorioHoras_P * objetoCuadrante.datosInforme.precioHora_P) + ' €', 'error']);
+                    arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro o del Cuadrante para poder computar', 'error']);
                 } else {
                     arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA DEL PARKING: ' + (sumatorioHoras_P * objetoCuadrante.datosInforme.precioHora_P) + ' €', 'normal']);
                 }
             };
-            arrayInforme.push(['Total General a facturar: ' + sumatorioTotal + ' €', 'normal']);
+            if (sumatorioHoras_N) {
+                arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA NAVE 2: ' + sumatorioHoras_N + ' horas', 'normal']);
+                if (!objetoCuadrante.datosInforme.precioHora_N) {
+                    arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA NAVE 2: ' + (sumatorioHoras_N * objetoCuadrante.datosInforme.precioHora_N) + ' €', 'error']);
+                    arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro o del Cuadrante para poder computar', 'error']);
+                } else {
+                    arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA NAVE 2: ' + (sumatorioHoras_N * objetoCuadrante.datosInforme.precioHora_N) + ' €', 'normal']);
+                }
+            };
+            if (sumatorioHoras_R) {
+                arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA REFUERZO: ' + sumatorioHoras_R + ' horas', 'normal']);
+                if (!objetoCuadrante.datosInforme.precioHora_R) {
+                    arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA REFUERZO: ' + (sumatorioHoras_R * objetoCuadrante.datosInforme.precioHora_R) + ' €', 'error']);
+                    arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro o del Cuadrante para poder computar', 'error']);
+                } else {
+                    arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA REFUERZO: ' + (sumatorioHoras_R * objetoCuadrante.datosInforme.precioHora_R) + ' €', 'normal']);
+                }
+            };
+            if (sumatorioHoras_L1) {
+                arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA_1: ' + sumatorioHoras_L1 + ' horas', 'normal']);
+                if (!objetoCuadrante.datosInforme.precioHora_L1) {
+                    arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA_1: ' + (sumatorioHoras_L1 * objetoCuadrante.datosInforme.precioHora_L1) + ' €', 'error']);
+                    arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro o del Cuadrante para poder computar', 'error']);
+                } else {
+                    arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA_1: ' + (sumatorioHoras_L1 * objetoCuadrante.datosInforme.precioHora_L1) + ' €', 'normal']);
+                }
+            };
+            if (sumatorioHoras_L2) {
+                arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA_2: ' + sumatorioHoras_L2 + ' horas', 'normal']);
+                if (!objetoCuadrante.datosInforme.precioHora_L2) {
+                    arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA_2: ' + (sumatorioHoras_L2 * objetoCuadrante.datosInforme.precioHora_L2) + ' €', 'error']);
+                    arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro o del Cuadrante para poder computar', 'error']);
+                } else {
+                    arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA_2: ' + (sumatorioHoras_L2 * objetoCuadrante.datosInforme.precioHora_L2) + ' €', 'normal']);
+                }
+            };
+            if (sumatorioHoras_F) {
+                arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA DÍA FESTIVO: ' + sumatorioHoras_F + ' horas', 'normal']);
+                if (!objetoCuadrante.datosInforme.precioHora_F) {
+                    arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA DÍA FESTIVO: ' + (sumatorioHoras_F * objetoCuadrante.datosInforme.precioHora_F) + ' €', 'error']);
+                    arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro o del Cuadrante para poder computar', 'error']);
+                } else {
+                    arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA DÍA FESTIVO: ' + (sumatorioHoras_F * objetoCuadrante.datosInforme.precioHora_F) + ' €', 'normal']);
+                }
+            };
         };
         if (objetoCuadrante.datosInforme.computo === 3) {
             if (objetoCuadrante.datosInforme.mensualPactado) {
@@ -4320,68 +5242,156 @@ const Cuadrantes = (props) => {
                     arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA: ' + sumatorioHoras_L + ' horas', 'normal']);
                     if (!objetoCuadrante.datosInforme.precioHora_L) {
                         arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA: ' + (sumatorioHoras_L * objetoCuadrante.datosInforme.precioHora_L) + ' €', 'error']);
-                        arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro para poder computar', 'error']);
+                        arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro o del Cuadrante para poder computar', 'error']);
                     } else {
                         arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA: ' + (sumatorioHoras_L * objetoCuadrante.datosInforme.precioHora_L) + ' €', 'normal']);
                     }
                 };
-                if (sumatorioHoras_C) {
-                    arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA DE CRISTALES: ' + sumatorioHoras_C + ' horas', 'normal']);
-                    if (!objetoCuadrante.datosInforme.precioHora_C) {
-                        arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA DE CRISTALES: ' + (sumatorioHoras_C * objetoCuadrante.datosInforme.precioHora_C) + ' €', 'error']);
-                        arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro para poder computar', 'error']);
-                    } else {
-                        arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA DE CRISTALES: ' + (sumatorioHoras_C * objetoCuadrante.datosInforme.precioHora_C) + ' €', 'normal']);
-                    }
-                };
                 if (sumatorioHoras_E) {
-                    arrayInforme.push(['Total horas mes cuadrante en concepto de LIMPIEZA CRISTALES EXTERIORES: ' + sumatorioHoras_E + ' horas', 'normal']);
+                    arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA ESPECIAL: ' + sumatorioHoras_E + ' horas', 'normal']);
                     if (!objetoCuadrante.datosInforme.precioHora_E) {
-                        arrayInforme.push(['Total a facturar según cómputo precio/hora LIMPIEZA CRISTALES EXTERIORES: ' + (sumatorioHoras_E * objetoCuadrante.datosInforme.precioHora_E) + ' €', 'error']);
-                        arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro para poder computar', 'error']);
+                        arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA ESPECIAL: ' + (sumatorioHoras_E * objetoCuadrante.datosInforme.precioHora_E) + ' €', 'error']);
+                        arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro o del Cuadrante para poder computar', 'error']);
                     } else {
-                        arrayInforme.push(['Total a facturar según cómputo precio/hora LIMPIEZA CRISTALES EXTERIORES: ' + (sumatorioHoras_E * objetoCuadrante.datosInforme.precioHora_E) + ' €', 'normal']);
-                    }
-                };
-                if (sumatorioHoras_I) {
-                    arrayInforme.push(['Total horas mes cuadrante en concepto de LIMPIEZA CRISTALES INTERIORES: ' + sumatorioHoras_I + ' horas', 'normal']);
-                    if (!objetoCuadrante.datosInforme.precioHora_I) {
-                        arrayInforme.push(['Total a facturar según cómputo precio/hora LIMPIEZA CRISTALES INTERIORES: ' + (sumatorioHoras_I * objetoCuadrante.datosInforme.precioHora_I) + ' €', 'error']);
-                        arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro para poder computar', 'error']);
-                    } else {
-                        arrayInforme.push(['Total a facturar según cómputo precio/hora LIMPIEZA CRISTALES INTERIORES: ' + (sumatorioHoras_I * objetoCuadrante.datosInforme.precioHora_I) + ' €', 'normal']);
-                    }
-                };
-                if (sumatorioHoras_Z) {
-                    arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA DE ESCALERA Y ZONAS COMUNES: ' + sumatorioHoras_Z + ' horas', 'normal']);
-                    if (!objetoCuadrante.datosInforme.precioHora_Z) {
-                        arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA DE ESCALERA Y ZONAS COMUNES: ' + (sumatorioHoras_Z * objetoCuadrante.datosInforme.precioHora_Z) + ' €', 'error']);
-                        arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro para poder computar', 'error']);
-                    } else {
-                        arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA DE ESCALERA Y ZONAS COMUNES: ' + (sumatorioHoras_Z * objetoCuadrante.datosInforme.precioHora_Z) + ' €', 'normal']);
-                    }
-                };
-                if (sumatorioHoras_T) {
-                    arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA DE TOLDOS: ' + sumatorioHoras_T + ' horas', 'normal']);
-                    if (!objetoCuadrante.datosInforme.precioHora_T) {
-                        arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA DE TOLDOS: ' + (sumatorioHoras_T * objetoCuadrante.datosInforme.precioHora_T) + ' €', 'error']);
-                        arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro para poder computar', 'error']);
-                    } else {
-                        arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA DE TOLDOS: ' + (sumatorioHoras_T * objetoCuadrante.datosInforme.precioHora_T) + ' €', 'normal']);
+                        arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA ESPECIAL: ' + (sumatorioHoras_E * objetoCuadrante.datosInforme.precioHora_E) + ' €', 'normal']);
                     }
                 };
                 if (sumatorioHoras_P) {
                     arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA DEL PARKING: ' + sumatorioHoras_P + ' horas', 'normal']);
                     if (!objetoCuadrante.datosInforme.precioHora_P) {
-                        arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA DEL PARKING ' + (sumatorioHoras_P * objetoCuadrante.datosInforme.precioHora_P) + ' €', 'error']);
-                        arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro para poder computar', 'error']);
+                        arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA DEL PARKING: ' + (sumatorioHoras_P * objetoCuadrante.datosInforme.precioHora_P) + ' €', 'error']);
+                        arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro o del Cuadrante para poder computar', 'error']);
                     } else {
                         arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA DEL PARKING: ' + (sumatorioHoras_P * objetoCuadrante.datosInforme.precioHora_P) + ' €', 'normal']);
                     }
                 };
-                arrayInforme.push(['Total General a facturar: ' + sumatorioTotal + ' €', 'normal']);
+                if (sumatorioHoras_N) {
+                    arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA NAVE 2: ' + sumatorioHoras_N + ' horas', 'normal']);
+                    if (!objetoCuadrante.datosInforme.precioHora_N) {
+                        arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA NAVE 2: ' + (sumatorioHoras_N * objetoCuadrante.datosInforme.precioHora_N) + ' €', 'error']);
+                        arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro o del Cuadrante para poder computar', 'error']);
+                    } else {
+                        arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA NAVE 2: ' + (sumatorioHoras_N * objetoCuadrante.datosInforme.precioHora_N) + ' €', 'normal']);
+                    }
+                };
+                if (sumatorioHoras_R) {
+                    arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA REFUERZO: ' + sumatorioHoras_R + ' horas', 'normal']);
+                    if (!objetoCuadrante.datosInforme.precioHora_R) {
+                        arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA REFUERZO: ' + (sumatorioHoras_R * objetoCuadrante.datosInforme.precioHora_R) + ' €', 'error']);
+                        arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro o del Cuadrante para poder computar', 'error']);
+                    } else {
+                        arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA REFUERZO: ' + (sumatorioHoras_R * objetoCuadrante.datosInforme.precioHora_R) + ' €', 'normal']);
+                    }
+                };
+                if (sumatorioHoras_L1) {
+                    arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA_1: ' + sumatorioHoras_L1 + ' horas', 'normal']);
+                    if (!objetoCuadrante.datosInforme.precioHora_L1) {
+                        arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA_1: ' + (sumatorioHoras_L1 * objetoCuadrante.datosInforme.precioHora_L1) + ' €', 'error']);
+                        arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro o del Cuadrante para poder computar', 'error']);
+                    } else {
+                        arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA_1: ' + (sumatorioHoras_L1 * objetoCuadrante.datosInforme.precioHora_L1) + ' €', 'normal']);
+                    }
+                };
+                if (sumatorioHoras_L2) {
+                    arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA_2: ' + sumatorioHoras_L2 + ' horas', 'normal']);
+                    if (!objetoCuadrante.datosInforme.precioHora_L2) {
+                        arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA_2: ' + (sumatorioHoras_L2 * objetoCuadrante.datosInforme.precioHora_L2) + ' €', 'error']);
+                        arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro o del Cuadrante para poder computar', 'error']);
+                    } else {
+                        arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA_2: ' + (sumatorioHoras_L2 * objetoCuadrante.datosInforme.precioHora_L2) + ' €', 'normal']);
+                    }
+                };
+                if (sumatorioHoras_F) {
+                    arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA DÍA FESTIVO: ' + sumatorioHoras_F + ' horas', 'normal']);
+                    if (!objetoCuadrante.datosInforme.precioHora_F) {
+                        arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA DÍA FESTIVO: ' + (sumatorioHoras_F * objetoCuadrante.datosInforme.precioHora_F) + ' €', 'error']);
+                        arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro o del Cuadrante para poder computar', 'error']);
+                    } else {
+                        arrayInforme.push(['Total a facturar según cómputo precio/hora SERVICIO DE LIMPIEZA DÍA FESTIVO: ' + (sumatorioHoras_F * objetoCuadrante.datosInforme.precioHora_F) + ' €', 'normal']);
+                    }
+                };
             };
         };
+        arrayInforme.push(['divider', 'normal']);
+        arrayInforme.push(['Servicios fijos:', 'normal']);
+        let sumatorioServiciosFijos = 0;
+        for (const prop in losServiciosFijos) {
+            if (losServiciosFijos[prop] && prop === 'precioHora_TO') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA DE TOLDOS: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_CR') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA DE CRISTALES: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_CE') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                arrayInforme.push(['Total a facturar por LIMPIEZA CRISTALES EXTERIORES: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_CI') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                arrayInforme.push(['Total a facturar por LIMPIEZA CRISTALES INTERIORES: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_MO') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA MOQUETA: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_OF') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA OFICINAS: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_AL') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA ALMACENES: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_LA') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA LABORATORIO: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_TE') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA TELARAÑAS: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_FI') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA FACHADA INTERIOR: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_FE') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA FACHADA EXTERIOR: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_AB') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA ABRILLANTADO: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_MA') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                arrayInforme.push(['Total a facturar por SERVICIO DE MANTENIMIENTO MÁQUINA: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_PO') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA PORTERÍA: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_BA') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                arrayInforme.push(['Total a facturar por BOT. NOUBACT: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
+            };
+            if (losServiciosFijos[prop] && prop === 'precioHora_FT') {
+                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
+                arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA DÍA FESTIVO: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
+            };
+        };
+        if (objetoCuadrante.datosInforme.computo === 1 || (objetoCuadrante.datosInforme.computo === 3 && objetoCuadrante.datosInforme.mensualPactado)) {
+            sumatorioTotal = objetoCuadrante.datosInforme.mensualPactado;
+        };
+        sumatorioTotal += sumatorioServiciosFijos;
+        arrayInforme.push(['divider', 'normal']);
+        arrayInforme.push(['Total General a facturar: ' + sumatorioTotal + ' €', 'normal']);
+        arrayInforme.push(['Forma de pago: ' + dispatch(retornaFormaPagoAccion(centroAGestionar.formaPago)), 'normal']);
+        if (centroAGestionar.diaPago) {
+            arrayInforme.push(['Día de pago: ' + centroAGestionar.formaPago, 'normal']);
+        };
+        arrayInforme.push(['Frecuencia de pago: ' + centroAGestionar.tempPago, 'normal']);
         setArrayInformeLineas(arrayInforme);
     };
 
@@ -4416,49 +5426,54 @@ const Cuadrantes = (props) => {
         if (objetoCuadrante.datosInforme.totalFacturado_L) {
             elTotalFacturado += objetoCuadrante.datosInforme.totalFacturado_L
         };
-        if (objetoCuadrante.datosInforme.totalFacturado_C) {
-            elTotalFacturado += objetoCuadrante.datosInforme.totalFacturado_C
-        };
         if (objetoCuadrante.datosInforme.totalFacturado_E) {
             elTotalFacturado += objetoCuadrante.datosInforme.totalFacturado_E
         };
-        if (objetoCuadrante.datosInforme.totalFacturado_I) {
-            elTotalFacturado += objetoCuadrante.datosInforme.totalFacturado_I
-        };
-        if (objetoCuadrante.datosInforme.totalFacturado_Z) {
-            elTotalFacturado += objetoCuadrante.datosInforme.totalFacturado_Z
-        };
-        if (objetoCuadrante.datosInforme.totalFacturado_T) {
-            elTotalFacturado += objetoCuadrante.datosInforme.totalFacturado_T
-        };
         if (objetoCuadrante.datosInforme.totalFacturado_P) {
             elTotalFacturado += objetoCuadrante.datosInforme.totalFacturado_P
+        };
+        if (objetoCuadrante.datosInforme.totalFacturado_N) {
+            elTotalFacturado += objetoCuadrante.datosInforme.totalFacturado_N
+        };
+        if (objetoCuadrante.datosInforme.totalFacturado_R) {
+            elTotalFacturado += objetoCuadrante.datosInforme.totalFacturado_R
+        };
+        if (objetoCuadrante.datosInforme.totalFacturado_L1) {
+            elTotalFacturado += objetoCuadrante.datosInforme.totalFacturado_L1
+        };
+        if (objetoCuadrante.datosInforme.totalFacturado_L2) {
+            elTotalFacturado += objetoCuadrante.datosInforme.totalFacturado_L2
+        };
+        if (objetoCuadrante.datosInforme.totalFacturado_F) {
+            elTotalFacturado += objetoCuadrante.datosInforme.totalFacturado_F
         };
         return elTotalFacturado;
     };
 
     const calculoTotalHoras = () => {
         let sumatorioHoras_L = 0;
-        let sumatorioHoras_C = 0;
         let sumatorioHoras_E = 0;
-        let sumatorioHoras_I = 0;
-        let sumatorioHoras_Z = 0;
-        let sumatorioHoras_T = 0;
         let sumatorioHoras_P = 0;
+        let sumatorioHoras_N = 0;
+        let sumatorioHoras_R = 0;
+        let sumatorioHoras_L1 = 0;
+        let sumatorioHoras_L2 = 0;
+        let sumatorioHoras_F = 0;
         let sumatorioTotal = 0;
         if (arrayDatosInforme.length > 0) {
             arrayDatosInforme.forEach((dato, index) => {
                 sumatorioHoras_L += (dato.totalHorasNormal_L + dato.totalHorasExtra_L);
-                sumatorioHoras_C += (dato.totalHorasNormal_C + dato.totalHorasExtra_C);
                 sumatorioHoras_E += (dato.totalHorasNormal_E + dato.totalHorasExtra_E);
-                sumatorioHoras_I += (dato.totalHorasNormal_I + dato.totalHorasExtra_I);
-                sumatorioHoras_Z += (dato.totalHorasNormal_Z + dato.totalHorasExtra_Z);
-                sumatorioHoras_T += (dato.totalHorasNormal_T + dato.totalHorasExtra_T);
                 sumatorioHoras_P += (dato.totalHorasNormal_P + dato.totalHorasExtra_P);
+                sumatorioHoras_N += (dato.totalHorasNormal_N + dato.totalHorasExtra_N);
+                sumatorioHoras_R += (dato.totalHorasNormal_R + dato.totalHorasExtra_R);
+                sumatorioHoras_L1 += (dato.totalHorasNormal_L1 + dato.totalHorasExtra_L1);
+                sumatorioHoras_L2 += (dato.totalHorasNormal_L2 + dato.totalHorasExtra_L2);
+                sumatorioHoras_F += (dato.totalHorasNormal_F + dato.totalHorasExtra_F);
                 sumatorioTotal += dato.totalHoras;
             });
         };
-        return { sumatorioHoras_L, sumatorioHoras_C, sumatorioHoras_E, sumatorioHoras_I, sumatorioHoras_Z, sumatorioHoras_T, sumatorioHoras_P, sumatorioTotal }
+        return { sumatorioHoras_L, sumatorioHoras_E, sumatorioHoras_P, sumatorioHoras_N, sumatorioHoras_R, sumatorioHoras_L1, sumatorioHoras_L2, sumatorioHoras_F, sumatorioTotal }
     };
 
     const handleClickFacturarCuadrante = () => {
@@ -4477,45 +5492,52 @@ const Cuadrantes = (props) => {
                     </Tooltip>
                 )
                 break;
-            case 'CRIS':
-                return (
-                    <Tooltip title="Servicio de limpieza de cristales" placement="top-end" arrow>
-                        <Avatar className={clsx(classes.tipoServ2, classes.small2)}>C</Avatar>
-                    </Tooltip>
-                )
-                break;
-            case 'CRISE':
-                return (
-                    <Tooltip title="Limpieza de cristales exteriores" placement="top-end" arrow>
-                        <Avatar className={clsx(classes.tipoServ3, classes.small2)}>E</Avatar>
-                    </Tooltip>
-                )
-                break;
-            case 'CRISI':
-                return (
-                    <Tooltip title="Limpieza de cristales interiores" placement="top-end" arrow>
-                        <Avatar className={clsx(classes.tipoServ4, classes.small2)}>I</Avatar>
-                    </Tooltip>
-                )
-                break;
             case 'LIME':
                 return (
-                    <Tooltip title="Servicio de limpieza de escalera y zonas comunes" placement="top-end" arrow>
-                        <Avatar className={clsx(classes.tipoServ5, classes.small2)}>Z</Avatar>
-                    </Tooltip>
-                )
-                break;
-            case 'TOL':
-                return (
-                    <Tooltip title="Servicio de limpieza de toldos" placement="top-end" arrow>
-                        <Avatar className={clsx(classes.tipoServ6, classes.small2)}>T</Avatar>
+                    <Tooltip title="Servicio de limpieza especial" placement="top-end" arrow>
+                        <Avatar className={clsx(classes.tipoServ2, classes.small2)}>E</Avatar>
                     </Tooltip>
                 )
                 break;
             case 'LIMP':
                 return (
-                    <Tooltip title="Servicio de limpieza de parking" placement="top-end" arrow>
-                        <Avatar className={clsx(classes.tipoServ7, classes.small2)}>P</Avatar>
+                    <Tooltip title="Limpieza de limpieza del párking" placement="top-end" arrow>
+                        <Avatar className={clsx(classes.tipoServ3, classes.small2)}>P</Avatar>
+                    </Tooltip>
+                )
+                break;
+            case 'NAVE2':
+                return (
+                    <Tooltip title="Limpieza de limpieza de nave 2" placement="top-end" arrow>
+                        <Avatar className={clsx(classes.tipoServ4, classes.small2)}>N</Avatar>
+                    </Tooltip>
+                )
+                break;
+            case 'REFZ':
+                return (
+                    <Tooltip title="Servicio de limpieza de refuerzo" placement="top-end" arrow>
+                        <Avatar className={clsx(classes.tipoServ5, classes.small2)}>R</Avatar>
+                    </Tooltip>
+                )
+                break;
+            case 'LIM1':
+                return (
+                    <Tooltip title="Servicio de limpieza 1" placement="top-end" arrow>
+                        <Avatar className={clsx(classes.tipoServ6, classes.small2)}>1</Avatar>
+                    </Tooltip>
+                )
+                break;
+            case 'LIM2':
+                return (
+                    <Tooltip title="Servicio de limpieza 2" placement="top-end" arrow>
+                        <Avatar className={clsx(classes.tipoServ6, classes.small2)}>2</Avatar>
+                    </Tooltip>
+                )
+                break;
+            case 'FEST':
+                return (
+                    <Tooltip title="Servicio de limpieza día festivo" placement="top-end" arrow>
+                        <Avatar className={clsx(classes.tipoServ7, classes.small2)}>F</Avatar>
                     </Tooltip>
                 )
                 break;
@@ -4552,20 +5574,22 @@ const Cuadrantes = (props) => {
             const objetoDesgloseConceptos = {
                 MT: objetoCuadrante.datosInforme.totalFacturado_M ? objetoCuadrante.datosInforme.totalFacturado_M : null,
                 LT: objetoCuadrante.datosInforme.totalFacturado_L ? objetoCuadrante.datosInforme.totalFacturado_L : null,
-                CT: objetoCuadrante.datosInforme.totalFacturado_C ? objetoCuadrante.datosInforme.totalFacturado_C : null,
                 ET: objetoCuadrante.datosInforme.totalFacturado_E ? objetoCuadrante.datosInforme.totalFacturado_E : null,
-                IT: objetoCuadrante.datosInforme.totalFacturado_I ? objetoCuadrante.datosInforme.totalFacturado_I : null,
-                ZT: objetoCuadrante.datosInforme.totalFacturado_Z ? objetoCuadrante.datosInforme.totalFacturado_Z : null,
-                TT: objetoCuadrante.datosInforme.totalFacturado_T ? objetoCuadrante.datosInforme.totalFacturado_T : null,
                 PT: objetoCuadrante.datosInforme.totalFacturado_P ? objetoCuadrante.datosInforme.totalFacturado_P : null,
+                NT: objetoCuadrante.datosInforme.totalFacturado_N ? objetoCuadrante.datosInforme.totalFacturado_N : null,
+                RT: objetoCuadrante.datosInforme.totalFacturado_R ? objetoCuadrante.datosInforme.totalFacturado_R : null,
+                L1T: objetoCuadrante.datosInforme.totalFacturado_L1 ? objetoCuadrante.datosInforme.totalFacturado_L1 : null,
+                L2T: objetoCuadrante.datosInforme.totalFacturado_L2 ? objetoCuadrante.datosInforme.totalFacturado_L2 : null,
+                FT: objetoCuadrante.datosInforme.totalFacturado_F ? objetoCuadrante.datosInforme.totalFacturado_F : null,
                 MH: objetoCuadrante.datosInforme.totalFacturado_M ? 1 : null,
                 LH: objetoCuadrante.horas.L,
-                CH: objetoCuadrante.horas.C,
                 EH: objetoCuadrante.horas.E,
-                IH: objetoCuadrante.horas.I,
-                ZH: objetoCuadrante.horas.Z,
-                TH: objetoCuadrante.horas.T,
-                PH: objetoCuadrante.horas.P
+                PH: objetoCuadrante.horas.P,
+                NH: objetoCuadrante.horas.N,
+                RH: objetoCuadrante.horas.R,
+                L1H: objetoCuadrante.horas.L1,
+                L2H: objetoCuadrante.horas.L2,
+                FH: objetoCuadrante.horas.F
             };
             dispatch(generarArchivosXLSAccion('centros', numeroFactusol, centro, calculoTotalAFacturar(), objetoDesgloseConceptos));
             handleCloseMenu();
@@ -4577,7 +5601,28 @@ const Cuadrantes = (props) => {
             setOpenSnack(true);
             return;
         };
-    };    
+    };
+
+    const handleChangeTipoHorario = (index) => (e) => {
+        let arrayCuadrante = [...cuadrante];
+        arrayCuadrante[index].tipoHorario = e.target.value;
+        setCuadrante(arrayCuadrante);
+        if (arrayCuadrante[index].tipoTrabajador === 'trabajador') {
+            setEsInicioTra(false);
+            setEsCambioTra(true);
+            let trabajador = trabajadoresEnCuadrante.find(trabajador => trabajador.id === arrayCuadrante[index].idTrabajador);
+            gestionaColumnaCuadrante(trabajador, 'trabajador', true, index, false, true, e.target.value);
+        } else {
+            setEsInicioSup(false);
+            setEsCambioSup(true);
+            let suplente = suplentesEnCuadrante.find(suplente => suplente.id === arrayCuadrante[index].idTrabajador);
+            gestionaColumnaCuadrante(suplente, 'suplente', true, index, false, true, e.target.value);
+        }
+        if (cuadranteRegistrado === 'si') {
+            dispatch(activarDesactivarCambioBotonActualizarAccion(false));
+        };
+        dispatch(registrarIntervencionAccion(false));
+    };
 
     //dialog
 
@@ -4616,7 +5661,7 @@ const Cuadrantes = (props) => {
             dispatch(setCentroAccion(centroId));
             dispatch(cambiarACuadranteNoRegistradoAccion());
             const nombreCuadrante = calendarioAGestionar + '-' + centroId;
-            const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, centro: centroId, arrayCuadrante: [] };
+            const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, centro: centroId, tipoHorarioGeneral: '', arrayCuadrante: [] };
             dispatch(actualizarObjetoCuadranteAccion({
                 ...objetoCuadrante,
                 id: null,
@@ -4629,16 +5674,19 @@ const Cuadrantes = (props) => {
                     objeto: 'horas',
                     M: null,
                     L: null,
-                    C: null,
                     E: null,
-                    I: null,
-                    Z: null,
-                    T: null,
-                    P: null
+                    P: null,
+                    N: null,
+                    R: null,
+                    L1: null,
+                    L2: null,
+                    F: null
                 }
             }));
             dispatch(activarDesactivarCambioBotonResetearAccion(true));
             setControladorDeEstado('venimosDeResetear');
+            setPreValueCalendarioAGestionarReseteo(calendarioAGestionar);
+            dispatch(setCalendarioAGestionarAccion(''));
         }
         dispatch(cierraObjetoDialogAccion());
     };
@@ -4650,7 +5698,7 @@ const Cuadrantes = (props) => {
                 reseteaContenidoCentro();
                 dispatch(setCentroAccion(preValueValor.valor));
                 const nombreCuadrante = calendarioAGestionar + '-' + preValueValor.valor;
-                const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, centro: preValueValor.valor, arrayCuadrante: [] };
+                const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, centro: preValueValor.valor, tipoHorarioGeneral: '', arrayCuadrante: [] };
                 dispatch(actualizarObjetoCuadranteAccion({
                     ...objetoCuadrante,
                     id: null,
@@ -4663,12 +5711,13 @@ const Cuadrantes = (props) => {
                         objeto: 'horas',
                         M: null,
                         L: null,
-                        C: null,
                         E: null,
-                        I: null,
-                        Z: null,
-                        T: null,
-                        P: null
+                        P: null,
+                        N: null,
+                        R: null,
+                        L1: null,
+                        L2: null,
+                        R: null
                     }
                 }));
                 dispatch(obtenerCuadranteAccion('cuadrantes', nombreCuadrante));
@@ -4762,6 +5811,152 @@ const Cuadrantes = (props) => {
                     </Grid>
                 </Box >
             </Grid>
+        )
+    };
+
+    const retornoServiciosFijosEnLayout = (elemento) => {
+        let hayServicios;
+        if (losServiciosFijos.precioHora_TO ||
+            losServiciosFijos.precioHora_CR ||
+            losServiciosFijos.precioHora_CE ||
+            losServiciosFijos.precioHora_CI ||
+            losServiciosFijos.precioHora_MO ||
+            losServiciosFijos.precioHora_OF ||
+            losServiciosFijos.precioHora_AL ||
+            losServiciosFijos.precioHora_LA ||
+            losServiciosFijos.precioHora_TE ||
+            losServiciosFijos.precioHora_FI ||
+            losServiciosFijos.precioHora_FE ||
+            losServiciosFijos.precioHora_AB ||
+            losServiciosFijos.precioHora_MA ||
+            losServiciosFijos.precioHora_PO ||
+            losServiciosFijos.precioHora_BA ||
+            losServiciosFijos.precioHora_FT) {
+            hayServicios = true;
+        };
+        if (elemento === 'grid') {
+            if (hayServicios) {
+                return (classes.conServicios)
+            } else {
+                return (classes.sinServicios)
+            };
+        };
+        if (elemento === 'avatar') {
+            if (hayServicios) {
+                return (clsx(classes.conServiciosA, classes.small))
+            } else {
+                return (clsx(classes.sinServiciosA, classes.small))
+            };
+        };
+        if (elemento === 'icon') {
+            if (hayServicios) {
+                return (<NotificationsIcon />)
+            } else {
+                return (<NotificationsOffIcon />)
+            };
+        };
+        if (elemento === 'tooltip') {
+            if (hayServicios) {
+                return ('Cuadrante con servicios fijos')
+            } else {
+                return ('Cuadrante sin servicios fijos')
+            };
+        };
+    };
+
+    const retornaServiciosFijosEnLayoutAvatars = (tipo, index) => {
+        let laClase, elTooltip, laLetra;
+        switch (tipo.value) {
+            case 'TOL':
+                laClase = losServiciosFijos.precioHora_TO ? classes.displayBlock : classes.displayNone;
+                elTooltip = 'Servicio de limpieza de toldos: ' + losServiciosFijos.precioHora_TO + ' €';
+                laLetra = 'TO';
+                break;
+            case 'CRIS':
+                laClase = losServiciosFijos.precioHora_CR ? classes.displayBlock : classes.displayNone;
+                elTooltip = 'Servicio de limpieza de cristales: ' + losServiciosFijos.precioHora_CR + ' €';
+                laLetra = 'CR';
+                break;
+            case 'CRISE':
+                laClase = losServiciosFijos.precioHora_CE ? classes.displayBlock : classes.displayNone;
+                elTooltip = 'Limpieza cristales exteriores: ' + losServiciosFijos.precioHora_CE + ' €';
+                laLetra = 'CE';
+                break;
+            case 'CRISI':
+                laClase = losServiciosFijos.precioHora_CI ? classes.displayBlock : classes.displayNone;
+                elTooltip = 'Limpieza cristales interiores: ' + losServiciosFijos.precioHora_CI + ' €';
+                laLetra = 'CI';
+                break;
+            case 'MOQ':
+                laClase = losServiciosFijos.precioHora_MO ? classes.displayBlock : classes.displayNone;
+                elTooltip = 'Servicio de limpieza moqueta: ' + losServiciosFijos.precioHora_MO + ' €';
+                laLetra = 'MO';
+                break;
+            case 'OF':
+                laClase = losServiciosFijos.precioHora_OF ? classes.displayBlock : classes.displayNone;
+                elTooltip = 'Servicio de limpieza oficinas: ' + losServiciosFijos.precioHora_OF + ' €';
+                laLetra = 'OF';
+                break;
+            case 'ALMC':
+                laClase = losServiciosFijos.precioHora_AL ? classes.displayBlock : classes.displayNone;
+                elTooltip = 'Servicio de limpieza almacenes: ' + losServiciosFijos.precioHora_AL + ' €';
+                laLetra = 'AL';
+                break;
+            case 'LAB':
+                laClase = losServiciosFijos.precioHora_LA ? classes.displayBlock : classes.displayNone;
+                elTooltip = 'Servicio de limpieza laboratorio: ' + losServiciosFijos.precioHora_LA + ' €';
+                laLetra = 'LA';
+                break;
+            case 'TELÑ':
+                laClase = losServiciosFijos.precioHora_TE ? classes.displayBlock : classes.displayNone;
+                elTooltip = 'Servicio de limpieza telarañas: ' + losServiciosFijos.precioHora_TE + ' €';
+                laLetra = 'TE';
+                break;
+            case 'FCH.IN':
+                laClase = losServiciosFijos.precioHora_FI ? classes.displayBlock : classes.displayNone;
+                elTooltip = 'Servicio de limpieza fachada interior: ' + losServiciosFijos.precioHora_FI + ' €';
+                laLetra = 'FI';
+                break;
+            case 'FCH.EX':
+                laClase = losServiciosFijos.precioHora_FE ? classes.displayBlock : classes.displayNone;
+                elTooltip = 'Servicio de limpieza fachada exterior: ' + losServiciosFijos.precioHora_FE + ' €';
+                laLetra = 'FE';
+                break;
+            case 'ABRLL':
+                laClase = losServiciosFijos.precioHora_AB ? classes.displayBlock : classes.displayNone;
+                elTooltip = 'Servicio de limpieza abrillantado: ' + losServiciosFijos.precioHora_AB + ' €';
+                laLetra = 'AB';
+                break;
+            case 'MANT':
+                laClase = losServiciosFijos.precioHora_MA ? classes.displayBlock : classes.displayNone;
+                elTooltip = 'Servicio de mantenimiento máquina: ' + losServiciosFijos.precioHora_MA + ' €';
+                laLetra = 'MA';
+                break;
+            case 'PORT':
+                laClase = losServiciosFijos.precioHora_PO ? classes.displayBlock : classes.displayNone;
+                elTooltip = 'Servicio de limpieza portería: ' + losServiciosFijos.precioHora_PO + ' €';
+                laLetra = 'PO';
+                break;
+            case 'BACT':
+                laClase = losServiciosFijos.precioHora_BA ? classes.displayBlock : classes.displayNone;
+                elTooltip = 'Bot. Noubact: ' + losServiciosFijos.precioHora_BA + ' €';
+                laLetra = 'BA';
+                break;
+            case 'FEST':
+                laClase = losServiciosFijos.precioHora_FT ? classes.displayBlock : classes.displayNone;
+                elTooltip = 'Servicio de limpieza día festivo: ' + losServiciosFijos.precioHora_FT + ' €';
+                laLetra = 'FT';
+                break;
+            default:
+        };
+        return (
+            <Box style={{ paddingTop: 5 }} className={laClase} key={'avatar' + index}>
+                <LightTooltip title={elTooltip} placement="right">
+                    <Avatar variant="square" className={clsx(classes.conServiciosA2, classes.small4)}>
+                        <Typography style={{ fontSize: '0.7rem' }}>{laLetra}</Typography>
+                    </Avatar>
+                </LightTooltip>
+            </Box>
         )
     };
 
@@ -4930,7 +6125,7 @@ const Cuadrantes = (props) => {
                         mt={2}
                         mb={3}
                     >
-                        <Grid item lg={4}>
+                        <Grid item xs={2}>
                             <Box pr={2}>
                                 <MuiPickersUtilsProvider locale={es} utils={DateFnsUtils}>
                                     <KeyboardDatePicker
@@ -4950,7 +6145,7 @@ const Cuadrantes = (props) => {
                                 </MuiPickersUtilsProvider>
                             </Box>
                         </Grid>
-                        <Grid item lg={4}>
+                        <Grid item xs={4}>
                             <Box pr={2}>
                                 <FormControl
                                     variant="outlined"
@@ -4977,7 +6172,7 @@ const Cuadrantes = (props) => {
                                 </FormControl>
                             </Box>
                         </Grid>
-                        <Grid item lg={4}>
+                        <Grid item xs={4}>
                             <Box pr={2}>
                                 <FormControl
                                     variant="outlined"
@@ -5005,180 +6200,290 @@ const Cuadrantes = (props) => {
                                 </FormControl>
                             </Box>
                         </Grid>
-                    </Box>
-                    {cuadrante.length > 0 ? (
-                        <Grid
-                            className={clsx(classes.scrollable, classes.scrollableScroll)}
-                            ref={scrollable}
-                            style={{ height: heightScrollable }}
-                        >
-                            <Box
-                                p={0}
-                                mt={0}
-                            >
-                                <Grid
-                                    container
-                                    direction="row"
-                                    justifycontent="flex-start"
-                                    alignItems="flex-start"
-                                    style={{ position: 'fixed', zIndex: 3, marginTop: -45 }}
+                        <Grid item xs={2}>
+                            <Box pr={2}>
+                                <FormControl
+                                    variant="outlined"
+                                    fullWidth
+                                    disabled={true}
+                                    size="small"
                                 >
-                                    <Box
-                                        p={1.5}
-                                        mx={0.3}
-                                        className={clsx(classes.cabecera, classes.inicio)}
-                                        color="secondary.contrastText"
-                                        style={{ minHeight: 38, maxHeight: 38, padding: 9 }}
+                                    <InputLabel>Cuadrante</InputLabel>
+                                    <Select
+                                        id="form-numero-cuadrantes"
+                                        value={1 || ''}
+                                        // onChange={handleChangeSelectCategoria}
+                                        input={
+                                            <OutlinedInput
+                                                labelWidth={80}
+                                            />
+                                        }
                                     >
-                                        <Typography variant="body2">Día</Typography>
-                                    </Box>
-                                    {cuadrante.map((columnaCabecera, index) => (
-                                        <Box
-                                            key={`box_header_` + (index + 1)}
-                                            mx={0.3}
-                                        >
-                                            <Accordion
-                                                expanded={expandedAccordion === 'panel_' + (index + 1)}
-                                                className={gestionaClassesColoresTrabajadores(columnaCabecera.tipoTrabajador)}
-                                                style={{ width: dimensionsColumna.width }}
-                                                onChange={(e, expandedAccordion) => { handleCambioAccordionHeader(expandedAccordion, 'panel_' + (index + 1), index) }}
-                                            >
-                                                <AccordionSummary
-                                                    expandIcon={<ExpandMoreIcon className={classes.blanc} />}
-                                                >
-                                                    <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{columnaCabecera.nombreTrabajador}</Typography>
-                                                </AccordionSummary>
-                                                <AccordionDetails>
-                                                    <Grid container className={classes.mt5}>
-                                                        <Grid
-                                                            container
-                                                            direction="column"
-                                                            justifycontent="flex-start"
-                                                            alignItems="flex-start"
-                                                        >
-                                                            <Box
-                                                                style={{ width: '100%', display: 'flex' }}
-                                                                className={estadoFlex === 'fila' ? classes.flexRow : classes.flexColumn}
-                                                            >
-                                                                <Grid item xs={false}>
-                                                                </Grid>
-                                                                <Grid item xs={12}>
-                                                                    <Box
-                                                                        display="flex"
-                                                                        alignItems="center"
-                                                                        justifyContent="flex-end"
-                                                                    >
-                                                                        <Tooltip title={columnaCabecera.nombreTrabajador ? "Añadir suplente" : ""} placement="top-end" arrow>
-                                                                            <div>
-                                                                                <IconButton
-                                                                                    className={clsx(classes.btnAddSuplente, classes.blanc, classes.mb10)}
-                                                                                    onClick={() => handleClickAddColumna('suplente', index)}
-                                                                                    disabled={columnaCabecera.nombreTrabajador ? false : true}
-                                                                                >
-                                                                                    <PersonAddIcon style={{ fontSize: 18 }} />
-                                                                                </IconButton>
-                                                                            </div>
-                                                                        </Tooltip>
-                                                                        <Tooltip title={columnaCabecera.nombreTrabajador ? "Actualizar trabajador" : ""} placement="top-end" arrow>
-                                                                            <div>
-                                                                                <IconButton
-                                                                                    className={clsx(classes.btnVariacion, classes.blanc, classes.mb10)}
-                                                                                    size="small"
-                                                                                    onClick={() => handleActualizarTrabajadores(index, columnaCabecera.tipoTrabajador, columnaCabecera.idTrabajador)}
-                                                                                    disabled={columnaCabecera.nombreTrabajador ? false : true}
-                                                                                >
-                                                                                    <CachedIcon />
-                                                                                </IconButton>
-                                                                            </div>
-                                                                        </Tooltip>
-                                                                        <Tooltip title="Eliminar trabajador" placement="top-end" arrow>
-                                                                            <IconButton
-                                                                                className={clsx(classes.btnError, classes.mb10)}
-                                                                                size="small"
-                                                                                onClick={() => eliminarColumna(index, columnaCabecera.idTrabajador)}
-                                                                            >
-                                                                                <DeleteIcon />
-                                                                            </IconButton>
-                                                                        </Tooltip>
-                                                                    </Box>
-                                                                </Grid>
-                                                            </Box>
-                                                            <FormControl
-                                                                variant="outlined"
-                                                                fullWidth
-                                                                className={classes.mt15}
-                                                            >
-                                                                <InputLabel>{(columnaCabecera.tipoTrabajador === 'trabajador' || !columnaCabecera.tipoTrabajador) ? 'Trabajador' : 'Suplente'}</InputLabel>
-                                                                <Select
-                                                                    id={`form-trabajador-` + (index + 1)}
-                                                                    value={columnaCabecera.idTrabajador < 1000 ? columnaCabecera.idTrabajador : ''}
-                                                                    onChange={handleChangeFormTrabajadores(index, columnaCabecera.tipoTrabajador)}
-                                                                    onOpen={() => setValorPrevioAccordionAbierto(columnaCabecera.idTrabajador)}
-                                                                    input={
-                                                                        <OutlinedInput
-                                                                            labelWidth={80}
-                                                                        />
-                                                                    }
-                                                                >
-                                                                    {listadoTrabajadores.map((option) => (
-                                                                        <MenuItem key={option.id} value={option.id}>
-                                                                            {option.nombre}
-                                                                        </MenuItem>
-                                                                    ))}
-                                                                </Select>
-                                                            </FormControl>
-                                                        </Grid>
-                                                    </Grid>
-                                                </AccordionDetails>
-                                            </Accordion>
-                                        </Box>
-                                    ))}
-                                    <Box
-                                        m={0.3}
-                                    >
-                                        <Tooltip title="Añadir trabajador" placement="right" arrow>
-                                            <IconButton
-                                                className={clsx(classes.btnAddTrabajador, classes.blanc)}
-                                                onClick={() => handleClickAddColumna('trabajador', null)}
-                                            >
-                                                <PersonAddIcon style={{ fontSize: 18 }} />
-                                            </IconButton>
-                                        </Tooltip>
-                                    </Box>
-                                </Grid>
-                                <Grid container
-                                    style={{ marginTop: 45 }}
-                                >
-                                    <Box
-                                    >
-                                        {losDiasDelMes.map((dia, index) => (
-                                            retornaCasillasDias(dia, index)
-                                        ))}
-                                    </Box>
-                                    {cuadrante.map((columna, indexColumna) => (
-                                        <Box
-                                            key={'Box_' + indexColumna}
-                                        >
-                                            {losDiasDelMes.map((dia, indexDia) => (
-                                                retornaCasillasGeneral(dia, indexDia, columna, indexColumna)
-                                            ))}
-                                        </Box>
-                                    ))}
-                                </Grid>
+                                        <MenuItem key={1} value={1}>
+                                            1
+                                        </MenuItem>
+                                    </Select>
+                                </FormControl>
                             </Box>
-                            <Tooltip title="Informe Cuadrante" placement="left" arrow>
-                                <Fab
-                                    variant="extended"
-                                    className={classes.fab}
-                                    onClick={handleClickOpenDialogCuadrantes4}
-                                >
-                                    <Typography variant="body2" className={classes.typoFab}>{retornaInfoFabButton()}</Typography>
-                                    <AssessmentIcon />
-                                </Fab>
-                            </Tooltip>
                         </Grid>
-                    ) : (
-                        esInicioCuadrantes ? <PantallaCuadrantes /> : null
+                    </Box>
+                    {esInicioCuadrantes ? <PantallaCuadrantes /> : (
+                        <Grid container
+                            direction="row"
+                            justifycontent="flex-start"
+                            alignItems="flex-start"
+                        >
+                            {cuadrante.length > 0 || cuadranteVacio ? (
+                                <Box>
+                                    <Grid item
+                                        style={{ width: 40, marginRight: 4, height: 38 }}
+                                        className={classes.trabajador}
+                                    >
+                                        <Box
+                                            style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", paddingTop: 6, cursor: 'pointer' }}
+                                            onClick={abrePopoverConfiguracion()}
+                                        >
+                                            <Tooltip title="Configuración general cuadrante" placement="right" arrow>
+                                                <AssignmentIcon />
+                                            </Tooltip>
+                                        </Box>
+                                    </Grid>
+                                    <Grid item
+                                        style={{ width: 40, marginRight: 4, marginTop: 9, paddingTop: 5, height: heightScrollable - 47 }}
+                                        className={retornoServiciosFijosEnLayout('grid')}
+                                    >
+                                        <Box style={{ padding: 4 }}>
+                                            <Tooltip title={retornoServiciosFijosEnLayout('tooltip')} placement="right" arrow>
+                                                <Avatar
+                                                    style={{ cursor: 'pointer' }}
+                                                    className={retornoServiciosFijosEnLayout('avatar')}
+                                                    onClick={abrePopoverServiciosFijos()}
+                                                >
+                                                    {retornoServiciosFijosEnLayout('icon')}
+                                                </Avatar>
+                                            </Tooltip>
+                                        </Box>
+                                        <Box
+                                            display="flex"
+                                            flexDirection="column"
+                                            alignItems="center"
+                                            justifyContent="center"
+                                        >
+                                            {
+                                                tiposDeServicio.map((tipo, index) => (
+                                                    retornaServiciosFijosEnLayoutAvatars(tipo, index)
+                                                ))
+                                            }
+                                        </Box>
+                                    </Grid>
+                                </Box>
+                            ) : null}
+                            <Grid item xs>
+                                {cuadrante.length > 0 || cuadranteVacio ? (
+                                    <Grid
+                                        className={clsx(classes.scrollable, classes.scrollableScroll)}
+                                        ref={scrollable}
+                                        style={{ height: heightScrollable }}
+                                    >
+                                        <Box
+                                            p={0}
+                                            mt={0}
+                                        >
+                                            <Grid
+                                                container
+                                                direction="row"
+                                                justifycontent="flex-start"
+                                                alignItems="flex-start"
+                                                style={{ position: 'fixed', zIndex: 3, marginTop: -45 }}
+                                            >
+                                                <Box
+                                                    p={1.5}
+                                                    mx={0.3}
+                                                    className={clsx(classes.cabecera, classes.inicio)}
+                                                    color="secondary.contrastText"
+                                                    style={{ minHeight: 38, maxHeight: 38, padding: 9, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
+                                                >
+                                                    <Typography variant="body2">Cuadrante</Typography>
+                                                    <Avatar
+                                                        className={clsx(classes.small4)}
+                                                    >
+                                                        <Typography variant='body2' color="textPrimary">1</Typography>
+                                                    </Avatar>
+
+                                                </Box>
+                                                {cuadrante.map((columnaCabecera, index) => (
+                                                    <Box
+                                                        key={`box_header_` + (index + 1)}
+                                                        mx={0.3}
+                                                    >
+                                                        <Accordion
+                                                            expanded={expandedAccordion === 'panel_' + (index + 1)}
+                                                            className={gestionaClassesColoresTrabajadores(columnaCabecera.tipoTrabajador)}
+                                                            style={{ width: dimensionsColumna.width }}
+                                                            onChange={(e, expandedAccordion) => { handleCambioAccordionHeader(expandedAccordion, 'panel_' + (index + 1), index) }}
+                                                        >
+                                                            <AccordionSummary
+                                                                expandIcon={<ExpandMoreIcon className={classes.blanc} />}
+                                                            >
+                                                                <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{columnaCabecera.nombreTrabajador}</Typography>
+                                                            </AccordionSummary>
+                                                            <AccordionDetails>
+                                                                <Grid container className={classes.mt5}>
+                                                                    <Grid
+                                                                        container
+                                                                        direction="column"
+                                                                        justifycontent="flex-start"
+                                                                        alignItems="flex-start"
+                                                                    >
+                                                                        <Box
+                                                                            style={{ width: '100%', display: 'flex' }}
+                                                                            className={estadoFlex === 'fila' ? classes.flexRow : classes.flexColumn}
+                                                                        >
+                                                                            <Grid item xs={false}>
+                                                                            </Grid>
+                                                                            <Grid item xs={12}>
+                                                                                <Box
+                                                                                    display="flex"
+                                                                                    alignItems="center"
+                                                                                    justifyContent="flex-end"
+                                                                                >
+                                                                                    <Tooltip title={columnaCabecera.nombreTrabajador ? "Añadir suplente" : ""} placement="top-end" arrow>
+                                                                                        <div>
+                                                                                            <IconButton
+                                                                                                className={clsx(classes.btnAddSuplente, classes.blanc, classes.mb10)}
+                                                                                                onClick={() => handleClickAddColumna('suplente', index)}
+                                                                                                disabled={columnaCabecera.nombreTrabajador ? false : true}
+                                                                                            >
+                                                                                                <PersonAddIcon style={{ fontSize: 18 }} />
+                                                                                            </IconButton>
+                                                                                        </div>
+                                                                                    </Tooltip>
+                                                                                    <Tooltip title={columnaCabecera.nombreTrabajador ? "Actualizar trabajador" : ""} placement="top-end" arrow>
+                                                                                        <div>
+                                                                                            <IconButton
+                                                                                                className={clsx(classes.btnVariacion, classes.blanc, classes.mb10)}
+                                                                                                size="small"
+                                                                                                onClick={() => handleActualizarTrabajadores(index, columnaCabecera.tipoTrabajador, columnaCabecera.idTrabajador)}
+                                                                                                disabled={columnaCabecera.nombreTrabajador ? false : true}
+                                                                                            >
+                                                                                                <CachedIcon />
+                                                                                            </IconButton>
+                                                                                        </div>
+                                                                                    </Tooltip>
+                                                                                    <Tooltip title="Eliminar trabajador" placement="top-end" arrow>
+                                                                                        <IconButton
+                                                                                            className={clsx(classes.btnError, classes.mb10)}
+                                                                                            size="small"
+                                                                                            onClick={() => eliminarColumna(index, columnaCabecera.idTrabajador)}
+                                                                                        >
+                                                                                            <DeleteIcon />
+                                                                                        </IconButton>
+                                                                                    </Tooltip>
+                                                                                </Box>
+                                                                            </Grid>
+                                                                        </Box>
+                                                                        <FormControl
+                                                                            variant="outlined"
+                                                                            fullWidth
+                                                                            className={classes.mt15}
+                                                                            size="small"
+                                                                        >
+                                                                            <InputLabel>{(columnaCabecera.tipoTrabajador === 'trabajador' || !columnaCabecera.tipoTrabajador) ? 'Trabajador' : 'Suplente'}</InputLabel>
+                                                                            <Select
+                                                                                id={`form-trabajador-` + (index + 1)}
+                                                                                value={columnaCabecera.idTrabajador < 1000 ? columnaCabecera.idTrabajador : ''}
+                                                                                onChange={handleChangeFormTrabajadores(index, columnaCabecera.tipoTrabajador)}
+                                                                                onOpen={() => setValorPrevioAccordionAbierto(columnaCabecera.idTrabajador)}
+                                                                                input={
+                                                                                    <OutlinedInput
+                                                                                        labelWidth={80}
+                                                                                    />
+                                                                                }
+                                                                            >
+                                                                                {listadoTrabajadores.map((option) => (
+                                                                                    <MenuItem key={option.id} value={option.id}>
+                                                                                        {option.nombre}
+                                                                                    </MenuItem>
+                                                                                ))}
+                                                                            </Select>
+                                                                        </FormControl>
+                                                                        <FormControl
+                                                                            variant="outlined"
+                                                                            fullWidth
+                                                                            className={classes.mt15}
+                                                                            size="small"
+                                                                        >
+                                                                            <InputLabel>Modo entrada datos</InputLabel>
+                                                                            <Select
+                                                                                id="form-tipo-cuadrantes"
+                                                                                label="Modo entrada datos"
+                                                                                value={columnaCabecera.tipoHorario || ''}
+                                                                                onChange={handleChangeTipoHorario(index)}
+                                                                                helpertext="Selecciona Modo entrada datos"
+                                                                                disabled={columnaCabecera.nombreTrabajador ? false : true}
+                                                                            >
+                                                                                {
+                                                                                    tipos.map((option) => (
+                                                                                        <MenuItem key={option.value} value={option.value}>
+                                                                                            {option.label}
+                                                                                        </MenuItem>
+                                                                                    ))
+                                                                                }
+                                                                            </Select>
+                                                                        </FormControl>
+                                                                    </Grid>
+                                                                </Grid>
+                                                            </AccordionDetails>
+                                                        </Accordion>
+                                                    </Box>
+                                                ))}
+                                                <Box
+                                                    m={0.3}
+                                                >
+                                                    <Tooltip title="Añadir trabajador" placement="right" arrow>
+                                                        <IconButton
+                                                            className={clsx(classes.btnAddTrabajador, classes.blanc)}
+                                                            onClick={() => handleClickAddColumna('trabajador', null)}
+                                                        >
+                                                            <PersonAddIcon style={{ fontSize: 18 }} />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </Box>
+                                            </Grid>
+                                            <Grid container
+                                                style={{ marginTop: 45 }}
+                                            >
+                                                <Box
+                                                >
+                                                    {losDiasDelMes.map((dia, index) => (
+                                                        retornaCasillasDias(dia, index)
+                                                    ))}
+                                                </Box>
+                                                {cuadrante.map((columna, indexColumna) => (
+                                                    <Box
+                                                        key={'Box_' + indexColumna}
+                                                    >
+                                                        {losDiasDelMes.map((dia, indexDia) => (
+                                                            retornaCasillasGeneral(dia, indexDia, columna, indexColumna)
+                                                        ))}
+                                                    </Box>
+                                                ))}
+                                            </Grid>
+                                        </Box>
+                                        <Tooltip title="Informe Cuadrante" placement="left" arrow>
+                                            <Fab
+                                                variant="extended"
+                                                className={classes.fab}
+                                                onClick={handleClickOpenDialogCuadrantes4}
+                                            >
+                                                <Typography variant="body2" className={classes.typoFab}>{retornaInfoFabButton()}</Typography>
+                                                <AssessmentIcon />
+                                            </Fab>
+                                        </Tooltip>
+                                    </Grid>
+                                ) : null}
+                            </Grid>
+                        </Grid>
                     )}
                 </Grid>
             </Grid>
@@ -5235,79 +6540,182 @@ const Cuadrantes = (props) => {
                 >
                     <Grid container className={classes.mt20}>
                         <Box style={{ width: '100%' }}>
-                            {centroAGestionar.horario.tipo === 'rango' ? (
-                                <Fragment>
-                                    <ItemCuadrante
-                                        prTipo={'rango'}
-                                        prIdInicio={'timePickerInicio-' + variablesPopoverGeneral.postRef}
-                                        prIdFin={'timePickerFin-' + variablesPopoverGeneral.postRef}
-                                        prIndex={variablesPopoverGeneral.indexColumna}
-                                        prValueTimePickerInicio={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillas(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 1) : null}
-                                        prValueTimePickerFin={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillas(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 2) : null}
-                                        prObservaciones={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].observaciones : null}
-                                        prVisibleVariaciones={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].visibleVariaciones : false}
-                                        prTipoVariacion={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].tipoVariacion : ''}
-                                        prHandleVisibleVariaciones={handleVisibleVariaciones}
-                                        prHandleChangeTipoVariaciones={handleChangeTipoVariaciones}
-                                        prHandleChangeTimePickerInicioCuadrante={handleChangeTimePickerInicioCuadrante}
-                                        prHandleChangeTimePickerFinCuadrante={handleChangeTimePickerFinCuadrante}
-                                        prHandleChangeObservaciones={handleChangeObservaciones}
-                                        prGestionItemPrevioEditando={gestionItemPrevioEditando}
-                                        prHandleRegistrarCambioEnCasilla={handleRegistrarCambioEnCasilla}
-                                        prHandleChangeTipoServicio={handleChangeTipoServicio}
-                                        prValueTipoServicio={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].tipoServicio : ''}
-                                    />
-                                </Fragment>
-                            ) : centroAGestionar.horario.tipo === 'cantidad' ? (
-                                <Fragment>
-                                    <ItemCuadrante
-                                        prTipo={'cantidad'}
-                                        prIndex={variablesPopoverGeneral.indexColumna}
-                                        prIdCantidad={'selectCantidad-' + variablesPopoverGeneral.postRef}
-                                        prValueCantidadHoras={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillas(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 1) : null}
-                                        prObservaciones={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].observaciones : null}
-                                        prVisibleVariaciones={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].visibleVariaciones : false}
-                                        prTipoVariacion={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].tipoVariacion : ''}
-                                        prHandleVisibleVariaciones={handleVisibleVariaciones}
-                                        prHandleChangeTipoVariaciones={handleChangeTipoVariaciones}
-                                        prHandleChangeSelectCantidad={handleChangeSelectCantidad}
-                                        prHandleChangeObservaciones={handleChangeObservaciones}
-                                        prGestionItemPrevioEditando={gestionItemPrevioEditando}
-                                        prHandleRegistrarCambioEnCasilla={handleRegistrarCambioEnCasilla}
-                                        prHandleChangeTipoServicio={handleChangeTipoServicio}
-                                        prValueTipoServicio={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].tipoServicio : ''}
-                                    />
-                                </Fragment>
-                            ) : centroAGestionar.horario.tipo === 'rangoDescanso' ? (
-                                <Fragment>
-                                    <ItemCuadrante
-                                        prTipo={'rangoDescanso'}
-                                        prIndex={variablesPopoverGeneral.indexColumna}
-                                        prIdInicio1={'timePickerInicio1Descanso-' + variablesPopoverGeneral.postRef}
-                                        prIdFin1={'timePickerFin1Descanso-' + variablesPopoverGeneral.postRef}
-                                        prIdInicio2={'timePickerInicio2Descanso-' + variablesPopoverGeneral.postRef}
-                                        prIdFin2={'timePickerFin2Descanso-' + variablesPopoverGeneral.postRef}
-                                        prValueTimePickerInicio1={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillas(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 1) : null}
-                                        prValueTimePickerFin1={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillas(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 2) : null}
-                                        prValueTimePickerInicio2={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillas(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 3) : null}
-                                        prValueTimePickerFin2={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillas(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 4) : null}
-                                        prObservaciones={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].observaciones : null}
-                                        prVisibleVariaciones={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].visibleVariaciones : false}
-                                        prTipoVariacion={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].tipoVariacion : ''}
-                                        prHandleVisibleVariaciones={handleVisibleVariaciones}
-                                        prHandleChangeTipoVariaciones={handleChangeTipoVariaciones}
-                                        prHandleChangeTimePickerInicioCuadrante={handleChangeTimePickerInicioCuadrante}
-                                        prHandleChangeTimePickerFinCuadrante={handleChangeTimePickerFinCuadrante}
-                                        prHandleChangeObservaciones={handleChangeObservaciones}
-                                        prGestionItemPrevioEditando={gestionItemPrevioEditando}
-                                        prHandleRegistrarCambioEnCasilla={handleRegistrarCambioEnCasilla}
-                                        prHandleChangeTipoServicio={handleChangeTipoServicio}
-                                        prValueTipoServicio={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].tipoServicio : ''}
-                                    />
-                                </Fragment>
+                            {variablesPopoverGeneral.columna ? (
+                                variablesPopoverGeneral.columna.tipoHorario === 'rango' ? (
+                                    <Fragment>
+                                        <ItemCuadrante
+                                            prTipo={'rango'}
+                                            prIdInicio={'timePickerInicio-' + variablesPopoverGeneral.postRef}
+                                            prIdFin={'timePickerFin-' + variablesPopoverGeneral.postRef}
+                                            prIndex={variablesPopoverGeneral.indexColumna}
+                                            prValueTimePickerInicio={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillas(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 1) : null}
+                                            prValueTimePickerFin={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillas(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 2) : null}
+                                            prObservaciones={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].observaciones : null}
+                                            prVisibleVariaciones={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].visibleVariaciones : false}
+                                            prTipoVariacion={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].tipoVariacion : ''}
+                                            prHandleVisibleVariaciones={handleVisibleVariaciones}
+                                            prHandleChangeTipoVariaciones={handleChangeTipoVariaciones}
+                                            prHandleChangeTimePickerInicioCuadrante={handleChangeTimePickerInicioCuadrante}
+                                            prHandleChangeTimePickerFinCuadrante={handleChangeTimePickerFinCuadrante}
+                                            prHandleChangeObservaciones={handleChangeObservaciones}
+                                            prGestionItemPrevioEditando={gestionItemPrevioEditando}
+                                            prHandleRegistrarCambioEnCasilla={handleRegistrarCambioEnCasilla}
+                                            prHandleChangeTipoServicio={handleChangeTipoServicio}
+                                            prValueTipoServicio={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].tipoServicio : ''}
+                                        />
+                                    </Fragment>
+                                ) : variablesPopoverGeneral.columna.tipoHorario === 'cantidad' ? (
+                                    <Fragment>
+                                        <ItemCuadrante
+                                            prTipo={'cantidad'}
+                                            prIndex={variablesPopoverGeneral.indexColumna}
+                                            prIdCantidad={'selectCantidad-' + variablesPopoverGeneral.postRef}
+                                            prValueCantidadHoras={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillas(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 1) : null}
+                                            prObservaciones={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].observaciones : null}
+                                            prVisibleVariaciones={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].visibleVariaciones : false}
+                                            prTipoVariacion={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].tipoVariacion : ''}
+                                            prHandleVisibleVariaciones={handleVisibleVariaciones}
+                                            prHandleChangeTipoVariaciones={handleChangeTipoVariaciones}
+                                            prHandleChangeSelectCantidad={handleChangeSelectCantidad}
+                                            prHandleChangeObservaciones={handleChangeObservaciones}
+                                            prGestionItemPrevioEditando={gestionItemPrevioEditando}
+                                            prHandleRegistrarCambioEnCasilla={handleRegistrarCambioEnCasilla}
+                                            prHandleChangeTipoServicio={handleChangeTipoServicio}
+                                            prValueTipoServicio={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].tipoServicio : ''}
+                                        />
+                                    </Fragment>
+                                ) : variablesPopoverGeneral.columna.tipoHorario === 'rangoDescanso' ? (
+                                    <Fragment>
+                                        <ItemCuadrante
+                                            prTipo={'rangoDescanso'}
+                                            prIndex={variablesPopoverGeneral.indexColumna}
+                                            prIdInicio1={'timePickerInicio1Descanso-' + variablesPopoverGeneral.postRef}
+                                            prIdFin1={'timePickerFin1Descanso-' + variablesPopoverGeneral.postRef}
+                                            prIdInicio2={'timePickerInicio2Descanso-' + variablesPopoverGeneral.postRef}
+                                            prIdFin2={'timePickerFin2Descanso-' + variablesPopoverGeneral.postRef}
+                                            prValueTimePickerInicio1={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillas(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 1) : null}
+                                            prValueTimePickerFin1={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillas(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 2) : null}
+                                            prValueTimePickerInicio2={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillas(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 3) : null}
+                                            prValueTimePickerFin2={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillas(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 4) : null}
+                                            prObservaciones={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].observaciones : null}
+                                            prVisibleVariaciones={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].visibleVariaciones : false}
+                                            prTipoVariacion={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].tipoVariacion : ''}
+                                            prHandleVisibleVariaciones={handleVisibleVariaciones}
+                                            prHandleChangeTipoVariaciones={handleChangeTipoVariaciones}
+                                            prHandleChangeTimePickerInicioCuadrante={handleChangeTimePickerInicioCuadrante}
+                                            prHandleChangeTimePickerFinCuadrante={handleChangeTimePickerFinCuadrante}
+                                            prHandleChangeObservaciones={handleChangeObservaciones}
+                                            prGestionItemPrevioEditando={gestionItemPrevioEditando}
+                                            prHandleRegistrarCambioEnCasilla={handleRegistrarCambioEnCasilla}
+                                            prHandleChangeTipoServicio={handleChangeTipoServicio}
+                                            prValueTipoServicio={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].tipoServicio : ''}
+                                        />
+                                    </Fragment>
+                                ) : null
                             ) : null}
+
                         </Box>
                     </Grid>
+                </Box>
+            </Popover>
+            <Popover
+                open={openServiciosFijos}
+                anchorEl={anchorElServiciosFijos}
+                onClose={handleClosePopoverServiciosFijos}
+                anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right"
+                }}
+                PaperProps={{
+                    style: {
+                        backgroundColor: "transparent",
+                        boxShadow: "none",
+                        borderRadius: 0
+                    }
+                }}
+            >
+                <Box
+                    className={classes.tooltip}
+                    style={{ width: 500, marginLeft: 10 }}>
+                    <Box
+                        m={0.5}
+                        color="secondary.contrastText"
+                        className={clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
+                    >
+                        Configuración servicios fijos
+                    </Box>
+                    <Box style={{ height: heightScrollable - 150, marginRight: -5, paddingRight: 10 }} className={classes.scrollable} >
+                        <ServiciosFijos
+                            prItemEditandoServiciosFijos={itemEditandoServiciosFijos}
+                            prHandleChangeFormConfiguracionServiciosFijos={handleChangeFormConfiguracionServiciosFijos}
+                            prGestionItemPrevioEditandoServiciosFijos={gestionItemPrevioEditandoServiciosFijos}
+                        />
+                    </Box>
+                    <Box px={0.5}>
+                        <Button
+                            className={classes.mt15}
+                            disabled={disabledItem}
+                            fullWidth
+                            variant="contained"
+                            size="small"
+                            color="secondary"
+                            startIcon={<SaveIcon />}
+                            onClick={handleRegistrarCambioEnCasillaServiciosFijos}
+                        >
+                            Registrar cambio
+                        </Button>
+                    </Box>
+                </Box>
+            </Popover>
+            <Popover
+                open={openConfiguracion}
+                anchorEl={anchorElConfiguracion}
+                onClose={handleClosePopoverConfiguracion}
+                anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right"
+                }}
+                PaperProps={{
+                    style: {
+                        backgroundColor: "transparent",
+                        boxShadow: "none",
+                        borderRadius: 0
+                    }
+                }}
+            >
+                <Box
+                    className={classes.tooltip}
+                    style={{ width: 300, marginLeft: 5 }}>
+                    <Box
+                        m={0.5}
+                        color="secondary.contrastText"
+                        className={clsx(classes.fondoAlta, classes.boxStl2, classes.mb15)}
+                    >
+                        Configuración general cuadrante
+                    </Box>
+                    <Box style={{ height: heightScrollable - 145, marginRight: -5, paddingRight: 10, paddingLeft: 5 }} className={classes.scrollable} >
+                        <ConfiguracionCuadrante
+                            prCentro={centroAGestionar}
+                            prItemEditandoConfiguracion={itemEditandoConfiguracion}
+                            prHandleChangeFormConfiguracionCuadrante={handleChangeFormConfiguracionCuadrante}
+                            prGestionItemPrevioEditandoConfiguracion={gestionItemPrevioEditandoConfiguracion}
+                            prCuadranteLength={cuadrante.length}
+                        />
+                    </Box>
+                    <Box px={0.5}>
+                        <Button
+                            className={classes.mt15}
+                            disabled={disabledItem}
+                            fullWidth
+                            variant="contained"
+                            size="small"
+                            color="secondary"
+                            startIcon={<SaveIcon />}
+                            onClick={handleRegistrarCambioEnCasillaConfiguracion}
+                        >
+                            Registrar cambio
+                        </Button>
+                    </Box>
                 </Box>
             </Popover>
             <Snackbar open={openSnack} autoHideDuration={12000} onClose={handleCloseSnack}>
@@ -5343,7 +6751,7 @@ const Cuadrantes = (props) => {
                 prFullWidth={true}
                 prMaxWidth={true}
             />
-            {/* {console.log('cuadrante: ', cuadrante, 'tra: ', trabajadoresEnCuadrante, 'sup: ', suplentesEnCuadrante)} */}
+            {/* {console.log(calendarioAGestionar)} */}
         </div>
     )
 }

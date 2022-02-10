@@ -51,6 +51,32 @@ const ItemListTime = (props) => {
         props.prHandleChangeSelectTipoServicioRegistro(e);
     };
 
+    const retornaEstiloItem = (tipo) => {
+        let elEstilo;
+        if (tipo === 'rango') {
+            if (props.prValueTimePickerInicio && props.prValueTimePickerFin && props.prValueTipoServicio) {
+                elEstilo = { padding: 12, marginBottom: 5, backgroundColor: '#f5f5f5' }
+            } else {
+                elEstilo = { padding: 12, marginBottom: 5 }
+            };
+        };
+        if (tipo === 'cantidad') {
+            if (props.prValueCantidadHoras && props.prValueTipoServicio) {
+                elEstilo = { paddingTop: 8, paddingLeft: 12, paddingBottom: 8, marginBottom: 5, backgroundColor: '#f5f5f5' }
+            } else {
+                elEstilo = { paddingTop: 8, paddingLeft: 12, paddingBottom: 8, marginBottom: 5 }
+            };
+        };
+        if (tipo === 'rangoDescanso') {
+            if (props.prValueTimePickerInicio1 && props.prValueTimePickerFin1 && props.prValueTipoServicio) {
+                elEstilo = { padding: 12, marginBottom: 5, backgroundColor: '#f5f5f5' }
+            } else {
+                elEstilo = { padding: 12, marginBottom: 5 }
+            };
+        };
+        return elEstilo;
+    };
+
     //retorno componentes
 
     const retornaSelectTipoServicio = (name, value) => {
@@ -88,7 +114,7 @@ const ItemListTime = (props) => {
     return (
         <div>
             {props.prTipo === 'rango' ? (
-                <ListItem button className={classes.cursorDefault} style={{ padding: 12 }} disabled={props.prDisabledItem}>
+                <ListItem button className={classes.cursorDefault} style={retornaEstiloItem('rango')} disabled={props.prDisabledItem}>
                     <Grid
                         container
                         direction="column"
@@ -143,7 +169,7 @@ const ItemListTime = (props) => {
                     </Grid>
                 </ListItem>
             ) : props.prTipo === 'cantidad' ? (
-                <ListItem button className={clsx(classes.cursorDefault, classes.root4)} style={{ paddingTop: 8, paddingLeft: 12, paddingBottom: 8 }} disabled={props.prDisabledItem}>
+                <ListItem button className={clsx(classes.cursorDefault, classes.root4)} style={retornaEstiloItem('cantidad')} disabled={props.prDisabledItem}>
                     <Grid
                         container
                         direction="column"
@@ -192,7 +218,7 @@ const ItemListTime = (props) => {
                     </Grid>
                 </ListItem>
             ) : props.prTipo === "rangoDescanso" ? (
-                <ListItem button className={clsx(classes.cursorDefault,classes.root4)} style={{ padding: 12 }} disabled={props.prDisabledItem}>
+                <ListItem button className={clsx(classes.cursorDefault, classes.root4)} style={retornaEstiloItem('rangoDescanso')} disabled={props.prDisabledItem}>
                     <Grid
                         container
                         direction="column"

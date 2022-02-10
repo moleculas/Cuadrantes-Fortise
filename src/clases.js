@@ -1,5 +1,5 @@
 import { makeStyles } from "@material-ui/core";
-import { amber, blueGrey, green, lime, indigo, red, grey, blue } from '@material-ui/core/colors';
+import { amber, blueGrey, green, lime, indigo, red, grey, blue, yellow } from '@material-ui/core/colors';
 
 const Clases = makeStyles((theme) => ({
     //loading
@@ -188,6 +188,9 @@ const Clases = makeStyles((theme) => ({
     },
     vermell: {
         color: red[500]
+    },
+    groc: {
+        color: yellow[500]
     },
     mb15: {
         marginBottom: 15,
@@ -490,6 +493,14 @@ const Clases = makeStyles((theme) => ({
         fontSize: '0.9rem',
         marginLeft: 5,
     },
+    small3: {
+        width: theme.spacing(3.75),
+        height: theme.spacing(3.75),
+    },
+    small4: {
+        width: theme.spacing(3.5),
+        height: theme.spacing(3.5),
+    },
     link: {
         textDecoration: 'none',
         color: 'inherit'
@@ -553,10 +564,6 @@ const Clases = makeStyles((theme) => ({
     colorText: {
         color: 'rgba(0, 0, 0, 0.54)'
     },
-    small3: {
-        width: theme.spacing(3.75),
-        height: theme.spacing(3.75),
-    },
     tabsStl: {
         minHeight: 40,
         maxHeight: 40
@@ -582,6 +589,37 @@ const Clases = makeStyles((theme) => ({
     fondoAlta: {
         backgroundColor: theme.palette.secondary.light,
     },
+    fondoGrisClaro: {
+        backgroundColor: '#f5f5f5',
+    },
+    conServicios: {
+        backgroundColor: green[100]
+    },
+    sinServicios: {
+        backgroundColor: amber[100]
+    },
+    conServiciosA: {
+        backgroundColor: green[200]
+    },
+    conServiciosA2: {
+        backgroundColor: green[400]
+    },
+    sinServiciosA: {
+        backgroundColor: amber[300]
+    },
+    listConfig: {
+        backgroundColor: theme.palette.background.default,   
+        paddingBottom: 0    
+    },
+    boxMiniServicios: {
+        marginTop: -13,
+        marginBottom: 15,
+        paddingLeft: 6
+    },
+    labelBoxMiniServicios:{
+        color: 'rgba(0, 0, 0, 0.54)', 
+        fontSize: '0.8rem'
+    }
 }), { index: 1 });
 
 export default Clases;

@@ -24,6 +24,9 @@ import { withStyles } from '@material-ui/core/styles';
 import MuiAccordion from '@material-ui/core/Accordion';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import AppBar from '@material-ui/core/AppBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 
 //carga componentes
 import ItemListTime from './ItemListTime';
@@ -57,6 +60,9 @@ const computoHoras = Constantes.COMPUTO_HORAS;
 const formasDePago = Constantes.FORMA_DE_PAGO;
 const temporizacionDelPago = Constantes.TEMPORIZACION_PAGO;
 const diaDelPago = Constantes.DIA_PAGO;
+const tiposDeServicio = Constantes.TIPO_SERVICIO_FIJO;
+
+const getHeightScrollable = () => (window.innerHeight - 260) || (document.documentElement.clientHeight - 260) || (document.body.clientHeight - 260);
 
 //accordion
 const Accordion = withStyles({
@@ -97,6 +103,34 @@ const AccordionSummary = withStyles({
 //snackbar y alert
 const Alert = (props) => {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
+//tabs
+function TabPanel(props) {
+    const { children, value, index, ...other } = props;
+
+    return (
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`simple-tabpanel-${index}`}
+            aria-labelledby={`simple-tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <Box style={{ paddingTop: 24, paddingRight: 24 }}>
+                    <Typography component={'span'}>{children}</Typography>
+                </Box>
+            )}
+        </div>
+    );
+}
+
+function a11yProps(index) {
+    return {
+        id: `simple-tab-${index}`,
+        'aria-controls': `simple-tabpanel-${index}`,
+    };
 }
 
 const CentrosEditar = forwardRef((props, ref) => {
@@ -148,12 +182,29 @@ const CentrosEditar = forwardRef((props, ref) => {
         computo: '',
         mensualPactado: null,
         precioHora_L: null,
-        precioHora_C: null,
         precioHora_E: null,
-        precioHora_I: null,
-        precioHora_Z: null,
-        precioHora_T: null,
-        precioHora_P: null
+        precioHora_P: null,
+        precioHora_N: null,
+        precioHora_R: null,
+        precioHora_L1: null,
+        precioHora_L2: null,
+        precioHora_F: null,
+        precioHora_TO: null,
+        precioHora_CR: null,
+        precioHora_CE: null,
+        precioHora_CI: null,
+        precioHora_MO: null,
+        precioHora_OF: null,
+        precioHora_AL: null,
+        precioHora_LA: null,
+        precioHora_TE: null,
+        precioHora_FI: null,
+        precioHora_FE: null,
+        precioHora_AB: null,
+        precioHora_MA: null,
+        precioHora_PO: null,
+        precioHora_BA: null,
+        precioHora_FT: null
     });
     const [valueTimePickerInicioEdicion, setValueTimePickerInicioEdicion] = useState([
         {
@@ -318,9 +369,39 @@ const CentrosEditar = forwardRef((props, ref) => {
     const [expandedRangoDescanso, setExpandedRangoDescanso] = useState(false);
     const [expandedCantidad, setExpandedCantidad] = useState(false);
     const [estamosCargandoDatos, setEstamosCargandoDatos] = useState(true);
-    const [stateSwitchEstado, setStateSwitchEstado] = useState(false);
+    const [stateSwitchEstadoEdicion, setStateSwitchEstadoEdicion] = useState(false);
+    const [valueTabCentrosEdicion, setValueTabCentrosEdicion] = useState(0);
+    const [heightScrollable, setHeightScrollable] = useState(getHeightScrollable());
+    const [stateSwitchTipoServicioFijoEdicion, setStateSwitchTipoServicioFijoEdicion] = useState({
+        TO: false,
+        CR: false,
+        CE: false,
+        CI: false,
+        MO: false,
+        OF: false,
+        AL: false,
+        LA: false,
+        TE: false,
+        FI: false,
+        FE: false,
+        AB: false,
+        MA: false,
+        PO: false,
+        BA: false,
+        FT: false
+    });
 
     //useEffect
+
+    useEffect(() => {
+        const resizeListener = () => {
+            setHeightScrollable(getHeightScrollable());
+        };
+        window.addEventListener('resize', resizeListener);
+        return () => {
+            window.removeEventListener('resize', resizeListener);
+        }
+    }, []);
 
     useEffect(() => {
         dispatch(onEstemAccion('editarCentros'));
@@ -383,8 +464,111 @@ const CentrosEditar = forwardRef((props, ref) => {
             setStateSwitchTipoRegistro(true);
         };
         if (centroAEditar.estado === 'baja') {
-            setStateSwitchEstado(true);
+            setStateSwitchEstadoEdicion(true);
         };
+        let myObjetoServiciosFijos = {
+            precioHora_TO: null,
+            precioHora_CR: null,
+            precioHora_CE: null,
+            precioHora_CI: null,
+            precioHora_MO: null,
+            precioHora_OF: null,
+            precioHora_AL: null,
+            precioHora_LA: null,
+            precioHora_TE: null,
+            precioHora_FI: null,
+            precioHora_FE: null,
+            precioHora_AB: null,
+            precioHora_MA: null,
+            precioHora_PO: null,
+            precioHora_BA: null,
+            precioHora_FT: null
+        };
+        let objetoEstadosSwitch = {
+            TO: false,
+            CR: false,
+            CE: false,
+            CI: false,
+            MO: false,
+            OF: false,
+            AL: false,
+            LA: false,
+            TE: false,
+            FI: false,
+            FE: false,
+            AB: false,
+            MA: false,
+            PO: false,
+            BA: false,
+            FT: false
+        }
+        centroAEditar.serviciosFijos.servicio.forEach((servicio) => {
+            if (servicio.precioHora_TO) {
+                myObjetoServiciosFijos.precioHora_TO = servicio.precioHora_TO;
+                objetoEstadosSwitch.TO = true;
+            };
+            if (servicio.precioHora_CR) {
+                myObjetoServiciosFijos.precioHora_CR = servicio.precioHora_CR;
+                objetoEstadosSwitch.CR = true;
+            };
+            if (servicio.precioHora_CE) {
+                myObjetoServiciosFijos.precioHora_CE = servicio.precioHora_CE;
+                objetoEstadosSwitch.CE = true;
+            };
+            if (servicio.precioHora_CI) {
+                myObjetoServiciosFijos.precioHora_CI = servicio.precioHora_CI;
+                objetoEstadosSwitch.CI = true;
+            };
+            if (servicio.precioHora_MO) {
+                myObjetoServiciosFijos.precioHora_MO = servicio.precioHora_MO;
+                objetoEstadosSwitch.MO = true;
+            };
+            if (servicio.precioHora_OF) {
+                myObjetoServiciosFijos.precioHora_OF = servicio.precioHora_OF;
+                objetoEstadosSwitch.OF = true;
+            };
+            if (servicio.precioHora_AL) {
+                myObjetoServiciosFijos.precioHora_AL = servicio.precioHora_AL;
+                objetoEstadosSwitch.AL = true;
+            };
+            if (servicio.precioHora_LA) {
+                myObjetoServiciosFijos.precioHora_LA = servicio.precioHora_LA;
+                objetoEstadosSwitch.LA = true;
+            };
+            if (servicio.precioHora_TE) {
+                myObjetoServiciosFijos.precioHora_TE = servicio.precioHora_TE;
+                objetoEstadosSwitch.TE = true;
+            };
+            if (servicio.precioHora_FI) {
+                myObjetoServiciosFijos.precioHora_FI = servicio.precioHora_FI;
+                objetoEstadosSwitch.FI = true;
+            };
+            if (servicio.precioHora_FE) {
+                myObjetoServiciosFijos.precioHora_FE = servicio.precioHora_FE;
+                objetoEstadosSwitch.FE = true;
+            };
+            if (servicio.precioHora_AB) {
+                myObjetoServiciosFijos.precioHora_AB = servicio.precioHora_AB;
+                objetoEstadosSwitch.AB = true;
+            };
+            if (servicio.precioHora_MA) {
+                myObjetoServiciosFijos.precioHora_MA = servicio.precioHora_MA;
+                objetoEstadosSwitch.MA = true;
+            };
+            if (servicio.precioHora_PO) {
+                myObjetoServiciosFijos.precioHora_PO = servicio.precioHora_PO;
+                objetoEstadosSwitch.PO = true;
+            };
+            if (servicio.precioHora_BA) {
+                myObjetoServiciosFijos.precioHora_BA = servicio.precioHora_BA;
+                objetoEstadosSwitch.BA = true;
+            };
+            if (servicio.precioHora_FT) {
+                myObjetoServiciosFijos.precioHora_FT = servicio.precioHora_FT;
+                objetoEstadosSwitch.FT = true;
+            };
+        });
+        setStateSwitchTipoServicioFijoEdicion(objetoEstadosSwitch);
         setValuesFormEdicion({
             ...valuesFormEdicion,
             id: centroAEditar.id,
@@ -403,7 +587,7 @@ const CentrosEditar = forwardRef((props, ref) => {
             telefono2: centroAEditar.telefono2 || '',
             formaPago: centroAEditar.formaPago || '',
             tempPago: centroAEditar.tempPago || '',
-            diaPago:  centroAEditar.diaPago ? centroAEditar.diaPago: '',
+            diaPago: centroAEditar.diaPago ? centroAEditar.diaPago : '',
             variacion: centroAEditar.horario.variacion || '',
             tipo: centroAEditar.horario.tipo,
             numeroTrabajadores: centroAEditar.trabajadores.cantidad,
@@ -412,12 +596,28 @@ const CentrosEditar = forwardRef((props, ref) => {
             computo: centroAEditar.horario.computo,
             mensualPactado: centroAEditar.horario.mensualPactado ? centroAEditar.horario.mensualPactado : null,
             precioHora_L: centroAEditar.horario.precioHora_L ? centroAEditar.horario.precioHora_L : null,
-            precioHora_C: centroAEditar.horario.precioHora_C ? centroAEditar.horario.precioHora_C : null,
             precioHora_E: centroAEditar.horario.precioHora_E ? centroAEditar.horario.precioHora_E : null,
-            precioHora_I: centroAEditar.horario.precioHora_I ? centroAEditar.horario.precioHora_I : null,
-            precioHora_Z: centroAEditar.horario.precioHora_Z ? centroAEditar.horario.precioHora_Z : null,
-            precioHora_T: centroAEditar.horario.precioHora_T ? centroAEditar.horario.precioHora_T : null,
-            precioHora_P: centroAEditar.horario.precioHora_P ? centroAEditar.horario.precioHora_P : null
+            precioHora_P: centroAEditar.horario.precioHora_P ? centroAEditar.horario.precioHora_P : null,
+            precioHora_R: centroAEditar.horario.precioHora_R ? centroAEditar.horario.precioHora_R : null,
+            precioHora_L1: centroAEditar.horario.precioHora_L1 ? centroAEditar.horario.precioHora_L1 : null,
+            precioHora_L2: centroAEditar.horario.precioHora_L2 ? centroAEditar.horario.precioHora_L2 : null,
+            precioHora_F: centroAEditar.horario.precioHora_F ? centroAEditar.horario.precioHora_F : null,
+            precioHora_TO: myObjetoServiciosFijos.precioHora_TO,
+            precioHora_CR: myObjetoServiciosFijos.precioHora_CR,
+            precioHora_CE: myObjetoServiciosFijos.precioHora_CE,
+            precioHora_CI: myObjetoServiciosFijos.precioHora_CI,
+            precioHora_MO: myObjetoServiciosFijos.precioHora_MO,
+            precioHora_OF: myObjetoServiciosFijos.precioHora_OF,
+            precioHora_AL: myObjetoServiciosFijos.precioHora_AL,
+            precioHora_LA: myObjetoServiciosFijos.precioHora_LA,
+            precioHora_TE: myObjetoServiciosFijos.precioHora_TE,
+            precioHora_FI: myObjetoServiciosFijos.precioHora_FI,
+            precioHora_FE: myObjetoServiciosFijos.precioHora_FE,
+            precioHora_AB: myObjetoServiciosFijos.precioHora_AB,
+            precioHora_MA: myObjetoServiciosFijos.precioHora_MA,
+            precioHora_PO: myObjetoServiciosFijos.precioHora_PO,
+            precioHora_BA: myObjetoServiciosFijos.precioHora_BA,
+            precioHora_FT: myObjetoServiciosFijos.precioHora_FT
         });
         if (centroAEditar.horario.tipo === "rango") {
             let arrayValoresTimePicker1 = [];
@@ -924,6 +1124,10 @@ const CentrosEditar = forwardRef((props, ref) => {
 
     //funciones
 
+    const handleChangeTabCentrosEdicion = (event, newValue) => {
+        setValueTabCentrosEdicion(newValue);
+    };
+
     const handleChangeAccordion = (panel, tipo) => (event, isExpanded) => {
         if (tipo === 'rango') {
             setExpandedRango(isExpanded ? panel : false);
@@ -986,12 +1190,13 @@ const CentrosEditar = forwardRef((props, ref) => {
                 ...valuesFormEdicion, [prop]: e.target.value,
                 mensualPactado: null,
                 precioHora_L: null,
-                precioHora_C: null,
                 precioHora_E: null,
-                precioHora_I: null,
-                precioHora_Z: null,
-                precioHora_T: null,
-                precioHora_P: null
+                precioHora_P: null,
+                precioHora_N: null,
+                precioHora_R: null,
+                precioHora_L1: null,
+                precioHora_L2: null,
+                precioHora_F: null
             });
             dispatch(registrarIntervencionAccion(false));
             dispatch(activarDesactivarActualizarCentroAccion(false));
@@ -1005,12 +1210,29 @@ const CentrosEditar = forwardRef((props, ref) => {
             return;
         };
         if (prop === "precioHora_L" ||
-            prop === "precioHora_C" ||
             prop === "precioHora_E" ||
-            prop === "precioHora_I" ||
-            prop === "precioHora_Z" ||
-            prop === "precioHora_T" ||
-            prop === "precioHora_P"
+            prop === "precioHora_P" ||
+            prop === "precioHora_N" ||
+            prop === "precioHora_R" ||
+            prop === "precioHora_L1" ||
+            prop === "precioHora_L2" ||
+            prop === "precioHora_F" ||
+            prop === "precioHora_TO" ||
+            prop === "precioHora_CR" ||
+            prop === "precioHora_CE" ||
+            prop === "precioHora_CI" ||
+            prop === "precioHora_MO" ||
+            prop === "precioHora_OF" ||
+            prop === "precioHora_AL" ||
+            prop === "precioHora_LA" ||
+            prop === "precioHora_TE" ||
+            prop === "precioHora_FI" ||
+            prop === "precioHora_FE" ||
+            prop === "precioHora_AB" ||
+            prop === "precioHora_MA" ||
+            prop === "precioHora_PO" ||
+            prop === "precioHora_BA" ||
+            prop === "precioHora_FT"
         ) {
             if (IsNumeric(e.target.value)) {
                 setValuesFormEdicion({ ...valuesFormEdicion, [prop]: e.target.value });
@@ -2298,7 +2520,108 @@ const CentrosEditar = forwardRef((props, ref) => {
         } else {
             setValuesFormEdicion({ ...valuesFormEdicion, estado: 'alta' });
         };
-        setStateSwitchEstado(e.target.checked);
+        setStateSwitchEstadoEdicion(e.target.checked);
+        dispatch(registrarIntervencionAccion(false));
+        dispatch(activarDesactivarActualizarCentroAccion(false));
+    };
+
+    const handleChangeSwitchTipoServicioFijoEdicion = (e) => {
+        if (e.target.name.includes('TO')) {
+            if (!e.target.checked) {
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_TO: null });
+            };
+            setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, TO: e.target.checked });
+        };
+        if (e.target.name.includes('CR')) {
+            if (!e.target.checked) {
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_CR: null });
+            };
+            setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, CR: e.target.checked });
+        };
+        if (e.target.name.includes('CE')) {
+            if (!e.target.checked) {
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_CE: null });
+            };
+            setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, CE: e.target.checked });
+        };
+        if (e.target.name.includes('CI')) {
+            if (!e.target.checked) {
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_CI: null });
+            };
+            setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, CI: e.target.checked });
+        };
+        if (e.target.name.includes('MO')) {
+            if (!e.target.checked) {
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_MO: null });
+            };
+            setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, MO: e.target.checked });
+        };
+        if (e.target.name.includes('OF')) {
+            if (!e.target.checked) {
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_OF: null });
+            };
+            setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, OF: e.target.checked });
+        };
+        if (e.target.name.includes('AL')) {
+            if (!e.target.checked) {
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_AL: null });
+            };
+            setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, AL: e.target.checked });
+        };
+        if (e.target.name.includes('LA')) {
+            if (!e.target.checked) {
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_LA: null });
+            };
+            setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, LA: e.target.checked });
+        };
+        if (e.target.name.includes('TE')) {
+            if (!e.target.checked) {
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_TE: null });
+            };
+            setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, TE: e.target.checked });
+        };
+        if (e.target.name.includes('FI')) {
+            if (!e.target.checked) {
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_FI: null });
+            };
+            setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, FI: e.target.checked });
+        };
+        if (e.target.name.includes('FE')) {
+            if (!e.target.checked) {
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_FE: null });
+            };
+            setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, FE: e.target.checked });
+        };
+        if (e.target.name.includes('AB')) {
+            if (!e.target.checked) {
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_AB: null });
+            };
+            setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, AB: e.target.checked });
+        };
+        if (e.target.name.includes('MA')) {
+            if (!e.target.checked) {
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_MA: null });
+            };
+            setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, MA: e.target.checked });
+        };
+        if (e.target.name.includes('PO')) {
+            if (!e.target.checked) {
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_PO: null });
+            };
+            setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, PO: e.target.checked });
+        };
+        if (e.target.name.includes('BA')) {
+            if (!e.target.checked) {
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_BA: null });
+            };
+            setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, BA: e.target.checked });
+        };
+        if (e.target.name.includes('FT')) {
+            if (!e.target.checked) {
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_FT: null });
+            };
+            setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, FT: e.target.checked });
+        };
         dispatch(registrarIntervencionAccion(false));
         dispatch(activarDesactivarActualizarCentroAccion(false));
     };
@@ -2508,6 +2831,1073 @@ const CentrosEditar = forwardRef((props, ref) => {
         dispatch(cierraObjetoDialogAccion());
     };
 
+    const procesarDatosEdicionPromesa = () => {
+        return new Promise((resolve, reject) => {
+            if (valuesFormEdicion.nombre === '' ||
+                valuesFormEdicion.categoria === '' ||
+                valuesFormEdicion.formaPago === '' ||
+                valuesFormEdicion.tempPago === ''
+            ) {
+                setAlert({
+                    mensaje: "Faltan datos por completar. Revisa el formulario.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return;
+            };
+            if ((stateSwitchTipoServicioFijoEdicion.TO && !valuesFormEdicion.precioHora_TO) ||
+                (stateSwitchTipoServicioFijoEdicion.CR && !valuesFormEdicion.precioHora_CR) ||
+                (stateSwitchTipoServicioFijoEdicion.CE && !valuesFormEdicion.precioHora_CE) ||
+                (stateSwitchTipoServicioFijoEdicion.CI && !valuesFormEdicion.precioHora_CI) ||
+                (stateSwitchTipoServicioFijoEdicion.MO && !valuesFormEdicion.precioHora_MO) ||
+                (stateSwitchTipoServicioFijoEdicion.OF && !valuesFormEdicion.precioHora_OF) ||
+                (stateSwitchTipoServicioFijoEdicion.AL && !valuesFormEdicion.precioHora_AL) ||
+                (stateSwitchTipoServicioFijoEdicion.LA && !valuesFormEdicion.precioHora_LA) ||
+                (stateSwitchTipoServicioFijoEdicion.TE && !valuesFormEdicion.precioHora_TE) ||
+                (stateSwitchTipoServicioFijoEdicion.FI && !valuesFormEdicion.precioHora_FI) ||
+                (stateSwitchTipoServicioFijoEdicion.FE && !valuesFormEdicion.precioHora_FE) ||
+                (stateSwitchTipoServicioFijoEdicion.AB && !valuesFormEdicion.precioHora_AB) ||
+                (stateSwitchTipoServicioFijoEdicion.MA && !valuesFormEdicion.precioHora_MA) ||
+                (stateSwitchTipoServicioFijoEdicion.PO && !valuesFormEdicion.precioHora_PO) ||
+                (stateSwitchTipoServicioFijoEdicion.BA && !valuesFormEdicion.precioHora_BA) ||
+                (stateSwitchTipoServicioFijoEdicion.FT && !valuesFormEdicion.precioHora_FT)
+            ) {
+                setAlert({
+                    mensaje: "Has selecionado un tipo de servicio fijo pero no has asignado precio. Revisa el formulario.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return;
+            };
+            let valoresComputoPreciosHoraVariables = true;
+            let valoresComputoPreciosHoraFijos = true;
+            let valoresCorrectosComputo = false;
+            if (valuesFormEdicion.computo === '' &&
+                !valuesFormEdicion.mensualPactado &&
+                !valuesFormEdicion.precioHora_L &&
+                !valuesFormEdicion.precioHora_E &&
+                !valuesFormEdicion.precioHora_P &&
+                !valuesFormEdicion.precioHora_N &&
+                !valuesFormEdicion.precioHora_R &&
+                !valuesFormEdicion.precioHora_L1 &&
+                !valuesFormEdicion.precioHora_L2 &&
+                !valuesFormEdicion.precioHora_F) {
+                valoresComputoPreciosHoraVariables = false;
+            };
+            if ((valuesFormEdicion.computo === 1 && !valuesFormEdicion.mensualPactado) ||
+                (valuesFormEdicion.computo === 2 && (
+                    !valuesFormEdicion.precioHora_L &&
+                    !valuesFormEdicion.precioHora_E &&
+                    !valuesFormEdicion.precioHora_P &&
+                    !valuesFormEdicion.precioHora_N &&
+                    !valuesFormEdicion.precioHora_R &&
+                    !valuesFormEdicion.precioHora_L1 &&
+                    !valuesFormEdicion.precioHora_L2 &&
+                    !valuesFormEdicion.precioHora_F)) ||
+                (valuesFormEdicion.computo === 3 && (
+                    !valuesFormEdicion.precioHora_L &&
+                    !valuesFormEdicion.precioHora_E &&
+                    !valuesFormEdicion.precioHora_P &&
+                    !valuesFormEdicion.precioHora_N &&
+                    !valuesFormEdicion.precioHora_R &&
+                    !valuesFormEdicion.precioHora_L1 &&
+                    !valuesFormEdicion.precioHora_L2 &&
+                    !valuesFormEdicion.precioHora_F &&
+                    !valuesFormEdicion.mensualPactado))) {
+                setAlert({
+                    mensaje: "Faltan datos por completar. Revisa el cómputo de horas en el formulario.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return;
+            } else {
+                valoresCorrectosComputo = true;
+            }
+            if (!valuesFormEdicion.precioHora_TO &&
+                !valuesFormEdicion.precioHora_CR &&
+                !valuesFormEdicion.precioHora_CE &&
+                !valuesFormEdicion.precioHora_CI &&
+                !valuesFormEdicion.precioHora_MO &&
+                !valuesFormEdicion.precioHora_OF &&
+                !valuesFormEdicion.precioHora_AL &&
+                !valuesFormEdicion.precioHora_LA &&
+                !valuesFormEdicion.precioHora_TE &&
+                !valuesFormEdicion.precioHora_FI &&
+                !valuesFormEdicion.precioHora_FE &&
+                !valuesFormEdicion.precioHora_AB &&
+                !valuesFormEdicion.precioHora_MA &&
+                !valuesFormEdicion.precioHora_PO &&
+                !valuesFormEdicion.precioHora_BA &&
+                !valuesFormEdicion.precioHora_FT) {
+                valoresComputoPreciosHoraFijos = false;
+            };
+            if ((!valoresComputoPreciosHoraFijos && !valoresComputoPreciosHoraVariables) ||
+                (!valoresComputoPreciosHoraVariables && valuesFormEdicion.numeroTrabajadores)) {
+                setAlert({
+                    mensaje: "Faltan datos por completar. Revisa el cómputo de horas en el formulario.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return;
+            };
+            if (valuesFormEdicion.numeroTrabajadores === '' &&
+                valuesFormEdicion.computo &&
+                valoresCorrectosComputo
+            ) {
+                setAlert({
+                    mensaje: "Falta asignar trabajadores para el cómputo de horas. Revisa el formulario.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return;
+            };
+            if ((valuesFormEdicion.variacion === '' ||
+                valuesFormEdicion.tipo === '') &&
+                valuesFormEdicion.numeroTrabajadores !== '') {
+                setAlert({
+                    mensaje: "Falta asignar horario o variaciones para los trabajadores seleccionados. Revisa el formulario.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return;
+            };
+            if (valuesFormEdicion.computo === 3 && ((
+                valuesFormEdicion.precioHora_L ||
+                valuesFormEdicion.precioHora_E ||
+                valuesFormEdicion.precioHora_P ||
+                valuesFormEdicion.precioHora_N ||
+                valuesFormEdicion.precioHora_R ||
+                valuesFormEdicion.precioHora_L1 ||
+                valuesFormEdicion.precioHora_L2 ||
+                valuesFormEdicion.precioHora_F) && valuesFormEdicion.mensualPactado)) {
+                setAlert({
+                    mensaje: "Revisa el formulario, solo puede haber un tipo de cómputo de horas.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return;
+            };
+
+            //comprobación que el tipo de servicio seleccionado corresponda con el precio/hora estipulado
+            for (let i = 0; i < horarioIntervencionEdicion.tipoRegistroTrabajador.length; i++) {
+                if (valuesFormEdicion.computo === 2 || (valuesFormEdicion.computo === 3 && !valuesFormEdicion.mensualPactado)) {
+                    if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio === 'LIM' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio === 'LIM' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio === 'LIM' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio === 'LIM' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio === 'LIM' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio === 'LIM' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio === 'LIM')
+                        && !valuesFormEdicion.precioHora_L) {
+                        setAlert({
+                            mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio === 'LIME' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio === 'LIME' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio === 'LIME' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio === 'LIME' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio === 'LIME' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio === 'LIME' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio === 'LIME')
+                        && !valuesFormEdicion.precioHora_E) {
+                        setAlert({
+                            mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio === 'LIMP' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio === 'LIMP' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio === 'LIMP' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio === 'LIMP' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio === 'LIMP' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio === 'LIMP' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio === 'LIMP')
+                        && !valuesFormEdicion.precioHora_P) {
+                        setAlert({
+                            mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio === 'NAVE2' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio === 'NAVE2' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio === 'NAVE2' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio === 'NAVE2' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio === 'NAVE2' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio === 'NAVE2' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio === 'NAVE2')
+                        && !valuesFormEdicion.precioHora_N) {
+                        setAlert({
+                            mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio === 'REFZ' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio === 'REFZ' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio === 'REFZ' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio === 'REFZ' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio === 'REFZ' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio === 'REFZ' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio === 'REFZ')
+                        && !valuesFormEdicion.precioHora_R) {
+                        setAlert({
+                            mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio === 'LIM1' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio === 'LIM1' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio === 'LIM1' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio === 'LIM1' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio === 'LIM1' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio === 'LIM1' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio === 'LIM1')
+                        && !valuesFormEdicion.precioHora_L1) {
+                        setAlert({
+                            mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio === 'LIM2' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio === 'LIM2' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio === 'LIM2' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio === 'LIM2' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio === 'LIM2' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio === 'LIM2' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio === 'LIM2')
+                        && !valuesFormEdicion.precioHora_L2) {
+                        setAlert({
+                            mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio === 'FEST' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio === 'FEST' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio === 'FEST' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio === 'FEST' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio === 'FEST' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio === 'FEST' ||
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio === 'FEST')
+                        && !valuesFormEdicion.precioHora_F) {
+                        setAlert({
+                            mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                }
+            };
+
+            //validacion mail
+            if (valuesFormEdicion.mail) {
+                const validacionMail = dispatch(validarMailAccion(valuesFormEdicion.mail));
+                if (!validacionMail) {
+                    setAlert({
+                        mensaje: "El campo E-mail es incorrecto. Revisa el formulario.",
+                        tipo: 'error'
+                    })
+                    setOpenSnack(true);
+                    return;
+                };
+            }
+            if (valuesFormEdicion.mail2) {
+                const validacionMail2 = dispatch(validarMailAccion(valuesFormEdicion.mail2));
+                if (!validacionMail2) {
+                    setAlert({
+                        mensaje: "El campo E-mail es incorrecto. Revisa el formulario.",
+                        tipo: 'error'
+                    })
+                    setOpenSnack(true);
+                    return;
+                };
+            }
+
+            if (horarioIntervencionEdicion.tipo === "rango") {
+                for (let i = 0; i < horarioIntervencionEdicion.tipoRegistroTrabajador.length; i++) {
+                    //primera comprobación, que todos los campos esten vacíos
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicioRango &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFinRango &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicioRango &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFinRango &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicioRango &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFinRango &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicioRango &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFinRango &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicioRango &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFinRango &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicioRango &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFinRango &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicioRango &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFinRango) {
+                        setAlert({
+                            mensaje: "No has introducido ningún dato horario para registrar.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    //segunda comprobación, coinciden ambas casillas en registro
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFinRango) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFinRango) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFinRango) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFinRango) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFinRango) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFinRango) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFinRango) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFinRango) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFinRango) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFinRango) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFinRango) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFinRango) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFinRango) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFinRango) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    //tercera comprobacion que no falte tipo de servicio
+                    if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio) ||
+                        (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio) ||
+                        (horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio) ||
+                        (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio) ||
+                        (horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio) ||
+                        (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio) ||
+                        (horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio) ||
+                        (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio) ||
+                        (horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio) ||
+                        (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio) ||
+                        (horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio) ||
+                        (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio) ||
+                        (horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio) ||
+                        (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio)) {
+                        setAlert({
+                            mensaje: "Falta seleccionar el tipo de servicio para el rango horario o viceversa.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                };
+            };
+
+            if (horarioIntervencionEdicion.tipo === "rangoDescanso") {
+                for (let i = 0; i < horarioIntervencionEdicion.tipoRegistroTrabajador.length; i++) {
+                    //primera comprobación, que todos los campos esten vacíos
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFin1RangoDescanso &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFin2RangoDescanso &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio1RangoDescanso &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio2RangoDescanso &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFin1RangoDescanso &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFin2RangoDescanso &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFin1RangoDescanso &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFin2RangoDescanso &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFin1RangoDescanso &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFin2RangoDescanso &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFin1RangoDescanso &&
+                        !horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFin2RangoDescanso) {
+                        setAlert({
+                            mensaje: "No has introducido ningún dato horario para registrar.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    //segunda comprobación, coinciden todas las casillas en registro
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFin1RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFin1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFin2RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFin2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFin1RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFin1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio1RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFin2RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFin2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio2RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFin1RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFin1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFin2RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFin2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFin1RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFin1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFin2RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFin2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFin1RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFin1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFin2RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFin2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+
+                    //tercera comprobacion que no falte tipo de servicio
+                    if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio) ||
+                        (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio) ||
+                        (horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio1RangoDescanso && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio) ||
+                        (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio) ||
+                        (horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio) ||
+                        (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio) ||
+                        (horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio) ||
+                        (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio) ||
+                        (horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio) ||
+                        (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio) ||
+                        (horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio) ||
+                        (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio) ||
+                        (horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio) ||
+                        (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio)) {
+                        setAlert({
+                            mensaje: "Falta seleccionar el tipo de servicio para el rango horario o viceversa.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                }
+            };
+
+            if (horarioIntervencionEdicion.tipo === "cantidad") {
+                for (let i = 0; i < horarioIntervencionEdicion.tipoRegistroTrabajador.length; i++) {
+                    //comprobamos que no haya campos vacíos
+                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesCantidad === '' &&
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesCantidad === '' &&
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesCantidad === '' &&
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesCantidad === '' &&
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesCantidad === '' &&
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoCantidad === '' &&
+                        horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoCantidad === '') {
+                        setAlert({
+                            mensaje: "No has introducido ningún dato horario para registrar.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    //tercera comprobacion que no falte tipo de servicio
+                    if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesCantidad && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio) ||
+                        (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesCantidad && horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio) ||
+                        (horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesCantidad && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio) ||
+                        (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesCantidad && horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio) ||
+                        (horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesCantidad && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio) ||
+                        (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesCantidad && horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio) ||
+                        (horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesCantidad && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio) ||
+                        (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesCantidad && horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio) ||
+                        (horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesCantidad && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio) ||
+                        (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesCantidad && horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio) ||
+                        (horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoCantidad && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio) ||
+                        (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoCantidad && horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio) ||
+                        (horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoCantidad && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio) ||
+                        (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoCantidad && horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio)) {
+                        setAlert({
+                            mensaje: "Falta seleccionar el tipo de servicio para el rango horario o viceversa.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                }
+            };
+
+            //comprobamos que array objetos trabajadores no tenga elementos vacíos
+            for (let i = 0; i < trabajadoresEdicion.cantidad; i++) {
+                if (trabajadoresEdicion.trabajadores[i]['trabajador_' + (i + 1)] === '' && trabajadoresEdicion.trabajadores[i]['suplente_' + (i + 1)] === '') {
+                    setAlert({
+                        mensaje: "Alguno de los registros Trabajadores - Suplentes está vacío. Completa o cambia la cantidad de trabajadores asignados.",
+                        tipo: 'error'
+                    })
+                    setOpenSnack(true);
+                    return;
+                }
+            };
+
+            //limpieza final  
+            let horarioIntervencionEdicionRevisado;
+            let elArrayTipoRegistroTrabajador = [];
+            if (horarioIntervencionEdicion.tipo === 'rango') {
+                for (let i = 0; i < horarioIntervencionEdicion.tipoRegistroTrabajador.length; i++) {
+                    let elObjetoTipoRegistroTrabajador = {};
+                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicioRango) {
+                        elObjetoTipoRegistroTrabajador['lunesInicioRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicioRango;
+                        elObjetoTipoRegistroTrabajador['lunesFinRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFinRango;
+                        elObjetoTipoRegistroTrabajador['lunesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio;
+                    };
+                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicioRango) {
+                        elObjetoTipoRegistroTrabajador['martesInicioRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicioRango;
+                        elObjetoTipoRegistroTrabajador['martesFinRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFinRango;
+                        elObjetoTipoRegistroTrabajador['martesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio;
+                    };
+                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicioRango) {
+                        elObjetoTipoRegistroTrabajador['miercolesInicioRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicioRango;
+                        elObjetoTipoRegistroTrabajador['miercolesFinRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFinRango;
+                        elObjetoTipoRegistroTrabajador['miercolesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio;
+                    };
+                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicioRango) {
+                        elObjetoTipoRegistroTrabajador['juevesInicioRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicioRango;
+                        elObjetoTipoRegistroTrabajador['juevesFinRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFinRango;
+                        elObjetoTipoRegistroTrabajador['juevesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio;
+                    };
+                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicioRango) {
+                        elObjetoTipoRegistroTrabajador['viernesInicioRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicioRango;
+                        elObjetoTipoRegistroTrabajador['viernesFinRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFinRango;
+                        elObjetoTipoRegistroTrabajador['viernesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio;
+                    };
+                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicioRango) {
+                        elObjetoTipoRegistroTrabajador['sabadoInicioRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicioRango;
+                        elObjetoTipoRegistroTrabajador['sabadoFinRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFinRango;
+                        elObjetoTipoRegistroTrabajador['sabadoTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio;
+                    };
+                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicioRango) {
+                        elObjetoTipoRegistroTrabajador['domingoInicioRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicioRango;
+                        elObjetoTipoRegistroTrabajador['domingoFinRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFinRango;
+                        elObjetoTipoRegistroTrabajador['domingoTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio;
+                    };
+                    elArrayTipoRegistroTrabajador.push(elObjetoTipoRegistroTrabajador);
+                };
+                horarioIntervencionEdicionRevisado = {
+                    tipo: horarioIntervencionEdicion.tipo,
+                    tipoRegistro: horarioIntervencionEdicion.tipoRegistro,
+                    variacion: horarioIntervencionEdicion.variacion,
+                    tipoRegistroTrabajador: elArrayTipoRegistroTrabajador
+                };
+            };
+            if (horarioIntervencionEdicion.tipo === 'rangoDescanso') {
+                for (let i = 0; i < horarioIntervencionEdicion.tipoRegistroTrabajador.length; i++) {
+                    let elObjetoTipoRegistroTrabajador = {};
+                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso) {
+                        elObjetoTipoRegistroTrabajador['lunesInicio1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso;
+                        elObjetoTipoRegistroTrabajador['lunesFin1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFin1RangoDescanso;
+                        if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso) {
+                            elObjetoTipoRegistroTrabajador['lunesInicio2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso;
+                            elObjetoTipoRegistroTrabajador['lunesFin2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFin2RangoDescanso;
+                        };
+                        elObjetoTipoRegistroTrabajador['lunesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio;
+                    };
+                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio1RangoDescanso) {
+                        elObjetoTipoRegistroTrabajador['martesInicio1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio1RangoDescanso;
+                        elObjetoTipoRegistroTrabajador['martesFin1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFin1RangoDescanso;
+                        if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio2RangoDescanso) {
+                            elObjetoTipoRegistroTrabajador['martesInicio2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio2RangoDescanso;
+                            elObjetoTipoRegistroTrabajador['martesFin2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFin2RangoDescanso;
+                        };
+                        elObjetoTipoRegistroTrabajador['martesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio;
+                    };
+                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso) {
+                        elObjetoTipoRegistroTrabajador['miercolesInicio1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso;
+                        elObjetoTipoRegistroTrabajador['miercolesFin1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso;
+                        if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso) {
+                            elObjetoTipoRegistroTrabajador['miercolesInicio2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso;
+                            elObjetoTipoRegistroTrabajador['miercolesFin2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso;
+                        };
+                        elObjetoTipoRegistroTrabajador['miercolesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio;
+                    };
+                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso) {
+                        elObjetoTipoRegistroTrabajador['juevesInicio1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso;
+                        elObjetoTipoRegistroTrabajador['juevesFin1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFin1RangoDescanso;
+                        if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso) {
+                            elObjetoTipoRegistroTrabajador['juevesInicio2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso;
+                            elObjetoTipoRegistroTrabajador['juevesFin2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFin2RangoDescanso;
+                        };
+                        elObjetoTipoRegistroTrabajador['juevesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio;
+                    };
+                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso) {
+                        elObjetoTipoRegistroTrabajador['viernesInicio1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso;
+                        elObjetoTipoRegistroTrabajador['viernesFin1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFin1RangoDescanso;
+                        if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso) {
+                            elObjetoTipoRegistroTrabajador['viernesInicio2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso;
+                            elObjetoTipoRegistroTrabajador['viernesFin2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFin2RangoDescanso;
+                        };
+                        elObjetoTipoRegistroTrabajador['viernesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio;
+                    };
+                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso) {
+                        elObjetoTipoRegistroTrabajador['sabadoInicio1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso;
+                        elObjetoTipoRegistroTrabajador['sabadoFin1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso;
+                        if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso) {
+                            elObjetoTipoRegistroTrabajador['sabadoInicio2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso;
+                            elObjetoTipoRegistroTrabajador['sabadoFin2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso;
+                        };
+                        elObjetoTipoRegistroTrabajador['sabadoTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio;
+                    };
+                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso) {
+                        elObjetoTipoRegistroTrabajador['domingoInicio1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso;
+                        elObjetoTipoRegistroTrabajador['domingoFin1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFin1RangoDescanso;
+                        if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso) {
+                            elObjetoTipoRegistroTrabajador['domingoInicio2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso;
+                            elObjetoTipoRegistroTrabajador['domingoFin2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFin2RangoDescanso;
+                        };
+                        elObjetoTipoRegistroTrabajador['domingoTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio;
+                    };
+                    elArrayTipoRegistroTrabajador.push(elObjetoTipoRegistroTrabajador);
+                };
+                horarioIntervencionEdicionRevisado = {
+                    tipo: horarioIntervencionEdicion.tipo,
+                    tipoRegistro: horarioIntervencionEdicion.tipoRegistro,
+                    variacion: horarioIntervencionEdicion.variacion,
+                    tipoRegistroTrabajador: elArrayTipoRegistroTrabajador
+                };
+            };
+            if (horarioIntervencionEdicion.tipo === 'cantidad') {
+                for (let i = 0; i < horarioIntervencionEdicion.tipoRegistroTrabajador.length; i++) {
+                    let elObjetoTipoRegistroTrabajador = {};
+                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesCantidad) {
+                        elObjetoTipoRegistroTrabajador['lunesCantidad'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesCantidad;
+                        elObjetoTipoRegistroTrabajador['lunesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio;
+                    };
+                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesCantidad) {
+                        elObjetoTipoRegistroTrabajador['martesCantidad'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesCantidad;
+                        elObjetoTipoRegistroTrabajador['martesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio;
+                    };
+                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesCantidad) {
+                        elObjetoTipoRegistroTrabajador['miercolesCantidad'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesCantidad;
+                        elObjetoTipoRegistroTrabajador['miercolesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio;
+                    };
+                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesCantidad) {
+                        elObjetoTipoRegistroTrabajador['juevesCantidad'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesCantidad;
+                        elObjetoTipoRegistroTrabajador['juevesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio;
+                    };
+                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesCantidad) {
+                        elObjetoTipoRegistroTrabajador['viernesCantidad'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesCantidad;
+                        elObjetoTipoRegistroTrabajador['viernesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio;
+                    };
+                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoCantidad) {
+                        elObjetoTipoRegistroTrabajador['sabadoCantidad'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoCantidad;
+                        elObjetoTipoRegistroTrabajador['sabadoTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio;
+                    };
+                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoCantidad) {
+                        elObjetoTipoRegistroTrabajador['domingoCantidad'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoCantidad;
+                        elObjetoTipoRegistroTrabajador['domingoTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio;
+                    };
+                    elArrayTipoRegistroTrabajador.push(elObjetoTipoRegistroTrabajador);
+                };
+                horarioIntervencionEdicionRevisado = {
+                    tipo: horarioIntervencionEdicion.tipo,
+                    tipoRegistro: horarioIntervencionEdicion.tipoRegistro,
+                    variacion: horarioIntervencionEdicion.variacion,
+                    tipoRegistroTrabajador: elArrayTipoRegistroTrabajador
+                };
+            };
+            //añadimos cómputo final                           
+            let elHorarioIntervencionEditadoRevisado = {
+                ...horarioIntervencionEdicionRevisado,
+                computo: valuesFormEdicion.computo
+            };
+            if (valuesFormEdicion.mensualPactado) {
+                elHorarioIntervencionEditadoRevisado['mensualPactado'] = parseFloat(valuesFormEdicion.mensualPactado);
+            };
+            if (valuesFormEdicion.precioHora_L) {
+                elHorarioIntervencionEditadoRevisado['precioHora_L'] = parseFloat(valuesFormEdicion.precioHora_L);
+            };
+            if (valuesFormEdicion.precioHora_E) {
+                elHorarioIntervencionEditadoRevisado['precioHora_E'] = parseFloat(valuesFormEdicion.precioHora_E);
+            };
+            if (valuesFormEdicion.precioHora_P) {
+                elHorarioIntervencionEditadoRevisado['precioHora_P'] = parseFloat(valuesFormEdicion.precioHora_P);
+            };
+            if (valuesFormEdicion.precioHora_N) {
+                elHorarioIntervencionEditadoRevisado['precioHora_N'] = parseFloat(valuesFormEdicion.precioHora_N);
+            };
+            if (valuesFormEdicion.precioHora_R) {
+                elHorarioIntervencionEditadoRevisado['precioHora_R'] = parseFloat(valuesFormEdicion.precioHora_R);
+            };
+            if (valuesFormEdicion.precioHora_L1) {
+                elHorarioIntervencionEditadoRevisado['precioHora_L1'] = parseFloat(valuesFormEdicion.precioHora_L1);
+            };
+            if (valuesFormEdicion.precioHora_L2) {
+                elHorarioIntervencionEditadoRevisado['precioHora_L2'] = parseFloat(valuesFormEdicion.precioHora_L2);
+            };
+            if (valuesFormEdicion.precioHora_F) {
+                elHorarioIntervencionEditadoRevisado['precioHora_F'] = parseFloat(valuesFormEdicion.precioHora_F);
+            };
+            let serviciosFijosEdicion = {
+                objeto: 'serviciosFijos',
+                servicio: []
+            };
+            if (valuesFormEdicion.precioHora_TO) {
+                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'TOL', precioHora_TO: parseFloat(valuesFormEdicion.precioHora_TO) });
+            };
+            if (valuesFormEdicion.precioHora_CR) {
+                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'CRIS', precioHora_CR: parseFloat(valuesFormEdicion.precioHora_CR) });
+            };
+            if (valuesFormEdicion.precioHora_CE) {
+                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'CRISE', precioHora_CE: parseFloat(valuesFormEdicion.precioHora_CE) });
+            };
+            if (valuesFormEdicion.precioHora_CI) {
+                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'CRISI', precioHora_CI: parseFloat(valuesFormEdicion.precioHora_CI) });
+            };
+            if (valuesFormEdicion.precioHora_MO) {
+                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'MOQ', precioHora_MO: parseFloat(valuesFormEdicion.precioHora_MO) });
+            };
+            if (valuesFormEdicion.precioHora_OF) {
+                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'OF', precioHora_OF: parseFloat(valuesFormEdicion.precioHora_OF) });
+            };
+            if (valuesFormEdicion.precioHora_AL) {
+                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'ALMC', precioHora_AL: parseFloat(valuesFormEdicion.precioHora_AL) });
+            };
+            if (valuesFormEdicion.precioHora_LA) {
+                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'LAB', precioHora_LA: parseFloat(valuesFormEdicion.precioHora_LA) });
+            };
+            if (valuesFormEdicion.precioHora_TE) {
+                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'TELÑ', precioHora_TE: parseFloat(valuesFormEdicion.precioHora_TE) });
+            };
+            if (valuesFormEdicion.precioHora_FI) {
+                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'FCH.IN', precioHora_FI: parseFloat(valuesFormEdicion.precioHora_FI) });
+            };
+            if (valuesFormEdicion.precioHora_FE) {
+                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'FCH.EX', precioHora_FE: parseFloat(valuesFormEdicion.precioHora_FE) });
+            };
+            if (valuesFormEdicion.precioHora_AB) {
+                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'ABRLL', precioHora_AB: parseFloat(valuesFormEdicion.precioHora_AB) });
+            };
+            if (valuesFormEdicion.precioHora_MA) {
+                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'MANT', precioHora_MA: parseFloat(valuesFormEdicion.precioHora_MA) });
+            };
+            if (valuesFormEdicion.precioHora_PO) {
+                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'PORT', precioHora_PO: parseFloat(valuesFormEdicion.precioHora_PO) });
+            };
+            if (valuesFormEdicion.precioHora_BA) {
+                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'BACT', precioHora_BA: parseFloat(valuesFormEdicion.precioHora_BA) });
+            };
+            if (valuesFormEdicion.precioHora_FT) {
+                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'FEST', precioHora_FT: parseFloat(valuesFormEdicion.precioHora_FT) });
+            };
+            if (serviciosFijosEdicion.servicio.length === 0) {
+                serviciosFijosEdicion = null;
+            };
+            if (!valoresComputoPreciosHoraVariables) {
+                elHorarioIntervencionEditadoRevisado = null;
+            };
+            let trabajadoresRevisado;
+            if (valuesFormEdicion.numeroTrabajadores === '') {
+                trabajadoresRevisado = null;
+            } else {
+                trabajadoresRevisado = trabajadoresEdicion;
+            };
+            return resolve({ resuelto: true, horario: elHorarioIntervencionEditadoRevisado, servicios: serviciosFijosEdicion, trabajadores: trabajadoresRevisado });
+        });
+    };
+
     useImperativeHandle(ref, () => ({
         funcionesEnCentrosEditar(funcion) {
             switch (funcion) {
@@ -2519,923 +3909,37 @@ const CentrosEditar = forwardRef((props, ref) => {
                     break;
                 case 'procesarDatosEdicion':
                     const procesarDatosEdicion = () => {
-                        if (valuesFormEdicion.nombre === '' ||
-                            valuesFormEdicion.categoria === '' ||
-                            valuesFormEdicion.variacion === '' ||
-                            valuesFormEdicion.formaPago === '' ||
-                            valuesFormEdicion.tempPago === '' ||                            
-                            valuesFormEdicion.tipo === '' ||
-                            valuesFormEdicion.numeroTrabajadores === ''
-                        ) {
-                            setAlert({
-                                mensaje: "Faltan datos por completar. Revisa el formulario.",
-                                tipo: 'error'
-                            })
-                            setOpenSnack(true);
-                            return;
-                        };
-                        if (valuesFormEdicion.computo === '' ||
-                            (valuesFormEdicion.computo === 1 && !valuesFormEdicion.mensualPactado) ||
-                            (valuesFormEdicion.computo === 2 &&
-                                !valuesFormEdicion.precioHora_L &&
-                                !valuesFormEdicion.precioHora_C &&
-                                !valuesFormEdicion.precioHora_E &&
-                                !valuesFormEdicion.precioHora_I &&
-                                !valuesFormEdicion.precioHora_Z &&
-                                !valuesFormEdicion.precioHora_T &&
-                                !valuesFormEdicion.precioHora_P) ||
-                            (valuesFormEdicion.computo === 3 && (
-                                !valuesFormEdicion.precioHora_L &&
-                                !valuesFormEdicion.precioHora_C &&
-                                !valuesFormEdicion.precioHora_E &&
-                                !valuesFormEdicion.precioHora_I &&
-                                !valuesFormEdicion.precioHora_Z &&
-                                !valuesFormEdicion.precioHora_T &&
-                                !valuesFormEdicion.precioHora_P &&
-                                !valuesFormEdicion.mensualPactado))) {
-                            setAlert({
-                                mensaje: "Faltan datos por completar. Revisa el cómputo de horas en el formulario.",
-                                tipo: 'error'
-                            })
-                            setOpenSnack(true);
-                            return;
-                        };
-                        if (valuesFormEdicion.computo === 3 && ((
-                            valuesFormEdicion.precioHora_L ||
-                            valuesFormEdicion.precioHora_C ||
-                            valuesFormEdicion.precioHora_E ||
-                            valuesFormEdicion.precioHora_I ||
-                            valuesFormEdicion.precioHora_Z ||
-                            valuesFormEdicion.precioHora_T ||
-                            valuesFormEdicion.precioHora_P) && valuesFormEdicion.mensualPactado)) {
-                            setAlert({
-                                mensaje: "Revisa el formulario, solo puede haber un tipo de cómputo de horas.",
-                                tipo: 'error'
-                            })
-                            setOpenSnack(true);
-                            return;
-                        };
-
-                        //comprobación que el tipo de servicio seleccionado corresponda con el precio/hora estipulado
-                        for (let i = 0; i < horarioIntervencionEdicion.tipoRegistroTrabajador.length; i++) {
-                            if (valuesFormEdicion.computo === 2 || (valuesFormEdicion.computo === 3 && !valuesFormEdicion.mensualPactado)) {
-                                if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio === 'LIM' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio === 'LIM' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio === 'LIM' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio === 'LIM' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio === 'LIM' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio === 'LIM' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio === 'LIM')
-                                    && !valuesFormEdicion.precioHora_L) {
-                                    setAlert({
-                                        mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio === 'CRIS' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio === 'CRIS' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio === 'CRIS' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio === 'CRIS' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio === 'CRIS' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio === 'CRIS' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio === 'CRIS')
-                                    && !valuesFormEdicion.precioHora_C) {
-                                    setAlert({
-                                        mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio === 'CRISE' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio === 'CRISE' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio === 'CRISE' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio === 'CRISE' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio === 'CRISE' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio === 'CRISE' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio === 'CRISE')
-                                    && !valuesFormEdicion.precioHora_E) {
-                                    setAlert({
-                                        mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio === 'CRISI' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio === 'CRISI' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio === 'CRISI' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio === 'CRISI' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio === 'CRISI' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio === 'CRISI' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio === 'CRISI')
-                                    && !valuesFormEdicion.precioHora_I) {
-                                    setAlert({
-                                        mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio === 'LIME' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio === 'LIME' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio === 'LIME' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio === 'LIME' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio === 'LIME' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio === 'LIME' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio === 'LIME')
-                                    && !valuesFormEdicion.precioHora_Z) {
-                                    setAlert({
-                                        mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio === 'TOL' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio === 'TOL' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio === 'TOL' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio === 'TOL' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio === 'TOL' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio === 'TOL' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio === 'TOL')
-                                    && !valuesFormEdicion.precioHora_T) {
-                                    setAlert({
-                                        mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio === 'LIMP' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio === 'LIMP' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio === 'LIMP' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio === 'LIMP' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio === 'LIMP' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio === 'LIMP' ||
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio === 'LIMP')
-                                    && !valuesFormEdicion.precioHora_P) {
-                                    setAlert({
-                                        mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                            }
-                        };
-
-                        //validacion mail
-                        if (valuesFormEdicion.mail) {
-                            const validacionMail = dispatch(validarMailAccion(valuesFormEdicion.mail));
-                            if (!validacionMail) {
-                                setAlert({
-                                    mensaje: "El campo E-mail es incorrecto. Revisa el formulario.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                        }
-                        if (valuesFormEdicion.mail2) {
-                            const validacionMail2 = dispatch(validarMailAccion(valuesFormEdicion.mail2));
-                            if (!validacionMail2) {
-                                setAlert({
-                                    mensaje: "El campo E-mail es incorrecto. Revisa el formulario.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                        }
-
-                        if (horarioIntervencionEdicion.tipo === "rango") {
-                            for (let i = 0; i < horarioIntervencionEdicion.tipoRegistroTrabajador.length; i++) {
-                                //primera comprobación, que todos los campos esten vacíos
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicioRango &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFinRango &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicioRango &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFinRango &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicioRango &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFinRango &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicioRango &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFinRango &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicioRango &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFinRango &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicioRango &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFinRango &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicioRango &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFinRango) {
-                                    setAlert({
-                                        mensaje: "No has introducido ningún dato horario para registrar.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                //segunda comprobación, coinciden ambas casillas en registro
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFinRango) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFinRango) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFinRango) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFinRango) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFinRango) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFinRango) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFinRango) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFinRango) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFinRango) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFinRango) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFinRango) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFinRango) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFinRango) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFinRango) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                //tercera comprobacion que no falte tipo de servicio
-                                if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio) ||
-                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio) ||
-                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio) ||
-                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio) ||
-                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio) ||
-                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio) ||
-                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio) ||
-                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio) ||
-                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio) ||
-                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio) ||
-                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio) ||
-                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio) ||
-                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicioRango && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio) ||
-                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicioRango && horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio)) {
-                                    setAlert({
-                                        mensaje: "Falta seleccionar el tipo de servicio para el rango horario o viceversa.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                            };
-                        };
-
-                        if (horarioIntervencionEdicion.tipo === "rangoDescanso") {
-                            for (let i = 0; i < horarioIntervencionEdicion.tipoRegistroTrabajador.length; i++) {
-                                //primera comprobación, que todos los campos esten vacíos
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFin1RangoDescanso &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFin2RangoDescanso &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio1RangoDescanso &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio2RangoDescanso &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFin1RangoDescanso &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFin2RangoDescanso &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFin1RangoDescanso &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFin2RangoDescanso &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFin1RangoDescanso &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFin2RangoDescanso &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFin1RangoDescanso &&
-                                    !horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFin2RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "No has introducido ningún dato horario para registrar.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                //segunda comprobación, coinciden todas las casillas en registro
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFin1RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFin1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFin2RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFin2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFin1RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFin1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio1RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFin2RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFin2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio2RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFin1RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFin1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFin2RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFin2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFin1RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFin1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFin2RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFin2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFin1RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFin1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFin2RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFin2RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-
-                                //tercera comprobacion que no falte tipo de servicio
-                                if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio) ||
-                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio) ||
-                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio1RangoDescanso && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio) ||
-                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio) ||
-                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio) ||
-                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio) ||
-                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio) ||
-                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio) ||
-                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio) ||
-                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio) ||
-                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio) ||
-                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio) ||
-                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio) ||
-                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso && horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio)) {
-                                    setAlert({
-                                        mensaje: "Falta seleccionar el tipo de servicio para el rango horario o viceversa.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                            }
-                        };
-
-                        if (horarioIntervencionEdicion.tipo === "cantidad") {
-                            for (let i = 0; i < horarioIntervencionEdicion.tipoRegistroTrabajador.length; i++) {
-                                //comprobamos que no haya campos vacíos
-                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesCantidad === '' &&
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesCantidad === '' &&
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesCantidad === '' &&
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesCantidad === '' &&
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesCantidad === '' &&
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoCantidad === '' &&
-                                    horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoCantidad === '') {
-                                    setAlert({
-                                        mensaje: "No has introducido ningún dato horario para registrar.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                //tercera comprobacion que no falte tipo de servicio
-                                if ((horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesCantidad && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio) ||
-                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesCantidad && horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio) ||
-                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesCantidad && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio) ||
-                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesCantidad && horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio) ||
-                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesCantidad && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio) ||
-                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesCantidad && horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio) ||
-                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesCantidad && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio) ||
-                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesCantidad && horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio) ||
-                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesCantidad && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio) ||
-                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesCantidad && horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio) ||
-                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoCantidad && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio) ||
-                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoCantidad && horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio) ||
-                                    (horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoCantidad && !horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio) ||
-                                    (!horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoCantidad && horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio)) {
-                                    setAlert({
-                                        mensaje: "Falta seleccionar el tipo de servicio para el rango horario o viceversa.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                            }
-                        };
-
-                        //comprobamos que array objetos trabajadores no tenga elementos vacíos
-                        for (let i = 0; i < trabajadoresEdicion.cantidad; i++) {
-                            if (trabajadoresEdicion.trabajadores[i]['trabajador_' + (i + 1)] === '' && trabajadoresEdicion.trabajadores[i]['suplente_' + (i + 1)] === '') {
-                                setAlert({
-                                    mensaje: "Alguno de los registros Trabajadores - Suplentes está vacío. Completa o cambia la cantidad de trabajadores asignados.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            }
-                        };
-
-                        //limpieza final  
-                        let horarioIntervencionEdicionRevisado;
-                        let elArrayTipoRegistroTrabajador = [];
-                        if (horarioIntervencionEdicion.tipo === 'rango') {
-                            for (let i = 0; i < horarioIntervencionEdicion.tipoRegistroTrabajador.length; i++) {
-                                let elObjetoTipoRegistroTrabajador = {};
-                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicioRango) {
-                                    elObjetoTipoRegistroTrabajador['lunesInicioRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicioRango;
-                                    elObjetoTipoRegistroTrabajador['lunesFinRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFinRango;
-                                    elObjetoTipoRegistroTrabajador['lunesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio;
-                                };
-                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicioRango) {
-                                    elObjetoTipoRegistroTrabajador['martesInicioRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicioRango;
-                                    elObjetoTipoRegistroTrabajador['martesFinRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFinRango;
-                                    elObjetoTipoRegistroTrabajador['martesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio;
-                                };
-                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicioRango) {
-                                    elObjetoTipoRegistroTrabajador['miercolesInicioRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicioRango;
-                                    elObjetoTipoRegistroTrabajador['miercolesFinRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFinRango;
-                                    elObjetoTipoRegistroTrabajador['miercolesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio;
-                                };
-                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicioRango) {
-                                    elObjetoTipoRegistroTrabajador['juevesInicioRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicioRango;
-                                    elObjetoTipoRegistroTrabajador['juevesFinRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFinRango;
-                                    elObjetoTipoRegistroTrabajador['juevesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio;
-                                };
-                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicioRango) {
-                                    elObjetoTipoRegistroTrabajador['viernesInicioRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicioRango;
-                                    elObjetoTipoRegistroTrabajador['viernesFinRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFinRango;
-                                    elObjetoTipoRegistroTrabajador['viernesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio;
-                                };
-                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicioRango) {
-                                    elObjetoTipoRegistroTrabajador['sabadoInicioRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicioRango;
-                                    elObjetoTipoRegistroTrabajador['sabadoFinRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFinRango;
-                                    elObjetoTipoRegistroTrabajador['sabadoTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio;
-                                };
-                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicioRango) {
-                                    elObjetoTipoRegistroTrabajador['domingoInicioRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicioRango;
-                                    elObjetoTipoRegistroTrabajador['domingoFinRango'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFinRango;
-                                    elObjetoTipoRegistroTrabajador['domingoTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio;
-                                };
-                                elArrayTipoRegistroTrabajador.push(elObjetoTipoRegistroTrabajador);
-                            };
-                            horarioIntervencionEdicionRevisado = {
-                                tipo: horarioIntervencionEdicion.tipo,
-                                tipoRegistro: horarioIntervencionEdicion.tipoRegistro,
-                                variacion: horarioIntervencionEdicion.variacion,
-                                tipoRegistroTrabajador: elArrayTipoRegistroTrabajador
-                            };
-                        };
-                        if (horarioIntervencionEdicion.tipo === 'rangoDescanso') {
-                            for (let i = 0; i < horarioIntervencionEdicion.tipoRegistroTrabajador.length; i++) {
-                                let elObjetoTipoRegistroTrabajador = {};
-                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso) {
-                                    elObjetoTipoRegistroTrabajador['lunesInicio1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso;
-                                    elObjetoTipoRegistroTrabajador['lunesFin1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFin1RangoDescanso;
-                                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso) {
-                                        elObjetoTipoRegistroTrabajador['lunesInicio2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso;
-                                        elObjetoTipoRegistroTrabajador['lunesFin2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesFin2RangoDescanso;
+                        procesarDatosEdicionPromesa()
+                            .then(values => {
+                                if (values.resuelto) {
+                                    //registramos
+                                    const centroAGuardar = {
+                                        id: valuesFormEdicion.id,
+                                        nombre: valuesFormEdicion.nombre,
+                                        estado: valuesFormEdicion.estado,
+                                        categoria: valuesFormEdicion.categoria,
+                                        codigo: valuesFormEdicion.codigo ? valuesFormEdicion.codigo : null,
+                                        domicilio: valuesFormEdicion.domicilio ? valuesFormEdicion.domicilio : null,
+                                        codigo_postal: valuesFormEdicion.codigoPostal ? valuesFormEdicion.codigoPostal : null,
+                                        poblacion: valuesFormEdicion.poblacion ? valuesFormEdicion.poblacion : null,
+                                        provincia: valuesFormEdicion.provincia ? valuesFormEdicion.provincia : null,
+                                        nif: valuesFormEdicion.nif ? valuesFormEdicion.nif : null,
+                                        mail: valuesFormEdicion.mail ? valuesFormEdicion.mail : null,
+                                        mail_2: valuesFormEdicion.mail2 ? valuesFormEdicion.mail2 : null,
+                                        telefono: valuesFormEdicion.telefono ? valuesFormEdicion.telefono : null,
+                                        telefono_2: valuesFormEdicion.telefono2 ? valuesFormEdicion.telefono2 : null,
+                                        forma_pago: valuesFormEdicion.formaPago,
+                                        temp_pago: valuesFormEdicion.tempPago,
+                                        dia_pago: valuesFormEdicion.diaPago ? valuesFormEdicion.diaPago : null,
+                                        horario: values.horario ? JSON.stringify(values.horario) : null,
+                                        servicios_fijos: values.servicios ? JSON.stringify(values.servicios) : null,
+                                        trabajadores: values.trabajadores ? JSON.stringify(values.trabajadores) : null
                                     };
-                                    elObjetoTipoRegistroTrabajador['lunesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio;
+                                    dispatch(actualizarCentroAccion('centros', centroAGuardar.id, centroAGuardar));
+                                    dispatch(registrarIntervencionAccion(true));
+                                    dispatch(activarDesactivarActualizarCentroAccion(true));
                                 };
-                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio1RangoDescanso) {
-                                    elObjetoTipoRegistroTrabajador['martesInicio1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio1RangoDescanso;
-                                    elObjetoTipoRegistroTrabajador['martesFin1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFin1RangoDescanso;
-                                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio2RangoDescanso) {
-                                        elObjetoTipoRegistroTrabajador['martesInicio2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesInicio2RangoDescanso;
-                                        elObjetoTipoRegistroTrabajador['martesFin2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesFin2RangoDescanso;
-                                    };
-                                    elObjetoTipoRegistroTrabajador['martesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio;
-                                };
-                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso) {
-                                    elObjetoTipoRegistroTrabajador['miercolesInicio1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso;
-                                    elObjetoTipoRegistroTrabajador['miercolesFin1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso;
-                                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso) {
-                                        elObjetoTipoRegistroTrabajador['miercolesInicio2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso;
-                                        elObjetoTipoRegistroTrabajador['miercolesFin2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso;
-                                    };
-                                    elObjetoTipoRegistroTrabajador['miercolesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio;
-                                };
-                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso) {
-                                    elObjetoTipoRegistroTrabajador['juevesInicio1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso;
-                                    elObjetoTipoRegistroTrabajador['juevesFin1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFin1RangoDescanso;
-                                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso) {
-                                        elObjetoTipoRegistroTrabajador['juevesInicio2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso;
-                                        elObjetoTipoRegistroTrabajador['juevesFin2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesFin2RangoDescanso;
-                                    };
-                                    elObjetoTipoRegistroTrabajador['juevesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio;
-                                };
-                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso) {
-                                    elObjetoTipoRegistroTrabajador['viernesInicio1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso;
-                                    elObjetoTipoRegistroTrabajador['viernesFin1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFin1RangoDescanso;
-                                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso) {
-                                        elObjetoTipoRegistroTrabajador['viernesInicio2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso;
-                                        elObjetoTipoRegistroTrabajador['viernesFin2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesFin2RangoDescanso;
-                                    };
-                                    elObjetoTipoRegistroTrabajador['viernesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio;
-                                };
-                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso) {
-                                    elObjetoTipoRegistroTrabajador['sabadoInicio1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso;
-                                    elObjetoTipoRegistroTrabajador['sabadoFin1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso;
-                                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso) {
-                                        elObjetoTipoRegistroTrabajador['sabadoInicio2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso;
-                                        elObjetoTipoRegistroTrabajador['sabadoFin2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso;
-                                    };
-                                    elObjetoTipoRegistroTrabajador['sabadoTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio;
-                                };
-                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso) {
-                                    elObjetoTipoRegistroTrabajador['domingoInicio1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso;
-                                    elObjetoTipoRegistroTrabajador['domingoFin1RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFin1RangoDescanso;
-                                    if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso) {
-                                        elObjetoTipoRegistroTrabajador['domingoInicio2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso;
-                                        elObjetoTipoRegistroTrabajador['domingoFin2RangoDescanso'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoFin2RangoDescanso;
-                                    };
-                                    elObjetoTipoRegistroTrabajador['domingoTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio;
-                                };
-                                elArrayTipoRegistroTrabajador.push(elObjetoTipoRegistroTrabajador);
-                            };
-                            horarioIntervencionEdicionRevisado = {
-                                tipo: horarioIntervencionEdicion.tipo,
-                                tipoRegistro: horarioIntervencionEdicion.tipoRegistro,
-                                variacion: horarioIntervencionEdicion.variacion,
-                                tipoRegistroTrabajador: elArrayTipoRegistroTrabajador
-                            };
-                        };
-                        if (horarioIntervencionEdicion.tipo === 'cantidad') {
-                            for (let i = 0; i < horarioIntervencionEdicion.tipoRegistroTrabajador.length; i++) {
-                                let elObjetoTipoRegistroTrabajador = {};
-                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesCantidad) {
-                                    elObjetoTipoRegistroTrabajador['lunesCantidad'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesCantidad;
-                                    elObjetoTipoRegistroTrabajador['lunesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].lunesTipoServicio;
-                                };
-                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesCantidad) {
-                                    elObjetoTipoRegistroTrabajador['martesCantidad'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesCantidad;
-                                    elObjetoTipoRegistroTrabajador['martesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].martesTipoServicio;
-                                };
-                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesCantidad) {
-                                    elObjetoTipoRegistroTrabajador['miercolesCantidad'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesCantidad;
-                                    elObjetoTipoRegistroTrabajador['miercolesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].miercolesTipoServicio;
-                                };
-                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesCantidad) {
-                                    elObjetoTipoRegistroTrabajador['juevesCantidad'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesCantidad;
-                                    elObjetoTipoRegistroTrabajador['juevesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].juevesTipoServicio;
-                                };
-                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesCantidad) {
-                                    elObjetoTipoRegistroTrabajador['viernesCantidad'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesCantidad;
-                                    elObjetoTipoRegistroTrabajador['viernesTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].viernesTipoServicio;
-                                };
-                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoCantidad) {
-                                    elObjetoTipoRegistroTrabajador['sabadoCantidad'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoCantidad;
-                                    elObjetoTipoRegistroTrabajador['sabadoTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].sabadoTipoServicio;
-                                };
-                                if (horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoCantidad) {
-                                    elObjetoTipoRegistroTrabajador['domingoCantidad'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoCantidad;
-                                    elObjetoTipoRegistroTrabajador['domingoTipoServicio'] = horarioIntervencionEdicion.tipoRegistroTrabajador[i].domingoTipoServicio;
-                                };
-                                elArrayTipoRegistroTrabajador.push(elObjetoTipoRegistroTrabajador);
-                            };
-                            horarioIntervencionEdicionRevisado = {
-                                tipo: horarioIntervencionEdicion.tipo,
-                                tipoRegistro: horarioIntervencionEdicion.tipoRegistro,
-                                variacion: horarioIntervencionEdicion.variacion,
-                                tipoRegistroTrabajador: elArrayTipoRegistroTrabajador
-                            };
-                        };
-                        //añadimos cómputo final                           
-                        let elHorarioIntervencionEditadoRevisado = {
-                            ...horarioIntervencionEdicionRevisado,
-                            computo: valuesFormEdicion.computo
-                        };
-                        if (valuesFormEdicion.mensualPactado) {
-                            elHorarioIntervencionEditadoRevisado['mensualPactado'] = parseFloat(valuesFormEdicion.mensualPactado);
-                        };
-                        if (valuesFormEdicion.precioHora_L) {
-                            elHorarioIntervencionEditadoRevisado['precioHora_L'] = parseFloat(valuesFormEdicion.precioHora_L);
-                        };
-                        if (valuesFormEdicion.precioHora_C) {
-                            elHorarioIntervencionEditadoRevisado['precioHora_C'] = parseFloat(valuesFormEdicion.precioHora_C);
-                        };
-                        if (valuesFormEdicion.precioHora_E) {
-                            elHorarioIntervencionEditadoRevisado['precioHora_E'] = parseFloat(valuesFormEdicion.precioHora_E);
-                        };
-                        if (valuesFormEdicion.precioHora_I) {
-                            elHorarioIntervencionEditadoRevisado['precioHora_I'] = parseFloat(valuesFormEdicion.precioHora_I);
-                        };
-                        if (valuesFormEdicion.precioHora_Z) {
-                            elHorarioIntervencionEditadoRevisado['precioHora_Z'] = parseFloat(valuesFormEdicion.precioHora_Z);
-                        };
-                        if (valuesFormEdicion.precioHora_T) {
-                            elHorarioIntervencionEditadoRevisado['precioHora_T'] = parseFloat(valuesFormEdicion.precioHora_T);
-                        };
-                        if (valuesFormEdicion.precioHora_P) {
-                            elHorarioIntervencionEditadoRevisado['precioHora_P'] = parseFloat(valuesFormEdicion.precioHora_P);
-                        };
-
-                        //registramos
-                        const centroAGuardar = {
-                            id: valuesFormEdicion.id,
-                            nombre: valuesFormEdicion.nombre,
-                            estado: valuesFormEdicion.estado,
-                            categoria: valuesFormEdicion.categoria,
-                            codigo: valuesFormEdicion.codigo ? valuesFormEdicion.codigo : null,
-                            domicilio: valuesFormEdicion.domicilio ? valuesFormEdicion.domicilio : null,
-                            codigo_postal: valuesFormEdicion.codigoPostal ? valuesFormEdicion.codigoPostal : null,
-                            poblacion: valuesFormEdicion.poblacion ? valuesFormEdicion.poblacion : null,
-                            provincia: valuesFormEdicion.provincia ? valuesFormEdicion.provincia : null,
-                            nif: valuesFormEdicion.nif ? valuesFormEdicion.nif : null,
-                            mail: valuesFormEdicion.mail ? valuesFormEdicion.mail : null,
-                            mail_2: valuesFormEdicion.mail2 ? valuesFormEdicion.mail2 : null,
-                            telefono: valuesFormEdicion.telefono ? valuesFormEdicion.telefono : null,
-                            telefono_2: valuesFormEdicion.telefono2 ? valuesFormEdicion.telefono2 : null,
-                            forma_pago: valuesFormEdicion.formaPago,
-                            temp_pago: valuesFormEdicion.tempPago,
-                            dia_pago: valuesFormEdicion.diaPago ? valuesFormEdicion.diaPago: null,
-                            horario: JSON.stringify(elHorarioIntervencionEditadoRevisado),
-                            trabajadores: JSON.stringify(trabajadoresEdicion)
-                        };
-                        dispatch(actualizarCentroAccion('centros', centroAGuardar.id, centroAGuardar));
-                        dispatch(registrarIntervencionAccion(true));
-                        dispatch(activarDesactivarActualizarCentroAccion(true));
+                            });
                     };
                     procesarDatosEdicion();
                     break;
@@ -3474,12 +3978,29 @@ const CentrosEditar = forwardRef((props, ref) => {
             computo: '',
             mensualPactado: null,
             precioHora_L: null,
-            precioHora_C: null,
             precioHora_E: null,
-            precioHora_I: null,
-            precioHora_Z: null,
-            precioHora_T: null,
             precioHora_P: null,
+            precioHora_N: null,
+            precioHora_R: null,
+            precioHora_L1: null,
+            precioHora_L2: null,
+            precioHora_F: null,
+            precioHora_TO: null,
+            precioHora_CR: null,
+            precioHora_CE: null,
+            precioHora_CI: null,
+            precioHora_MO: null,
+            precioHora_OF: null,
+            precioHora_AL: null,
+            precioHora_LA: null,
+            precioHora_TE: null,
+            precioHora_FI: null,
+            precioHora_FE: null,
+            precioHora_AB: null,
+            precioHora_MA: null,
+            precioHora_PO: null,
+            precioHora_BA: null,
+            precioHora_FT: null
         });
         setValueTimePickerInicioEdicion([
             {
@@ -3637,6 +4158,24 @@ const CentrosEditar = forwardRef((props, ref) => {
         setTrabajadoresEdicion({
             cantidad: '',
             trabajadores: []
+        });
+        setStateSwitchTipoServicioFijoEdicion({
+            TO: false,
+            CR: false,
+            CE: false,
+            CI: false,
+            MO: false,
+            OF: false,
+            AL: false,
+            LA: false,
+            TE: false,
+            FI: false,
+            FE: false,
+            AB: false,
+            MA: false,
+            PO: false,
+            BA: false,
+            FT: false
         });
     };
 
@@ -4078,6 +4617,217 @@ const CentrosEditar = forwardRef((props, ref) => {
         };
     };
 
+    const retornaTipoServicioFijoEdicion = (tipo, index) => {
+        let checkeado, laLabelSw, laLabelIn, elId, elValue, laLabelWi, elPrecioHora, laClase;
+        switch (tipo.value) {
+            case 'TOL':
+                checkeado = stateSwitchTipoServicioFijoEdicion.TO;
+                laLabelSw = 'SERVICIO DE LIMPIEZA DE TOLDOS';
+                laLabelIn = 'Precio TOL';
+                elId = 'form-precio-hora_TO-edicion';
+                elValue = valuesFormEdicion.precioHora_TO || '';
+                laLabelWi = 90;
+                elPrecioHora = 'precioHora_TO';
+                laClase = valuesFormEdicion.precioHora_TO ? classes.fondoGrisClaro : classes.paper;
+                break;
+            case 'CRIS':
+                checkeado = stateSwitchTipoServicioFijoEdicion.CR;
+                laLabelSw = 'SERVICIO DE LIMPIEZA DE CRISTALES';
+                laLabelIn = 'Precio CRIS';
+                elId = 'form-precio-hora_CR-edicion';
+                elValue = valuesFormEdicion.precioHora_CR || '';
+                laLabelWi = 100;
+                elPrecioHora = 'precioHora_CR';
+                laClase = valuesFormEdicion.precioHora_CR ? classes.fondoGrisClaro : classes.paper;
+                break;
+            case 'CRISE':
+                checkeado = stateSwitchTipoServicioFijoEdicion.CE;
+                laLabelSw = 'LIMPIEZA CRISTALES EXTERIORES';
+                laLabelIn = 'Precio CRISE';
+                elId = 'form-precio-hora_CE-edicion';
+                elValue = valuesFormEdicion.precioHora_CE || '';
+                laLabelWi = 110;
+                elPrecioHora = 'precioHora_CE';
+                laClase = valuesFormEdicion.precioHora_CE ? classes.fondoGrisClaro : classes.paper;
+                break;
+            case 'CRISI':
+                checkeado = stateSwitchTipoServicioFijoEdicion.CI;
+                laLabelSw = 'LIMPIEZA CRISTALES INTERIORES';
+                laLabelIn = 'Precio CRISI';
+                elId = 'form-precio-hora_CI-edicion';
+                elValue = valuesFormEdicion.precioHora_CI || '';
+                laLabelWi = 105;
+                elPrecioHora = 'precioHora_CI';
+                laClase = valuesFormEdicion.precioHora_CI ? classes.fondoGrisClaro : classes.paper;
+                break;
+            case 'MOQ':
+                checkeado = stateSwitchTipoServicioFijoEdicion.MO;
+                laLabelSw = 'SERVICIO DE LIMPIEZA MOQUETA';
+                laLabelIn = 'Precio MOQ';
+                elId = 'form-precio-hora_MO-edicion';
+                elValue = valuesFormEdicion.precioHora_MO || '';
+                laLabelWi = 95;
+                elPrecioHora = 'precioHora_MO';
+                laClase = valuesFormEdicion.precioHora_MO ? classes.fondoGrisClaro : classes.paper;
+                break;
+            case 'OF':
+                checkeado = stateSwitchTipoServicioFijoEdicion.OF;
+                laLabelSw = 'SERVICIO DE LIMPIEZA OFICINAS';
+                laLabelIn = 'Precio OF';
+                elId = 'form-precio-hora_OF-edicion';
+                elValue = valuesFormEdicion.precioHora_OF || '';
+                laLabelWi = 80;
+                elPrecioHora = 'precioHora_OF';
+                laClase = valuesFormEdicion.precioHora_OF ? classes.fondoGrisClaro : classes.paper;
+                break;
+            case 'ALMC':
+                checkeado = stateSwitchTipoServicioFijoEdicion.AL;
+                laLabelSw = 'SERVICIO DE LIMPIEZA ALMACENES';
+                laLabelIn = 'Precio ALMC';
+                elId = 'form-precio-hora_AL-edicion';
+                elValue = valuesFormEdicion.precioHora_AL || '';
+                laLabelWi = 100;
+                elPrecioHora = 'precioHora_AL';
+                laClase = valuesFormEdicion.precioHora_AL ? classes.fondoGrisClaro : classes.paper;
+                break;
+            case 'LAB':
+                checkeado = stateSwitchTipoServicioFijoEdicion.LA;
+                laLabelSw = 'SERVICIO DE LIMPIEZA LABORATORIO';
+                laLabelIn = 'Precio LAB';
+                elId = 'form-precio-hora_LA-edicion';
+                elValue = valuesFormEdicion.precioHora_LA || '';
+                laLabelWi = 90;
+                elPrecioHora = 'precioHora_LA';
+                laClase = valuesFormEdicion.precioHora_LA ? classes.fondoGrisClaro : classes.paper;
+                break;
+            case 'TELÑ':
+                checkeado = stateSwitchTipoServicioFijoEdicion.TE;
+                laLabelSw = 'SERVICIO DE LIMPIEZA TELARAÑAS';
+                laLabelIn = 'Precio TELÑ';
+                elId = 'form-precio-hora_TE-edicion';
+                elValue = valuesFormEdicion.precioHora_TE || '';
+                laLabelWi = 100;
+                elPrecioHora = 'precioHora_TE';
+                laClase = valuesFormEdicion.precioHora_TE ? classes.fondoGrisClaro : classes.paper;
+                break;
+            case 'FCH.IN':
+                checkeado = stateSwitchTipoServicioFijoEdicion.FI;
+                laLabelSw = 'SERVICIO DE LIMPIEZA FACHADA INTERIOR';
+                laLabelIn = 'Precio FCH.IN';
+                elId = 'form-precio-hora_FI-edicion';
+                elValue = valuesFormEdicion.precioHora_FI || '';
+                laLabelWi = 120;
+                elPrecioHora = 'precioHora_FI';
+                laClase = valuesFormEdicion.precioHora_FI ? classes.fondoGrisClaro : classes.paper;
+                break;
+            case 'FCH.EX':
+                checkeado = stateSwitchTipoServicioFijoEdicion.FE;
+                laLabelSw = 'SERVICIO DE LIMPIEZA FACHADA EXTERIOR';
+                laLabelIn = 'Precio FCH.EX';
+                elId = 'form-precio-hora_FE-edicion';
+                elValue = valuesFormEdicion.precioHora_FE || '';
+                laLabelWi = 120;
+                elPrecioHora = 'precioHora_FE';
+                laClase = valuesFormEdicion.precioHora_FE ? classes.fondoGrisClaro : classes.paper;
+                break;
+            case 'ABRLL':
+                checkeado = stateSwitchTipoServicioFijoEdicion.AB;
+                laLabelSw = 'SERVICIO DE LIMPIEZA ABRILLANTADO';
+                laLabelIn = 'Precio ABRLL';
+                elId = 'form-precio-hora_AB-edicion';
+                elValue = valuesFormEdicion.precioHora_AB || '';
+                laLabelWi = 110;
+                elPrecioHora = 'precioHora_AB';
+                laClase = valuesFormEdicion.precioHora_AB ? classes.fondoGrisClaro : classes.paper;
+                break;
+            case 'MANT':
+                checkeado = stateSwitchTipoServicioFijoEdicion.MA;
+                laLabelSw = 'SERVICIO DE MANTENIMIENTO MÁQUINA';
+                laLabelIn = 'Precio MANT';
+                elId = 'form-precio-hora_MA-edicion';
+                elValue = valuesFormEdicion.precioHora_MA || '';
+                laLabelWi = 105;
+                elPrecioHora = 'precioHora_MA';
+                laClase = valuesFormEdicion.precioHora_MA ? classes.fondoGrisClaro : classes.paper;
+                break;
+            case 'PORT':
+                checkeado = stateSwitchTipoServicioFijoEdicion.PO;
+                laLabelSw = 'SERVICIO DE LIMPIEZA PORTERÍA';
+                laLabelIn = 'Precio PORT';
+                elId = 'form-precio-hora_PO-edicion';
+                elValue = valuesFormEdicion.precioHora_PO || '';
+                laLabelWi = 100;
+                elPrecioHora = 'precioHora_PO';
+                laClase = valuesFormEdicion.precioHora_PO ? classes.fondoGrisClaro : classes.paper;
+                break;
+            case 'BACT':
+                checkeado = stateSwitchTipoServicioFijoEdicion.BA;
+                laLabelSw = 'BOT. NOUBACT';
+                laLabelIn = 'Precio BACT';
+                elId = 'form-precio-hora_BA-edicion';
+                elValue = valuesFormEdicion.precioHora_BA || '';
+                laLabelWi = 100;
+                elPrecioHora = 'precioHora_BA';
+                laClase = valuesFormEdicion.precioHora_BA ? classes.fondoGrisClaro : classes.paper;
+                break;
+            case 'FEST':
+                checkeado = stateSwitchTipoServicioFijoEdicion.FT;
+                laLabelSw = 'SERVICIO DE LIMPIEZA DÍA FESTIVO';
+                laLabelIn = 'Precio FEST';
+                elId = 'form-precio-hora_FT-edicion';
+                elValue = valuesFormEdicion.precioHora_FT || '';
+                laLabelWi = 100;
+                elPrecioHora = 'precioHora_FT';
+                laClase = valuesFormEdicion.precioHora_FT ? classes.fondoGrisClaro : classes.paper;
+                break;
+            default:
+        };
+        return (
+            <Grid
+                container
+                direction="row"
+                justifycontent="flex-start"
+                alignItems="center"
+                spacing={2}
+                className={laClase}
+                style={{ height: 80, paddingTop: 5, paddingBottom: 10, paddingRight: 10, paddingLeft: 10, marginBottom: 15 }}
+                key={'formServicio' + index}
+            >
+                <Grid item xs={8} >
+                    <FormControlLabel
+                        control={
+                            <Switch
+                                checked={checkeado}
+                                name={elId}
+                                color="secondary"
+                                onChange={handleChangeSwitchTipoServicioFijoEdicion}
+                            />
+                        }
+                        label={<Typography variant="body2">{laLabelSw}</Typography>}
+                        labelPlacement="end"
+                    />
+                </Grid>
+                <Grid item xs={4}>
+                    <FormControl
+                        variant="outlined"
+                        className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
+                        size="small"
+                    >
+                        <InputLabel>{laLabelIn}</InputLabel>
+                        <OutlinedInput
+                            fullWidth
+                            id={elId}
+                            value={elValue}
+                            onChange={handleChangeFormEdicion(elPrecioHora)}
+                            labelWidth={laLabelWi}
+                            startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                        />
+                    </FormControl>
+                </Grid>
+            </Grid>
+        )
+    };
+
     return (
         <div>
             <Backdrop className={classes.loading} open={openLoading}>
@@ -4096,7 +4846,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                             <Box
                                 m={0.5}
                                 color="secondary.contrastText"
-                                className={valuesFormEdicion.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
+                                className={valuesFormEdicion.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2) : clsx(classes.fondoAlta, classes.boxStl2)}
                                 style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}
                             >
                                 <Box>Datos generales</Box>
@@ -4106,7 +4856,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                     <FormControlLabel
                                         control={
                                             <Switch
-                                                checked={stateSwitchEstado}
+                                                checked={stateSwitchEstadoEdicion}
                                                 color="secondary"
                                                 style={valuesFormEdicion.estado === 'baja' ? { color: '#FFFFFF' } : null}
                                                 onChange={handleChangeSwitchEstadoEdicion}
@@ -4118,633 +4868,701 @@ const CentrosEditar = forwardRef((props, ref) => {
                                     />
                                 </Box>
                             </Box>
-                            <FormControl
-                                variant="outlined"
-                                className={classes.form}
-                            >
-                                <Autocomplete
-                                    id="form-select-centros"
-                                    options={listadoCentros}
-                                    onChange={handleChangeSelectCentrosEdicion}
-                                    value={valuesAutocompleteCentrosValores || null}
-                                    getOptionLabel={(option) => option.nombre ? option.nombre : ''}
-                                    fullWidth
-                                    renderInput={(params) => <TextField {...params} label="Selecciona centro" variant="outlined" />}
-                                    className={classes.mb15}
+                            <Box className={classes.scrollable} style={{ height: heightScrollable, paddingTop: 20, paddingRight: 10 }}>
+                                <FormControl
+                                    variant="outlined"
+                                    className={classes.form}
+                                >
+                                    <Autocomplete
+                                        id="form-select-centros"
+                                        options={listadoCentros}
+                                        onChange={handleChangeSelectCentrosEdicion}
+                                        value={valuesAutocompleteCentrosValores || null}
+                                        getOptionLabel={(option) => option.nombre ? option.nombre : ''}
+                                        fullWidth
+                                        renderInput={(params) => <TextField {...params} label="Selecciona centro" variant="outlined" />}
+                                        className={classes.mb15}
+                                        size="small"
+                                    />
+                                </FormControl>
+                                <FormControl
+                                    variant="outlined"
+                                    className={classes.form}
                                     size="small"
-                                />
-                            </FormControl>
-                            <FormControl
-                                variant="outlined"
-                                className={classes.form}
-                                size="small"
-                            >
-                                <InputLabel>Nombre</InputLabel>
-                                <OutlinedInput
-                                    className={classes.mb15}
-                                    fullWidth
-                                    id="form-nombre-centro-edicion"
-                                    value={valuesFormEdicion.nombre}
-                                    onChange={handleChangeFormEdicion('nombre')}
-                                    labelWidth={60}
-                                    disabled={disabledItem}
+                                >
+                                    <InputLabel>Nombre</InputLabel>
+                                    <OutlinedInput
+                                        className={classes.mb15}
+                                        fullWidth
+                                        id="form-nombre-centro-edicion"
+                                        value={valuesFormEdicion.nombre}
+                                        onChange={handleChangeFormEdicion('nombre')}
+                                        labelWidth={60}
+                                        disabled={disabledItem}
 
-                                />
-                            </FormControl>
-                            <FormControl
-                                variant="outlined"
-                                className={classes.form}
-                                size="small"
-                            >
-                                <InputLabel>Categoría Centro</InputLabel>
-                                <Select
-                                    fullWidth
-                                    className={classes.mb15}
-                                    id="form-categoria-edicion"
-                                    label="Categoría Centro"
-                                    value={valuesFormEdicion.categoria}
-                                    onChange={handleChangeFormEdicion('categoria')}
-                                    helpertext="Selecciona categoria"
-                                    disabled={disabledItem}
+                                    />
+                                </FormControl>
+                                <FormControl
+                                    variant="outlined"
+                                    className={classes.form}
+                                    size="small"
                                 >
-                                    {
-                                        categorias.map((option) => (
-                                            <MenuItem key={option.value} value={option.value}>
-                                                {option.label}
-                                            </MenuItem>
-                                        ))
-                                    }
-                                </Select>
-                            </FormControl>
-                            <Grid container>
-                                <Grid item xs={6}>
-                                    <FormControl
-                                        variant="outlined"
-                                        className={classes.form}
-                                        size="small"
+                                    <InputLabel>Categoría Centro</InputLabel>
+                                    <Select
+                                        fullWidth
+                                        className={classes.mb15}
+                                        id="form-categoria-edicion"
+                                        label="Categoría Centro"
+                                        value={valuesFormEdicion.categoria}
+                                        onChange={handleChangeFormEdicion('categoria')}
+                                        helpertext="Selecciona categoria"
+                                        disabled={disabledItem}
                                     >
-                                        <InputLabel>Código</InputLabel>
-                                        <OutlinedInput
-                                            className={classes.mb15}
-                                            fullWidth
-                                            id="form-codigo-centro-edicion"
-                                            value={valuesFormEdicion.codigo}
-                                            onChange={handleChangeFormEdicion('codigo')}
-                                            labelWidth={55}
-                                            disabled={disabledItem}
-                                        />
-                                    </FormControl>
+                                        {
+                                            categorias.map((option) => (
+                                                <MenuItem key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </MenuItem>
+                                            ))
+                                        }
+                                    </Select>
+                                </FormControl>
+                                <Grid container>
+                                    <Grid item xs={6}>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>Código</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb15}
+                                                fullWidth
+                                                id="form-codigo-centro-edicion"
+                                                value={valuesFormEdicion.codigo}
+                                                onChange={handleChangeFormEdicion('codigo')}
+                                                labelWidth={55}
+                                                disabled={disabledItem}
+                                            />
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>NIF</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb15}
+                                                fullWidth
+                                                id="form-nif-centro-edicion"
+                                                value={valuesFormEdicion.nif}
+                                                onChange={handleChangeFormEdicion('nif')}
+                                                labelWidth={30}
+                                                disabled={disabledItem}
+                                            />
+                                        </FormControl>
+                                    </Grid>
                                 </Grid>
-                                <Grid item xs={6}>
-                                    <FormControl
-                                        variant="outlined"
-                                        className={classes.form}
-                                        size="small"
-                                    >
-                                        <InputLabel>NIF</InputLabel>
-                                        <OutlinedInput
-                                            className={classes.mb15}
-                                            fullWidth
-                                            id="form-nif-centro-edicion"
-                                            value={valuesFormEdicion.nif}
-                                            onChange={handleChangeFormEdicion('nif')}
-                                            labelWidth={30}
-                                            disabled={disabledItem}
-                                        />
-                                    </FormControl>
+                                <FormControl
+                                    variant="outlined"
+                                    className={classes.form}
+                                    size="small"
+                                >
+                                    <InputLabel>E-mail</InputLabel>
+                                    <OutlinedInput
+                                        className={classes.mb15}
+                                        fullWidth
+                                        id="form-mail-centro-edicion"
+                                        value={valuesFormEdicion.mail}
+                                        onChange={handleChangeFormEdicion('mail')}
+                                        labelWidth={55}
+                                        disabled={disabledItem}
+                                    />
+                                </FormControl>
+                                <FormControl
+                                    variant="outlined"
+                                    className={classes.form}
+                                    size="small"
+                                >
+                                    <InputLabel>E-mail 2</InputLabel>
+                                    <OutlinedInput
+                                        className={classes.mb15}
+                                        fullWidth
+                                        id="form-mail2-centro-edicion"
+                                        value={valuesFormEdicion.mail2}
+                                        onChange={handleChangeFormEdicion('mail2')}
+                                        labelWidth={65}
+                                        disabled={disabledItem}
+                                    />
+                                </FormControl>
+                                <FormControl
+                                    variant="outlined"
+                                    className={classes.form}
+                                    size="small"
+                                >
+                                    <InputLabel>Domicilio</InputLabel>
+                                    <OutlinedInput
+                                        className={classes.mb15}
+                                        fullWidth
+                                        id="form-domicilio-centro-edicion"
+                                        value={valuesFormEdicion.domicilio}
+                                        onChange={handleChangeFormEdicion('domicilio')}
+                                        labelWidth={70}
+                                        disabled={disabledItem}
+                                    />
+                                </FormControl>
+                                <FormControl
+                                    variant="outlined"
+                                    className={classes.form}
+                                    size="small"
+                                >
+                                    <InputLabel>Población</InputLabel>
+                                    <OutlinedInput
+                                        className={classes.mb15}
+                                        fullWidth
+                                        id="form-poblacion-centro-edicion"
+                                        value={valuesFormEdicion.poblacion}
+                                        onChange={handleChangeFormEdicion('poblacion')}
+                                        labelWidth={75}
+                                        disabled={disabledItem}
+                                    />
+                                </FormControl>
+                                <Grid container>
+                                    <Grid item xs={8}>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>Provincia</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb15}
+                                                fullWidth
+                                                id="form-provincia-centro-edicion"
+                                                value={valuesFormEdicion.provincia}
+                                                onChange={handleChangeFormEdicion('provincia')}
+                                                labelWidth={75}
+                                                disabled={disabledItem}
+                                            />
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>Código Postal</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb15}
+                                                fullWidth
+                                                id="form-codigoPostal-centro-edicion"
+                                                value={valuesFormEdicion.codigoPostal}
+                                                onChange={handleChangeFormEdicion('codigoPostal')}
+                                                labelWidth={105}
+                                                disabled={disabledItem}
+                                            />
+                                        </FormControl>
+                                    </Grid>
                                 </Grid>
-                            </Grid>
-                            <FormControl
-                                variant="outlined"
-                                className={classes.form}
-                                size="small"
-                            >
-                                <InputLabel>E-mail</InputLabel>
-                                <OutlinedInput
-                                    className={classes.mb15}
-                                    fullWidth
-                                    id="form-mail-centro-edicion"
-                                    value={valuesFormEdicion.mail}
-                                    onChange={handleChangeFormEdicion('mail')}
-                                    labelWidth={55}
-                                    disabled={disabledItem}
-                                />
-                            </FormControl>
-                            <FormControl
-                                variant="outlined"
-                                className={classes.form}
-                                size="small"
-                            >
-                                <InputLabel>E-mail 2</InputLabel>
-                                <OutlinedInput
-                                    className={classes.mb15}
-                                    fullWidth
-                                    id="form-mail2-centro-edicion"
-                                    value={valuesFormEdicion.mail2}
-                                    onChange={handleChangeFormEdicion('mail2')}
-                                    labelWidth={65}
-                                    disabled={disabledItem}
-                                />
-                            </FormControl>
-                            <FormControl
-                                variant="outlined"
-                                className={classes.form}
-                                size="small"
-                            >
-                                <InputLabel>Domicilio</InputLabel>
-                                <OutlinedInput
-                                    className={classes.mb15}
-                                    fullWidth
-                                    id="form-domicilio-centro-edicion"
-                                    value={valuesFormEdicion.domicilio}
-                                    onChange={handleChangeFormEdicion('domicilio')}
-                                    labelWidth={70}
-                                    disabled={disabledItem}
-                                />
-                            </FormControl>
-                            <FormControl
-                                variant="outlined"
-                                className={classes.form}
-                                size="small"
-                            >
-                                <InputLabel>Población</InputLabel>
-                                <OutlinedInput
-                                    className={classes.mb15}
-                                    fullWidth
-                                    id="form-poblacion-centro-edicion"
-                                    value={valuesFormEdicion.poblacion}
-                                    onChange={handleChangeFormEdicion('poblacion')}
-                                    labelWidth={75}
-                                    disabled={disabledItem}
-                                />
-                            </FormControl>
-                            <Grid container>
-                                <Grid item xs={8}>
-                                    <FormControl
-                                        variant="outlined"
-                                        className={classes.form}
-                                        size="small"
-                                    >
-                                        <InputLabel>Provincia</InputLabel>
-                                        <OutlinedInput
-                                            className={classes.mb15}
-                                            fullWidth
-                                            id="form-provincia-centro-edicion"
-                                            value={valuesFormEdicion.provincia}
-                                            onChange={handleChangeFormEdicion('provincia')}
-                                            labelWidth={75}
-                                            disabled={disabledItem}
-                                        />
-                                    </FormControl>
+                                <Grid container>
+                                    <Grid item xs={6}>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>Teléfono 1</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb15}
+                                                fullWidth
+                                                id="form-telefono-centro-edicion"
+                                                value={valuesFormEdicion.telefono}
+                                                onChange={handleChangeFormEdicion('telefono')}
+                                                labelWidth={80}
+                                                disabled={disabledItem}
+                                            />
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>Teléfono 2</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb25}
+                                                fullWidth
+                                                id="form-telefono2-centro-edicion"
+                                                value={valuesFormEdicion.telefono2}
+                                                onChange={handleChangeFormEdicion('telefono2')}
+                                                labelWidth={80}
+                                                disabled={disabledItem}
+                                            />
+                                        </FormControl>
+                                    </Grid>
                                 </Grid>
-                                <Grid item xs={4}>
-                                    <FormControl
-                                        variant="outlined"
-                                        className={classes.form}
-                                        size="small"
-                                    >
-                                        <InputLabel>Código Postal</InputLabel>
-                                        <OutlinedInput
-                                            className={classes.mb15}
-                                            fullWidth
-                                            id="form-codigoPostal-centro-edicion"
-                                            value={valuesFormEdicion.codigoPostal}
-                                            onChange={handleChangeFormEdicion('codigoPostal')}
-                                            labelWidth={105}
-                                            disabled={disabledItem}
-                                        />
-                                    </FormControl>
-                                </Grid>
-                            </Grid>
-                            <Grid container>
-                                <Grid item xs={6}>
-                                    <FormControl
-                                        variant="outlined"
-                                        className={classes.form}
-                                        size="small"
-                                    >
-                                        <InputLabel>Teléfono 1</InputLabel>
-                                        <OutlinedInput
-                                            className={classes.mb15}
-                                            fullWidth
-                                            id="form-telefono-centro-edicion"
-                                            value={valuesFormEdicion.telefono}
-                                            onChange={handleChangeFormEdicion('telefono')}
-                                            labelWidth={80}
-                                            disabled={disabledItem}
-                                        />
-                                    </FormControl>
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <FormControl
-                                        variant="outlined"
-                                        className={classes.form}
-                                        size="small"
-                                    >
-                                        <InputLabel>Teléfono 2</InputLabel>
-                                        <OutlinedInput
-                                            className={classes.mb25}
-                                            fullWidth
-                                            id="form-telefono2-centro-edicion"
-                                            value={valuesFormEdicion.telefono2}
-                                            onChange={handleChangeFormEdicion('telefono2')}
-                                            labelWidth={80}
-                                            disabled={disabledItem}
-                                        />
-                                    </FormControl>
-                                </Grid>
-                            </Grid>
-                            <Box
-                                m={0.5}
-                                color="secondary.contrastText"
-                                className={valuesFormEdicion.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
-                            >
-                                Trabajadores
                             </Box>
-                            <FormControl
-                                variant="outlined"
-                                className={classes.form}
-                                size="small"
-                            >
-                                <InputLabel>Trabajadores asignados</InputLabel>
-                                <Select
-                                    fullWidth
-                                    className={classes.mb15}
-                                    id="form-tipo-trabajadores"
-                                    label="Trabajadores asignados"
-                                    value={valuesFormEdicion.numeroTrabajadores || ''}
-                                    onChange={handleChangeFormEdicion('numeroTrabajadores')}
-                                    helpertext="Selecciona número de trabajadores"
-                                    disabled={disabledItem}
-                                >
-                                    {
-                                        totalTrabajadores.map((option) => (
-                                            <MenuItem key={option.value} value={option.value}>
-                                                {option.label}
-                                            </MenuItem>
-                                        ))
-                                    }
-                                </Select>
-                            </FormControl>
-                            {trabajadoresEdicion.cantidad !== '' ? (generarSelectsTrabajadores(trabajadoresEdicion.cantidad)) : null}
                         </Box>
                     </Grid>
                     <Grid item lg={8} sm={6} xs={12}>
-                        <Box
-                            m={0.5}
-                            color="secondary.contrastText"
-                            className={valuesFormEdicion.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
-                        >
-                            Horario de intervención
-                        </Box>
-                        <Grid
-                            container
-                            direction="row"
-                            justifycontent="flex-start"
-                            alignItems="flex-start"
-                            spacing={4}
-                        >
-                            <Grid item lg={4} sm={4} xs={12}>
-                                <FormControl
-                                    variant="outlined"
-                                    className={classes.form}
-                                    size="small"
-                                >
-                                    <InputLabel>Modo entrada datos</InputLabel>
-                                    <Select
-                                        fullWidth
-                                        className={classes.mb15}
-                                        id="form-tipo-edicion"
-                                        label="Modo entrada datos"
-                                        value={valuesFormEdicion.tipo || ''}
-                                        onChange={handleChangeFormEdicion('tipo')}
-                                        helpertext="Selecciona Modo entrada datos"
-                                        disabled={disabledItem}
-                                    >
-                                        {
-                                            tipos.map((option) => (
-                                                <MenuItem key={option.value} value={option.value}>
-                                                    {option.label}
+                        <div className={classes.root2} style={{ marginTop: 5 }}>
+                            <AppBar position="static" className={valuesFormEdicion.estado === 'baja' ? clsx(classes.fondoBaja) : clsx(classes.fondoAlta)}>
+                                <Tabs value={valueTabCentrosEdicion} onChange={handleChangeTabCentrosEdicion} className={classes.tabsStl}>
+                                    <Tab label="Trabajadores" {...a11yProps(0)} style={{ paddingBottom: 10 }} />
+                                    <Tab label="Horario de intervención" {...a11yProps(1)} style={{ paddingBottom: 10 }} />
+                                    <Tab label="Servicios fijos" {...a11yProps(2)} style={{ paddingBottom: 10 }} />
+                                    <Tab label="Forma de pago" {...a11yProps(3)} style={{ paddingBottom: 10 }} />
+                                </Tabs>
+                            </AppBar>
+                            <TabPanel value={valueTabCentrosEdicion} index={0} className={classes.scrollable} style={{ height: heightScrollable }}>
+                                <Grid item lg={6} sm={6} xs={12}>
+                                    <Box>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>Trabajadores asignados</InputLabel>
+                                            <Select
+                                                fullWidth
+                                                className={classes.mb15}
+                                                id="form-tipo-trabajadores"
+                                                label="Trabajadores asignados"
+                                                value={valuesFormEdicion.numeroTrabajadores || ''}
+                                                onChange={handleChangeFormEdicion('numeroTrabajadores')}
+                                                helpertext="Selecciona número de trabajadores"
+                                                disabled={disabledItem}
+                                            >
+                                                <MenuItem value=''>
+                                                    <em>No</em>
                                                 </MenuItem>
-                                            ))
-                                        }
-                                    </Select>
-                                </FormControl>
-                                <FormControl
-                                    variant="outlined"
-                                    className={classes.form}
-                                    size="small"
+                                                {
+                                                    totalTrabajadores.map((option) => (
+                                                        <MenuItem key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </MenuItem>
+                                                    ))
+                                                }
+                                            </Select>
+                                        </FormControl>
+                                        {trabajadoresEdicion.cantidad !== '' ? (generarSelectsTrabajadores(trabajadoresEdicion.cantidad)) : null}
+                                    </Box>
+                                </Grid>
+                            </TabPanel>
+                            <TabPanel value={valueTabCentrosEdicion} index={1} className={classes.scrollable} style={{ height: heightScrollable }}>
+                                <Grid
+                                    container
+                                    direction="row"
+                                    justifycontent="flex-start"
+                                    alignItems="flex-start"
+                                    spacing={4}
                                 >
-                                    <InputLabel>Variaciones</InputLabel>
-                                    <Select
-                                        fullWidth
-                                        className={classes.mb25}
-                                        id="form-variaciones-edicion"
-                                        label="Variaciones"
-                                        value={valuesFormEdicion.variacion}
-                                        onChange={handleChangeFormEdicion('variacion')}
-                                        helpertext="Selecciona variaciones"
-                                        disabled={disabledItem}
-                                    >
-                                        {
-                                            variaciones.map((option) => (
-                                                <MenuItem key={option.value} value={option.value}>
-                                                    {option.label}
+                                    <Grid item lg={4} sm={4} xs={12}>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>Modo entrada datos</InputLabel>
+                                            <Select
+                                                fullWidth
+                                                className={classes.mb15}
+                                                id="form-tipo-edicion"
+                                                label="Modo entrada datos"
+                                                value={valuesFormEdicion.tipo || ''}
+                                                onChange={handleChangeFormEdicion('tipo')}
+                                                helpertext="Selecciona Modo entrada datos"
+                                                disabled={disabledItem}
+                                            >
+                                                <MenuItem value=''>
+                                                    <em>No</em>
                                                 </MenuItem>
-                                            ))
-                                        }
-                                    </Select>
-                                </FormControl>
-                                <Box
-                                    m={0.5}
-                                    color="secondary.contrastText"
-                                    className={valuesFormEdicion.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
-                                >
-                                    Cómputo de horas
-                                </Box>
-                                <FormControl
-                                    variant="outlined"
-                                    className={classes.form}
-                                    size="small"
-                                >
-                                    <InputLabel>Tipo cómputo</InputLabel>
-                                    <Select
-                                        fullWidth
-                                        className={classes.mb15}
-                                        id="form-tipo-computo-edicion"
-                                        label="Tipo cómputo"
-                                        value={valuesFormEdicion.computo || ''}
-                                        onChange={handleChangeFormEdicion('computo')}
-                                        helpertext="Selecciona cómputo de horas"
-                                        disabled={disabledItem}
-                                    >
-                                        {
-                                            computoHoras.map((option) => (
-                                                <MenuItem key={option.value} value={option.value}>
-                                                    {option.label}
+                                                {
+                                                    tipos.map((option) => (
+                                                        <MenuItem key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </MenuItem>
+                                                    ))
+                                                }
+                                            </Select>
+                                        </FormControl>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>Variaciones</InputLabel>
+                                            <Select
+                                                fullWidth
+                                                className={classes.mb25}
+                                                id="form-variaciones-edicion"
+                                                label="Variaciones"
+                                                value={valuesFormEdicion.variacion}
+                                                onChange={handleChangeFormEdicion('variacion')}
+                                                helpertext="Selecciona variaciones"
+                                                disabled={disabledItem}
+                                            >
+                                                <MenuItem value=''>
+                                                    <em>No</em>
                                                 </MenuItem>
-                                            ))
-                                        }
-                                    </Select>
-                                </FormControl>
-                                {valuesFormEdicion.computo === 1 || valuesFormEdicion.computo === 3 ? (
-                                    <FormControl
-                                        variant="outlined"
-                                        className={classes.form}
-                                        size="small"
-                                    >
-                                        <InputLabel>Mensual pactado</InputLabel>
-                                        <OutlinedInput
-                                            className={classes.mb15}
-                                            fullWidth
-                                            id="form-mensual-pactado-edicion"
-                                            value={valuesFormEdicion.mensualPactado || ''}
-                                            onChange={handleChangeFormEdicion('mensualPactado')}
-                                            labelWidth={130}
-                                            startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                                        />
-                                    </FormControl>
-                                ) : null}
-                                {valuesFormEdicion.computo === 2 || valuesFormEdicion.computo === 3 ? (
-                                    <Fragment>
-                                        <FormControl
-                                            variant="outlined"
-                                            className={classes.form}
-                                            size="small"
-                                        >
-                                            <InputLabel>Precio hora LIM</InputLabel>
-                                            <OutlinedInput
-                                                className={classes.mb15}
-                                                fullWidth
-                                                id="form-precio-hora_L-edicion"
-                                                value={valuesFormEdicion.precioHora_L || ''}
-                                                onChange={handleChangeFormEdicion('precioHora_L')}
-                                                labelWidth={120}
-                                                startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                                            />
+                                                {
+                                                    variaciones.map((option) => (
+                                                        <MenuItem key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </MenuItem>
+                                                    ))
+                                                }
+                                            </Select>
                                         </FormControl>
-                                        <FormControl
-                                            variant="outlined"
-                                            className={classes.form}
-                                            size="small"
-                                        >
-                                            <InputLabel>Precio hora CRIS</InputLabel>
-                                            <OutlinedInput
-                                                className={classes.mb15}
-                                                fullWidth
-                                                id="form-precio-hora_C-edicion"
-                                                value={valuesFormEdicion.precioHora_C || ''}
-                                                onChange={handleChangeFormEdicion('precioHora_C')}
-                                                labelWidth={125}
-                                                startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                                            />
-                                        </FormControl>
-                                        <FormControl
-                                            variant="outlined"
-                                            className={classes.form}
-                                            size="small"
-                                        >
-                                            <InputLabel>Precio hora CRISE</InputLabel>
-                                            <OutlinedInput
-                                                className={classes.mb15}
-                                                fullWidth
-                                                id="form-precio-hora_E-edicion"
-                                                value={valuesFormEdicion.precioHora_E || ''}
-                                                onChange={handleChangeFormEdicion('precioHora_E')}
-                                                labelWidth={130}
-                                                startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                                            />
-                                        </FormControl>
-                                        <FormControl
-                                            variant="outlined"
-                                            className={classes.form}
-                                            size="small"
-                                        >
-                                            <InputLabel>Precio hora CRISI</InputLabel>
-                                            <OutlinedInput
-                                                className={classes.mb15}
-                                                fullWidth
-                                                id="form-precio-hora_I-edicion"
-                                                value={valuesFormEdicion.precioHora_I || ''}
-                                                onChange={handleChangeFormEdicion('precioHora_I')}
-                                                labelWidth={130}
-                                                startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                                            />
-                                        </FormControl>
-                                        <FormControl
-                                            variant="outlined"
-                                            className={classes.form}
-                                            size="small"
-                                        >
-                                            <InputLabel>Precio hora LIME</InputLabel>
-                                            <OutlinedInput
-                                                className={classes.mb15}
-                                                fullWidth
-                                                id="form-precio-hora_Z-edicion"
-                                                value={valuesFormEdicion.precioHora_Z || ''}
-                                                onChange={handleChangeFormEdicion('precioHora_Z')}
-                                                labelWidth={125}
-                                                startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                                            />
-                                        </FormControl>
-                                        <FormControl
-                                            variant="outlined"
-                                            className={classes.form}
-                                            size="small"
-                                        >
-                                            <InputLabel>Precio hora TOL</InputLabel>
-                                            <OutlinedInput
-                                                className={classes.mb15}
-                                                fullWidth
-                                                id="form-precio-hora_T-edicion"
-                                                value={valuesFormEdicion.precioHora_T || ''}
-                                                onChange={handleChangeFormEdicion('precioHora_T')}
-                                                labelWidth={120}
-                                                startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                                            />
-                                        </FormControl>
-                                        <FormControl
-                                            variant="outlined"
-                                            className={classes.form}
-                                            size="small"
-                                        >
-                                            <InputLabel>Precio hora LIMP</InputLabel>
-                                            <OutlinedInput
-                                                className={classes.mb15}
-                                                fullWidth
-                                                id="form-precio-hora_P-edicion"
-                                                value={valuesFormEdicion.precioHora_P || ''}
-                                                onChange={handleChangeFormEdicion('precioHora_P')}
-                                                labelWidth={125}
-                                                startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                                            />
-                                        </FormControl>
-                                    </Fragment>
-                                ) : null}
-                                <Box
-                                    m={0.5}
-                                    color="secondary.contrastText"
-                                    className={valuesFormEdicion.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20, classes.mt15) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20, classes.mt15)}
-                                >
-                                    Forma de pago
-                                </Box>
-                                <FormControl
-                                    variant="outlined"
-                                    className={classes.form}
-                                    size="small"
-                                >
-                                    <InputLabel>Forma pago</InputLabel>
-                                    <Select
-                                        fullWidth
-                                        className={classes.mb15}
-                                        id="form-formaPago-edicion"
-                                        label="Forma pago"
-                                        value={valuesFormEdicion.formaPago || ''}
-                                        onChange={handleChangeFormEdicion('formaPago')}
-                                        helpertext="Selecciona la forma de pago"
-                                        disabled={disabledItem}
-                                    >
-                                        {
-                                            formasDePago.map((option) => (
-                                                <MenuItem key={option.value} value={option.value}>
-                                                    {option.label}
-                                                </MenuItem>
-                                            ))
-                                        }
-                                    </Select>
-                                </FormControl>
-                                <FormControl
-                                    variant="outlined"
-                                    className={classes.form}
-                                    size="small"
-                                >
-                                    <InputLabel>Vencimiento</InputLabel>
-                                    <Select
-                                        fullWidth
-                                        className={classes.mb15}
-                                        id="form-diaPago-edicion"
-                                        label="Vencimiento"
-                                        value={valuesFormEdicion.diaPago || ''}
-                                        onChange={handleChangeFormEdicion('diaPago')}
-                                        helpertext="Selecciona día vencimiento"
-                                        disabled={disabledItem}
-                                    >
-                                        <MenuItem value=''>
-                                            <em>No</em>
-                                        </MenuItem>
-                                        {
-                                            diaDelPago.map((option) => (
-                                                <MenuItem key={option.value} value={option.value}>
-                                                    {option.label}
-                                                </MenuItem>
-                                            ))
-                                        }
-                                    </Select>
-                                </FormControl>
-                                <FormControl
-                                    variant="outlined"
-                                    className={classes.form}
-                                    size="small"
-                                >
-                                    <InputLabel>Temporización</InputLabel>
-                                    <Select
-                                        fullWidth
-                                        className={classes.mb15}
-                                        id="form-tempPago-edicion"
-                                        label="Temporización"
-                                        value={valuesFormEdicion.tempPago || ''}
-                                        onChange={handleChangeFormEdicion('tempPago')}
-                                        helpertext="Selecciona temporización del pago"
-                                        disabled={disabledItem}
-                                    >
-                                        {
-                                            temporizacionDelPago.map((option) => (
-                                                <MenuItem key={option.value} value={option.value}>
-                                                    {option.label}
-                                                </MenuItem>
-                                            ))
-                                        }
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                            <Grid item lg={8} sm={8} xs={12}>
-                                <Box style={{ marginTop: -10 }}>
-                                    {valuesFormEdicion.tipo !== '' ? (
                                         <Box
                                             m={0.5}
                                             color="secondary.contrastText"
-                                            className={valuesFormEdicion.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb10, classes.mt15) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb10, classes.mt15)}
-                                            style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}
+                                            className={valuesFormEdicion.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
                                         >
-                                            <Box>Tipo de registro</Box>
-                                            <Box
-                                                className={clsx(classes.mt_5, classes.mr15)}
-                                            >
-                                                <FormControlLabel
-                                                    control={
-                                                        <Switch
-                                                            checked={stateSwitchTipoRegistro}
-                                                            style={valuesFormEdicion.estado === 'baja' ? { color: '#FFFFFF' } : null}
-                                                            color="secondary"
-                                                            onChange={handleChangeSwitchTipoRegistroEdicion}
-                                                        />
-                                                    }
-                                                    label={<Typography variant="body2">Común / Individual</Typography>}
-                                                    labelPlacement="start"
-                                                />
-                                            </Box>
+                                            Cómputo de horas
                                         </Box>
-                                    ) : null}
-                                    <List >
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>Tipo cómputo</InputLabel>
+                                            <Select
+                                                fullWidth
+                                                className={classes.mb15}
+                                                id="form-tipo-computo-edicion"
+                                                label="Tipo cómputo"
+                                                value={valuesFormEdicion.computo || ''}
+                                                onChange={handleChangeFormEdicion('computo')}
+                                                helpertext="Selecciona cómputo de horas"
+                                                disabled={disabledItem}
+                                            >
+                                                <MenuItem value=''>
+                                                    <em>No</em>
+                                                </MenuItem>
+                                                {
+                                                    computoHoras.map((option) => (
+                                                        <MenuItem key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </MenuItem>
+                                                    ))
+                                                }
+                                            </Select>
+                                        </FormControl>
+                                        {valuesFormEdicion.computo === 1 || valuesFormEdicion.computo === 3 ? (
+                                            <FormControl
+                                                variant="outlined"
+                                                className={classes.form}
+                                                size="small"
+                                            >
+                                                <InputLabel>Mensual pactado</InputLabel>
+                                                <OutlinedInput
+                                                    className={classes.mb15}
+                                                    fullWidth
+                                                    id="form-mensual-pactado-edicion"
+                                                    value={valuesFormEdicion.mensualPactado || ''}
+                                                    onChange={handleChangeFormEdicion('mensualPactado')}
+                                                    labelWidth={130}
+                                                    startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                                />
+                                            </FormControl>                                            
+                                        ) : null}
+                                        {valuesFormEdicion.computo === 2 || valuesFormEdicion.computo === 3 ? (
+                                            <Fragment>
+                                                <FormControl
+                                                    variant="outlined"
+                                                    className={classes.form}
+                                                    size="small"
+                                                >
+                                                    <InputLabel>Precio hora LIM</InputLabel>
+                                                    <OutlinedInput
+                                                        className={classes.mb15}
+                                                        fullWidth
+                                                        id="form-precio-hora_L-edicion"
+                                                        value={valuesFormEdicion.precioHora_L || ''}
+                                                        onChange={handleChangeFormEdicion('precioHora_L')}
+                                                        labelWidth={120}
+                                                        startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                                    />
+                                                </FormControl>
+                                                <Box className={classes.boxMiniServicios}>
+                                                    <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza</Typography>
+                                                </Box>
+                                                <FormControl
+                                                    variant="outlined"
+                                                    className={classes.form}
+                                                    size="small"
+                                                >
+                                                    <InputLabel>Precio hora LIME</InputLabel>
+                                                    <OutlinedInput
+                                                        className={classes.mb15}
+                                                        fullWidth
+                                                        id="form-precio-hora_E-edicion"
+                                                        value={valuesFormEdicion.precioHora_E || ''}
+                                                        onChange={handleChangeFormEdicion('precioHora_E')}
+                                                        labelWidth={125}
+                                                        startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                                    />
+                                                </FormControl>
+                                                <Box className={classes.boxMiniServicios}>
+                                                    <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza especial</Typography>
+                                                </Box>
+                                                <FormControl
+                                                    variant="outlined"
+                                                    className={classes.form}
+                                                    size="small"
+                                                >
+                                                    <InputLabel>Precio hora LIMP</InputLabel>
+                                                    <OutlinedInput
+                                                        className={classes.mb15}
+                                                        fullWidth
+                                                        id="form-precio-hora_P-edicion"
+                                                        value={valuesFormEdicion.precioHora_P || ''}
+                                                        onChange={handleChangeFormEdicion('precioHora_P')}
+                                                        labelWidth={130}
+                                                        startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                                    />
+                                                </FormControl>
+                                                <Box className={classes.boxMiniServicios}>
+                                                    <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza del parking</Typography>
+                                                </Box>
+                                                <FormControl
+                                                    variant="outlined"
+                                                    className={classes.form}
+                                                    size="small"
+                                                >
+                                                    <InputLabel>Precio hora NAVE2</InputLabel>
+                                                    <OutlinedInput
+                                                        className={classes.mb15}
+                                                        fullWidth
+                                                        id="form-precio-hora_N-edicion"
+                                                        value={valuesFormEdicion.precioHora_N || ''}
+                                                        onChange={handleChangeFormEdicion('precioHora_N')}
+                                                        labelWidth={130}
+                                                        startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                                    />
+                                                </FormControl>
+                                                <Box className={classes.boxMiniServicios}>
+                                                    <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza nave 2</Typography>
+                                                </Box>
+                                                <FormControl
+                                                    variant="outlined"
+                                                    className={classes.form}
+                                                    size="small"
+                                                >
+                                                    <InputLabel>Precio hora REFZ</InputLabel>
+                                                    <OutlinedInput
+                                                        className={classes.mb15}
+                                                        fullWidth
+                                                        id="form-precio-hora_R-edicion"
+                                                        value={valuesFormEdicion.precioHora_R || ''}
+                                                        onChange={handleChangeFormEdicion('precioHora_R')}
+                                                        labelWidth={125}
+                                                        startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                                    />
+                                                </FormControl>
+                                                <Box className={classes.boxMiniServicios}>
+                                                    <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza refuerzo</Typography>
+                                                </Box>
+                                                <FormControl
+                                                    variant="outlined"
+                                                    className={classes.form}
+                                                    size="small"
+                                                >
+                                                    <InputLabel>Precio hora LIM1</InputLabel>
+                                                    <OutlinedInput
+                                                        className={classes.mb15}
+                                                        fullWidth
+                                                        id="form-precio-hora_L1-edicion"
+                                                        value={valuesFormEdicion.precioHora_L1 || ''}
+                                                        onChange={handleChangeFormEdicion('precioHora_L1')}
+                                                        labelWidth={120}
+                                                        startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                                    />
+                                                </FormControl>
+                                                <Box className={classes.boxMiniServicios}>
+                                                    <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza 1</Typography>
+                                                </Box>
+                                                <FormControl
+                                                    variant="outlined"
+                                                    className={classes.form}
+                                                    size="small"
+                                                >
+                                                    <InputLabel>Precio hora LIM2</InputLabel>
+                                                    <OutlinedInput
+                                                        className={classes.mb15}
+                                                        fullWidth
+                                                        id="form-precio-hora_L2-edicion"
+                                                        value={valuesFormEdicion.precioHora_L2 || ''}
+                                                        onChange={handleChangeFormEdicion('precioHora_L2')}
+                                                        labelWidth={125}
+                                                        startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                                    />
+                                                </FormControl>
+                                                <Box className={classes.boxMiniServicios}>
+                                                    <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza 2</Typography>
+                                                </Box>
+                                                <FormControl
+                                                    variant="outlined"
+                                                    className={classes.form}
+                                                    size="small"
+                                                >
+                                                    <InputLabel>Precio hora FEST</InputLabel>
+                                                    <OutlinedInput
+                                                        className={classes.mb15}
+                                                        fullWidth
+                                                        id="form-precio-hora_F-edicion"
+                                                        value={valuesFormEdicion.precioHora_F || ''}
+                                                        onChange={handleChangeFormEdicion('precioHora_F')}
+                                                        labelWidth={125}
+                                                        startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                                    />
+                                                </FormControl>
+                                                <Box className={classes.boxMiniServicios}>
+                                                    <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza día festivo</Typography>
+                                                </Box>
+                                            </Fragment>
+                                        ) : null}
+                                    </Grid>
+                                    <Grid item lg={8} sm={8} xs={12}>
+                                        <Box style={{ marginTop: -10 }}>
+                                            {valuesFormEdicion.tipo !== '' ? (
+                                                <Box
+                                                    m={0.5}
+                                                    color="secondary.contrastText"
+                                                    className={valuesFormEdicion.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb10, classes.mt15) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb10, classes.mt15)}
+                                                    style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}
+                                                >
+                                                    <Box>Tipo de registro</Box>
+                                                    <Box
+                                                        className={clsx(classes.mt_5, classes.mr15)}
+                                                    >
+                                                        <FormControlLabel
+                                                            control={
+                                                                <Switch
+                                                                    checked={stateSwitchTipoRegistro}
+                                                                    style={valuesFormEdicion.estado === 'baja' ? { color: '#FFFFFF' } : null}
+                                                                    color="secondary"
+                                                                    onChange={handleChangeSwitchTipoRegistroEdicion}
+                                                                />
+                                                            }
+                                                            label={<Typography variant="body2">Común / Individual</Typography>}
+                                                            labelPlacement="start"
+                                                        />
+                                                    </Box>
+                                                </Box>
+                                            ) : null}
+                                            <List >
+                                                {
+                                                    horarioIntervencionEdicion.tipoRegistroTrabajador.map((item, index) => (
+                                                        generaRetornoHorario(valuesFormEdicion.tipo, index)
+                                                    ))
+                                                }
+                                            </List>
+                                        </Box>
+                                    </Grid>
+                                </Grid>
+                            </TabPanel>
+                            <TabPanel value={valueTabCentrosEdicion} index={2} className={classes.scrollable} style={{ height: heightScrollable }}>
+                                <Grid item lg={8} sm={8} xs={12}>
+                                    <Box style={{ paddingLeft: 10, marginTop: 10 }}>
                                         {
-                                            horarioIntervencionEdicion.tipoRegistroTrabajador.map((item, index) => (
-                                                generaRetornoHorario(valuesFormEdicion.tipo, index)
+                                            tiposDeServicio.map((tipo, index) => (
+                                                retornaTipoServicioFijoEdicion(tipo, index)
                                             ))
                                         }
-                                    </List>
-                                </Box>
-                            </Grid>
-                        </Grid>
+                                    </Box>
+                                </Grid>
+                            </TabPanel>
+                            <TabPanel value={valueTabCentrosEdicion} index={3} className={classes.scrollable} style={{ height: heightScrollable }}>
+                                <Grid item lg={6} sm={6} xs={12}>
+                                    <Box>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>Forma pago</InputLabel>
+                                            <Select
+                                                fullWidth
+                                                className={classes.mb15}
+                                                id="form-formaPago-edicion"
+                                                label="Forma pago"
+                                                value={valuesFormEdicion.formaPago || ''}
+                                                onChange={handleChangeFormEdicion('formaPago')}
+                                                helpertext="Selecciona la forma de pago"
+                                                disabled={disabledItem}
+                                            >
+                                                {
+                                                    formasDePago.map((option) => (
+                                                        <MenuItem key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </MenuItem>
+                                                    ))
+                                                }
+                                            </Select>
+                                        </FormControl>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>Vencimiento</InputLabel>
+                                            <Select
+                                                fullWidth
+                                                className={classes.mb15}
+                                                id="form-diaPago-edicion"
+                                                label="Vencimiento"
+                                                value={valuesFormEdicion.diaPago || ''}
+                                                onChange={handleChangeFormEdicion('diaPago')}
+                                                helpertext="Selecciona día vencimiento"
+                                                disabled={disabledItem}
+                                            >
+                                                <MenuItem value=''>
+                                                    <em>No</em>
+                                                </MenuItem>
+                                                {
+                                                    diaDelPago.map((option) => (
+                                                        <MenuItem key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </MenuItem>
+                                                    ))
+                                                }
+                                            </Select>
+                                        </FormControl>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>Temporización</InputLabel>
+                                            <Select
+                                                fullWidth
+                                                className={classes.mb15}
+                                                id="form-tempPago-edicion"
+                                                label="Temporización"
+                                                value={valuesFormEdicion.tempPago || ''}
+                                                onChange={handleChangeFormEdicion('tempPago')}
+                                                helpertext="Selecciona temporización del pago"
+                                                disabled={disabledItem}
+                                            >
+                                                {
+                                                    temporizacionDelPago.map((option) => (
+                                                        <MenuItem key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </MenuItem>
+                                                    ))
+                                                }
+                                            </Select>
+                                        </FormControl>
+                                    </Box>
+                                </Grid>
+                            </TabPanel>
+                        </div>
                     </Grid>
                 </Grid>
             </Fragment>
@@ -4759,8 +5577,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                 prTituloDialog={tituloDialog}
                 prDescripcionDialog={descripcionDialog}
             />
-            {console.log(valuesFormEdicion)}
-        </div>
+            {/* {console.log(valuesFormEdicion)} */}
+        </div >
     )
 })
 

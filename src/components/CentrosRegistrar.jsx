@@ -22,6 +22,9 @@ import { withStyles } from '@material-ui/core/styles';
 import MuiAccordion from '@material-ui/core/Accordion';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import AppBar from '@material-ui/core/AppBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 
 //carga componentes
 import ItemListTime from './ItemListTime';
@@ -49,6 +52,9 @@ const computoHoras = Constantes.COMPUTO_HORAS;
 const formasDePago = Constantes.FORMA_DE_PAGO;
 const temporizacionDelPago = Constantes.TEMPORIZACION_PAGO;
 const diaDelPago = Constantes.DIA_PAGO;
+const tiposDeServicio = Constantes.TIPO_SERVICIO_FIJO;
+
+const getHeightScrollable = () => (window.innerHeight - 260) || (document.documentElement.clientHeight - 260) || (document.body.clientHeight - 260);
 
 //accordion
 const Accordion = withStyles({
@@ -89,6 +95,34 @@ const AccordionSummary = withStyles({
 //snackbar y alert
 const Alert = (props) => {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
+//tabs
+function TabPanel(props) {
+    const { children, value, index, ...other } = props;
+
+    return (
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`simple-tabpanel-${index}`}
+            aria-labelledby={`simple-tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <Box style={{ paddingTop: 24, paddingRight: 24 }}>
+                    <Typography component={'span'}>{children}</Typography>
+                </Box>
+            )}
+        </div>
+    );
+}
+
+function a11yProps(index) {
+    return {
+        id: `simple-tab-${index}`,
+        'aria-controls': `simple-tabpanel-${index}`,
+    };
 }
 
 const CentrosRegistrar = forwardRef((props, ref) => {
@@ -132,12 +166,29 @@ const CentrosRegistrar = forwardRef((props, ref) => {
         computo: '',
         mensualPactado: null,
         precioHora_L: null,
-        precioHora_C: null,
         precioHora_E: null,
-        precioHora_I: null,
-        precioHora_Z: null,
-        precioHora_T: null,
-        precioHora_P: null
+        precioHora_P: null,
+        precioHora_N: null,
+        precioHora_R: null,
+        precioHora_L1: null,
+        precioHora_L2: null,
+        precioHora_F: null,
+        precioHora_TO: null,
+        precioHora_CR: null,
+        precioHora_CE: null,
+        precioHora_CI: null,
+        precioHora_MO: null,
+        precioHora_OF: null,
+        precioHora_AL: null,
+        precioHora_LA: null,
+        precioHora_TE: null,
+        precioHora_FI: null,
+        precioHora_FE: null,
+        precioHora_AB: null,
+        precioHora_MA: null,
+        precioHora_PO: null,
+        precioHora_BA: null,
+        precioHora_FT: null
     });
     const [valueTimePickerInicioRegistro, setValueTimePickerInicioRegistro] = useState([
         {
@@ -301,9 +352,39 @@ const CentrosRegistrar = forwardRef((props, ref) => {
     const [expandedRango, setExpandedRango] = useState(false);
     const [expandedRangoDescanso, setExpandedRangoDescanso] = useState(false);
     const [expandedCantidad, setExpandedCantidad] = useState(false);
-    const [stateSwitchEstado, setStateSwitchEstado] = useState(false);
+    const [stateSwitchEstadoRegistro, setStateSwitchEstadoRegistro] = useState(false);
+    const [valueTabCentrosRegistro, setValueTabCentrosRegistro] = useState(0);
+    const [heightScrollable, setHeightScrollable] = useState(getHeightScrollable());
+    const [stateSwitchTipoServicioFijoRegistro, setStateSwitchTipoServicioFijoRegistro] = useState({
+        TO: false,
+        CR: false,
+        CE: false,
+        CI: false,
+        MO: false,
+        OF: false,
+        AL: false,
+        LA: false,
+        TE: false,
+        FI: false,
+        FE: false,
+        AB: false,
+        MA: false,
+        PO: false,
+        BA: false,
+        FT: false
+    });
 
     //useEffect
+
+    useEffect(() => {
+        const resizeListener = () => {
+            setHeightScrollable(getHeightScrollable());
+        };
+        window.addEventListener('resize', resizeListener);
+        return () => {
+            window.removeEventListener('resize', resizeListener);
+        }
+    }, []);
 
     useEffect(() => {
         dispatch(onEstemAccion('registrarCentros'));
@@ -515,6 +596,10 @@ const CentrosRegistrar = forwardRef((props, ref) => {
 
     //funciones
 
+    const handleChangeTabCentrosRegistro = (event, newValue) => {
+        setValueTabCentrosRegistro(newValue);
+    };
+
     const handleChangeAccordion = (panel, tipo) => (event, isExpanded) => {
         if (tipo === 'rango') {
             setExpandedRango(isExpanded ? panel : false);
@@ -558,12 +643,13 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 ...valuesFormRegistro, [prop]: e.target.value,
                 mensualPactado: null,
                 precioHora_L: null,
-                precioHora_C: null,
                 precioHora_E: null,
-                precioHora_I: null,
-                precioHora_Z: null,
-                precioHora_T: null,
-                precioHora_P: null
+                precioHora_P: null,
+                precioHora_N: null,
+                precioHora_R: null,
+                precioHora_L1: null,
+                precioHora_L2: null,
+                precioHora_F: null
             });
             dispatch(activarDesactivarRegistrarCentroAccion(false));
             return;
@@ -576,12 +662,29 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             return;
         };
         if (prop === "precioHora_L" ||
-            prop === "precioHora_C" ||
             prop === "precioHora_E" ||
-            prop === "precioHora_I" ||
-            prop === "precioHora_Z" ||
-            prop === "precioHora_T" ||
-            prop === "precioHora_P"
+            prop === "precioHora_P" ||
+            prop === "precioHora_N" ||
+            prop === "precioHora_R" ||
+            prop === "precioHora_L1" ||
+            prop === "precioHora_L2" ||
+            prop === "precioHora_F" ||
+            prop === "precioHora_TO" ||
+            prop === "precioHora_CR" ||
+            prop === "precioHora_CE" ||
+            prop === "precioHora_CI" ||
+            prop === "precioHora_MO" ||
+            prop === "precioHora_OF" ||
+            prop === "precioHora_AL" ||
+            prop === "precioHora_LA" ||
+            prop === "precioHora_TE" ||
+            prop === "precioHora_FI" ||
+            prop === "precioHora_FE" ||
+            prop === "precioHora_AB" ||
+            prop === "precioHora_MA" ||
+            prop === "precioHora_PO" ||
+            prop === "precioHora_BA" ||
+            prop === "precioHora_FT"
         ) {
             if (IsNumeric(e.target.value)) {
                 setValuesFormRegistro({ ...valuesFormRegistro, [prop]: e.target.value });
@@ -1869,7 +1972,108 @@ const CentrosRegistrar = forwardRef((props, ref) => {
         } else {
             setValuesFormRegistro({ ...valuesFormRegistro, estado: 'alta' });
         };
-        setStateSwitchEstado(e.target.checked);
+        setStateSwitchEstadoRegistro(e.target.checked);
+        dispatch(registrarIntervencionAccion(false));
+        dispatch(activarDesactivarRegistrarCentroAccion(false));
+    };
+
+    const handleChangeSwitchTipoServicioFijoRegistro = (e) => {
+        if (e.target.name.includes('TO')) {
+            if (!e.target.checked) {
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_TO: null });
+            };
+            setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, TO: e.target.checked });
+        };
+        if (e.target.name.includes('CR')) {
+            if (!e.target.checked) {
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_CR: null });
+            };
+            setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, CR: e.target.checked });
+        };
+        if (e.target.name.includes('CE')) {
+            if (!e.target.checked) {
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_CE: null });
+            };
+            setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, CE: e.target.checked });
+        };
+        if (e.target.name.includes('CI')) {
+            if (!e.target.checked) {
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_CI: null });
+            };
+            setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, CI: e.target.checked });
+        };
+        if (e.target.name.includes('MO')) {
+            if (!e.target.checked) {
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_MO: null });
+            };
+            setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, MO: e.target.checked });
+        };
+        if (e.target.name.includes('OF')) {
+            if (!e.target.checked) {
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_OF: null });
+            };
+            setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, OF: e.target.checked });
+        };
+        if (e.target.name.includes('AL')) {
+            if (!e.target.checked) {
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_AL: null });
+            };
+            setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, AL: e.target.checked });
+        };
+        if (e.target.name.includes('LA')) {
+            if (!e.target.checked) {
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_LA: null });
+            };
+            setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, LA: e.target.checked });
+        };
+        if (e.target.name.includes('TE')) {
+            if (!e.target.checked) {
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_TE: null });
+            };
+            setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, TE: e.target.checked });
+        };
+        if (e.target.name.includes('FI')) {
+            if (!e.target.checked) {
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_FI: null });
+            };
+            setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, FI: e.target.checked });
+        };
+        if (e.target.name.includes('FE')) {
+            if (!e.target.checked) {
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_FE: null });
+            };
+            setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, FE: e.target.checked });
+        };
+        if (e.target.name.includes('AB')) {
+            if (!e.target.checked) {
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_AB: null });
+            };
+            setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, AB: e.target.checked });
+        };
+        if (e.target.name.includes('MA')) {
+            if (!e.target.checked) {
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_MA: null });
+            };
+            setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, MA: e.target.checked });
+        };
+        if (e.target.name.includes('PO')) {
+            if (!e.target.checked) {
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_PO: null });
+            };
+            setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, PO: e.target.checked });
+        };
+        if (e.target.name.includes('BA')) {
+            if (!e.target.checked) {
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_BA: null });
+            };
+            setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, BA: e.target.checked });
+        };
+        if (e.target.name.includes('FT')) {
+            if (!e.target.checked) {
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_FT: null });
+            };
+            setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, FT: e.target.checked });
+        };
         dispatch(registrarIntervencionAccion(false));
         dispatch(activarDesactivarRegistrarCentroAccion(false));
     };
@@ -2062,6 +2266,1070 @@ const CentrosRegistrar = forwardRef((props, ref) => {
         setValueTipoServicioRegistro(myArray9);
     };
 
+    const procesarDatosRegistroPromesa = () => {
+        return new Promise((resolve, reject) => {
+            if (valuesFormRegistro.nombre === '' ||
+                valuesFormRegistro.categoria === '' ||
+                valuesFormRegistro.formaPago === '' ||
+                valuesFormRegistro.tempPago === ''
+            ) {
+                setAlert({
+                    mensaje: "Faltan datos por completar. Revisa el formulario.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return;
+            };
+            if ((stateSwitchTipoServicioFijoRegistro.TO && !valuesFormRegistro.precioHora_TO) ||
+                (stateSwitchTipoServicioFijoRegistro.CR && !valuesFormRegistro.precioHora_CR) ||
+                (stateSwitchTipoServicioFijoRegistro.CE && !valuesFormRegistro.precioHora_CE) ||
+                (stateSwitchTipoServicioFijoRegistro.CI && !valuesFormRegistro.precioHora_CI) ||
+                (stateSwitchTipoServicioFijoRegistro.MO && !valuesFormRegistro.precioHora_MO) ||
+                (stateSwitchTipoServicioFijoRegistro.OF && !valuesFormRegistro.precioHora_OF) ||
+                (stateSwitchTipoServicioFijoRegistro.AL && !valuesFormRegistro.precioHora_AL) ||
+                (stateSwitchTipoServicioFijoRegistro.LA && !valuesFormRegistro.precioHora_LA) ||
+                (stateSwitchTipoServicioFijoRegistro.TE && !valuesFormRegistro.precioHora_TE) ||
+                (stateSwitchTipoServicioFijoRegistro.FI && !valuesFormRegistro.precioHora_FI) ||
+                (stateSwitchTipoServicioFijoRegistro.FE && !valuesFormRegistro.precioHora_FE) ||
+                (stateSwitchTipoServicioFijoRegistro.AB && !valuesFormRegistro.precioHora_AB) ||
+                (stateSwitchTipoServicioFijoRegistro.MA && !valuesFormRegistro.precioHora_MA) ||
+                (stateSwitchTipoServicioFijoRegistro.PO && !valuesFormRegistro.precioHora_PO) ||
+                (stateSwitchTipoServicioFijoRegistro.BA && !valuesFormRegistro.precioHora_BA) ||
+                (stateSwitchTipoServicioFijoRegistro.FT && !valuesFormRegistro.precioHora_FT)
+            ) {
+                setAlert({
+                    mensaje: "Has selecionado un tipo de servicio fijo pero no has asignado precio. Revisa el formulario.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return;
+            };
+            let valoresComputoPreciosHoraVariables = true;
+            let valoresComputoPreciosHoraFijos = true;
+            let valoresCorrectosComputo = false;
+            if (valuesFormRegistro.computo === '' &&
+                !valuesFormRegistro.mensualPactado &&
+                !valuesFormRegistro.precioHora_L &&
+                !valuesFormRegistro.precioHora_E &&
+                !valuesFormRegistro.precioHora_P &&
+                !valuesFormRegistro.precioHora_N &&
+                !valuesFormRegistro.precioHora_R &&
+                !valuesFormRegistro.precioHora_L1 &&
+                !valuesFormRegistro.precioHora_L2 &&
+                !valuesFormRegistro.precioHora_F) {
+                valoresComputoPreciosHoraVariables = false;
+            };
+            if ((valuesFormRegistro.computo === 1 && !valuesFormRegistro.mensualPactado) ||
+                (valuesFormRegistro.computo === 2 && (
+                    !valuesFormRegistro.precioHora_L &&
+                    !valuesFormRegistro.precioHora_E &&
+                    !valuesFormRegistro.precioHora_P &&
+                    !valuesFormRegistro.precioHora_N &&
+                    !valuesFormRegistro.precioHora_R &&
+                    !valuesFormRegistro.precioHora_L1 &&
+                    !valuesFormRegistro.precioHora_L2 &&
+                    !valuesFormRegistro.precioHora_F)) ||
+                (valuesFormRegistro.computo === 3 && (
+                    !valuesFormRegistro.precioHora_L &&
+                    !valuesFormRegistro.precioHora_E &&
+                    !valuesFormRegistro.precioHora_P &&
+                    !valuesFormRegistro.precioHora_N &&
+                    !valuesFormRegistro.precioHora_R &&
+                    !valuesFormRegistro.precioHora_L1 &&
+                    !valuesFormRegistro.precioHora_L2 &&
+                    !valuesFormRegistro.precioHora_F &&
+                    !valuesFormRegistro.mensualPactado))) {
+                setAlert({
+                    mensaje: "Faltan datos por completar. Revisa el cómputo de horas en el formulario.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return;
+            };
+            if (!valuesFormRegistro.precioHora_TO &&
+                !valuesFormRegistro.precioHora_CR &&
+                !valuesFormRegistro.precioHora_CE &&
+                !valuesFormRegistro.precioHora_CI &&
+                !valuesFormRegistro.precioHora_MO &&
+                !valuesFormRegistro.precioHora_OF &&
+                !valuesFormRegistro.precioHora_AL &&
+                !valuesFormRegistro.precioHora_LA &&
+                !valuesFormRegistro.precioHora_TE &&
+                !valuesFormRegistro.precioHora_FI &&
+                !valuesFormRegistro.precioHora_FE &&
+                !valuesFormRegistro.precioHora_AB &&
+                !valuesFormRegistro.precioHora_MA &&
+                !valuesFormRegistro.precioHora_PO &&
+                !valuesFormRegistro.precioHora_BA &&
+                !valuesFormRegistro.precioHora_FT) {
+                valoresComputoPreciosHoraFijos = false;
+            };
+            if ((!valoresComputoPreciosHoraFijos && !valoresComputoPreciosHoraVariables) ||
+                (!valoresComputoPreciosHoraVariables && valuesFormRegistro.numeroTrabajadores)) {
+                setAlert({
+                    mensaje: "Faltan datos por completar. Revisa el cómputo de horas en el formulario.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return;
+            };
+            if (valuesFormRegistro.numeroTrabajadores === '' &&
+                valuesFormRegistro.computo &&
+                valoresCorrectosComputo
+            ) {
+                setAlert({
+                    mensaje: "Falta asignar trabajadores para el cómputo de horas. Revisa el formulario.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return;
+            };
+            if ((valuesFormRegistro.variacion === '' ||
+                valuesFormRegistro.tipo === '') &&
+                valuesFormRegistro.numeroTrabajadores !== '') {
+                setAlert({
+                    mensaje: "Falta asignar horario o variaciones para los trabajadores seleccionados. Revisa el formulario.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return;
+            };
+            if (valuesFormRegistro.computo === 3 && (
+                (!valuesFormRegistro.precioHora_L ||
+                    valuesFormRegistro.precioHora_E ||
+                    valuesFormRegistro.precioHora_P ||
+                    valuesFormRegistro.precioHora_N ||
+                    valuesFormRegistro.precioHora_R ||
+                    valuesFormRegistro.precioHora_L1 ||
+                    valuesFormRegistro.precioHora_L2 ||
+                    valuesFormRegistro.precioHora_F) && valuesFormRegistro.mensualPactado)) {
+                setAlert({
+                    mensaje: "Revisa el formulario, solo puede haber un tipo de cómputo de horas.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return;
+            };
+
+            //comprobación que el tipo de servicio seleccionado corresponda con el precio/hora estipulado
+            for (let i = 0; i < horarioIntervencionRegistro.tipoRegistroTrabajador.length; i++) {
+                if (valuesFormRegistro.computo === 2 || (valuesFormRegistro.computo === 3 && !valuesFormRegistro.mensualPactado)) {
+                    if ((horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio === 'LIM' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio === 'LIM' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio === 'LIM' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio === 'LIM' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio === 'LIM' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio === 'LIM' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio === 'LIM')
+                        && !valuesFormRegistro.precioHora_L) {
+                        setAlert({
+                            mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if ((horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio === 'LIME' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio === 'LIME' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio === 'LIME' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio === 'LIME' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio === 'LIME' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio === 'LIME' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio === 'LIME')
+                        && !valuesFormRegistro.precioHora_E) {
+                        setAlert({
+                            mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if ((horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio === 'LIMP' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio === 'LIMP' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio === 'LIMP' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio === 'LIMP' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio === 'LIMP' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio === 'LIMP' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio === 'LIMP')
+                        && !valuesFormRegistro.precioHora_P) {
+                        setAlert({
+                            mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if ((horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio === 'NAVE2' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio === 'NAVE2' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio === 'NAVE2' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio === 'NAVE2' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio === 'NAVE2' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio === 'NAVE2' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio === 'NAVE2')
+                        && !valuesFormRegistro.precioHora_N) {
+                        setAlert({
+                            mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if ((horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio === 'REFZ' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio === 'REFZ' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio === 'REFZ' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio === 'REFZ' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio === 'REFZ' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio === 'REFZ' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio === 'REFZ')
+                        && !valuesFormRegistro.precioHora_R) {
+                        setAlert({
+                            mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if ((horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio === 'LIM1' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio === 'LIM1' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio === 'LIM1' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio === 'LIM1' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio === 'LIM1' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio === 'LIM1' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio === 'LIM1')
+                        && !valuesFormRegistro.precioHora_L1) {
+                        setAlert({
+                            mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if ((horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio === 'LIM2' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio === 'LIM2' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio === 'LIM2' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio === 'LIM2' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio === 'LIM2' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio === 'LIM2' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio === 'LIM2')
+                        && !valuesFormRegistro.precioHora_L2) {
+                        setAlert({
+                            mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if ((horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio === 'FEST' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio === 'FEST' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio === 'FEST' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio === 'FEST' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio === 'FEST' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio === 'FEST' ||
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio === 'FEST')
+                        && !valuesFormRegistro.precioHora_F) {
+                        setAlert({
+                            mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                }
+            };
+
+            //validacion mail
+            if (valuesFormRegistro.mail) {
+                const validacionMail = dispatch(validarMailAccion(valuesFormRegistro.mail));
+                if (!validacionMail) {
+                    setAlert({
+                        mensaje: "El campo E-mail es incorrecto. Revisa el formulario.",
+                        tipo: 'error'
+                    })
+                    setOpenSnack(true);
+                    return;
+                };
+            }
+            if (valuesFormRegistro.mail2) {
+                const validacionMail2 = dispatch(validarMailAccion(valuesFormRegistro.mail2));
+                if (!validacionMail2) {
+                    setAlert({
+                        mensaje: "El campo E-mail es incorrecto. Revisa el formulario.",
+                        tipo: 'error'
+                    })
+                    setOpenSnack(true);
+                    return;
+                };
+            }
+
+            if (horarioIntervencionRegistro.tipo === "rango") {
+                for (let i = 0; i < horarioIntervencionRegistro.tipoRegistroTrabajador.length; i++) {
+                    //primera comprobación, que todos los campos esten vacíos
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicioRango &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesFinRango &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicioRango &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesFinRango &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicioRango &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesFinRango &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicioRango &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesFinRango &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicioRango &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesFinRango &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicioRango &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoFinRango &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicioRango &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoFinRango) {
+                        setAlert({
+                            mensaje: "No has introducido ningún dato horario para registrar.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    //segunda comprobación, coinciden ambas casillas en registro
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicioRango && horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesFinRango) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicioRango && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesFinRango) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicioRango && horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesFinRango) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicioRango && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesFinRango) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicioRango && horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesFinRango) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicioRango && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesFinRango) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicioRango && horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesFinRango) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicioRango && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesFinRango) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicioRango && horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesFinRango) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicioRango && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesFinRango) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicioRango && horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoFinRango) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicioRango && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoFinRango) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicioRango && horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoFinRango) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicioRango && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoFinRango) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    //tercera comprobacion que no falte tipo de servicio
+                    if ((horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicioRango && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio) ||
+                        (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicioRango && horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio) ||
+                        (horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicioRango && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio) ||
+                        (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicioRango && horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio) ||
+                        (horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicioRango && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio) ||
+                        (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicioRango && horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio) ||
+                        (horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicioRango && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio) ||
+                        (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicioRango && horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio) ||
+                        (horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicioRango && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio) ||
+                        (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicioRango && horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio) ||
+                        (horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicioRango && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio) ||
+                        (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicioRango && horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio) ||
+                        (horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicioRango && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio) ||
+                        (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicioRango && horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio)) {
+                        setAlert({
+                            mensaje: "Falta seleccionar el tipo de servicio para el rango horario o viceversa.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                };
+            };
+
+            if (horarioIntervencionRegistro.tipo === "rangoDescanso") {
+                for (let i = 0; i < horarioIntervencionRegistro.tipoRegistroTrabajador.length; i++) {
+                    //primera comprobación, que todos los campos esten vacíos
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesFin1RangoDescanso &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesFin2RangoDescanso &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicio1RangoDescanso &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicio2RangoDescanso &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesFin1RangoDescanso &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesFin2RangoDescanso &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesFin1RangoDescanso &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesFin2RangoDescanso &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesFin1RangoDescanso &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesFin2RangoDescanso &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoFin1RangoDescanso &&
+                        !horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoFin2RangoDescanso) {
+                        setAlert({
+                            mensaje: "No has introducido ningún dato horario para registrar.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    //segunda comprobación, coinciden todas las casillas en registro
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesFin1RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesFin1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesFin2RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesFin2RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicio1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesFin1RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesFin1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicio1RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicio2RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesFin2RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesFin2RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicio2RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesFin1RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesFin1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesFin2RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesFin2RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesFin1RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesFin1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesFin2RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesFin2RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoFin1RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoFin1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoFin2RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoFin2RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso) {
+                        setAlert({
+                            mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+
+                    //tercera comprobacion que no falte tipo de servicio
+                    if ((horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio) ||
+                        (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio) ||
+                        (horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicio1RangoDescanso && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio) ||
+                        (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicio1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio) ||
+                        (horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio) ||
+                        (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio) ||
+                        (horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio) ||
+                        (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio) ||
+                        (horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio) ||
+                        (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio) ||
+                        (horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio) ||
+                        (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio) ||
+                        (horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio) ||
+                        (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio)) {
+                        setAlert({
+                            mensaje: "Falta seleccionar el tipo de servicio para el rango horario o viceversa.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                }
+            };
+
+            if (horarioIntervencionRegistro.tipo === "cantidad") {
+                for (let i = 0; i < horarioIntervencionRegistro.tipoRegistroTrabajador.length; i++) {
+                    //comprobamos que no haya campos vacíos
+                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesCantidad === '' &&
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesCantidad === '' &&
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesCantidad === '' &&
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesCantidad === '' &&
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesCantidad === '' &&
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoCantidad === '' &&
+                        horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoCantidad === '') {
+                        setAlert({
+                            mensaje: "No has introducido ningún dato horario para registrar.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                    //tercera comprobacion que no falte tipo de servicio
+                    if ((horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesCantidad && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio) ||
+                        (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesCantidad && horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio) ||
+                        (horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesCantidad && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio) ||
+                        (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesCantidad && horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio) ||
+                        (horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesCantidad && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio) ||
+                        (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesCantidad && horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio) ||
+                        (horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesCantidad && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio) ||
+                        (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesCantidad && horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio) ||
+                        (horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesCantidad && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio) ||
+                        (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesCantidad && horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio) ||
+                        (horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoCantidad && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio) ||
+                        (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoCantidad && horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio) ||
+                        (horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoCantidad && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio) ||
+                        (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoCantidad && horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio)) {
+                        setAlert({
+                            mensaje: "Falta seleccionar el tipo de servicio para el rango horario o viceversa.",
+                            tipo: 'error'
+                        })
+                        setOpenSnack(true);
+                        return;
+                    };
+                }
+            };
+
+            //comprobamos que array objetos trabajadores no tenga elementos vacíos
+            for (let i = 0; i < trabajadoresRegistro.cantidad; i++) {
+                if (trabajadoresRegistro.trabajadores[i]['trabajador_' + (i + 1)] === '' && trabajadoresRegistro.trabajadores[i]['suplente_' + (i + 1)] === '') {
+                    setAlert({
+                        mensaje: "Alguno de los registros Trabajadores - Suplentes está vacío. Completa o cambia la cantidad de trabajadores asignados.",
+                        tipo: 'error'
+                    })
+                    setOpenSnack(true);
+                    return;
+                }
+            };
+            //limpieza final  
+            let horarioIntervencionRegistroRevisado;
+            let elArrayTipoRegistroTrabajador = [];
+            if (horarioIntervencionRegistro.tipo === 'rango') {
+                for (let i = 0; i < horarioIntervencionRegistro.tipoRegistroTrabajador.length; i++) {
+                    let elObjetoTipoRegistroTrabajador = {};
+                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicioRango) {
+                        elObjetoTipoRegistroTrabajador['lunesInicioRango'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicioRango;
+                        elObjetoTipoRegistroTrabajador['lunesFinRango'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesFinRango;
+                        elObjetoTipoRegistroTrabajador['lunesTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio;
+                    };
+                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicioRango) {
+                        elObjetoTipoRegistroTrabajador['martesInicioRango'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicioRango;
+                        elObjetoTipoRegistroTrabajador['martesFinRango'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesFinRango;
+                        elObjetoTipoRegistroTrabajador['martesTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio;
+                    };
+                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicioRango) {
+                        elObjetoTipoRegistroTrabajador['miercolesInicioRango'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicioRango;
+                        elObjetoTipoRegistroTrabajador['miercolesFinRango'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesFinRango;
+                        elObjetoTipoRegistroTrabajador['miercolesTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio;
+                    };
+                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicioRango) {
+                        elObjetoTipoRegistroTrabajador['juevesInicioRango'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicioRango;
+                        elObjetoTipoRegistroTrabajador['juevesFinRango'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesFinRango;
+                        elObjetoTipoRegistroTrabajador['juevesTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio;
+                    };
+                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicioRango) {
+                        elObjetoTipoRegistroTrabajador['viernesInicioRango'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicioRango;
+                        elObjetoTipoRegistroTrabajador['viernesFinRango'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesFinRango;
+                        elObjetoTipoRegistroTrabajador['viernesTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio;
+                    };
+                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicioRango) {
+                        elObjetoTipoRegistroTrabajador['sabadoInicioRango'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicioRango;
+                        elObjetoTipoRegistroTrabajador['sabadoFinRango'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoFinRango;
+                        elObjetoTipoRegistroTrabajador['sabadoTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio;
+                    };
+                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicioRango) {
+                        elObjetoTipoRegistroTrabajador['domingoInicioRango'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicioRango;
+                        elObjetoTipoRegistroTrabajador['domingoFinRango'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoFinRango;
+                        elObjetoTipoRegistroTrabajador['domingoTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio;
+                    };
+                    elArrayTipoRegistroTrabajador.push(elObjetoTipoRegistroTrabajador);
+                };
+                horarioIntervencionRegistroRevisado = {
+                    tipo: horarioIntervencionRegistro.tipo,
+                    tipoRegistro: horarioIntervencionRegistro.tipoRegistro,
+                    variacion: horarioIntervencionRegistro.variacion,
+                    tipoRegistroTrabajador: elArrayTipoRegistroTrabajador
+                };
+            };
+            if (horarioIntervencionRegistro.tipo === 'rangoDescanso') {
+                for (let i = 0; i < horarioIntervencionRegistro.tipoRegistroTrabajador.length; i++) {
+                    let elObjetoTipoRegistroTrabajador = {};
+                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso) {
+                        elObjetoTipoRegistroTrabajador['lunesInicio1RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso;
+                        elObjetoTipoRegistroTrabajador['lunesFin1RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesFin1RangoDescanso;
+                        if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso) {
+                            elObjetoTipoRegistroTrabajador['lunesInicio2RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso;
+                            elObjetoTipoRegistroTrabajador['lunesFin2RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesFin2RangoDescanso;
+                        };
+                        elObjetoTipoRegistroTrabajador['lunesTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio;
+                    };
+                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicio1RangoDescanso) {
+                        elObjetoTipoRegistroTrabajador['martesInicio1RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicio1RangoDescanso;
+                        elObjetoTipoRegistroTrabajador['martesFin1RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesFin1RangoDescanso;
+                        if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicio2RangoDescanso) {
+                            elObjetoTipoRegistroTrabajador['martesInicio2RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicio2RangoDescanso;
+                            elObjetoTipoRegistroTrabajador['martesFin2RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesFin2RangoDescanso;
+                        };
+                        elObjetoTipoRegistroTrabajador['martesTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio;
+                    };
+                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso) {
+                        elObjetoTipoRegistroTrabajador['miercolesInicio1RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso;
+                        elObjetoTipoRegistroTrabajador['miercolesFin1RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso;
+                        if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso) {
+                            elObjetoTipoRegistroTrabajador['miercolesInicio2RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso;
+                            elObjetoTipoRegistroTrabajador['miercolesFin2RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso;
+                        };
+                        elObjetoTipoRegistroTrabajador['miercolesTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio;
+                    };
+                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso) {
+                        elObjetoTipoRegistroTrabajador['juevesInicio1RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso;
+                        elObjetoTipoRegistroTrabajador['juevesFin1RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesFin1RangoDescanso;
+                        if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso) {
+                            elObjetoTipoRegistroTrabajador['juevesInicio2RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso;
+                            elObjetoTipoRegistroTrabajador['juevesFin2RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesFin2RangoDescanso;
+                        };
+                        elObjetoTipoRegistroTrabajador['juevesTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio;
+                    };
+                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso) {
+                        elObjetoTipoRegistroTrabajador['viernesInicio1RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso;
+                        elObjetoTipoRegistroTrabajador['viernesFin1RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesFin1RangoDescanso;
+                        if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso) {
+                            elObjetoTipoRegistroTrabajador['viernesInicio2RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso;
+                            elObjetoTipoRegistroTrabajador['viernesFin2RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesFin2RangoDescanso;
+                        };
+                        elObjetoTipoRegistroTrabajador['viernesTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio;
+                    };
+                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso) {
+                        elObjetoTipoRegistroTrabajador['sabadoInicio1RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso;
+                        elObjetoTipoRegistroTrabajador['sabadoFin1RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso;
+                        if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso) {
+                            elObjetoTipoRegistroTrabajador['sabadoInicio2RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso;
+                            elObjetoTipoRegistroTrabajador['sabadoFin2RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso;
+                        };
+                        elObjetoTipoRegistroTrabajador['sabadoTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio;
+                    };
+                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso) {
+                        elObjetoTipoRegistroTrabajador['domingoInicio1RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso;
+                        elObjetoTipoRegistroTrabajador['domingoFin1RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoFin1RangoDescanso;
+                        if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso) {
+                            elObjetoTipoRegistroTrabajador['domingoInicio2RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso;
+                            elObjetoTipoRegistroTrabajador['domingoFin2RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoFin2RangoDescanso;
+                        };
+                        elObjetoTipoRegistroTrabajador['domingoTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio;
+                    };
+                    elArrayTipoRegistroTrabajador.push(elObjetoTipoRegistroTrabajador);
+                };
+                horarioIntervencionRegistroRevisado = {
+                    tipo: horarioIntervencionRegistro.tipo,
+                    tipoRegistro: horarioIntervencionRegistro.tipoRegistro,
+                    variacion: horarioIntervencionRegistro.variacion,
+                    tipoRegistroTrabajador: elArrayTipoRegistroTrabajador
+                };
+            };
+            if (horarioIntervencionRegistro.tipo === 'cantidad') {
+                for (let i = 0; i < horarioIntervencionRegistro.tipoRegistroTrabajador.length; i++) {
+                    let elObjetoTipoRegistroTrabajador = {};
+                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesCantidad) {
+                        elObjetoTipoRegistroTrabajador['lunesCantidad'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesCantidad;
+                        elObjetoTipoRegistroTrabajador['lunesTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio;
+                    };
+                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesCantidad) {
+                        elObjetoTipoRegistroTrabajador['martesCantidad'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesCantidad;
+                        elObjetoTipoRegistroTrabajador['martesTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio;
+                    };
+                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesCantidad) {
+                        elObjetoTipoRegistroTrabajador['miercolesCantidad'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesCantidad;
+                        elObjetoTipoRegistroTrabajador['miercolesTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio;
+                    };
+                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesCantidad) {
+                        elObjetoTipoRegistroTrabajador['juevesCantidad'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesCantidad;
+                        elObjetoTipoRegistroTrabajador['juevesTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio;
+                    };
+                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesCantidad) {
+                        elObjetoTipoRegistroTrabajador['viernesCantidad'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesCantidad;
+                        elObjetoTipoRegistroTrabajador['viernesTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio;
+                    };
+                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoCantidad) {
+                        elObjetoTipoRegistroTrabajador['sabadoCantidad'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoCantidad;
+                        elObjetoTipoRegistroTrabajador['sabadoTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio;
+                    };
+                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoCantidad) {
+                        elObjetoTipoRegistroTrabajador['domingoCantidad'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoCantidad;
+                        elObjetoTipoRegistroTrabajador['domingoTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio;
+                    };
+                    elArrayTipoRegistroTrabajador.push(elObjetoTipoRegistroTrabajador);
+                };
+                horarioIntervencionRegistroRevisado = {
+                    tipo: horarioIntervencionRegistro.tipo,
+                    tipoRegistro: horarioIntervencionRegistro.tipoRegistro,
+                    variacion: horarioIntervencionRegistro.variacion,
+                    tipoRegistroTrabajador: elArrayTipoRegistroTrabajador
+                };
+            };
+            //añadimos cómputo final     
+            let elHorarioIntervencionRegistradoRevisado = {
+                ...horarioIntervencionRegistroRevisado,
+                computo: valuesFormRegistro.computo
+            };
+            if (valuesFormRegistro.mensualPactado) {
+                elHorarioIntervencionRegistradoRevisado['mensualPactado'] = parseFloat(valuesFormRegistro.mensualPactado);
+            };
+            if (valuesFormRegistro.precioHora_L) {
+                elHorarioIntervencionRegistradoRevisado['precioHora_L'] = parseFloat(valuesFormRegistro.precioHora_L);
+            };
+            if (valuesFormRegistro.precioHora_E) {
+                elHorarioIntervencionRegistradoRevisado['precioHora_E'] = parseFloat(valuesFormRegistro.precioHora_E);
+            };
+            if (valuesFormRegistro.precioHora_P) {
+                elHorarioIntervencionRegistradoRevisado['precioHora_P'] = parseFloat(valuesFormRegistro.precioHora_P);
+            };
+            if (valuesFormRegistro.precioHora_N) {
+                elHorarioIntervencionRegistradoRevisado['precioHora_N'] = parseFloat(valuesFormRegistro.precioHora_N);
+            };
+            if (valuesFormRegistro.precioHora_R) {
+                elHorarioIntervencionRegistradoRevisado['precioHora_R'] = parseFloat(valuesFormRegistro.precioHora_R);
+            };
+            if (valuesFormRegistro.precioHora_L1) {
+                elHorarioIntervencionRegistradoRevisado['precioHora_L1'] = parseFloat(valuesFormRegistro.precioHora_L1);
+            };
+            if (valuesFormRegistro.precioHora_L2) {
+                elHorarioIntervencionRegistradoRevisado['precioHora_L2'] = parseFloat(valuesFormRegistro.precioHora_L2);
+            };
+            if (valuesFormRegistro.precioHora_F) {
+                elHorarioIntervencionRegistradoRevisado['precioHora_F'] = parseFloat(valuesFormRegistro.precioHora_F);
+            };
+            let serviciosFijosRegistro = {
+                objeto: 'serviciosFijos',
+                servicio: []
+            };
+            if (valuesFormRegistro.precioHora_TO) {
+                serviciosFijosRegistro.servicio.push({ tipoServiciofijo: 'TOL', precioHora_TO: parseFloat(valuesFormRegistro.precioHora_TO) });
+            };
+            if (valuesFormRegistro.precioHora_CR) {
+                serviciosFijosRegistro.servicio.push({ tipoServiciofijo: 'CRIS', precioHora_CR: parseFloat(valuesFormRegistro.precioHora_CR) });
+            };
+            if (valuesFormRegistro.precioHora_CE) {
+                serviciosFijosRegistro.servicio.push({ tipoServiciofijo: 'CRISE', precioHora_CE: parseFloat(valuesFormRegistro.precioHora_CE) });
+            };
+            if (valuesFormRegistro.precioHora_CI) {
+                serviciosFijosRegistro.servicio.push({ tipoServiciofijo: 'CRISI', precioHora_CI: parseFloat(valuesFormRegistro.precioHora_CI) });
+            };
+            if (valuesFormRegistro.precioHora_MO) {
+                serviciosFijosRegistro.servicio.push({ tipoServiciofijo: 'MOQ', precioHora_MO: parseFloat(valuesFormRegistro.precioHora_MO) });
+            };
+            if (valuesFormRegistro.precioHora_OF) {
+                serviciosFijosRegistro.servicio.push({ tipoServiciofijo: 'OF', precioHora_OF: parseFloat(valuesFormRegistro.precioHora_OF) });
+            };
+            if (valuesFormRegistro.precioHora_AL) {
+                serviciosFijosRegistro.servicio.push({ tipoServiciofijo: 'ALMC', precioHora_AL: parseFloat(valuesFormRegistro.precioHora_AL) });
+            };
+            if (valuesFormRegistro.precioHora_LA) {
+                serviciosFijosRegistro.servicio.push({ tipoServiciofijo: 'LAB', precioHora_LA: parseFloat(valuesFormRegistro.precioHora_LA) });
+            };
+            if (valuesFormRegistro.precioHora_TE) {
+                serviciosFijosRegistro.servicio.push({ tipoServiciofijo: 'TELÑ', precioHora_TE: parseFloat(valuesFormRegistro.precioHora_TE) });
+            };
+            if (valuesFormRegistro.precioHora_FI) {
+                serviciosFijosRegistro.servicio.push({ tipoServiciofijo: 'FCH.IN', precioHora_FI: parseFloat(valuesFormRegistro.precioHora_FI) });
+            };
+            if (valuesFormRegistro.precioHora_FE) {
+                serviciosFijosRegistro.servicio.push({ tipoServiciofijo: 'FCH.EX', precioHora_FE: parseFloat(valuesFormRegistro.precioHora_FE) });
+            };
+            if (valuesFormRegistro.precioHora_AB) {
+                serviciosFijosRegistro.servicio.push({ tipoServiciofijo: 'ABRLL', precioHora_AB: parseFloat(valuesFormRegistro.precioHora_AB) });
+            };
+            if (valuesFormRegistro.precioHora_MA) {
+                serviciosFijosRegistro.servicio.push({ tipoServiciofijo: 'MANT', precioHora_MA: parseFloat(valuesFormRegistro.precioHora_MA) });
+            };
+            if (valuesFormRegistro.precioHora_PO) {
+                serviciosFijosRegistro.servicio.push({ tipoServiciofijo: 'PORT', precioHora_PO: parseFloat(valuesFormRegistro.precioHora_PO) });
+            };
+            if (valuesFormRegistro.precioHora_BA) {
+                serviciosFijosRegistro.servicio.push({ tipoServiciofijo: 'BACT', precioHora_BA: parseFloat(valuesFormRegistro.precioHora_BA) });
+            };
+            if (valuesFormRegistro.precioHora_FT) {
+                serviciosFijosRegistro.servicio.push({ tipoServiciofijo: 'FEST', precioHora_FT: parseFloat(valuesFormRegistro.precioHora_FT) });
+            };
+            if (serviciosFijosRegistro.servicio.length === 0) {
+                serviciosFijosRegistro = null;
+            };
+            if (!valoresComputoPreciosHoraVariables) {
+                elHorarioIntervencionRegistradoRevisado = null;
+            };
+            let trabajadoresRevisado;
+            if (valuesFormRegistro.numeroTrabajadores === '') {
+                trabajadoresRevisado = null;
+            } else {
+                trabajadoresRevisado = trabajadoresRegistro;
+            };
+            return resolve({ resuelto: true, horario: elHorarioIntervencionRegistradoRevisado, servicios: serviciosFijosRegistro });
+        });
+    };
+
     useImperativeHandle(ref, () => ({
         funcionesEnCentrosRegistrar(funcion) {
             switch (funcion) {
@@ -2074,923 +3342,38 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     break;
                 case 'procesarDatosRegistro':
                     const procesarDatosRegistro = () => {
-                        if (valuesFormRegistro.nombre === '' ||
-                            valuesFormRegistro.categoria === '' ||
-                            valuesFormRegistro.variacion === '' ||
-                            valuesFormRegistro.formaPago === '' ||
-                            valuesFormRegistro.tempPago === '' ||
-                            valuesFormRegistro.tipo === '' ||
-                            valuesFormRegistro.numeroTrabajadores === ''
-                        ) {
-                            setAlert({
-                                mensaje: "Faltan datos por completar. Revisa el formulario.",
-                                tipo: 'error'
-                            })
-                            setOpenSnack(true);
-                            return;
-                        };
-                        if (valuesFormRegistro.computo === '' ||
-                            (valuesFormRegistro.computo === 1 && !valuesFormRegistro.mensualPactado) ||
-                            (valuesFormRegistro.computo === 2 && (
-                                !valuesFormRegistro.precioHora_L &&
-                                !valuesFormRegistro.precioHora_C &&
-                                !valuesFormRegistro.precioHora_E &&
-                                !valuesFormRegistro.precioHora_I &&
-                                !valuesFormRegistro.precioHora_Z &&
-                                !valuesFormRegistro.precioHora_T &&
-                                !valuesFormRegistro.precioHora_P)) ||
-                            (valuesFormRegistro.computo === 3 && (
-                                !valuesFormRegistro.precioHora_L &&
-                                !valuesFormRegistro.precioHora_C &&
-                                !valuesFormRegistro.precioHora_E &&
-                                !valuesFormRegistro.precioHora_I &&
-                                !valuesFormRegistro.precioHora_Z &&
-                                !valuesFormRegistro.precioHora_T &&
-                                !valuesFormRegistro.precioHora_P &&
-                                !valuesFormRegistro.mensualPactado))) {
-                            setAlert({
-                                mensaje: "Faltan datos por completar. Revisa el cómputo de horas en el formulario.",
-                                tipo: 'error'
-                            })
-                            setOpenSnack(true);
-                            return;
-                        };
-                        if (valuesFormRegistro.computo === 3 && (
-                            (!valuesFormRegistro.precioHora_L ||
-                                !valuesFormRegistro.precioHora_C ||
-                                !valuesFormRegistro.precioHora_E ||
-                                !valuesFormRegistro.precioHora_I ||
-                                !valuesFormRegistro.precioHora_Z ||
-                                !valuesFormRegistro.precioHora_T ||
-                                !valuesFormRegistro.precioHora_P) && valuesFormRegistro.mensualPactado)) {
-                            setAlert({
-                                mensaje: "Revisa el formulario, solo puede haber un tipo de cómputo de horas.",
-                                tipo: 'error'
-                            })
-                            setOpenSnack(true);
-                            return;
-                        };
-
-                        //comprobación que el tipo de servicio seleccionado corresponda con el precio/hora estipulado
-                        for (let i = 0; i < horarioIntervencionRegistro.tipoRegistroTrabajador.length; i++) {
-                            if (valuesFormRegistro.computo === 2 || (valuesFormRegistro.computo === 3 && !valuesFormRegistro.mensualPactado)) {
-                                if ((horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio === 'LIM' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio === 'LIM' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio === 'LIM' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio === 'LIM' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio === 'LIM' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio === 'LIM' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio === 'LIM')
-                                    && !valuesFormRegistro.precioHora_L) {
-                                    setAlert({
-                                        mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if ((horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio === 'CRIS' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio === 'CRIS' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio === 'CRIS' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio === 'CRIS' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio === 'CRIS' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio === 'CRIS' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio === 'CRIS')
-                                    && !valuesFormRegistro.precioHora_C) {
-                                    setAlert({
-                                        mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if ((horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio === 'CRISE' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio === 'CRISE' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio === 'CRISE' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio === 'CRISE' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio === 'CRISE' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio === 'CRISE' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio === 'CRISE')
-                                    && !valuesFormRegistro.precioHora_E) {
-                                    setAlert({
-                                        mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if ((horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio === 'CRISI' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio === 'CRISI' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio === 'CRISI' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio === 'CRISI' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio === 'CRISI' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio === 'CRISI' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio === 'CRISI')
-                                    && !valuesFormRegistro.precioHora_I) {
-                                    setAlert({
-                                        mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if ((horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio === 'LIME' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio === 'LIME' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio === 'LIME' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio === 'LIME' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio === 'LIME' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio === 'LIME' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio === 'LIME')
-                                    && !valuesFormRegistro.precioHora_Z) {
-                                    setAlert({
-                                        mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if ((horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio === 'TOL' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio === 'TOL' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio === 'TOL' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio === 'TOL' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio === 'TOL' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio === 'TOL' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio === 'TOL')
-                                    && !valuesFormRegistro.precioHora_T) {
-                                    setAlert({
-                                        mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if ((horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio === 'LIMP' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio === 'LIMP' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio === 'LIMP' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio === 'LIMP' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio === 'LIMP' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio === 'LIMP' ||
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio === 'LIMP')
-                                    && !valuesFormRegistro.precioHora_P) {
-                                    setAlert({
-                                        mensaje: "Debe asignarse un precio/hora al tipo de servicio seleccionado o viceversa.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                            }
-                        };
-
-                        //validacion mail
-                        if (valuesFormRegistro.mail) {
-                            const validacionMail = dispatch(validarMailAccion(valuesFormRegistro.mail));
-                            if (!validacionMail) {
-                                setAlert({
-                                    mensaje: "El campo E-mail es incorrecto. Revisa el formulario.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                        }
-                        if (valuesFormRegistro.mail2) {
-                            const validacionMail2 = dispatch(validarMailAccion(valuesFormRegistro.mail2));
-                            if (!validacionMail2) {
-                                setAlert({
-                                    mensaje: "El campo E-mail es incorrecto. Revisa el formulario.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            };
-                        }
-
-                        if (horarioIntervencionRegistro.tipo === "rango") {
-                            for (let i = 0; i < horarioIntervencionRegistro.tipoRegistroTrabajador.length; i++) {
-                                //primera comprobación, que todos los campos esten vacíos
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicioRango &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesFinRango &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicioRango &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesFinRango &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicioRango &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesFinRango &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicioRango &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesFinRango &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicioRango &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesFinRango &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicioRango &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoFinRango &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicioRango &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoFinRango) {
-                                    setAlert({
-                                        mensaje: "No has introducido ningún dato horario para registrar.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                //segunda comprobación, coinciden ambas casillas en registro
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicioRango && horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesFinRango) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicioRango && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesFinRango) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicioRango && horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesFinRango) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicioRango && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesFinRango) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicioRango && horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesFinRango) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicioRango && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesFinRango) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicioRango && horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesFinRango) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicioRango && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesFinRango) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicioRango && horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesFinRango) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicioRango && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesFinRango) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicioRango && horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoFinRango) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicioRango && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoFinRango) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicioRango && horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoFinRango) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicioRango && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoFinRango) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                //tercera comprobacion que no falte tipo de servicio
-                                if ((horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicioRango && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio) ||
-                                    (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicioRango && horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio) ||
-                                    (horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicioRango && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio) ||
-                                    (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicioRango && horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio) ||
-                                    (horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicioRango && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio) ||
-                                    (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicioRango && horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio) ||
-                                    (horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicioRango && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio) ||
-                                    (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicioRango && horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio) ||
-                                    (horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicioRango && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio) ||
-                                    (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicioRango && horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio) ||
-                                    (horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicioRango && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio) ||
-                                    (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicioRango && horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio) ||
-                                    (horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicioRango && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio) ||
-                                    (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicioRango && horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio)) {
-                                    setAlert({
-                                        mensaje: "Falta seleccionar el tipo de servicio para el rango horario o viceversa.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                            };
-                        };
-
-                        if (horarioIntervencionRegistro.tipo === "rangoDescanso") {
-                            for (let i = 0; i < horarioIntervencionRegistro.tipoRegistroTrabajador.length; i++) {
-                                //primera comprobación, que todos los campos esten vacíos
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesFin1RangoDescanso &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesFin2RangoDescanso &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicio1RangoDescanso &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicio2RangoDescanso &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesFin1RangoDescanso &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesFin2RangoDescanso &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesFin1RangoDescanso &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesFin2RangoDescanso &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesFin1RangoDescanso &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesFin2RangoDescanso &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoFin1RangoDescanso &&
-                                    !horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoFin2RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "No has introducido ningún dato horario para registrar.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                //segunda comprobación, coinciden todas las casillas en registro
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesFin1RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesFin1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesFin2RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesFin2RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicio1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesFin1RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesFin1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicio1RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicio2RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesFin2RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesFin2RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicio2RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesFin1RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesFin1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesFin2RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesFin2RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesFin1RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesFin1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesFin2RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesFin2RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoFin1RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoFin1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoFin2RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                if (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoFin2RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso) {
-                                    setAlert({
-                                        mensaje: "El rango de horas en alguna casilla es erróneo o está incompleto.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-
-                                //tercera comprobacion que no falte tipo de servicio
-                                if ((horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio) ||
-                                    (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio) ||
-                                    (horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicio1RangoDescanso && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio) ||
-                                    (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicio1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio) ||
-                                    (horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio) ||
-                                    (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio) ||
-                                    (horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio) ||
-                                    (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio) ||
-                                    (horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio) ||
-                                    (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio) ||
-                                    (horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio) ||
-                                    (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio) ||
-                                    (horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio) ||
-                                    (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso && horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio)) {
-                                    setAlert({
-                                        mensaje: "Falta seleccionar el tipo de servicio para el rango horario o viceversa.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                            }
-                        };
-
-                        if (horarioIntervencionRegistro.tipo === "cantidad") {
-                            for (let i = 0; i < horarioIntervencionRegistro.tipoRegistroTrabajador.length; i++) {
-                                //comprobamos que no haya campos vacíos
-                                if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesCantidad === '' &&
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesCantidad === '' &&
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesCantidad === '' &&
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesCantidad === '' &&
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesCantidad === '' &&
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoCantidad === '' &&
-                                    horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoCantidad === '') {
-                                    setAlert({
-                                        mensaje: "No has introducido ningún dato horario para registrar.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                                //tercera comprobacion que no falte tipo de servicio
-                                if ((horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesCantidad && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio) ||
-                                    (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesCantidad && horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio) ||
-                                    (horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesCantidad && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio) ||
-                                    (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesCantidad && horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio) ||
-                                    (horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesCantidad && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio) ||
-                                    (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesCantidad && horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio) ||
-                                    (horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesCantidad && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio) ||
-                                    (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesCantidad && horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio) ||
-                                    (horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesCantidad && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio) ||
-                                    (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesCantidad && horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio) ||
-                                    (horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoCantidad && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio) ||
-                                    (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoCantidad && horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio) ||
-                                    (horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoCantidad && !horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio) ||
-                                    (!horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoCantidad && horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio)) {
-                                    setAlert({
-                                        mensaje: "Falta seleccionar el tipo de servicio para el rango horario o viceversa.",
-                                        tipo: 'error'
-                                    })
-                                    setOpenSnack(true);
-                                    return;
-                                };
-                            }
-                        };
-
-                        //comprobamos que array objetos trabajadores no tenga elementos vacíos
-                        for (let i = 0; i < trabajadoresRegistro.cantidad; i++) {
-                            if (trabajadoresRegistro.trabajadores[i]['trabajador_' + (i + 1)] === '' && trabajadoresRegistro.trabajadores[i]['suplente_' + (i + 1)] === '') {
-                                setAlert({
-                                    mensaje: "Alguno de los registros Trabajadores - Suplentes está vacío. Completa o cambia la cantidad de trabajadores asignados.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            }
-                        };
-                        //limpieza final  
-                        let horarioIntervencionRegistroRevisado;
-                        let elArrayTipoRegistroTrabajador = [];
-                        if (horarioIntervencionRegistro.tipo === 'rango') {
-                            for (let i = 0; i < horarioIntervencionRegistro.tipoRegistroTrabajador.length; i++) {
-                                let elObjetoTipoRegistroTrabajador = {};
-                                if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicioRango) {
-                                    elObjetoTipoRegistroTrabajador['lunesInicioRango'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicioRango;
-                                    elObjetoTipoRegistroTrabajador['lunesFinRango'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesFinRango;
-                                    elObjetoTipoRegistroTrabajador['lunesTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio;
-                                };
-                                if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicioRango) {
-                                    elObjetoTipoRegistroTrabajador['martesInicioRango'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicioRango;
-                                    elObjetoTipoRegistroTrabajador['martesFinRango'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesFinRango;
-                                    elObjetoTipoRegistroTrabajador['martesTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio;
-                                };
-                                if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicioRango) {
-                                    elObjetoTipoRegistroTrabajador['miercolesInicioRango'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicioRango;
-                                    elObjetoTipoRegistroTrabajador['miercolesFinRango'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesFinRango;
-                                    elObjetoTipoRegistroTrabajador['miercolesTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio;
-                                };
-                                if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicioRango) {
-                                    elObjetoTipoRegistroTrabajador['juevesInicioRango'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicioRango;
-                                    elObjetoTipoRegistroTrabajador['juevesFinRango'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesFinRango;
-                                    elObjetoTipoRegistroTrabajador['juevesTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio;
-                                };
-                                if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicioRango) {
-                                    elObjetoTipoRegistroTrabajador['viernesInicioRango'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicioRango;
-                                    elObjetoTipoRegistroTrabajador['viernesFinRango'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesFinRango;
-                                    elObjetoTipoRegistroTrabajador['viernesTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio;
-                                };
-                                if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicioRango) {
-                                    elObjetoTipoRegistroTrabajador['sabadoInicioRango'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicioRango;
-                                    elObjetoTipoRegistroTrabajador['sabadoFinRango'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoFinRango;
-                                    elObjetoTipoRegistroTrabajador['sabadoTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio;
-                                };
-                                if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicioRango) {
-                                    elObjetoTipoRegistroTrabajador['domingoInicioRango'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicioRango;
-                                    elObjetoTipoRegistroTrabajador['domingoFinRango'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoFinRango;
-                                    elObjetoTipoRegistroTrabajador['domingoTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio;
-                                };
-                                elArrayTipoRegistroTrabajador.push(elObjetoTipoRegistroTrabajador);
-                            };
-                            horarioIntervencionRegistroRevisado = {
-                                tipo: horarioIntervencionRegistro.tipo,
-                                tipoRegistro: horarioIntervencionRegistro.tipoRegistro,
-                                variacion: horarioIntervencionRegistro.variacion,
-                                tipoRegistroTrabajador: elArrayTipoRegistroTrabajador
-                            };
-                        };
-                        if (horarioIntervencionRegistro.tipo === 'rangoDescanso') {
-                            for (let i = 0; i < horarioIntervencionRegistro.tipoRegistroTrabajador.length; i++) {
-                                let elObjetoTipoRegistroTrabajador = {};
-                                if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso) {
-                                    elObjetoTipoRegistroTrabajador['lunesInicio1RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso;
-                                    elObjetoTipoRegistroTrabajador['lunesFin1RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesFin1RangoDescanso;
-                                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso) {
-                                        elObjetoTipoRegistroTrabajador['lunesInicio2RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso;
-                                        elObjetoTipoRegistroTrabajador['lunesFin2RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesFin2RangoDescanso;
+                        procesarDatosRegistroPromesa()
+                            .then(values => {
+                                if (values.resuelto) {
+                                    //registramos
+                                    const centroAGuardar = {
+                                        id: valuesFormRegistro.id,
+                                        nombre: valuesFormRegistro.nombre,
+                                        estado: valuesFormRegistro.estado,
+                                        categoria: valuesFormRegistro.categoria,
+                                        codigo: valuesFormRegistro.codigo ? valuesFormRegistro.codigo : null,
+                                        domicilio: valuesFormRegistro.domicilio ? valuesFormRegistro.domicilio : null,
+                                        codigo_postal: valuesFormRegistro.codigoPostal ? valuesFormRegistro.codigoPostal : null,
+                                        poblacion: valuesFormRegistro.poblacion ? valuesFormRegistro.poblacion : null,
+                                        provincia: valuesFormRegistro.provincia ? valuesFormRegistro.provincia : null,
+                                        nif: valuesFormRegistro.nif ? valuesFormRegistro.nif : null,
+                                        mail: valuesFormRegistro.mail ? valuesFormRegistro.mail : null,
+                                        mail_2: valuesFormRegistro.mail2 ? valuesFormRegistro.mail2 : null,
+                                        telefono: valuesFormRegistro.telefono ? valuesFormRegistro.telefono : null,
+                                        telefono_2: valuesFormRegistro.telefono2 ? valuesFormRegistro.telefono2 : null,
+                                        forma_pago: valuesFormRegistro.formaPago,
+                                        temp_pago: valuesFormRegistro.tempPago,
+                                        dia_pago: valuesFormRegistro.diaPago ? valuesFormRegistro.diaPago : null,
+                                        horario: values.horario ? JSON.stringify(values.horario) : null,
+                                        servicios_fijos: values.servicios ? JSON.stringify(values.servicios) : null,
+                                        trabajadores: values.trabajadores ? JSON.stringify(values.trabajadores) : null
                                     };
-                                    elObjetoTipoRegistroTrabajador['lunesTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio;
+                                    dispatch(registrarCentroAccion('centros', centroAGuardar.id, centroAGuardar));
+                                    dispatch(registrarIntervencionAccion(true));
+                                    dispatch(activarDesactivarNuevoCentroAccion(false));
+                                    dispatch(activarDesactivarRegistrarCentroAccion(true));
                                 };
-                                if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicio1RangoDescanso) {
-                                    elObjetoTipoRegistroTrabajador['martesInicio1RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicio1RangoDescanso;
-                                    elObjetoTipoRegistroTrabajador['martesFin1RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesFin1RangoDescanso;
-                                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicio2RangoDescanso) {
-                                        elObjetoTipoRegistroTrabajador['martesInicio2RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesInicio2RangoDescanso;
-                                        elObjetoTipoRegistroTrabajador['martesFin2RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesFin2RangoDescanso;
-                                    };
-                                    elObjetoTipoRegistroTrabajador['martesTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio;
-                                };
-                                if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso) {
-                                    elObjetoTipoRegistroTrabajador['miercolesInicio1RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso;
-                                    elObjetoTipoRegistroTrabajador['miercolesFin1RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso;
-                                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso) {
-                                        elObjetoTipoRegistroTrabajador['miercolesInicio2RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso;
-                                        elObjetoTipoRegistroTrabajador['miercolesFin2RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso;
-                                    };
-                                    elObjetoTipoRegistroTrabajador['miercolesTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio;
-                                };
-                                if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso) {
-                                    elObjetoTipoRegistroTrabajador['juevesInicio1RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso;
-                                    elObjetoTipoRegistroTrabajador['juevesFin1RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesFin1RangoDescanso;
-                                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso) {
-                                        elObjetoTipoRegistroTrabajador['juevesInicio2RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso;
-                                        elObjetoTipoRegistroTrabajador['juevesFin2RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesFin2RangoDescanso;
-                                    };
-                                    elObjetoTipoRegistroTrabajador['juevesTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio;
-                                };
-                                if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso) {
-                                    elObjetoTipoRegistroTrabajador['viernesInicio1RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso;
-                                    elObjetoTipoRegistroTrabajador['viernesFin1RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesFin1RangoDescanso;
-                                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso) {
-                                        elObjetoTipoRegistroTrabajador['viernesInicio2RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso;
-                                        elObjetoTipoRegistroTrabajador['viernesFin2RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesFin2RangoDescanso;
-                                    };
-                                    elObjetoTipoRegistroTrabajador['viernesTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio;
-                                };
-                                if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso) {
-                                    elObjetoTipoRegistroTrabajador['sabadoInicio1RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso;
-                                    elObjetoTipoRegistroTrabajador['sabadoFin1RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso;
-                                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso) {
-                                        elObjetoTipoRegistroTrabajador['sabadoInicio2RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso;
-                                        elObjetoTipoRegistroTrabajador['sabadoFin2RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso;
-                                    };
-                                    elObjetoTipoRegistroTrabajador['sabadoTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio;
-                                };
-                                if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso) {
-                                    elObjetoTipoRegistroTrabajador['domingoInicio1RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso;
-                                    elObjetoTipoRegistroTrabajador['domingoFin1RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoFin1RangoDescanso;
-                                    if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso) {
-                                        elObjetoTipoRegistroTrabajador['domingoInicio2RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso;
-                                        elObjetoTipoRegistroTrabajador['domingoFin2RangoDescanso'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoFin2RangoDescanso;
-                                    };
-                                    elObjetoTipoRegistroTrabajador['domingoTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio;
-                                };
-                                elArrayTipoRegistroTrabajador.push(elObjetoTipoRegistroTrabajador);
-                            };
-                            horarioIntervencionRegistroRevisado = {
-                                tipo: horarioIntervencionRegistro.tipo,
-                                tipoRegistro: horarioIntervencionRegistro.tipoRegistro,
-                                variacion: horarioIntervencionRegistro.variacion,
-                                tipoRegistroTrabajador: elArrayTipoRegistroTrabajador
-                            };
-                        };
-                        if (horarioIntervencionRegistro.tipo === 'cantidad') {
-                            for (let i = 0; i < horarioIntervencionRegistro.tipoRegistroTrabajador.length; i++) {
-                                let elObjetoTipoRegistroTrabajador = {};
-                                if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesCantidad) {
-                                    elObjetoTipoRegistroTrabajador['lunesCantidad'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesCantidad;
-                                    elObjetoTipoRegistroTrabajador['lunesTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].lunesTipoServicio;
-                                };
-                                if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesCantidad) {
-                                    elObjetoTipoRegistroTrabajador['martesCantidad'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesCantidad;
-                                    elObjetoTipoRegistroTrabajador['martesTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].martesTipoServicio;
-                                };
-                                if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesCantidad) {
-                                    elObjetoTipoRegistroTrabajador['miercolesCantidad'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesCantidad;
-                                    elObjetoTipoRegistroTrabajador['miercolesTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].miercolesTipoServicio;
-                                };
-                                if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesCantidad) {
-                                    elObjetoTipoRegistroTrabajador['juevesCantidad'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesCantidad;
-                                    elObjetoTipoRegistroTrabajador['juevesTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].juevesTipoServicio;
-                                };
-                                if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesCantidad) {
-                                    elObjetoTipoRegistroTrabajador['viernesCantidad'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesCantidad;
-                                    elObjetoTipoRegistroTrabajador['viernesTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].viernesTipoServicio;
-                                };
-                                if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoCantidad) {
-                                    elObjetoTipoRegistroTrabajador['sabadoCantidad'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoCantidad;
-                                    elObjetoTipoRegistroTrabajador['sabadoTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].sabadoTipoServicio;
-                                };
-                                if (horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoCantidad) {
-                                    elObjetoTipoRegistroTrabajador['domingoCantidad'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoCantidad;
-                                    elObjetoTipoRegistroTrabajador['domingoTipoServicio'] = horarioIntervencionRegistro.tipoRegistroTrabajador[i].domingoTipoServicio;
-                                };
-                                elArrayTipoRegistroTrabajador.push(elObjetoTipoRegistroTrabajador);
-                            };
-                            horarioIntervencionRegistroRevisado = {
-                                tipo: horarioIntervencionRegistro.tipo,
-                                tipoRegistro: horarioIntervencionRegistro.tipoRegistro,
-                                variacion: horarioIntervencionRegistro.variacion,
-                                tipoRegistroTrabajador: elArrayTipoRegistroTrabajador
-                            };
-                        };
-                        //añadimos cómputo final     
-                        let elHorarioIntervencionRegistradoRevisado = {
-                            ...horarioIntervencionRegistroRevisado,
-                            computo: valuesFormRegistro.computo
-                        };
-                        if (valuesFormRegistro.mensualPactado) {
-                            elHorarioIntervencionRegistradoRevisado['mensualPactado'] = parseFloat(valuesFormRegistro.mensualPactado);
-                        };
-                        if (valuesFormRegistro.precioHora_L) {
-                            elHorarioIntervencionRegistradoRevisado['precioHora_L'] = parseFloat(valuesFormRegistro.precioHora_L);
-                        };
-                        if (valuesFormRegistro.precioHora_C) {
-                            elHorarioIntervencionRegistradoRevisado['precioHora_C'] = parseFloat(valuesFormRegistro.precioHora_C);
-                        };
-                        if (valuesFormRegistro.precioHora_E) {
-                            elHorarioIntervencionRegistradoRevisado['precioHora_E'] = parseFloat(valuesFormRegistro.precioHora_E);
-                        };
-                        if (valuesFormRegistro.precioHora_I) {
-                            elHorarioIntervencionRegistradoRevisado['precioHora_I'] = parseFloat(valuesFormRegistro.precioHora_I);
-                        };
-                        if (valuesFormRegistro.precioHora_Z) {
-                            elHorarioIntervencionRegistradoRevisado['precioHora_Z'] = parseFloat(valuesFormRegistro.precioHora_Z);
-                        };
-                        if (valuesFormRegistro.precioHora_T) {
-                            elHorarioIntervencionRegistradoRevisado['precioHora_T'] = parseFloat(valuesFormRegistro.precioHora_T);
-                        };
-                        if (valuesFormRegistro.precioHora_P) {
-                            elHorarioIntervencionRegistradoRevisado['precioHora_P'] = parseFloat(valuesFormRegistro.precioHora_P);
-                        };
-
-                        //registramos
-                        const centroAGuardar = {
-                            id: valuesFormRegistro.id,
-                            nombre: valuesFormRegistro.nombre,
-                            estado: valuesFormRegistro.estado,
-                            categoria: valuesFormRegistro.categoria,
-                            codigo: valuesFormRegistro.codigo ? valuesFormRegistro.codigo : null,
-                            domicilio: valuesFormRegistro.domicilio ? valuesFormRegistro.domicilio : null,
-                            codigo_postal: valuesFormRegistro.codigoPostal ? valuesFormRegistro.codigoPostal : null,
-                            poblacion: valuesFormRegistro.poblacion ? valuesFormRegistro.poblacion : null,
-                            provincia: valuesFormRegistro.provincia ? valuesFormRegistro.provincia : null,
-                            nif: valuesFormRegistro.nif ? valuesFormRegistro.nif : null,
-                            mail: valuesFormRegistro.mail ? valuesFormRegistro.mail : null,
-                            mail_2: valuesFormRegistro.mail2 ? valuesFormRegistro.mail2 : null,
-                            telefono: valuesFormRegistro.telefono ? valuesFormRegistro.telefono : null,
-                            telefono_2: valuesFormRegistro.telefono2 ? valuesFormRegistro.telefono2 : null,
-                            forma_pago: valuesFormRegistro.formaPago,
-                            temp_pago: valuesFormRegistro.tempPago,
-                            dia_pago: valuesFormRegistro.diaPago ? valuesFormRegistro.diaPago : null,
-                            horario: JSON.stringify(elHorarioIntervencionRegistradoRevisado),
-                            trabajadores: JSON.stringify(trabajadoresRegistro),
-                        };
-                        dispatch(registrarCentroAccion('centros', centroAGuardar.id, centroAGuardar));
-                        dispatch(registrarIntervencionAccion(true));
-                        dispatch(activarDesactivarNuevoCentroAccion(false));
-                        dispatch(activarDesactivarRegistrarCentroAccion(true));
+                            });
                     };
                     procesarDatosRegistro();
                     break;
@@ -3026,12 +3409,29 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             computo: '',
             mensualPactado: null,
             precioHora_L: null,
-            precioHora_C: null,
             precioHora_E: null,
-            precioHora_I: null,
-            precioHora_Z: null,
-            precioHora_T: null,
             precioHora_P: null,
+            precioHora_N: null,
+            precioHora_R: null,
+            precioHora_L1: null,
+            precioHora_L2: null,
+            precioHora_F: null,
+            precioHora_TO: null,
+            precioHora_CR: null,
+            precioHora_CE: null,
+            precioHora_CI: null,
+            precioHora_MO: null,
+            precioHora_OF: null,
+            precioHora_AL: null,
+            precioHora_LA: null,
+            precioHora_TE: null,
+            precioHora_FI: null,
+            precioHora_FE: null,
+            precioHora_AB: null,
+            precioHora_MA: null,
+            precioHora_PO: null,
+            precioHora_BA: null,
+            precioHora_FT: null
         });
         setValueTimePickerInicioRegistro([
             {
@@ -3190,6 +3590,24 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             cantidad: '',
             trabajadores: []
         });
+        setStateSwitchTipoServicioFijoRegistro({
+            TO: false,
+            CR: false,
+            CE: false,
+            CI: false,
+            MO: false,
+            OF: false,
+            AL: false,
+            LA: false,
+            TE: false,
+            FI: false,
+            FE: false,
+            AB: false,
+            MA: false,
+            PO: false,
+            BA: false,
+            FT: false
+        });
     };
 
     const generarSelectsTrabajadores = (numeroSelects) => {
@@ -3207,7 +3625,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     <FormControl
                         variant="outlined"
                         fullWidth
-                        className={classes.mb20}
+                        className={classes.mb15}
                         size="small"
                     >
                         <InputLabel>{`Trabajador-` + index}</InputLabel>
@@ -3630,6 +4048,217 @@ const CentrosRegistrar = forwardRef((props, ref) => {
         };
     };
 
+    const retornaTipoServicioFijoRegistro = (tipo, index) => {
+        let checkeado, laLabelSw, laLabelIn, elId, elValue, laLabelWi, elPrecioHora, laClase;
+        switch (tipo.value) {
+            case 'TOL':
+                checkeado = stateSwitchTipoServicioFijoRegistro.TO;
+                laLabelSw = 'SERVICIO DE LIMPIEZA DE TOLDOS';
+                laLabelIn = 'Precio TOL';
+                elId = 'form-precio-hora_TO-registro';
+                elValue = valuesFormRegistro.precioHora_TO || '';
+                laLabelWi = 90;
+                elPrecioHora = 'precioHora_TO';
+                laClase = valuesFormRegistro.precioHora_TO ? classes.fondoGrisClaro : classes.paper;
+                break;
+            case 'CRIS':
+                checkeado = stateSwitchTipoServicioFijoRegistro.CR;
+                laLabelSw = 'SERVICIO DE LIMPIEZA DE CRISTALES';
+                laLabelIn = 'Precio CRIS';
+                elId = 'form-precio-hora_CR-registro';
+                elValue = valuesFormRegistro.precioHora_CR || '';
+                laLabelWi = 100;
+                elPrecioHora = 'precioHora_CR';
+                laClase = valuesFormRegistro.precioHora_CR ? classes.fondoGrisClaro : classes.paper;
+                break;
+            case 'CRISE':
+                checkeado = stateSwitchTipoServicioFijoRegistro.CE;
+                laLabelSw = 'LIMPIEZA CRISTALES EXTERIORES';
+                laLabelIn = 'Precio CRISE';
+                elId = 'form-precio-hora_CE-registro';
+                elValue = valuesFormRegistro.precioHora_CE || '';
+                laLabelWi = 110;
+                elPrecioHora = 'precioHora_CE';
+                laClase = valuesFormRegistro.precioHora_CE ? classes.fondoGrisClaro : classes.paper;
+                break;
+            case 'CRISI':
+                checkeado = stateSwitchTipoServicioFijoRegistro.CI;
+                laLabelSw = 'LIMPIEZA CRISTALES INTERIORES';
+                laLabelIn = 'Precio CRISI';
+                elId = 'form-precio-hora_CI-registro';
+                elValue = valuesFormRegistro.precioHora_CI || '';
+                laLabelWi = 105;
+                elPrecioHora = 'precioHora_CI';
+                laClase = valuesFormRegistro.precioHora_CI ? classes.fondoGrisClaro : classes.paper;
+                break;
+            case 'MOQ':
+                checkeado = stateSwitchTipoServicioFijoRegistro.MO;
+                laLabelSw = 'SERVICIO DE LIMPIEZA MOQUETA';
+                laLabelIn = 'Precio MOQ';
+                elId = 'form-precio-hora_MO-registro';
+                elValue = valuesFormRegistro.precioHora_MO || '';
+                laLabelWi = 95;
+                elPrecioHora = 'precioHora_MO';
+                laClase = valuesFormRegistro.precioHora_MO ? classes.fondoGrisClaro : classes.paper;
+                break;
+            case 'OF':
+                checkeado = stateSwitchTipoServicioFijoRegistro.OF;
+                laLabelSw = 'SERVICIO DE LIMPIEZA OFICINAS';
+                laLabelIn = 'Precio OF';
+                elId = 'form-precio-hora_OF-registro';
+                elValue = valuesFormRegistro.precioHora_OF || '';
+                laLabelWi = 80;
+                elPrecioHora = 'precioHora_OF';
+                laClase = valuesFormRegistro.precioHora_OF ? classes.fondoGrisClaro : classes.paper;
+                break;
+            case 'ALMC':
+                checkeado = stateSwitchTipoServicioFijoRegistro.AL;
+                laLabelSw = 'SERVICIO DE LIMPIEZA ALMACENES';
+                laLabelIn = 'Precio ALMC';
+                elId = 'form-precio-hora_AL-registro';
+                elValue = valuesFormRegistro.precioHora_AL || '';
+                laLabelWi = 100;
+                elPrecioHora = 'precioHora_AL';
+                laClase = valuesFormRegistro.precioHora_AL ? classes.fondoGrisClaro : classes.paper;
+                break;
+            case 'LAB':
+                checkeado = stateSwitchTipoServicioFijoRegistro.LA;
+                laLabelSw = 'SERVICIO DE LIMPIEZA LABORATORIO';
+                laLabelIn = 'Precio LAB';
+                elId = 'form-precio-hora_LA-registro';
+                elValue = valuesFormRegistro.precioHora_LA || '';
+                laLabelWi = 90;
+                elPrecioHora = 'precioHora_LA';
+                laClase = valuesFormRegistro.precioHora_LA ? classes.fondoGrisClaro : classes.paper;
+                break;
+            case 'TELÑ':
+                checkeado = stateSwitchTipoServicioFijoRegistro.TE;
+                laLabelSw = 'SERVICIO DE LIMPIEZA TELARAÑAS';
+                laLabelIn = 'Precio TELÑ';
+                elId = 'form-precio-hora_TE-registro';
+                elValue = valuesFormRegistro.precioHora_TE || '';
+                laLabelWi = 100;
+                elPrecioHora = 'precioHora_TE';
+                laClase = valuesFormRegistro.precioHora_TE ? classes.fondoGrisClaro : classes.paper;
+                break;
+            case 'FCH.IN':
+                checkeado = stateSwitchTipoServicioFijoRegistro.FI;
+                laLabelSw = 'SERVICIO DE LIMPIEZA FACHADA INTERIOR';
+                laLabelIn = 'Precio FCH.IN';
+                elId = 'form-precio-hora_FI-registro';
+                elValue = valuesFormRegistro.precioHora_FI || '';
+                laLabelWi = 120;
+                elPrecioHora = 'precioHora_FI';
+                laClase = valuesFormRegistro.precioHora_FI ? classes.fondoGrisClaro : classes.paper;
+                break;
+            case 'FCH.EX':
+                checkeado = stateSwitchTipoServicioFijoRegistro.FE;
+                laLabelSw = 'SERVICIO DE LIMPIEZA FACHADA EXTERIOR';
+                laLabelIn = 'Precio FCH.EX';
+                elId = 'form-precio-hora_FE-registro';
+                elValue = valuesFormRegistro.precioHora_FE || '';
+                laLabelWi = 120;
+                elPrecioHora = 'precioHora_FE';
+                laClase = valuesFormRegistro.precioHora_FE ? classes.fondoGrisClaro : classes.paper;
+                break;
+            case 'ABRLL':
+                checkeado = stateSwitchTipoServicioFijoRegistro.AB;
+                laLabelSw = 'SERVICIO DE LIMPIEZA ABRILLANTADO';
+                laLabelIn = 'Precio ABRLL';
+                elId = 'form-precio-hora_AB-registro';
+                elValue = valuesFormRegistro.precioHora_AB || '';
+                laLabelWi = 110;
+                elPrecioHora = 'precioHora_AB';
+                laClase = valuesFormRegistro.precioHora_AB ? classes.fondoGrisClaro : classes.paper;
+                break;
+            case 'MANT':
+                checkeado = stateSwitchTipoServicioFijoRegistro.MA;
+                laLabelSw = 'SERVICIO DE MANTENIMIENTO MÁQUINA';
+                laLabelIn = 'Precio MANT';
+                elId = 'form-precio-hora_MA-registro';
+                elValue = valuesFormRegistro.precioHora_MA || '';
+                laLabelWi = 105;
+                elPrecioHora = 'precioHora_MA';
+                laClase = valuesFormRegistro.precioHora_MA ? classes.fondoGrisClaro : classes.paper;
+                break;
+            case 'PORT':
+                checkeado = stateSwitchTipoServicioFijoRegistro.PO;
+                laLabelSw = 'SERVICIO DE LIMPIEZA PORTERÍA';
+                laLabelIn = 'Precio PORT';
+                elId = 'form-precio-hora_PO-registro';
+                elValue = valuesFormRegistro.precioHora_PO || '';
+                laLabelWi = 100;
+                elPrecioHora = 'precioHora_PO';
+                laClase = valuesFormRegistro.precioHora_PO ? classes.fondoGrisClaro : classes.paper;
+                break;
+            case 'BACT':
+                checkeado = stateSwitchTipoServicioFijoRegistro.BA;
+                laLabelSw = 'BOT. NOUBACT';
+                laLabelIn = 'Precio BACT';
+                elId = 'form-precio-hora_BA-registro';
+                elValue = valuesFormRegistro.precioHora_BA || '';
+                laLabelWi = 100;
+                elPrecioHora = 'precioHora_BA';
+                laClase = valuesFormRegistro.precioHora_BA ? classes.fondoGrisClaro : classes.paper;
+                break;
+            case 'FEST':
+                checkeado = stateSwitchTipoServicioFijoRegistro.FT;
+                laLabelSw = 'SERVICIO DE LIMPIEZA DÍA FESTIVO';
+                laLabelIn = 'Precio FEST';
+                elId = 'form-precio-hora_FT-registro';
+                elValue = valuesFormRegistro.precioHora_FT || '';
+                laLabelWi = 100;
+                elPrecioHora = 'precioHora_FT';
+                laClase = valuesFormRegistro.precioHora_FT ? classes.fondoGrisClaro : classes.paper;
+                break;
+            default:
+        };
+        return (
+            <Grid
+                container
+                direction="row"
+                justifycontent="flex-start"
+                alignItems="center"
+                spacing={2}
+                className={laClase}
+                style={{ height: 80, paddingTop: 5, paddingBottom: 10, paddingRight: 10, paddingLeft: 10, marginBottom: 15 }}
+                key={'formServicio' + index}
+            >
+                <Grid item xs={8} >
+                    <FormControlLabel
+                        control={
+                            <Switch
+                                checked={checkeado}
+                                name={elId}
+                                color="secondary"
+                                onChange={handleChangeSwitchTipoServicioFijoRegistro}
+                            />
+                        }
+                        label={<Typography variant="body2">{laLabelSw}</Typography>}
+                        labelPlacement="end"
+                    />
+                </Grid>
+                <Grid item xs={4}>
+                    <FormControl
+                        variant="outlined"
+                        className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
+                        size="small"
+                    >
+                        <InputLabel>{laLabelIn}</InputLabel>
+                        <OutlinedInput
+                            fullWidth
+                            id={elId}
+                            value={elValue}
+                            onChange={handleChangeFormRegistro(elPrecioHora)}
+                            labelWidth={laLabelWi}
+                            startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                        />
+                    </FormControl>
+                </Grid>
+            </Grid>
+        )
+    };
+
     return (
         <div>
             <Backdrop className={classes.loading} open={openLoading}>
@@ -3648,7 +4277,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                             <Box
                                 m={0.5}
                                 color="secondary.contrastText"
-                                className={valuesFormRegistro.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
+                                className={valuesFormRegistro.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2) : clsx(classes.fondoAlta, classes.boxStl2)}
                                 style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}
                             >
                                 <Box>Datos generales</Box>
@@ -3658,7 +4287,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                     <FormControlLabel
                                         control={
                                             <Switch
-                                                checked={stateSwitchEstado}
+                                                checked={stateSwitchEstadoRegistro}
                                                 color="secondary"
                                                 style={valuesFormRegistro.estado === 'baja' ? { color: '#FFFFFF' } : null}
                                                 onChange={handleChangeSwitchEstadoRegistro}
@@ -3669,596 +4298,664 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                     />
                                 </Box>
                             </Box>
-                            <FormControl
-                                variant="outlined"
-                                className={classes.form}
-                                size="small"
-                            >
-                                <InputLabel>Nombre</InputLabel>
-                                <OutlinedInput
-                                    className={classes.mb15}
-                                    fullWidth
-                                    id="form-nombre-centro-registro"
-                                    value={valuesFormRegistro.nombre}
-                                    onChange={handleChangeFormRegistro('nombre')}
-                                    labelWidth={60}
-                                />
-                            </FormControl>
-                            <FormControl
-                                variant="outlined"
-                                className={classes.form}
-                                size="small"
-                            >
-                                <InputLabel>Categoría Centro</InputLabel>
-                                <Select
-                                    fullWidth
-                                    className={classes.mb15}
-                                    id="form-categoria-registro"
-                                    label="Categoría Centro"
-                                    value={valuesFormRegistro.categoria}
-                                    onChange={handleChangeFormRegistro('categoria')}
-                                    helpertext="Selecciona categoria"
+                            <Box className={classes.scrollable} style={{ height: heightScrollable, paddingTop: 20, paddingRight: 10 }}>
+                                <FormControl
+                                    variant="outlined"
+                                    className={classes.form}
+                                    size="small"
                                 >
-                                    {
-                                        categorias.map((option) => (
-                                            <MenuItem key={option.value} value={option.value}>
-                                                {option.label}
-                                            </MenuItem>
-                                        ))
-                                    }
-                                </Select>
-                            </FormControl>
-                            <Grid container>
-                                <Grid item xs={6}>
-                                    <FormControl
-                                        variant="outlined"
-                                        className={classes.form}
-                                        size="small"
+                                    <InputLabel>Nombre</InputLabel>
+                                    <OutlinedInput
+                                        className={classes.mb15}
+                                        fullWidth
+                                        id="form-nombre-centro-registro"
+                                        value={valuesFormRegistro.nombre}
+                                        onChange={handleChangeFormRegistro('nombre')}
+                                        labelWidth={60}
+                                    />
+                                </FormControl>
+                                <FormControl
+                                    variant="outlined"
+                                    className={classes.form}
+                                    size="small"
+                                >
+                                    <InputLabel>Categoría Centro</InputLabel>
+                                    <Select
+                                        fullWidth
+                                        className={classes.mb15}
+                                        id="form-categoria-registro"
+                                        label="Categoría Centro"
+                                        value={valuesFormRegistro.categoria}
+                                        onChange={handleChangeFormRegistro('categoria')}
+                                        helpertext="Selecciona categoria"
                                     >
-                                        <InputLabel>Código</InputLabel>
-                                        <OutlinedInput
-                                            className={classes.mb15}
-                                            fullWidth
-                                            id="form-codigo-centro-registro"
-                                            value={valuesFormRegistro.codigo}
-                                            onChange={handleChangeFormRegistro('codigo')}
-                                            labelWidth={55}
-                                        />
-                                    </FormControl>
+                                        {
+                                            categorias.map((option) => (
+                                                <MenuItem key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </MenuItem>
+                                            ))
+                                        }
+                                    </Select>
+                                </FormControl>
+                                <Grid container>
+                                    <Grid item xs={6}>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>Código</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb15}
+                                                fullWidth
+                                                id="form-codigo-centro-registro"
+                                                value={valuesFormRegistro.codigo}
+                                                onChange={handleChangeFormRegistro('codigo')}
+                                                labelWidth={55}
+                                            />
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>NIF</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb15}
+                                                fullWidth
+                                                id="form-nif-centro-registro"
+                                                value={valuesFormRegistro.nif}
+                                                onChange={handleChangeFormRegistro('nif')}
+                                                labelWidth={30}
+                                            />
+                                        </FormControl>
+                                    </Grid>
                                 </Grid>
-                                <Grid item xs={6}>
-                                    <FormControl
-                                        variant="outlined"
-                                        className={classes.form}
-                                        size="small"
-                                    >
-                                        <InputLabel>NIF</InputLabel>
-                                        <OutlinedInput
-                                            className={classes.mb15}
-                                            fullWidth
-                                            id="form-nif-centro-registro"
-                                            value={valuesFormRegistro.nif}
-                                            onChange={handleChangeFormRegistro('nif')}
-                                            labelWidth={30}
-                                        />
-                                    </FormControl>
+                                <FormControl
+                                    variant="outlined"
+                                    className={classes.form}
+                                    size="small"
+                                >
+                                    <InputLabel>E-mail</InputLabel>
+                                    <OutlinedInput
+                                        className={classes.mb15}
+                                        fullWidth
+                                        id="form-mail-centro-registro"
+                                        value={valuesFormRegistro.mail}
+                                        onChange={handleChangeFormRegistro('mail')}
+                                        labelWidth={55}
+                                    />
+                                </FormControl>
+                                <FormControl
+                                    variant="outlined"
+                                    className={classes.form}
+                                    size="small"
+                                >
+                                    <InputLabel>E-mail 2</InputLabel>
+                                    <OutlinedInput
+                                        className={classes.mb15}
+                                        fullWidth
+                                        id="form-mail2-centro-registro"
+                                        value={valuesFormRegistro.mail2}
+                                        onChange={handleChangeFormRegistro('mail2')}
+                                        labelWidth={65}
+                                    />
+                                </FormControl>
+                                <FormControl
+                                    variant="outlined"
+                                    className={classes.form}
+                                    size="small"
+                                >
+                                    <InputLabel>Domicilio</InputLabel>
+                                    <OutlinedInput
+                                        className={classes.mb15}
+                                        fullWidth
+                                        id="form-domicilio-centro-registro"
+                                        value={valuesFormRegistro.domicilio}
+                                        onChange={handleChangeFormRegistro('domicilio')}
+                                        labelWidth={70}
+                                    />
+                                </FormControl>
+                                <FormControl
+                                    variant="outlined"
+                                    className={classes.form}
+                                    size="small"
+                                >
+                                    <InputLabel>Población</InputLabel>
+                                    <OutlinedInput
+                                        className={classes.mb15}
+                                        fullWidth
+                                        id="form-poblacion-centro-registro"
+                                        value={valuesFormRegistro.poblacion}
+                                        onChange={handleChangeFormRegistro('poblacion')}
+                                        labelWidth={75}
+                                    />
+                                </FormControl>
+                                <Grid container>
+                                    <Grid item xs={8}>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>Provincia</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb15}
+                                                fullWidth
+                                                id="form-provincia-centro-registro"
+                                                value={valuesFormRegistro.provincia}
+                                                onChange={handleChangeFormRegistro('provincia')}
+                                                labelWidth={75}
+                                            />
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>Código Postal</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb15}
+                                                fullWidth
+                                                id="form-codigoPostal-centro-registro"
+                                                value={valuesFormRegistro.codigoPostal}
+                                                onChange={handleChangeFormRegistro('codigoPostal')}
+                                                labelWidth={75}
+                                            />
+                                        </FormControl>
+                                    </Grid>
                                 </Grid>
-                            </Grid>
-                            <FormControl
-                                variant="outlined"
-                                className={classes.form}
-                                size="small"
-                            >
-                                <InputLabel>E-mail</InputLabel>
-                                <OutlinedInput
-                                    className={classes.mb15}
-                                    fullWidth
-                                    id="form-mail-centro-registro"
-                                    value={valuesFormRegistro.mail}
-                                    onChange={handleChangeFormRegistro('mail')}
-                                    labelWidth={55}
-                                />
-                            </FormControl>
-                            <FormControl
-                                variant="outlined"
-                                className={classes.form}
-                                size="small"
-                            >
-                                <InputLabel>E-mail 2</InputLabel>
-                                <OutlinedInput
-                                    className={classes.mb15}
-                                    fullWidth
-                                    id="form-mail2-centro-registro"
-                                    value={valuesFormRegistro.mail2}
-                                    onChange={handleChangeFormRegistro('mail2')}
-                                    labelWidth={65}
-                                />
-                            </FormControl>
-                            <FormControl
-                                variant="outlined"
-                                className={classes.form}
-                                size="small"
-                            >
-                                <InputLabel>Domicilio</InputLabel>
-                                <OutlinedInput
-                                    className={classes.mb15}
-                                    fullWidth
-                                    id="form-domicilio-centro-registro"
-                                    value={valuesFormRegistro.domicilio}
-                                    onChange={handleChangeFormRegistro('domicilio')}
-                                    labelWidth={70}
-                                />
-                            </FormControl>
-                            <FormControl
-                                variant="outlined"
-                                className={classes.form}
-                                size="small"
-                            >
-                                <InputLabel>Población</InputLabel>
-                                <OutlinedInput
-                                    className={classes.mb15}
-                                    fullWidth
-                                    id="form-poblacion-centro-registro"
-                                    value={valuesFormRegistro.poblacion}
-                                    onChange={handleChangeFormRegistro('poblacion')}
-                                    labelWidth={75}
-                                />
-                            </FormControl>
-                            <Grid container>
-                                <Grid item xs={8}>
-                                    <FormControl
-                                        variant="outlined"
-                                        className={classes.form}
-                                        size="small"
-                                    >
-                                        <InputLabel>Provincia</InputLabel>
-                                        <OutlinedInput
-                                            className={classes.mb15}
-                                            fullWidth
-                                            id="form-provincia-centro-registro"
-                                            value={valuesFormRegistro.provincia}
-                                            onChange={handleChangeFormRegistro('provincia')}
-                                            labelWidth={75}
-                                        />
-                                    </FormControl>
+                                <Grid container>
+                                    <Grid item xs={6}>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>Teléfono 1</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb15}
+                                                fullWidth
+                                                id="form-telefono-centro-registro"
+                                                value={valuesFormRegistro.telefono}
+                                                onChange={handleChangeFormRegistro('telefono')}
+                                                labelWidth={80}
+                                            />
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>Teléfono 2</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb25}
+                                                fullWidth
+                                                id="form-telefono2-centro-registro"
+                                                value={valuesFormRegistro.telefono2}
+                                                onChange={handleChangeFormRegistro('telefono2')}
+                                                labelWidth={80}
+                                            />
+                                        </FormControl>
+                                    </Grid>
                                 </Grid>
-                                <Grid item xs={4}>
-                                    <FormControl
-                                        variant="outlined"
-                                        className={classes.form}
-                                        size="small"
-                                    >
-                                        <InputLabel>Código Postal</InputLabel>
-                                        <OutlinedInput
-                                            className={classes.mb15}
-                                            fullWidth
-                                            id="form-codigoPostal-centro-registro"
-                                            value={valuesFormRegistro.codigoPostal}
-                                            onChange={handleChangeFormRegistro('codigoPostal')}
-                                            labelWidth={75}
-                                        />
-                                    </FormControl>
-                                </Grid>
-                            </Grid>
-                            <Grid container>
-                                <Grid item xs={6}>
-                                    <FormControl
-                                        variant="outlined"
-                                        className={classes.form}
-                                        size="small"
-                                    >
-                                        <InputLabel>Teléfono 1</InputLabel>
-                                        <OutlinedInput
-                                            className={classes.mb15}
-                                            fullWidth
-                                            id="form-telefono-centro-registro"
-                                            value={valuesFormRegistro.telefono}
-                                            onChange={handleChangeFormRegistro('telefono')}
-                                            labelWidth={80}
-                                        />
-                                    </FormControl>
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <FormControl
-                                        variant="outlined"
-                                        className={classes.form}
-                                        size="small"
-                                    >
-                                        <InputLabel>Teléfono 2</InputLabel>
-                                        <OutlinedInput
-                                            className={classes.mb25}
-                                            fullWidth
-                                            id="form-telefono2-centro-registro"
-                                            value={valuesFormRegistro.telefono2}
-                                            onChange={handleChangeFormRegistro('telefono2')}
-                                            labelWidth={80}
-                                        />
-                                    </FormControl>
-                                </Grid>
-                            </Grid>
-                            <Box
-                                m={0.5}
-                                color="secondary.contrastText"
-                                className={valuesFormRegistro.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
-                            >
-                                Trabajadores
                             </Box>
-                            <FormControl
-                                variant="outlined"
-                                className={classes.form}
-                                size="small"
-                            >
-                                <InputLabel>Trabajadores asignados</InputLabel>
-                                <Select
-                                    fullWidth
-                                    className={classes.mb15}
-                                    id="form-tipo-trabajadores-registro"
-                                    label="Trabajadores asignados"
-                                    value={valuesFormRegistro.numeroTrabajadores || ''}
-                                    onChange={handleChangeFormRegistro('numeroTrabajadores')}
-                                    helpertext="Selecciona número de trabajadores"
-                                >
-                                    {
-                                        totalTrabajadores.map((option) => (
-                                            <MenuItem key={option.value} value={option.value}>
-                                                {option.label}
-                                            </MenuItem>
-                                        ))
-                                    }
-                                </Select>
-                            </FormControl>
-                            {trabajadoresRegistro.cantidad !== '' ? (generarSelectsTrabajadores(trabajadoresRegistro.cantidad)) : null}
                         </Box>
                     </Grid>
                     <Grid item lg={8} sm={6} xs={12}>
-                        <Box
-                            m={0.5}
-                            color="secondary.contrastText"
-                            className={valuesFormRegistro.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
-                        >
-                            Horario de intervención
-                        </Box>
-                        <Grid
-                            container
-                            direction="row"
-                            justifycontent="flex-start"
-                            alignItems="flex-start"
-                            spacing={4}
-                        >
-                            <Grid item lg={4} sm={4} xs={12}>
-                                <FormControl
-                                    variant="outlined"
-                                    className={classes.form}
-                                    size="small"
-                                >
-                                    <InputLabel>Modo entrada datos</InputLabel>
-                                    <Select
-                                        fullWidth
-                                        className={classes.mb15}
-                                        id="form-tipo-registro"
-                                        label="Modo entrada datos"
-                                        value={valuesFormRegistro.tipo || ''}
-                                        onChange={handleChangeFormRegistro('tipo')}
-                                        helpertext="Selecciona Modo entrada datos"
-                                    >
-                                        {
-                                            tipos.map((option) => (
-                                                <MenuItem key={option.value} value={option.value}>
-                                                    {option.label}
+                        <div className={classes.root2} style={{ marginTop: 5 }}>
+                            <AppBar position="static" className={valuesFormRegistro.estado === 'baja' ? clsx(classes.fondoBaja) : clsx(classes.fondoAlta)}>
+                                <Tabs value={valueTabCentrosRegistro} onChange={handleChangeTabCentrosRegistro} className={classes.tabsStl}>
+                                    <Tab label="Trabajadores" {...a11yProps(0)} style={{ paddingBottom: 10 }} />
+                                    <Tab label="Horario de intervención" {...a11yProps(1)} style={{ paddingBottom: 10 }} />
+                                    <Tab label="Servicios fijos" {...a11yProps(2)} style={{ paddingBottom: 10 }} />
+                                    <Tab label="Forma de pago" {...a11yProps(3)} style={{ paddingBottom: 10 }} />
+                                </Tabs>
+                            </AppBar>
+                            <TabPanel value={valueTabCentrosRegistro} index={0} className={classes.scrollable} style={{ height: heightScrollable }}>
+                                <Grid item lg={6} sm={6} xs={12}>
+                                    <Box>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>Trabajadores asignados</InputLabel>
+                                            <Select
+                                                fullWidth
+                                                className={classes.mb15}
+                                                id="form-tipo-trabajadores-registro"
+                                                label="Trabajadores asignados"
+                                                value={valuesFormRegistro.numeroTrabajadores || ''}
+                                                onChange={handleChangeFormRegistro('numeroTrabajadores')}
+                                                helpertext="Selecciona número de trabajadores"
+                                            >
+                                                <MenuItem value=''>
+                                                    <em>No</em>
                                                 </MenuItem>
-                                            ))
-                                        }
-                                    </Select>
-                                </FormControl>
-                                <FormControl
-                                    variant="outlined"
-                                    className={classes.form}
-                                    size="small"
+                                                {
+                                                    totalTrabajadores.map((option) => (
+                                                        <MenuItem key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </MenuItem>
+                                                    ))
+                                                }
+                                            </Select>
+                                        </FormControl>
+                                        {trabajadoresRegistro.cantidad !== '' ? (generarSelectsTrabajadores(trabajadoresRegistro.cantidad)) : null}
+                                    </Box>
+                                </Grid>
+                            </TabPanel>
+                            <TabPanel value={valueTabCentrosRegistro} index={1} className={classes.scrollable} style={{ height: heightScrollable }}>
+                                <Grid
+                                    container
+                                    direction="row"
+                                    justifycontent="flex-start"
+                                    alignItems="flex-start"
+                                    spacing={4}
                                 >
-                                    <InputLabel>Variaciones</InputLabel>
-                                    <Select
-                                        fullWidth
-                                        className={classes.mb25}
-                                        id="form-variaciones-registro"
-                                        label="Variaciones"
-                                        value={valuesFormRegistro.variacion}
-                                        onChange={handleChangeFormRegistro('variacion')}
-                                        helpertext="Selecciona variaciones"
-                                    >
-                                        {
-                                            variaciones.map((option) => (
-                                                <MenuItem key={option.value} value={option.value}>
-                                                    {option.label}
+                                    <Grid item lg={4} sm={4} xs={12}>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>Modo entrada datos</InputLabel>
+                                            <Select
+                                                fullWidth
+                                                className={classes.mb15}
+                                                id="form-tipo-registro"
+                                                label="Modo entrada datos"
+                                                value={valuesFormRegistro.tipo || ''}
+                                                onChange={handleChangeFormRegistro('tipo')}
+                                                helpertext="Selecciona Modo entrada datos"
+                                            >
+                                                <MenuItem value=''>
+                                                    <em>No</em>
                                                 </MenuItem>
-                                            ))
-                                        }
-                                    </Select>
-                                </FormControl>
-                                <Box
-                                    m={0.5}
-                                    color="secondary.contrastText"
-                                    className={valuesFormRegistro.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
-                                >
-                                    Cómputo de horas
-                                </Box>
-                                <FormControl
-                                    variant="outlined"
-                                    className={classes.form}
-                                    size="small"
-                                >
-                                    <InputLabel>Tipo cómputo</InputLabel>
-                                    <Select
-                                        fullWidth
-                                        className={classes.mb15}
-                                        id="form-tipo-computo-registro"
-                                        label="Tipo cómputo"
-                                        value={valuesFormRegistro.computo || ''}
-                                        onChange={handleChangeFormRegistro('computo')}
-                                        helpertext="Selecciona cómputo de horas"
-                                    >
-                                        {
-                                            computoHoras.map((option) => (
-                                                <MenuItem key={option.value} value={option.value}>
-                                                    {option.label}
+                                                {
+                                                    tipos.map((option) => (
+                                                        <MenuItem key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </MenuItem>
+                                                    ))
+                                                }
+                                            </Select>
+                                        </FormControl>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>Variaciones</InputLabel>
+                                            <Select
+                                                fullWidth
+                                                className={classes.mb25}
+                                                id="form-variaciones-registro"
+                                                label="Variaciones"
+                                                value={valuesFormRegistro.variacion}
+                                                onChange={handleChangeFormRegistro('variacion')}
+                                                helpertext="Selecciona variaciones"
+                                            >
+                                                <MenuItem value=''>
+                                                    <em>No</em>
                                                 </MenuItem>
-                                            ))
-                                        }
-                                    </Select>
-                                </FormControl>
-                                {valuesFormRegistro.computo === 1 || valuesFormRegistro.computo === 3 ? (
-                                    <FormControl
-                                        variant="outlined"
-                                        className={classes.form}
-                                        size="small"
-                                    >
-                                        <InputLabel>Mensual pactado</InputLabel>
-                                        <OutlinedInput
-                                            className={classes.mb15}
-                                            fullWidth
-                                            id="form-mensual-pactado-registro"
-                                            value={valuesFormRegistro.mensualPactado || ''}
-                                            onChange={handleChangeFormRegistro('mensualPactado')}
-                                            labelWidth={130}
-                                            startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                                        />
-                                    </FormControl>
-                                ) : null}
-                                {valuesFormRegistro.computo === 2 || valuesFormRegistro.computo === 3 ? (
-                                    <Fragment>
-                                        <FormControl
-                                            variant="outlined"
-                                            className={classes.form}
-                                            size="small"
-                                        >
-                                            <InputLabel>Precio hora LIM</InputLabel>
-                                            <OutlinedInput
-                                                className={classes.mb15}
-                                                fullWidth
-                                                id="form-precio-hora_L-registro"
-                                                value={valuesFormRegistro.precioHora_L || ''}
-                                                onChange={handleChangeFormRegistro('precioHora_L')}
-                                                labelWidth={120}
-                                                startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                                            />
+                                                {
+                                                    variaciones.map((option) => (
+                                                        <MenuItem key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </MenuItem>
+                                                    ))
+                                                }
+                                            </Select>
                                         </FormControl>
-                                        <FormControl
-                                            variant="outlined"
-                                            className={classes.form}
-                                            size="small"
-                                        >
-                                            <InputLabel>Precio hora CRIS</InputLabel>
-                                            <OutlinedInput
-                                                className={classes.mb15}
-                                                fullWidth
-                                                id="form-precio-hora_C-registro"
-                                                value={valuesFormRegistro.precioHora_C || ''}
-                                                onChange={handleChangeFormRegistro('precioHora_C')}
-                                                labelWidth={125}
-                                                startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                                            />
-                                        </FormControl>
-                                        <FormControl
-                                            variant="outlined"
-                                            className={classes.form}
-                                            size="small"
-                                        >
-                                            <InputLabel>Precio hora CRISE</InputLabel>
-                                            <OutlinedInput
-                                                className={classes.mb15}
-                                                fullWidth
-                                                id="form-precio-hora_E-registro"
-                                                value={valuesFormRegistro.precioHora_E || ''}
-                                                onChange={handleChangeFormRegistro('precioHora_E')}
-                                                labelWidth={130}
-                                                startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                                            />
-                                        </FormControl>
-                                        <FormControl
-                                            variant="outlined"
-                                            className={classes.form}
-                                            size="small"
-                                        >
-                                            <InputLabel>Precio hora CRISI</InputLabel>
-                                            <OutlinedInput
-                                                className={classes.mb15}
-                                                fullWidth
-                                                id="form-precio-hora_I-registro"
-                                                value={valuesFormRegistro.precioHora_I || ''}
-                                                onChange={handleChangeFormRegistro('precioHora_I')}
-                                                labelWidth={130}
-                                                startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                                            />
-                                        </FormControl>
-                                        <FormControl
-                                            variant="outlined"
-                                            className={classes.form}
-                                            size="small"
-                                        >
-                                            <InputLabel>Precio hora LIME</InputLabel>
-                                            <OutlinedInput
-                                                className={classes.mb15}
-                                                fullWidth
-                                                id="form-precio-hora_Z-registro"
-                                                value={valuesFormRegistro.precioHora_Z || ''}
-                                                onChange={handleChangeFormRegistro('precioHora_Z')}
-                                                labelWidth={125}
-                                                startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                                            />
-                                        </FormControl>
-                                        <FormControl
-                                            variant="outlined"
-                                            className={classes.form}
-                                            size="small"
-                                        >
-                                            <InputLabel>Precio hora TOL</InputLabel>
-                                            <OutlinedInput
-                                                className={classes.mb15}
-                                                fullWidth
-                                                id="form-precio-hora_T-registro"
-                                                value={valuesFormRegistro.precioHora_T || ''}
-                                                onChange={handleChangeFormRegistro('precioHora_T')}
-                                                labelWidth={120}
-                                                startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                                            />
-                                        </FormControl>
-                                        <FormControl
-                                            variant="outlined"
-                                            className={classes.form}
-                                            size="small"
-                                        >
-                                            <InputLabel>Precio hora LIMP</InputLabel>
-                                            <OutlinedInput
-                                                className={classes.mb15}
-                                                fullWidth
-                                                id="form-precio-hora_P-registro"
-                                                value={valuesFormRegistro.precioHora_P || ''}
-                                                onChange={handleChangeFormRegistro('precioHora_P')}
-                                                labelWidth={125}
-                                                startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                                            />
-                                        </FormControl>
-                                    </Fragment>
-                                ) : null}
-                                <Box
-                                    m={0.5}                                  
-                                    color="secondary.contrastText"
-                                    className={valuesFormRegistro.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20, classes.mt15) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20, classes.mt15)}
-                                >
-                                    Forma de pago
-                                </Box>
-                                <FormControl
-                                    variant="outlined"
-                                    className={classes.form}
-                                    size="small"
-                                >
-                                    <InputLabel>Forma pago</InputLabel>
-                                    <Select
-                                        fullWidth
-                                        className={classes.mb15}
-                                        id="form-formaPago-registro"
-                                        label="Forma pago"
-                                        value={valuesFormRegistro.formaPago || ''}
-                                        onChange={handleChangeFormRegistro('formaPago')}
-                                        helpertext="Selecciona la forma de pago"
-                                    >
-                                        {
-                                            formasDePago.map((option) => (
-                                                <MenuItem key={option.value} value={option.value}>
-                                                    {option.label}
-                                                </MenuItem>
-                                            ))
-                                        }
-                                    </Select>
-                                </FormControl>
-                                <FormControl
-                                    variant="outlined"
-                                    className={classes.form}
-                                    size="small"
-                                >
-                                    <InputLabel>Vencimiento</InputLabel>
-                                    <Select
-                                        fullWidth
-                                        className={classes.mb15}
-                                        id="form-diaPago-registro"
-                                        label="Vencimiento"
-                                        value={valuesFormRegistro.diaPago || ''}
-                                        onChange={handleChangeFormRegistro('diaPago')}
-                                        helpertext="Selecciona día vencimiento"
-                                    >
-                                        <MenuItem value=''>
-                                            <em>No</em>
-                                        </MenuItem>
-                                        {
-                                            diaDelPago.map((option) => (
-                                                <MenuItem key={option.value} value={option.value}>
-                                                    {option.label}
-                                                </MenuItem>
-                                            ))
-                                        }
-                                    </Select>
-                                </FormControl>
-                                <FormControl
-                                    variant="outlined"
-                                    className={classes.form}
-                                    size="small"
-                                >
-                                    <InputLabel>Temporización</InputLabel>
-                                    <Select
-                                        fullWidth
-                                        className={classes.mb15}
-                                        id="form-tempPago-registro"
-                                        label="Temporización"
-                                        value={valuesFormRegistro.tempPago || ''}
-                                        onChange={handleChangeFormRegistro('tempPago')}
-                                        helpertext="Selecciona temporización del pago"
-                                    >
-                                        {
-                                            temporizacionDelPago.map((option) => (
-                                                <MenuItem key={option.value} value={option.value}>
-                                                    {option.label}
-                                                </MenuItem>
-                                            ))
-                                        }
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                            <Grid item lg={8} sm={8} xs={12}>
-                                <Box style={{ marginTop: -10 }}>
-                                    {valuesFormRegistro.tipo !== '' ? (
                                         <Box
                                             m={0.5}
                                             color="secondary.contrastText"
-                                            className={valuesFormRegistro.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb10, classes.mt15) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb10, classes.mt15)}
-                                            style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}
+                                            className={valuesFormRegistro.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
                                         >
-                                            <Box>Tipo de registro</Box>
-                                            <Box
-                                                className={clsx(classes.mt_5, classes.mr15)}
-                                            >
-                                                <FormControlLabel
-                                                    control={
-                                                        <Switch
-                                                            checked={stateSwitchTipoRegistro}
-                                                            color="secondary"
-                                                            onChange={handleChangeSwitchTipoRegistroRegistro}
-                                                        />
-                                                    }
-                                                    label={<Typography variant="body2">Común / Individual</Typography>}
-                                                    labelPlacement="start"
-                                                />
-                                            </Box>
+                                            Cómputo de horas
                                         </Box>
-                                    ) : null}
-                                    <List >
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>Tipo cómputo</InputLabel>
+                                            <Select
+                                                fullWidth
+                                                className={classes.mb15}
+                                                id="form-tipo-computo-registro"
+                                                label="Tipo cómputo"
+                                                value={valuesFormRegistro.computo || ''}
+                                                onChange={handleChangeFormRegistro('computo')}
+                                                helpertext="Selecciona cómputo de horas"
+                                            >
+                                                <MenuItem value=''>
+                                                    <em>No</em>
+                                                </MenuItem>
+                                                {
+                                                    computoHoras.map((option) => (
+                                                        <MenuItem key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </MenuItem>
+                                                    ))
+                                                }
+                                            </Select>
+                                        </FormControl>
+                                        {valuesFormRegistro.computo === 1 || valuesFormRegistro.computo === 3 ? (
+                                            <FormControl
+                                                variant="outlined"
+                                                className={classes.form}
+                                                size="small"
+                                            >
+                                                <InputLabel>Mensual pactado</InputLabel>
+                                                <OutlinedInput
+                                                    className={classes.mb15}
+                                                    fullWidth
+                                                    id="form-mensual-pactado-registro"
+                                                    value={valuesFormRegistro.mensualPactado || ''}
+                                                    onChange={handleChangeFormRegistro('mensualPactado')}
+                                                    labelWidth={130}
+                                                    startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                                />
+                                            </FormControl>
+                                        ) : null}
+                                        {valuesFormRegistro.computo === 2 || valuesFormRegistro.computo === 3 ? (
+                                            <Fragment>
+                                                <FormControl
+                                                    variant="outlined"
+                                                    className={classes.form}
+                                                    size="small"
+                                                >
+                                                    <InputLabel>Precio hora LIM</InputLabel>
+                                                    <OutlinedInput
+                                                        className={classes.mb15}
+                                                        fullWidth
+                                                        id="form-precio-hora_L-registro"
+                                                        value={valuesFormRegistro.precioHora_L || ''}
+                                                        onChange={handleChangeFormRegistro('precioHora_L')}
+                                                        labelWidth={120}
+                                                        startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                                    />
+                                                </FormControl>
+                                                <Box className={classes.boxMiniServicios}>
+                                                    <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza</Typography>
+                                                </Box>
+                                                <FormControl
+                                                    variant="outlined"
+                                                    className={classes.form}
+                                                    size="small"
+                                                >
+                                                    <InputLabel>Precio hora LIME</InputLabel>
+                                                    <OutlinedInput
+                                                        className={classes.mb15}
+                                                        fullWidth
+                                                        id="form-precio-hora_E-registro"
+                                                        value={valuesFormRegistro.precioHora_E || ''}
+                                                        onChange={handleChangeFormRegistro('precioHora_E')}
+                                                        labelWidth={125}
+                                                        startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                                    />
+                                                </FormControl>
+                                                <Box className={classes.boxMiniServicios}>
+                                                    <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza especial</Typography>
+                                                </Box>
+                                                <FormControl
+                                                    variant="outlined"
+                                                    className={classes.form}
+                                                    size="small"
+                                                >
+                                                    <InputLabel>Precio hora LIMP</InputLabel>
+                                                    <OutlinedInput
+                                                        className={classes.mb15}
+                                                        fullWidth
+                                                        id="form-precio-hora_P-registro"
+                                                        value={valuesFormRegistro.precioHora_P || ''}
+                                                        onChange={handleChangeFormRegistro('precioHora_P')}
+                                                        labelWidth={130}
+                                                        startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                                    />
+                                                </FormControl>
+                                                <Box className={classes.boxMiniServicios}>
+                                                    <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza del parking</Typography>
+                                                </Box>
+                                                <FormControl
+                                                    variant="outlined"
+                                                    className={classes.form}
+                                                    size="small"
+                                                >
+                                                    <InputLabel>Precio hora NAVE2</InputLabel>
+                                                    <OutlinedInput
+                                                        className={classes.mb15}
+                                                        fullWidth
+                                                        id="form-precio-hora_N-registro"
+                                                        value={valuesFormRegistro.precioHora_N || ''}
+                                                        onChange={handleChangeFormRegistro('precioHora_N')}
+                                                        labelWidth={130}
+                                                        startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                                    />
+                                                </FormControl>
+                                                <Box className={classes.boxMiniServicios}>
+                                                    <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza nave 2</Typography>
+                                                </Box>
+                                                <FormControl
+                                                    variant="outlined"
+                                                    className={classes.form}
+                                                    size="small"
+                                                >
+                                                    <InputLabel>Precio hora REFZ</InputLabel>
+                                                    <OutlinedInput
+                                                        className={classes.mb15}
+                                                        fullWidth
+                                                        id="form-precio-hora_R-registro"
+                                                        value={valuesFormRegistro.precioHora_R || ''}
+                                                        onChange={handleChangeFormRegistro('precioHora_R')}
+                                                        labelWidth={125}
+                                                        startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                                    />
+                                                </FormControl>
+                                                <Box className={classes.boxMiniServicios}>
+                                                    <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza refuerzo</Typography>
+                                                </Box>
+                                                <FormControl
+                                                    variant="outlined"
+                                                    className={classes.form}
+                                                    size="small"
+                                                >
+                                                    <InputLabel>Precio hora LIM1</InputLabel>
+                                                    <OutlinedInput
+                                                        className={classes.mb15}
+                                                        fullWidth
+                                                        id="form-precio-hora_L1-registro"
+                                                        value={valuesFormRegistro.precioHora_L1 || ''}
+                                                        onChange={handleChangeFormRegistro('precioHora_L1')}
+                                                        labelWidth={120}
+                                                        startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                                    />
+                                                </FormControl>
+                                                <Box className={classes.boxMiniServicios}>
+                                                    <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza 1</Typography>
+                                                </Box>
+                                                <FormControl
+                                                    variant="outlined"
+                                                    className={classes.form}
+                                                    size="small"
+                                                >
+                                                    <InputLabel>Precio hora LIM2</InputLabel>
+                                                    <OutlinedInput
+                                                        className={classes.mb15}
+                                                        fullWidth
+                                                        id="form-precio-hora_L2-registro"
+                                                        value={valuesFormRegistro.precioHora_L2 || ''}
+                                                        onChange={handleChangeFormRegistro('precioHora_L2')}
+                                                        labelWidth={120}
+                                                        startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                                    />
+                                                </FormControl>
+                                                <Box className={classes.boxMiniServicios}>
+                                                    <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza 2</Typography>
+                                                </Box>
+                                                <FormControl
+                                                    variant="outlined"
+                                                    className={classes.form}
+                                                    size="small"
+                                                >
+                                                    <InputLabel>Precio hora FEST</InputLabel>
+                                                    <OutlinedInput
+                                                        className={classes.mb15}
+                                                        fullWidth
+                                                        id="form-precio-hora_F-registro"
+                                                        value={valuesFormRegistro.precioHora_F || ''}
+                                                        onChange={handleChangeFormRegistro('precioHora_F')}
+                                                        labelWidth={125}
+                                                        startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                                    />
+                                                </FormControl>
+                                                <Box className={classes.boxMiniServicios}>
+                                                    <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza día festivo</Typography>
+                                                </Box>
+                                            </Fragment>
+                                        ) : null}
+                                    </Grid>
+                                    <Grid item lg={8} sm={8} xs={12}>
+                                        <Box style={{ marginTop: -10 }}>
+                                            {valuesFormRegistro.tipo !== '' ? (
+                                                <Box
+                                                    m={0.5}
+                                                    color="secondary.contrastText"
+                                                    className={valuesFormRegistro.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb10, classes.mt15) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb10, classes.mt15)}
+                                                    style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}
+                                                >
+                                                    <Box>Tipo de registro</Box>
+                                                    <Box
+                                                        className={clsx(classes.mt_5, classes.mr15)}
+                                                    >
+                                                        <FormControlLabel
+                                                            control={
+                                                                <Switch
+                                                                    checked={stateSwitchTipoRegistro}
+                                                                    color="secondary"
+                                                                    onChange={handleChangeSwitchTipoRegistroRegistro}
+                                                                />
+                                                            }
+                                                            label={<Typography variant="body2">Común / Individual</Typography>}
+                                                            labelPlacement="start"
+                                                        />
+                                                    </Box>
+                                                </Box>
+                                            ) : null}
+                                            <List >
+                                                {
+                                                    horarioIntervencionRegistro.tipoRegistroTrabajador.map((item, index) => (
+                                                        generaRetornoHorario(valuesFormRegistro.tipo, index)
+                                                    ))
+                                                }
+                                            </List>
+                                        </Box>
+                                    </Grid>
+                                </Grid>
+                            </TabPanel>
+                            <TabPanel value={valueTabCentrosRegistro} index={2} className={classes.scrollable} style={{ height: heightScrollable }}>
+                                <Grid item lg={8} sm={8} xs={12}>
+                                    <Box style={{ paddingLeft: 10, marginTop: 10 }}>
                                         {
-                                            horarioIntervencionRegistro.tipoRegistroTrabajador.map((item, index) => (
-                                                generaRetornoHorario(valuesFormRegistro.tipo, index)
+                                            tiposDeServicio.map((tipo, index) => (
+                                                retornaTipoServicioFijoRegistro(tipo, index)
                                             ))
                                         }
-                                    </List>
-                                </Box>
-                            </Grid>
-                        </Grid>
+                                    </Box>
+                                </Grid>
+                            </TabPanel>
+                            <TabPanel value={valueTabCentrosRegistro} index={3} className={classes.scrollable} style={{ height: heightScrollable }}>
+                                <Grid item lg={6} sm={6} xs={12}>
+                                    <Box>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>Forma pago</InputLabel>
+                                            <Select
+                                                fullWidth
+                                                className={classes.mb15}
+                                                id="form-formaPago-registro"
+                                                label="Forma pago"
+                                                value={valuesFormRegistro.formaPago || ''}
+                                                onChange={handleChangeFormRegistro('formaPago')}
+                                                helpertext="Selecciona la forma de pago"
+                                            >
+                                                {
+                                                    formasDePago.map((option) => (
+                                                        <MenuItem key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </MenuItem>
+                                                    ))
+                                                }
+                                            </Select>
+                                        </FormControl>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>Vencimiento</InputLabel>
+                                            <Select
+                                                fullWidth
+                                                className={classes.mb15}
+                                                id="form-diaPago-registro"
+                                                label="Vencimiento"
+                                                value={valuesFormRegistro.diaPago || ''}
+                                                onChange={handleChangeFormRegistro('diaPago')}
+                                                helpertext="Selecciona día vencimiento"
+                                            >
+                                                <MenuItem value=''>
+                                                    <em>No</em>
+                                                </MenuItem>
+                                                {
+                                                    diaDelPago.map((option) => (
+                                                        <MenuItem key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </MenuItem>
+                                                    ))
+                                                }
+                                            </Select>
+                                        </FormControl>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>Temporización</InputLabel>
+                                            <Select
+                                                fullWidth
+                                                className={classes.mb15}
+                                                id="form-tempPago-registro"
+                                                label="Temporización"
+                                                value={valuesFormRegistro.tempPago || ''}
+                                                onChange={handleChangeFormRegistro('tempPago')}
+                                                helpertext="Selecciona temporización del pago"
+                                            >
+                                                {
+                                                    temporizacionDelPago.map((option) => (
+                                                        <MenuItem key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </MenuItem>
+                                                    ))
+                                                }
+                                            </Select>
+                                        </FormControl>
+                                    </Box>
+                                </Grid>
+                            </TabPanel>
+                        </div>
                     </Grid>
                 </Grid>
             </Fragment>
@@ -4267,7 +4964,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     {alert.mensaje}
                 </Alert>
             </Snackbar>
-            {/* {console.log(horarioIntervencionRegistro)} */}
+            {/* {console.log(valuesFormRegistro)} */}
         </div>
     )
 })
