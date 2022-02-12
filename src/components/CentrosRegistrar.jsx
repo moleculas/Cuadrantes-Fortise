@@ -25,6 +25,10 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 //carga componentes
 import ItemListTime from './ItemListTime';
@@ -43,6 +47,9 @@ import { activarDesactivarAccion } from '../redux/appDucks';
 import { activarDesactivarNuevoCentroAccion } from '../redux/centrosDucks';
 import { activarDesactivarRegistrarCentroAccion } from '../redux/centrosDucks';
 import { validarMailAccion } from '../redux/appDucks';
+import { generaFechaAccion } from '../redux/appDucks';
+import { obtenerCentrosAccion } from '../redux/centrosDucks';
+import { cambiarEstadoYaEstaRegistradoAccion } from '../redux/centrosDucks';
 
 const categorias = Constantes.CATEGORIAS_CENTROS;
 const variaciones = Constantes.VARIACIONES_HORARIOS_CENTROS;
@@ -135,29 +142,14 @@ const CentrosRegistrar = forwardRef((props, ref) => {
     const errorDeCargaCentros = useSelector(store => store.variablesCentros.errorDeCargaCentros);
     const exitoRegistroCentro = useSelector(store => store.variablesCentros.exitoRegistroCentro);
     const listadoTrabajadores = useSelector(store => store.variablesTrabajadores.arrayTrabajadores);
+    const listadoCentros = useSelector(store => store.variablesCentros.arrayCentros);
 
     //states
 
     const [openSnack, setOpenSnack] = useState(false);
     const [alert, setAlert] = useState({});
     const [valuesFormRegistro, setValuesFormRegistro] = useState({
-        id: null,
-        nombre: '',
-        estado: 'alta',
         categoria: '',
-        codigo: '',
-        domicilio: '',
-        codigoPostal: '',
-        poblacion: '',
-        provincia: '',
-        nif: '',
-        mail: '',
-        mail2: '',
-        telefono: '',
-        telefono2: '',
-        formaPago: '',
-        tempPago: '',
-        diaPago: '',
         variacion: '',
         tipo: '',
         numeroTrabajadores: '',
@@ -373,6 +365,27 @@ const CentrosRegistrar = forwardRef((props, ref) => {
         BA: false,
         FT: false
     });
+    const [numeroCuadrantesRegistro, setNumeroCuadrantesRegistro] = useState([{ value: 1, cuadrante: null, guardado: false }]);
+    const [cuadranteEnUsoRegistro, setCuadranteEnUsoRegistro] = useState(1);
+    const [esInicioCentrosRegistro, setEsInicioCentrosRegistro] = useState(true);
+    const [valuesFormRegistroGenerales, setValuesFormRegistroGenerales] = useState({
+        id: null,
+        nombre: '',
+        estado: 'alta',
+        codigo: '',
+        domicilio: '',
+        codigoPostal: '',
+        poblacion: '',
+        provincia: '',
+        nif: '',
+        mail: '',
+        mail2: '',
+        telefono: '',
+        telefono2: '',
+        formaPago: '',
+        tempPago: '',
+        diaPago: ''
+    });
 
     //useEffect
 
@@ -390,6 +403,9 @@ const CentrosRegistrar = forwardRef((props, ref) => {
         dispatch(onEstemAccion('registrarCentros'));
         if (listadoTrabajadores.length === 0) {
             dispatch(obtenerTrabajadoresAccion('trabajadores'));
+        };
+        if (listadoCentros.length === 0) {
+            dispatch(obtenerCentrosAccion('centros', false));
         };
     }, [dispatch]);
 
@@ -594,6 +610,15 @@ const CentrosRegistrar = forwardRef((props, ref) => {
         };
     }, [horarioIntervencionRegistro.tipoRegistro]);
 
+    useEffect(() => {
+        if (esInicioCentrosRegistro) {
+            if (numeroCuadrantesRegistro[0].guardado) {
+                gestionaContenidoCuadranteRegistro(1);
+                setEsInicioCentrosRegistro(false);
+            };
+        }
+    }, [numeroCuadrantesRegistro]);
+
     //funciones
 
     const handleChangeTabCentrosRegistro = (event, newValue) => {
@@ -620,6 +645,10 @@ const CentrosRegistrar = forwardRef((props, ref) => {
         return dispatch(retornaMinutosAccion(primeraHora, segundaHora));
     };
 
+    const generaFecha = (datoHorario) => {
+        return dispatch(generaFechaAccion(datoHorario));
+    };
+
     const handleCloseSnack = (event, reason) => {
         if (reason === 'clickaway') {
             return;
@@ -632,6 +661,36 @@ const CentrosRegistrar = forwardRef((props, ref) => {
     };
 
     const handleChangeFormRegistro = (prop) => (e) => {
+        if (prop === "categoria") {
+            if (numeroCuadrantesRegistro.length > 1) {
+                let foundCategoria = false;
+                numeroCuadrantesRegistro.forEach((cuadrante, index) => {
+                    if (cuadrante.cuadrante) {
+                        if (cuadrante.cuadrante.categoria === e.target.value) {
+                            foundCategoria = true;
+                        };
+                    };
+                });
+                if (foundCategoria) {
+                    setAlert({
+                        mensaje: "No es posible registrar un centro con la misma categoría en 2 cuadrantes.",
+                        tipo: 'error'
+                    })
+                    setOpenSnack(true);
+                    return;
+                } else {
+                    setValuesFormRegistro({ ...valuesFormRegistro, [prop]: e.target.value });
+                    dispatch(registrarIntervencionAccion(false));
+                    dispatch(activarDesactivarRegistrarCentroAccion(false));
+                    return;
+                };
+            } else {
+                setValuesFormRegistro({ ...valuesFormRegistro, [prop]: e.target.value });
+                dispatch(registrarIntervencionAccion(false));
+                dispatch(activarDesactivarRegistrarCentroAccion(false));
+                return;
+            };
+        };
         if (prop === "variacion") {
             setValuesFormRegistro({ ...valuesFormRegistro, [prop]: e.target.value });
             setHorarioIntervencionRegistro({ ...horarioIntervencionRegistro, variacion: e.target.value });
@@ -897,6 +956,12 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             return;
         };
         setValuesFormRegistro({ ...valuesFormRegistro, [prop]: e.target.value });
+        dispatch(registrarIntervencionAccion(false));
+        dispatch(activarDesactivarRegistrarCentroAccion(false));
+    };
+
+    const handleChangeFormRegistroGenerales = (prop) => (e) => {
+        setValuesFormRegistroGenerales({ ...valuesFormRegistroGenerales, [prop]: e.target.value });
         dispatch(registrarIntervencionAccion(false));
         dispatch(activarDesactivarRegistrarCentroAccion(false));
     };
@@ -1968,9 +2033,9 @@ const CentrosRegistrar = forwardRef((props, ref) => {
 
     const handleChangeSwitchEstadoRegistro = (e) => {
         if (e.target.checked) {
-            setValuesFormRegistro({ ...valuesFormRegistro, estado: 'baja' });
+            setValuesFormRegistroGenerales({ ...valuesFormRegistroGenerales, estado: 'baja' });
         } else {
-            setValuesFormRegistro({ ...valuesFormRegistro, estado: 'alta' });
+            setValuesFormRegistroGenerales({ ...valuesFormRegistroGenerales, estado: 'alta' });
         };
         setStateSwitchEstadoRegistro(e.target.checked);
         dispatch(registrarIntervencionAccion(false));
@@ -2268,13 +2333,31 @@ const CentrosRegistrar = forwardRef((props, ref) => {
 
     const procesarDatosRegistroPromesa = () => {
         return new Promise((resolve, reject) => {
-            if (valuesFormRegistro.nombre === '' ||
+            if (valuesFormRegistroGenerales.nombre === '' ||
                 valuesFormRegistro.categoria === '' ||
-                valuesFormRegistro.formaPago === '' ||
-                valuesFormRegistro.tempPago === ''
+                valuesFormRegistroGenerales.formaPago === '' ||
+                valuesFormRegistroGenerales.tempPago === ''
             ) {
                 setAlert({
                     mensaje: "Faltan datos por completar. Revisa el formulario.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return;
+            };
+            let hayNombre = listadoCentros.some(centro => centro.nombre === valuesFormRegistroGenerales.nombre);
+            let hayCodigo = listadoCentros.some(centro => centro.codigo === valuesFormRegistroGenerales.codigo);
+            if (hayCodigo) {
+                setAlert({
+                    mensaje: "Ya existe un centro registrado con el mismo código. Revisa el formulario.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return;
+            };
+            if (hayNombre) {
+                setAlert({
+                    mensaje: "Ya existe un centro registrado con el mismo nombre. Revisa el formulario.",
                     tipo: 'error'
                 })
                 setOpenSnack(true);
@@ -2538,8 +2621,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             };
 
             //validacion mail
-            if (valuesFormRegistro.mail) {
-                const validacionMail = dispatch(validarMailAccion(valuesFormRegistro.mail));
+            if (valuesFormRegistroGenerales.mail) {
+                const validacionMail = dispatch(validarMailAccion(valuesFormRegistroGenerales.mail));
                 if (!validacionMail) {
                     setAlert({
                         mensaje: "El campo E-mail es incorrecto. Revisa el formulario.",
@@ -2549,8 +2632,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     return;
                 };
             }
-            if (valuesFormRegistro.mail2) {
-                const validacionMail2 = dispatch(validarMailAccion(valuesFormRegistro.mail2));
+            if (valuesFormRegistroGenerales.mail2) {
+                const validacionMail2 = dispatch(validarMailAccion(valuesFormRegistroGenerales.mail2));
                 if (!validacionMail2) {
                     setAlert({
                         mensaje: "El campo E-mail es incorrecto. Revisa el formulario.",
@@ -3326,7 +3409,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             } else {
                 trabajadoresRevisado = trabajadoresRegistro;
             };
-            return resolve({ resuelto: true, horario: elHorarioIntervencionRegistradoRevisado, servicios: serviciosFijosRegistro });
+            return resolve({ resuelto: true, horario: elHorarioIntervencionRegistradoRevisado, servicios: serviciosFijosRegistro, trabajadores: trabajadoresRevisado });
         });
     };
 
@@ -3336,44 +3419,199 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 case 'nuevoCentro':
                     const nuevoCentro = () => {
                         dispatch(activarDesactivarNuevoCentroAccion(true));
-                        reseteaContenidoRegistro();
+                        reseteaContenidoRegistro('nuevo');
                     };
                     nuevoCentro();
                     break;
                 case 'procesarDatosRegistro':
                     const procesarDatosRegistro = () => {
-                        procesarDatosRegistroPromesa()
-                            .then(values => {
-                                if (values.resuelto) {
-                                    //registramos
-                                    const centroAGuardar = {
-                                        id: valuesFormRegistro.id,
-                                        nombre: valuesFormRegistro.nombre,
-                                        estado: valuesFormRegistro.estado,
-                                        categoria: valuesFormRegistro.categoria,
-                                        codigo: valuesFormRegistro.codigo ? valuesFormRegistro.codigo : null,
-                                        domicilio: valuesFormRegistro.domicilio ? valuesFormRegistro.domicilio : null,
-                                        codigo_postal: valuesFormRegistro.codigoPostal ? valuesFormRegistro.codigoPostal : null,
-                                        poblacion: valuesFormRegistro.poblacion ? valuesFormRegistro.poblacion : null,
-                                        provincia: valuesFormRegistro.provincia ? valuesFormRegistro.provincia : null,
-                                        nif: valuesFormRegistro.nif ? valuesFormRegistro.nif : null,
-                                        mail: valuesFormRegistro.mail ? valuesFormRegistro.mail : null,
-                                        mail_2: valuesFormRegistro.mail2 ? valuesFormRegistro.mail2 : null,
-                                        telefono: valuesFormRegistro.telefono ? valuesFormRegistro.telefono : null,
-                                        telefono_2: valuesFormRegistro.telefono2 ? valuesFormRegistro.telefono2 : null,
-                                        forma_pago: valuesFormRegistro.formaPago,
-                                        temp_pago: valuesFormRegistro.tempPago,
-                                        dia_pago: valuesFormRegistro.diaPago ? valuesFormRegistro.diaPago : null,
-                                        horario: values.horario ? JSON.stringify(values.horario) : null,
-                                        servicios_fijos: values.servicios ? JSON.stringify(values.servicios) : null,
-                                        trabajadores: values.trabajadores ? JSON.stringify(values.trabajadores) : null
+                        let centroAGuardar;
+                        let objCategorias, objHorario, objServiciosFijos, objTrabajadores = null;
+                        let centroDefinitivoAGuardar;
+                        if (numeroCuadrantesRegistro.length === 1) {
+                            procesarDatosRegistroPromesa()
+                                .then(values => {
+                                    if (values.resuelto) {
+                                        //registramos
+                                        centroAGuardar = {
+                                            id: valuesFormRegistroGenerales.id,
+                                            nombre: valuesFormRegistroGenerales.nombre,
+                                            estado: valuesFormRegistroGenerales.estado,
+                                            categoria: valuesFormRegistro.categoria,
+                                            codigo: valuesFormRegistroGenerales.codigo ? valuesFormRegistroGenerales.codigo : null,
+                                            domicilio: valuesFormRegistro.domicilio ? valuesFormRegistro.domicilio : null,
+                                            codigo_postal: valuesFormRegistroGenerales.codigoPostal ? valuesFormRegistroGenerales.codigoPostal : null,
+                                            poblacion: valuesFormRegistroGenerales.poblacion ? valuesFormRegistroGenerales.poblacion : null,
+                                            provincia: valuesFormRegistroGenerales.provincia ? valuesFormRegistroGenerales.provincia : null,
+                                            nif: valuesFormRegistroGenerales.nif.provincia ? valuesFormRegistroGenerales.nif.provincia : null,
+                                            mail: valuesFormRegistroGenerales.mail ? valuesFormRegistroGenerales.mail : null,
+                                            mail_2: valuesFormRegistroGenerales.mail2 ? valuesFormRegistroGenerales.mail2 : null,
+                                            telefono: valuesFormRegistroGenerales.telefono ? valuesFormRegistroGenerales.telefono : null,
+                                            telefono_2: valuesFormRegistroGenerales.telefono2 ? valuesFormRegistroGenerales.telefono2 : null,
+                                            forma_pago: valuesFormRegistroGenerales.formaPago,
+                                            temp_pago: valuesFormRegistroGenerales.tempPago,
+                                            dia_pago: valuesFormRegistroGenerales.diaPago ? valuesFormRegistroGenerales.diaPago : null,
+                                            horario: values.horario ? (values.horario) : null,
+                                            servicios_fijos: values.servicios ? (values.servicios) : null,
+                                            trabajadores: values.trabajadores ? (values.trabajadores) : null
+                                        };
+                                        centroDefinitivoAGuardar = { ...centroAGuardar };
+                                        objCategorias = {
+                                            objeto: 'categoria',
+                                            categoria: []
+                                        };
+                                        objHorario = {
+                                            objeto: 'horario',
+                                            horario: []
+                                        };
+                                        objServiciosFijos = {
+                                            objeto: 'serviciosFijos',
+                                            serviciosFijos: []
+                                        };
+                                        objTrabajadores = {
+                                            objeto: 'trabajadores',
+                                            trabajadores: []
+                                        };
+                                        objCategorias.categoria.push(centroAGuardar.categoria);
+                                        if (centroAGuardar.horario) {
+                                            objHorario.horario.push(centroAGuardar.horario);
+                                        } else {
+                                            objHorario.horario.push(null);
+                                        };
+                                        if (centroAGuardar.servicios_fijos) {
+                                            objServiciosFijos.serviciosFijos.push(centroAGuardar.servicios_fijos);
+                                        } else {
+                                            objServiciosFijos.serviciosFijos.push(null);
+                                        };
+                                        if (centroAGuardar.trabajadores) {
+                                            objTrabajadores.trabajadores.push(centroAGuardar.trabajadores);
+                                        } else {
+                                            objTrabajadores.trabajadores.push(null);
+                                        };
+                                        centroDefinitivoAGuardar = {
+                                            ...centroDefinitivoAGuardar,
+                                            categoria: JSON.stringify(objCategorias),
+                                            horario: JSON.stringify(objHorario),
+                                            servicios_fijos: JSON.stringify(objServiciosFijos),
+                                            trabajadores: JSON.stringify(objTrabajadores)
+                                        };
+                                        dispatch(registrarCentroAccion('centros', centroDefinitivoAGuardar.id, centroDefinitivoAGuardar));
+                                        dispatch(registrarIntervencionAccion(true));
+                                        dispatch(activarDesactivarNuevoCentroAccion(false));
+                                        dispatch(activarDesactivarRegistrarCentroAccion(true));
+                                        dispatch(cambiarEstadoYaEstaRegistradoAccion(true));
                                     };
-                                    dispatch(registrarCentroAccion('centros', centroAGuardar.id, centroAGuardar));
-                                    dispatch(registrarIntervencionAccion(true));
-                                    dispatch(activarDesactivarNuevoCentroAccion(false));
-                                    dispatch(activarDesactivarRegistrarCentroAccion(true));
-                                };
-                            });
+                                });
+                        } else {
+                            procesarDatosRegistroPromesa()
+                                .then(values => {
+                                    if (values.resuelto) {
+                                        //registramos
+                                        centroAGuardar = {
+                                            id: valuesFormRegistroGenerales.id,
+                                            nombre: valuesFormRegistroGenerales.nombre,
+                                            estado: valuesFormRegistroGenerales.estado,
+                                            categoria: valuesFormRegistro.categoria,
+                                            codigo: valuesFormRegistroGenerales.codigo ? valuesFormRegistroGenerales.codigo : null,
+                                            domicilio: valuesFormRegistro.domicilio ? valuesFormRegistro.domicilio : null,
+                                            codigo_postal: valuesFormRegistroGenerales.codigoPostal ? valuesFormRegistroGenerales.codigoPostal : null,
+                                            poblacion: valuesFormRegistroGenerales.poblacion ? valuesFormRegistroGenerales.poblacion : null,
+                                            provincia: valuesFormRegistroGenerales.provincia ? valuesFormRegistroGenerales.provincia : null,
+                                            nif: valuesFormRegistroGenerales.nif.provincia ? valuesFormRegistroGenerales.nif.provincia : null,
+                                            mail: valuesFormRegistroGenerales.mail ? valuesFormRegistroGenerales.mail : null,
+                                            mail_2: valuesFormRegistroGenerales.mail2 ? valuesFormRegistroGenerales.mail2 : null,
+                                            telefono: valuesFormRegistroGenerales.telefono ? valuesFormRegistroGenerales.telefono : null,
+                                            telefono_2: valuesFormRegistroGenerales.telefono2 ? valuesFormRegistroGenerales.telefono2 : null,
+                                            forma_pago: valuesFormRegistroGenerales.formaPago,
+                                            temp_pago: valuesFormRegistroGenerales.tempPago,
+                                            dia_pago: valuesFormRegistroGenerales.diaPago ? valuesFormRegistroGenerales.diaPago : null,
+                                            horario: values.horario ? (values.horario) : null,
+                                            servicios_fijos: values.servicios ? (values.servicios) : null,
+                                            trabajadores: values.trabajadores ? (values.trabajadores) : null
+                                        };
+                                        let arrayCuadrantes = [...numeroCuadrantesRegistro];
+                                        arrayCuadrantes.forEach((cuadrante, index) => {
+                                            if (cuadrante.value === cuadranteEnUsoRegistro) {
+                                                cuadrante.cuadrante = {
+                                                    categoria: valuesFormRegistro.categoria,
+                                                    horario: values.horario ? (values.horario) : null,
+                                                    servicios_fijos: values.servicios ? (values.servicios) : null,
+                                                    trabajadores: values.trabajadores ? (values.trabajadores) : null
+                                                };
+                                                cuadrante.guardado = true;
+                                            }
+                                        });
+                                        centroDefinitivoAGuardar = { ...centroAGuardar };
+                                        objCategorias = {
+                                            objeto: 'categoria',
+                                            categoria: []
+                                        };
+                                        objHorario = {
+                                            objeto: 'horario',
+                                            horario: []
+                                        };
+                                        objServiciosFijos = {
+                                            objeto: 'serviciosFijos',
+                                            serviciosFijos: []
+                                        };
+                                        objTrabajadores = {
+                                            objeto: 'trabajadores',
+                                            trabajadores: []
+                                        };
+                                        arrayCuadrantes.forEach((cuadrante, index) => {
+                                            if (cuadrante.guardado) {
+                                                objCategorias.categoria.push(cuadrante.cuadrante.categoria);
+                                                if (cuadrante.cuadrante.horario) {
+                                                    objHorario.horario.push(cuadrante.cuadrante.horario);
+                                                } else {
+                                                    objHorario.horario.push(null);
+                                                };
+                                                if (cuadrante.cuadrante.servicios_fijos) {
+                                                    objServiciosFijos.serviciosFijos.push(cuadrante.cuadrante.servicios_fijos);
+                                                } else {
+                                                    objServiciosFijos.serviciosFijos.push(null);
+                                                };
+                                                if (cuadrante.cuadrante.trabajadores) {
+                                                    objTrabajadores.trabajadores.push(cuadrante.cuadrante.trabajadores);
+                                                } else {
+                                                    objTrabajadores.trabajadores.push(null);
+                                                };
+                                            } else {
+                                                objCategorias.categoria.push(centroAGuardar.categoria);
+                                                if (centroAGuardar.horario) {
+                                                    objHorario.horario.push(centroAGuardar.horario);
+                                                } else {
+                                                    objHorario.horario.push(null);
+                                                };
+                                                if (centroAGuardar.servicios_fijos) {
+                                                    objServiciosFijos.serviciosFijos.push(centroAGuardar.servicios_fijos);
+                                                } else {
+                                                    objServiciosFijos.serviciosFijos.push(null);
+                                                };
+                                                if (centroAGuardar.trabajadores) {
+                                                    objTrabajadores.trabajadores.push(centroAGuardar.trabajadores);
+                                                } else {
+                                                    objTrabajadores.trabajadores.push(null);
+                                                };
+                                                cuadrante.cuadrante = centroAGuardar;
+                                                cuadrante.guardado = true;
+                                            };
+                                        });
+                                        centroDefinitivoAGuardar = {
+                                            ...centroDefinitivoAGuardar,
+                                            categoria: JSON.stringify(objCategorias),
+                                            horario: JSON.stringify(objHorario),
+                                            servicios_fijos: JSON.stringify(objServiciosFijos),
+                                            trabajadores: JSON.stringify(objTrabajadores)
+                                        };
+                                        dispatch(registrarCentroAccion('centros', centroDefinitivoAGuardar.id, centroDefinitivoAGuardar));
+                                        dispatch(registrarIntervencionAccion(true));
+                                        dispatch(activarDesactivarNuevoCentroAccion(false));
+                                        dispatch(activarDesactivarRegistrarCentroAccion(true));
+                                        dispatch(cambiarEstadoYaEstaRegistradoAccion(true));
+                                    };
+                                });
+                        };
                     };
                     procesarDatosRegistro();
                     break;
@@ -3382,57 +3620,99 @@ const CentrosRegistrar = forwardRef((props, ref) => {
         }
     }));
 
-    const reseteaContenidoRegistro = () => {
-        setValuesFormRegistro({
-            id: null,
-            nombre: '',
-            estado: 'alta',
-            categoria: '',
-            codigo: '',
-            domicilio: '',
-            codigoPostal: '',
-            poblacion: '',
-            provincia: '',
-            nif: '',
-            mail: '',
-            mail2: '',
-            telefono: '',
-            telefono2: '',
-            formaPago: '',
-            tempPago: '',
-            diaPago: '',
-            variacion: '',
-            tipo: '',
-            numeroTrabajadores: '',
-            datosTrabajadores: [],
-            datosSuplentes: [],
-            computo: '',
-            mensualPactado: null,
-            precioHora_L: null,
-            precioHora_E: null,
-            precioHora_P: null,
-            precioHora_N: null,
-            precioHora_R: null,
-            precioHora_L1: null,
-            precioHora_L2: null,
-            precioHora_F: null,
-            precioHora_TO: null,
-            precioHora_CR: null,
-            precioHora_CE: null,
-            precioHora_CI: null,
-            precioHora_MO: null,
-            precioHora_OF: null,
-            precioHora_AL: null,
-            precioHora_LA: null,
-            precioHora_TE: null,
-            precioHora_FI: null,
-            precioHora_FE: null,
-            precioHora_AB: null,
-            precioHora_MA: null,
-            precioHora_PO: null,
-            precioHora_BA: null,
-            precioHora_FT: null
-        });
+    const reseteaContenidoRegistro = (accion) => {
+        if (accion === 'nuevo') {
+            dispatch(cambiarEstadoYaEstaRegistradoAccion(false));
+            setValuesFormRegistro({
+                categoria: '',
+                variacion: '',
+                tipo: '',
+                numeroTrabajadores: '',
+                datosTrabajadores: [],
+                datosSuplentes: [],
+                computo: '',
+                mensualPactado: null,
+                precioHora_L: null,
+                precioHora_E: null,
+                precioHora_P: null,
+                precioHora_N: null,
+                precioHora_R: null,
+                precioHora_L1: null,
+                precioHora_L2: null,
+                precioHora_F: null,
+                precioHora_TO: null,
+                precioHora_CR: null,
+                precioHora_CE: null,
+                precioHora_CI: null,
+                precioHora_MO: null,
+                precioHora_OF: null,
+                precioHora_AL: null,
+                precioHora_LA: null,
+                precioHora_TE: null,
+                precioHora_FI: null,
+                precioHora_FE: null,
+                precioHora_AB: null,
+                precioHora_MA: null,
+                precioHora_PO: null,
+                precioHora_BA: null,
+                precioHora_FT: null
+            });
+            setValuesFormRegistroGenerales({
+                id: null,
+                nombre: '',
+                estado: 'alta',
+                codigo: '',
+                domicilio: '',
+                codigoPostal: '',
+                poblacion: '',
+                provincia: '',
+                nif: '',
+                mail: '',
+                mail2: '',
+                telefono: '',
+                telefono2: '',
+                formaPago: '',
+                tempPago: '',
+                diaPago: ''
+            });
+            setNumeroCuadrantesRegistro([{ value: 1, cuadrante: null, guardado: false }]);
+            setCuadranteEnUsoRegistro(1);
+        } else {
+            setValuesFormRegistro({
+                categoria: '',
+                variacion: '',
+                tipo: '',
+                numeroTrabajadores: '',
+                datosTrabajadores: [],
+                datosSuplentes: [],
+                computo: '',
+                mensualPactado: null,
+                precioHora_L: null,
+                precioHora_E: null,
+                precioHora_P: null,
+                precioHora_N: null,
+                precioHora_R: null,
+                precioHora_L1: null,
+                precioHora_L2: null,
+                precioHora_F: null,
+                precioHora_TO: null,
+                precioHora_CR: null,
+                precioHora_CE: null,
+                precioHora_CI: null,
+                precioHora_MO: null,
+                precioHora_OF: null,
+                precioHora_AL: null,
+                precioHora_LA: null,
+                precioHora_TE: null,
+                precioHora_FI: null,
+                precioHora_FE: null,
+                precioHora_AB: null,
+                precioHora_MA: null,
+                precioHora_PO: null,
+                precioHora_BA: null,
+                precioHora_FT: null
+            });
+        };
         setValueTimePickerInicioRegistro([
             {
                 lunes: null,
@@ -4259,6 +4539,724 @@ const CentrosRegistrar = forwardRef((props, ref) => {
         )
     };
 
+    const handleAnadirCuadranteCentroRegistro = () => {
+        procesarDatosRegistroPromesa()
+            .then(values => {
+                if (values.resuelto) {
+                    //registramos
+                    const centroAGuardar = {
+                        categoria: valuesFormRegistro.categoria,
+                        horario: values.horario ? (values.horario) : null,
+                        servicios_fijos: values.servicios ? (values.servicios) : null,
+                        trabajadores: values.trabajadores ? (values.trabajadores) : null
+                    };
+                    let arrayCuadrantes = [...numeroCuadrantesRegistro];
+                    arrayCuadrantes.forEach((cuadrante, index) => {
+                        if (cuadrante.value === cuadranteEnUsoRegistro) {
+                            cuadrante.cuadrante = centroAGuardar;
+                            cuadrante.guardado = true;
+                        }
+                    });
+                    arrayCuadrantes.push({ value: numeroCuadrantesRegistro.length + 1, cuadrante: null, guardado: false });
+                    setNumeroCuadrantesRegistro(arrayCuadrantes);
+                    setCuadranteEnUsoRegistro(numeroCuadrantesRegistro.length + 1);
+                    reseteaContenidoRegistro('anadir');
+                    dispatch(registrarIntervencionAccion(false));
+                    dispatch(activarDesactivarRegistrarCentroAccion(false));
+                }
+            });
+    };
+
+    const handleEliminarCuadranteCentroRegistro = () => {
+        let arrayCuadrantes = [...numeroCuadrantesRegistro];
+        const posicionCuadrante = arrayCuadrantes.indexOf(arrayCuadrantes.find(cuadrante => cuadrante.value === cuadranteEnUsoRegistro));
+        arrayCuadrantes.splice(posicionCuadrante, 1);
+        for (let i = 0; i < arrayCuadrantes.length; i++) {
+            arrayCuadrantes[i]['value'] = i + 1;
+        };
+        setNumeroCuadrantesRegistro(arrayCuadrantes);
+        setCuadranteEnUsoRegistro(1);
+        reseteaContenidoRegistro('anadir');
+        dispatch(registrarIntervencionAccion(false));
+        dispatch(activarDesactivarRegistrarCentroAccion(false));
+        setEsInicioCentrosRegistro(true);
+        setAlert({
+            mensaje: "Cuadrante eliminado exitosamente.",
+            tipo: 'success'
+        })
+        setOpenSnack(true);
+    };
+
+    const handleChangeCuadranteCentroRegistro = (e) => {
+        procesarDatosRegistroPromesa()
+            .then(values => {
+                if (values.resuelto) {
+                    //registramos
+                    const centroAGuardar = {
+                        categoria: valuesFormRegistro.categoria,
+                        horario: values.horario ? (values.horario) : null,
+                        servicios_fijos: values.servicios ? (values.servicios) : null,
+                        trabajadores: values.trabajadores ? (values.trabajadores) : null
+                    };
+                    let arrayCuadrantes = [...numeroCuadrantesRegistro];
+                    arrayCuadrantes.forEach((cuadrante, index) => {
+                        if (cuadrante.value === cuadranteEnUsoRegistro) {
+                            cuadrante.cuadrante = centroAGuardar;
+                            cuadrante.guardado = true;
+                        }
+                    });
+                    setNumeroCuadrantesRegistro(arrayCuadrantes);
+                    setCuadranteEnUsoRegistro(e.target.value);
+                    reseteaContenidoRegistro('anadir');
+                    gestionaContenidoCuadranteRegistro(e.target.value);
+                }
+            });
+    };
+
+    const gestionaContenidoCuadranteRegistro = (elCuadrante) => {
+        let cuadranteAGestionarCompleto = numeroCuadrantesRegistro.find(cuadrante => cuadrante.value === elCuadrante);
+        let cuadranteAGestionar = cuadranteAGestionarCompleto.cuadrante;
+        const arrayTr = [];
+        const arraySu = [];
+        if (cuadranteAGestionar.trabajadores) {
+            if (cuadranteAGestionar.trabajadores.trabajadores.length > 0) {
+                cuadranteAGestionar.trabajadores.trabajadores.forEach((trabajadorIterado, index) => {
+                    arrayTr.push(trabajadorIterado['trabajador_' + (index + 1)]);
+                    arraySu.push(trabajadorIterado['suplente_' + (index + 1)]);
+                });
+                setTrabajadoresRegistro({
+                    ...trabajadoresRegistro,
+                    cantidad: cuadranteAGestionar.trabajadores.cantidad,
+                    trabajadores: cuadranteAGestionar.trabajadores.trabajadores
+                });
+            }else {
+                setTrabajadoresRegistro({
+                    cantidad: '',
+                    trabajadores: []
+                });
+            };
+        };
+        if (cuadranteAGestionar.horario) {
+            if (cuadranteAGestionar.horario.tipoRegistro === 'individual') {
+                setStateSwitchTipoRegistro(true);
+            } else {
+                setStateSwitchTipoRegistro(false);
+            }
+        };
+        if (cuadranteAGestionar.estado === 'baja') {
+            setStateSwitchEstadoRegistro(true);
+        };
+        let myObjetoServiciosFijos = {
+            precioHora_TO: null,
+            precioHora_CR: null,
+            precioHora_CE: null,
+            precioHora_CI: null,
+            precioHora_MO: null,
+            precioHora_OF: null,
+            precioHora_AL: null,
+            precioHora_LA: null,
+            precioHora_TE: null,
+            precioHora_FI: null,
+            precioHora_FE: null,
+            precioHora_AB: null,
+            precioHora_MA: null,
+            precioHora_PO: null,
+            precioHora_BA: null,
+            precioHora_FT: null
+        };
+        let objetoEstadosSwitch = {
+            TO: false,
+            CR: false,
+            CE: false,
+            CI: false,
+            MO: false,
+            OF: false,
+            AL: false,
+            LA: false,
+            TE: false,
+            FI: false,
+            FE: false,
+            AB: false,
+            MA: false,
+            PO: false,
+            BA: false,
+            FT: false
+        };
+        if (cuadranteAGestionar.servicios_fijos) {
+            cuadranteAGestionar.servicios_fijos.servicio.forEach((servicio) => {
+                if (servicio.precioHora_TO) {
+                    myObjetoServiciosFijos.precioHora_TO = servicio.precioHora_TO;
+                    objetoEstadosSwitch.TO = true;
+                };
+                if (servicio.precioHora_CR) {
+                    myObjetoServiciosFijos.precioHora_CR = servicio.precioHora_CR;
+                    objetoEstadosSwitch.CR = true;
+                };
+                if (servicio.precioHora_CE) {
+                    myObjetoServiciosFijos.precioHora_CE = servicio.precioHora_CE;
+                    objetoEstadosSwitch.CE = true;
+                };
+                if (servicio.precioHora_CI) {
+                    myObjetoServiciosFijos.precioHora_CI = servicio.precioHora_CI;
+                    objetoEstadosSwitch.CI = true;
+                };
+                if (servicio.precioHora_MO) {
+                    myObjetoServiciosFijos.precioHora_MO = servicio.precioHora_MO;
+                    objetoEstadosSwitch.MO = true;
+                };
+                if (servicio.precioHora_OF) {
+                    myObjetoServiciosFijos.precioHora_OF = servicio.precioHora_OF;
+                    objetoEstadosSwitch.OF = true;
+                };
+                if (servicio.precioHora_AL) {
+                    myObjetoServiciosFijos.precioHora_AL = servicio.precioHora_AL;
+                    objetoEstadosSwitch.AL = true;
+                };
+                if (servicio.precioHora_LA) {
+                    myObjetoServiciosFijos.precioHora_LA = servicio.precioHora_LA;
+                    objetoEstadosSwitch.LA = true;
+                };
+                if (servicio.precioHora_TE) {
+                    myObjetoServiciosFijos.precioHora_TE = servicio.precioHora_TE;
+                    objetoEstadosSwitch.TE = true;
+                };
+                if (servicio.precioHora_FI) {
+                    myObjetoServiciosFijos.precioHora_FI = servicio.precioHora_FI;
+                    objetoEstadosSwitch.FI = true;
+                };
+                if (servicio.precioHora_FE) {
+                    myObjetoServiciosFijos.precioHora_FE = servicio.precioHora_FE;
+                    objetoEstadosSwitch.FE = true;
+                };
+                if (servicio.precioHora_AB) {
+                    myObjetoServiciosFijos.precioHora_AB = servicio.precioHora_AB;
+                    objetoEstadosSwitch.AB = true;
+                };
+                if (servicio.precioHora_MA) {
+                    myObjetoServiciosFijos.precioHora_MA = servicio.precioHora_MA;
+                    objetoEstadosSwitch.MA = true;
+                };
+                if (servicio.precioHora_PO) {
+                    myObjetoServiciosFijos.precioHora_PO = servicio.precioHora_PO;
+                    objetoEstadosSwitch.PO = true;
+                };
+                if (servicio.precioHora_BA) {
+                    myObjetoServiciosFijos.precioHora_BA = servicio.precioHora_BA;
+                    objetoEstadosSwitch.BA = true;
+                };
+                if (servicio.precioHora_FT) {
+                    myObjetoServiciosFijos.precioHora_FT = servicio.precioHora_FT;
+                    objetoEstadosSwitch.FT = true;
+                };
+            });
+        };
+        setStateSwitchTipoServicioFijoRegistro(objetoEstadosSwitch);
+        setValuesFormRegistro({
+            categoria: cuadranteAGestionar.categoria,
+            variacion: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.variacion : '',
+            tipo: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.tipo : '',
+            numeroTrabajadores: cuadranteAGestionar.trabajadores ? cuadranteAGestionar.trabajadores.cantidad : '',
+            datosTrabajadores: arrayTr,
+            datosSuplentes: arraySu,
+            computo: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.computo : '',
+            mensualPactado: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.mensualPactado : null,
+            precioHora_L: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.precioHora_L : null,
+            precioHora_E: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.precioHora_E : null,
+            precioHora_P: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.precioHora_P : null,
+            precioHora_R: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.precioHora_R : null,
+            precioHora_L1: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.precioHora_L1 : null,
+            precioHora_L2: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.precioHora_L2 : null,
+            precioHora_F: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.precioHora_F : null,
+            precioHora_TO: myObjetoServiciosFijos.precioHora_TO,
+            precioHora_CR: myObjetoServiciosFijos.precioHora_CR,
+            precioHora_CE: myObjetoServiciosFijos.precioHora_CE,
+            precioHora_CI: myObjetoServiciosFijos.precioHora_CI,
+            precioHora_MO: myObjetoServiciosFijos.precioHora_MO,
+            precioHora_OF: myObjetoServiciosFijos.precioHora_OF,
+            precioHora_AL: myObjetoServiciosFijos.precioHora_AL,
+            precioHora_LA: myObjetoServiciosFijos.precioHora_LA,
+            precioHora_TE: myObjetoServiciosFijos.precioHora_TE,
+            precioHora_FI: myObjetoServiciosFijos.precioHora_FI,
+            precioHora_FE: myObjetoServiciosFijos.precioHora_FE,
+            precioHora_AB: myObjetoServiciosFijos.precioHora_AB,
+            precioHora_MA: myObjetoServiciosFijos.precioHora_MA,
+            precioHora_PO: myObjetoServiciosFijos.precioHora_PO,
+            precioHora_BA: myObjetoServiciosFijos.precioHora_BA,
+            precioHora_FT: myObjetoServiciosFijos.precioHora_FT
+        });
+        if (cuadranteAGestionar.horario) {
+            if (cuadranteAGestionar.horario.tipo === "rango") {
+                let arrayValoresTimePicker1 = [];
+                let arrayValoresTimePicker2 = [];
+                let arrayValoresTimePickerT = [];
+                for (let i = 0; i < cuadranteAGestionar.horario.tipoRegistroTrabajador.length; i++) {
+                    let objetoValoresTimePicker1 = {};
+                    let objetoValoresTimePicker2 = {};
+                    let objetoValoresTimePickerT = {};
+                    objetoValoresTimePicker1['lunes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesInicioRango ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesInicioRango) : null);
+                    objetoValoresTimePicker2['lunes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesFinRango ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesFinRango) : null);
+                    objetoValoresTimePickerT['lunesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesTipoServicio : '');
+                    objetoValoresTimePicker1['martes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesInicioRango ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesInicioRango) : null);
+                    objetoValoresTimePicker2['martes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesFinRango ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesFinRango) : null);
+                    objetoValoresTimePickerT['martesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesTipoServicio : '');
+                    objetoValoresTimePicker1['miercoles'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesInicioRango ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesInicioRango) : null);
+                    objetoValoresTimePicker2['miercoles'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesFinRango ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesFinRango) : null);
+                    objetoValoresTimePickerT['miercolesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio : '');
+                    objetoValoresTimePicker1['jueves'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesInicioRango ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesInicioRango) : null);
+                    objetoValoresTimePicker2['jueves'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesFinRango ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesFinRango) : null);
+                    objetoValoresTimePickerT['juevesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesTipoServicio : '');
+                    objetoValoresTimePicker1['viernes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesInicioRango ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesInicioRango) : null);
+                    objetoValoresTimePicker2['viernes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesFinRango ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesFinRango) : null);
+                    objetoValoresTimePickerT['viernesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesTipoServicio : '');
+                    objetoValoresTimePicker1['sabado'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoInicioRango ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoInicioRango) : null);
+                    objetoValoresTimePicker2['sabado'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoFinRango ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoFinRango) : null);
+                    objetoValoresTimePickerT['sabadoTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio : '');
+                    objetoValoresTimePicker1['domingo'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoInicioRango ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoInicioRango) : null);
+                    objetoValoresTimePicker2['domingo'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoFinRango ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoFinRango) : null);
+                    objetoValoresTimePickerT['domingoTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoTipoServicio : '');
+                    arrayValoresTimePicker1.push(objetoValoresTimePicker1);
+                    arrayValoresTimePicker2.push(objetoValoresTimePicker2);
+                    arrayValoresTimePickerT.push(objetoValoresTimePickerT);
+                };
+                setValueTimePickerInicioRegistro(arrayValoresTimePicker1);
+                setValueTimePickerFinRegistro(arrayValoresTimePicker2);
+                setValueTipoServicioRegistro(arrayValoresTimePickerT);
+            };
+            if (cuadranteAGestionar.horario.tipo === "cantidad") {
+                let arrayValoresTimePicker1 = [];
+                let arrayValoresTimePickerT = [];
+                for (let i = 0; i < cuadranteAGestionar.horario.tipoRegistroTrabajador.length; i++) {
+                    let objetoValoresTimePicker1 = {};
+                    let objetoValoresTimePickerT = {};
+                    objetoValoresTimePicker1['lunes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesCantidad ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesCantidad : '');
+                    objetoValoresTimePickerT['lunesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesTipoServicio : '');
+                    objetoValoresTimePicker1['martes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesCantidad ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesCantidad : '');
+                    objetoValoresTimePickerT['martesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesTipoServicio : '');
+                    objetoValoresTimePicker1['miercoles'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesCantidad ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesCantidad : '');
+                    objetoValoresTimePickerT['miercolesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio : '');
+                    objetoValoresTimePicker1['jueves'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesCantidad ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesCantidad : '');
+                    objetoValoresTimePickerT['juevesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesTipoServicio : '');
+                    objetoValoresTimePicker1['viernes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesCantidad ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesCantidad : '');
+                    objetoValoresTimePickerT['viernesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesTipoServicio : '');
+                    objetoValoresTimePicker1['sabado'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoCantidad ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoCantidad : '');
+                    objetoValoresTimePickerT['sabadoTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio : '');
+                    objetoValoresTimePicker1['domingo'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoCantidad ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoCantidad : '');
+                    objetoValoresTimePickerT['domingoTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoTipoServicio : '');
+                    arrayValoresTimePicker1.push(objetoValoresTimePicker1);
+                    arrayValoresTimePickerT.push(objetoValoresTimePickerT);
+                };
+                setValueCantidadHorasRegistro(arrayValoresTimePicker1);
+                setValueTipoServicioRegistro(arrayValoresTimePickerT);
+            };
+            if (cuadranteAGestionar.horario.tipo === "rangoDescanso") {
+                let arrayValoresTimePicker1 = [];
+                let arrayValoresTimePicker2 = [];
+                let arrayValoresTimePicker3 = [];
+                let arrayValoresTimePicker4 = [];
+                let arrayValoresTimePickerT = [];
+                for (let i = 0; i < cuadranteAGestionar.horario.tipoRegistroTrabajador.length; i++) {
+                    let objetoValoresTimePicker1 = {};
+                    let objetoValoresTimePicker2 = {};
+                    let objetoValoresTimePicker3 = {};
+                    let objetoValoresTimePicker4 = {};
+                    let objetoValoresTimePickerT = {};
+                    objetoValoresTimePicker1['lunes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso) : null);
+                    objetoValoresTimePicker2['lunes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesFin1RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesFin1RangoDescanso) : null);
+                    objetoValoresTimePicker3['lunes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso) : null);
+                    objetoValoresTimePicker4['lunes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesFin2RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesFin2RangoDescanso) : null);
+                    objetoValoresTimePickerT['lunesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesTipoServicio : '');
+                    objetoValoresTimePicker1['martes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesInicio1RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesInicio1RangoDescanso) : null);
+                    objetoValoresTimePicker2['martes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesFin1RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesFin1RangoDescanso) : null);
+                    objetoValoresTimePicker3['martes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesInicio2RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesInicio2RangoDescanso) : null);
+                    objetoValoresTimePicker4['martes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesFin2RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesFin2RangoDescanso) : null);
+                    objetoValoresTimePickerT['martesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesTipoServicio : '');
+                    objetoValoresTimePicker1['miercoles'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso) : null);
+                    objetoValoresTimePicker2['miercoles'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso) : null);
+                    objetoValoresTimePicker3['miercoles'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso) : null);
+                    objetoValoresTimePicker4['miercoles'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso) : null);
+                    objetoValoresTimePickerT['miercolesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio : '');
+                    objetoValoresTimePicker1['jueves'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso) : null);
+                    objetoValoresTimePicker2['jueves'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesFin1RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesFin1RangoDescanso) : null);
+                    objetoValoresTimePicker3['jueves'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso) : null);
+                    objetoValoresTimePicker4['jueves'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesFin2RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesFin2RangoDescanso) : null);
+                    objetoValoresTimePickerT['juevesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesTipoServicio : '');
+                    objetoValoresTimePicker1['viernes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso) : null);
+                    objetoValoresTimePicker2['viernes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesFin1RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesFin1RangoDescanso) : null);
+                    objetoValoresTimePicker3['viernes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso) : null);
+                    objetoValoresTimePicker4['viernes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesFin2RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesFin2RangoDescanso) : null);
+                    objetoValoresTimePickerT['viernesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesTipoServicio : '');
+                    objetoValoresTimePicker1['sabado'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso) : null);
+                    objetoValoresTimePicker2['sabado'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso) : null);
+                    objetoValoresTimePicker3['sabado'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso) : null);
+                    objetoValoresTimePicker4['sabado'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso) : null);
+                    objetoValoresTimePickerT['sabadoTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio : '');
+                    objetoValoresTimePicker1['domingo'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso) : null);
+                    objetoValoresTimePicker2['domingo'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoFin1RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoFin1RangoDescanso) : null);
+                    objetoValoresTimePicker3['domingo'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso) : null);
+                    objetoValoresTimePicker4['domingo'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoFin2RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoFin2RangoDescanso) : null);
+                    objetoValoresTimePickerT['domingoTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoTipoServicio : '');
+                    arrayValoresTimePicker1.push(objetoValoresTimePicker1);
+                    arrayValoresTimePicker2.push(objetoValoresTimePicker2);
+                    arrayValoresTimePicker3.push(objetoValoresTimePicker3);
+                    arrayValoresTimePicker4.push(objetoValoresTimePicker4);
+                    arrayValoresTimePickerT.push(objetoValoresTimePickerT);
+                };
+                setValueTimePickerInicioDescanso1Registro(arrayValoresTimePicker1);
+                setValueTimePickerFinDescanso1Registro(arrayValoresTimePicker2);
+                setValueTimePickerInicioDescanso2Registro(arrayValoresTimePicker3);
+                setValueTimePickerFinDescanso2Registro(arrayValoresTimePicker4);
+                setValueTipoServicioRegistro(arrayValoresTimePickerT);
+            };
+            let arrayValoresHorario = [];
+            for (let i = 0; i < cuadranteAGestionar.horario.tipoRegistroTrabajador.length; i++) {
+                let objetoValoresHorario = {};
+                objetoValoresHorario['lunesInicioRango'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesInicioRango ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesInicioRango : null);
+                objetoValoresHorario['lunesFinRango'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesFinRango ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesFinRango : null);
+                objetoValoresHorario['martesInicioRango'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesInicioRango ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesInicioRango : null);
+                objetoValoresHorario['martesFinRango'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesFinRango ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesFinRango : null);
+                objetoValoresHorario['miercolesInicioRango'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesInicioRango ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesInicioRango : null);
+                objetoValoresHorario['miercolesFinRango'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesFinRango ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesFinRango : null);
+                objetoValoresHorario['juevesInicioRango'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesInicioRango ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesInicioRango : null);
+                objetoValoresHorario['juevesFinRango'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesFinRango ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesFinRango : null);
+                objetoValoresHorario['viernesInicioRango'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesInicioRango ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesInicioRango : null);
+                objetoValoresHorario['viernesFinRango'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesFinRango ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesFinRango : null);
+                objetoValoresHorario['sabadoInicioRango'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoInicioRango ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoInicioRango : null);
+                objetoValoresHorario['sabadoFinRango'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoFinRango ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoFinRango : null);
+                objetoValoresHorario['domingoInicioRango'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoInicioRango ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoInicioRango : null);
+                objetoValoresHorario['domingoFinRango'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoFinRango ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoFinRango : null);
+                objetoValoresHorario['lunesInicio1RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso : null);
+                objetoValoresHorario['lunesFin1RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesFin1RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesFin1RangoDescanso : null);
+                objetoValoresHorario['lunesInicio2RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso : null);
+                objetoValoresHorario['lunesFin2RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesFin2RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesFin2RangoDescanso : null);
+                objetoValoresHorario['martesInicio1RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesInicio1RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesInicio1RangoDescanso : null);
+                objetoValoresHorario['martesFin1RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesFin1RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesFin1RangoDescanso : null);
+                objetoValoresHorario['martesInicio2RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesInicio2RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesInicio2RangoDescanso : null);
+                objetoValoresHorario['martesFin2RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesFin2RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesFin2RangoDescanso : null);
+                objetoValoresHorario['miercolesInicio1RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso : null);
+                objetoValoresHorario['miercolesFin1RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso : null);
+                objetoValoresHorario['miercolesInicio2RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso : null);
+                objetoValoresHorario['miercolesFin2RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso : null);
+                objetoValoresHorario['juevesInicio1RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso : null);
+                objetoValoresHorario['juevesFin1RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesFin1RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesFin1RangoDescanso : null);
+                objetoValoresHorario['juevesInicio2RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso : null);
+                objetoValoresHorario['juevesFin2RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesFin2RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesFin2RangoDescanso : null);
+                objetoValoresHorario['viernesInicio1RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso : null);
+                objetoValoresHorario['viernesFin1RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesFin1RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesFin1RangoDescanso : null);
+                objetoValoresHorario['viernesInicio2RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso : null);
+                objetoValoresHorario['viernesFin2RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesFin2RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesFin2RangoDescanso : null);
+                objetoValoresHorario['sabadoInicio1RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso : null);
+                objetoValoresHorario['sabadoFin1RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso : null);
+                objetoValoresHorario['sabadoInicio2RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso : null);
+                objetoValoresHorario['sabadoFin2RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso : null);
+                objetoValoresHorario['domingoInicio1RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso : null);
+                objetoValoresHorario['domingoFin1RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoFin1RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoFin1RangoDescanso : null);
+                objetoValoresHorario['domingoInicio2RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso : null);
+                objetoValoresHorario['domingoFin2RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoFin2RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoFin2RangoDescanso : null);
+                objetoValoresHorario['lunesCantidad'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesCantidad ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesCantidad : '');
+                objetoValoresHorario['martesCantidad'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesCantidad ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesCantidad : '');
+                objetoValoresHorario['miercolesCantidad'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesCantidad ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesCantidad : '');
+                objetoValoresHorario['juevesCantidad'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesCantidad ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesCantidad : '');
+                objetoValoresHorario['viernesCantidad'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesCantidad ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesCantidad : '');
+                objetoValoresHorario['sabadoCantidad'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoCantidad ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoCantidad : '');
+                objetoValoresHorario['domingoCantidad'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoCantidad ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoCantidad : '');
+                objetoValoresHorario['lunesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesTipoServicio ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesTipoServicio : '');
+                objetoValoresHorario['martesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesTipoServicio ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesTipoServicio : '');
+                objetoValoresHorario['miercolesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio : '');
+                objetoValoresHorario['juevesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesTipoServicio ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesTipoServicio : '');
+                objetoValoresHorario['viernesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesTipoServicio ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesTipoServicio : '');
+                objetoValoresHorario['sabadoTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio : '');
+                objetoValoresHorario['domingoTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoTipoServicio ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoTipoServicio : '');
+                arrayValoresHorario.push(objetoValoresHorario);
+            };
+            setHorarioIntervencionRegistro({
+                tipo: cuadranteAGestionar.horario.tipo,
+                variacion: cuadranteAGestionar.horario.variacion,
+                tipoRegistro: cuadranteAGestionar.horario.tipoRegistro,
+                tipoRegistroTrabajador: arrayValoresHorario
+            });            
+        } else {
+            setValueTimePickerInicioRegistro([
+                {
+                    lunes: null,
+                    martes: null,
+                    miercoles: null,
+                    jueves: null,
+                    viernes: null,
+                    sabado: null,
+                    domingo: null
+                }
+            ]);
+            setValueTimePickerFinRegistro([
+                {
+                    lunes: null,
+                    martes: null,
+                    miercoles: null,
+                    jueves: null,
+                    viernes: null,
+                    sabado: null,
+                    domingo: null
+                }
+            ]);
+            setValueTimePickerInicioDescanso1Registro([
+                {
+                    lunes: null,
+                    martes: null,
+                    miercoles: null,
+                    jueves: null,
+                    viernes: null,
+                    sabado: null,
+                    domingo: null
+                }
+            ]);
+            setValueTimePickerFinDescanso1Registro([
+                {
+                    lunes: null,
+                    martes: null,
+                    miercoles: null,
+                    jueves: null,
+                    viernes: null,
+                    sabado: null,
+                    domingo: null
+                }
+            ]);
+            setValueTimePickerInicioDescanso2Registro([
+                {
+                    lunes: null,
+                    martes: null,
+                    miercoles: null,
+                    jueves: null,
+                    viernes: null,
+                    sabado: null,
+                    domingo: null
+                }
+            ]);
+            setValueTimePickerFinDescanso2Registro([
+                {
+                    lunes: null,
+                    martes: null,
+                    miercoles: null,
+                    jueves: null,
+                    viernes: null,
+                    sabado: null,
+                    domingo: null
+                }
+            ]);
+            setValueCantidadHorasRegistro([
+                {
+                    lunes: '',
+                    martes: '',
+                    miercoles: '',
+                    jueves: '',
+                    viernes: '',
+                    sabado: '',
+                    domingo: ''
+                }
+            ]);
+            setValueTipoServicioRegistro([
+                {
+                    lunesTipoServicio: '',
+                    martesTipoServicio: '',
+                    miercolesTipoServicio: '',
+                    juevesTipoServicio: '',
+                    viernesTipoServicio: '',
+                    sabadoTipoServicio: '',
+                    domingoTipoServicio: '',
+                }
+            ]);
+            setHorarioIntervencionRegistro({
+                tipo: '',
+                variacion: '',
+                tipoRegistro: 'comun',
+                tipoRegistroTrabajador: [
+                    {
+                        lunesInicioRango: null,
+                        lunesFinRango: null,
+                        martesInicioRango: null,
+                        martesFinRango: null,
+                        miercolesInicioRango: null,
+                        miercolesFinRango: null,
+                        juevesInicioRango: null,
+                        juevesFinRango: null,
+                        viernesInicioRango: null,
+                        viernesFinRango: null,
+                        sabadoInicioRango: null,
+                        sabadoFinRango: null,
+                        domingoInicioRango: null,
+                        domingoFinRango: null,
+                        lunesInicio1RangoDescanso: null,
+                        lunesInicio2RangoDescanso: null,
+                        lunesFin1RangoDescanso: null,
+                        lunesFin2RangoDescanso: null,
+                        martesInicio1RangoDescanso: null,
+                        martesInicio2RangoDescanso: null,
+                        martesFin1RangoDescanso: null,
+                        martesFin2RangoDescanso: null,
+                        miercolesInicio1RangoDescanso: null,
+                        miercolesInicio2RangoDescanso: null,
+                        miercolesFin1RangoDescanso: null,
+                        miercolesFin2RangoDescanso: null,
+                        juevesInicio1RangoDescanso: null,
+                        juevesInicio2RangoDescanso: null,
+                        juevesFin1RangoDescanso: null,
+                        juevesFin2RangoDescanso: null,
+                        viernesInicio1RangoDescanso: null,
+                        viernesInicio2RangoDescanso: null,
+                        viernesFin1RangoDescanso: null,
+                        viernesFin2RangoDescanso: null,
+                        sabadoInicio1RangoDescanso: null,
+                        sabadoInicio2RangoDescanso: null,
+                        sabadoFin1RangoDescanso: null,
+                        sabadoFin2RangoDescanso: null,
+                        domingoInicio1RangoDescanso: null,
+                        domingoInicio2RangoDescanso: null,
+                        domingoFin1RangoDescanso: null,
+                        domingoFin2RangoDescanso: null,
+                        lunesCantidad: '',
+                        martesCantidad: '',
+                        miercolesCantidad: '',
+                        juevesCantidad: '',
+                        viernesCantidad: '',
+                        sabadoCantidad: '',
+                        domingoCantidad: '',
+                        lunesTipoServicio: '',
+                        martesTipoServicio: '',
+                        miercolesTipoServicio: '',
+                        juevesTipoServicio: '',
+                        viernesTipoServicio: '',
+                        sabadoTipoServicio: '',
+                        domingoTipoServicio: '',
+                    }
+                ],
+            });           
+        };
+    };
+
     return (
         <div>
             <Backdrop className={classes.loading} open={openLoading}>
@@ -4277,7 +5275,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                             <Box
                                 m={0.5}
                                 color="secondary.contrastText"
-                                className={valuesFormRegistro.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2) : clsx(classes.fondoAlta, classes.boxStl2)}
+                                className={valuesFormRegistroGenerales.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2) : clsx(classes.fondoAlta, classes.boxStl2)}
                                 style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}
                             >
                                 <Box>Datos generales</Box>
@@ -4289,7 +5287,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                             <Switch
                                                 checked={stateSwitchEstadoRegistro}
                                                 color="secondary"
-                                                style={valuesFormRegistro.estado === 'baja' ? { color: '#FFFFFF' } : null}
+                                                style={valuesFormRegistroGenerales.estado === 'baja' ? { color: '#FFFFFF' } : null}
                                                 onChange={handleChangeSwitchEstadoRegistro}
                                             />
                                         }
@@ -4299,6 +5297,81 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                 </Box>
                             </Box>
                             <Box className={classes.scrollable} style={{ height: heightScrollable, paddingTop: 20, paddingRight: 10 }}>
+                                <Grid
+                                    container
+                                    direction="row"
+                                    justifycontent="space-between"
+                                    alignItems="flex-start"
+                                >
+                                    <Grid item xs={8}>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                            disabled={numeroCuadrantesRegistro.length === 1 ? true : false}
+                                        >
+                                            <InputLabel>Número Cuadrante</InputLabel>
+                                            <Select
+                                                fullWidth
+                                                className={classes.mb15}
+                                                id="form-cuadrante-no-registro"
+                                                label="Número Cuadrante"
+                                                value={cuadranteEnUsoRegistro}
+                                                onChange={handleChangeCuadranteCentroRegistro}
+                                                helpertext="Selecciona nº cuadrante"
+                                            >
+                                                {
+                                                    numeroCuadrantesRegistro.map((option) => (
+                                                        <MenuItem key={option.value} value={option.value}>
+                                                            {option.value}
+                                                        </MenuItem>
+                                                    ))
+                                                }
+                                            </Select>
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item xs={4} >
+                                        <Box className={classes.floatRight}>
+                                            {numeroCuadrantesRegistro.length > 1 ? (
+                                                <Fragment>
+                                                    <Tooltip title="Borrar cuadrante del centro" placement="top-end" arrow >
+                                                        <IconButton
+                                                            className={classes.btnBorrarCuad}
+                                                            onClick={handleEliminarCuadranteCentroRegistro}
+                                                        >
+                                                            <DeleteIcon />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                    <Tooltip title="Añadir cuadrante al centro" placement="top-end" arrow >
+                                                        <IconButton
+                                                            className={classes.paper}
+                                                            onClick={handleAnadirCuadranteCentroRegistro}
+                                                        >
+                                                            <LibraryAddIcon />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </Fragment>
+                                            ) : (
+                                                <Fragment>
+                                                    <IconButton
+                                                        className={classes.btnBorrarCuad}
+                                                        disabled={true}
+                                                    >
+                                                        <DeleteIcon />
+                                                    </IconButton>
+                                                    <Tooltip title="Añadir cuadrante al centro" placement="top-end" arrow >
+                                                        <IconButton
+                                                            className={classes.paper}
+                                                            onClick={handleAnadirCuadranteCentroRegistro}
+                                                        >
+                                                            <LibraryAddIcon />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </Fragment>
+                                            )}
+                                        </Box>
+                                    </Grid>
+                                </Grid>
                                 <FormControl
                                     variant="outlined"
                                     className={classes.form}
@@ -4309,8 +5382,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         className={classes.mb15}
                                         fullWidth
                                         id="form-nombre-centro-registro"
-                                        value={valuesFormRegistro.nombre}
-                                        onChange={handleChangeFormRegistro('nombre')}
+                                        value={valuesFormRegistroGenerales.nombre}
+                                        onChange={handleChangeFormRegistroGenerales('nombre')}
                                         labelWidth={60}
                                     />
                                 </FormControl>
@@ -4325,7 +5398,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         className={classes.mb15}
                                         id="form-categoria-registro"
                                         label="Categoría Centro"
-                                        value={valuesFormRegistro.categoria}
+                                        value={valuesFormRegistro.categoria || ''}
                                         onChange={handleChangeFormRegistro('categoria')}
                                         helpertext="Selecciona categoria"
                                     >
@@ -4350,8 +5423,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                 className={classes.mb15}
                                                 fullWidth
                                                 id="form-codigo-centro-registro"
-                                                value={valuesFormRegistro.codigo}
-                                                onChange={handleChangeFormRegistro('codigo')}
+                                                value={valuesFormRegistroGenerales.codigo}
+                                                onChange={handleChangeFormRegistroGenerales('codigo')}
                                                 labelWidth={55}
                                             />
                                         </FormControl>
@@ -4367,8 +5440,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                 className={classes.mb15}
                                                 fullWidth
                                                 id="form-nif-centro-registro"
-                                                value={valuesFormRegistro.nif}
-                                                onChange={handleChangeFormRegistro('nif')}
+                                                value={valuesFormRegistroGenerales.nif.provincia}
+                                                onChange={handleChangeFormRegistroGenerales('nif')}
                                                 labelWidth={30}
                                             />
                                         </FormControl>
@@ -4384,8 +5457,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         className={classes.mb15}
                                         fullWidth
                                         id="form-mail-centro-registro"
-                                        value={valuesFormRegistro.mail}
-                                        onChange={handleChangeFormRegistro('mail')}
+                                        value={valuesFormRegistroGenerales.mail}
+                                        onChange={handleChangeFormRegistroGenerales('mail')}
                                         labelWidth={55}
                                     />
                                 </FormControl>
@@ -4399,43 +5472,66 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         className={classes.mb15}
                                         fullWidth
                                         id="form-mail2-centro-registro"
-                                        value={valuesFormRegistro.mail2}
-                                        onChange={handleChangeFormRegistro('mail2')}
+                                        value={valuesFormRegistroGenerales.mail2}
+                                        onChange={handleChangeFormRegistroGenerales('mail2')}
                                         labelWidth={65}
                                     />
                                 </FormControl>
-                                <FormControl
-                                    variant="outlined"
-                                    className={classes.form}
-                                    size="small"
-                                >
-                                    <InputLabel>Domicilio</InputLabel>
-                                    <OutlinedInput
-                                        className={classes.mb15}
-                                        fullWidth
-                                        id="form-domicilio-centro-registro"
-                                        value={valuesFormRegistro.domicilio}
-                                        onChange={handleChangeFormRegistro('domicilio')}
-                                        labelWidth={70}
-                                    />
-                                </FormControl>
-                                <FormControl
-                                    variant="outlined"
-                                    className={classes.form}
-                                    size="small"
-                                >
-                                    <InputLabel>Población</InputLabel>
-                                    <OutlinedInput
-                                        className={classes.mb15}
-                                        fullWidth
-                                        id="form-poblacion-centro-registro"
-                                        value={valuesFormRegistro.poblacion}
-                                        onChange={handleChangeFormRegistro('poblacion')}
-                                        labelWidth={75}
-                                    />
-                                </FormControl>
                                 <Grid container>
-                                    <Grid item xs={8}>
+                                    <Grid item xs={9}>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>Domicilio</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb15}
+                                                fullWidth
+                                                id="form-domicilio-centro-registro"
+                                                value={valuesFormRegistro.domicilio}
+                                                onChange={handleChangeFormRegistroGenerales('domicilio')}
+                                                labelWidth={70}
+                                            />
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item xs={3}>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>C.P.</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb15}
+                                                fullWidth
+                                                id="form-codigoPostal-centro-registro"
+                                                value={valuesFormRegistroGenerales.codigoPostal}
+                                                onChange={handleChangeFormRegistroGenerales('codigoPostal')}
+                                                labelWidth={35}
+                                            />
+                                        </FormControl>
+                                    </Grid>
+                                </Grid>
+                                <Grid container>
+                                    <Grid item xs={6}>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>Población</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb15}
+                                                fullWidth
+                                                id="form-poblacion-centro-registro"
+                                                value={valuesFormRegistroGenerales.poblacion}
+                                                onChange={handleChangeFormRegistroGenerales('poblacion')}
+                                                labelWidth={75}
+                                            />
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item xs={6}>
                                         <FormControl
                                             variant="outlined"
                                             className={classes.form}
@@ -4446,25 +5542,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                 className={classes.mb15}
                                                 fullWidth
                                                 id="form-provincia-centro-registro"
-                                                value={valuesFormRegistro.provincia}
-                                                onChange={handleChangeFormRegistro('provincia')}
-                                                labelWidth={75}
-                                            />
-                                        </FormControl>
-                                    </Grid>
-                                    <Grid item xs={4}>
-                                        <FormControl
-                                            variant="outlined"
-                                            className={classes.form}
-                                            size="small"
-                                        >
-                                            <InputLabel>Código Postal</InputLabel>
-                                            <OutlinedInput
-                                                className={classes.mb15}
-                                                fullWidth
-                                                id="form-codigoPostal-centro-registro"
-                                                value={valuesFormRegistro.codigoPostal}
-                                                onChange={handleChangeFormRegistro('codigoPostal')}
+                                                value={valuesFormRegistroGenerales.provincia}
+                                                onChange={handleChangeFormRegistroGenerales('provincia')}
                                                 labelWidth={75}
                                             />
                                         </FormControl>
@@ -4482,8 +5561,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                 className={classes.mb15}
                                                 fullWidth
                                                 id="form-telefono-centro-registro"
-                                                value={valuesFormRegistro.telefono}
-                                                onChange={handleChangeFormRegistro('telefono')}
+                                                value={valuesFormRegistroGenerales.telefono}
+                                                onChange={handleChangeFormRegistroGenerales('telefono')}
                                                 labelWidth={80}
                                             />
                                         </FormControl>
@@ -4499,8 +5578,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                 className={classes.mb25}
                                                 fullWidth
                                                 id="form-telefono2-centro-registro"
-                                                value={valuesFormRegistro.telefono2}
-                                                onChange={handleChangeFormRegistro('telefono2')}
+                                                value={valuesFormRegistroGenerales.telefono2}
+                                                onChange={handleChangeFormRegistroGenerales('telefono2')}
                                                 labelWidth={80}
                                             />
                                         </FormControl>
@@ -4511,7 +5590,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     </Grid>
                     <Grid item lg={8} sm={6} xs={12}>
                         <div className={classes.root2} style={{ marginTop: 5 }}>
-                            <AppBar position="static" className={valuesFormRegistro.estado === 'baja' ? clsx(classes.fondoBaja) : clsx(classes.fondoAlta)}>
+                            <AppBar position="static" className={valuesFormRegistroGenerales.estado === 'baja' ? clsx(classes.fondoBaja) : clsx(classes.fondoAlta)}>
                                 <Tabs value={valueTabCentrosRegistro} onChange={handleChangeTabCentrosRegistro} className={classes.tabsStl}>
                                     <Tab label="Trabajadores" {...a11yProps(0)} style={{ paddingBottom: 10 }} />
                                     <Tab label="Horario de intervención" {...a11yProps(1)} style={{ paddingBottom: 10 }} />
@@ -4619,7 +5698,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         <Box
                                             m={0.5}
                                             color="secondary.contrastText"
-                                            className={valuesFormRegistro.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
+                                            className={valuesFormRegistroGenerales.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
                                         >
                                             Cómputo de horas
                                         </Box>
@@ -4831,7 +5910,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                 <Box
                                                     m={0.5}
                                                     color="secondary.contrastText"
-                                                    className={valuesFormRegistro.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb10, classes.mt15) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb10, classes.mt15)}
+                                                    className={valuesFormRegistroGenerales.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb10, classes.mt15) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb10, classes.mt15)}
                                                     style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}
                                                 >
                                                     <Box>Tipo de registro</Box>
@@ -4888,8 +5967,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                 className={classes.mb15}
                                                 id="form-formaPago-registro"
                                                 label="Forma pago"
-                                                value={valuesFormRegistro.formaPago || ''}
-                                                onChange={handleChangeFormRegistro('formaPago')}
+                                                value={valuesFormRegistroGenerales.formaPago || ''}
+                                                onChange={handleChangeFormRegistroGenerales('formaPago')}
                                                 helpertext="Selecciona la forma de pago"
                                             >
                                                 {
@@ -4912,8 +5991,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                 className={classes.mb15}
                                                 id="form-diaPago-registro"
                                                 label="Vencimiento"
-                                                value={valuesFormRegistro.diaPago || ''}
-                                                onChange={handleChangeFormRegistro('diaPago')}
+                                                value={valuesFormRegistroGenerales.diaPago || ''}
+                                                onChange={handleChangeFormRegistroGenerales('diaPago')}
                                                 helpertext="Selecciona día vencimiento"
                                             >
                                                 <MenuItem value=''>
@@ -4939,8 +6018,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                 className={classes.mb15}
                                                 id="form-tempPago-registro"
                                                 label="Temporización"
-                                                value={valuesFormRegistro.tempPago || ''}
-                                                onChange={handleChangeFormRegistro('tempPago')}
+                                                value={valuesFormRegistroGenerales.tempPago || ''}
+                                                onChange={handleChangeFormRegistroGenerales('tempPago')}
                                                 helpertext="Selecciona temporización del pago"
                                             >
                                                 {

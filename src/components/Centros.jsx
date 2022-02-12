@@ -99,6 +99,7 @@ const Centros = (props) => {
     const intervencionRegistrada = useSelector(store => store.variablesApp.estadoIntervencionRegistrada);
     const onEstem = useSelector(store => store.variablesApp.onEstem);
     const openDialog1 = useSelector(store => store.variablesApp.openDialog[0]);
+    const estadoYaEstaRegistradoRegistroCentro = useSelector(store => store.variablesCentros.estadoYaEstaRegistradoRegistroCentro);
 
     //instancias children
 
@@ -110,7 +111,6 @@ const Centros = (props) => {
     const [valueTab, setValueTab] = useState(0);
     const [preValueTab, setPreValueTab] = useState(null);
     const [anchorElMenu, setAnchorElMenu] = useState(null);
-    // const [heightScrollable, setHeightScrollable] = useState(getHeightScrollable());
     const [venimosCentroFuera, setVenimosCentroFuera] = useState(null);
 
     //useEffect
@@ -231,7 +231,9 @@ const Centros = (props) => {
                                     >
                                         <MenuItem
                                             onClick={onEstem === 'editarCentros' ? (procesarDatosEdicionParent) : (procesarDatosRegistroParent)}
-                                            disabled={onEstem === 'editarCentros' ? (disabledItemActualizacionCentro) : (disabledItemRegistroCentro)}
+                                            disabled={onEstem === 'editarCentros' ? (disabledItemActualizacionCentro) : (
+                                                estadoYaEstaRegistradoRegistroCentro ? estadoYaEstaRegistradoRegistroCentro : disabledItemRegistroCentro                                                
+                                                )}
                                         >
                                             <ListItemIcon>
                                                 {onEstem === 'editarCentros' ? <SystemUpdateAltIcon fontSize="small" /> : <SaveIcon fontSize="small" />}
@@ -297,6 +299,7 @@ const Centros = (props) => {
                 prTituloDialog={tituloDialog}
                 prDescripcionDialog={descripcionDialog}
             />
+            {/* {console.log('registrado: ', estadoYaEstaRegistradoRegistroCentro)} */}
         </div>
     )
 }

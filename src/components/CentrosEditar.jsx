@@ -27,6 +27,10 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 //carga componentes
 import ItemListTime from './ItemListTime';
@@ -157,23 +161,7 @@ const CentrosEditar = forwardRef((props, ref) => {
     const [valuesAutocompleteCentrosValores, setValuesAutocompleteCentrosValores] = useState(null);
     const [alert, setAlert] = useState({});
     const [valuesFormEdicion, setValuesFormEdicion] = useState({
-        id: null,
-        nombre: '',
-        estado: 'alta',
         categoria: '',
-        codigo: '',
-        domicilio: '',
-        codigoPostal: '',
-        poblacion: '',
-        provincia: '',
-        nif: '',
-        mail: '',
-        mail2: '',
-        telefono: '',
-        telefono2: '',
-        formaPago: '',
-        tempPago: '',
-        diaPago: '',
         variacion: '',
         tipo: '',
         numeroTrabajadores: '',
@@ -390,6 +378,27 @@ const CentrosEditar = forwardRef((props, ref) => {
         BA: false,
         FT: false
     });
+    const [numeroCuadrantesEdicion, setNumeroCuadrantesEdicion] = useState([{ value: 1, cuadrante: null, guardado: false }]);
+    const [cuadranteEnUsoEdicion, setCuadranteEnUsoEdicion] = useState(1);
+    const [esInicioCentrosEdicion, setEsInicioCentrosEdicion] = useState(true);
+    const [valuesFormEdicionGenerales, setValuesFormEdicionGenerales] = useState({
+        id: null,
+        nombre: '',
+        estado: 'alta',
+        codigo: '',
+        domicilio: '',
+        codigoPostal: '',
+        poblacion: '',
+        provincia: '',
+        nif: '',
+        mail: '',
+        mail2: '',
+        telefono: '',
+        telefono2: '',
+        formaPago: '',
+        tempPago: '',
+        diaPago: ''
+    });
 
     //useEffect
 
@@ -452,493 +461,42 @@ const CentrosEditar = forwardRef((props, ref) => {
     }, [exitoEliminarCentro]);
 
     useEffect(() => {
-        const arrayTr = [];
-        const arraySu = [];
-        if (centroAEditar.trabajadores.trabajadores.length > 0) {
-            centroAEditar.trabajadores.trabajadores.forEach((trabajadorIterado, index) => {
-                arrayTr.push(trabajadorIterado['trabajador_' + (index + 1)]);
-                arraySu.push(trabajadorIterado['suplente_' + (index + 1)]);
+        if (centroAEditar.categoria.categoria.length > 0) {
+            let arrayAAnadir = [];
+            for (let i = 0; i < centroAEditar.categoria.categoria.length; i++) {
+                let objAAnadir = {
+                    value: i + 1,
+                    cuadrante: {
+                        categoria: centroAEditar.categoria.categoria[i],
+                        horario: centroAEditar.horario.horario[i],
+                        servicios_fijos: centroAEditar.serviciosFijos.serviciosFijos[i],
+                        trabajadores: centroAEditar.trabajadores.trabajadores[i]
+                    },
+                    guardado: true
+                };
+                arrayAAnadir.push(objAAnadir);
+            };
+            setNumeroCuadrantesEdicion(arrayAAnadir);
+            setValuesFormEdicionGenerales({
+                ...valuesFormEdicionGenerales,
+                id: centroAEditar.id,
+                nombre: centroAEditar.nombre,
+                estado: centroAEditar.estado,
+                codigo: centroAEditar.codigo || '',
+                domicilio: centroAEditar.domicilio || '',
+                codigoPostal: centroAEditar.codigoPostal || '',
+                poblacion: centroAEditar.poblacion || '',
+                provincia: centroAEditar.provincia || '',
+                nif: centroAEditar.nif || '',
+                mail: centroAEditar.mail || '',
+                mail2: centroAEditar.mail2 || '',
+                telefono: centroAEditar.telefono || '',
+                telefono2: centroAEditar.telefono2 || '',
+                formaPago: centroAEditar.formaPago || '',
+                tempPago: centroAEditar.tempPago || '',
+                diaPago: centroAEditar.diaPago ? centroAEditar.diaPago : ''
             });
         };
-        if (centroAEditar.horario.tipoRegistro === 'individual') {
-            setStateSwitchTipoRegistro(true);
-        };
-        if (centroAEditar.estado === 'baja') {
-            setStateSwitchEstadoEdicion(true);
-        };
-        let myObjetoServiciosFijos = {
-            precioHora_TO: null,
-            precioHora_CR: null,
-            precioHora_CE: null,
-            precioHora_CI: null,
-            precioHora_MO: null,
-            precioHora_OF: null,
-            precioHora_AL: null,
-            precioHora_LA: null,
-            precioHora_TE: null,
-            precioHora_FI: null,
-            precioHora_FE: null,
-            precioHora_AB: null,
-            precioHora_MA: null,
-            precioHora_PO: null,
-            precioHora_BA: null,
-            precioHora_FT: null
-        };
-        let objetoEstadosSwitch = {
-            TO: false,
-            CR: false,
-            CE: false,
-            CI: false,
-            MO: false,
-            OF: false,
-            AL: false,
-            LA: false,
-            TE: false,
-            FI: false,
-            FE: false,
-            AB: false,
-            MA: false,
-            PO: false,
-            BA: false,
-            FT: false
-        }
-        centroAEditar.serviciosFijos.servicio.forEach((servicio) => {
-            if (servicio.precioHora_TO) {
-                myObjetoServiciosFijos.precioHora_TO = servicio.precioHora_TO;
-                objetoEstadosSwitch.TO = true;
-            };
-            if (servicio.precioHora_CR) {
-                myObjetoServiciosFijos.precioHora_CR = servicio.precioHora_CR;
-                objetoEstadosSwitch.CR = true;
-            };
-            if (servicio.precioHora_CE) {
-                myObjetoServiciosFijos.precioHora_CE = servicio.precioHora_CE;
-                objetoEstadosSwitch.CE = true;
-            };
-            if (servicio.precioHora_CI) {
-                myObjetoServiciosFijos.precioHora_CI = servicio.precioHora_CI;
-                objetoEstadosSwitch.CI = true;
-            };
-            if (servicio.precioHora_MO) {
-                myObjetoServiciosFijos.precioHora_MO = servicio.precioHora_MO;
-                objetoEstadosSwitch.MO = true;
-            };
-            if (servicio.precioHora_OF) {
-                myObjetoServiciosFijos.precioHora_OF = servicio.precioHora_OF;
-                objetoEstadosSwitch.OF = true;
-            };
-            if (servicio.precioHora_AL) {
-                myObjetoServiciosFijos.precioHora_AL = servicio.precioHora_AL;
-                objetoEstadosSwitch.AL = true;
-            };
-            if (servicio.precioHora_LA) {
-                myObjetoServiciosFijos.precioHora_LA = servicio.precioHora_LA;
-                objetoEstadosSwitch.LA = true;
-            };
-            if (servicio.precioHora_TE) {
-                myObjetoServiciosFijos.precioHora_TE = servicio.precioHora_TE;
-                objetoEstadosSwitch.TE = true;
-            };
-            if (servicio.precioHora_FI) {
-                myObjetoServiciosFijos.precioHora_FI = servicio.precioHora_FI;
-                objetoEstadosSwitch.FI = true;
-            };
-            if (servicio.precioHora_FE) {
-                myObjetoServiciosFijos.precioHora_FE = servicio.precioHora_FE;
-                objetoEstadosSwitch.FE = true;
-            };
-            if (servicio.precioHora_AB) {
-                myObjetoServiciosFijos.precioHora_AB = servicio.precioHora_AB;
-                objetoEstadosSwitch.AB = true;
-            };
-            if (servicio.precioHora_MA) {
-                myObjetoServiciosFijos.precioHora_MA = servicio.precioHora_MA;
-                objetoEstadosSwitch.MA = true;
-            };
-            if (servicio.precioHora_PO) {
-                myObjetoServiciosFijos.precioHora_PO = servicio.precioHora_PO;
-                objetoEstadosSwitch.PO = true;
-            };
-            if (servicio.precioHora_BA) {
-                myObjetoServiciosFijos.precioHora_BA = servicio.precioHora_BA;
-                objetoEstadosSwitch.BA = true;
-            };
-            if (servicio.precioHora_FT) {
-                myObjetoServiciosFijos.precioHora_FT = servicio.precioHora_FT;
-                objetoEstadosSwitch.FT = true;
-            };
-        });
-        setStateSwitchTipoServicioFijoEdicion(objetoEstadosSwitch);
-        setValuesFormEdicion({
-            ...valuesFormEdicion,
-            id: centroAEditar.id,
-            nombre: centroAEditar.nombre || '',
-            estado: centroAEditar.estado || '',
-            categoria: centroAEditar.categoria || '',
-            codigo: centroAEditar.codigo || '',
-            domicilio: centroAEditar.domicilio || '',
-            codigoPostal: centroAEditar.codigoPostal || '',
-            poblacion: centroAEditar.poblacion || '',
-            provincia: centroAEditar.provincia || '',
-            nif: centroAEditar.nif || '',
-            mail: centroAEditar.mail || '',
-            mail2: centroAEditar.mail2 || '',
-            telefono: centroAEditar.telefono || '',
-            telefono2: centroAEditar.telefono2 || '',
-            formaPago: centroAEditar.formaPago || '',
-            tempPago: centroAEditar.tempPago || '',
-            diaPago: centroAEditar.diaPago ? centroAEditar.diaPago : '',
-            variacion: centroAEditar.horario.variacion || '',
-            tipo: centroAEditar.horario.tipo,
-            numeroTrabajadores: centroAEditar.trabajadores.cantidad,
-            datosTrabajadores: arrayTr,
-            datosSuplentes: arraySu,
-            computo: centroAEditar.horario.computo,
-            mensualPactado: centroAEditar.horario.mensualPactado ? centroAEditar.horario.mensualPactado : null,
-            precioHora_L: centroAEditar.horario.precioHora_L ? centroAEditar.horario.precioHora_L : null,
-            precioHora_E: centroAEditar.horario.precioHora_E ? centroAEditar.horario.precioHora_E : null,
-            precioHora_P: centroAEditar.horario.precioHora_P ? centroAEditar.horario.precioHora_P : null,
-            precioHora_R: centroAEditar.horario.precioHora_R ? centroAEditar.horario.precioHora_R : null,
-            precioHora_L1: centroAEditar.horario.precioHora_L1 ? centroAEditar.horario.precioHora_L1 : null,
-            precioHora_L2: centroAEditar.horario.precioHora_L2 ? centroAEditar.horario.precioHora_L2 : null,
-            precioHora_F: centroAEditar.horario.precioHora_F ? centroAEditar.horario.precioHora_F : null,
-            precioHora_TO: myObjetoServiciosFijos.precioHora_TO,
-            precioHora_CR: myObjetoServiciosFijos.precioHora_CR,
-            precioHora_CE: myObjetoServiciosFijos.precioHora_CE,
-            precioHora_CI: myObjetoServiciosFijos.precioHora_CI,
-            precioHora_MO: myObjetoServiciosFijos.precioHora_MO,
-            precioHora_OF: myObjetoServiciosFijos.precioHora_OF,
-            precioHora_AL: myObjetoServiciosFijos.precioHora_AL,
-            precioHora_LA: myObjetoServiciosFijos.precioHora_LA,
-            precioHora_TE: myObjetoServiciosFijos.precioHora_TE,
-            precioHora_FI: myObjetoServiciosFijos.precioHora_FI,
-            precioHora_FE: myObjetoServiciosFijos.precioHora_FE,
-            precioHora_AB: myObjetoServiciosFijos.precioHora_AB,
-            precioHora_MA: myObjetoServiciosFijos.precioHora_MA,
-            precioHora_PO: myObjetoServiciosFijos.precioHora_PO,
-            precioHora_BA: myObjetoServiciosFijos.precioHora_BA,
-            precioHora_FT: myObjetoServiciosFijos.precioHora_FT
-        });
-        if (centroAEditar.horario.tipo === "rango") {
-            let arrayValoresTimePicker1 = [];
-            let arrayValoresTimePicker2 = [];
-            let arrayValoresTimePickerT = [];
-            for (let i = 0; i < centroAEditar.horario.tipoRegistroTrabajador.length; i++) {
-                let objetoValoresTimePicker1 = {};
-                let objetoValoresTimePicker2 = {};
-                let objetoValoresTimePickerT = {};
-                objetoValoresTimePicker1['lunes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesInicioRango ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].lunesInicioRango) : null);
-                objetoValoresTimePicker2['lunes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesFinRango ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].lunesFinRango) : null);
-                objetoValoresTimePickerT['lunesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesTipoServicio ?
-                    centroAEditar.horario.tipoRegistroTrabajador[i].lunesTipoServicio : '');
-                objetoValoresTimePicker1['martes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesInicioRango ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].martesInicioRango) : null);
-                objetoValoresTimePicker2['martes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesFinRango ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].martesFinRango) : null);
-                objetoValoresTimePickerT['martesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesTipoServicio ?
-                    centroAEditar.horario.tipoRegistroTrabajador[i].martesTipoServicio : '');
-                objetoValoresTimePicker1['miercoles'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesInicioRango ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].miercolesInicioRango) : null);
-                objetoValoresTimePicker2['miercoles'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesFinRango ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].miercolesFinRango) : null);
-                objetoValoresTimePickerT['miercolesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio ?
-                    centroAEditar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio : '');
-                objetoValoresTimePicker1['jueves'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesInicioRango ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].juevesInicioRango) : null);
-                objetoValoresTimePicker2['jueves'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesFinRango ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].juevesFinRango) : null);
-                objetoValoresTimePickerT['juevesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesTipoServicio ?
-                    centroAEditar.horario.tipoRegistroTrabajador[i].juevesTipoServicio : '');
-                objetoValoresTimePicker1['viernes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesInicioRango ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].viernesInicioRango) : null);
-                objetoValoresTimePicker2['viernes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesFinRango ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].viernesFinRango) : null);
-                objetoValoresTimePickerT['viernesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesTipoServicio ?
-                    centroAEditar.horario.tipoRegistroTrabajador[i].viernesTipoServicio : '');
-                objetoValoresTimePicker1['sabado'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoInicioRango ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].sabadoInicioRango) : null);
-                objetoValoresTimePicker2['sabado'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoFinRango ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].sabadoFinRango) : null);
-                objetoValoresTimePickerT['sabadoTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio ?
-                    centroAEditar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio : '');
-                objetoValoresTimePicker1['domingo'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoInicioRango ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].domingoInicioRango) : null);
-                objetoValoresTimePicker2['domingo'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoFinRango ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].domingoFinRango) : null);
-                objetoValoresTimePickerT['domingoTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoTipoServicio ?
-                    centroAEditar.horario.tipoRegistroTrabajador[i].domingoTipoServicio : '');
-                arrayValoresTimePicker1.push(objetoValoresTimePicker1);
-                arrayValoresTimePicker2.push(objetoValoresTimePicker2);
-                arrayValoresTimePickerT.push(objetoValoresTimePickerT);
-            };
-            setValueTimePickerInicioEdicion(arrayValoresTimePicker1);
-            setValueTimePickerFinEdicion(arrayValoresTimePicker2);
-            setValueTipoServicioEdicion(arrayValoresTimePickerT);
-        };
-        if (centroAEditar.horario.tipo === "cantidad") {
-            let arrayValoresTimePicker1 = [];
-            let arrayValoresTimePickerT = [];
-            for (let i = 0; i < centroAEditar.horario.tipoRegistroTrabajador.length; i++) {
-                let objetoValoresTimePicker1 = {};
-                let objetoValoresTimePickerT = {};
-                objetoValoresTimePicker1['lunes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesCantidad ?
-                    centroAEditar.horario.tipoRegistroTrabajador[i].lunesCantidad : '');
-                objetoValoresTimePickerT['lunesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesTipoServicio ?
-                    centroAEditar.horario.tipoRegistroTrabajador[i].lunesTipoServicio : '');
-                objetoValoresTimePicker1['martes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesCantidad ?
-                    centroAEditar.horario.tipoRegistroTrabajador[i].martesCantidad : '');
-                objetoValoresTimePickerT['martesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesTipoServicio ?
-                    centroAEditar.horario.tipoRegistroTrabajador[i].martesTipoServicio : '');
-                objetoValoresTimePicker1['miercoles'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesCantidad ?
-                    centroAEditar.horario.tipoRegistroTrabajador[i].miercolesCantidad : '');
-                objetoValoresTimePickerT['miercolesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio ?
-                    centroAEditar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio : '');
-                objetoValoresTimePicker1['jueves'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesCantidad ?
-                    centroAEditar.horario.tipoRegistroTrabajador[i].juevesCantidad : '');
-                objetoValoresTimePickerT['juevesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesTipoServicio ?
-                    centroAEditar.horario.tipoRegistroTrabajador[i].juevesTipoServicio : '');
-                objetoValoresTimePicker1['viernes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesCantidad ?
-                    centroAEditar.horario.tipoRegistroTrabajador[i].viernesCantidad : '');
-                objetoValoresTimePickerT['viernesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesTipoServicio ?
-                    centroAEditar.horario.tipoRegistroTrabajador[i].viernesTipoServicio : '');
-                objetoValoresTimePicker1['sabado'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoCantidad ?
-                    centroAEditar.horario.tipoRegistroTrabajador[i].sabadoCantidad : '');
-                objetoValoresTimePickerT['sabadoTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio ?
-                    centroAEditar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio : '');
-                objetoValoresTimePicker1['domingo'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoCantidad ?
-                    centroAEditar.horario.tipoRegistroTrabajador[i].domingoCantidad : '');
-                objetoValoresTimePickerT['domingoTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoTipoServicio ?
-                    centroAEditar.horario.tipoRegistroTrabajador[i].domingoTipoServicio : '');
-                arrayValoresTimePicker1.push(objetoValoresTimePicker1);
-                arrayValoresTimePickerT.push(objetoValoresTimePickerT);
-            };
-            setValueCantidadHorasEdicion(arrayValoresTimePicker1);
-            setValueTipoServicioEdicion(arrayValoresTimePickerT);
-        };
-        if (centroAEditar.horario.tipo === "rangoDescanso") {
-            let arrayValoresTimePicker1 = [];
-            let arrayValoresTimePicker2 = [];
-            let arrayValoresTimePicker3 = [];
-            let arrayValoresTimePicker4 = [];
-            let arrayValoresTimePickerT = [];
-            for (let i = 0; i < centroAEditar.horario.tipoRegistroTrabajador.length; i++) {
-                let objetoValoresTimePicker1 = {};
-                let objetoValoresTimePicker2 = {};
-                let objetoValoresTimePicker3 = {};
-                let objetoValoresTimePicker4 = {};
-                let objetoValoresTimePickerT = {};
-                objetoValoresTimePicker1['lunes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso) : null);
-                objetoValoresTimePicker2['lunes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesFin1RangoDescanso ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].lunesFin1RangoDescanso) : null);
-                objetoValoresTimePicker3['lunes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso) : null);
-                objetoValoresTimePicker4['lunes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesFin2RangoDescanso ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].lunesFin2RangoDescanso) : null);
-                objetoValoresTimePickerT['lunesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesTipoServicio ?
-                    centroAEditar.horario.tipoRegistroTrabajador[i].lunesTipoServicio : '');
-                objetoValoresTimePicker1['martes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesInicio1RangoDescanso ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].martesInicio1RangoDescanso) : null);
-                objetoValoresTimePicker2['martes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesFin1RangoDescanso ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].martesFin1RangoDescanso) : null);
-                objetoValoresTimePicker3['martes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesInicio2RangoDescanso ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].martesInicio2RangoDescanso) : null);
-                objetoValoresTimePicker4['martes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesFin2RangoDescanso ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].martesFin2RangoDescanso) : null);
-                objetoValoresTimePickerT['martesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesTipoServicio ?
-                    centroAEditar.horario.tipoRegistroTrabajador[i].martesTipoServicio : '');
-                objetoValoresTimePicker1['miercoles'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso) : null);
-                objetoValoresTimePicker2['miercoles'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso) : null);
-                objetoValoresTimePicker3['miercoles'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso) : null);
-                objetoValoresTimePicker4['miercoles'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso) : null);
-                objetoValoresTimePickerT['miercolesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio ?
-                    centroAEditar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio : '');
-                objetoValoresTimePicker1['jueves'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso) : null);
-                objetoValoresTimePicker2['jueves'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesFin1RangoDescanso ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].juevesFin1RangoDescanso) : null);
-                objetoValoresTimePicker3['jueves'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso) : null);
-                objetoValoresTimePicker4['jueves'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesFin2RangoDescanso ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].juevesFin2RangoDescanso) : null);
-                objetoValoresTimePickerT['juevesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesTipoServicio ?
-                    centroAEditar.horario.tipoRegistroTrabajador[i].juevesTipoServicio : '');
-                objetoValoresTimePicker1['viernes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso) : null);
-                objetoValoresTimePicker2['viernes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesFin1RangoDescanso ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].viernesFin1RangoDescanso) : null);
-                objetoValoresTimePicker3['viernes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso) : null);
-                objetoValoresTimePicker4['viernes'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesFin2RangoDescanso ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].viernesFin2RangoDescanso) : null);
-                objetoValoresTimePickerT['viernesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesTipoServicio ?
-                    centroAEditar.horario.tipoRegistroTrabajador[i].viernesTipoServicio : '');
-                objetoValoresTimePicker1['sabado'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso) : null);
-                objetoValoresTimePicker2['sabado'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso) : null);
-                objetoValoresTimePicker3['sabado'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso) : null);
-                objetoValoresTimePicker4['sabado'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso) : null);
-                objetoValoresTimePickerT['sabadoTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio ?
-                    centroAEditar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio : '');
-                objetoValoresTimePicker1['domingo'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso) : null);
-                objetoValoresTimePicker2['domingo'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoFin1RangoDescanso ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].domingoFin1RangoDescanso) : null);
-                objetoValoresTimePicker3['domingo'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso) : null);
-                objetoValoresTimePicker4['domingo'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoFin2RangoDescanso ?
-                    generaFecha(centroAEditar.horario.tipoRegistroTrabajador[i].domingoFin2RangoDescanso) : null);
-                objetoValoresTimePickerT['domingoTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoTipoServicio ?
-                    centroAEditar.horario.tipoRegistroTrabajador[i].domingoTipoServicio : '');
-                arrayValoresTimePicker1.push(objetoValoresTimePicker1);
-                arrayValoresTimePicker2.push(objetoValoresTimePicker2);
-                arrayValoresTimePicker3.push(objetoValoresTimePicker3);
-                arrayValoresTimePicker4.push(objetoValoresTimePicker4);
-                arrayValoresTimePickerT.push(objetoValoresTimePickerT);
-            };
-            setValueTimePickerInicioDescanso1Edicion(arrayValoresTimePicker1);
-            setValueTimePickerFinDescanso1Edicion(arrayValoresTimePicker2);
-            setValueTimePickerInicioDescanso2Edicion(arrayValoresTimePicker3);
-            setValueTimePickerFinDescanso2Edicion(arrayValoresTimePicker4);
-            setValueTipoServicioEdicion(arrayValoresTimePickerT);
-        };
-        let arrayValoresHorario = [];
-        for (let i = 0; i < centroAEditar.horario.tipoRegistroTrabajador.length; i++) {
-            let objetoValoresHorario = {};
-            objetoValoresHorario['lunesInicioRango'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesInicioRango ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].lunesInicioRango : null);
-            objetoValoresHorario['lunesFinRango'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesFinRango ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].lunesFinRango : null);
-            objetoValoresHorario['martesInicioRango'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesInicioRango ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].martesInicioRango : null);
-            objetoValoresHorario['martesFinRango'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesFinRango ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].martesFinRango : null);
-            objetoValoresHorario['miercolesInicioRango'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesInicioRango ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].miercolesInicioRango : null);
-            objetoValoresHorario['miercolesFinRango'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesFinRango ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].miercolesFinRango : null);
-            objetoValoresHorario['juevesInicioRango'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesInicioRango ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].juevesInicioRango : null);
-            objetoValoresHorario['juevesFinRango'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesFinRango ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].juevesFinRango : null);
-            objetoValoresHorario['viernesInicioRango'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesInicioRango ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].viernesInicioRango : null);
-            objetoValoresHorario['viernesFinRango'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesFinRango ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].viernesFinRango : null);
-            objetoValoresHorario['sabadoInicioRango'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoInicioRango ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].sabadoInicioRango : null);
-            objetoValoresHorario['sabadoFinRango'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoFinRango ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].sabadoFinRango : null);
-            objetoValoresHorario['domingoInicioRango'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoInicioRango ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].domingoInicioRango : null);
-            objetoValoresHorario['domingoFinRango'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoFinRango ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].domingoFinRango : null);
-            objetoValoresHorario['lunesInicio1RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso : null);
-            objetoValoresHorario['lunesFin1RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesFin1RangoDescanso ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].lunesFin1RangoDescanso : null);
-            objetoValoresHorario['lunesInicio2RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso : null);
-            objetoValoresHorario['lunesFin2RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesFin2RangoDescanso ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].lunesFin2RangoDescanso : null);
-            objetoValoresHorario['martesInicio1RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesInicio1RangoDescanso ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].martesInicio1RangoDescanso : null);
-            objetoValoresHorario['martesFin1RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesFin1RangoDescanso ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].martesFin1RangoDescanso : null);
-            objetoValoresHorario['martesInicio2RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesInicio2RangoDescanso ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].martesInicio2RangoDescanso : null);
-            objetoValoresHorario['martesFin2RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesFin2RangoDescanso ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].martesFin2RangoDescanso : null);
-            objetoValoresHorario['miercolesInicio1RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso : null);
-            objetoValoresHorario['miercolesFin1RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso : null);
-            objetoValoresHorario['miercolesInicio2RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso : null);
-            objetoValoresHorario['miercolesFin2RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso : null);
-            objetoValoresHorario['juevesInicio1RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso : null);
-            objetoValoresHorario['juevesFin1RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesFin1RangoDescanso ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].juevesFin1RangoDescanso : null);
-            objetoValoresHorario['juevesInicio2RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso : null);
-            objetoValoresHorario['juevesFin2RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesFin2RangoDescanso ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].juevesFin2RangoDescanso : null);
-            objetoValoresHorario['viernesInicio1RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso : null);
-            objetoValoresHorario['viernesFin1RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesFin1RangoDescanso ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].viernesFin1RangoDescanso : null);
-            objetoValoresHorario['viernesInicio2RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso : null);
-            objetoValoresHorario['viernesFin2RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesFin2RangoDescanso ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].viernesFin2RangoDescanso : null);
-            objetoValoresHorario['sabadoInicio1RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso : null);
-            objetoValoresHorario['sabadoFin1RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso : null);
-            objetoValoresHorario['sabadoInicio2RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso : null);
-            objetoValoresHorario['sabadoFin2RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso : null);
-            objetoValoresHorario['domingoInicio1RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso : null);
-            objetoValoresHorario['domingoFin1RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoFin1RangoDescanso ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].domingoFin1RangoDescanso : null);
-            objetoValoresHorario['domingoInicio2RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso : null);
-            objetoValoresHorario['domingoFin2RangoDescanso'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoFin2RangoDescanso ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].domingoFin2RangoDescanso : null);
-            objetoValoresHorario['lunesCantidad'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesCantidad ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].lunesCantidad : '');
-            objetoValoresHorario['martesCantidad'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesCantidad ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].martesCantidad : '');
-            objetoValoresHorario['miercolesCantidad'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesCantidad ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].miercolesCantidad : '');
-            objetoValoresHorario['juevesCantidad'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesCantidad ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].juevesCantidad : '');
-            objetoValoresHorario['viernesCantidad'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesCantidad ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].viernesCantidad : '');
-            objetoValoresHorario['sabadoCantidad'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoCantidad ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].sabadoCantidad : '');
-            objetoValoresHorario['domingoCantidad'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoCantidad ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].domingoCantidad : '');
-            objetoValoresHorario['lunesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].lunesTipoServicio ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].lunesTipoServicio : '');
-            objetoValoresHorario['martesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].martesTipoServicio ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].martesTipoServicio : '');
-            objetoValoresHorario['miercolesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio : '');
-            objetoValoresHorario['juevesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].juevesTipoServicio ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].juevesTipoServicio : '');
-            objetoValoresHorario['viernesTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].viernesTipoServicio ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].viernesTipoServicio : '');
-            objetoValoresHorario['sabadoTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio : '');
-            objetoValoresHorario['domingoTipoServicio'] = (centroAEditar.horario.tipoRegistroTrabajador[i].domingoTipoServicio ?
-                centroAEditar.horario.tipoRegistroTrabajador[i].domingoTipoServicio : '');
-            arrayValoresHorario.push(objetoValoresHorario);
-        };
-        setHorarioIntervencionEdicion({
-            tipo: centroAEditar.horario.tipo,
-            variacion: centroAEditar.horario.variacion,
-            tipoRegistro: centroAEditar.horario.tipoRegistro,
-            tipoRegistroTrabajador: arrayValoresHorario
-        });
-        setTrabajadoresEdicion({
-            ...trabajadoresEdicion,
-            cantidad: centroAEditar.trabajadores.cantidad,
-            trabajadores: centroAEditar.trabajadores.trabajadores
-        });
     }, [centroAEditar]);
 
     useEffect(() => {
@@ -1122,6 +680,15 @@ const CentrosEditar = forwardRef((props, ref) => {
         }
     }, [openLoadingCentros, openLoadingTrabajadores]);
 
+    useEffect(() => {
+        if (esInicioCentrosEdicion) {
+            if (numeroCuadrantesEdicion[0].guardado) {
+                gestionaContenidoCuadranteEdicion(1);
+                setEsInicioCentrosEdicion(false);
+            };
+        }
+    }, [numeroCuadrantesEdicion]);
+
     //funciones
 
     const handleChangeTabCentrosEdicion = (event, newValue) => {
@@ -1161,15 +728,17 @@ const CentrosEditar = forwardRef((props, ref) => {
 
     const handleChangeSelectCentrosEdicion = (e, values) => {
         if (values) {
+            reseteaContenidoEdicion('nuevo');
+            setEsInicioCentrosEdicion(true);
             setEstamosCargandoDatos(true);
-            setValuesAutocompleteCentrosValores(values)
+            setValuesAutocompleteCentrosValores(values);
             dispatch(obtenerCentroAccion('centros', values.id));
             dispatch(activarDesactivarAccion(false));
         } else {
             dispatch(activarDesactivarAccion(true));
             dispatch(activarDesactivarActualizarCentroAccion(true));
             dispatch(registrarIntervencionAccion(true));
-            reseteaContenidoEdicion();
+            reseteaContenidoEdicion('nuevo');
         }
     };
 
@@ -1178,6 +747,36 @@ const CentrosEditar = forwardRef((props, ref) => {
     };
 
     const handleChangeFormEdicion = (prop) => (e) => {
+        if (prop === "categoria") {
+            if (numeroCuadrantesEdicion.length > 1) {
+                let foundCategoria = false;
+                numeroCuadrantesEdicion.forEach((cuadrante, index) => {
+                    if (cuadrante.cuadrante) {
+                        if (cuadrante.cuadrante.categoria === e.target.value) {
+                            foundCategoria = true;
+                        };
+                    };
+                });
+                if (foundCategoria) {
+                    setAlert({
+                        mensaje: "No es posible registrar un centro con la misma categoría en 2 cuadrantes.",
+                        tipo: 'error'
+                    })
+                    setOpenSnack(true);
+                    return;
+                } else {
+                    setValuesFormEdicion({ ...valuesFormEdicion, [prop]: e.target.value });
+                    dispatch(registrarIntervencionAccion(false));
+                    dispatch(activarDesactivarActualizarCentroAccion(false));
+                    return;
+                };
+            } else {
+                setValuesFormEdicion({ ...valuesFormEdicion, [prop]: e.target.value });
+                dispatch(registrarIntervencionAccion(false));
+                dispatch(activarDesactivarActualizarCentroAccion(false));
+                return;
+            };
+        };
         if (prop === "variacion") {
             setValuesFormEdicion({ ...valuesFormEdicion, [prop]: e.target.value });
             setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, variacion: e.target.value });
@@ -1447,6 +1046,13 @@ const CentrosEditar = forwardRef((props, ref) => {
         dispatch(registrarIntervencionAccion(false));
         dispatch(activarDesactivarActualizarCentroAccion(false));
     };
+
+    const handleChangeFormEdicionGenerales = (prop) => (e) => {
+        setValuesFormEdicionGenerales({ ...valuesFormEdicionGenerales, [prop]: e.target.value });
+        dispatch(registrarIntervencionAccion(false));
+        dispatch(activarDesactivarActualizarCentroAccion(false));
+    };
+
 
     const handleChangeFormEdicionSelectsTrabajadores = (tipo, index) => (e) => {
         let encontrado = false;
@@ -2516,9 +2122,9 @@ const CentrosEditar = forwardRef((props, ref) => {
 
     const handleChangeSwitchEstadoEdicion = (e) => {
         if (e.target.checked) {
-            setValuesFormEdicion({ ...valuesFormEdicion, estado: 'baja' });
+            setValuesFormEdicionGenerales({ ...valuesFormEdicionGenerales, estado: 'baja' });
         } else {
-            setValuesFormEdicion({ ...valuesFormEdicion, estado: 'alta' });
+            setValuesFormEdicionGenerales({ ...valuesFormEdicionGenerales, estado: 'alta' });
         };
         setStateSwitchEstadoEdicion(e.target.checked);
         dispatch(registrarIntervencionAccion(false));
@@ -2823,20 +2429,20 @@ const CentrosEditar = forwardRef((props, ref) => {
 
     const handleCloseDialogBotones = (respuesta) => {
         if (respuesta === "acuerdo") {
-            dispatch(eliminarCentroAccion('centros', valuesFormEdicion.id));
+            dispatch(eliminarCentroAccion('centros', valuesFormEdicionGenerales.id));
             //setTimeout(function(){ window.location.reload(); }, 1500);
             dispatch(activarDesactivarAccion(true));
-            reseteaContenidoEdicion();
+            reseteaContenidoEdicion('nuevo');
         }
         dispatch(cierraObjetoDialogAccion());
     };
 
     const procesarDatosEdicionPromesa = () => {
         return new Promise((resolve, reject) => {
-            if (valuesFormEdicion.nombre === '' ||
+            if (valuesFormEdicionGenerales.nombre === '' ||
                 valuesFormEdicion.categoria === '' ||
-                valuesFormEdicion.formaPago === '' ||
-                valuesFormEdicion.tempPago === ''
+                valuesFormEdicionGenerales.formaPago === '' ||
+                valuesFormEdicionGenerales.tempPago === ''
             ) {
                 setAlert({
                     mensaje: "Faltan datos por completar. Revisa el formulario.",
@@ -3105,8 +2711,8 @@ const CentrosEditar = forwardRef((props, ref) => {
             };
 
             //validacion mail
-            if (valuesFormEdicion.mail) {
-                const validacionMail = dispatch(validarMailAccion(valuesFormEdicion.mail));
+            if (valuesFormEdicionGenerales.mail) {
+                const validacionMail = dispatch(validarMailAccion(valuesFormEdicionGenerales.mail));
                 if (!validacionMail) {
                     setAlert({
                         mensaje: "El campo E-mail es incorrecto. Revisa el formulario.",
@@ -3116,8 +2722,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                     return;
                 };
             }
-            if (valuesFormEdicion.mail2) {
-                const validacionMail2 = dispatch(validarMailAccion(valuesFormEdicion.mail2));
+            if (valuesFormEdicionGenerales.mail2) {
+                const validacionMail2 = dispatch(validarMailAccion(valuesFormEdicionGenerales.mail2));
                 if (!validacionMail2) {
                     setAlert({
                         mensaje: "El campo E-mail es incorrecto. Revisa el formulario.",
@@ -3909,37 +3515,189 @@ const CentrosEditar = forwardRef((props, ref) => {
                     break;
                 case 'procesarDatosEdicion':
                     const procesarDatosEdicion = () => {
-                        procesarDatosEdicionPromesa()
-                            .then(values => {
-                                if (values.resuelto) {
-                                    //registramos
-                                    const centroAGuardar = {
-                                        id: valuesFormEdicion.id,
-                                        nombre: valuesFormEdicion.nombre,
-                                        estado: valuesFormEdicion.estado,
-                                        categoria: valuesFormEdicion.categoria,
-                                        codigo: valuesFormEdicion.codigo ? valuesFormEdicion.codigo : null,
-                                        domicilio: valuesFormEdicion.domicilio ? valuesFormEdicion.domicilio : null,
-                                        codigo_postal: valuesFormEdicion.codigoPostal ? valuesFormEdicion.codigoPostal : null,
-                                        poblacion: valuesFormEdicion.poblacion ? valuesFormEdicion.poblacion : null,
-                                        provincia: valuesFormEdicion.provincia ? valuesFormEdicion.provincia : null,
-                                        nif: valuesFormEdicion.nif ? valuesFormEdicion.nif : null,
-                                        mail: valuesFormEdicion.mail ? valuesFormEdicion.mail : null,
-                                        mail_2: valuesFormEdicion.mail2 ? valuesFormEdicion.mail2 : null,
-                                        telefono: valuesFormEdicion.telefono ? valuesFormEdicion.telefono : null,
-                                        telefono_2: valuesFormEdicion.telefono2 ? valuesFormEdicion.telefono2 : null,
-                                        forma_pago: valuesFormEdicion.formaPago,
-                                        temp_pago: valuesFormEdicion.tempPago,
-                                        dia_pago: valuesFormEdicion.diaPago ? valuesFormEdicion.diaPago : null,
-                                        horario: values.horario ? JSON.stringify(values.horario) : null,
-                                        servicios_fijos: values.servicios ? JSON.stringify(values.servicios) : null,
-                                        trabajadores: values.trabajadores ? JSON.stringify(values.trabajadores) : null
+                        let centroAGuardar;
+                        let objCategorias, objHorario, objServiciosFijos, objTrabajadores = null;
+                        let centroDefinitivoAGuardar;
+                        if (numeroCuadrantesEdicion.length === 1) {
+                            procesarDatosEdicionPromesa()
+                                .then(values => {
+                                    if (values.resuelto) {
+                                        //registramos
+                                        centroAGuardar = {
+                                            id: valuesFormEdicionGenerales.id,
+                                            nombre: valuesFormEdicionGenerales.nombre,
+                                            estado: valuesFormEdicionGenerales.estado,
+                                            categoria: valuesFormEdicion.categoria,
+                                            codigo: valuesFormEdicionGenerales.codigo ? valuesFormEdicionGenerales.codigo : null,
+                                            domicilio: valuesFormEdicionGenerales.domicilio ? valuesFormEdicionGenerales.domicilio : null,
+                                            codigo_postal: valuesFormEdicionGenerales.codigoPostal ? valuesFormEdicionGenerales.codigoPostal : null,
+                                            poblacion: valuesFormEdicionGenerales.poblacion ? valuesFormEdicionGenerales.poblacion : null,
+                                            provincia: valuesFormEdicionGenerales.provincia ? valuesFormEdicionGenerales.provincia : null,
+                                            nif: valuesFormEdicionGenerales.nif ? valuesFormEdicionGenerales.nif : null,
+                                            mail: valuesFormEdicionGenerales.mail ? valuesFormEdicionGenerales.mail : null,
+                                            mail_2: valuesFormEdicionGenerales.mail2 ? valuesFormEdicionGenerales.mail2 : null,
+                                            telefono: valuesFormEdicionGenerales.telefono ? valuesFormEdicionGenerales.telefono : null,
+                                            telefono_2: valuesFormEdicionGenerales.telefono2 ? valuesFormEdicionGenerales.telefono2 : null,
+                                            forma_pago: valuesFormEdicionGenerales.formaPago,
+                                            temp_pago: valuesFormEdicionGenerales.tempPago,
+                                            dia_pago: valuesFormEdicionGenerales.diaPago ? valuesFormEdicionGenerales.diaPago : null,
+                                            horario: values.horario ? (values.horario) : null,
+                                            servicios_fijos: values.servicios ? (values.servicios) : null,
+                                            trabajadores: values.trabajadores ? (values.trabajadores) : null
+                                        };
+                                        centroDefinitivoAGuardar = { ...centroAGuardar };
+                                        objCategorias = {
+                                            objeto: 'categoria',
+                                            categoria: []
+                                        };
+                                        objHorario = {
+                                            objeto: 'horario',
+                                            horario: []
+                                        };
+                                        objServiciosFijos = {
+                                            objeto: 'serviciosFijos',
+                                            serviciosFijos: []
+                                        };
+                                        objTrabajadores = {
+                                            objeto: 'trabajadores',
+                                            trabajadores: []
+                                        };
+                                        objCategorias.categoria.push(centroAGuardar.categoria);
+                                        if (centroAGuardar.horario) {
+                                            objHorario.horario.push(centroAGuardar.horario);
+                                        } else {
+                                            objHorario.horario.push(null);
+                                        };
+                                        if (centroAGuardar.servicios_fijos) {
+                                            objServiciosFijos.serviciosFijos.push(centroAGuardar.servicios_fijos);
+                                        } else {
+                                            objServiciosFijos.serviciosFijos.push(null);
+                                        };
+                                        if (centroAGuardar.trabajadores) {
+                                            objTrabajadores.trabajadores.push(centroAGuardar.trabajadores);
+                                        } else {
+                                            objTrabajadores.trabajadores.push(null);
+                                        };
+                                        centroDefinitivoAGuardar = {
+                                            ...centroDefinitivoAGuardar,
+                                            categoria: JSON.stringify(objCategorias),
+                                            horario: JSON.stringify(objHorario),
+                                            servicios_fijos: JSON.stringify(objServiciosFijos),
+                                            trabajadores: JSON.stringify(objTrabajadores)
+                                        };
+                                        dispatch(actualizarCentroAccion('centros', centroDefinitivoAGuardar.id, centroDefinitivoAGuardar));
+                                        dispatch(registrarIntervencionAccion(true));
+                                        dispatch(activarDesactivarActualizarCentroAccion(true));
                                     };
-                                    dispatch(actualizarCentroAccion('centros', centroAGuardar.id, centroAGuardar));
-                                    dispatch(registrarIntervencionAccion(true));
-                                    dispatch(activarDesactivarActualizarCentroAccion(true));
-                                };
-                            });
+                                });
+                        } else {
+                            procesarDatosEdicionPromesa()
+                                .then(values => {
+                                    if (values.resuelto) {
+                                        //registramos
+                                        centroAGuardar = {
+                                            id: valuesFormEdicionGenerales.id,
+                                            nombre: valuesFormEdicionGenerales.nombre,
+                                            estado: valuesFormEdicionGenerales.estado,
+                                            categoria: valuesFormEdicion.categoria,
+                                            codigo: valuesFormEdicionGenerales.codigo ? valuesFormEdicionGenerales.codigo : null,
+                                            domicilio: valuesFormEdicionGenerales.domicilio ? valuesFormEdicionGenerales.domicilio : null,
+                                            codigo_postal: valuesFormEdicionGenerales.codigoPostal ? valuesFormEdicionGenerales.codigoPostal : null,
+                                            poblacion: valuesFormEdicionGenerales.poblacion ? valuesFormEdicionGenerales.poblacion : null,
+                                            provincia: valuesFormEdicionGenerales.provincia ? valuesFormEdicionGenerales.provincia : null,
+                                            nif: valuesFormEdicionGenerales.nif ? valuesFormEdicionGenerales.nif : null,
+                                            mail: valuesFormEdicionGenerales.mail ? valuesFormEdicionGenerales.mail : null,
+                                            mail_2: valuesFormEdicionGenerales.mail2 ? valuesFormEdicionGenerales.mail2 : null,
+                                            telefono: valuesFormEdicionGenerales.telefono ? valuesFormEdicionGenerales.telefono : null,
+                                            telefono_2: valuesFormEdicionGenerales.telefono2 ? valuesFormEdicionGenerales.telefono2 : null,
+                                            forma_pago: valuesFormEdicionGenerales.formaPago,
+                                            temp_pago: valuesFormEdicionGenerales.tempPago,
+                                            dia_pago: valuesFormEdicionGenerales.diaPago ? valuesFormEdicionGenerales.diaPago : null,
+                                            horario: values.horario ? (values.horario) : null,
+                                            servicios_fijos: values.servicios ? (values.servicios) : null,
+                                            trabajadores: values.trabajadores ? (values.trabajadores) : null
+                                        };
+                                        let arrayCuadrantes = [...numeroCuadrantesEdicion];
+                                        arrayCuadrantes.forEach((cuadrante, index) => {
+                                            if (cuadrante.value === cuadranteEnUsoEdicion) {
+                                                cuadrante.cuadrante = {
+                                                    categoria: valuesFormEdicion.categoria,
+                                                    horario: values.horario ? (values.horario) : null,
+                                                    servicios_fijos: values.servicios ? (values.servicios) : null,
+                                                    trabajadores: values.trabajadores ? (values.trabajadores) : null
+                                                };
+                                                cuadrante.guardado = true;
+                                            }
+                                        });
+                                        centroDefinitivoAGuardar = { ...centroAGuardar };
+                                        objCategorias = {
+                                            objeto: 'categoria',
+                                            categoria: []
+                                        };
+                                        objHorario = {
+                                            objeto: 'horario',
+                                            horario: []
+                                        };
+                                        objServiciosFijos = {
+                                            objeto: 'serviciosFijos',
+                                            serviciosFijos: []
+                                        };
+                                        objTrabajadores = {
+                                            objeto: 'trabajadores',
+                                            trabajadores: []
+                                        };
+                                        arrayCuadrantes.forEach((cuadrante, index) => {
+                                            if (cuadrante.guardado) {
+                                                objCategorias.categoria.push(cuadrante.cuadrante.categoria);
+                                                if (cuadrante.cuadrante.horario) {
+                                                    objHorario.horario.push(cuadrante.cuadrante.horario);
+                                                } else {
+                                                    objHorario.horario.push(null);
+                                                };
+                                                if (cuadrante.cuadrante.servicios_fijos) {
+                                                    objServiciosFijos.serviciosFijos.push(cuadrante.cuadrante.servicios_fijos);
+                                                } else {
+                                                    objServiciosFijos.serviciosFijos.push(null);
+                                                };
+                                                if (cuadrante.cuadrante.trabajadores) {
+                                                    objTrabajadores.trabajadores.push(cuadrante.cuadrante.trabajadores);
+                                                } else {
+                                                    objTrabajadores.trabajadores.push(null);
+                                                };
+                                            } else {
+                                                objCategorias.categoria.push(centroAGuardar.categoria);
+                                                if (centroAGuardar.horario) {
+                                                    objHorario.horario.push(centroAGuardar.horario);
+                                                } else {
+                                                    objHorario.horario.push(null);
+                                                };
+                                                if (centroAGuardar.servicios_fijos) {
+                                                    objServiciosFijos.serviciosFijos.push(centroAGuardar.servicios_fijos);
+                                                } else {
+                                                    objServiciosFijos.serviciosFijos.push(null);
+                                                };
+                                                if (centroAGuardar.trabajadores) {
+                                                    objTrabajadores.trabajadores.push(centroAGuardar.trabajadores);
+                                                } else {
+                                                    objTrabajadores.trabajadores.push(null);
+                                                };
+                                                cuadrante.cuadrante = centroAGuardar;
+                                                cuadrante.guardado = true;
+                                            };
+                                        });
+                                        centroDefinitivoAGuardar = {
+                                            ...centroDefinitivoAGuardar,
+                                            categoria: JSON.stringify(objCategorias),
+                                            horario: JSON.stringify(objHorario),
+                                            servicios_fijos: JSON.stringify(objServiciosFijos),
+                                            trabajadores: JSON.stringify(objTrabajadores)
+                                        };
+                                        dispatch(actualizarCentroAccion('centros', centroDefinitivoAGuardar.id, centroDefinitivoAGuardar));
+                                        dispatch(registrarIntervencionAccion(true));
+                                        dispatch(activarDesactivarActualizarCentroAccion(true));
+                                    };
+                                });
+                        };
                     };
                     procesarDatosEdicion();
                     break;
@@ -3948,60 +3706,102 @@ const CentrosEditar = forwardRef((props, ref) => {
         }
     }));
 
-    const reseteaContenidoEdicion = () => {
-        setEstamosCargandoDatos(true);
-        forceUpdate();
-        setValuesAutocompleteCentrosValores(null);
-        setValuesFormEdicion({
-            id: null,
-            nombre: '',
-            estado: 'alta',
-            categoria: '',
-            codigo: '',
-            domicilio: '',
-            codigoPostal: '',
-            poblacion: '',
-            provincia: '',
-            nif: '',
-            mail: '',
-            mail2: '',
-            telefono: '',
-            telefono2: '',
-            formaPago: '',
-            tempPago: '',
-            diaPago: '',
-            variacion: '',
-            tipo: '',
-            numeroTrabajadores: '',
-            datosTrabajadores: [],
-            datosSuplentes: [],
-            computo: '',
-            mensualPactado: null,
-            precioHora_L: null,
-            precioHora_E: null,
-            precioHora_P: null,
-            precioHora_N: null,
-            precioHora_R: null,
-            precioHora_L1: null,
-            precioHora_L2: null,
-            precioHora_F: null,
-            precioHora_TO: null,
-            precioHora_CR: null,
-            precioHora_CE: null,
-            precioHora_CI: null,
-            precioHora_MO: null,
-            precioHora_OF: null,
-            precioHora_AL: null,
-            precioHora_LA: null,
-            precioHora_TE: null,
-            precioHora_FI: null,
-            precioHora_FE: null,
-            precioHora_AB: null,
-            precioHora_MA: null,
-            precioHora_PO: null,
-            precioHora_BA: null,
-            precioHora_FT: null
-        });
+    const reseteaContenidoEdicion = (accion) => {
+        if (accion === 'nuevo') {
+            setEstamosCargandoDatos(true);
+            forceUpdate();
+            setValuesAutocompleteCentrosValores(null);
+            setValuesFormEdicion({
+                categoria: '',
+                variacion: '',
+                tipo: '',
+                numeroTrabajadores: '',
+                datosTrabajadores: [],
+                datosSuplentes: [],
+                computo: '',
+                mensualPactado: null,
+                precioHora_L: null,
+                precioHora_E: null,
+                precioHora_P: null,
+                precioHora_N: null,
+                precioHora_R: null,
+                precioHora_L1: null,
+                precioHora_L2: null,
+                precioHora_F: null,
+                precioHora_TO: null,
+                precioHora_CR: null,
+                precioHora_CE: null,
+                precioHora_CI: null,
+                precioHora_MO: null,
+                precioHora_OF: null,
+                precioHora_AL: null,
+                precioHora_LA: null,
+                precioHora_TE: null,
+                precioHora_FI: null,
+                precioHora_FE: null,
+                precioHora_AB: null,
+                precioHora_MA: null,
+                precioHora_PO: null,
+                precioHora_BA: null,
+                precioHora_FT: null
+            });
+            setValuesFormEdicionGenerales({
+                id: null,
+                nombre: '',
+                estado: 'alta',
+                codigo: '',
+                domicilio: '',
+                codigoPostal: '',
+                poblacion: '',
+                provincia: '',
+                nif: '',
+                mail: '',
+                mail2: '',
+                telefono: '',
+                telefono2: '',
+                formaPago: '',
+                tempPago: '',
+                diaPago: ''
+            });
+            setNumeroCuadrantesEdicion([{ value: 1, cuadrante: null, guardado: false }]);
+            setCuadranteEnUsoEdicion(1);
+            setEsInicioCentrosEdicion(true);
+        } else {
+            setValuesFormEdicion({
+                categoria: '',
+                variacion: '',
+                tipo: '',
+                numeroTrabajadores: '',
+                datosTrabajadores: [],
+                datosSuplentes: [],
+                computo: '',
+                mensualPactado: null,
+                precioHora_L: null,
+                precioHora_E: null,
+                precioHora_P: null,
+                precioHora_N: null,
+                precioHora_R: null,
+                precioHora_L1: null,
+                precioHora_L2: null,
+                precioHora_F: null,
+                precioHora_TO: null,
+                precioHora_CR: null,
+                precioHora_CE: null,
+                precioHora_CI: null,
+                precioHora_MO: null,
+                precioHora_OF: null,
+                precioHora_AL: null,
+                precioHora_LA: null,
+                precioHora_TE: null,
+                precioHora_FI: null,
+                precioHora_FE: null,
+                precioHora_AB: null,
+                precioHora_MA: null,
+                precioHora_PO: null,
+                precioHora_BA: null,
+                precioHora_FT: null
+            });
+        };
         setValueTimePickerInicioEdicion([
             {
                 lunes: null,
@@ -4828,6 +4628,724 @@ const CentrosEditar = forwardRef((props, ref) => {
         )
     };
 
+    const handleAnadirCuadranteCentroEdicion = () => {
+        procesarDatosEdicionPromesa()
+            .then(values => {
+                if (values.resuelto) {
+                    //registramos
+                    const centroAGuardar = {
+                        categoria: valuesFormEdicion.categoria,
+                        horario: values.horario ? (values.horario) : null,
+                        servicios_fijos: values.servicios ? (values.servicios) : null,
+                        trabajadores: values.trabajadores ? (values.trabajadores) : null
+                    };
+                    let arrayCuadrantes = [...numeroCuadrantesEdicion];
+                    arrayCuadrantes.forEach((cuadrante, index) => {
+                        if (cuadrante.value === cuadranteEnUsoEdicion) {
+                            cuadrante.cuadrante = centroAGuardar;
+                            cuadrante.guardado = true;
+                        }
+                    });
+                    arrayCuadrantes.push({ value: numeroCuadrantesEdicion.length + 1, cuadrante: null, guardado: false });
+                    setNumeroCuadrantesEdicion(arrayCuadrantes);
+                    setCuadranteEnUsoEdicion(numeroCuadrantesEdicion.length + 1);
+                    reseteaContenidoEdicion('anadir');
+                    dispatch(registrarIntervencionAccion(false));
+                    dispatch(activarDesactivarActualizarCentroAccion(false));
+                }
+            });
+    };
+
+    const handleEliminarCuadranteCentroEdicion = () => {
+        let arrayCuadrantes = [...numeroCuadrantesEdicion];
+        const posicionCuadrante = arrayCuadrantes.indexOf(arrayCuadrantes.find(cuadrante => cuadrante.value === cuadranteEnUsoEdicion));
+        arrayCuadrantes.splice(posicionCuadrante, 1);
+        for (let i = 0; i < arrayCuadrantes.length; i++) {
+            arrayCuadrantes[i]['value'] = i + 1;
+        };
+        setNumeroCuadrantesEdicion(arrayCuadrantes);
+        setCuadranteEnUsoEdicion(1);
+        reseteaContenidoEdicion('anadir');
+        dispatch(registrarIntervencionAccion(false));
+        dispatch(activarDesactivarActualizarCentroAccion(false));
+        setEsInicioCentrosEdicion(true);
+        setAlert({
+            mensaje: "Cuadrante eliminado exitosamente.",
+            tipo: 'success'
+        })
+        setOpenSnack(true);
+    };
+
+    const handleChangeCuadranteCentroEdicion = (e) => {
+        procesarDatosEdicionPromesa()
+            .then(values => {
+                if (values.resuelto) {
+                    //registramos
+                    const centroAGuardar = {
+                        categoria: valuesFormEdicion.categoria,
+                        horario: values.horario ? (values.horario) : null,
+                        servicios_fijos: values.servicios ? (values.servicios) : null,
+                        trabajadores: values.trabajadores ? (values.trabajadores) : null
+                    };
+                    let arrayCuadrantes = [...numeroCuadrantesEdicion];
+                    arrayCuadrantes.forEach((cuadrante, index) => {
+                        if (cuadrante.value === cuadranteEnUsoEdicion) {
+                            cuadrante.cuadrante = centroAGuardar;
+                            cuadrante.guardado = true;
+                        }
+                    });
+                    setNumeroCuadrantesEdicion(arrayCuadrantes);
+                    setCuadranteEnUsoEdicion(e.target.value);
+                    reseteaContenidoEdicion('anadir');
+                    gestionaContenidoCuadranteEdicion(e.target.value);
+                }
+            });
+    };
+
+    const gestionaContenidoCuadranteEdicion = (elCuadrante) => {
+        let cuadranteAGestionarCompleto = numeroCuadrantesEdicion.find(cuadrante => cuadrante.value === elCuadrante);
+        let cuadranteAGestionar = cuadranteAGestionarCompleto.cuadrante;
+        const arrayTr = [];
+        const arraySu = [];
+        if (cuadranteAGestionar.trabajadores) {
+            if (cuadranteAGestionar.trabajadores.trabajadores.length > 0) {
+                cuadranteAGestionar.trabajadores.trabajadores.forEach((trabajadorIterado, index) => {
+                    arrayTr.push(trabajadorIterado['trabajador_' + (index + 1)]);
+                    arraySu.push(trabajadorIterado['suplente_' + (index + 1)]);
+                });
+                setTrabajadoresEdicion({
+                    ...trabajadoresEdicion,
+                    cantidad: cuadranteAGestionar.trabajadores.cantidad,
+                    trabajadores: cuadranteAGestionar.trabajadores.trabajadores
+                });
+            } else {
+                setTrabajadoresEdicion({
+                    cantidad: '',
+                    trabajadores: []
+                });
+            };
+        };
+        if (cuadranteAGestionar.horario) {
+            if (cuadranteAGestionar.horario.tipoRegistro === 'individual') {
+                setStateSwitchTipoRegistro(true);
+            } else {
+                setStateSwitchTipoRegistro(false);
+            }
+        };
+        if (cuadranteAGestionar.estado === 'baja') {
+            setStateSwitchEstadoEdicion(true);
+        };
+        let myObjetoServiciosFijos = {
+            precioHora_TO: null,
+            precioHora_CR: null,
+            precioHora_CE: null,
+            precioHora_CI: null,
+            precioHora_MO: null,
+            precioHora_OF: null,
+            precioHora_AL: null,
+            precioHora_LA: null,
+            precioHora_TE: null,
+            precioHora_FI: null,
+            precioHora_FE: null,
+            precioHora_AB: null,
+            precioHora_MA: null,
+            precioHora_PO: null,
+            precioHora_BA: null,
+            precioHora_FT: null
+        };
+        let objetoEstadosSwitch = {
+            TO: false,
+            CR: false,
+            CE: false,
+            CI: false,
+            MO: false,
+            OF: false,
+            AL: false,
+            LA: false,
+            TE: false,
+            FI: false,
+            FE: false,
+            AB: false,
+            MA: false,
+            PO: false,
+            BA: false,
+            FT: false
+        };
+        if (cuadranteAGestionar.servicios_fijos) {
+            cuadranteAGestionar.servicios_fijos.servicio.forEach((servicio) => {
+                if (servicio.precioHora_TO) {
+                    myObjetoServiciosFijos.precioHora_TO = servicio.precioHora_TO;
+                    objetoEstadosSwitch.TO = true;
+                };
+                if (servicio.precioHora_CR) {
+                    myObjetoServiciosFijos.precioHora_CR = servicio.precioHora_CR;
+                    objetoEstadosSwitch.CR = true;
+                };
+                if (servicio.precioHora_CE) {
+                    myObjetoServiciosFijos.precioHora_CE = servicio.precioHora_CE;
+                    objetoEstadosSwitch.CE = true;
+                };
+                if (servicio.precioHora_CI) {
+                    myObjetoServiciosFijos.precioHora_CI = servicio.precioHora_CI;
+                    objetoEstadosSwitch.CI = true;
+                };
+                if (servicio.precioHora_MO) {
+                    myObjetoServiciosFijos.precioHora_MO = servicio.precioHora_MO;
+                    objetoEstadosSwitch.MO = true;
+                };
+                if (servicio.precioHora_OF) {
+                    myObjetoServiciosFijos.precioHora_OF = servicio.precioHora_OF;
+                    objetoEstadosSwitch.OF = true;
+                };
+                if (servicio.precioHora_AL) {
+                    myObjetoServiciosFijos.precioHora_AL = servicio.precioHora_AL;
+                    objetoEstadosSwitch.AL = true;
+                };
+                if (servicio.precioHora_LA) {
+                    myObjetoServiciosFijos.precioHora_LA = servicio.precioHora_LA;
+                    objetoEstadosSwitch.LA = true;
+                };
+                if (servicio.precioHora_TE) {
+                    myObjetoServiciosFijos.precioHora_TE = servicio.precioHora_TE;
+                    objetoEstadosSwitch.TE = true;
+                };
+                if (servicio.precioHora_FI) {
+                    myObjetoServiciosFijos.precioHora_FI = servicio.precioHora_FI;
+                    objetoEstadosSwitch.FI = true;
+                };
+                if (servicio.precioHora_FE) {
+                    myObjetoServiciosFijos.precioHora_FE = servicio.precioHora_FE;
+                    objetoEstadosSwitch.FE = true;
+                };
+                if (servicio.precioHora_AB) {
+                    myObjetoServiciosFijos.precioHora_AB = servicio.precioHora_AB;
+                    objetoEstadosSwitch.AB = true;
+                };
+                if (servicio.precioHora_MA) {
+                    myObjetoServiciosFijos.precioHora_MA = servicio.precioHora_MA;
+                    objetoEstadosSwitch.MA = true;
+                };
+                if (servicio.precioHora_PO) {
+                    myObjetoServiciosFijos.precioHora_PO = servicio.precioHora_PO;
+                    objetoEstadosSwitch.PO = true;
+                };
+                if (servicio.precioHora_BA) {
+                    myObjetoServiciosFijos.precioHora_BA = servicio.precioHora_BA;
+                    objetoEstadosSwitch.BA = true;
+                };
+                if (servicio.precioHora_FT) {
+                    myObjetoServiciosFijos.precioHora_FT = servicio.precioHora_FT;
+                    objetoEstadosSwitch.FT = true;
+                };
+            });
+        };
+        setStateSwitchTipoServicioFijoEdicion(objetoEstadosSwitch);
+        setValuesFormEdicion({
+            categoria: cuadranteAGestionar.categoria,
+            variacion: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.variacion : '',
+            tipo: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.tipo : '',
+            numeroTrabajadores: cuadranteAGestionar.trabajadores ? cuadranteAGestionar.trabajadores.cantidad : '',
+            datosTrabajadores: arrayTr,
+            datosSuplentes: arraySu,
+            computo: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.computo : '',
+            mensualPactado: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.mensualPactado : null,
+            precioHora_L: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.precioHora_L : null,
+            precioHora_E: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.precioHora_E : null,
+            precioHora_P: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.precioHora_P : null,
+            precioHora_R: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.precioHora_R : null,
+            precioHora_L1: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.precioHora_L1 : null,
+            precioHora_L2: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.precioHora_L2 : null,
+            precioHora_F: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.precioHora_F : null,
+            precioHora_TO: myObjetoServiciosFijos.precioHora_TO,
+            precioHora_CR: myObjetoServiciosFijos.precioHora_CR,
+            precioHora_CE: myObjetoServiciosFijos.precioHora_CE,
+            precioHora_CI: myObjetoServiciosFijos.precioHora_CI,
+            precioHora_MO: myObjetoServiciosFijos.precioHora_MO,
+            precioHora_OF: myObjetoServiciosFijos.precioHora_OF,
+            precioHora_AL: myObjetoServiciosFijos.precioHora_AL,
+            precioHora_LA: myObjetoServiciosFijos.precioHora_LA,
+            precioHora_TE: myObjetoServiciosFijos.precioHora_TE,
+            precioHora_FI: myObjetoServiciosFijos.precioHora_FI,
+            precioHora_FE: myObjetoServiciosFijos.precioHora_FE,
+            precioHora_AB: myObjetoServiciosFijos.precioHora_AB,
+            precioHora_MA: myObjetoServiciosFijos.precioHora_MA,
+            precioHora_PO: myObjetoServiciosFijos.precioHora_PO,
+            precioHora_BA: myObjetoServiciosFijos.precioHora_BA,
+            precioHora_FT: myObjetoServiciosFijos.precioHora_FT
+        });
+        if (cuadranteAGestionar.horario) {
+            if (cuadranteAGestionar.horario.tipo === "rango") {
+                let arrayValoresTimePicker1 = [];
+                let arrayValoresTimePicker2 = [];
+                let arrayValoresTimePickerT = [];
+                for (let i = 0; i < cuadranteAGestionar.horario.tipoRegistroTrabajador.length; i++) {
+                    let objetoValoresTimePicker1 = {};
+                    let objetoValoresTimePicker2 = {};
+                    let objetoValoresTimePickerT = {};
+                    objetoValoresTimePicker1['lunes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesInicioRango ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesInicioRango) : null);
+                    objetoValoresTimePicker2['lunes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesFinRango ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesFinRango) : null);
+                    objetoValoresTimePickerT['lunesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesTipoServicio : '');
+                    objetoValoresTimePicker1['martes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesInicioRango ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesInicioRango) : null);
+                    objetoValoresTimePicker2['martes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesFinRango ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesFinRango) : null);
+                    objetoValoresTimePickerT['martesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesTipoServicio : '');
+                    objetoValoresTimePicker1['miercoles'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesInicioRango ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesInicioRango) : null);
+                    objetoValoresTimePicker2['miercoles'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesFinRango ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesFinRango) : null);
+                    objetoValoresTimePickerT['miercolesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio : '');
+                    objetoValoresTimePicker1['jueves'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesInicioRango ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesInicioRango) : null);
+                    objetoValoresTimePicker2['jueves'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesFinRango ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesFinRango) : null);
+                    objetoValoresTimePickerT['juevesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesTipoServicio : '');
+                    objetoValoresTimePicker1['viernes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesInicioRango ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesInicioRango) : null);
+                    objetoValoresTimePicker2['viernes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesFinRango ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesFinRango) : null);
+                    objetoValoresTimePickerT['viernesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesTipoServicio : '');
+                    objetoValoresTimePicker1['sabado'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoInicioRango ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoInicioRango) : null);
+                    objetoValoresTimePicker2['sabado'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoFinRango ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoFinRango) : null);
+                    objetoValoresTimePickerT['sabadoTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio : '');
+                    objetoValoresTimePicker1['domingo'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoInicioRango ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoInicioRango) : null);
+                    objetoValoresTimePicker2['domingo'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoFinRango ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoFinRango) : null);
+                    objetoValoresTimePickerT['domingoTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoTipoServicio : '');
+                    arrayValoresTimePicker1.push(objetoValoresTimePicker1);
+                    arrayValoresTimePicker2.push(objetoValoresTimePicker2);
+                    arrayValoresTimePickerT.push(objetoValoresTimePickerT);
+                };
+                setValueTimePickerInicioEdicion(arrayValoresTimePicker1);
+                setValueTimePickerFinEdicion(arrayValoresTimePicker2);
+                setValueTipoServicioEdicion(arrayValoresTimePickerT);
+            };
+            if (cuadranteAGestionar.horario.tipo === "cantidad") {
+                let arrayValoresTimePicker1 = [];
+                let arrayValoresTimePickerT = [];
+                for (let i = 0; i < cuadranteAGestionar.horario.tipoRegistroTrabajador.length; i++) {
+                    let objetoValoresTimePicker1 = {};
+                    let objetoValoresTimePickerT = {};
+                    objetoValoresTimePicker1['lunes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesCantidad ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesCantidad : '');
+                    objetoValoresTimePickerT['lunesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesTipoServicio : '');
+                    objetoValoresTimePicker1['martes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesCantidad ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesCantidad : '');
+                    objetoValoresTimePickerT['martesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesTipoServicio : '');
+                    objetoValoresTimePicker1['miercoles'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesCantidad ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesCantidad : '');
+                    objetoValoresTimePickerT['miercolesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio : '');
+                    objetoValoresTimePicker1['jueves'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesCantidad ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesCantidad : '');
+                    objetoValoresTimePickerT['juevesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesTipoServicio : '');
+                    objetoValoresTimePicker1['viernes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesCantidad ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesCantidad : '');
+                    objetoValoresTimePickerT['viernesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesTipoServicio : '');
+                    objetoValoresTimePicker1['sabado'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoCantidad ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoCantidad : '');
+                    objetoValoresTimePickerT['sabadoTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio : '');
+                    objetoValoresTimePicker1['domingo'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoCantidad ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoCantidad : '');
+                    objetoValoresTimePickerT['domingoTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoTipoServicio : '');
+                    arrayValoresTimePicker1.push(objetoValoresTimePicker1);
+                    arrayValoresTimePickerT.push(objetoValoresTimePickerT);
+                };
+                setValueCantidadHorasEdicion(arrayValoresTimePicker1);
+                setValueTipoServicioEdicion(arrayValoresTimePickerT);
+            };
+            if (cuadranteAGestionar.horario.tipo === "rangoDescanso") {
+                let arrayValoresTimePicker1 = [];
+                let arrayValoresTimePicker2 = [];
+                let arrayValoresTimePicker3 = [];
+                let arrayValoresTimePicker4 = [];
+                let arrayValoresTimePickerT = [];
+                for (let i = 0; i < cuadranteAGestionar.horario.tipoRegistroTrabajador.length; i++) {
+                    let objetoValoresTimePicker1 = {};
+                    let objetoValoresTimePicker2 = {};
+                    let objetoValoresTimePicker3 = {};
+                    let objetoValoresTimePicker4 = {};
+                    let objetoValoresTimePickerT = {};
+                    objetoValoresTimePicker1['lunes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso) : null);
+                    objetoValoresTimePicker2['lunes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesFin1RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesFin1RangoDescanso) : null);
+                    objetoValoresTimePicker3['lunes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso) : null);
+                    objetoValoresTimePicker4['lunes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesFin2RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesFin2RangoDescanso) : null);
+                    objetoValoresTimePickerT['lunesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesTipoServicio : '');
+                    objetoValoresTimePicker1['martes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesInicio1RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesInicio1RangoDescanso) : null);
+                    objetoValoresTimePicker2['martes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesFin1RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesFin1RangoDescanso) : null);
+                    objetoValoresTimePicker3['martes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesInicio2RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesInicio2RangoDescanso) : null);
+                    objetoValoresTimePicker4['martes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesFin2RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesFin2RangoDescanso) : null);
+                    objetoValoresTimePickerT['martesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesTipoServicio : '');
+                    objetoValoresTimePicker1['miercoles'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso) : null);
+                    objetoValoresTimePicker2['miercoles'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso) : null);
+                    objetoValoresTimePicker3['miercoles'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso) : null);
+                    objetoValoresTimePicker4['miercoles'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso) : null);
+                    objetoValoresTimePickerT['miercolesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio : '');
+                    objetoValoresTimePicker1['jueves'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso) : null);
+                    objetoValoresTimePicker2['jueves'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesFin1RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesFin1RangoDescanso) : null);
+                    objetoValoresTimePicker3['jueves'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso) : null);
+                    objetoValoresTimePicker4['jueves'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesFin2RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesFin2RangoDescanso) : null);
+                    objetoValoresTimePickerT['juevesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesTipoServicio : '');
+                    objetoValoresTimePicker1['viernes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso) : null);
+                    objetoValoresTimePicker2['viernes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesFin1RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesFin1RangoDescanso) : null);
+                    objetoValoresTimePicker3['viernes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso) : null);
+                    objetoValoresTimePicker4['viernes'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesFin2RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesFin2RangoDescanso) : null);
+                    objetoValoresTimePickerT['viernesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesTipoServicio : '');
+                    objetoValoresTimePicker1['sabado'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso) : null);
+                    objetoValoresTimePicker2['sabado'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso) : null);
+                    objetoValoresTimePicker3['sabado'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso) : null);
+                    objetoValoresTimePicker4['sabado'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso) : null);
+                    objetoValoresTimePickerT['sabadoTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio : '');
+                    objetoValoresTimePicker1['domingo'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso) : null);
+                    objetoValoresTimePicker2['domingo'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoFin1RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoFin1RangoDescanso) : null);
+                    objetoValoresTimePicker3['domingo'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso) : null);
+                    objetoValoresTimePicker4['domingo'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoFin2RangoDescanso ?
+                        generaFecha(cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoFin2RangoDescanso) : null);
+                    objetoValoresTimePickerT['domingoTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoTipoServicio ?
+                        cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoTipoServicio : '');
+                    arrayValoresTimePicker1.push(objetoValoresTimePicker1);
+                    arrayValoresTimePicker2.push(objetoValoresTimePicker2);
+                    arrayValoresTimePicker3.push(objetoValoresTimePicker3);
+                    arrayValoresTimePicker4.push(objetoValoresTimePicker4);
+                    arrayValoresTimePickerT.push(objetoValoresTimePickerT);
+                };
+                setValueTimePickerInicioDescanso1Edicion(arrayValoresTimePicker1);
+                setValueTimePickerFinDescanso1Edicion(arrayValoresTimePicker2);
+                setValueTimePickerInicioDescanso2Edicion(arrayValoresTimePicker3);
+                setValueTimePickerFinDescanso2Edicion(arrayValoresTimePicker4);
+                setValueTipoServicioEdicion(arrayValoresTimePickerT);
+            };
+            let arrayValoresHorario = [];
+            for (let i = 0; i < cuadranteAGestionar.horario.tipoRegistroTrabajador.length; i++) {
+                let objetoValoresHorario = {};
+                objetoValoresHorario['lunesInicioRango'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesInicioRango ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesInicioRango : null);
+                objetoValoresHorario['lunesFinRango'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesFinRango ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesFinRango : null);
+                objetoValoresHorario['martesInicioRango'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesInicioRango ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesInicioRango : null);
+                objetoValoresHorario['martesFinRango'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesFinRango ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesFinRango : null);
+                objetoValoresHorario['miercolesInicioRango'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesInicioRango ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesInicioRango : null);
+                objetoValoresHorario['miercolesFinRango'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesFinRango ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesFinRango : null);
+                objetoValoresHorario['juevesInicioRango'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesInicioRango ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesInicioRango : null);
+                objetoValoresHorario['juevesFinRango'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesFinRango ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesFinRango : null);
+                objetoValoresHorario['viernesInicioRango'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesInicioRango ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesInicioRango : null);
+                objetoValoresHorario['viernesFinRango'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesFinRango ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesFinRango : null);
+                objetoValoresHorario['sabadoInicioRango'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoInicioRango ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoInicioRango : null);
+                objetoValoresHorario['sabadoFinRango'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoFinRango ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoFinRango : null);
+                objetoValoresHorario['domingoInicioRango'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoInicioRango ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoInicioRango : null);
+                objetoValoresHorario['domingoFinRango'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoFinRango ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoFinRango : null);
+                objetoValoresHorario['lunesInicio1RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesInicio1RangoDescanso : null);
+                objetoValoresHorario['lunesFin1RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesFin1RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesFin1RangoDescanso : null);
+                objetoValoresHorario['lunesInicio2RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesInicio2RangoDescanso : null);
+                objetoValoresHorario['lunesFin2RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesFin2RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesFin2RangoDescanso : null);
+                objetoValoresHorario['martesInicio1RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesInicio1RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesInicio1RangoDescanso : null);
+                objetoValoresHorario['martesFin1RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesFin1RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesFin1RangoDescanso : null);
+                objetoValoresHorario['martesInicio2RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesInicio2RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesInicio2RangoDescanso : null);
+                objetoValoresHorario['martesFin2RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesFin2RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesFin2RangoDescanso : null);
+                objetoValoresHorario['miercolesInicio1RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesInicio1RangoDescanso : null);
+                objetoValoresHorario['miercolesFin1RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesFin1RangoDescanso : null);
+                objetoValoresHorario['miercolesInicio2RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesInicio2RangoDescanso : null);
+                objetoValoresHorario['miercolesFin2RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesFin2RangoDescanso : null);
+                objetoValoresHorario['juevesInicio1RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesInicio1RangoDescanso : null);
+                objetoValoresHorario['juevesFin1RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesFin1RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesFin1RangoDescanso : null);
+                objetoValoresHorario['juevesInicio2RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesInicio2RangoDescanso : null);
+                objetoValoresHorario['juevesFin2RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesFin2RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesFin2RangoDescanso : null);
+                objetoValoresHorario['viernesInicio1RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesInicio1RangoDescanso : null);
+                objetoValoresHorario['viernesFin1RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesFin1RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesFin1RangoDescanso : null);
+                objetoValoresHorario['viernesInicio2RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesInicio2RangoDescanso : null);
+                objetoValoresHorario['viernesFin2RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesFin2RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesFin2RangoDescanso : null);
+                objetoValoresHorario['sabadoInicio1RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoInicio1RangoDescanso : null);
+                objetoValoresHorario['sabadoFin1RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoFin1RangoDescanso : null);
+                objetoValoresHorario['sabadoInicio2RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoInicio2RangoDescanso : null);
+                objetoValoresHorario['sabadoFin2RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoFin2RangoDescanso : null);
+                objetoValoresHorario['domingoInicio1RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoInicio1RangoDescanso : null);
+                objetoValoresHorario['domingoFin1RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoFin1RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoFin1RangoDescanso : null);
+                objetoValoresHorario['domingoInicio2RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoInicio2RangoDescanso : null);
+                objetoValoresHorario['domingoFin2RangoDescanso'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoFin2RangoDescanso ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoFin2RangoDescanso : null);
+                objetoValoresHorario['lunesCantidad'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesCantidad ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesCantidad : '');
+                objetoValoresHorario['martesCantidad'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesCantidad ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesCantidad : '');
+                objetoValoresHorario['miercolesCantidad'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesCantidad ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesCantidad : '');
+                objetoValoresHorario['juevesCantidad'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesCantidad ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesCantidad : '');
+                objetoValoresHorario['viernesCantidad'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesCantidad ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesCantidad : '');
+                objetoValoresHorario['sabadoCantidad'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoCantidad ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoCantidad : '');
+                objetoValoresHorario['domingoCantidad'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoCantidad ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoCantidad : '');
+                objetoValoresHorario['lunesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesTipoServicio ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].lunesTipoServicio : '');
+                objetoValoresHorario['martesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesTipoServicio ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].martesTipoServicio : '');
+                objetoValoresHorario['miercolesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].miercolesTipoServicio : '');
+                objetoValoresHorario['juevesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesTipoServicio ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].juevesTipoServicio : '');
+                objetoValoresHorario['viernesTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesTipoServicio ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].viernesTipoServicio : '');
+                objetoValoresHorario['sabadoTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].sabadoTipoServicio : '');
+                objetoValoresHorario['domingoTipoServicio'] = (cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoTipoServicio ?
+                    cuadranteAGestionar.horario.tipoRegistroTrabajador[i].domingoTipoServicio : '');
+                arrayValoresHorario.push(objetoValoresHorario);
+            };
+            setHorarioIntervencionEdicion({
+                tipo: cuadranteAGestionar.horario.tipo,
+                variacion: cuadranteAGestionar.horario.variacion,
+                tipoRegistro: cuadranteAGestionar.horario.tipoRegistro,
+                tipoRegistroTrabajador: arrayValoresHorario
+            });
+        } else {
+            setValueTimePickerInicioEdicion([
+                {
+                    lunes: null,
+                    martes: null,
+                    miercoles: null,
+                    jueves: null,
+                    viernes: null,
+                    sabado: null,
+                    domingo: null
+                }
+            ]);
+            setValueTimePickerFinEdicion([
+                {
+                    lunes: null,
+                    martes: null,
+                    miercoles: null,
+                    jueves: null,
+                    viernes: null,
+                    sabado: null,
+                    domingo: null
+                }
+            ]);
+            setValueTimePickerInicioDescanso1Edicion([
+                {
+                    lunes: null,
+                    martes: null,
+                    miercoles: null,
+                    jueves: null,
+                    viernes: null,
+                    sabado: null,
+                    domingo: null
+                }
+            ]);
+            setValueTimePickerFinDescanso1Edicion([
+                {
+                    lunes: null,
+                    martes: null,
+                    miercoles: null,
+                    jueves: null,
+                    viernes: null,
+                    sabado: null,
+                    domingo: null
+                }
+            ]);
+            setValueTimePickerInicioDescanso2Edicion([
+                {
+                    lunes: null,
+                    martes: null,
+                    miercoles: null,
+                    jueves: null,
+                    viernes: null,
+                    sabado: null,
+                    domingo: null
+                }
+            ]);
+            setValueTimePickerFinDescanso2Edicion([
+                {
+                    lunes: null,
+                    martes: null,
+                    miercoles: null,
+                    jueves: null,
+                    viernes: null,
+                    sabado: null,
+                    domingo: null
+                }
+            ]);
+            setValueCantidadHorasEdicion([
+                {
+                    lunes: '',
+                    martes: '',
+                    miercoles: '',
+                    jueves: '',
+                    viernes: '',
+                    sabado: '',
+                    domingo: ''
+                }
+            ]);
+            setValueTipoServicioEdicion([
+                {
+                    lunesTipoServicio: '',
+                    martesTipoServicio: '',
+                    miercolesTipoServicio: '',
+                    juevesTipoServicio: '',
+                    viernesTipoServicio: '',
+                    sabadoTipoServicio: '',
+                    domingoTipoServicio: '',
+                }
+            ]);
+            setHorarioIntervencionEdicion({
+                tipo: '',
+                variacion: '',
+                tipoRegistro: 'comun',
+                tipoRegistroTrabajador: [
+                    {
+                        lunesInicioRango: null,
+                        lunesFinRango: null,
+                        martesInicioRango: null,
+                        martesFinRango: null,
+                        miercolesInicioRango: null,
+                        miercolesFinRango: null,
+                        juevesInicioRango: null,
+                        juevesFinRango: null,
+                        viernesInicioRango: null,
+                        viernesFinRango: null,
+                        sabadoInicioRango: null,
+                        sabadoFinRango: null,
+                        domingoInicioRango: null,
+                        domingoFinRango: null,
+                        lunesInicio1RangoDescanso: null,
+                        lunesInicio2RangoDescanso: null,
+                        lunesFin1RangoDescanso: null,
+                        lunesFin2RangoDescanso: null,
+                        martesInicio1RangoDescanso: null,
+                        martesInicio2RangoDescanso: null,
+                        martesFin1RangoDescanso: null,
+                        martesFin2RangoDescanso: null,
+                        miercolesInicio1RangoDescanso: null,
+                        miercolesInicio2RangoDescanso: null,
+                        miercolesFin1RangoDescanso: null,
+                        miercolesFin2RangoDescanso: null,
+                        juevesInicio1RangoDescanso: null,
+                        juevesInicio2RangoDescanso: null,
+                        juevesFin1RangoDescanso: null,
+                        juevesFin2RangoDescanso: null,
+                        viernesInicio1RangoDescanso: null,
+                        viernesInicio2RangoDescanso: null,
+                        viernesFin1RangoDescanso: null,
+                        viernesFin2RangoDescanso: null,
+                        sabadoInicio1RangoDescanso: null,
+                        sabadoInicio2RangoDescanso: null,
+                        sabadoFin1RangoDescanso: null,
+                        sabadoFin2RangoDescanso: null,
+                        domingoInicio1RangoDescanso: null,
+                        domingoInicio2RangoDescanso: null,
+                        domingoFin1RangoDescanso: null,
+                        domingoFin2RangoDescanso: null,
+                        lunesCantidad: '',
+                        martesCantidad: '',
+                        miercolesCantidad: '',
+                        juevesCantidad: '',
+                        viernesCantidad: '',
+                        sabadoCantidad: '',
+                        domingoCantidad: '',
+                        lunesTipoServicio: '',
+                        martesTipoServicio: '',
+                        miercolesTipoServicio: '',
+                        juevesTipoServicio: '',
+                        viernesTipoServicio: '',
+                        sabadoTipoServicio: '',
+                        domingoTipoServicio: '',
+                    }
+                ],
+            });            
+        };
+    };
+
     return (
         <div>
             <Backdrop className={classes.loading} open={openLoading}>
@@ -4846,7 +5364,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                             <Box
                                 m={0.5}
                                 color="secondary.contrastText"
-                                className={valuesFormEdicion.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2) : clsx(classes.fondoAlta, classes.boxStl2)}
+                                className={valuesFormEdicionGenerales.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2) : clsx(classes.fondoAlta, classes.boxStl2)}
                                 style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}
                             >
                                 <Box>Datos generales</Box>
@@ -4858,7 +5376,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                             <Switch
                                                 checked={stateSwitchEstadoEdicion}
                                                 color="secondary"
-                                                style={valuesFormEdicion.estado === 'baja' ? { color: '#FFFFFF' } : null}
+                                                style={valuesFormEdicionGenerales.estado === 'baja' ? { color: '#FFFFFF' } : null}
                                                 onChange={handleChangeSwitchEstadoEdicion}
                                                 disabled={disabledItem}
                                             />
@@ -4885,6 +5403,88 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         size="small"
                                     />
                                 </FormControl>
+                                <Grid
+                                    container
+                                    direction="row"
+                                    justifycontent="space-between"
+                                    alignItems="flex-start"
+                                >
+                                    <Grid item xs={8}>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                            disabled={numeroCuadrantesEdicion.length === 1 ? true : false}
+                                        >
+                                            <InputLabel>Número Cuadrante</InputLabel>
+                                            <Select
+                                                fullWidth
+                                                className={classes.mb15}
+                                                id="form-cuadrante-no-edicion"
+                                                label="Número Cuadrante"
+                                                value={cuadranteEnUsoEdicion}
+                                                onChange={handleChangeCuadranteCentroEdicion}
+                                                helpertext="Selecciona nº cuadrante"
+                                            >
+                                                {
+                                                    numeroCuadrantesEdicion.map((option) => (
+                                                        <MenuItem key={option.value} value={option.value}>
+                                                            {option.value}
+                                                        </MenuItem>
+                                                    ))
+                                                }
+                                            </Select>
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item xs={4} >
+                                        <Box className={classes.floatRight}>
+                                            {esInicioCentrosEdicion ? (
+                                                <Fragment>
+                                                    <IconButton
+                                                        className={classes.btnBorrarCuad}
+                                                        disabled={true}
+                                                    >
+                                                        <DeleteIcon />
+                                                    </IconButton>
+                                                    <IconButton
+                                                        className={classes.paper}
+                                                        disabled={true}
+                                                    >
+                                                        <LibraryAddIcon />
+                                                    </IconButton>
+                                                </Fragment>
+                                            ) : (
+                                                <Fragment>
+                                                    {numeroCuadrantesEdicion.length > 1 ? (
+                                                        <Tooltip title="Borrar cuadrante del centro" placement="top-end" arrow >
+                                                            <IconButton
+                                                                className={classes.btnBorrarCuad}
+                                                                onClick={handleEliminarCuadranteCentroEdicion}
+                                                            >
+                                                                <DeleteIcon />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                    ) : (
+                                                        <IconButton
+                                                            className={classes.btnBorrarCuad}
+                                                            disabled={true}
+                                                        >
+                                                            <DeleteIcon />
+                                                        </IconButton>
+                                                    )}
+                                                    <Tooltip title="Añadir cuadrante al centro" placement="top-end" arrow >
+                                                        <IconButton
+                                                            className={classes.paper}
+                                                            onClick={handleAnadirCuadranteCentroEdicion}
+                                                        >
+                                                            <LibraryAddIcon />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </Fragment>
+                                            )}
+                                        </Box>
+                                    </Grid>
+                                </Grid>
                                 <FormControl
                                     variant="outlined"
                                     className={classes.form}
@@ -4895,8 +5495,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         className={classes.mb15}
                                         fullWidth
                                         id="form-nombre-centro-edicion"
-                                        value={valuesFormEdicion.nombre}
-                                        onChange={handleChangeFormEdicion('nombre')}
+                                        value={valuesFormEdicionGenerales.nombre}
+                                        onChange={handleChangeFormEdicionGenerales('nombre')}
                                         labelWidth={60}
                                         disabled={disabledItem}
 
@@ -4913,7 +5513,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         className={classes.mb15}
                                         id="form-categoria-edicion"
                                         label="Categoría Centro"
-                                        value={valuesFormEdicion.categoria}
+                                        value={valuesFormEdicion.categoria || ''}
                                         onChange={handleChangeFormEdicion('categoria')}
                                         helpertext="Selecciona categoria"
                                         disabled={disabledItem}
@@ -4939,8 +5539,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                 className={classes.mb15}
                                                 fullWidth
                                                 id="form-codigo-centro-edicion"
-                                                value={valuesFormEdicion.codigo}
-                                                onChange={handleChangeFormEdicion('codigo')}
+                                                value={valuesFormEdicionGenerales.codigo}
+                                                onChange={handleChangeFormEdicionGenerales('codigo')}
                                                 labelWidth={55}
                                                 disabled={disabledItem}
                                             />
@@ -4957,8 +5557,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                 className={classes.mb15}
                                                 fullWidth
                                                 id="form-nif-centro-edicion"
-                                                value={valuesFormEdicion.nif}
-                                                onChange={handleChangeFormEdicion('nif')}
+                                                value={valuesFormEdicionGenerales.nif}
+                                                onChange={handleChangeFormEdicionGenerales('nif')}
                                                 labelWidth={30}
                                                 disabled={disabledItem}
                                             />
@@ -4975,8 +5575,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         className={classes.mb15}
                                         fullWidth
                                         id="form-mail-centro-edicion"
-                                        value={valuesFormEdicion.mail}
-                                        onChange={handleChangeFormEdicion('mail')}
+                                        value={valuesFormEdicionGenerales.mail}
+                                        onChange={handleChangeFormEdicionGenerales('mail')}
                                         labelWidth={55}
                                         disabled={disabledItem}
                                     />
@@ -4991,46 +5591,70 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         className={classes.mb15}
                                         fullWidth
                                         id="form-mail2-centro-edicion"
-                                        value={valuesFormEdicion.mail2}
-                                        onChange={handleChangeFormEdicion('mail2')}
+                                        value={valuesFormEdicionGenerales.mail2}
+                                        onChange={handleChangeFormEdicionGenerales('mail2')}
                                         labelWidth={65}
                                         disabled={disabledItem}
                                     />
                                 </FormControl>
-                                <FormControl
-                                    variant="outlined"
-                                    className={classes.form}
-                                    size="small"
-                                >
-                                    <InputLabel>Domicilio</InputLabel>
-                                    <OutlinedInput
-                                        className={classes.mb15}
-                                        fullWidth
-                                        id="form-domicilio-centro-edicion"
-                                        value={valuesFormEdicion.domicilio}
-                                        onChange={handleChangeFormEdicion('domicilio')}
-                                        labelWidth={70}
-                                        disabled={disabledItem}
-                                    />
-                                </FormControl>
-                                <FormControl
-                                    variant="outlined"
-                                    className={classes.form}
-                                    size="small"
-                                >
-                                    <InputLabel>Población</InputLabel>
-                                    <OutlinedInput
-                                        className={classes.mb15}
-                                        fullWidth
-                                        id="form-poblacion-centro-edicion"
-                                        value={valuesFormEdicion.poblacion}
-                                        onChange={handleChangeFormEdicion('poblacion')}
-                                        labelWidth={75}
-                                        disabled={disabledItem}
-                                    />
-                                </FormControl>
                                 <Grid container>
-                                    <Grid item xs={8}>
+                                    <Grid item xs={9}>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>Domicilio</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb15}
+                                                fullWidth
+                                                id="form-domicilio-centro-edicion"
+                                                value={valuesFormEdicionGenerales.domicilio}
+                                                onChange={handleChangeFormEdicionGenerales('domicilio')}
+                                                labelWidth={70}
+                                                disabled={disabledItem}
+                                            />
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item xs={3}>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>C.P.</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb15}
+                                                fullWidth
+                                                id="form-codigoPostal-centro-edicion"
+                                                value={valuesFormEdicionGenerales.codigoPostal}
+                                                onChange={handleChangeFormEdicionGenerales('codigoPostal')}
+                                                labelWidth={35}
+                                                disabled={disabledItem}
+                                            />
+                                        </FormControl>
+                                    </Grid>
+                                </Grid>
+                                <Grid container>
+                                    <Grid item xs={6}>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>Población</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb15}
+                                                fullWidth
+                                                id="form-poblacion-centro-edicion"
+                                                value={valuesFormEdicionGenerales.poblacion}
+                                                onChange={handleChangeFormEdicionGenerales('poblacion')}
+                                                labelWidth={75}
+                                                disabled={disabledItem}
+                                            />
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item xs={6}>
                                         <FormControl
                                             variant="outlined"
                                             className={classes.form}
@@ -5041,27 +5665,9 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                 className={classes.mb15}
                                                 fullWidth
                                                 id="form-provincia-centro-edicion"
-                                                value={valuesFormEdicion.provincia}
-                                                onChange={handleChangeFormEdicion('provincia')}
+                                                value={valuesFormEdicionGenerales.provincia}
+                                                onChange={handleChangeFormEdicionGenerales('provincia')}
                                                 labelWidth={75}
-                                                disabled={disabledItem}
-                                            />
-                                        </FormControl>
-                                    </Grid>
-                                    <Grid item xs={4}>
-                                        <FormControl
-                                            variant="outlined"
-                                            className={classes.form}
-                                            size="small"
-                                        >
-                                            <InputLabel>Código Postal</InputLabel>
-                                            <OutlinedInput
-                                                className={classes.mb15}
-                                                fullWidth
-                                                id="form-codigoPostal-centro-edicion"
-                                                value={valuesFormEdicion.codigoPostal}
-                                                onChange={handleChangeFormEdicion('codigoPostal')}
-                                                labelWidth={105}
                                                 disabled={disabledItem}
                                             />
                                         </FormControl>
@@ -5079,8 +5685,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                 className={classes.mb15}
                                                 fullWidth
                                                 id="form-telefono-centro-edicion"
-                                                value={valuesFormEdicion.telefono}
-                                                onChange={handleChangeFormEdicion('telefono')}
+                                                value={valuesFormEdicionGenerales.telefono}
+                                                onChange={handleChangeFormEdicionGenerales('telefono')}
                                                 labelWidth={80}
                                                 disabled={disabledItem}
                                             />
@@ -5097,8 +5703,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                 className={classes.mb25}
                                                 fullWidth
                                                 id="form-telefono2-centro-edicion"
-                                                value={valuesFormEdicion.telefono2}
-                                                onChange={handleChangeFormEdicion('telefono2')}
+                                                value={valuesFormEdicionGenerales.telefono2}
+                                                onChange={handleChangeFormEdicionGenerales('telefono2')}
                                                 labelWidth={80}
                                                 disabled={disabledItem}
                                             />
@@ -5110,7 +5716,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                     </Grid>
                     <Grid item lg={8} sm={6} xs={12}>
                         <div className={classes.root2} style={{ marginTop: 5 }}>
-                            <AppBar position="static" className={valuesFormEdicion.estado === 'baja' ? clsx(classes.fondoBaja) : clsx(classes.fondoAlta)}>
+                            <AppBar position="static" className={valuesFormEdicionGenerales.estado === 'baja' ? clsx(classes.fondoBaja) : clsx(classes.fondoAlta)}>
                                 <Tabs value={valueTabCentrosEdicion} onChange={handleChangeTabCentrosEdicion} className={classes.tabsStl}>
                                     <Tab label="Trabajadores" {...a11yProps(0)} style={{ paddingBottom: 10 }} />
                                     <Tab label="Horario de intervención" {...a11yProps(1)} style={{ paddingBottom: 10 }} />
@@ -5221,7 +5827,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         <Box
                                             m={0.5}
                                             color="secondary.contrastText"
-                                            className={valuesFormEdicion.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
+                                            className={valuesFormEdicionGenerales.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
                                         >
                                             Cómputo de horas
                                         </Box>
@@ -5269,7 +5875,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                     labelWidth={130}
                                                     startAdornment={<InputAdornment position="start">€</InputAdornment>}
                                                 />
-                                            </FormControl>                                            
+                                            </FormControl>
                                         ) : null}
                                         {valuesFormEdicion.computo === 2 || valuesFormEdicion.computo === 3 ? (
                                             <Fragment>
@@ -5434,7 +6040,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                 <Box
                                                     m={0.5}
                                                     color="secondary.contrastText"
-                                                    className={valuesFormEdicion.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb10, classes.mt15) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb10, classes.mt15)}
+                                                    className={valuesFormEdicionGenerales.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb10, classes.mt15) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb10, classes.mt15)}
                                                     style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}
                                                 >
                                                     <Box>Tipo de registro</Box>
@@ -5445,7 +6051,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                             control={
                                                                 <Switch
                                                                     checked={stateSwitchTipoRegistro}
-                                                                    style={valuesFormEdicion.estado === 'baja' ? { color: '#FFFFFF' } : null}
+                                                                    style={valuesFormEdicionGenerales.estado === 'baja' ? { color: '#FFFFFF' } : null}
                                                                     color="secondary"
                                                                     onChange={handleChangeSwitchTipoRegistroEdicion}
                                                                 />
@@ -5492,8 +6098,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                 className={classes.mb15}
                                                 id="form-formaPago-edicion"
                                                 label="Forma pago"
-                                                value={valuesFormEdicion.formaPago || ''}
-                                                onChange={handleChangeFormEdicion('formaPago')}
+                                                value={valuesFormEdicionGenerales.formaPago || ''}
+                                                onChange={handleChangeFormEdicionGenerales('formaPago')}
                                                 helpertext="Selecciona la forma de pago"
                                                 disabled={disabledItem}
                                             >
@@ -5517,8 +6123,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                 className={classes.mb15}
                                                 id="form-diaPago-edicion"
                                                 label="Vencimiento"
-                                                value={valuesFormEdicion.diaPago || ''}
-                                                onChange={handleChangeFormEdicion('diaPago')}
+                                                value={valuesFormEdicionGenerales.diaPago || ''}
+                                                onChange={handleChangeFormEdicionGenerales('diaPago')}
                                                 helpertext="Selecciona día vencimiento"
                                                 disabled={disabledItem}
                                             >
@@ -5545,8 +6151,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                 className={classes.mb15}
                                                 id="form-tempPago-edicion"
                                                 label="Temporización"
-                                                value={valuesFormEdicion.tempPago || ''}
-                                                onChange={handleChangeFormEdicion('tempPago')}
+                                                value={valuesFormEdicionGenerales.tempPago || ''}
+                                                onChange={handleChangeFormEdicionGenerales('tempPago')}
                                                 helpertext="Selecciona temporización del pago"
                                                 disabled={disabledItem}
                                             >
@@ -5577,7 +6183,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                 prTituloDialog={tituloDialog}
                 prDescripcionDialog={descripcionDialog}
             />
-            {/* {console.log(valuesFormEdicion)} */}
+            {/* {console.log(numeroCuadrantesEdicion)} */}
         </div >
     )
 })

@@ -358,7 +358,6 @@ const Cuadrantes = (props) => {
         }
 
     });
-
     const [itemPrevioEditandoConfiguracion, setItemPrevioEditandoConfiguracion] = useState(null);
     const [itemEditandoConfiguracion, setItemEditandoConfiguracion] = useState({
         tipoHorario: '',

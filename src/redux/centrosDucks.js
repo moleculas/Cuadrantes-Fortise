@@ -12,7 +12,10 @@ const dataInicial = {
         id: null,
         nombre: '',
         estado: 'alta',
-        categoria: '',
+        categoria: {
+            objeto: 'categoria',
+            categoria: []
+        },
         codigo: '',
         domicilio: '',
         codigoPostal: '',
@@ -27,51 +30,15 @@ const dataInicial = {
         tempPago: '',
         diaPago: '',
         horario: {
-            tipo: '',
-            variacion: '',
-            computo: '',
-            mensualPactado: null,
-            precioHora_L: null,
-            precioHora_E: null,
-            precioHora_P: null,
-            precioHora_N: null,
-            precioHora_R: null,
-            precioHora_L1: null,
-            precioHora_L2: null,
-            precioHora_F: null,
-            tipoRegistro: 'comun',
-            tipoRegistroTrabajador: [],
-            lunesTipoServicio: '',
-            martesTipoServicio: '',
-            miercolesTipoServicio: '',
-            juevesTipoServicio: '',
-            viernesTipoServicio: '',
-            sabadoTipoServicio: '',
-            domingoTipoServicio: '',
+            objeto: 'horario',
+            horario: []
         },
         serviciosFijos: {
             objeto: 'serviciosFijos',
-            servicio: [
-                { tipoServiciofijo: 'TOL', precioHora_TO: null },
-                { tipoServiciofijo: 'CRIS', precioHora_CR: null },
-                { tipoServiciofijo: 'CRISE', precioHora_CE: null },
-                { tipoServiciofijo: 'CRISE', precioHora_CI: null },
-                { tipoServiciofijo: 'MOQ', precioHora_MO: null },
-                { tipoServiciofijo: 'OF', precioHora_OF: null },
-                { tipoServiciofijo: 'ALMC', precioHora_AL: null },
-                { tipoServiciofijo: 'LAB', precioHora_LA: null },
-                { tipoServiciofijo: 'TELÑ', precioHora_TE: null },
-                { tipoServiciofijo: 'FCH.IN', precioHora_FI: null },
-                { tipoServiciofijo: 'FCH.EX', precioHora_FE: null },
-                { tipoServiciofijo: 'ABRLL', precioHora_AB: null },
-                { tipoServiciofijo: 'MANT', precioHora_MA: null },
-                { tipoServiciofijo: 'PORT', precioHora_PO: null },
-                { tipoServiciofijo: 'BACT', precioHora_BA: null },
-                { tipoServiciofijo: 'FEST', precioHora_FT: null }
-            ]
+            serviciosFijos: []
         },
         trabajadores: {
-            cantidad: '',
+            objeto: 'trabajadores',
             trabajadores: []
         },
     },
@@ -81,6 +48,7 @@ const dataInicial = {
     estadoActivadoDesactivadoNuevoCentro: true,
     estadoActivadoDesactivadoActualizacionCentro: true,
     estadoActivadoDesactivadoRegistroCentro: true,
+    estadoYaEstaRegistradoRegistroCentro: false,
     categoriaPorCentro: ''
 }
 
@@ -100,6 +68,7 @@ const ACTIVAR_DESACTIVAR_COMPONENTE_ACTUALIZACION_CENTRO = 'ACTIVAR_DESACTIVAR_C
 const ACTIVAR_DESACTIVAR_COMPONENTE_REGISTRO_CENTRO = 'ACTIVAR_DESACTIVAR_COMPONENTE_REGISTRO_CENTRO';
 const OBTENER_CATEGORIA_POR_CENTRO_EXITO = 'OBTENER_CATEGORIA_POR_CENTRO_EXITO';
 const VACIAR_DATOS_CENTRO = 'VACIAR_DATOS_CENTRO';
+const CAMBIAR_ESTADO_YA_ESTA_REGISTRADO_CENTRO = 'CAMBIAR_ESTADO_YA_ESTA_REGISTRADO_CENTRO';
 
 //reducer
 export default function centrosReducer(state = dataInicial, action) {
@@ -134,6 +103,8 @@ export default function centrosReducer(state = dataInicial, action) {
             return { ...state, categoriaPorCentro: action.payload.categoria, errorDeCargaCentros: false, loadingCentros: false }
         case VACIAR_DATOS_CENTRO:
             return { ...state, objetoCentro: action.payload, categoriaPorCentro: '' }
+        case CAMBIAR_ESTADO_YA_ESTA_REGISTRADO_CENTRO:
+            return { ...state, estadoYaEstaRegistradoRegistroCentro: action.payload.estado }
         default:
             return { ...state }
     }
@@ -219,7 +190,10 @@ export const vaciarDatosCentroAccion = () => (dispatch, getState) => {
             id: null,
             nombre: '',
             estado: 'alta',
-            categoria: '',
+            categoria: {
+                objeto: 'categoria',
+                categoria: []
+            },
             codigo: '',
             domicilio: '',
             codigoPostal: '',
@@ -305,7 +279,7 @@ export const obtenerCentroAccion = (objeto, id) => async (dispatch, getState) =>
                 id: res.data.id,
                 nombre: res.data.nombre,
                 estado: res.data.estado,
-                categoria: res.data.categoria,
+                categoria: JSON.parse(res.data.categoria),
                 codigo: res.data.codigo,
                 domicilio: res.data.domicilio,
                 codigoPostal: res.data.codigo_postal,
@@ -319,9 +293,9 @@ export const obtenerCentroAccion = (objeto, id) => async (dispatch, getState) =>
                 formaPago: res.data.forma_pago,
                 tempPago: res.data.temp_pago,
                 diaPago: res.data.dia_pago,
-                horario: res.data.horario ? JSON.parse(res.data.horario) : dataInicial.objetoCentro.horario,
-                serviciosFijos: res.data.servicios_fijos ? JSON.parse(res.data.servicios_fijos) : dataInicial.objetoCentro.serviciosFijos,
-                trabajadores: res.data.trabajadores ? JSON.parse(res.data.trabajadores) : dataInicial.objetoCentro.trabajadores,
+                horario: JSON.parse(res.data.horario),
+                serviciosFijos: JSON.parse(res.data.servicios_fijos),
+                trabajadores: JSON.parse(res.data.trabajadores),
             }
         });
     } catch (error) {
@@ -446,6 +420,15 @@ export const eliminarCentroAccion = (objeto, id) => async (dispatch, getState) =
 export const activarDesactivarNuevoCentroAccion = (estado) => (dispatch, getState) => {
     dispatch({
         type: ACTIVAR_DESACTIVAR_COMPONENTE_NUEVO_CENTRO,
+        payload: {
+            estado: estado
+        }
+    });
+}
+
+export const cambiarEstadoYaEstaRegistradoAccion = (estado) => (dispatch, getState) => {
+    dispatch({
+        type: CAMBIAR_ESTADO_YA_ESTA_REGISTRADO_CENTRO,
         payload: {
             estado: estado
         }

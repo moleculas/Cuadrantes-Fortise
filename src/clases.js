@@ -228,6 +228,9 @@ const Clases = makeStyles((theme) => ({
     mr15: {
         marginRight: 15,
     },
+    mr10: {
+        marginRight: 10,
+    },
     btnAddTrabajador: {
         backgroundColor: theme.palette.secondary.main,
         color: theme.palette.error.contrastText,
@@ -619,7 +622,16 @@ const Clases = makeStyles((theme) => ({
     labelBoxMiniServicios:{
         color: 'rgba(0, 0, 0, 0.54)', 
         fontSize: '0.8rem'
-    }
+    },    
+    floatRight:{
+        display: 'flex',        
+        flexDirection: 'row-reverse'
+    },
+    btnBorrarCuad: {
+        backgroundColor: theme.palette.background.paper,
+        color: 'red',
+        marginLeft: 10
+    },
 }), { index: 1 });
 
 export default Clases;
