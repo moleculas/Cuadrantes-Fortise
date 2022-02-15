@@ -119,7 +119,6 @@ export const obtenerCentrosPorCategoriaAccion = (objeto, categoria) => async (di
         // const { errorDeCargaCentros } = getState().centrosPorCategoria;
         const formData = new FormData();
         formData.append("objeto", objeto);
-        formData.append("categoria", categoria);
         let apiUrl = rutaApi + "listar_por_categoria.php";
         const res = await axios.post(apiUrl, formData, {
             headers: {
@@ -127,15 +126,22 @@ export const obtenerCentrosPorCategoriaAccion = (objeto, categoria) => async (di
             }
         });
         const respuesta = res.data;
-        respuesta.sort((a, b) => a.nombre.localeCompare(b.nombre));
+        let arrayRespuesta = [];
+        respuesta.forEach((centro) => {
+            let objetoRespuestaCategoria = JSON.parse(centro.categoria);
+            let hayCategoria = objetoRespuestaCategoria.categoria.indexOf(categoria) >= 0;
+            if (hayCategoria) {
+                arrayRespuesta.push(centro);
+            };
+        });
+        arrayRespuesta.sort((a, b) => a.nombre.localeCompare(b.nombre));
         dispatch({
             type: OBTENER_CENTROS_POR_CATEGORIA_EXITO,
             payload: {
-                array: respuesta,
+                array: arrayRespuesta,
                 errorDeCargaCentros: false
             }
         })
-
     } catch (error) {
         dispatch({
             type: ERROR_DE_CARGA_CENTROS
@@ -319,10 +325,12 @@ export const obtenerCategoriaPorCentroAccion = (objeto, id) => async (dispatch, 
                 "Content-Type": "multipart/form-data",
             }
         });
+        let laCategoriaPre = JSON.parse(res.data.categoria);
+        let laCategoria = laCategoriaPre.categoria[0];
         dispatch({
             type: OBTENER_CATEGORIA_POR_CENTRO_EXITO,
             payload: {
-                categoria: res.data.categoria,
+                categoria: laCategoria,
             }
         });
     } catch (error) {

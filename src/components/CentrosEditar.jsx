@@ -65,6 +65,8 @@ const formasDePago = Constantes.FORMA_DE_PAGO;
 const temporizacionDelPago = Constantes.TEMPORIZACION_PAGO;
 const diaDelPago = Constantes.DIA_PAGO;
 const tiposDeServicio = Constantes.TIPO_SERVICIO_FIJO;
+const variacionesServiciosFijos = Constantes.VARIACIONES_SERVICIOS_FIJOS_CENTROS;
+const diasSemana = Constantes.DIAS_SEMANA;
 
 const getHeightScrollable = () => (window.innerHeight - 260) || (document.documentElement.clientHeight - 260) || (document.body.clientHeight - 260);
 
@@ -192,7 +194,39 @@ const CentrosEditar = forwardRef((props, ref) => {
         precioHora_MA: null,
         precioHora_PO: null,
         precioHora_BA: null,
-        precioHora_FT: null
+        precioHora_FT: null,
+        variacion_TO: '',
+        variacion_CR: '',
+        variacion_CE: '',
+        variacion_CI: '',
+        variacion_MO: '',
+        variacion_OF: '',
+        variacion_AL: '',
+        variacion_LA: '',
+        variacion_TE: '',
+        variacion_FI: '',
+        variacion_FE: '',
+        variacion_AB: '',
+        variacion_MA: '',
+        variacion_PO: '',
+        variacion_BA: '',
+        variacion_FT: '',
+        diaVariacion_TO: '',
+        diaVariacion_CR: '',
+        diaVariacion_CE: '',
+        diaVariacion_CI: '',
+        diaVariacion_MO: '',
+        diaVariacion_OF: '',
+        diaVariacion_AL: '',
+        diaVariacion_LA: '',
+        diaVariacion_TE: '',
+        diaVariacion_FI: '',
+        diaVariacion_FE: '',
+        diaVariacion_AB: '',
+        diaVariacion_MA: '',
+        diaVariacion_PO: '',
+        diaVariacion_BA: '',
+        diaVariacion_FT: ''
     });
     const [valueTimePickerInicioEdicion, setValueTimePickerInicioEdicion] = useState([
         {
@@ -2134,97 +2168,97 @@ const CentrosEditar = forwardRef((props, ref) => {
     const handleChangeSwitchTipoServicioFijoEdicion = (e) => {
         if (e.target.name.includes('TO')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_TO: null });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_TO: null, variacion_TO: '', diaVariacion_TO: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, TO: e.target.checked });
         };
         if (e.target.name.includes('CR')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_CR: null });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_CR: null, variacion_CR: '', diaVariacion_CR: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, CR: e.target.checked });
         };
         if (e.target.name.includes('CE')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_CE: null });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_CE: null, variacion_CE: '', diaVariacion_CE: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, CE: e.target.checked });
         };
         if (e.target.name.includes('CI')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_CI: null });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_CI: null, variacion_CI: '', diaVariacion_CI: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, CI: e.target.checked });
         };
         if (e.target.name.includes('MO')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_MO: null });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_MO: null, variacion_MO: '', diaVariacion_MO: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, MO: e.target.checked });
         };
         if (e.target.name.includes('OF')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_OF: null });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_OF: null, variacion_OF: '', diaVariacion_OF: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, OF: e.target.checked });
         };
         if (e.target.name.includes('AL')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_AL: null });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_AL: null, variacion_AL: '', diaVariacion_AL: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, AL: e.target.checked });
         };
         if (e.target.name.includes('LA')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_LA: null });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_LA: null, variacion_LA: '', diaVariacion_LA: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, LA: e.target.checked });
         };
         if (e.target.name.includes('TE')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_TE: null });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_TE: null, variacion_TE: '', diaVariacion_TE: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, TE: e.target.checked });
         };
         if (e.target.name.includes('FI')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_FI: null });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_FI: null, variacion_FI: '', diaVariacion_FI: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, FI: e.target.checked });
         };
         if (e.target.name.includes('FE')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_FE: null });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_FE: null, variacion_FE: '', diaVariacion_FE: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, FE: e.target.checked });
         };
         if (e.target.name.includes('AB')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_AB: null });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_AB: null, variacion_AB: '', diaVariacion_AB: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, AB: e.target.checked });
         };
         if (e.target.name.includes('MA')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_MA: null });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_MA: null, variacion_MA: '', diaVariacion_MA: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, MA: e.target.checked });
         };
         if (e.target.name.includes('PO')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_PO: null });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_PO: null, variacion_PO: '', diaVariacion_PO: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, PO: e.target.checked });
         };
         if (e.target.name.includes('BA')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_BA: null });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_BA: null, variacion_BA: '', diaVariacion_BA: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, BA: e.target.checked });
         };
         if (e.target.name.includes('FT')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_FT: null });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_FT: null, variacion_FT: '', diaVariacion_FT: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, FT: e.target.checked });
         };
@@ -2451,25 +2485,49 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setOpenSnack(true);
                 return;
             };
-            if ((stateSwitchTipoServicioFijoEdicion.TO && !valuesFormEdicion.precioHora_TO) ||
-                (stateSwitchTipoServicioFijoEdicion.CR && !valuesFormEdicion.precioHora_CR) ||
-                (stateSwitchTipoServicioFijoEdicion.CE && !valuesFormEdicion.precioHora_CE) ||
-                (stateSwitchTipoServicioFijoEdicion.CI && !valuesFormEdicion.precioHora_CI) ||
-                (stateSwitchTipoServicioFijoEdicion.MO && !valuesFormEdicion.precioHora_MO) ||
-                (stateSwitchTipoServicioFijoEdicion.OF && !valuesFormEdicion.precioHora_OF) ||
-                (stateSwitchTipoServicioFijoEdicion.AL && !valuesFormEdicion.precioHora_AL) ||
-                (stateSwitchTipoServicioFijoEdicion.LA && !valuesFormEdicion.precioHora_LA) ||
-                (stateSwitchTipoServicioFijoEdicion.TE && !valuesFormEdicion.precioHora_TE) ||
-                (stateSwitchTipoServicioFijoEdicion.FI && !valuesFormEdicion.precioHora_FI) ||
-                (stateSwitchTipoServicioFijoEdicion.FE && !valuesFormEdicion.precioHora_FE) ||
-                (stateSwitchTipoServicioFijoEdicion.AB && !valuesFormEdicion.precioHora_AB) ||
-                (stateSwitchTipoServicioFijoEdicion.MA && !valuesFormEdicion.precioHora_MA) ||
-                (stateSwitchTipoServicioFijoEdicion.PO && !valuesFormEdicion.precioHora_PO) ||
-                (stateSwitchTipoServicioFijoEdicion.BA && !valuesFormEdicion.precioHora_BA) ||
-                (stateSwitchTipoServicioFijoEdicion.FT && !valuesFormEdicion.precioHora_FT)
+            if ((stateSwitchTipoServicioFijoEdicion.TO && (!valuesFormEdicion.variacion_TO || !valuesFormEdicion.precioHora_TO)) ||
+                (stateSwitchTipoServicioFijoEdicion.CR && (!valuesFormEdicion.variacion_CR || !valuesFormEdicion.precioHora_CR)) ||
+                (stateSwitchTipoServicioFijoEdicion.CE && (!valuesFormEdicion.variacion_CE || !valuesFormEdicion.precioHora_CE)) ||
+                (stateSwitchTipoServicioFijoEdicion.CI && (!valuesFormEdicion.variacion_CI || !valuesFormEdicion.precioHora_CI)) ||
+                (stateSwitchTipoServicioFijoEdicion.MO && (!valuesFormEdicion.variacion_MO || !valuesFormEdicion.precioHora_MO)) ||
+                (stateSwitchTipoServicioFijoEdicion.OF && (!valuesFormEdicion.variacion_OF || !valuesFormEdicion.precioHora_OF)) ||
+                (stateSwitchTipoServicioFijoEdicion.AL && (!valuesFormEdicion.variacion_AL || !valuesFormEdicion.precioHora_AL)) ||
+                (stateSwitchTipoServicioFijoEdicion.LA && (!valuesFormEdicion.variacion_LA || !valuesFormEdicion.precioHora_LA)) ||
+                (stateSwitchTipoServicioFijoEdicion.TE && (!valuesFormEdicion.variacion_TE || !valuesFormEdicion.precioHora_TE)) ||
+                (stateSwitchTipoServicioFijoEdicion.FI && (!valuesFormEdicion.variacion_FI || !valuesFormEdicion.precioHora_FI)) ||
+                (stateSwitchTipoServicioFijoEdicion.FE && (!valuesFormEdicion.variacion_FE || !valuesFormEdicion.precioHora_FE)) ||
+                (stateSwitchTipoServicioFijoEdicion.AB && (!valuesFormEdicion.variacion_AB || !valuesFormEdicion.precioHora_AB)) ||
+                (stateSwitchTipoServicioFijoEdicion.MA && (!valuesFormEdicion.variacion_MA || !valuesFormEdicion.precioHora_MA)) ||
+                (stateSwitchTipoServicioFijoEdicion.PO && (!valuesFormEdicion.variacion_PO || !valuesFormEdicion.precioHora_PO)) ||
+                (stateSwitchTipoServicioFijoEdicion.BA && (!valuesFormEdicion.variacion_BA || !valuesFormEdicion.precioHora_BA)) ||
+                (stateSwitchTipoServicioFijoEdicion.FT && (!valuesFormEdicion.variacion_FT || !valuesFormEdicion.precioHora_FT))
             ) {
                 setAlert({
-                    mensaje: "Has selecionado un tipo de servicio fijo pero no has asignado precio. Revisa el formulario.",
+                    mensaje: "Has selecionado un tipo de servicio fijo pero no has asignado precio o variación. Revisa el formulario.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return;
+            };
+            if (((valuesFormEdicion.variacion_TO === 1 || valuesFormEdicion.variacion_TO === 2) && !valuesFormEdicion.diaVariacion_TO) ||
+                ((valuesFormEdicion.variacion_CR === 1 || valuesFormEdicion.variacion_CR === 2) && !valuesFormEdicion.diaVariacion_CR) ||
+                ((valuesFormEdicion.variacion_CE === 1 || valuesFormEdicion.variacion_CE === 2) && !valuesFormEdicion.diaVariacion_CE) ||
+                ((valuesFormEdicion.variacion_CI === 1 || valuesFormEdicion.variacion_CI === 2) && !valuesFormEdicion.diaVariacion_CI) ||
+                ((valuesFormEdicion.variacion_MO === 1 || valuesFormEdicion.variacion_MO === 2) && !valuesFormEdicion.diaVariacion_MO) ||
+                ((valuesFormEdicion.variacion_OF === 1 || valuesFormEdicion.variacion_OF === 2) && !valuesFormEdicion.diaVariacion_OF) ||
+                ((valuesFormEdicion.variacion_AL === 1 || valuesFormEdicion.variacion_AL === 2) && !valuesFormEdicion.diaVariacion_AL) ||
+                ((valuesFormEdicion.variacion_LA === 1 || valuesFormEdicion.variacion_LA === 2) && !valuesFormEdicion.diaVariacion_LA) ||
+                ((valuesFormEdicion.variacion_TE === 1 || valuesFormEdicion.variacion_TE === 2) && !valuesFormEdicion.diaVariacion_TE) ||
+                ((valuesFormEdicion.variacion_FI === 1 || valuesFormEdicion.variacion_FI === 2) && !valuesFormEdicion.diaVariacion_FI) ||
+                ((valuesFormEdicion.variacion_FE === 1 || valuesFormEdicion.variacion_FE === 2) && !valuesFormEdicion.diaVariacion_FE) ||
+                ((valuesFormEdicion.variacion_AB === 1 || valuesFormEdicion.variacion_AB === 2) && !valuesFormEdicion.diaVariacion_AB) ||
+                ((valuesFormEdicion.variacion_MA === 1 || valuesFormEdicion.variacion_MA === 2) && !valuesFormEdicion.diaVariacion_MA) ||
+                ((valuesFormEdicion.variacion_PO === 1 || valuesFormEdicion.variacion_PO === 2) && !valuesFormEdicion.diaVariacion_PO) ||
+                ((valuesFormEdicion.variacion_BA === 1 || valuesFormEdicion.variacion_BA === 2) && !valuesFormEdicion.diaVariacion_BA) ||
+                ((valuesFormEdicion.variacion_FT === 1 || valuesFormEdicion.variacion_FT === 2) && !valuesFormEdicion.diaVariacion_FT)
+            ) {
+                setAlert({
+                    mensaje: "Debes seleccionar un día de la semana para la variación de servicio fijo elegida. Revisa el formulario.",
                     tipo: 'error'
                 })
                 setOpenSnack(true);
@@ -3441,52 +3499,132 @@ const CentrosEditar = forwardRef((props, ref) => {
                 servicio: []
             };
             if (valuesFormEdicion.precioHora_TO) {
-                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'TOL', precioHora_TO: parseFloat(valuesFormEdicion.precioHora_TO) });
+                serviciosFijosEdicion.servicio.push({
+                    tipoServiciofijo: 'TOL',
+                    precioHora_TO: parseFloat(valuesFormEdicion.precioHora_TO),
+                    variacion_TO: parseFloat(valuesFormEdicion.variacion_TO),
+                    diaVariacion_TO: valuesFormEdicion.diaVariacion_TO
+                });
             };
             if (valuesFormEdicion.precioHora_CR) {
-                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'CRIS', precioHora_CR: parseFloat(valuesFormEdicion.precioHora_CR) });
+                serviciosFijosEdicion.servicio.push({
+                    tipoServiciofijo: 'CRIS',
+                    precioHora_CR: parseFloat(valuesFormEdicion.precioHora_CR),
+                    variacion_CR: parseFloat(valuesFormEdicion.variacion_CR),
+                    diaVariacion_CR: valuesFormEdicion.diaVariacion_CR
+                });
             };
             if (valuesFormEdicion.precioHora_CE) {
-                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'CRISE', precioHora_CE: parseFloat(valuesFormEdicion.precioHora_CE) });
+                serviciosFijosEdicion.servicio.push({
+                    tipoServiciofijo: 'CRISE',
+                    precioHora_CE: parseFloat(valuesFormEdicion.precioHora_CE),
+                    variacion_CE: parseFloat(valuesFormEdicion.variacion_CE),
+                    diaVariacion_CE: valuesFormEdicion.diaVariacion_CE
+                });
             };
             if (valuesFormEdicion.precioHora_CI) {
-                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'CRISI', precioHora_CI: parseFloat(valuesFormEdicion.precioHora_CI) });
+                serviciosFijosEdicion.servicio.push({
+                    tipoServiciofijo: 'CRISI',
+                    precioHora_CI: parseFloat(valuesFormEdicion.precioHora_CI),
+                    variacion_CI: parseFloat(valuesFormEdicion.variacion_CI),
+                    diaVariacion_CI: valuesFormEdicion.diaVariacion_CI
+                });
             };
             if (valuesFormEdicion.precioHora_MO) {
-                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'MOQ', precioHora_MO: parseFloat(valuesFormEdicion.precioHora_MO) });
+                serviciosFijosEdicion.servicio.push({
+                    tipoServiciofijo: 'MOQ',
+                    precioHora_MO: parseFloat(valuesFormEdicion.precioHora_MO),
+                    variacion_MO: parseFloat(valuesFormEdicion.variacion_MO),
+                    diaVariacion_MO: valuesFormEdicion.diaVariacion_MO
+                });
             };
             if (valuesFormEdicion.precioHora_OF) {
-                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'OF', precioHora_OF: parseFloat(valuesFormEdicion.precioHora_OF) });
+                serviciosFijosEdicion.servicio.push({
+                    tipoServiciofijo: 'OF',
+                    precioHora_OF: parseFloat(valuesFormEdicion.precioHora_OF),
+                    variacion_OF: parseFloat(valuesFormEdicion.variacion_OF),
+                    diaVariacion_OF: valuesFormEdicion.diaVariacion_OF
+                });
             };
             if (valuesFormEdicion.precioHora_AL) {
-                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'ALMC', precioHora_AL: parseFloat(valuesFormEdicion.precioHora_AL) });
+                serviciosFijosEdicion.servicio.push({
+                    tipoServiciofijo: 'ALMC',
+                    precioHora_AL: parseFloat(valuesFormEdicion.precioHora_AL),
+                    variacion_AL: parseFloat(valuesFormEdicion.variacion_AL),
+                    diaVariacion_AL: valuesFormEdicion.diaVariacion_AL
+                });
             };
             if (valuesFormEdicion.precioHora_LA) {
-                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'LAB', precioHora_LA: parseFloat(valuesFormEdicion.precioHora_LA) });
+                serviciosFijosEdicion.servicio.push({
+                    tipoServiciofijo: 'LAB',
+                    precioHora_LA: parseFloat(valuesFormEdicion.precioHora_LA),
+                    variacion_LA: parseFloat(valuesFormEdicion.variacion_LA),
+                    diaVariacion_LA: valuesFormEdicion.diaVariacion_LA
+                });
             };
             if (valuesFormEdicion.precioHora_TE) {
-                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'TELÑ', precioHora_TE: parseFloat(valuesFormEdicion.precioHora_TE) });
+                serviciosFijosEdicion.servicio.push({
+                    tipoServiciofijo: 'TELÑ',
+                    precioHora_TE: parseFloat(valuesFormEdicion.precioHora_TE),
+                    variacion_TE: parseFloat(valuesFormEdicion.variacion_TE),
+                    diaVariacion_TE: valuesFormEdicion.diaVariacion_TE
+                });
             };
             if (valuesFormEdicion.precioHora_FI) {
-                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'FCH.IN', precioHora_FI: parseFloat(valuesFormEdicion.precioHora_FI) });
+                serviciosFijosEdicion.servicio.push({
+                    tipoServiciofijo: 'FCH.IN',
+                    precioHora_FI: parseFloat(valuesFormEdicion.precioHora_FI),
+                    variacion_FI: parseFloat(valuesFormEdicion.variacion_FI),
+                    diaVariacion_FI: valuesFormEdicion.diaVariacion_FI
+                });
             };
             if (valuesFormEdicion.precioHora_FE) {
-                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'FCH.EX', precioHora_FE: parseFloat(valuesFormEdicion.precioHora_FE) });
+                serviciosFijosEdicion.servicio.push({
+                    tipoServiciofijo: 'FCH.EX',
+                    precioHora_FE: parseFloat(valuesFormEdicion.precioHora_FE),
+                    variacion_FE: parseFloat(valuesFormEdicion.variacion_FE),
+                    diaVariacion_FE: valuesFormEdicion.diaVariacion_FE
+                });
             };
             if (valuesFormEdicion.precioHora_AB) {
-                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'ABRLL', precioHora_AB: parseFloat(valuesFormEdicion.precioHora_AB) });
+                serviciosFijosEdicion.servicio.push({
+                    tipoServiciofijo: 'ABRLL',
+                    precioHora_AB: parseFloat(valuesFormEdicion.precioHora_AB),
+                    variacion_AB: parseFloat(valuesFormEdicion.variacion_AB),
+                    diaVariacion_AB: valuesFormEdicion.diaVariacion_AB
+                });
             };
             if (valuesFormEdicion.precioHora_MA) {
-                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'MANT', precioHora_MA: parseFloat(valuesFormEdicion.precioHora_MA) });
+                serviciosFijosEdicion.servicio.push({
+                    tipoServiciofijo: 'MANT',
+                    precioHora_MA: parseFloat(valuesFormEdicion.precioHora_MA),
+                    variacion_MA: parseFloat(valuesFormEdicion.variacion_MA),
+                    diaVariacion_MA: valuesFormEdicion.diaVariacion_MA
+                });
             };
             if (valuesFormEdicion.precioHora_PO) {
-                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'PORT', precioHora_PO: parseFloat(valuesFormEdicion.precioHora_PO) });
+                serviciosFijosEdicion.servicio.push({
+                    tipoServiciofijo: 'PORT',
+                    precioHora_PO: parseFloat(valuesFormEdicion.precioHora_PO),
+                    variacion_PO: parseFloat(valuesFormEdicion.variacion_PO),
+                    diaVariacion_PO: valuesFormEdicion.diaVariacion_PO
+                });
             };
             if (valuesFormEdicion.precioHora_BA) {
-                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'BACT', precioHora_BA: parseFloat(valuesFormEdicion.precioHora_BA) });
+                serviciosFijosEdicion.servicio.push({
+                    tipoServiciofijo: 'BACT',
+                    precioHora_BA: parseFloat(valuesFormEdicion.precioHora_BA),
+                    variacion_BA: parseFloat(valuesFormEdicion.variacion_BA),
+                    diaVariacion_BA: valuesFormEdicion.diaVariacion_BA
+                });
             };
             if (valuesFormEdicion.precioHora_FT) {
-                serviciosFijosEdicion.servicio.push({ tipoServiciofijo: 'FEST', precioHora_FT: parseFloat(valuesFormEdicion.precioHora_FT) });
+                serviciosFijosEdicion.servicio.push({
+                    tipoServiciofijo: 'FEST',
+                    precioHora_FT: parseFloat(valuesFormEdicion.precioHora_FT),
+                    variacion_FT: parseFloat(valuesFormEdicion.variacion_FT),
+                    diaVariacion_FT: valuesFormEdicion.diaVariacion_FT
+                });
             };
             if (serviciosFijosEdicion.servicio.length === 0) {
                 serviciosFijosEdicion = null;
@@ -3743,7 +3881,39 @@ const CentrosEditar = forwardRef((props, ref) => {
                 precioHora_MA: null,
                 precioHora_PO: null,
                 precioHora_BA: null,
-                precioHora_FT: null
+                precioHora_FT: null,
+                variacion_TO: '',
+                variacion_CR: '',
+                variacion_CE: '',
+                variacion_CI: '',
+                variacion_MO: '',
+                variacion_OF: '',
+                variacion_AL: '',
+                variacion_LA: '',
+                variacion_TE: '',
+                variacion_FI: '',
+                variacion_FE: '',
+                variacion_AB: '',
+                variacion_MA: '',
+                variacion_PO: '',
+                variacion_BA: '',
+                variacion_FT: '',
+                diaVariacion_TO: '',
+                diaVariacion_CR: '',
+                diaVariacion_CE: '',
+                diaVariacion_CI: '',
+                diaVariacion_MO: '',
+                diaVariacion_OF: '',
+                diaVariacion_AL: '',
+                diaVariacion_LA: '',
+                diaVariacion_TE: '',
+                diaVariacion_FI: '',
+                diaVariacion_FE: '',
+                diaVariacion_AB: '',
+                diaVariacion_MA: '',
+                diaVariacion_PO: '',
+                diaVariacion_BA: '',
+                diaVariacion_FT: ''
             });
             setValuesFormEdicionGenerales({
                 id: null,
@@ -3799,7 +3969,39 @@ const CentrosEditar = forwardRef((props, ref) => {
                 precioHora_MA: null,
                 precioHora_PO: null,
                 precioHora_BA: null,
-                precioHora_FT: null
+                precioHora_FT: null,
+                variacion_TO: '',
+                variacion_CR: '',
+                variacion_CE: '',
+                variacion_CI: '',
+                variacion_MO: '',
+                variacion_OF: '',
+                variacion_AL: '',
+                variacion_LA: '',
+                variacion_TE: '',
+                variacion_FI: '',
+                variacion_FE: '',
+                variacion_AB: '',
+                variacion_MA: '',
+                variacion_PO: '',
+                variacion_BA: '',
+                variacion_FT: '',
+                diaVariacion_TO: '',
+                diaVariacion_CR: '',
+                diaVariacion_CE: '',
+                diaVariacion_CI: '',
+                diaVariacion_MO: '',
+                diaVariacion_OF: '',
+                diaVariacion_AL: '',
+                diaVariacion_LA: '',
+                diaVariacion_TE: '',
+                diaVariacion_FI: '',
+                diaVariacion_FE: '',
+                diaVariacion_AB: '',
+                diaVariacion_MA: '',
+                diaVariacion_PO: '',
+                diaVariacion_BA: '',
+                diaVariacion_FT: ''
             });
         };
         setValueTimePickerInicioEdicion([
@@ -4418,7 +4620,7 @@ const CentrosEditar = forwardRef((props, ref) => {
     };
 
     const retornaTipoServicioFijoEdicion = (tipo, index) => {
-        let checkeado, laLabelSw, laLabelIn, elId, elValue, laLabelWi, elPrecioHora, laClase;
+        let checkeado, laLabelSw, laLabelIn, elId, elValue, laLabelWi, elPrecioHora, laClase, elValueVariaciones, laVariacion, elValueDia, elDia;
         switch (tipo.value) {
             case 'TOL':
                 checkeado = stateSwitchTipoServicioFijoEdicion.TO;
@@ -4426,9 +4628,13 @@ const CentrosEditar = forwardRef((props, ref) => {
                 laLabelIn = 'Precio TOL';
                 elId = 'form-precio-hora_TO-edicion';
                 elValue = valuesFormEdicion.precioHora_TO || '';
+                elValueVariaciones = valuesFormEdicion.variacion_TO || '';
+                elValueDia = valuesFormEdicion.diaVariacion_TO || '';
                 laLabelWi = 90;
                 elPrecioHora = 'precioHora_TO';
-                laClase = valuesFormEdicion.precioHora_TO ? classes.fondoGrisClaro : classes.paper;
+                laVariacion = 'variacion_TO';
+                elDia = 'diaVariacion_TO';
+                laClase = valuesFormEdicion.precioHora_TO && valuesFormEdicion.variacion_TO ? classes.fondoGrisClaro : classes.paper;
                 break;
             case 'CRIS':
                 checkeado = stateSwitchTipoServicioFijoEdicion.CR;
@@ -4436,9 +4642,13 @@ const CentrosEditar = forwardRef((props, ref) => {
                 laLabelIn = 'Precio CRIS';
                 elId = 'form-precio-hora_CR-edicion';
                 elValue = valuesFormEdicion.precioHora_CR || '';
+                elValueVariaciones = valuesFormEdicion.variacion_CR || '';
+                elValueDia = valuesFormEdicion.diaVariacion_CR || '';
                 laLabelWi = 100;
                 elPrecioHora = 'precioHora_CR';
-                laClase = valuesFormEdicion.precioHora_CR ? classes.fondoGrisClaro : classes.paper;
+                laVariacion = 'variacion_CR';
+                elDia = 'diaVariacion_CR';
+                laClase = valuesFormEdicion.precioHora_CR && valuesFormEdicion.variacion_CR ? classes.fondoGrisClaro : classes.paper;
                 break;
             case 'CRISE':
                 checkeado = stateSwitchTipoServicioFijoEdicion.CE;
@@ -4446,9 +4656,13 @@ const CentrosEditar = forwardRef((props, ref) => {
                 laLabelIn = 'Precio CRISE';
                 elId = 'form-precio-hora_CE-edicion';
                 elValue = valuesFormEdicion.precioHora_CE || '';
+                elValueVariaciones = valuesFormEdicion.variacion_CE || '';
+                elValueDia = valuesFormEdicion.diaVariacion_CE || '';
                 laLabelWi = 110;
                 elPrecioHora = 'precioHora_CE';
-                laClase = valuesFormEdicion.precioHora_CE ? classes.fondoGrisClaro : classes.paper;
+                laVariacion = 'variacion_CE';
+                elDia = 'diaVariacion_CE';
+                laClase = valuesFormEdicion.precioHora_CE && valuesFormEdicion.variacion_CE ? classes.fondoGrisClaro : classes.paper;
                 break;
             case 'CRISI':
                 checkeado = stateSwitchTipoServicioFijoEdicion.CI;
@@ -4456,9 +4670,13 @@ const CentrosEditar = forwardRef((props, ref) => {
                 laLabelIn = 'Precio CRISI';
                 elId = 'form-precio-hora_CI-edicion';
                 elValue = valuesFormEdicion.precioHora_CI || '';
+                elValueVariaciones = valuesFormEdicion.variacion_CI || '';
+                elValueDia = valuesFormEdicion.diaVariacion_CI || '';
                 laLabelWi = 105;
                 elPrecioHora = 'precioHora_CI';
-                laClase = valuesFormEdicion.precioHora_CI ? classes.fondoGrisClaro : classes.paper;
+                laVariacion = 'variacion_CI';
+                elDia = 'diaVariacion_CI';
+                laClase = valuesFormEdicion.precioHora_CI && valuesFormEdicion.variacion_CI ? classes.fondoGrisClaro : classes.paper;
                 break;
             case 'MOQ':
                 checkeado = stateSwitchTipoServicioFijoEdicion.MO;
@@ -4466,9 +4684,13 @@ const CentrosEditar = forwardRef((props, ref) => {
                 laLabelIn = 'Precio MOQ';
                 elId = 'form-precio-hora_MO-edicion';
                 elValue = valuesFormEdicion.precioHora_MO || '';
+                elValueVariaciones = valuesFormEdicion.variacion_MO || '';
+                elValueDia = valuesFormEdicion.diaVariacion_MO || '';
                 laLabelWi = 95;
                 elPrecioHora = 'precioHora_MO';
-                laClase = valuesFormEdicion.precioHora_MO ? classes.fondoGrisClaro : classes.paper;
+                laVariacion = 'variacion_MO';
+                elDia = 'diaVariacion_MO';
+                laClase = valuesFormEdicion.precioHora_MO && valuesFormEdicion.variacion_MO ? classes.fondoGrisClaro : classes.paper;
                 break;
             case 'OF':
                 checkeado = stateSwitchTipoServicioFijoEdicion.OF;
@@ -4476,9 +4698,13 @@ const CentrosEditar = forwardRef((props, ref) => {
                 laLabelIn = 'Precio OF';
                 elId = 'form-precio-hora_OF-edicion';
                 elValue = valuesFormEdicion.precioHora_OF || '';
+                elValueVariaciones = valuesFormEdicion.variacion_OF || '';
+                elValueDia = valuesFormEdicion.diaVariacion_OF || '';
                 laLabelWi = 80;
                 elPrecioHora = 'precioHora_OF';
-                laClase = valuesFormEdicion.precioHora_OF ? classes.fondoGrisClaro : classes.paper;
+                laVariacion = 'variacion_OF';
+                elDia = 'diaVariacion_OF';
+                laClase = valuesFormEdicion.precioHora_OF && valuesFormEdicion.variacion_OF ? classes.fondoGrisClaro : classes.paper;
                 break;
             case 'ALMC':
                 checkeado = stateSwitchTipoServicioFijoEdicion.AL;
@@ -4486,9 +4712,13 @@ const CentrosEditar = forwardRef((props, ref) => {
                 laLabelIn = 'Precio ALMC';
                 elId = 'form-precio-hora_AL-edicion';
                 elValue = valuesFormEdicion.precioHora_AL || '';
+                elValueVariaciones = valuesFormEdicion.variacion_AL || '';
+                elValueDia = valuesFormEdicion.diaVariacion_AL || '';
                 laLabelWi = 100;
                 elPrecioHora = 'precioHora_AL';
-                laClase = valuesFormEdicion.precioHora_AL ? classes.fondoGrisClaro : classes.paper;
+                laVariacion = 'variacion_AL';
+                elDia = 'diaVariacion_AL';
+                laClase = valuesFormEdicion.precioHora_AL && valuesFormEdicion.variacion_AL ? classes.fondoGrisClaro : classes.paper;
                 break;
             case 'LAB':
                 checkeado = stateSwitchTipoServicioFijoEdicion.LA;
@@ -4496,9 +4726,13 @@ const CentrosEditar = forwardRef((props, ref) => {
                 laLabelIn = 'Precio LAB';
                 elId = 'form-precio-hora_LA-edicion';
                 elValue = valuesFormEdicion.precioHora_LA || '';
+                elValueVariaciones = valuesFormEdicion.variacion_LA || '';
+                elValueDia = valuesFormEdicion.diaVariacion_LA || '';
                 laLabelWi = 90;
                 elPrecioHora = 'precioHora_LA';
-                laClase = valuesFormEdicion.precioHora_LA ? classes.fondoGrisClaro : classes.paper;
+                laVariacion = 'variacion_LA';
+                elDia = 'diaVariacion_LA';
+                laClase = valuesFormEdicion.precioHora_LA && valuesFormEdicion.variacion_LA ? classes.fondoGrisClaro : classes.paper;
                 break;
             case 'TELÑ':
                 checkeado = stateSwitchTipoServicioFijoEdicion.TE;
@@ -4506,9 +4740,13 @@ const CentrosEditar = forwardRef((props, ref) => {
                 laLabelIn = 'Precio TELÑ';
                 elId = 'form-precio-hora_TE-edicion';
                 elValue = valuesFormEdicion.precioHora_TE || '';
+                elValueVariaciones = valuesFormEdicion.variacion_TE || '';
+                elValueDia = valuesFormEdicion.diaVariacion_TE || '';
                 laLabelWi = 100;
                 elPrecioHora = 'precioHora_TE';
-                laClase = valuesFormEdicion.precioHora_TE ? classes.fondoGrisClaro : classes.paper;
+                laVariacion = 'variacion_TE';
+                elDia = 'diaVariacion_TE';
+                laClase = valuesFormEdicion.precioHora_TE && valuesFormEdicion.variacion_TE ? classes.fondoGrisClaro : classes.paper;
                 break;
             case 'FCH.IN':
                 checkeado = stateSwitchTipoServicioFijoEdicion.FI;
@@ -4516,9 +4754,13 @@ const CentrosEditar = forwardRef((props, ref) => {
                 laLabelIn = 'Precio FCH.IN';
                 elId = 'form-precio-hora_FI-edicion';
                 elValue = valuesFormEdicion.precioHora_FI || '';
+                elValueVariaciones = valuesFormEdicion.variacion_FT || '';
+                elValueDia = valuesFormEdicion.diaVariacion_FT || '';
                 laLabelWi = 120;
                 elPrecioHora = 'precioHora_FI';
-                laClase = valuesFormEdicion.precioHora_FI ? classes.fondoGrisClaro : classes.paper;
+                laVariacion = 'variacion_FI';
+                elDia = 'diaVariacion_FI';
+                laClase = valuesFormEdicion.precioHora_FI && valuesFormEdicion.variacion_FI ? classes.fondoGrisClaro : classes.paper;
                 break;
             case 'FCH.EX':
                 checkeado = stateSwitchTipoServicioFijoEdicion.FE;
@@ -4526,9 +4768,13 @@ const CentrosEditar = forwardRef((props, ref) => {
                 laLabelIn = 'Precio FCH.EX';
                 elId = 'form-precio-hora_FE-edicion';
                 elValue = valuesFormEdicion.precioHora_FE || '';
+                elValueVariaciones = valuesFormEdicion.variacion_FE || '';
+                elValueDia = valuesFormEdicion.diaVariacion_FE || '';
                 laLabelWi = 120;
                 elPrecioHora = 'precioHora_FE';
-                laClase = valuesFormEdicion.precioHora_FE ? classes.fondoGrisClaro : classes.paper;
+                laVariacion = 'variacion_FE';
+                elDia = 'diaVariacion_FE';
+                laClase = valuesFormEdicion.precioHora_FE && valuesFormEdicion.variacion_FE ? classes.fondoGrisClaro : classes.paper;
                 break;
             case 'ABRLL':
                 checkeado = stateSwitchTipoServicioFijoEdicion.AB;
@@ -4536,9 +4782,13 @@ const CentrosEditar = forwardRef((props, ref) => {
                 laLabelIn = 'Precio ABRLL';
                 elId = 'form-precio-hora_AB-edicion';
                 elValue = valuesFormEdicion.precioHora_AB || '';
+                elValueVariaciones = valuesFormEdicion.variacion_AB || '';
+                elValueDia = valuesFormEdicion.diaVariacion_AB || '';
                 laLabelWi = 110;
                 elPrecioHora = 'precioHora_AB';
-                laClase = valuesFormEdicion.precioHora_AB ? classes.fondoGrisClaro : classes.paper;
+                laVariacion = 'variacion_AB';
+                elDia = 'diaVariacion_AB';
+                laClase = valuesFormEdicion.precioHora_AB && valuesFormEdicion.variacion_AB ? classes.fondoGrisClaro : classes.paper;
                 break;
             case 'MANT':
                 checkeado = stateSwitchTipoServicioFijoEdicion.MA;
@@ -4546,9 +4796,13 @@ const CentrosEditar = forwardRef((props, ref) => {
                 laLabelIn = 'Precio MANT';
                 elId = 'form-precio-hora_MA-edicion';
                 elValue = valuesFormEdicion.precioHora_MA || '';
+                elValueVariaciones = valuesFormEdicion.variacion_MA || '';
+                elValueDia = valuesFormEdicion.diaVariacion_MA || '';
                 laLabelWi = 105;
                 elPrecioHora = 'precioHora_MA';
-                laClase = valuesFormEdicion.precioHora_MA ? classes.fondoGrisClaro : classes.paper;
+                laVariacion = 'variacion_MA';
+                elDia = 'diaVariacion_MA';
+                laClase = valuesFormEdicion.precioHora_MA && valuesFormEdicion.variacion_MA ? classes.fondoGrisClaro : classes.paper;
                 break;
             case 'PORT':
                 checkeado = stateSwitchTipoServicioFijoEdicion.PO;
@@ -4556,9 +4810,13 @@ const CentrosEditar = forwardRef((props, ref) => {
                 laLabelIn = 'Precio PORT';
                 elId = 'form-precio-hora_PO-edicion';
                 elValue = valuesFormEdicion.precioHora_PO || '';
+                elValueVariaciones = valuesFormEdicion.variacion_PO || '';
+                elValueDia = valuesFormEdicion.diaVariacion_PO || '';
                 laLabelWi = 100;
                 elPrecioHora = 'precioHora_PO';
-                laClase = valuesFormEdicion.precioHora_PO ? classes.fondoGrisClaro : classes.paper;
+                laVariacion = 'variacion_PO';
+                elDia = 'diaVariacion_PO';
+                laClase = valuesFormEdicion.precioHora_PO && valuesFormEdicion.variacion_PO ? classes.fondoGrisClaro : classes.paper;
                 break;
             case 'BACT':
                 checkeado = stateSwitchTipoServicioFijoEdicion.BA;
@@ -4566,9 +4824,13 @@ const CentrosEditar = forwardRef((props, ref) => {
                 laLabelIn = 'Precio BACT';
                 elId = 'form-precio-hora_BA-edicion';
                 elValue = valuesFormEdicion.precioHora_BA || '';
+                elValueVariaciones = valuesFormEdicion.variacion_BA || '';
+                elValueDia = valuesFormEdicion.diaVariacion_BA || '';
                 laLabelWi = 100;
                 elPrecioHora = 'precioHora_BA';
-                laClase = valuesFormEdicion.precioHora_BA ? classes.fondoGrisClaro : classes.paper;
+                laVariacion = 'variacion_BA';
+                elDia = 'diaVariacion_BA';
+                laClase = valuesFormEdicion.precioHora_BA && valuesFormEdicion.variacion_BA ? classes.fondoGrisClaro : classes.paper;
                 break;
             case 'FEST':
                 checkeado = stateSwitchTipoServicioFijoEdicion.FT;
@@ -4576,9 +4838,13 @@ const CentrosEditar = forwardRef((props, ref) => {
                 laLabelIn = 'Precio FEST';
                 elId = 'form-precio-hora_FT-edicion';
                 elValue = valuesFormEdicion.precioHora_FT || '';
+                elValueVariaciones = valuesFormEdicion.variacion_FT || '';
+                elValueDia = valuesFormEdicion.diaVariacion_FT || '';
                 laLabelWi = 100;
                 elPrecioHora = 'precioHora_FT';
-                laClase = valuesFormEdicion.precioHora_FT ? classes.fondoGrisClaro : classes.paper;
+                laVariacion = 'variacion_FT';
+                elDia = 'diaVariacion_FT';
+                laClase = valuesFormEdicion.precioHora_FT && valuesFormEdicion.variacion_FT ? classes.fondoGrisClaro : classes.paper;
                 break;
             default:
         };
@@ -4593,7 +4859,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                 style={{ height: 80, paddingTop: 5, paddingBottom: 10, paddingRight: 10, paddingLeft: 10, marginBottom: 15 }}
                 key={'formServicio' + index}
             >
-                <Grid item xs={8} >
+                <Grid item xs={5} >
                     <FormControlLabel
                         control={
                             <Switch
@@ -4601,13 +4867,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                                 name={elId}
                                 color="secondary"
                                 onChange={handleChangeSwitchTipoServicioFijoEdicion}
+                                disabled={disabledItem}
                             />
                         }
                         label={<Typography variant="body2">{laLabelSw}</Typography>}
                         labelPlacement="end"
                     />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={2}>
                     <FormControl
                         variant="outlined"
                         className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
@@ -4622,6 +4889,53 @@ const CentrosEditar = forwardRef((props, ref) => {
                             labelWidth={laLabelWi}
                             startAdornment={<InputAdornment position="start">€</InputAdornment>}
                         />
+                    </FormControl>
+                </Grid>
+                <Grid item xs={3}>
+                    <FormControl
+                        variant="outlined"
+                        className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
+                        size="small"
+                    >
+                        <InputLabel>Variaciones</InputLabel>
+                        <Select
+                            fullWidth
+                            value={elValueVariaciones}
+                            onChange={handleChangeFormEdicion(laVariacion)}
+                            helpertext="Selecciona variaciones"
+                            label="Variaciones"
+                        >
+                            {variacionesServiciosFijos.map((option) => (
+                                <MenuItem key={option.value} value={option.value}>
+                                    {option.label}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </Grid>
+                <Grid item xs={2}>
+                    <FormControl
+                        variant="outlined"
+                        className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
+                        size="small"
+                    >
+                        <InputLabel>Día</InputLabel>
+                        <Select
+                            fullWidth
+                            value={elValueDia}
+                            onChange={handleChangeFormEdicion(elDia)}
+                            helpertext="Selecciona Día"
+                            label="Día"
+                        >
+                            <MenuItem value=''>
+                                <em>No</em>
+                            </MenuItem>
+                            {diasSemana.map((option) => (
+                                <MenuItem key={option.value} value={option.value}>
+                                    {option.label}
+                                </MenuItem>
+                            ))}
+                        </Select>
                     </FormControl>
                 </Grid>
             </Grid>
@@ -4751,7 +5065,39 @@ const CentrosEditar = forwardRef((props, ref) => {
             precioHora_MA: null,
             precioHora_PO: null,
             precioHora_BA: null,
-            precioHora_FT: null
+            precioHora_FT: null,
+            variacion_TO: '',
+            variacion_CR: '',
+            variacion_CE: '',
+            variacion_CI: '',
+            variacion_MO: '',
+            variacion_OF: '',
+            variacion_AL: '',
+            variacion_LA: '',
+            variacion_TE: '',
+            variacion_FI: '',
+            variacion_FE: '',
+            variacion_AB: '',
+            variacion_MA: '',
+            variacion_PO: '',
+            variacion_BA: '',
+            variacion_FT: '',
+            diaVariacion_TO: '',
+            diaVariacion_CR: '',
+            diaVariacion_CE: '',
+            diaVariacion_CI: '',
+            diaVariacion_MO: '',
+            diaVariacion_OF: '',
+            diaVariacion_AL: '',
+            diaVariacion_LA: '',
+            diaVariacion_TE: '',
+            diaVariacion_FI: '',
+            diaVariacion_FE: '',
+            diaVariacion_AB: '',
+            diaVariacion_MA: '',
+            diaVariacion_PO: '',
+            diaVariacion_BA: '',
+            diaVariacion_FT: ''
         };
         let objetoEstadosSwitch = {
             TO: false,
@@ -4775,66 +5121,98 @@ const CentrosEditar = forwardRef((props, ref) => {
             cuadranteAGestionar.servicios_fijos.servicio.forEach((servicio) => {
                 if (servicio.precioHora_TO) {
                     myObjetoServiciosFijos.precioHora_TO = servicio.precioHora_TO;
+                    myObjetoServiciosFijos.variacion_TO = servicio.variacion_TO;
+                    myObjetoServiciosFijos.diaVariacion_TO = servicio.diaVariacion_TO;
                     objetoEstadosSwitch.TO = true;
                 };
                 if (servicio.precioHora_CR) {
                     myObjetoServiciosFijos.precioHora_CR = servicio.precioHora_CR;
+                    myObjetoServiciosFijos.variacion_CR = servicio.variacion_CR;
+                    myObjetoServiciosFijos.diaVariacion_CR = servicio.diaVariacion_CR;
                     objetoEstadosSwitch.CR = true;
                 };
                 if (servicio.precioHora_CE) {
                     myObjetoServiciosFijos.precioHora_CE = servicio.precioHora_CE;
+                    myObjetoServiciosFijos.variacion_CE = servicio.variacion_CE;
+                    myObjetoServiciosFijos.diaVariacion_CE = servicio.diaVariacion_CE;
                     objetoEstadosSwitch.CE = true;
                 };
                 if (servicio.precioHora_CI) {
                     myObjetoServiciosFijos.precioHora_CI = servicio.precioHora_CI;
+                    myObjetoServiciosFijos.variacion_CI = servicio.variacion_CI;
+                    myObjetoServiciosFijos.diaVariacion_CI = servicio.diaVariacion_CI;
                     objetoEstadosSwitch.CI = true;
                 };
                 if (servicio.precioHora_MO) {
                     myObjetoServiciosFijos.precioHora_MO = servicio.precioHora_MO;
+                    myObjetoServiciosFijos.variacion_MO = servicio.variacion_MO;
+                    myObjetoServiciosFijos.diaVariacion_MO = servicio.diaVariacion_MO;
                     objetoEstadosSwitch.MO = true;
                 };
                 if (servicio.precioHora_OF) {
                     myObjetoServiciosFijos.precioHora_OF = servicio.precioHora_OF;
+                    myObjetoServiciosFijos.variacion_OF = servicio.variacion_OF;
+                    myObjetoServiciosFijos.diaVariacion_OF = servicio.diaVariacion_OF;
                     objetoEstadosSwitch.OF = true;
                 };
                 if (servicio.precioHora_AL) {
                     myObjetoServiciosFijos.precioHora_AL = servicio.precioHora_AL;
+                    myObjetoServiciosFijos.variacion_AL = servicio.variacion_AL;
+                    myObjetoServiciosFijos.diaVariacion_AL = servicio.diaVariacion_AL;
                     objetoEstadosSwitch.AL = true;
                 };
                 if (servicio.precioHora_LA) {
                     myObjetoServiciosFijos.precioHora_LA = servicio.precioHora_LA;
+                    myObjetoServiciosFijos.variacion_LA = servicio.variacion_LA;
+                    myObjetoServiciosFijos.diaVariacion_LA = servicio.diaVariacion_LA;
                     objetoEstadosSwitch.LA = true;
                 };
                 if (servicio.precioHora_TE) {
                     myObjetoServiciosFijos.precioHora_TE = servicio.precioHora_TE;
+                    myObjetoServiciosFijos.variacion_TE = servicio.variacion_TE;
+                    myObjetoServiciosFijos.diaVariacion_TE = servicio.diaVariacion_TE;
                     objetoEstadosSwitch.TE = true;
                 };
                 if (servicio.precioHora_FI) {
                     myObjetoServiciosFijos.precioHora_FI = servicio.precioHora_FI;
+                    myObjetoServiciosFijos.variacion_FI = servicio.variacion_FI;
+                    myObjetoServiciosFijos.diaVariacion_FI = servicio.diaVariacion_FI;
                     objetoEstadosSwitch.FI = true;
                 };
                 if (servicio.precioHora_FE) {
                     myObjetoServiciosFijos.precioHora_FE = servicio.precioHora_FE;
+                    myObjetoServiciosFijos.variacion_FE = servicio.variacion_FE;
+                    myObjetoServiciosFijos.diaVariacion_FE = servicio.diaVariacion_FE;
                     objetoEstadosSwitch.FE = true;
                 };
                 if (servicio.precioHora_AB) {
                     myObjetoServiciosFijos.precioHora_AB = servicio.precioHora_AB;
+                    myObjetoServiciosFijos.variacion_AB = servicio.variacion_AB;
+                    myObjetoServiciosFijos.diaVariacion_AB = servicio.diaVariacion_AB;
                     objetoEstadosSwitch.AB = true;
                 };
                 if (servicio.precioHora_MA) {
                     myObjetoServiciosFijos.precioHora_MA = servicio.precioHora_MA;
+                    myObjetoServiciosFijos.variacion_MA = servicio.variacion_MA;
+                    myObjetoServiciosFijos.diaVariacion_MA = servicio.diaVariacion_MA;
                     objetoEstadosSwitch.MA = true;
                 };
                 if (servicio.precioHora_PO) {
                     myObjetoServiciosFijos.precioHora_PO = servicio.precioHora_PO;
+                    myObjetoServiciosFijos.variacion_PO = servicio.variacion_PO;
+                    myObjetoServiciosFijos.diaVariacion_PO = servicio.diaVariacion_PO;
                     objetoEstadosSwitch.PO = true;
                 };
                 if (servicio.precioHora_BA) {
                     myObjetoServiciosFijos.precioHora_BA = servicio.precioHora_BA;
+                    myObjetoServiciosFijos.variacion_BA = servicio.variacion_BA;
+                    myObjetoServiciosFijos.diaVariacion_BA = servicio.diaVariacion_BA;
                     objetoEstadosSwitch.BA = true;
                 };
                 if (servicio.precioHora_FT) {
                     myObjetoServiciosFijos.precioHora_FT = servicio.precioHora_FT;
+                    myObjetoServiciosFijos.variacion_FT = servicio.variacion_FT;
+                    myObjetoServiciosFijos.diaVariacion_FT = servicio.diaVariacion_FT;
                     objetoEstadosSwitch.FT = true;
                 };
             });
@@ -4852,6 +5230,7 @@ const CentrosEditar = forwardRef((props, ref) => {
             precioHora_L: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.precioHora_L : null,
             precioHora_E: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.precioHora_E : null,
             precioHora_P: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.precioHora_P : null,
+            precioHora_N: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.precioHora_N : null,
             precioHora_R: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.precioHora_R : null,
             precioHora_L1: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.precioHora_L1 : null,
             precioHora_L2: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.precioHora_L2 : null,
@@ -4871,7 +5250,39 @@ const CentrosEditar = forwardRef((props, ref) => {
             precioHora_MA: myObjetoServiciosFijos.precioHora_MA,
             precioHora_PO: myObjetoServiciosFijos.precioHora_PO,
             precioHora_BA: myObjetoServiciosFijos.precioHora_BA,
-            precioHora_FT: myObjetoServiciosFijos.precioHora_FT
+            precioHora_FT: myObjetoServiciosFijos.precioHora_FT,
+            variacion_TO: myObjetoServiciosFijos.variacion_TO,
+            variacion_CR: myObjetoServiciosFijos.variacion_CR,
+            variacion_CE: myObjetoServiciosFijos.variacion_CE,
+            variacion_CI: myObjetoServiciosFijos.variacion_CI,
+            variacion_MO: myObjetoServiciosFijos.variacion_MO,
+            variacion_OF: myObjetoServiciosFijos.variacion_OF,
+            variacion_AL: myObjetoServiciosFijos.variacion_AL,
+            variacion_LA: myObjetoServiciosFijos.variacion_LA,
+            variacion_TE: myObjetoServiciosFijos.variacion_TE,
+            variacion_FI: myObjetoServiciosFijos.variacion_FI,
+            variacion_FE: myObjetoServiciosFijos.variacion_FE,
+            variacion_AB: myObjetoServiciosFijos.variacion_AB,
+            variacion_MA: myObjetoServiciosFijos.variacion_MA,
+            variacion_PO: myObjetoServiciosFijos.variacion_PO,
+            variacion_BA: myObjetoServiciosFijos.variacion_BA,
+            variacion_FT: myObjetoServiciosFijos.variacion_FT,
+            diaVariacion_TO: myObjetoServiciosFijos.diaVariacion_TO,
+            diaVariacion_CR: myObjetoServiciosFijos.diaVariacion_CR,
+            diaVariacion_CE: myObjetoServiciosFijos.diaVariacion_CE,
+            diaVariacion_CI: myObjetoServiciosFijos.diaVariacion_CI,
+            diaVariacion_MO: myObjetoServiciosFijos.diaVariacion_MO,
+            diaVariacion_OF: myObjetoServiciosFijos.diaVariacion_OF,
+            diaVariacion_AL: myObjetoServiciosFijos.diaVariacion_AL,
+            diaVariacion_LA: myObjetoServiciosFijos.diaVariacion_LA,
+            diaVariacion_TE: myObjetoServiciosFijos.diaVariacion_TE,
+            diaVariacion_FI: myObjetoServiciosFijos.diaVariacion_FI,
+            diaVariacion_FE: myObjetoServiciosFijos.diaVariacion_FE,
+            diaVariacion_AB: myObjetoServiciosFijos.diaVariacion_AB,
+            diaVariacion_MA: myObjetoServiciosFijos.diaVariacion_MA,
+            diaVariacion_PO: myObjetoServiciosFijos.diaVariacion_PO,
+            diaVariacion_BA: myObjetoServiciosFijos.diaVariacion_BA,
+            diaVariacion_FT: myObjetoServiciosFijos.diaVariacion_FT
         });
         if (cuadranteAGestionar.horario) {
             if (cuadranteAGestionar.horario.tipo === "rango") {
@@ -5342,7 +5753,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                         domingoTipoServicio: '',
                     }
                 ],
-            });            
+            });
         };
     };
 
@@ -6074,7 +6485,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                 </Grid>
                             </TabPanel>
                             <TabPanel value={valueTabCentrosEdicion} index={2} className={classes.scrollable} style={{ height: heightScrollable }}>
-                                <Grid item lg={8} sm={8} xs={12}>
+                                <Grid item xs={12}>
                                     <Box style={{ paddingLeft: 10, marginTop: 10 }}>
                                         {
                                             tiposDeServicio.map((tipo, index) => (

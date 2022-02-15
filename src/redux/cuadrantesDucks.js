@@ -21,66 +21,21 @@ const dataInicial = {
         datosCuadrante: {
             objeto: 'cuadrante',
             centro: null,
-            tipoHorarioGeneral: '',
-            arrayCuadrante: []
+            datosCuadrante: []
         },
         datosServicios: {
             objeto: 'serviciosFijos',
-            servicio: [
-                { tipoServiciofijo: 'TOL', precioHora_TO: null },
-                { tipoServiciofijo: 'CRIS', precioHora_CR: null },
-                { tipoServiciofijo: 'CRISE', precioHora_CE: null },
-                { tipoServiciofijo: 'CRISI', precioHora_CI: null },
-                { tipoServiciofijo: 'MOQ', precioHora_MO: null },
-                { tipoServiciofijo: 'OF', precioHora_OF: null },
-                { tipoServiciofijo: 'ALMC', precioHora_AL: null },
-                { tipoServiciofijo: 'LAB', precioHora_LA: null },
-                { tipoServiciofijo: 'TELÑ', precioHora_TE: null },
-                { tipoServiciofijo: 'FCH.IN', precioHora_FI: null },
-                { tipoServiciofijo: 'FCH.EX', precioHora_FE: null },
-                { tipoServiciofijo: 'ABRLL', precioHora_AB: null },
-                { tipoServiciofijo: 'MANT', precioHora_MA: null },
-                { tipoServiciofijo: 'PORT', precioHora_PO: null },
-                { tipoServiciofijo: 'BACT', precioHora_BA: null },
-                { tipoServiciofijo: 'FEST', precioHora_FT: null }
-            ]
+            datosServicios: []
         },
         datosInforme: {
             objeto: 'informe',
-            computo: '',
-            mensualPactado: null,
-            precioHora_L: null,
-            precioHora_E: null,
-            precioHora_P: null,
-            precioHora_N: null,
-            precioHora_R: null,
-            precioHora_L1: null,
-            precioHora_L2: null,
-            precioHora_F: null,
-            arrayTrabajadores: [],
-            totalFacturado_M: null,
-            totalFacturado_L: null,
-            totalFacturado_E: null,
-            totalFacturado_P: null,
-            totalFacturado_N: null,
-            totalFacturado_R: null,
-            totalFacturado_L1: null,
-            totalFacturado_L2: null,
-            totalFacturado_F: null
+            datosInforme: []
         },
         estado: 'registrado',
         total: null,
         horas: {
             objeto: 'horas',
-            M: null,
-            L: null,
-            E: null,
-            P: null,
-            N: null,
-            R: null,
-            L1: null,
-            L2: null,
-            F: null
+            horas: []
         }
     },
     cuadranteRegistrado: '',
@@ -239,66 +194,21 @@ export const vaciarDatosCuadrantesAccion = () => (dispatch, getState) => {
             datosCuadrante: {
                 objeto: 'cuadrante',
                 centro: null,
-                tipoHorarioGeneral: '',
-                arrayCuadrante: []
+                datosCuadrante: []
             },
             datosServicios: {
                 objeto: 'serviciosFijos',
-                servicio: [
-                    { tipoServiciofijo: 'TOL', precioHora_TO: null },
-                    { tipoServiciofijo: 'CRIS', precioHora_CR: null },
-                    { tipoServiciofijo: 'CRISE', precioHora_CE: null },
-                    { tipoServiciofijo: 'CRISI', precioHora_CI: null },
-                    { tipoServiciofijo: 'MOQ', precioHora_MO: null },
-                    { tipoServiciofijo: 'OF', precioHora_OF: null },
-                    { tipoServiciofijo: 'ALMC', precioHora_AL: null },
-                    { tipoServiciofijo: 'LAB', precioHora_LA: null },
-                    { tipoServiciofijo: 'TELÑ', precioHora_TE: null },
-                    { tipoServiciofijo: 'FCH.IN', precioHora_FI: null },
-                    { tipoServiciofijo: 'FCH.EX', precioHora_FE: null },
-                    { tipoServiciofijo: 'ABRLL', precioHora_AB: null },
-                    { tipoServiciofijo: 'MANT', precioHora_MA: null },
-                    { tipoServiciofijo: 'PORT', precioHora_PO: null },
-                    { tipoServiciofijo: 'BACT', precioHora_BA: null },
-                    { tipoServiciofijo: 'FEST', precioHora_FT: null }
-                ]
+                datosServicios: []
             },
             datosInforme: {
                 objeto: 'informe',
-                computo: '',
-                mensualPactado: null,
-                precioHora_L: null,
-                precioHora_E: null,
-                precioHora_P: null,
-                precioHora_N: null,
-                precioHora_R: null,
-                precioHora_L1: null,
-                precioHora_L2: null,
-                precioHora_F: null,
-                arrayTrabajadores: [],
-                totalFacturado_M: null,
-                totalFacturado_L: null,
-                totalFacturado_E: null,
-                totalFacturado_P: null,
-                totalFacturado_N: null,
-                totalFacturado_R: null,
-                totalFacturado_L1: null,
-                totalFacturado_L2: null,
-                totalFacturado_F: null
+                datosInforme: []
             },
             estado: 'registrado',
             total: null,
             horas: {
                 objeto: 'horas',
-                M: null,
-                L: null,
-                E: null,
-                P: null,
-                N: null,
-                R: null,
-                L1: null,
-                L2: null,
-                F: null
+                horas: []
             }
         }
     });
@@ -552,7 +462,7 @@ const periodoBajaTrabajadorAccion = (calendarioAGestionar, inicioBaja, finBaja, 
 }
 
 const gestionaDatosHorarioItem = (
-    centroAGestionar,
+    elHorarioCuadrante,
     tipoTrabajador,
     tipoRegistro,
     cantidadTrabajadoresCentro,
@@ -589,8 +499,8 @@ const gestionaDatosHorarioItem = (
                 return null;
             }
         } else {
-            if (centroAGestionar.horario.tipoRegistroTrabajador[0][item]) {
-                return centroAGestionar.horario.tipoRegistroTrabajador[0][item];
+            if (elHorarioCuadrante.tipoRegistroTrabajador[0][item]) {
+                return elHorarioCuadrante.tipoRegistroTrabajador[0][item];
             } else {
                 if (comillas) {
                     return '';
@@ -608,8 +518,8 @@ const gestionaDatosHorarioItem = (
                     return null;
                 }
             } else {
-                if (centroAGestionar.horario.tipoRegistroTrabajador[posicionTrabajador - 1][item]) {
-                    return centroAGestionar.horario.tipoRegistroTrabajador[posicionTrabajador - 1][item];
+                if (elHorarioCuadrante.tipoRegistroTrabajador[posicionTrabajador - 1][item]) {
+                    return elHorarioCuadrante.tipoRegistroTrabajador[posicionTrabajador - 1][item];
                 } else {
                     if (comillas) {
                         return '';
@@ -628,8 +538,8 @@ const gestionaDatosHorarioItem = (
                             return null;
                         }
                     } else {
-                        if (centroAGestionar.horario.tipoRegistroTrabajador[0][item]) {
-                            return centroAGestionar.horario.tipoRegistroTrabajador[0][item];
+                        if (elHorarioCuadrante.tipoRegistroTrabajador[0][item]) {
+                            return elHorarioCuadrante.tipoRegistroTrabajador[0][item];
                         } else {
                             if (comillas) {
                                 return '';
@@ -646,8 +556,8 @@ const gestionaDatosHorarioItem = (
                             return null;
                         }
                     } else {
-                        if (centroAGestionar.horario.tipoRegistroTrabajador[posicionTrabajador - 1][item]) {
-                            return centroAGestionar.horario.tipoRegistroTrabajador[posicionTrabajador - 1][item];
+                        if (elHorarioCuadrante.tipoRegistroTrabajador[posicionTrabajador - 1][item]) {
+                            return elHorarioCuadrante.tipoRegistroTrabajador[posicionTrabajador - 1][item];
                         } else {
                             if (comillas) {
                                 return '';
@@ -666,8 +576,8 @@ const gestionaDatosHorarioItem = (
                             return null;
                         }
                     } else {
-                        if (centroAGestionar.horario.tipoRegistroTrabajador[0][item]) {
-                            return centroAGestionar.horario.tipoRegistroTrabajador[0][item];
+                        if (elHorarioCuadrante.tipoRegistroTrabajador[0][item]) {
+                            return elHorarioCuadrante.tipoRegistroTrabajador[0][item];
                         } else {
                             if (comillas) {
                                 return '';
@@ -684,8 +594,8 @@ const gestionaDatosHorarioItem = (
                             return null;
                         }
                     } else {
-                        if (centroAGestionar.horario.tipoRegistroTrabajador[posicionTrabajador - 1][item]) {
-                            return centroAGestionar.horario.tipoRegistroTrabajador[posicionTrabajador - 1][item];
+                        if (elHorarioCuadrante.tipoRegistroTrabajador[posicionTrabajador - 1][item]) {
+                            return elHorarioCuadrante.tipoRegistroTrabajador[posicionTrabajador - 1][item];
                         } else {
                             if (comillas) {
                                 return '';
@@ -706,7 +616,7 @@ export const gestionaColumnaCuadranteInterior = (
     esRevision,
     columna,
     cuadrante,
-    centroAGestionar,
+    elHorarioCuadrante,
     posicionAnterior,
     calendarioAGestionar,
     losDiasDelMes,
@@ -723,8 +633,8 @@ export const gestionaColumnaCuadranteInterior = (
     let arrayBaja = [];
     let hayTrabajador;
     let arrayRegistrosHistorico = [];
-    let tipoRegistro = centroAGestionar.horario.tipoRegistro;
-    let cantidadTrabajadoresCentro = centroAGestionar.horario.tipoRegistroTrabajador.length;
+    let tipoRegistro = elHorarioCuadrante.tipoRegistro;
+    let cantidadTrabajadoresCentro = elHorarioCuadrante.tipoRegistroTrabajador.length;
     if (trabajador && tipoTrabajador) {
         if (esRevision) {
             columnaAnadir = {
@@ -825,7 +735,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 };
                             }
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Lunes') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         lunesInicioRango: null,
@@ -864,9 +774,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                            lunesInicioRango: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicioRango'),
-                                            lunesFinRango: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFinRango'),
-                                            tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
+                                            lunesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicioRango'),
+                                            lunesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFinRango'),
+                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -880,7 +790,7 @@ export const gestionaColumnaCuadranteInterior = (
                             };
                         }
                     } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                             if (dia[1][0] === 'Lunes') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     lunesInicioRango: null,
@@ -919,9 +829,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        lunesInicioRango: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicioRango'),
-                                        lunesFinRango: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFinRango'),
-                                        tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
+                                        lunesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicioRango'),
+                                        lunesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFinRango'),
+                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -968,7 +878,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 };
                             }
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Martes') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         martesInicioRango: null,
@@ -1007,9 +917,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                            martesInicioRango: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicioRango'),
-                                            martesFinRango: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFinRango'),
-                                            tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
+                                            martesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicioRango'),
+                                            martesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFinRango'),
+                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -1023,7 +933,7 @@ export const gestionaColumnaCuadranteInterior = (
                             };
                         }
                     } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                             if (dia[1][0] === 'Martes') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     martesInicioRango: null,
@@ -1062,9 +972,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        martesInicioRango: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicioRango'),
-                                        martesFinRango: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFinRango'),
-                                        tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
+                                        martesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicioRango'),
+                                        martesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFinRango'),
+                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -1111,7 +1021,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 };
                             }
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Miércoles') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         miercolesInicioRango: null,
@@ -1150,9 +1060,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                            miercolesInicioRango: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicioRango'),
-                                            miercolesFinRango: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFinRango'),
-                                            tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
+                                            miercolesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicioRango'),
+                                            miercolesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFinRango'),
+                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -1166,7 +1076,7 @@ export const gestionaColumnaCuadranteInterior = (
                             };
                         }
                     } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                             if (dia[1][0] === 'Miércoles') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     miercolesInicioRango: null,
@@ -1205,9 +1115,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        miercolesInicioRango: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicioRango'),
-                                        miercolesFinRango: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFinRango'),
-                                        tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
+                                        miercolesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicioRango'),
+                                        miercolesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFinRango'),
+                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -1254,7 +1164,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 };
                             }
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Jueves') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         juevesInicioRango: null,
@@ -1293,9 +1203,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                            juevesInicioRango: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicioRango'),
-                                            juevesFinRango: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFinRango'),
-                                            tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
+                                            juevesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicioRango'),
+                                            juevesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFinRango'),
+                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -1309,7 +1219,7 @@ export const gestionaColumnaCuadranteInterior = (
                             };
                         }
                     } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                             if (dia[1][0] === 'Jueves') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     juevesInicioRango: null,
@@ -1348,9 +1258,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        juevesInicioRango: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicioRango'),
-                                        juevesFinRango: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFinRango'),
-                                        tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
+                                        juevesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicioRango'),
+                                        juevesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFinRango'),
+                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -1397,7 +1307,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 };
                             }
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Viernes') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         viernesInicioRango: null,
@@ -1436,9 +1346,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                            viernesInicioRango: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicioRango'),
-                                            viernesFinRango: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFinRango'),
-                                            tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
+                                            viernesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicioRango'),
+                                            viernesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFinRango'),
+                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -1452,7 +1362,7 @@ export const gestionaColumnaCuadranteInterior = (
                             };
                         }
                     } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                             if (dia[1][0] === 'Viernes') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     viernesInicioRango: null,
@@ -1491,9 +1401,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        viernesInicioRango: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicioRango'),
-                                        viernesFinRango: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFinRango'),
-                                        tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
+                                        viernesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicioRango'),
+                                        viernesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFinRango'),
+                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -1540,7 +1450,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 };
                             }
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Sábado') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         sabadoInicioRango: null,
@@ -1579,9 +1489,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                            sabadoInicioRango: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicioRango'),
-                                            sabadoFinRango: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFinRango'),
-                                            tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
+                                            sabadoInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicioRango'),
+                                            sabadoFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFinRango'),
+                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -1595,7 +1505,7 @@ export const gestionaColumnaCuadranteInterior = (
                             };
                         }
                     } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                             if (dia[1][0] === 'Sábado') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     sabadoInicioRango: null,
@@ -1634,9 +1544,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        sabadoInicioRango: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicioRango'),
-                                        sabadoFinRango: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFinRango'),
-                                        tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
+                                        sabadoInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicioRango'),
+                                        sabadoFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFinRango'),
+                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -1683,7 +1593,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 };
                             }
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Domingo') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         domingoInicioRango: null,
@@ -1722,9 +1632,9 @@ export const gestionaColumnaCuadranteInterior = (
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                            domingoInicioRango: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicioRango'),
-                                            domingoFinRango: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFinRango'),
-                                            tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
+                                            domingoInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicioRango'),
+                                            domingoFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFinRango'),
+                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -1738,7 +1648,7 @@ export const gestionaColumnaCuadranteInterior = (
                             };
                         }
                     } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                             if (dia[1][0] === 'Domingo') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     domingoInicioRango: null,
@@ -1777,9 +1687,9 @@ export const gestionaColumnaCuadranteInterior = (
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        domingoInicioRango: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicioRango'),
-                                        domingoFinRango: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFinRango'),
-                                        tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
+                                        domingoInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicioRango'),
+                                        domingoFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFinRango'),
+                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -1835,7 +1745,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 };
                             }
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Lunes') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         lunesInicio1RangoDescanso: null,
@@ -1878,11 +1788,11 @@ export const gestionaColumnaCuadranteInterior = (
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                            lunesInicio1RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicio1RangoDescanso'),
-                                            lunesFin1RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFin1RangoDescanso'),
-                                            lunesInicio2RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicio2RangoDescanso'),
-                                            lunesFin2RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFin2RangoDescanso'),
-                                            tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
+                                            lunesInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicio1RangoDescanso'),
+                                            lunesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFin1RangoDescanso'),
+                                            lunesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicio2RangoDescanso'),
+                                            lunesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFin2RangoDescanso'),
+                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -1896,7 +1806,7 @@ export const gestionaColumnaCuadranteInterior = (
                             };
                         }
                     } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                             if (dia[1][0] === 'Lunes') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     lunesInicio1RangoDescanso: null,
@@ -1939,11 +1849,11 @@ export const gestionaColumnaCuadranteInterior = (
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        lunesInicio1RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicio1RangoDescanso'),
-                                        lunesFin1RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFin1RangoDescanso'),
-                                        lunesInicio2RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicio2RangoDescanso'),
-                                        lunesFin2RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFin2RangoDescanso'),
-                                        tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
+                                        lunesInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicio1RangoDescanso'),
+                                        lunesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFin1RangoDescanso'),
+                                        lunesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicio2RangoDescanso'),
+                                        lunesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFin2RangoDescanso'),
+                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -1994,7 +1904,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 };
                             }
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Martes') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         martesInicio1RangoDescanso: null,
@@ -2037,11 +1947,11 @@ export const gestionaColumnaCuadranteInterior = (
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                            martesInicio1RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicio1RangoDescanso'),
-                                            martesFin1RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFin1RangoDescanso'),
-                                            martesInicio2RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicio2RangoDescanso'),
-                                            martesFin2RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFin2RangoDescanso'),
-                                            tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
+                                            martesInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicio1RangoDescanso'),
+                                            martesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFin1RangoDescanso'),
+                                            martesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicio2RangoDescanso'),
+                                            martesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFin2RangoDescanso'),
+                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -2055,7 +1965,7 @@ export const gestionaColumnaCuadranteInterior = (
                             };
                         }
                     } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                             if (dia[1][0] === 'Martes') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     martesInicio1RangoDescanso: null,
@@ -2098,11 +2008,11 @@ export const gestionaColumnaCuadranteInterior = (
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        martesInicio1RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicio1RangoDescanso'),
-                                        martesFin1RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFin1RangoDescanso'),
-                                        martesInicio2RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicio2RangoDescanso'),
-                                        martesFin2RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFin2RangoDescanso'),
-                                        tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
+                                        martesInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicio1RangoDescanso'),
+                                        martesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFin1RangoDescanso'),
+                                        martesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicio2RangoDescanso'),
+                                        martesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFin2RangoDescanso'),
+                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -2153,7 +2063,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 };
                             }
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Miércoles') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         miercolesInicio1RangoDescanso: null,
@@ -2196,11 +2106,11 @@ export const gestionaColumnaCuadranteInterior = (
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                            miercolesInicio1RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicio1RangoDescanso'),
-                                            miercolesFin1RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFin1RangoDescanso'),
-                                            miercolesInicio2RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicio2RangoDescanso'),
-                                            miercolesFin2RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFin2RangoDescanso'),
-                                            tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
+                                            miercolesInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicio1RangoDescanso'),
+                                            miercolesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFin1RangoDescanso'),
+                                            miercolesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicio2RangoDescanso'),
+                                            miercolesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFin2RangoDescanso'),
+                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -2214,7 +2124,7 @@ export const gestionaColumnaCuadranteInterior = (
                             };
                         }
                     } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                             if (dia[1][0] === 'Miércoles') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     miercolesInicio1RangoDescanso: null,
@@ -2257,11 +2167,11 @@ export const gestionaColumnaCuadranteInterior = (
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        miercolesInicio1RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicio1RangoDescanso'),
-                                        miercolesFin1RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFin1RangoDescanso'),
-                                        miercolesInicio2RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicio2RangoDescanso'),
-                                        miercolesFin2RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFin2RangoDescanso'),
-                                        tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
+                                        miercolesInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicio1RangoDescanso'),
+                                        miercolesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFin1RangoDescanso'),
+                                        miercolesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicio2RangoDescanso'),
+                                        miercolesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFin2RangoDescanso'),
+                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -2312,7 +2222,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 };
                             }
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Jueves') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         juevesInicio1RangoDescanso: null,
@@ -2355,11 +2265,11 @@ export const gestionaColumnaCuadranteInterior = (
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                            juevesInicio1RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicio1RangoDescanso'),
-                                            juevesFin1RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFin1RangoDescanso'),
-                                            juevesInicio2RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicio2RangoDescanso'),
-                                            juevesFin2RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFin2RangoDescanso'),
-                                            tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
+                                            juevesInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicio1RangoDescanso'),
+                                            juevesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFin1RangoDescanso'),
+                                            juevesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicio2RangoDescanso'),
+                                            juevesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFin2RangoDescanso'),
+                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -2373,7 +2283,7 @@ export const gestionaColumnaCuadranteInterior = (
                             };
                         }
                     } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                             if (dia[1][0] === 'Jueves') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     juevesInicio1RangoDescanso: null,
@@ -2416,11 +2326,11 @@ export const gestionaColumnaCuadranteInterior = (
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        juevesInicio1RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicio1RangoDescanso'),
-                                        juevesFin1RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFin1RangoDescanso'),
-                                        juevesInicio2RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicio2RangoDescanso'),
-                                        juevesFin2RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFin2RangoDescanso'),
-                                        tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
+                                        juevesInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicio1RangoDescanso'),
+                                        juevesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFin1RangoDescanso'),
+                                        juevesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicio2RangoDescanso'),
+                                        juevesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFin2RangoDescanso'),
+                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -2471,7 +2381,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 };
                             }
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Viernes') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         viernesInicio1RangoDescanso: null,
@@ -2514,11 +2424,11 @@ export const gestionaColumnaCuadranteInterior = (
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                            viernesInicio1RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicio1RangoDescanso'),
-                                            viernesFin1RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFin1RangoDescanso'),
-                                            viernesInicio2RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicio2RangoDescanso'),
-                                            viernesFin2RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFin2RangoDescanso'),
-                                            tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
+                                            viernesInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicio1RangoDescanso'),
+                                            viernesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFin1RangoDescanso'),
+                                            viernesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicio2RangoDescanso'),
+                                            viernesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFin2RangoDescanso'),
+                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -2532,7 +2442,7 @@ export const gestionaColumnaCuadranteInterior = (
                             };
                         }
                     } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                             if (dia[1][0] === 'Viernes') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     viernesInicio1RangoDescanso: null,
@@ -2575,11 +2485,11 @@ export const gestionaColumnaCuadranteInterior = (
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        viernesInicio1RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicio1RangoDescanso'),
-                                        viernesFin1RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFin1RangoDescanso'),
-                                        viernesInicio2RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicio2RangoDescanso'),
-                                        viernesFin2RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFin2RangoDescanso'),
-                                        tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
+                                        viernesInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicio1RangoDescanso'),
+                                        viernesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFin1RangoDescanso'),
+                                        viernesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicio2RangoDescanso'),
+                                        viernesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFin2RangoDescanso'),
+                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -2630,7 +2540,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 };
                             }
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Sábado') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         sabadoInicio1RangoDescanso: null,
@@ -2673,11 +2583,11 @@ export const gestionaColumnaCuadranteInterior = (
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                            sabadoInicio1RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicio1RangoDescanso'),
-                                            sabadoFin1RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFin1RangoDescanso'),
-                                            sabadoInicio2RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicio2RangoDescanso'),
-                                            sabadoFin2RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFin2RangoDescanso'),
-                                            tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
+                                            sabadoInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicio1RangoDescanso'),
+                                            sabadoFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFin1RangoDescanso'),
+                                            sabadoInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicio2RangoDescanso'),
+                                            sabadoFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFin2RangoDescanso'),
+                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -2691,7 +2601,7 @@ export const gestionaColumnaCuadranteInterior = (
                             };
                         }
                     } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                             if (dia[1][0] === 'Sábado') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     sabadoInicio1RangoDescanso: null,
@@ -2734,11 +2644,11 @@ export const gestionaColumnaCuadranteInterior = (
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        sabadoInicio1RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicio1RangoDescanso'),
-                                        sabadoFin1RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFin1RangoDescanso'),
-                                        sabadoInicio2RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicio2RangoDescanso'),
-                                        sabadoFin2RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFin2RangoDescanso'),
-                                        tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
+                                        sabadoInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicio1RangoDescanso'),
+                                        sabadoFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFin1RangoDescanso'),
+                                        sabadoInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicio2RangoDescanso'),
+                                        sabadoFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFin2RangoDescanso'),
+                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -2789,7 +2699,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 };
                             }
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Domingo') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         domingoInicio1RangoDescanso: null,
@@ -2832,11 +2742,11 @@ export const gestionaColumnaCuadranteInterior = (
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                            domingoInicio1RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicio1RangoDescanso'),
-                                            domingoFin1RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFin1RangoDescanso'),
-                                            domingoInicio2RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicio2RangoDescanso'),
-                                            domingoFin2RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFin2RangoDescanso'),
-                                            tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
+                                            domingoInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicio1RangoDescanso'),
+                                            domingoFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFin1RangoDescanso'),
+                                            domingoInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicio2RangoDescanso'),
+                                            domingoFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFin2RangoDescanso'),
+                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -2850,7 +2760,7 @@ export const gestionaColumnaCuadranteInterior = (
                             };
                         }
                     } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                             if (dia[1][0] === 'Domingo') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     domingoInicio1RangoDescanso: null,
@@ -2893,11 +2803,11 @@ export const gestionaColumnaCuadranteInterior = (
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        domingoInicio1RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicio1RangoDescanso'),
-                                        domingoFin1RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFin1RangoDescanso'),
-                                        domingoInicio2RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicio2RangoDescanso'),
-                                        domingoFin2RangoDescanso: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFin2RangoDescanso'),
-                                        tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
+                                        domingoInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicio1RangoDescanso'),
+                                        domingoFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFin1RangoDescanso'),
+                                        domingoInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicio2RangoDescanso'),
+                                        domingoFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFin2RangoDescanso'),
+                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -2947,7 +2857,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 };
                             }
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Lunes') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         lunesCantidad: '',
@@ -2984,8 +2894,8 @@ export const gestionaColumnaCuadranteInterior = (
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                            lunesCantidad: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesCantidad'),
-                                            tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
+                                            lunesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesCantidad'),
+                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -2999,7 +2909,7 @@ export const gestionaColumnaCuadranteInterior = (
                             };
                         }
                     } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                             if (dia[1][0] === 'Lunes') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     lunesCantidad: '',
@@ -3036,8 +2946,8 @@ export const gestionaColumnaCuadranteInterior = (
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        lunesCantidad: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesCantidad'),
-                                        tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
+                                        lunesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesCantidad'),
+                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -3082,7 +2992,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 };
                             }
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Martes') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         martesCantidad: '',
@@ -3119,8 +3029,8 @@ export const gestionaColumnaCuadranteInterior = (
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                            martesCantidad: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesCantidad'),
-                                            tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
+                                            martesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesCantidad'),
+                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -3134,7 +3044,7 @@ export const gestionaColumnaCuadranteInterior = (
                             };
                         }
                     } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                             if (dia[1][0] === 'Martes') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     martesCantidad: '',
@@ -3171,8 +3081,8 @@ export const gestionaColumnaCuadranteInterior = (
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        martesCantidad: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesCantidad'),
-                                        tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
+                                        martesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesCantidad'),
+                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -3217,7 +3127,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 };
                             }
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Miércoles') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         miercolesCantidad: '',
@@ -3254,8 +3164,8 @@ export const gestionaColumnaCuadranteInterior = (
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                            miercolesCantidad: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesCantidad'),
-                                            tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
+                                            miercolesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesCantidad'),
+                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -3269,7 +3179,7 @@ export const gestionaColumnaCuadranteInterior = (
                             };
                         }
                     } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                             if (dia[1][0] === 'Miércoles') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     miercolesCantidad: '',
@@ -3306,8 +3216,8 @@ export const gestionaColumnaCuadranteInterior = (
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        miercolesCantidad: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesCantidad'),
-                                        tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
+                                        miercolesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesCantidad'),
+                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -3352,7 +3262,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 };
                             }
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Jueves') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         juevesCantidad: '',
@@ -3389,8 +3299,8 @@ export const gestionaColumnaCuadranteInterior = (
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                            juevesCantidad: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesCantidad'),
-                                            tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
+                                            juevesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesCantidad'),
+                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -3404,7 +3314,7 @@ export const gestionaColumnaCuadranteInterior = (
                             };
                         }
                     } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                             if (dia[1][0] === 'Jueves') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     juevesCantidad: '',
@@ -3441,8 +3351,8 @@ export const gestionaColumnaCuadranteInterior = (
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        juevesCantidad: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesCantidad'),
-                                        tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
+                                        juevesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesCantidad'),
+                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -3487,7 +3397,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 };
                             }
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Viernes') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         viernesCantidad: '',
@@ -3524,8 +3434,8 @@ export const gestionaColumnaCuadranteInterior = (
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                            viernesCantidad: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesCantidad'),
-                                            tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
+                                            viernesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesCantidad'),
+                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -3539,7 +3449,7 @@ export const gestionaColumnaCuadranteInterior = (
                             };
                         }
                     } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                             if (dia[1][0] === 'Viernes') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     viernesCantidad: '',
@@ -3576,8 +3486,8 @@ export const gestionaColumnaCuadranteInterior = (
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        viernesCantidad: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesCantidad'),
-                                        tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
+                                        viernesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesCantidad'),
+                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -3622,7 +3532,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 };
                             }
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Sábado') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         sabadoCantidad: '',
@@ -3659,8 +3569,8 @@ export const gestionaColumnaCuadranteInterior = (
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                            sabadoCantidad: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoCantidad'),
-                                            tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
+                                            sabadoCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoCantidad'),
+                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -3674,7 +3584,7 @@ export const gestionaColumnaCuadranteInterior = (
                             };
                         }
                     } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                             if (dia[1][0] === 'Sábado') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     sabadoCantidad: '',
@@ -3711,8 +3621,8 @@ export const gestionaColumnaCuadranteInterior = (
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        sabadoCantidad: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoCantidad'),
-                                        tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
+                                        sabadoCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoCantidad'),
+                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -3757,7 +3667,7 @@ export const gestionaColumnaCuadranteInterior = (
                                 };
                             }
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Domingo') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         domingoCantidad: '',
@@ -3794,8 +3704,8 @@ export const gestionaColumnaCuadranteInterior = (
                                         };
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                            domingoCantidad: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoCantidad'),
-                                            tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
+                                            domingoCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoCantidad'),
+                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -3809,7 +3719,7 @@ export const gestionaColumnaCuadranteInterior = (
                             };
                         }
                     } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && centroAGestionar.horario.variacion === 'semanaSiNo') {
+                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                             if (dia[1][0] === 'Domingo') {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                     domingoCantidad: '',
@@ -3846,8 +3756,8 @@ export const gestionaColumnaCuadranteInterior = (
                                     };
                                 } else {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        domingoCantidad: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoCantidad'),
-                                        tipoServicio: gestionaDatosHorarioItem(centroAGestionar, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
+                                        domingoCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoCantidad'),
+                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
                                         baja: false,
                                         tipoBaja: null,
                                         festivo: false,
@@ -6051,7 +5961,7 @@ export const completarCuadranteAccion = (losDiasDelMes, cuadrante) => (dispatch,
         switch (cuadranteColumna.tipoHorario) {
             case 'rango':
                 losDiasDelMes.forEach((dia, index) => {
-                    let hasKey = (dia[1][0] + dia[0][0]) in cuadranteColumna;                    
+                    let hasKey = (dia[1][0] + dia[0][0]) in cuadranteColumna;
                     if (hasKey) {
                         objetoResultante[dia[1][0] + dia[0][0]] = cuadranteColumna[dia[1][0] + dia[0][0]];
                         if (cuadranteColumna[dia[1][0] + dia[0][0]].festivo) {
@@ -6161,7 +6071,7 @@ export const completarCuadranteAccion = (losDiasDelMes, cuadrante) => (dispatch,
                 break;
             case 'rangoDescanso':
                 losDiasDelMes.forEach((dia, index) => {
-                    let hasKey = (dia[1][0] + dia[0][0]) in cuadranteColumna;                    
+                    let hasKey = (dia[1][0] + dia[0][0]) in cuadranteColumna;
                     if (hasKey) {
                         objetoResultante[dia[1][0] + dia[0][0]] = cuadranteColumna[dia[1][0] + dia[0][0]];
                         if (cuadranteColumna[dia[1][0] + dia[0][0]].festivo) {
@@ -6285,7 +6195,7 @@ export const completarCuadranteAccion = (losDiasDelMes, cuadrante) => (dispatch,
                 break;
             case 'cantidad':
                 losDiasDelMes.forEach((dia, index) => {
-                    let hasKey = (dia[1][0] + dia[0][0]) in cuadranteColumna;                 
+                    let hasKey = (dia[1][0] + dia[0][0]) in cuadranteColumna;
                     if (hasKey) {
                         objetoResultante[dia[1][0] + dia[0][0]] = cuadranteColumna[dia[1][0] + dia[0][0]];
                         if (cuadranteColumna[dia[1][0] + dia[0][0]].festivo) {
@@ -6383,7 +6293,7 @@ export const completarCuadranteAccion = (losDiasDelMes, cuadrante) => (dispatch,
                                 tipoVariacion: ''
                             }
                         };
-                    };                  
+                    };
                 });
                 break;
         };

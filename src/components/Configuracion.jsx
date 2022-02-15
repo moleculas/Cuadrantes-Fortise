@@ -655,6 +655,19 @@ const Configuracion = (props) => {
                                                             }
                                                         />
                                                     </ListItem >
+                                                    <ListItem>
+                                                        <ListItemText
+                                                            primary="V. 1.05 - 14/02/2022"
+                                                            secondary={
+                                                                <Fragment>
+                                                                <Typography component="span" variant="body2">1.- Añadida categoría CRISTALES para gestión fichas centros.</Typography>
+                                                                <br />  
+                                                                <Typography component="span" variant="body2">2.- Implementada funcionalidad de variaciones temporales para servicios fijos en fichas centros.</Typography>
+                                                                <br />                                                                            
+                                                                </Fragment>
+                                                            }
+                                                        />
+                                                    </ListItem >
                                                 </List>
                                             </Box>
                                         </Box>

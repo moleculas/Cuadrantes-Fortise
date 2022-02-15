@@ -201,12 +201,7 @@ const TrabajadoresRegistrar = forwardRef((props, ref) => {
                     const procesarDatosRegistro = () => {
                         //comprobamos que no haya campos vacíos
 
-                        if (valuesFormRegistro.nombre === '' ||
-                            valuesFormRegistro.estado === '' ||
-                            valuesFormRegistro.dni === '' ||
-                            valuesFormRegistro.segSocial === '' ||
-                            valuesFormRegistro.telefono === ''
-                        ) {
+                        if (valuesFormRegistro.nombre === '') {
                             setAlert({
                                 mensaje: "Alguno de los registros está vacío. Revisa el formulario.",
                                 tipo: 'error'
@@ -215,16 +210,16 @@ const TrabajadoresRegistrar = forwardRef((props, ref) => {
                             return;
                         };
 
-                        if (valuesFormRegistro.estado !== 'alta') {
-                            if (!valueDatePickerInicioRegistro && !valueDatePickerFinRegistro) {
-                                setAlert({
-                                    mensaje: "El rango de fechas del estado laboral está incompleto.",
-                                    tipo: 'error'
-                                })
-                                setOpenSnack(true);
-                                return;
-                            }
-                        };
+                        // if (valuesFormRegistro.estado !== 'alta') {
+                        //     if (!valueDatePickerInicioRegistro && !valueDatePickerFinRegistro) {
+                        //         setAlert({
+                        //             mensaje: "El rango de fechas del estado laboral está incompleto.",
+                        //             tipo: 'error'
+                        //         })
+                        //         setOpenSnack(true);
+                        //         return;
+                        //     }
+                        // };
 
                         //registramos
                         const trabajadorAGuardar = {
@@ -257,7 +252,7 @@ const TrabajadoresRegistrar = forwardRef((props, ref) => {
             dni: '',
             segSocial: '',
             telefono: '',
-            estado: ''
+            estado: 'alta'
         });
         setValueDatePickerInicioRegistro(null);
         setValueDatePickerFinEdicion(null);
@@ -332,7 +327,7 @@ const TrabajadoresRegistrar = forwardRef((props, ref) => {
                                 size="small"
                             >
                                 <InputLabel>Seg. Social</InputLabel>
-                                <OutlinedInput                                
+                                <OutlinedInput
                                     className={classes.mb15}
                                     fullWidth
                                     id="form-telefono-trabajador-registro"
@@ -360,10 +355,10 @@ const TrabajadoresRegistrar = forwardRef((props, ref) => {
                     </Grid>
                     <Grid item lg={4} sm={4} xs={12}>
                         <Box
-                           m={0.5}
-                           bgcolor="secondary.light"
-                           color="secondary.contrastText"
-                           className={clsx(classes.boxStl2, classes.mb20)}
+                            m={0.5}
+                            bgcolor="secondary.light"
+                            color="secondary.contrastText"
+                            className={clsx(classes.boxStl2, classes.mb20)}
                         >
                             Estado laboral
                         </Box>

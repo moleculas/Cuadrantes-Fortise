@@ -276,7 +276,8 @@ const Menu = (props) => {
                     >
                         <ListItem
                             button
-                            disabled={onEstem === 'cuadrantes' ? true : false}                            
+                            disabled={onEstem === 'cuadrantes' ? true : false}    
+                            //disabled={true}
                             onClick={() => handleClick('/cuadrantes')}
                         >
                             <ListItemIcon>

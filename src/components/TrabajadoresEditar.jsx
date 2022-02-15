@@ -118,7 +118,7 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
         dispatch(onEstemAccion('editarTrabajadores'));
         if (listadoTrabajadores.length === 0) {
             dispatch(obtenerTrabajadoresAccion('trabajadores'));
-        };  
+        };
     }, [dispatch]);
 
     useEffect(() => {
@@ -461,10 +461,7 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                 case 'procesarDatosEdicion':
                     const procesarDatosEdicion = () => {
                         //comprobamos que no haya campos vacíos
-                        if (valuesFormEdicion.nombre === '' ||
-                            valuesFormEdicion.dni === '' ||
-                            valuesFormEdicion.segSocial === '' ||
-                            valuesFormEdicion.telefono === '') {
+                        if (valuesFormEdicion.nombre === '') {
                             setAlert({
                                 mensaje: "Faltan datos por completar. Revisa el formulario.",
                                 tipo: 'error'
@@ -737,10 +734,10 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                     </Grid>
                     <Grid item lg={4} sm={4} xs={12}>
                         <Box
-                          m={0.5}
-                          bgcolor="secondary.light"
-                          color="secondary.contrastText"
-                          className={clsx(classes.boxStl2, classes.mb20)}
+                            m={0.5}
+                            bgcolor="secondary.light"
+                            color="secondary.contrastText"
+                            className={clsx(classes.boxStl2, classes.mb20)}
                         >
                             Estado laboral
                         </Box>

@@ -94,7 +94,8 @@ const Constantes = {
         { value: 3, label: 'Farmacias' },
         { value: 4, label: 'Fuera de Barcelona' },
         { value: 5, label: 'Pisos' },
-        { value: 6, label: 'Residencias' }
+        { value: 6, label: 'Residencias' },
+        { value: 7, label: 'Cristales' }
     ],
     CANTIDAD_HORAS_CENTROS: [
         { value: 60, label: '1 hora' },
@@ -197,7 +198,7 @@ const Constantes = {
         { value: 'F1', label: 'Factoring' },
         { value: 'ME', label: 'Metálico' },
         { value: 'P1', label: 'Pagaré' },
-        { value: 'RE', label: 'Recibo domiciliado a 3 días' },
+        { value: 'RE', label: 'Recibo domiciliado' },
         { value: 'R1', label: 'Recibo domiciliado a 30 días' },
         { value: 'R2', label: 'Recibo domiciliado a 60 días' },
         { value: 'R3', label: 'Recibo domiciliado a 90 días' },       
@@ -245,6 +246,20 @@ const Constantes = {
         { value: 29, label: 'Día 29' },
         { value: 30, label: 'Día 30' },
         { value: 31, label: 'Día 31' }    
+    ],
+    VARIACIONES_SERVICIOS_FIJOS_CENTROS: [
+        { value: 1, label: 'Todas las semanas' },
+        { value: 2, label: 'Semana sí, semana no' },
+        { value: 3, label: 'Una vez al mes' },
+    ],
+    DIAS_SEMANA: [
+        { value: 'lunes', label: 'Lunes' },
+        { value: 'martes', label: 'Martes' },
+        { value: 'miercoles', label: 'Miércoles' },
+        { value: 'jueves', label: 'Jueves' },
+        { value: 'viernes', label: 'Viernes' },
+        { value: 'sabado', label: 'Sábado' },
+        { value: 'domingo', label: 'Domingo' }
     ],
     MESES: meses,
 };
