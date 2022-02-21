@@ -1,5 +1,5 @@
 import { makeStyles } from "@material-ui/core";
-import { amber, blueGrey, green, lime, indigo, red, grey, blue, yellow } from '@material-ui/core/colors';
+import { amber, blueGrey, green, lime, indigo, red, grey, blue, yellow, teal } from '@material-ui/core/colors';
 
 const Clases = makeStyles((theme) => ({
     //loading
@@ -120,12 +120,29 @@ const Clases = makeStyles((theme) => ({
     cabecera: {
         backgroundColor: theme.palette.secondary.main
     },
+    cabeceraServicios: {
+        backgroundColor: `${teal[500]} !important`,
+    },
     casillaLaboral: {
         backgroundColor: `${blueGrey[50]} !important`,
         cursor: 'pointer',
         minHeight: 38,
         maxHeight: 38,
         padding: 9
+    },
+    casillaVaciaSF: {
+        backgroundColor: `${teal[50]} !important`,
+        minHeight: 38,
+        maxHeight: 38,
+        padding: 9,
+        cursor: 'pointer',
+    },
+    casillaSF: {
+        backgroundColor: `${teal[100]} !important`,
+        minHeight: 38,
+        maxHeight: 38,
+        padding: 9,
+        cursor: 'pointer',
     },
     casillaModificado: {
         backgroundColor: `${lime[100]} !important`,
@@ -589,11 +606,18 @@ const Clases = makeStyles((theme) => ({
         backgroundColor: '#ffcdd2',
         color: 'rgba(0, 0, 0, 0.87)'
     },
+    fondoInactivoServicioFijo: {
+        backgroundColor: '#ffebee',
+        color: 'rgba(0, 0, 0, 0.87)'
+    },
     fondoAlta: {
         backgroundColor: theme.palette.secondary.light,
     },
     fondoGrisClaro: {
         backgroundColor: '#f5f5f5',
+    },
+    grisClaro: {
+        color: grey[300],
     },
     conServicios: {
         backgroundColor: green[100]
@@ -611,27 +635,27 @@ const Clases = makeStyles((theme) => ({
         backgroundColor: amber[300]
     },
     listConfig: {
-        backgroundColor: theme.palette.background.default,   
-        paddingBottom: 0    
+        backgroundColor: theme.palette.background.default,
+        paddingBottom: 0
     },
     boxMiniServicios: {
         marginTop: -13,
         marginBottom: 15,
         paddingLeft: 6
     },
-    labelBoxMiniServicios:{
-        color: 'rgba(0, 0, 0, 0.54)', 
+    labelBoxMiniServicios: {
+        color: 'rgba(0, 0, 0, 0.54)',
         fontSize: '0.8rem'
-    },    
-    floatRight:{
-        display: 'flex',        
+    },
+    floatRight: {
+        display: 'flex',
         flexDirection: 'row-reverse'
     },
     btnBorrarCuad: {
         backgroundColor: theme.palette.background.paper,
         color: 'red',
         marginLeft: 10
-    },
+    }    
 }), { index: 1 });
 
 export default Clases;

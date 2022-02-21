@@ -249,7 +249,7 @@ const Trabajadores = (props) => {
                                             <ListItemIcon>
                                                 {onEstem === 'editarTrabajadores' ? <SystemUpdateAltIcon fontSize="small" /> : <SaveIcon fontSize="small" />}
                                             </ListItemIcon>
-                                            <ListItemText primary={onEstem === 'editarTrabajadores' ? ('Actualizar trabajador') : ('Registrar trabajador')} />
+                                            <ListItemText primary={onEstem === 'editarTrabajadores' ? ('Actualizar Trabajador') : ('Registrar Trabajador')} />
                                         </MenuItem>
                                         {
                                             onEstem === 'editarTrabajadores' ? (
@@ -260,7 +260,7 @@ const Trabajadores = (props) => {
                                                     <ListItemIcon>
                                                         <DeleteIcon style={{ color: 'red' }} fontSize="small" />
                                                     </ListItemIcon>
-                                                    <ListItemText style={{ color: 'red' }} primary="Eliminar trabajador" />
+                                                    <ListItemText style={{ color: 'red' }} primary="Eliminar Trabajador" />
                                                 </MenuItem>
                                             ) : (
                                                 <MenuItem
@@ -270,7 +270,7 @@ const Trabajadores = (props) => {
                                                     <ListItemIcon>
                                                         <GroupAddIcon fontSize="small" />
                                                     </ListItemIcon>
-                                                    <ListItemText primary="Nuevo trabajador" />
+                                                    <ListItemText primary="Nuevo Trabajador" />
                                                 </MenuItem>
                                             )
                                         }

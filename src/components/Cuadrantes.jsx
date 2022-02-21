@@ -34,7 +34,6 @@ import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Popover from "@material-ui/core/Popover";
 import ChatIcon from '@material-ui/icons/Chat';
-import TimerIcon from '@material-ui/icons/Timer';
 import SaveIcon from '@material-ui/icons/Save';
 import SystemUpdateAltIcon from '@material-ui/icons/SystemUpdateAlt';
 import HomeIcon from '@material-ui/icons/Home';
@@ -54,8 +53,9 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import EditIcon from '@material-ui/icons/Edit';
 import { TextField } from '@material-ui/core';
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import NotificationsOffIcon from '@material-ui/icons/NotificationsOff';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
+import SettingsIcon from '@material-ui/icons/Settings';
 
 //carga componentes
 import ItemCuadrante from './ItemCuadrante';
@@ -63,6 +63,12 @@ import PantallaCuadrantes from './PantallaCuadrantes';
 import DialogComponente from './DialogComponente';
 import ServiciosFijos from './ServiciosFijos';
 import ConfiguracionCuadrante from './ConfiguracionCuadrante';
+import SwitchServiciosFijos from './SwitchServiciosFijos';
+
+//helpers
+import Helpers_1 from './Helpers_1';
+import Helpers_2 from './Helpers_2';
+import Helpers_3 from './Helpers_3';
 
 //estilos
 import Clases from "../clases";
@@ -75,7 +81,6 @@ import { diaDeLaSemanaAccion } from '../redux/appDucks';
 import { obtenerCentroAccion } from '../redux/centrosDucks';
 import { obtenerTrabajadorAccion } from '../redux/trabajadoresDucks';
 import { obtenerSuplenteAccion } from '../redux/trabajadoresDucks';
-import { generaFechaAccion } from '../redux/appDucks';
 import { retornaHoraRangoAccion } from '../redux/appDucks';
 import { retornaMinutosAccion } from '../redux/appDucks';
 import { activarDesactivarCambioAccion } from '../redux/cuadrantesDucks';
@@ -93,7 +98,6 @@ import { cierraObjetoDialogAccion } from '../redux/appDucks';
 import { registrarIntervencionCuadranteNuevoAccion } from '../redux/cuadrantesDucks';
 import { registrarCuadranteAccion } from '../redux/cuadrantesDucks';
 import { actualizarCuadranteAccion } from '../redux/cuadrantesDucks';
-import { gestionaColumnaCuadranteInterior } from '../redux/cuadrantesDucks';
 import { resetearCuadranteAccion } from '../redux/cuadrantesDucks';
 import { cambiarACuadranteRegistradoAccion } from '../redux/cuadrantesDucks';
 import { cambiarACuadranteNoRegistradoAccion } from '../redux/cuadrantesDucks';
@@ -106,7 +110,6 @@ import { setCentroAccion } from '../redux/cuadrantesDucks';
 import { obtenerCategoriaPorCentroAccion } from '../redux/centrosDucks';
 import { setCalendarioAGestionarAccion } from '../redux/cuadrantesDucks';
 import { retornaAnoMesCuadranteAccion } from '../redux/appDucks';
-import { gestionarInformeAccion } from '../redux/cuadrantesDucks';
 import { obtenerObjetoPorIdAccion } from '../redux/appDucks';
 import { vaciarDatosCentroAccion } from '../redux/centrosDucks';
 import { vaciarDatosPendientesAccion } from '../redux/pendientesDucks';
@@ -115,13 +118,13 @@ import { vaciarDatosTrabajadorAccion } from '../redux/trabajadoresDucks';
 import { generarArchivosXLSAccion } from '../redux/appDucks';
 import { gestionaMaxDateCalendarAccion } from '../redux/appDucks';
 import { retornaFormaPagoAccion } from '../redux/cuadrantesDucks';
-import { limpiarCuadranteAccion } from '../redux/cuadrantesDucks';
-import { completarCuadranteAccion } from '../redux/cuadrantesDucks';
+import { setLosDiasDelMesAccion } from '../redux/cuadrantesDucks';
+import { setStateFestivoAccion } from '../redux/cuadrantesDucks';
+import { setCuadranteAccion } from '../redux/cuadrantesDucks';
+import { setCuadranteServiciosFijosAccion } from '../redux/cuadrantesDucks';
 
 const categorias = Constantes.CATEGORIAS_CENTROS;
 const arrayFestivos = Constantes.CALENDARIO_FESTIVOS;
-const variaciones = Constantes.VARIACIONES_CUADRANTES;
-const tiposDeServicio = Constantes.TIPO_SERVICIO_FIJO;
 const tipos = Constantes.MODO_ENTRADA_HORARIOS;
 
 const getHeightScrollable = () => (window.innerHeight - 217) || (document.documentElement.clientHeight - 217) || (document.body.clientHeight - 217);
@@ -179,16 +182,16 @@ const StyledMenu = withStyles({
 ));
 
 //tooltip
-const LightTooltip = withStyles((theme) => ({
+const InfoTooltip = withStyles((theme) => ({
     tooltip: {
-        backgroundColor: '#66bb6a',
-        color: '#ffffff',
-        fontSize: 11,
-        marginLeft: 5,
-        borderRadius: 0,
-        height: theme.spacing(3.5),
+        backgroundColor: '#ffeb3b',
+        color: 'rgba(0, 0, 0, 0.87)',       
     },
-
+    arrow: {
+        "&:before": {      
+        },
+        color: '#ffeb3b',
+      },
 }))(Tooltip);
 
 const Cuadrantes = (props) => {
@@ -232,6 +235,37 @@ const Cuadrantes = (props) => {
     const objetoUsuarioActivo = useSelector(store => store.variablesUsuario.usuarioActivo);
     const estadoVenimosDeRegistrados = useSelector(store => store.variablesPendientes.estadoVenimosDeRegistrados);
     const exitoGenerarArchivos = useSelector(store => store.variablesApp.exitoGenerarArchivos);
+    const losDiasDelMes = useSelector(store => store.variablesCuadrantes.losDiasDelMes);
+    const stateFestivo = useSelector(store => store.variablesCuadrantes.stateFestivo);
+    const cuadrante = useSelector(store => store.variablesCuadrantes.cuadrante);
+    const cuadranteServiciosFijos = useSelector(store => store.variablesCuadrantes.cuadranteServiciosFijos);
+
+    //helpers
+
+    const {
+        gestionaTextoCasillasServiciosFijosAccion,
+        gestionaTextoCasillasAccion,
+        gestionaClassesColoresGeneralAccion,
+        gestionaClassesColoresServiciosFijosAccion,
+        gestionaClassesColoresTrabajadoresAccion,
+        retornaIconoTipoServicioAccion,
+        retornaIconoVariacionAccion,
+        gestionaValoresCasillasAccion,
+        retornaHeaderServiciosFijosAccion,
+        retornoServiciosFijosEnLayoutAccion,
+        retornaServiciosFijosEnLayoutAvatarsAccion
+    } = Helpers_1();
+
+    const {
+        gestionaColumnaServiciosFijosAccion,
+        gestionarInformeAccion,
+        limpiarCuadranteAccion,
+        completarCuadranteAccion
+    } = Helpers_2();
+
+    const {
+        gestionaColumnaCuadranteInteriorAccion
+    } = Helpers_3();
 
     //refs
 
@@ -244,15 +278,12 @@ const Cuadrantes = (props) => {
     const [disableSelectCentros, setDisableSelectCentros] = useState(true);
     const [openSnack, setOpenSnack] = useState(false);
     const [alert, setAlert] = useState({});
-    const [losDiasDelMes, setLosDiasDelMes] = useState([]);
-    const [stateFestivo, setStateFestivo] = useState({});
     const [trabajadoresEnCuadrante, setTrabajadoresEnCuadrante] = useState([]);
     const [suplentesEnCuadrante, setSuplentesEnCuadrante] = useState([]);
-    const [cuadrante, setCuadrante] = useState([]);
     const [expandedAccordion, setExpandedAccordion] = useState(false);
     const [dimensionsColumna, setDimensionsColumna] = useState({ width: 350 });
     const [openLoading, setOpenLoading] = useState(false);
-    const [bufferSwitchedDiasFestivos, setBufferSwitchedDiasFestivos] = useState([]);
+    const [bufferSwitchedDiasFestivosCuadrante, setBufferSwitchedDiasFestivosCuadrante] = useState([]);
     const [esInicioTra, setEsInicioTra] = useState(true);
     const [esInicioSup, setEsInicioSup] = useState(true);
     const [esCambioTra, setEsCambioTra] = useState(false);
@@ -265,6 +296,15 @@ const Cuadrantes = (props) => {
         postRef: null,
         index: null,
         dia: null
+    });
+    const [anchorElSFCasillas, setAnchorElSFCasillas] = useState(null);
+    const openSFCasillas = Boolean(anchorElSFCasillas);
+    const [variablesPopoverSFCasillas, setVariablesPopoverSFCasillas] = useState({
+        postRef: null,
+        index: null,
+        dia: null,
+        tipo: '',
+        indice: null
     });
     const [anchorElGeneral, setAnchorElGeneral] = useState(null);
     const openGeneral = Boolean(anchorElGeneral);
@@ -386,9 +426,24 @@ const Cuadrantes = (props) => {
             diaVariacion_MA: '',
             diaVariacion_PO: '',
             diaVariacion_BA: '',
-            diaVariacion_FT: ''
+            diaVariacion_FT: '',
+            activo_TO: 'si',
+            activo_CR: 'si',
+            activo_CE: 'si',
+            activo_CI: 'si',
+            activo_MO: 'si',
+            activo_OF: 'si',
+            activo_AL: 'si',
+            activo_LA: 'si',
+            activo_TE: 'si',
+            activo_FI: 'si',
+            activo_FE: 'si',
+            activo_AB: 'si',
+            activo_MA: 'si',
+            activo_PO: 'si',
+            activo_BA: 'si',
+            activo_FT: 'si'
         }
-
     });
     const [itemPrevioEditandoConfiguracion, setItemPrevioEditandoConfiguracion] = useState(null);
     const [itemEditandoConfiguracion, setItemEditandoConfiguracion] = useState({
@@ -402,13 +457,17 @@ const Cuadrantes = (props) => {
         precioHora_R: '',
         precioHora_L1: '',
         precioHora_L2: '',
-        precioHora_F: ''
+        precioHora_F: '',
+        observaciones: ''
     });
     const [preValueCalendarioAGestionarReseteo, setPreValueCalendarioAGestionarReseteo] = useState(null);
     const [numeroCuadrantesCuadrantes, setNumeroCuadrantesCuadrantes] = useState([{ value: 1, revisado: false }]);
     const [cuadranteEnUsoCuadrantes, setCuadranteEnUsoCuadrantes] = useState(1);
     const [estamosActualizandoCuadranteSinCarga, setEstamosActualizandoCuadranteSinCarga] = useState(false);
     const [cambiadaConfiguracionGeneral, setCambiadaConfiguracionGeneral] = useState(false);
+    const [dimensionsColumnaServiciosFijos, setDimensionsColumnaServiciosFijos] = useState({ width: 165 });
+    const [visibleCuadrante, setVisibleCuadrante] = useState(true);
+    const [visibleCuadranteServiciosFijos, setVisibleCuadranteServiciosFijos] = useState(true);
 
     //useEffect
 
@@ -456,7 +515,8 @@ const Cuadrantes = (props) => {
             const dateStr = mesAGest + '-' + (i + 1) + '-' + anyoAGest;
             array.push([[i + 1], [dispatch(diaDeLaSemanaAccion(dateStr))]]);
         };
-        setLosDiasDelMes(array);
+        dispatch(setLosDiasDelMesAccion(array));
+        //setLosDiasDelMes(array);
     }, [calendarioAGestionar]);
 
     useEffect(() => {
@@ -469,7 +529,7 @@ const Cuadrantes = (props) => {
                     object['estadoFestivoDia' + i] = false;
                 }
             }
-            setStateFestivo(object);
+            dispatch(setStateFestivoAccion(object))
         }
     }, [losDiasDelMes]);
 
@@ -525,7 +585,7 @@ const Cuadrantes = (props) => {
     }, [cuadranteRegistrado]);
 
     const gestionaCuadranteIndividual = (numeroCuadrante) => {
-        setCuadrante(objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].arrayCuadrante);
+        dispatch(setCuadranteAccion(objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].arrayCuadrante));
         setFirmaActualizacion(objetoCuadrante.actualizacion);
         let myObjetoServiciosFijos = {
             precioHora_TO: null,
@@ -575,7 +635,23 @@ const Cuadrantes = (props) => {
             diaVariacion_MA: '',
             diaVariacion_PO: '',
             diaVariacion_BA: '',
-            diaVariacion_FT: ''
+            diaVariacion_FT: '',
+            activo_TO: 'si',
+            activo_CR: 'si',
+            activo_CE: 'si',
+            activo_CI: 'si',
+            activo_MO: 'si',
+            activo_OF: 'si',
+            activo_AL: 'si',
+            activo_LA: 'si',
+            activo_TE: 'si',
+            activo_FI: 'si',
+            activo_FE: 'si',
+            activo_AB: 'si',
+            activo_MA: 'si',
+            activo_PO: 'si',
+            activo_BA: 'si',
+            activo_FT: 'si'
         };
         let objetoEstadosSwitch = {
             TO: false,
@@ -599,101 +675,117 @@ const Cuadrantes = (props) => {
             setCuadranteVacio(true);
         };
         if (objetoCuadrante.datosServicios.datosServicios[numeroCuadrante - 1]) {
-            centroAGestionar.serviciosFijos.serviciosFijos[numeroCuadrante - 1].servicio.forEach((servicio) => {
+            objetoCuadrante.datosServicios.datosServicios[numeroCuadrante - 1].forEach((servicio) => {
                 if (servicio.precioHora_TO) {
                     myObjetoServiciosFijos.precioHora_TO = servicio.precioHora_TO;
                     myObjetoServiciosFijos.variacion_TO = servicio.variacion_TO;
                     myObjetoServiciosFijos.diaVariacion_TO = servicio.diaVariacion_TO;
+                    myObjetoServiciosFijos.activo_TO = servicio.activo_TO;
                     objetoEstadosSwitch.TO = true;
                 };
                 if (servicio.precioHora_CR) {
                     myObjetoServiciosFijos.precioHora_CR = servicio.precioHora_CR;
                     myObjetoServiciosFijos.variacion_CR = servicio.variacion_CR;
                     myObjetoServiciosFijos.diaVariacion_CR = servicio.diaVariacion_CR;
+                    myObjetoServiciosFijos.activo_CR = servicio.activo_CR;
                     objetoEstadosSwitch.CR = true;
                 };
                 if (servicio.precioHora_CE) {
                     myObjetoServiciosFijos.precioHora_CE = servicio.precioHora_CE;
                     myObjetoServiciosFijos.variacion_CE = servicio.variacion_CE;
                     myObjetoServiciosFijos.diaVariacion_CE = servicio.diaVariacion_CE;
+                    myObjetoServiciosFijos.activo_CE = servicio.activo_CE;
                     objetoEstadosSwitch.CE = true;
                 };
                 if (servicio.precioHora_CI) {
                     myObjetoServiciosFijos.precioHora_CI = servicio.precioHora_CI;
                     myObjetoServiciosFijos.variacion_CI = servicio.variacion_CI;
                     myObjetoServiciosFijos.diaVariacion_CI = servicio.diaVariacion_CI;
+                    myObjetoServiciosFijos.activo_CI = servicio.activo_CI;
                     objetoEstadosSwitch.CI = true;
                 };
                 if (servicio.precioHora_MO) {
                     myObjetoServiciosFijos.precioHora_MO = servicio.precioHora_MO;
                     myObjetoServiciosFijos.variacion_MO = servicio.variacion_MO;
                     myObjetoServiciosFijos.diaVariacion_MO = servicio.diaVariacion_MO;
+                    myObjetoServiciosFijos.activo_MO = servicio.activo_MO;
                     objetoEstadosSwitch.MO = true;
                 };
                 if (servicio.precioHora_OF) {
                     myObjetoServiciosFijos.precioHora_OF = servicio.precioHora_OF;
                     myObjetoServiciosFijos.variacion_OF = servicio.variacion_OF;
                     myObjetoServiciosFijos.diaVariacion_OF = servicio.diaVariacion_OF;
+                    myObjetoServiciosFijos.activo_OF = servicio.activo_OF;
                     objetoEstadosSwitch.OF = true;
                 };
                 if (servicio.precioHora_AL) {
                     myObjetoServiciosFijos.precioHora_AL = servicio.precioHora_AL;
                     myObjetoServiciosFijos.variacion_AL = servicio.variacion_AL;
                     myObjetoServiciosFijos.diaVariacion_AL = servicio.diaVariacion_AL;
+                    myObjetoServiciosFijos.activo_AL = servicio.activo_AL;
                     objetoEstadosSwitch.AL = true;
                 };
                 if (servicio.precioHora_LA) {
                     myObjetoServiciosFijos.precioHora_LA = servicio.precioHora_LA;
                     myObjetoServiciosFijos.variacion_LA = servicio.variacion_LA;
                     myObjetoServiciosFijos.diaVariacion_LA = servicio.diaVariacion_LA;
+                    myObjetoServiciosFijos.activo_LA = servicio.activo_LA;
                     objetoEstadosSwitch.LA = true;
                 };
                 if (servicio.precioHora_TE) {
                     myObjetoServiciosFijos.precioHora_TE = servicio.precioHora_TE;
                     myObjetoServiciosFijos.variacion_TE = servicio.variacion_TE;
                     myObjetoServiciosFijos.diaVariacion_TE = servicio.diaVariacion_TE;
+                    myObjetoServiciosFijos.activo_TE = servicio.activo_TE
                     objetoEstadosSwitch.TE = true;
                 };
                 if (servicio.precioHora_FI) {
                     myObjetoServiciosFijos.precioHora_FI = servicio.precioHora_FI;
                     myObjetoServiciosFijos.variacion_FI = servicio.variacion_FI;
                     myObjetoServiciosFijos.diaVariacion_FI = servicio.diaVariacion_FI;
+                    myObjetoServiciosFijos.activo_FI = servicio.activo_FI;
                     objetoEstadosSwitch.FI = true;
                 };
                 if (servicio.precioHora_FE) {
                     myObjetoServiciosFijos.precioHora_FE = servicio.precioHora_FE;
                     myObjetoServiciosFijos.variacion_FE = servicio.variacion_FE;
                     myObjetoServiciosFijos.diaVariacion_FE = servicio.diaVariacion_FE;
+                    myObjetoServiciosFijos.activo_FE = servicio.activo_FE;
                     objetoEstadosSwitch.FE = true;
                 };
                 if (servicio.precioHora_AB) {
                     myObjetoServiciosFijos.precioHora_AB = servicio.precioHora_AB;
                     myObjetoServiciosFijos.variacion_AB = servicio.variacion_AB;
                     myObjetoServiciosFijos.diaVariacion_AB = servicio.diaVariacion_AB;
+                    myObjetoServiciosFijos.activo_AB = servicio.activo_AB;
                     objetoEstadosSwitch.AB = true;
                 };
                 if (servicio.precioHora_MA) {
                     myObjetoServiciosFijos.precioHora_MA = servicio.precioHora_MA;
                     myObjetoServiciosFijos.variacion_MA = servicio.variacion_MA;
                     myObjetoServiciosFijos.diaVariacion_MA = servicio.diaVariacion_MA;
+                    myObjetoServiciosFijos.activo_MA = servicio.activo_MA;
                     objetoEstadosSwitch.MA = true;
                 };
                 if (servicio.precioHora_PO) {
                     myObjetoServiciosFijos.precioHora_PO = servicio.precioHora_PO;
                     myObjetoServiciosFijos.variacion_PO = servicio.variacion_PO;
                     myObjetoServiciosFijos.diaVariacion_PO = servicio.diaVariacion_PO;
+                    myObjetoServiciosFijos.activo_PO = servicio.activo_PO;
                     objetoEstadosSwitch.PO = true;
                 };
                 if (servicio.precioHora_BA) {
                     myObjetoServiciosFijos.precioHora_BA = servicio.precioHora_BA;
                     myObjetoServiciosFijos.variacion_BA = servicio.variacion_BA;
                     myObjetoServiciosFijos.diaVariacion_BA = servicio.diaVariacion_BA;
+                    myObjetoServiciosFijos.activo_BA = servicio.activo_BA;
                     objetoEstadosSwitch.BA = true;
                 };
                 if (servicio.precioHora_FT) {
                     myObjetoServiciosFijos.precioHora_FT = servicio.precioHora_FT;
                     myObjetoServiciosFijos.variacion_FT = servicio.variacion_FT;
                     myObjetoServiciosFijos.diaVariacion_FT = servicio.diaVariacion_FT;
+                    myObjetoServiciosFijos.activo_FT = servicio.activo_FT;
                     objetoEstadosSwitch.FT = true;
                 };
             });
@@ -721,6 +813,7 @@ const Cuadrantes = (props) => {
             switch: objetoEstadosSwitch,
             servicios: myObjetoServiciosFijos
         });
+        dispatch(setCuadranteServiciosFijosAccion(objetoCuadrante.datosServicios.datosServicios[numeroCuadrante - 1]));
         if (objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].computo && objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].tipoHorarioGeneral) {
             setItemEditandoConfiguracion({
                 tipoHorario: objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].tipoHorarioGeneral,
@@ -733,17 +826,18 @@ const Cuadrantes = (props) => {
                 precioHora_R: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_R ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_R : '',
                 precioHora_L1: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_L1 ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_L1 : '',
                 precioHora_L2: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_L2 ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_L2 : '',
-                precioHora_F: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_F ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_F : ''
+                precioHora_F: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_F ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_F : '',
+                observaciones: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].observaciones ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].observaciones : ''
             });
         };
         if (objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].arrayCuadrante.length > 0) {
-            const { arrayResultante, arrayFestivos } = dispatch(completarCuadranteAccion(losDiasDelMes, objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].arrayCuadrante));
-            setCuadrante(arrayResultante);
+            const { arrayResultante, arrayFestivos } = completarCuadranteAccion(objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].arrayCuadrante);
+            dispatch(setCuadranteAccion(arrayResultante));
             let object = { ...stateFestivo };
             arrayFestivos.forEach((festivo, index) => {
                 object['estadoFestivoDia' + festivo[1]] = true;
             });
-            setStateFestivo(object);
+            dispatch(setStateFestivoAccion(object))
         };
     };
 
@@ -771,7 +865,8 @@ const Cuadrantes = (props) => {
                             if (hayHorario) {
                                 arrayHorario.push({
                                     tipoHorarioGeneral: centroAGestionar.horario.horario[i].tipo,
-                                    arrayCuadrante: []
+                                    arrayCuadrante: [],
+                                    observaciones: ''
                                 });
                                 arrayInforme.push({
                                     computo: centroAGestionar.horario.horario[i].computo,
@@ -798,7 +893,8 @@ const Cuadrantes = (props) => {
                             } else {
                                 arrayHorario.push({
                                     tipoHorarioGeneral: '',
-                                    arrayCuadrante: []
+                                    arrayCuadrante: [],
+                                    observaciones: ''
                                 });
                                 arrayInforme.push({
                                     tipoRegistro: '',
@@ -825,9 +921,9 @@ const Cuadrantes = (props) => {
                                 });
                             };
                             if (hayServiciosFijos) {
-                                arrayServiciosFijos.push(centroAGestionar.serviciosFijos.serviciosFijos[i]);
+                                arrayServiciosFijos.push(gestionaColumnaServiciosFijosAccion(centroAGestionar.serviciosFijos.serviciosFijos[i].servicio), null);
                             } else {
-                                arrayServiciosFijos.push(null)
+                                arrayServiciosFijos.push([])
                             };
                             if (hayTrabajadores) {
                                 arrayTrabajadores.push(centroAGestionar.trabajadores.trabajadores[i]);
@@ -1060,7 +1156,7 @@ const Cuadrantes = (props) => {
                         arrayTr.push(trabajadorAGestionar);
                         setTrabajadoresEnCuadrante(arrayTr);
                     };
-                    setCuadrante(arrayCuadrante);
+                    dispatch(setCuadranteAccion(arrayCuadrante));
                 } else {
                     arrayTr.push(trabajadorAGestionar);
                     setTrabajadoresEnCuadrante(arrayTr);
@@ -1138,7 +1234,7 @@ const Cuadrantes = (props) => {
                         arraySu.push(suplenteAGestionar);
                         setSuplentesEnCuadrante(arraySu);
                     };
-                    setCuadrante(arrayCuadrante);
+                    dispatch(setCuadranteAccion(arrayCuadrante));
 
                 } else {
                     arraySu.push(suplenteAGestionar);
@@ -1203,31 +1299,18 @@ const Cuadrantes = (props) => {
 
     useEffect(() => {
         if (cuadrante.length > 0) {
-            const { innerWidth: finestraWidth } = window;
-            const ampleAGestionar = finestraWidth - 505;
-            if ((dimensionsColumna.width * cuadrante.length) > ampleAGestionar) {
-                setDimensionsColumna({ width: ((ampleAGestionar / cuadrante.length) - 5) });
-                if (ampleAGestionar / cuadrante.length < 225) {
-                    setEstadoFlex('columna');
-                } else {
-                    setEstadoFlex('fila');
-                }
-            } else {
-                if (dimensionsColumna.width < 350) {
-                    if ((ampleAGestionar / cuadrante.length) - 5 < 350) {
-                        setDimensionsColumna({ width: ((ampleAGestionar / cuadrante.length) - 5) });
-                    } else {
-                        setDimensionsColumna({ width: 350 });
-                    };
-                    setEstadoFlex('fila');
-                };
-            };
-            setArrayDatosInforme(dispatch(gestionarInformeAccion(cuadrante, objetoCuadrante.datosCuadrante.centro)));
+            setArrayDatosInforme(gestionarInformeAccion(objetoCuadrante.datosCuadrante.centro));
             // if (estamosActualizandoCuadrante.estado) {
             //     handleActualizarTrabajadoresGeneral();
             // };
         };
     }, [cuadrante]);
+
+    useEffect(() => {
+        if (cuadrante.length > 0 || cuadranteServiciosFijos.length > 0) {
+            redimensionarEspacio();
+        };
+    }, [cuadrante.length, cuadranteServiciosFijos.length, visibleCuadranteServiciosFijos, visibleCuadrante]);
 
     //secuencia venimos de pendientes o registrados
 
@@ -1336,6 +1419,53 @@ const Cuadrantes = (props) => {
     }, [openDialog8]);
 
     //funciones   
+
+    const redimensionarEspacio = () => {
+        let dimServiciosAnadir = 0;
+        let dimCuadrante = 0;
+        let serviciosActivos = 0;
+        let cuadrantesActivos = 0;
+        if (cuadranteServiciosFijos.length > 0 && visibleCuadranteServiciosFijos) {
+            cuadranteServiciosFijos.forEach((servicio) => {
+                for (const prop in servicio) {
+                    if (prop.includes('activo') && servicio[prop] === 'si') {
+                        dimServiciosAnadir += 165;
+                        serviciosActivos += 1;
+                    };
+                };
+            })
+        };
+        if (cuadrante.length > 0 && visibleCuadrante) {
+            cuadrante.forEach((columna) => {
+                dimCuadrante += 350;
+                cuadrantesActivos += 1;
+            })
+        };
+        const { innerWidth: finestraWidth } = window;
+        const ampleAGestionar = finestraWidth - 500;
+        if ((dimCuadrante + dimServiciosAnadir) > ampleAGestionar) {
+            setDimensionsColumna({ width: ((ampleAGestionar / (serviciosActivos + cuadrantesActivos)) - 5) });
+            setDimensionsColumnaServiciosFijos({ width: ((ampleAGestionar / (serviciosActivos + cuadrantesActivos)) - 5) });
+            if (ampleAGestionar / cuadrante.length < 225) {
+                setEstadoFlex('columna');
+            } else {
+                setEstadoFlex('fila');
+            }
+        } else {
+            if (dimensionsColumna.width < 350) {
+                if (((dimCuadrante + dimServiciosAnadir) - 5) < ampleAGestionar) {
+                    setDimensionsColumna({ width: 350 });
+                    setDimensionsColumnaServiciosFijos({ width: 165 });
+                }
+                setEstadoFlex('fila');
+            };
+            if (dimensionsColumnaServiciosFijos.width < 165) {
+                if (((dimCuadrante + dimServiciosAnadir) - 5) < ampleAGestionar) {
+                    setDimensionsColumnaServiciosFijos({ width: 165 });
+                };
+            };
+        };
+    };
 
     const handleClickMenu = (e) => {
         setAnchorElMenu(anchorElMenu ? null : e.currentTarget);
@@ -1530,22 +1660,18 @@ const Cuadrantes = (props) => {
             };
         };
         let elHorarioCuadrante = centroAGestionar.horario.horario[cuadranteEnUsoCuadrantes - 1];
-        const { columnaAnadir, hayTrabajador } = dispatch(gestionaColumnaCuadranteInterior(
+        const { columnaAnadir, hayTrabajador } = gestionaColumnaCuadranteInteriorAccion(
             trabajador,
             tipoTrabajador,
             esRevision,
             columna,
-            cuadrante,
             elHorarioCuadrante,
             posicionAnterior,
-            calendarioAGestionar,
-            losDiasDelMes,
-            stateFestivo,
             esInicio,
             posicionTrabajador,
             esLimpieza,
             tipoHorario
-        ));
+        );
         if (!hayTrabajador && tipoTrabajador === 'trabajador') {
             const arrayCuadrante = [...cuadrante];
             let arrayTr = [...trabajadoresEnCuadrante];
@@ -1576,7 +1702,7 @@ const Cuadrantes = (props) => {
             setTrabajadoresEnCuadrante(arrayTr);
             columnaAnadir['idTrabajador'] = randomNumber;
             arrayCuadrante.push(columnaAnadir);
-            setCuadrante(arrayCuadrante);
+            dispatch(setCuadranteAccion(arrayCuadrante));
             setExpandedAccordion(false);
         };
         if (!hayTrabajador && tipoTrabajador === 'suplente') {
@@ -1609,7 +1735,7 @@ const Cuadrantes = (props) => {
             setSuplentesEnCuadrante(arraySu);
             columnaAnadir['idTrabajador'] = randomNumber;
             arrayCuadrante.insert(columna + 1, columnaAnadir);
-            setCuadrante(arrayCuadrante);
+            dispatch(setCuadranteAccion(arrayCuadrante));
             setExpandedAccordion(false);
         };
         if (hayTrabajador) {
@@ -1618,14 +1744,14 @@ const Cuadrantes = (props) => {
             } else {
                 const arrayCuadrante = [...cuadrante];
                 arrayCuadrante[columna] = columnaAnadir;
-                setCuadrante(arrayCuadrante);
+                dispatch(setCuadranteAccion(arrayCuadrante));
             }
         };
     };
 
     const reseteaContenidoCuadrante = () => {
         reseteaContenidoCentro();
-        setStateFestivo({});
+        dispatch(setStateFestivoAccion({}))
         dispatch(vaciarDatosCentroAccion());
         dispatch(vaciarDatosTrabajadorAccion());
     };
@@ -1634,9 +1760,9 @@ const Cuadrantes = (props) => {
         dispatch(vaciarDatosCuadranteRegistradoAccion());
         setTrabajadoresEnCuadrante([]);
         setSuplentesEnCuadrante([]);
-        setCuadrante([]);
+        dispatch(setCuadranteAccion([]));
         setExpandedAccordion(false);
-        setBufferSwitchedDiasFestivos([]);
+        setBufferSwitchedDiasFestivosCuadrante([]);
         setEsInicioTra(true);
         setEsInicioSup(true);
         setEsCambioTra(false);
@@ -1715,7 +1841,55 @@ const Cuadrantes = (props) => {
                 precioHora_MA: '',
                 precioHora_PO: '',
                 precioHora_BA: '',
-                precioHora_FT: ''
+                precioHora_FT: '',
+                variacion_TO: '',
+                variacion_CR: '',
+                variacion_CE: '',
+                variacion_CI: '',
+                variacion_MO: '',
+                variacion_OF: '',
+                variacion_AL: '',
+                variacion_LA: '',
+                variacion_TE: '',
+                variacion_FI: '',
+                variacion_FE: '',
+                variacion_AB: '',
+                variacion_MA: '',
+                variacion_PO: '',
+                variacion_BA: '',
+                variacion_FT: '',
+                diaVariacion_TO: '',
+                diaVariacion_CR: '',
+                diaVariacion_CE: '',
+                diaVariacion_CI: '',
+                diaVariacion_MO: '',
+                diaVariacion_OF: '',
+                diaVariacion_AL: '',
+                diaVariacion_LA: '',
+                diaVariacion_TE: '',
+                diaVariacion_FI: '',
+                diaVariacion_FE: '',
+                diaVariacion_AB: '',
+                diaVariacion_MA: '',
+                diaVariacion_PO: '',
+                diaVariacion_BA: '',
+                diaVariacion_FT: '',
+                activo_TO: 'si',
+                activo_CR: 'si',
+                activo_CE: 'si',
+                activo_CI: 'si',
+                activo_MO: 'si',
+                activo_OF: 'si',
+                activo_AL: 'si',
+                activo_LA: 'si',
+                activo_TE: 'si',
+                activo_FI: 'si',
+                activo_FE: 'si',
+                activo_AB: 'si',
+                activo_MA: 'si',
+                activo_PO: 'si',
+                activo_BA: 'si',
+                activo_FT: 'si'
             }
 
         });
@@ -1731,10 +1905,15 @@ const Cuadrantes = (props) => {
             precioHora_R: '',
             precioHora_L1: '',
             precioHora_L2: '',
-            precioHora_F: ''
+            precioHora_F: '',
+            observaciones: ''
         });
-        setStateFestivo({});
+        dispatch(setStateFestivoAccion({}))
         setCambiadaConfiguracionGeneral(false);
+        dispatch(setCuadranteServiciosFijosAccion([]));
+        setVisibleCuadrante(true);
+        setVisibleCuadranteServiciosFijos(true);
+        setVariablesPopoverSFCasillas({});
     };
 
     const handleClickAddColumna = (tipo, columna) => {
@@ -1794,57 +1973,57 @@ const Cuadrantes = (props) => {
         let arrayCuadrante = [...cuadrante];
         let numTrabajadoresQuedanSinNombre = 0;
         let numTrabajadoresQuedanConNombre = 0;
-        let hayServiciosFijos = false;
-        for (const prop in losServiciosFijos) {
-            if (losServiciosFijos[prop] && prop === 'precioHora_TO') {
-                hayServiciosFijos = true;
-            };
-            if (losServiciosFijos[prop] && prop === 'precioHora_CR') {
-                hayServiciosFijos = true;
-            };
-            if (losServiciosFijos[prop] && prop === 'precioHora_CE') {
-                hayServiciosFijos = true;
-            };
-            if (losServiciosFijos[prop] && prop === 'precioHora_CI') {
-                hayServiciosFijos = true;
-            };
-            if (losServiciosFijos[prop] && prop === 'precioHora_MO') {
-                hayServiciosFijos = true;
-            };
-            if (losServiciosFijos[prop] && prop === 'precioHora_OF') {
-                hayServiciosFijos = true;
-            };
-            if (losServiciosFijos[prop] && prop === 'precioHora_AL') {
-                hayServiciosFijos = true;
-            };
-            if (losServiciosFijos[prop] && prop === 'precioHora_LA') {
-                hayServiciosFijos = true;
-            };
-            if (losServiciosFijos[prop] && prop === 'precioHora_TE') {
-                hayServiciosFijos = true;
-            };
-            if (losServiciosFijos[prop] && prop === 'precioHora_FI') {
-                hayServiciosFijos = true;
-            };
-            if (losServiciosFijos[prop] && prop === 'precioHora_FE') {
-                hayServiciosFijos = true;
-            };
-            if (losServiciosFijos[prop] && prop === 'precioHora_AB') {
-                hayServiciosFijos = true;
-            };
-            if (losServiciosFijos[prop] && prop === 'precioHora_MA') {
-                hayServiciosFijos = true;
-            };
-            if (losServiciosFijos[prop] && prop === 'precioHora_PO') {
-                hayServiciosFijos = true;
-            };
-            if (losServiciosFijos[prop] && prop === 'precioHora_BA') {
-                hayServiciosFijos = true;
-            };
-            if (losServiciosFijos[prop] && prop === 'precioHora_FT') {
-                hayServiciosFijos = true;
-            };
-        };
+        // let hayServiciosFijos = false;
+        // for (const prop in losServiciosFijos) {
+        //     if (losServiciosFijos[prop] && prop === 'precioHora_TO') {
+        //         hayServiciosFijos = true;
+        //     };
+        //     if (losServiciosFijos[prop] && prop === 'precioHora_CR') {
+        //         hayServiciosFijos = true;
+        //     };
+        //     if (losServiciosFijos[prop] && prop === 'precioHora_CE') {
+        //         hayServiciosFijos = true;
+        //     };
+        //     if (losServiciosFijos[prop] && prop === 'precioHora_CI') {
+        //         hayServiciosFijos = true;
+        //     };
+        //     if (losServiciosFijos[prop] && prop === 'precioHora_MO') {
+        //         hayServiciosFijos = true;
+        //     };
+        //     if (losServiciosFijos[prop] && prop === 'precioHora_OF') {
+        //         hayServiciosFijos = true;
+        //     };
+        //     if (losServiciosFijos[prop] && prop === 'precioHora_AL') {
+        //         hayServiciosFijos = true;
+        //     };
+        //     if (losServiciosFijos[prop] && prop === 'precioHora_LA') {
+        //         hayServiciosFijos = true;
+        //     };
+        //     if (losServiciosFijos[prop] && prop === 'precioHora_TE') {
+        //         hayServiciosFijos = true;
+        //     };
+        //     if (losServiciosFijos[prop] && prop === 'precioHora_FI') {
+        //         hayServiciosFijos = true;
+        //     };
+        //     if (losServiciosFijos[prop] && prop === 'precioHora_FE') {
+        //         hayServiciosFijos = true;
+        //     };
+        //     if (losServiciosFijos[prop] && prop === 'precioHora_AB') {
+        //         hayServiciosFijos = true;
+        //     };
+        //     if (losServiciosFijos[prop] && prop === 'precioHora_MA') {
+        //         hayServiciosFijos = true;
+        //     };
+        //     if (losServiciosFijos[prop] && prop === 'precioHora_PO') {
+        //         hayServiciosFijos = true;
+        //     };
+        //     if (losServiciosFijos[prop] && prop === 'precioHora_BA') {
+        //         hayServiciosFijos = true;
+        //     };
+        //     if (losServiciosFijos[prop] && prop === 'precioHora_FT') {
+        //         hayServiciosFijos = true;
+        //     };
+        // };
 
         arrayCuadrante.forEach((elemento) => {
             if (elemento.tipoTrabajador === 'trabajador' && !elemento.nombreTrabajador) {
@@ -1925,7 +2104,7 @@ const Cuadrantes = (props) => {
                     };
                 };
             }
-            setCuadrante(arrayCuadrante);
+            dispatch(setCuadranteAccion(arrayCuadrante));
             setExpandedAccordion(false);
         } else {
             fromIndex = arrayCuadrante.indexOf(arrayCuadrante[columna]);
@@ -1947,7 +2126,7 @@ const Cuadrantes = (props) => {
                     }
                 };
             };
-            setCuadrante(arrayCuadrante);
+            dispatch(setCuadranteAccion(arrayCuadrante));
             setExpandedAccordion(false);
         }
 
@@ -1981,715 +2160,310 @@ const Cuadrantes = (props) => {
         arrayCuadrante[index][key].tipoVariacion = e.target.value;
         setItemPrevioEditando({ ...itemPrevioEditando, modificado: true });
         dispatch(activarDesactivarCambioAccion(false));
-    }
-
-    const gestionaClassesColoresGeneral = (dia, trabajadorDiaDeBaja, modificado, nombreTrabajador) => {
-        if (trabajadorDiaDeBaja) {
-            return classes.casillaBaja;
-        } else {
-            if (stateFestivo['estadoFestivoDia' + (dia)]) {
-                return classes.casillaFestivo;
-            } else {
-                if (modificado) {
-                    return classes.casillaModificado;
-                } else {
-                    if (nombreTrabajador) {
-                        return classes.casillaLaboral;
-                    } else {
-                        return classes.casillaDisabled;
-                    }
-                }
-            };
-        }
-    };
-
-    const gestionaClassesColoresTrabajadores = (trabajadorTipo) => {
-        if (trabajadorTipo === 'trabajador' || !trabajadorTipo) {
-            return classes.trabajador;
-        } else {
-            return classes.suplente;
-        }
-    };
-
-    const gestionaTextoCasillas = (indexDia, dia, columna, diaSemana) => {
-        if (columna[dia].baja) {
-            switch (columna[dia].tipoBaja) {
-                case 'baja':
-                    return 'Trabajador de baja';
-                case 'vacaciones':
-                    return 'Trabajador de vacaciones';
-                case 'excedencia':
-                    return 'Trabajador en excedencia';
-                case 'personales':
-                    return 'Ausencia motivos personales';
-                default:
-            }
-        } else if (stateFestivo['estadoFestivoDia' + (indexDia)]) {
-            return 'Día festivo'
-        } else {
-            switch (columna.tipoHorario) {
-                case 'rango':
-                    switch (diaSemana) {
-                        case 'Lunes':
-                            if (columna[dia].lunesInicioRango && columna[dia].lunesFinRango) {
-                                return 'De ' + columna[dia].lunesInicioRango + ' a ' + columna[dia].lunesFinRango;
-                            } else {
-                                return '';
-                            };
-                        case 'Martes':
-                            if (columna[dia].martesInicioRango && columna[dia].martesFinRango) {
-                                return 'De ' + columna[dia].martesInicioRango + ' a ' + columna[dia].martesFinRango;
-                            } else {
-                                return '';
-                            };
-                        case 'Miércoles':
-                            if (columna[dia].miercolesInicioRango && columna[dia].miercolesFinRango) {
-                                return 'De ' + columna[dia].miercolesInicioRango + ' a ' + columna[dia].miercolesFinRango;
-                            } else {
-                                return '';
-                            };
-                        case 'Jueves':
-                            if (columna[dia].juevesInicioRango && columna[dia].juevesFinRango) {
-                                return 'De ' + columna[dia].juevesInicioRango + ' a ' + columna[dia].juevesFinRango;
-                            } else {
-                                return '';
-                            };
-                        case 'Viernes':
-                            if (columna[dia].viernesInicioRango && columna[dia].viernesFinRango) {
-                                return 'De ' + columna[dia].viernesInicioRango + ' a ' + columna[dia].viernesFinRango;
-                            } else {
-                                return '';
-                            };
-                        case 'Sábado':
-                            if (columna[dia].sabadoInicioRango && columna[dia].sabadoFinRango) {
-                                return 'De ' + columna[dia].sabadoInicioRango + ' a ' + columna[dia].sabadoFinRango;
-                            } else {
-                                return '';
-                            };
-                        case 'Domingo':
-                            if (columna[dia].domingoInicioRango && columna[dia].domingoFinRango) {
-                                return 'De ' + columna[dia].domingoInicioRango + ' a ' + columna[dia].domingoFinRango;
-                            } else {
-                                return '';
-                            };
-                        default:
-                    }
-                    break;
-                case 'rangoDescanso':
-                    switch (diaSemana) {
-                        case 'Lunes':
-                            if (columna[dia].lunesInicio1RangoDescanso && columna[dia].lunesFin1RangoDescanso) {
-                                let subRetorno;
-                                if (columna[dia].lunesInicio2RangoDescanso && columna[dia].lunesFin2RangoDescanso) {
-                                    subRetorno = ' y de ' + columna[dia].lunesInicio2RangoDescanso + ' a ' + columna[dia].lunesFin2RangoDescanso;
-                                } else {
-                                    subRetorno = ''
-                                }
-                                return 'De ' + columna[dia].lunesInicio1RangoDescanso + ' a ' + columna[dia].lunesFin1RangoDescanso + subRetorno;
-                            } else {
-                                return '';
-                            };
-                        case 'Martes':
-                            if (columna[dia].martesInicio1RangoDescanso && columna[dia].martesFin1RangoDescanso) {
-                                let subRetorno;
-                                if (columna[dia].martesInicio2RangoDescanso && columna[dia].martesFin2RangoDescanso) {
-                                    subRetorno = ' y de ' + columna[dia].martesInicio2RangoDescanso + ' a ' + columna[dia].martesFin2RangoDescanso;
-                                } else {
-                                    subRetorno = ''
-                                }
-                                return 'De ' + columna[dia].martesInicio1RangoDescanso + ' a ' + columna[dia].martesFin1RangoDescanso + subRetorno;
-                            } else {
-                                return '';
-                            };
-                        case 'Miércoles':
-                            if (columna[dia].miercolesInicio1RangoDescanso && columna[dia].miercolesFin1RangoDescanso) {
-                                let subRetorno;
-                                if (columna[dia].miercolesInicio2RangoDescanso && columna[dia].miercolesFin2RangoDescanso) {
-                                    subRetorno = ' y de ' + columna[dia].miercolesInicio2RangoDescanso + ' a ' + columna[dia].miercolesFin2RangoDescanso;
-                                } else {
-                                    subRetorno = ''
-                                }
-                                return 'De ' + columna[dia].miercolesInicio1RangoDescanso + ' a ' + columna[dia].miercolesFin1RangoDescanso + subRetorno;
-                            } else {
-                                return '';
-                            };
-                        case 'Jueves':
-                            if (columna[dia].juevesInicio1RangoDescanso && columna[dia].juevesFin1RangoDescanso) {
-                                let subRetorno;
-                                if (columna[dia].juevesInicio2RangoDescanso && columna[dia].juevesFin2RangoDescanso) {
-                                    subRetorno = ' y de ' + columna[dia].juevesInicio2RangoDescanso + ' a ' + columna[dia].juevesFin2RangoDescanso;
-                                } else {
-                                    subRetorno = ''
-                                }
-                                return 'De ' + columna[dia].juevesInicio1RangoDescanso + ' a ' + columna[dia].juevesFin1RangoDescanso + subRetorno;
-                            } else {
-                                return '';
-                            };
-                        case 'Viernes':
-                            if (columna[dia].viernesInicio1RangoDescanso && columna[dia].viernesFin1RangoDescanso) {
-                                let subRetorno;
-                                if (columna[dia].viernesInicio2RangoDescanso && columna[dia].viernesFin2RangoDescanso) {
-                                    subRetorno = ' y de ' + columna[dia].viernesInicio2RangoDescanso + ' a ' + columna[dia].viernesFin2RangoDescanso;
-                                } else {
-                                    subRetorno = ''
-                                }
-                                return 'De ' + columna[dia].viernesInicio1RangoDescanso + ' a ' + columna[dia].viernesFin1RangoDescanso + subRetorno;
-                            } else {
-                                return '';
-                            };
-                        case 'Sábado':
-                            if (columna[dia].sabadoInicio1RangoDescanso && columna[dia].sabadoFin1RangoDescanso) {
-                                let subRetorno;
-                                if (columna[dia].sabadoInicio2RangoDescanso && columna[dia].sabadoFin2RangoDescanso) {
-                                    subRetorno = ' y de ' + columna[dia].sabadoInicio2RangoDescanso + ' a ' + columna[dia].sabadoFin2RangoDescanso;
-                                } else {
-                                    subRetorno = ''
-                                }
-                                return 'De ' + columna[dia].sabadoInicio1RangoDescanso + ' a ' + columna[dia].sabadoFin1RangoDescanso + subRetorno;
-                            } else {
-                                return '';
-                            };
-                        case 'Domingo':
-                            if (columna[dia].domingoInicio1RangoDescanso && columna[dia].domingoFin1RangoDescanso) {
-                                let subRetorno;
-                                if (columna[dia].domingoInicio2RangoDescanso && columna[dia].domingoFin2RangoDescanso) {
-                                    subRetorno = ' y de ' + columna[dia].domingoInicio2RangoDescanso + ' a ' + columna[dia].domingoFin2RangoDescanso;
-                                } else {
-                                    subRetorno = ''
-                                }
-                                return 'De ' + columna[dia].domingoInicio1RangoDescanso + ' a ' + columna[dia].domingoFin1RangoDescanso + subRetorno;
-                            } else {
-                                return '';
-                            };
-                        default:
-                    }
-                    break;
-                case 'cantidad':
-                    switch (diaSemana) {
-                        case 'Lunes':
-                            if (columna[dia].lunesCantidad) {
-                                return columna[dia].lunesCantidad / 60 + ' horas';
-                            } else {
-                                return '';
-                            };
-                        case 'Martes':
-                            if (columna[dia].martesCantidad) {
-                                return columna[dia].martesCantidad / 60 + ' horas';
-                            } else {
-                                return '';
-                            };
-                        case 'Miércoles':
-                            if (columna[dia].miercolesCantidad) {
-                                return columna[dia].miercolesCantidad / 60 + ' horas';
-                            } else {
-                                return '';
-                            };
-                        case 'Jueves':
-                            if (columna[dia].juevesCantidad) {
-                                return columna[dia].juevesCantidad / 60 + ' horas';
-                            } else {
-                                return '';
-                            };
-                        case 'Viernes':
-                            if (columna[dia].viernesCantidad) {
-                                return columna[dia].viernesCantidad / 60 + ' horas';
-                            } else {
-                                return '';
-                            };
-                        case 'Sábado':
-                            if (columna[dia].sabadoCantidad) {
-                                return columna[dia].sabadoCantidad / 60 + ' horas';
-                            } else {
-                                return '';
-                            };
-                        case 'Domingo':
-                            if (columna[dia].domingoCantidad) {
-                                return columna[dia].domingoCantidad / 60 + ' horas';
-                            } else {
-                                return '';
-                            };
-                        default:
-                    }
-                    break;
-                default:
-            }
-        }
-    };
-
-    const gestionaValoresCasillas = (indexDia, dia, columna, diaSemana, casilla) => {
-        if (columna[dia].baja || stateFestivo['estadoFestivoDia' + (indexDia - 1)]) {
-            if (columna.tipoHorario === 'cantidad') {
-                return '';
-            } else {
-                return null;
-            }
-        } else {
-            switch (columna.tipoHorario) {
-                case 'rango':
-                    switch (diaSemana) {
-                        case 'Lunes':
-                            if (casilla === 1) {
-                                return columna[dia].lunesInicioRango ? dispatch(generaFechaAccion(columna[dia].lunesInicioRango)) : null;
-                            }
-                            if (casilla === 2) {
-                                return columna[dia].lunesFinRango ? dispatch(generaFechaAccion(columna[dia].lunesFinRango)) : null;
-                            }
-                        case 'Martes':
-                            if (casilla === 1) {
-                                return columna[dia].martesInicioRango ? dispatch(generaFechaAccion(columna[dia].martesInicioRango)) : null;
-                            }
-                            if (casilla === 2) {
-                                return columna[dia].martesFinRango ? dispatch(generaFechaAccion(columna[dia].martesFinRango)) : null;
-                            }
-                        case 'Miércoles':
-                            if (casilla === 1) {
-                                return columna[dia].miercolesInicioRango ? dispatch(generaFechaAccion(columna[dia].miercolesInicioRango)) : null;
-                            }
-                            if (casilla === 2) {
-                                return columna[dia].miercolesFinRango ? dispatch(generaFechaAccion(columna[dia].miercolesFinRango)) : null;
-                            }
-                        case 'Jueves':
-                            if (casilla === 1) {
-                                return columna[dia].juevesInicioRango ? dispatch(generaFechaAccion(columna[dia].juevesInicioRango)) : null;
-                            }
-                            if (casilla === 2) {
-                                return columna[dia].juevesFinRango ? dispatch(generaFechaAccion(columna[dia].juevesFinRango)) : null;
-                            }
-                        case 'Viernes':
-                            if (casilla === 1) {
-                                return columna[dia].viernesInicioRango ? dispatch(generaFechaAccion(columna[dia].viernesInicioRango)) : null;
-                            }
-                            if (casilla === 2) {
-                                return columna[dia].viernesFinRango ? dispatch(generaFechaAccion(columna[dia].viernesFinRango)) : null;
-                            }
-                        case 'Sábado':
-                            if (casilla === 1) {
-                                return columna[dia].sabadoInicioRango ? dispatch(generaFechaAccion(columna[dia].sabadoInicioRango)) : null;
-                            }
-                            if (casilla === 2) {
-                                return columna[dia].sabadoFinRango ? dispatch(generaFechaAccion(columna[dia].sabadoFinRango)) : null;
-                            }
-                        case 'Domingo':
-                            if (casilla === 1) {
-                                return columna[dia].domingoInicioRango ? dispatch(generaFechaAccion(columna[dia].domingoInicioRango)) : null;
-                            }
-                            if (casilla === 2) {
-                                return columna[dia].domingoFinRango ? dispatch(generaFechaAccion(columna[dia].domingoFinRango)) : null;
-                            }
-                        default:
-                    }
-                    break;
-                case 'rangoDescanso':
-                    switch (diaSemana) {
-                        case 'Lunes':
-                            if (casilla === 1) {
-                                return columna[dia].lunesInicio1RangoDescanso ? dispatch(generaFechaAccion(columna[dia].lunesInicio1RangoDescanso)) : null;
-                            }
-                            if (casilla === 2) {
-                                return columna[dia].lunesFin1RangoDescanso ? dispatch(generaFechaAccion(columna[dia].lunesFin1RangoDescanso)) : null;
-                            }
-                            if (casilla === 3) {
-                                return columna[dia].lunesInicio2RangoDescanso ? dispatch(generaFechaAccion(columna[dia].lunesInicio2RangoDescanso)) : null;
-                            }
-                            if (casilla === 4) {
-                                return columna[dia].lunesFin2RangoDescanso ? dispatch(generaFechaAccion(columna[dia].lunesFin2RangoDescanso)) : null;
-                            }
-                        case 'Martes':
-                            if (casilla === 1) {
-                                return columna[dia].martesInicio1RangoDescanso ? dispatch(generaFechaAccion(columna[dia].martesInicio1RangoDescanso)) : null;
-                            }
-                            if (casilla === 2) {
-                                return columna[dia].martesFin1RangoDescanso ? dispatch(generaFechaAccion(columna[dia].martesFin1RangoDescanso)) : null;
-                            }
-                            if (casilla === 3) {
-                                return columna[dia].martesInicio2RangoDescanso ? dispatch(generaFechaAccion(columna[dia].martesInicio2RangoDescanso)) : null;
-                            }
-                            if (casilla === 4) {
-                                return columna[dia].martesFin2RangoDescanso ? dispatch(generaFechaAccion(columna[dia].martesFin2RangoDescanso)) : null;
-                            }
-                        case 'Miércoles':
-                            if (casilla === 1) {
-                                return columna[dia].miercolesInicio1RangoDescanso ? dispatch(generaFechaAccion(columna[dia].miercolesInicio1RangoDescanso)) : null;
-                            }
-                            if (casilla === 2) {
-                                return columna[dia].miercolesFin1RangoDescanso ? dispatch(generaFechaAccion(columna[dia].miercolesFin1RangoDescanso)) : null;
-                            }
-                            if (casilla === 3) {
-                                return columna[dia].miercolesInicio2RangoDescanso ? dispatch(generaFechaAccion(columna[dia].miercolesInicio2RangoDescanso)) : null;
-                            }
-                            if (casilla === 4) {
-                                return columna[dia].miercolesFin2RangoDescanso ? dispatch(generaFechaAccion(columna[dia].miercolesFin2RangoDescanso)) : null;
-                            }
-                        case 'Jueves':
-                            if (casilla === 1) {
-                                return columna[dia].juevesInicio1RangoDescanso ? dispatch(generaFechaAccion(columna[dia].juevesInicio1RangoDescanso)) : null;
-                            }
-                            if (casilla === 2) {
-                                return columna[dia].juevesFin1RangoDescanso ? dispatch(generaFechaAccion(columna[dia].juevesFin1RangoDescanso)) : null;
-                            }
-                            if (casilla === 3) {
-                                return columna[dia].juevesInicio2RangoDescanso ? dispatch(generaFechaAccion(columna[dia].juevesInicio2RangoDescanso)) : null;
-                            }
-                            if (casilla === 4) {
-                                return columna[dia].juevesFin2RangoDescanso ? dispatch(generaFechaAccion(columna[dia].juevesFin2RangoDescanso)) : null;
-                            }
-                        case 'Viernes':
-                            if (casilla === 1) {
-                                return columna[dia].viernesInicio1RangoDescanso ? dispatch(generaFechaAccion(columna[dia].viernesInicio1RangoDescanso)) : null;
-                            }
-                            if (casilla === 2) {
-                                return columna[dia].viernesFin1RangoDescanso ? dispatch(generaFechaAccion(columna[dia].viernesFin1RangoDescanso)) : null;
-                            }
-                            if (casilla === 3) {
-                                return columna[dia].viernesInicio2RangoDescanso ? dispatch(generaFechaAccion(columna[dia].viernesInicio2RangoDescanso)) : null;
-                            }
-                            if (casilla === 4) {
-                                return columna[dia].viernesFin2RangoDescanso ? dispatch(generaFechaAccion(columna[dia].viernesFin2RangoDescanso)) : null;
-                            }
-                        case 'Sábado':
-                            if (casilla === 1) {
-                                return columna[dia].sabadoInicio1RangoDescanso ? dispatch(generaFechaAccion(columna[dia].sabadoInicio1RangoDescanso)) : null;
-                            }
-                            if (casilla === 2) {
-                                return columna[dia].sabadoFin1RangoDescanso ? dispatch(generaFechaAccion(columna[dia].sabadoFin1RangoDescanso)) : null;
-                            }
-                            if (casilla === 3) {
-                                return columna[dia].sabadoInicio2RangoDescanso ? dispatch(generaFechaAccion(columna[dia].sabadoInicio2RangoDescanso)) : null;
-                            }
-                            if (casilla === 4) {
-                                return columna[dia].sabadoFin2RangoDescanso ? dispatch(generaFechaAccion(columna[dia].sabadoFin2RangoDescanso)) : null;
-                            }
-                        case 'Domingo':
-                            if (casilla === 1) {
-                                return columna[dia].domingoInicio1RangoDescanso ? dispatch(generaFechaAccion(columna[dia].domingoInicio1RangoDescanso)) : null;
-                            }
-                            if (casilla === 2) {
-                                return columna[dia].domingoFin1RangoDescanso ? dispatch(generaFechaAccion(columna[dia].domingoFin1RangoDescanso)) : null;
-                            }
-                            if (casilla === 3) {
-                                return columna[dia].domingoInicio2RangoDescanso ? dispatch(generaFechaAccion(columna[dia].domingoInicio2RangoDescanso)) : null;
-                            }
-                            if (casilla === 4) {
-                                return columna[dia].domingoFin2RangoDescanso ? dispatch(generaFechaAccion(columna[dia].domingoFin2RangoDescanso)) : null;
-                            }
-                        default:
-                    }
-                    break;
-                case 'cantidad':
-                    switch (diaSemana) {
-                        case 'Lunes':
-                            if (casilla === 1) {
-                                return columna[dia].lunesCantidad ? columna[dia].lunesCantidad : '';
-                            }
-                        case 'Martes':
-                            if (casilla === 1) {
-                                return columna[dia].martesCantidad ? columna[dia].martesCantidad : '';
-                            }
-                        case 'Miércoles':
-                            if (casilla === 1) {
-                                return columna[dia].miercolesCantidad ? columna[dia].miercolesCantidad : '';
-                            }
-                        case 'Jueves':
-                            if (casilla === 1) {
-                                return columna[dia].juevesCantidad ? columna[dia].juevesCantidad : '';
-                            }
-                        case 'Viernes':
-                            if (casilla === 1) {
-                                return columna[dia].viernesCantidad ? columna[dia].viernesCantidad : '';
-                            }
-                        case 'Sábado':
-                            if (casilla === 1) {
-                                return columna[dia].sabadoCantidad ? columna[dia].sabadoCantidad : '';
-                            }
-                        case 'Domingo':
-                            if (casilla === 1) {
-                                return columna[dia].domingoCantidad ? columna[dia].domingoCantidad : '';
-                            }
-                        default:
-                    }
-                    break;
-                default:
-            }
-        }
     };
 
     const handleChangeFestivoDia = (postRef, index, diaSemana) => (e) => {
-        setStateFestivo({ ...stateFestivo, [e.target.name]: e.target.checked });
-        let arrayCuadrante = [];
-        let objetoBuffer = {};
-        objetoBuffer[postRef] = [];
-        let indexABorrar = -1;
-        cuadrante.forEach((columna, indexFor) => {
-            columna[postRef].festivo = e.target.checked;
-            if (columna.nombreTrabajador) {
-                if (e.target.checked) {
-                    switch (columna.tipoHorario) {
-                        case 'rango':
-                            switch (diaSemana) {
-                                case 'Lunes':
-                                    objetoBuffer[postRef].push([columna[postRef].lunesInicioRango, columna[postRef].lunesFinRango]);
-                                    columna[postRef].lunesInicioRango = null;
-                                    columna[postRef].lunesFinRango = null;
-                                    break;
-                                case 'Martes':
-                                    objetoBuffer[postRef].push([columna[postRef].martesInicioRango, columna[postRef].martesFinRango]);
-                                    columna[postRef].martesInicioRango = null;
-                                    columna[postRef].martesFinRango = null;
-                                    break;
-                                case 'Miércoles':
-                                    objetoBuffer[postRef].push([columna[postRef].miercolesInicioRango, columna[postRef].miercolesFinRango]);
-                                    columna[postRef].miercolesInicioRango = null;
-                                    columna[postRef].miercolesFinRango = null;
-                                    break;
-                                case 'Jueves':
-                                    objetoBuffer[postRef].push([columna[postRef].juevesInicioRango, columna[postRef].juevesFinRango]);
-                                    columna[postRef].juevesInicioRango = null;
-                                    columna[postRef].juevesFinRango = null;
-                                    break;
-                                case 'Viernes':
-                                    objetoBuffer[postRef].push([columna[postRef].viernesInicioRango, columna[postRef].viernesFinRango]);
-                                    columna[postRef].viernesInicioRango = null;
-                                    columna[postRef].viernesFinRango = null;
-                                    break;
-                                case 'Sábado':
-                                    objetoBuffer[postRef].push([columna[postRef].sabadoInicioRango, columna[postRef].sabadoFinRango]);
-                                    columna[postRef].sabadoInicioRango = null;
-                                    columna[postRef].sabadoFinRango = null;
-                                    break;
-                                case 'Domingo':
-                                    objetoBuffer[postRef].push([columna[postRef].domingoInicioRango, columna[postRef].domingoFinRango]);
-                                    columna[postRef].domingoInicioRango = null;
-                                    columna[postRef].domingoFinRango = null;
-                                    break;
-                                default:
+        dispatch(setStateFestivoAccion({ ...stateFestivo, [e.target.name]: e.target.checked }));
+        if (cuadrante.length > 0) {
+            let arrayCuadrante = [];
+            let objetoBuffer = {};
+            objetoBuffer[postRef] = [];
+            let indexABorrar = -1;
+            cuadrante.forEach((columna, indexFor) => {
+                columna[postRef].festivo = e.target.checked;
+                if (columna.nombreTrabajador) {
+                    if (e.target.checked) {
+                        switch (columna.tipoHorario) {
+                            case 'rango':
+                                switch (diaSemana) {
+                                    case 'Lunes':
+                                        objetoBuffer[postRef].push([columna[postRef].lunesInicioRango, columna[postRef].lunesFinRango]);
+                                        columna[postRef].lunesInicioRango = null;
+                                        columna[postRef].lunesFinRango = null;
+                                        break;
+                                    case 'Martes':
+                                        objetoBuffer[postRef].push([columna[postRef].martesInicioRango, columna[postRef].martesFinRango]);
+                                        columna[postRef].martesInicioRango = null;
+                                        columna[postRef].martesFinRango = null;
+                                        break;
+                                    case 'Miércoles':
+                                        objetoBuffer[postRef].push([columna[postRef].miercolesInicioRango, columna[postRef].miercolesFinRango]);
+                                        columna[postRef].miercolesInicioRango = null;
+                                        columna[postRef].miercolesFinRango = null;
+                                        break;
+                                    case 'Jueves':
+                                        objetoBuffer[postRef].push([columna[postRef].juevesInicioRango, columna[postRef].juevesFinRango]);
+                                        columna[postRef].juevesInicioRango = null;
+                                        columna[postRef].juevesFinRango = null;
+                                        break;
+                                    case 'Viernes':
+                                        objetoBuffer[postRef].push([columna[postRef].viernesInicioRango, columna[postRef].viernesFinRango]);
+                                        columna[postRef].viernesInicioRango = null;
+                                        columna[postRef].viernesFinRango = null;
+                                        break;
+                                    case 'Sábado':
+                                        objetoBuffer[postRef].push([columna[postRef].sabadoInicioRango, columna[postRef].sabadoFinRango]);
+                                        columna[postRef].sabadoInicioRango = null;
+                                        columna[postRef].sabadoFinRango = null;
+                                        break;
+                                    case 'Domingo':
+                                        objetoBuffer[postRef].push([columna[postRef].domingoInicioRango, columna[postRef].domingoFinRango]);
+                                        columna[postRef].domingoInicioRango = null;
+                                        columna[postRef].domingoFinRango = null;
+                                        break;
+                                    default:
+                                }
+                                break;
+                            case 'rangoDescanso':
+                                switch (diaSemana) {
+                                    case 'Lunes':
+                                        objetoBuffer[postRef].push([columna[postRef].lunesInicio1RangoDescanso, columna[postRef].lunesFin1RangoDescanso, columna[postRef].lunesInicio2RangoDescanso, columna[postRef].lunesFin2RangoDescanso]);
+                                        columna[postRef].lunesInicio1RangoDescanso = null;
+                                        columna[postRef].lunesFin1RangoDescanso = null;
+                                        columna[postRef].lunesInicio2RangoDescanso = null;
+                                        columna[postRef].lunesFin2RangoDescanso = null;
+                                        break;
+                                    case 'Martes':
+                                        objetoBuffer[postRef].push([columna[postRef].martesInicio1RangoDescanso, columna[postRef].martesFin1RangoDescanso, columna[postRef].martesInicio2RangoDescanso, columna[postRef].martesFin2RangoDescanso]);
+                                        columna[postRef].martesInicio1RangoDescanso = null;
+                                        columna[postRef].martesFin1RangoDescanso = null;
+                                        columna[postRef].martesInicio2RangoDescanso = null;
+                                        columna[postRef].martesFin2RangoDescanso = null;
+                                        break;
+                                    case 'Miércoles':
+                                        objetoBuffer[postRef].push([columna[postRef].miercolesInicio1RangoDescanso, columna[postRef].miercolesFin1RangoDescanso, columna[postRef].miercolesInicio2RangoDescanso, columna[postRef].miercolesFin2RangoDescanso]);
+                                        columna[postRef].miercolesInicio1RangoDescanso = null;
+                                        columna[postRef].miercolesFin1RangoDescanso = null;
+                                        columna[postRef].miercolesInicio2RangoDescanso = null;
+                                        columna[postRef].miercolesFin2RangoDescanso = null;
+                                        break;
+                                    case 'Jueves':
+                                        objetoBuffer[postRef].push([columna[postRef].juevesInicio1RangoDescanso, columna[postRef].juevesFin1RangoDescanso, columna[postRef].juevesInicio2RangoDescanso, columna[postRef].juevesFin2RangoDescanso]);
+                                        columna[postRef].juevesInicio1RangoDescanso = null;
+                                        columna[postRef].juevesFin1RangoDescanso = null;
+                                        columna[postRef].juevesInicio2RangoDescanso = null;
+                                        columna[postRef].juevesFin2RangoDescanso = null;
+                                        break;
+                                    case 'Viernes':
+                                        objetoBuffer[postRef].push([columna[postRef].viernesInicio1RangoDescanso, columna[postRef].viernesFin1RangoDescanso, columna[postRef].viernesInicio2RangoDescanso, columna[postRef].viernesFin2RangoDescanso]);
+                                        columna[postRef].viernesInicio1RangoDescanso = null;
+                                        columna[postRef].viernesFin1RangoDescanso = null;
+                                        columna[postRef].viernesInicio2RangoDescanso = null;
+                                        columna[postRef].viernesFin2RangoDescanso = null;
+                                        break;
+                                    case 'Sábado':
+                                        objetoBuffer[postRef].push([columna[postRef].sabadoInicio1RangoDescanso, columna[postRef].sabadoFin1RangoDescanso, columna[postRef].sabadoInicio2RangoDescanso, columna[postRef].sabadoFin2RangoDescanso]);
+                                        columna[postRef].sabadoInicio1RangoDescanso = null;
+                                        columna[postRef].sabadoFin1RangoDescanso = null;
+                                        columna[postRef].sabadoInicio2RangoDescanso = null;
+                                        columna[postRef].sabadoFin2RangoDescanso = null;
+                                        break;
+                                    case 'Domingo':
+                                        objetoBuffer[postRef].push([columna[postRef].domingoInicio1RangoDescanso, columna[postRef].domingoFin1RangoDescanso, columna[postRef].domingoInicio2RangoDescanso, columna[postRef].domingoFin2RangoDescanso]);
+                                        columna[postRef].domingoInicio1RangoDescanso = null;
+                                        columna[postRef].domingoFin1RangoDescanso = null;
+                                        columna[postRef].domingoInicio2RangoDescanso = null;
+                                        columna[postRef].domingoFin2RangoDescanso = null;
+                                        break;
+                                    default:
+                                }
+                                break;
+                            case 'cantidad':
+                                switch (diaSemana) {
+                                    case 'Lunes':
+                                        objetoBuffer[postRef].push([columna[postRef].lunesCantidad]);
+                                        columna[postRef].lunesCantidad = '';
+                                        break;
+                                    case 'Martes':
+                                        objetoBuffer[postRef].push([columna[postRef].martesCantidad]);
+                                        columna[postRef].martesCantidad = '';
+                                        break;
+                                    case 'Miércoles':
+                                        objetoBuffer[postRef].push([columna[postRef].miercolesCantidad]);
+                                        columna[postRef].miercolesCantidad = '';
+                                        break;
+                                    case 'Jueves':
+                                        objetoBuffer[postRef].push([columna[postRef].juevesCantidad]);
+                                        columna[postRef].juevesCantidad = '';
+                                        break;
+                                    case 'Viernes':
+                                        objetoBuffer[postRef].push([columna[postRef].viernesCantidad]);
+                                        columna[postRef].viernesCantidad = '';
+                                        break;
+                                    case 'Sábado':
+                                        objetoBuffer[postRef].push([columna[postRef].sabadoCantidad]);
+                                        columna[postRef].sabadoCantidad = '';
+                                        break;
+                                    case 'Domingo':
+                                        objetoBuffer[postRef].push([columna[postRef].domingoCantidad]);
+                                        columna[postRef].domingoCantidad = '';
+                                        break;
+                                    default:
+                                }
+                                break;
+                            default:
+                        };
+                        let arrayBuffer = [...bufferSwitchedDiasFestivosCuadrante];
+                        arrayBuffer.push(objetoBuffer);
+                        setBufferSwitchedDiasFestivosCuadrante(arrayBuffer);
+                    } else {
+                        let variableBuffer1, variableBuffer2, variableBuffer3, variableBuffer4;
+                        bufferSwitchedDiasFestivosCuadrante.forEach((registroBuffer, index) => {
+                            if (Object.keys(registroBuffer)[0] === postRef) {
+                                variableBuffer1 = registroBuffer[postRef][indexFor][0];
+                                variableBuffer2 = registroBuffer[postRef][indexFor][1];
+                                variableBuffer3 = registroBuffer[postRef][indexFor][2];
+                                variableBuffer4 = registroBuffer[postRef][indexFor][3];
+                                indexABorrar = index;
                             }
-                            break;
-                        case 'rangoDescanso':
-                            switch (diaSemana) {
-                                case 'Lunes':
-                                    objetoBuffer[postRef].push([columna[postRef].lunesInicio1RangoDescanso, columna[postRef].lunesFin1RangoDescanso, columna[postRef].lunesInicio2RangoDescanso, columna[postRef].lunesFin2RangoDescanso]);
-                                    columna[postRef].lunesInicio1RangoDescanso = null;
-                                    columna[postRef].lunesFin1RangoDescanso = null;
-                                    columna[postRef].lunesInicio2RangoDescanso = null;
-                                    columna[postRef].lunesFin2RangoDescanso = null;
-                                    break;
-                                case 'Martes':
-                                    objetoBuffer[postRef].push([columna[postRef].martesInicio1RangoDescanso, columna[postRef].martesFin1RangoDescanso, columna[postRef].martesInicio2RangoDescanso, columna[postRef].martesFin2RangoDescanso]);
-                                    columna[postRef].martesInicio1RangoDescanso = null;
-                                    columna[postRef].martesFin1RangoDescanso = null;
-                                    columna[postRef].martesInicio2RangoDescanso = null;
-                                    columna[postRef].martesFin2RangoDescanso = null;
-                                    break;
-                                case 'Miércoles':
-                                    objetoBuffer[postRef].push([columna[postRef].miercolesInicio1RangoDescanso, columna[postRef].miercolesFin1RangoDescanso, columna[postRef].miercolesInicio2RangoDescanso, columna[postRef].miercolesFin2RangoDescanso]);
-                                    columna[postRef].miercolesInicio1RangoDescanso = null;
-                                    columna[postRef].miercolesFin1RangoDescanso = null;
-                                    columna[postRef].miercolesInicio2RangoDescanso = null;
-                                    columna[postRef].miercolesFin2RangoDescanso = null;
-                                    break;
-                                case 'Jueves':
-                                    objetoBuffer[postRef].push([columna[postRef].juevesInicio1RangoDescanso, columna[postRef].juevesFin1RangoDescanso, columna[postRef].juevesInicio2RangoDescanso, columna[postRef].juevesFin2RangoDescanso]);
-                                    columna[postRef].juevesInicio1RangoDescanso = null;
-                                    columna[postRef].juevesFin1RangoDescanso = null;
-                                    columna[postRef].juevesInicio2RangoDescanso = null;
-                                    columna[postRef].juevesFin2RangoDescanso = null;
-                                    break;
-                                case 'Viernes':
-                                    objetoBuffer[postRef].push([columna[postRef].viernesInicio1RangoDescanso, columna[postRef].viernesFin1RangoDescanso, columna[postRef].viernesInicio2RangoDescanso, columna[postRef].viernesFin2RangoDescanso]);
-                                    columna[postRef].viernesInicio1RangoDescanso = null;
-                                    columna[postRef].viernesFin1RangoDescanso = null;
-                                    columna[postRef].viernesInicio2RangoDescanso = null;
-                                    columna[postRef].viernesFin2RangoDescanso = null;
-                                    break;
-                                case 'Sábado':
-                                    objetoBuffer[postRef].push([columna[postRef].sabadoInicio1RangoDescanso, columna[postRef].sabadoFin1RangoDescanso, columna[postRef].sabadoInicio2RangoDescanso, columna[postRef].sabadoFin2RangoDescanso]);
-                                    columna[postRef].sabadoInicio1RangoDescanso = null;
-                                    columna[postRef].sabadoFin1RangoDescanso = null;
-                                    columna[postRef].sabadoInicio2RangoDescanso = null;
-                                    columna[postRef].sabadoFin2RangoDescanso = null;
-                                    break;
-                                case 'Domingo':
-                                    objetoBuffer[postRef].push([columna[postRef].domingoInicio1RangoDescanso, columna[postRef].domingoFin1RangoDescanso, columna[postRef].domingoInicio2RangoDescanso, columna[postRef].domingoFin2RangoDescanso]);
-                                    columna[postRef].domingoInicio1RangoDescanso = null;
-                                    columna[postRef].domingoFin1RangoDescanso = null;
-                                    columna[postRef].domingoInicio2RangoDescanso = null;
-                                    columna[postRef].domingoFin2RangoDescanso = null;
-                                    break;
-                                default:
-                            }
-                            break;
-                        case 'cantidad':
-                            switch (diaSemana) {
-                                case 'Lunes':
-                                    objetoBuffer[postRef].push([columna[postRef].lunesCantidad]);
-                                    columna[postRef].lunesCantidad = '';
-                                    break;
-                                case 'Martes':
-                                    objetoBuffer[postRef].push([columna[postRef].martesCantidad]);
-                                    columna[postRef].martesCantidad = '';
-                                    break;
-                                case 'Miércoles':
-                                    objetoBuffer[postRef].push([columna[postRef].miercolesCantidad]);
-                                    columna[postRef].miercolesCantidad = '';
-                                    break;
-                                case 'Jueves':
-                                    objetoBuffer[postRef].push([columna[postRef].juevesCantidad]);
-                                    columna[postRef].juevesCantidad = '';
-                                    break;
-                                case 'Viernes':
-                                    objetoBuffer[postRef].push([columna[postRef].viernesCantidad]);
-                                    columna[postRef].viernesCantidad = '';
-                                    break;
-                                case 'Sábado':
-                                    objetoBuffer[postRef].push([columna[postRef].sabadoCantidad]);
-                                    columna[postRef].sabadoCantidad = '';
-                                    break;
-                                case 'Domingo':
-                                    objetoBuffer[postRef].push([columna[postRef].domingoCantidad]);
-                                    columna[postRef].domingoCantidad = '';
-                                    break;
-                                default:
-                            }
-                            break;
-                        default:
-                    };
-                    let arrayBuffer = [...bufferSwitchedDiasFestivos];
-                    arrayBuffer.push(objetoBuffer);
-                    setBufferSwitchedDiasFestivos(arrayBuffer);
-                } else {
-                    let variableBuffer1, variableBuffer2, variableBuffer3, variableBuffer4;
-                    bufferSwitchedDiasFestivos.forEach((registroBuffer, index) => {
-                        if (Object.keys(registroBuffer)[0] === postRef) {
-                            variableBuffer1 = registroBuffer[postRef][indexFor][0];
-                            variableBuffer2 = registroBuffer[postRef][indexFor][1];
-                            variableBuffer3 = registroBuffer[postRef][indexFor][2];
-                            variableBuffer4 = registroBuffer[postRef][indexFor][3];
-                            indexABorrar = index;
+                        });
+                        switch (columna.tipoHorario) {
+                            case 'rango':
+                                switch (diaSemana) {
+                                    case 'Lunes':
+                                        columna[postRef].lunesInicioRango = variableBuffer1;
+                                        columna[postRef].lunesFinRango = variableBuffer2;
+                                        break;
+                                    case 'Martes':
+                                        columna[postRef].martesInicioRango = variableBuffer1;
+                                        columna[postRef].martesFinRango = variableBuffer2;
+
+                                        break;
+                                    case 'Miércoles':
+                                        columna[postRef].miercolesInicioRango = variableBuffer1;
+                                        columna[postRef].miercolesFinRango = variableBuffer2;
+
+                                        break;
+                                    case 'Jueves':
+                                        columna[postRef].juevesInicioRango = variableBuffer1;
+                                        columna[postRef].juevesFinRango = variableBuffer2;
+                                        break;
+                                    case 'Viernes':
+                                        columna[postRef].viernesInicioRango = variableBuffer1;
+                                        columna[postRef].viernesFinRango = variableBuffer2;
+
+                                        break;
+                                    case 'Sábado':
+                                        columna[postRef].sabadoInicioRango = variableBuffer1;
+                                        columna[postRef].sabadoFinRango = variableBuffer2;
+
+                                        break;
+                                    case 'Domingo':
+                                        columna[postRef].domingoInicioRango = variableBuffer1;
+                                        columna[postRef].domingoFinRango = variableBuffer2;
+                                        break;
+                                    default:
+                                }
+                                break;
+                            case 'rangoDescanso':
+                                switch (diaSemana) {
+                                    case 'Lunes':
+                                        columna[postRef].lunesInicio1RangoDescanso = variableBuffer1;
+                                        columna[postRef].lunesFin1RangoDescanso = variableBuffer2;
+                                        columna[postRef].lunesInicio2RangoDescanso = variableBuffer3;
+                                        columna[postRef].lunesFin2RangoDescanso = variableBuffer4;
+                                        break;
+                                    case 'Martes':
+                                        columna[postRef].martesInicio1RangoDescanso = variableBuffer1;
+                                        columna[postRef].martesFin1RangoDescanso = variableBuffer2;
+                                        columna[postRef].martesInicio2RangoDescanso = variableBuffer3;
+                                        columna[postRef].martesFin2RangoDescanso = variableBuffer4;
+                                        break;
+                                    case 'Miércoles':
+                                        columna[postRef].miercolesInicio1RangoDescanso = variableBuffer1;
+                                        columna[postRef].miercolesFin1RangoDescanso = variableBuffer2;
+                                        columna[postRef].miercolesInicio2RangoDescanso = variableBuffer3;
+                                        columna[postRef].miercolesFin2RangoDescanso = variableBuffer4;
+                                        break;
+                                    case 'Jueves':
+                                        columna[postRef].juevesInicio1RangoDescanso = variableBuffer1;
+                                        columna[postRef].juevesFin1RangoDescanso = variableBuffer2;
+                                        columna[postRef].juevesInicio2RangoDescanso = variableBuffer3;
+                                        columna[postRef].juevesFin2RangoDescanso = variableBuffer4;
+                                        break;
+                                    case 'Viernes':
+                                        columna[postRef].viernesInicio1RangoDescanso = variableBuffer1;
+                                        columna[postRef].viernesFin1RangoDescanso = variableBuffer2;
+                                        columna[postRef].viernesInicio2RangoDescanso = variableBuffer3;
+                                        columna[postRef].viernesFin2RangoDescanso = variableBuffer4;
+                                        break;
+                                    case 'Sábado':
+                                        columna[postRef].sabadoInicio1RangoDescanso = variableBuffer1;
+                                        columna[postRef].sabadoFin1RangoDescanso = variableBuffer2;
+                                        columna[postRef].sabadoInicio2RangoDescanso = variableBuffer3;
+                                        columna[postRef].sabadoFin2RangoDescanso = variableBuffer4;
+                                        break;
+                                    case 'Domingo':
+                                        columna[postRef].domingoInicio1RangoDescanso = variableBuffer1;
+                                        columna[postRef].domingoFin1RangoDescanso = variableBuffer2;
+                                        columna[postRef].domingoInicio2RangoDescanso = variableBuffer3;
+                                        columna[postRef].domingoFin2RangoDescanso = variableBuffer4;
+                                        break;
+                                    default:
+                                }
+                                break;
+                            case 'cantidad':
+                                switch (diaSemana) {
+                                    case 'Lunes':
+                                        columna[postRef].lunesCantidad = variableBuffer1;
+                                        break;
+                                    case 'Martes':
+                                        columna[postRef].martesCantidad = variableBuffer1;
+                                        break;
+                                    case 'Miércoles':
+                                        columna[postRef].miercolesCantidad = variableBuffer1;
+                                        break;
+                                    case 'Jueves':
+                                        columna[postRef].juevesCantidad = variableBuffer1;
+                                        break;
+                                    case 'Viernes':
+                                        columna[postRef].viernesCantidad = variableBuffer1;
+                                        break;
+                                    case 'Sábado':
+                                        columna[postRef].sabadoCantidad = variableBuffer1;
+                                        break;
+                                    case 'Domingo':
+                                        columna[postRef].domingoCantidad = variableBuffer1;
+                                        break;
+                                    default:
+                                }
+                                break;
+                            default:
                         }
-                    });
-                    switch (columna.tipoHorario) {
-                        case 'rango':
-                            switch (diaSemana) {
-                                case 'Lunes':
-                                    columna[postRef].lunesInicioRango = variableBuffer1;
-                                    columna[postRef].lunesFinRango = variableBuffer2;
-                                    break;
-                                case 'Martes':
-                                    columna[postRef].martesInicioRango = variableBuffer1;
-                                    columna[postRef].martesFinRango = variableBuffer2;
-
-                                    break;
-                                case 'Miércoles':
-                                    columna[postRef].miercolesInicioRango = variableBuffer1;
-                                    columna[postRef].miercolesFinRango = variableBuffer2;
-
-                                    break;
-                                case 'Jueves':
-                                    columna[postRef].juevesInicioRango = variableBuffer1;
-                                    columna[postRef].juevesFinRango = variableBuffer2;
-                                    break;
-                                case 'Viernes':
-                                    columna[postRef].viernesInicioRango = variableBuffer1;
-                                    columna[postRef].viernesFinRango = variableBuffer2;
-
-                                    break;
-                                case 'Sábado':
-                                    columna[postRef].sabadoInicioRango = variableBuffer1;
-                                    columna[postRef].sabadoFinRango = variableBuffer2;
-
-                                    break;
-                                case 'Domingo':
-                                    columna[postRef].domingoInicioRango = variableBuffer1;
-                                    columna[postRef].domingoFinRango = variableBuffer2;
-                                    break;
-                                default:
-                            }
-                            break;
-                        case 'rangoDescanso':
-                            switch (diaSemana) {
-                                case 'Lunes':
-                                    columna[postRef].lunesInicio1RangoDescanso = variableBuffer1;
-                                    columna[postRef].lunesFin1RangoDescanso = variableBuffer2;
-                                    columna[postRef].lunesInicio2RangoDescanso = variableBuffer3;
-                                    columna[postRef].lunesFin2RangoDescanso = variableBuffer4;
-                                    break;
-                                case 'Martes':
-                                    columna[postRef].martesInicio1RangoDescanso = variableBuffer1;
-                                    columna[postRef].martesFin1RangoDescanso = variableBuffer2;
-                                    columna[postRef].martesInicio2RangoDescanso = variableBuffer3;
-                                    columna[postRef].martesFin2RangoDescanso = variableBuffer4;
-                                    break;
-                                case 'Miércoles':
-                                    columna[postRef].miercolesInicio1RangoDescanso = variableBuffer1;
-                                    columna[postRef].miercolesFin1RangoDescanso = variableBuffer2;
-                                    columna[postRef].miercolesInicio2RangoDescanso = variableBuffer3;
-                                    columna[postRef].miercolesFin2RangoDescanso = variableBuffer4;
-                                    break;
-                                case 'Jueves':
-                                    columna[postRef].juevesInicio1RangoDescanso = variableBuffer1;
-                                    columna[postRef].juevesFin1RangoDescanso = variableBuffer2;
-                                    columna[postRef].juevesInicio2RangoDescanso = variableBuffer3;
-                                    columna[postRef].juevesFin2RangoDescanso = variableBuffer4;
-                                    break;
-                                case 'Viernes':
-                                    columna[postRef].viernesInicio1RangoDescanso = variableBuffer1;
-                                    columna[postRef].viernesFin1RangoDescanso = variableBuffer2;
-                                    columna[postRef].viernesInicio2RangoDescanso = variableBuffer3;
-                                    columna[postRef].viernesFin2RangoDescanso = variableBuffer4;
-                                    break;
-                                case 'Sábado':
-                                    columna[postRef].sabadoInicio1RangoDescanso = variableBuffer1;
-                                    columna[postRef].sabadoFin1RangoDescanso = variableBuffer2;
-                                    columna[postRef].sabadoInicio2RangoDescanso = variableBuffer3;
-                                    columna[postRef].sabadoFin2RangoDescanso = variableBuffer4;
-                                    break;
-                                case 'Domingo':
-                                    columna[postRef].domingoInicio1RangoDescanso = variableBuffer1;
-                                    columna[postRef].domingoFin1RangoDescanso = variableBuffer2;
-                                    columna[postRef].domingoInicio2RangoDescanso = variableBuffer3;
-                                    columna[postRef].domingoFin2RangoDescanso = variableBuffer4;
-                                    break;
-                                default:
-                            }
-                            break;
-                        case 'cantidad':
-                            switch (diaSemana) {
-                                case 'Lunes':
-                                    columna[postRef].lunesCantidad = variableBuffer1;
-                                    break;
-                                case 'Martes':
-                                    columna[postRef].martesCantidad = variableBuffer1;
-                                    break;
-                                case 'Miércoles':
-                                    columna[postRef].miercolesCantidad = variableBuffer1;
-                                    break;
-                                case 'Jueves':
-                                    columna[postRef].juevesCantidad = variableBuffer1;
-                                    break;
-                                case 'Viernes':
-                                    columna[postRef].viernesCantidad = variableBuffer1;
-                                    break;
-                                case 'Sábado':
-                                    columna[postRef].sabadoCantidad = variableBuffer1;
-                                    break;
-                                case 'Domingo':
-                                    columna[postRef].domingoCantidad = variableBuffer1;
-                                    break;
-                                default:
-                            }
-                            break;
-                        default:
                     }
                 }
-            }
-            arrayCuadrante.push(columna);
-        });
-        if (indexABorrar >= 0) {
-            let arrayBuffer = [...bufferSwitchedDiasFestivos];
-            arrayBuffer.splice(indexABorrar, 1);
-            setBufferSwitchedDiasFestivos(arrayBuffer);
+                arrayCuadrante.push(columna);
+            });
+            if (indexABorrar >= 0) {
+                let arrayBuffer = [...bufferSwitchedDiasFestivosCuadrante];
+                arrayBuffer.splice(indexABorrar, 1);
+                setBufferSwitchedDiasFestivosCuadrante(arrayBuffer);
+            };
+            dispatch(setCuadranteAccion(arrayCuadrante));
         };
-        setCuadrante(arrayCuadrante);
+        if (cuadranteServiciosFijos.length > 0) {
+            let casilla = {
+                dia: postRef,
+                indice: null,
+                tipo: '',
+                valor: e.target.checked
+            };
+            dispatch(setCuadranteServiciosFijosAccion(gestionaColumnaServiciosFijosAccion(cuadranteServiciosFijos, casilla)));
+        };
+        if (cuadranteRegistrado === 'si') {
+            dispatch(activarDesactivarCambioBotonActualizarAccion(false));
+        };
+        dispatch(registrarIntervencionAccion(false));
+    };
+
+    const handleChangeSFCasillas = (postRef, indice, tipo, e) => {
+        let casilla = {
+            dia: postRef,
+            valor: e.target.checked,
+            indice: indice,
+            tipo: tipo
+        };
+        dispatch(setCuadranteServiciosFijosAccion(gestionaColumnaServiciosFijosAccion(cuadranteServiciosFijos, casilla)));
         if (cuadranteRegistrado === 'si') {
             dispatch(activarDesactivarCambioBotonActualizarAccion(false));
         };
@@ -2786,9 +2560,30 @@ const Cuadrantes = (props) => {
             dia: dia
         })
     };
+    const abrePopoverSFCasillas = (postRef, index, dia, tipo, indice) => (e) => {
+        setExpandedAccordion(false);
+        scrollable.current.classList.add(classes.openAccordion);
+        setAnchorElSFCasillas(anchorElSFCasillas ? null : e.currentTarget);
+        setVariablesPopoverSFCasillas({
+            postRef: postRef,
+            index: index,
+            dia: dia,
+            tipo: tipo,
+            indice: indice
+        })
+    };
 
     const handleClosePopoverDias = () => {
         setAnchorElDias(null);
+        scrollable.current.classList.remove(classes.openAccordion);
+        if (lastEditado) {
+            lastEditado.current.classList.remove(classes.editando);
+            setLastEditado(null);
+        }
+    };
+
+    const handleClosePopoverSFCasillas = () => {
+        setAnchorElSFCasillas(null);
         scrollable.current.classList.remove(classes.openAccordion);
         if (lastEditado) {
             lastEditado.current.classList.remove(classes.editando);
@@ -2836,7 +2631,7 @@ const Cuadrantes = (props) => {
         let arrayCuadrante = [...cuadrante];
         if (arrayCuadrante[indexColumna][postRef].visibleVariaciones && !arrayCuadrante[indexColumna][postRef].tipoVariacion) {
             arrayCuadrante[indexColumna][postRef].visibleVariaciones = false;
-            setCuadrante(arrayCuadrante);
+            dispatch(setCuadranteAccion(arrayCuadrante));
         };
         setExpandedAccordion(false);
         scrollable.current.classList.add(classes.openAccordion);
@@ -3302,7 +3097,7 @@ const Cuadrantes = (props) => {
     };
 
     const handleChangeFormConfiguracionCuadrante = (prop, e) => {
-        if (prop === "tipoHorario") {
+        if (prop === "tipoHorario" || prop === "observaciones") {
             setItemEditandoConfiguracion({ ...itemEditandoConfiguracion, [prop]: e.target.value });
         };
         if (prop === "computo" && e.target.value === 1) {
@@ -3359,6 +3154,7 @@ const Cuadrantes = (props) => {
                     losServicios['precioHora_TO'] = '';
                     losServicios['variacion_TO'] = '';
                     losServicios['diaVariacion_TO'] = '';
+                    losServicios['activo_TO'] = 'si';
                 };
                 losEstados['TO'] = e.target.checked;
             };
@@ -3367,6 +3163,7 @@ const Cuadrantes = (props) => {
                     losServicios['precioHora_CR'] = '';
                     losServicios['variacion_CR'] = '';
                     losServicios['diaVariacion_CR'] = '';
+                    losServicios['activo_CR'] = 'si';
                 };
                 losEstados['CR'] = e.target.checked;
             };
@@ -3375,6 +3172,7 @@ const Cuadrantes = (props) => {
                     losServicios['precioHora_CE'] = '';
                     losServicios['variacion_CE'] = '';
                     losServicios['diaVariacion_CE'] = '';
+                    losServicios['activo_CE'] = 'si';
                 };
                 losEstados['CE'] = e.target.checked;
             };
@@ -3383,6 +3181,7 @@ const Cuadrantes = (props) => {
                     losServicios['precioHora_CI'] = '';
                     losServicios['variacion_CI'] = '';
                     losServicios['diaVariacion_CI'] = '';
+                    losServicios['activo_CI'] = 'si';
                 };
                 losEstados['CI'] = e.target.checked;
             };
@@ -3391,6 +3190,7 @@ const Cuadrantes = (props) => {
                     losServicios['precioHora_MO'] = '';
                     losServicios['variacion_MO'] = '';
                     losServicios['diaVariacion_MO'] = '';
+                    losServicios['activo_MO'] = 'si';
                 };
                 losEstados['MO'] = e.target.checked;
             };
@@ -3399,6 +3199,7 @@ const Cuadrantes = (props) => {
                     losServicios['precioHora_OF'] = '';
                     losServicios['variacion_OF'] = '';
                     losServicios['diaVariacion_OF'] = '';
+                    losServicios['activo_OF'] = 'si';
                 };
                 losEstados['OF'] = e.target.checked;
             };
@@ -3407,6 +3208,7 @@ const Cuadrantes = (props) => {
                     losServicios['precioHora_AL'] = '';
                     losServicios['variacion_AL'] = '';
                     losServicios['diaVariacion_AL'] = '';
+                    losServicios['activo_AL'] = 'si';
                 };
                 losEstados['AL'] = e.target.checked;
             };
@@ -3415,6 +3217,7 @@ const Cuadrantes = (props) => {
                     losServicios['precioHora_LA'] = '';
                     losServicios['variacion_LA'] = '';
                     losServicios['diaVariacion_LA'] = '';
+                    losServicios['activo_LA'] = 'si';
                 };
                 losEstados['LA'] = e.target.checked;
             };
@@ -3423,6 +3226,7 @@ const Cuadrantes = (props) => {
                     losServicios['precioHora_TE'] = '';
                     losServicios['variacion_TE'] = '';
                     losServicios['diaVariacion_TE'] = '';
+                    losServicios['activo_TE'] = 'si';
                 };
                 losEstados['TE'] = e.target.checked;
             };
@@ -3431,6 +3235,7 @@ const Cuadrantes = (props) => {
                     losServicios['precioHora_FI'] = '';
                     losServicios['variacion_FI'] = '';
                     losServicios['diaVariacion_FI'] = '';
+                    losServicios['activo_FI'] = 'si';
                 };
                 losEstados['FI'] = e.target.checked;
             };
@@ -3439,6 +3244,7 @@ const Cuadrantes = (props) => {
                     losServicios['precioHora_FE'] = '';
                     losServicios['variacion_FE'] = '';
                     losServicios['diaVariacion_FE'] = '';
+                    losServicios['activo_FE'] = 'si';
                 };
                 losEstados['FE'] = e.target.checked;
             };
@@ -3447,6 +3253,7 @@ const Cuadrantes = (props) => {
                     losServicios['precioHora_AB'] = '';
                     losServicios['variacion_AB'] = '';
                     losServicios['diaVariacion_AB'] = '';
+                    losServicios['activo_AB'] = 'si';
                 };
                 losEstados['AB'] = e.target.checked;
             };
@@ -3455,6 +3262,7 @@ const Cuadrantes = (props) => {
                     losServicios['precioHora_MA'] = '';
                     losServicios['variacion_MA'] = '';
                     losServicios['diaVariacion_MA'] = '';
+                    losServicios['activo_MA'] = 'si';
                 };
                 losEstados['MA'] = e.target.checked;
             };
@@ -3463,6 +3271,7 @@ const Cuadrantes = (props) => {
                     losServicios['precioHora_PO'] = '';
                     losServicios['variacion_PO'] = '';
                     losServicios['diaVariacion_PO'] = '';
+                    losServicios['activo_PO'] = 'si';
                 };
                 losEstados['PO'] = e.target.checked;
             };
@@ -3471,6 +3280,7 @@ const Cuadrantes = (props) => {
                     losServicios['precioHora_BA'] = '';
                     losServicios['variacion_BA'] = '';
                     losServicios['diaVariacion_BA'] = '';
+                    losServicios['activo_BA'] = 'si';
                 };
                 losEstados['BA'] = e.target.checked;
             };
@@ -3479,6 +3289,7 @@ const Cuadrantes = (props) => {
                     losServicios['precioHora_FT'] = '';
                     losServicios['variacion_FT'] = '';
                     losServicios['diaVariacion_FT'] = '';
+                    losServicios['activo_FT'] = 'si';
                 };
                 losEstados['FT'] = e.target.checked;
             };
@@ -3490,9 +3301,9 @@ const Cuadrantes = (props) => {
                 setItemEditandoServiciosFijos({ ...itemEditandoServiciosFijos, servicios: losServicios });
             }
         };
-        if (tipo === "select") {            
-                losServicios[prop] = e.target.value;
-                setItemEditandoServiciosFijos({ ...itemEditandoServiciosFijos, servicios: losServicios });           
+        if (tipo === "select" || tipo === "radio") {
+            losServicios[prop] = e.target.value;
+            setItemEditandoServiciosFijos({ ...itemEditandoServiciosFijos, servicios: losServicios });
         };
         setItemPrevioEditandoServiciosFijos({ ...itemPrevioEditandoServiciosFijos, modificado: true });
         dispatch(activarDesactivarCambioAccion(false));
@@ -4492,7 +4303,7 @@ const Cuadrantes = (props) => {
             };
         }
         arrayCuadrante[index][key].modificado = true;
-        setCuadrante(arrayCuadrante);
+        dispatch(setCuadranteAccion(arrayCuadrante));
         setItemPrevioEditando(null);
         dispatch(activarDesactivarCambioAccion(true));
         if (cuadranteRegistrado === 'si') {
@@ -4573,7 +4384,7 @@ const Cuadrantes = (props) => {
             precioHora_MA: itemEditandoServiciosFijos.servicios.precioHora_MA ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_MA) : null,
             precioHora_PO: itemEditandoServiciosFijos.servicios.precioHora_PO ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_PO) : null,
             precioHora_BA: itemEditandoServiciosFijos.servicios.precioHora_BA ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_BA) : null,
-            precioHora_FT: itemEditandoServiciosFijos.servicios.precioHora_FT ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FT) : null,          
+            precioHora_FT: itemEditandoServiciosFijos.servicios.precioHora_FT ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FT) : null,
             variacion_TO: itemEditandoServiciosFijos.servicios.variacion_TO ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_TO) : null,
             variacion_CR: itemEditandoServiciosFijos.servicios.variacion_CR ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_CR) : null,
             variacion_CE: itemEditandoServiciosFijos.servicios.variacion_CE ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_CE) : null,
@@ -4590,23 +4401,185 @@ const Cuadrantes = (props) => {
             variacion_PO: itemEditandoServiciosFijos.servicios.variacion_PO ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_PO) : null,
             variacion_BA: itemEditandoServiciosFijos.servicios.variacion_BA ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_BA) : null,
             variacion_FT: itemEditandoServiciosFijos.servicios.variacion_FT ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_FT) : null,
-            diaVariacion_TO: itemEditandoServiciosFijos.servicios.diaVariacion_TO ? itemEditandoServiciosFijos.servicios.diaVariacion_TO : '',
-            diaVariacion_CR: itemEditandoServiciosFijos.servicios.diaVariacion_CR ? itemEditandoServiciosFijos.servicios.diaVariacion_CR : '',
-            diaVariacion_CE: itemEditandoServiciosFijos.servicios.diaVariacion_CE ? itemEditandoServiciosFijos.servicios.diaVariacion_CE : '',
-            diaVariacion_CI: itemEditandoServiciosFijos.servicios.diaVariacion_CI ? itemEditandoServiciosFijos.servicios.diaVariacion_CI : '',
-            diaVariacion_MO: itemEditandoServiciosFijos.servicios.diaVariacion_MO ? itemEditandoServiciosFijos.servicios.diaVariacion_MO : '',
-            diaVariacion_OF: itemEditandoServiciosFijos.servicios.diaVariacion_OF ? itemEditandoServiciosFijos.servicios.diaVariacion_OF : '',
-            diaVariacion_AL: itemEditandoServiciosFijos.servicios.diaVariacion_AL ? itemEditandoServiciosFijos.servicios.diaVariacion_AL : '',
-            diaVariacion_LA: itemEditandoServiciosFijos.servicios.diaVariacion_LA ? itemEditandoServiciosFijos.servicios.diaVariacion_LA : '',
-            diaVariacion_TE: itemEditandoServiciosFijos.servicios.diaVariacion_TE ? itemEditandoServiciosFijos.servicios.diaVariacion_TE : '',
-            diaVariacion_FI: itemEditandoServiciosFijos.servicios.diaVariacion_FI ? itemEditandoServiciosFijos.servicios.diaVariacion_FI : '',
-            diaVariacion_FE: itemEditandoServiciosFijos.servicios.diaVariacion_FE ? itemEditandoServiciosFijos.servicios.diaVariacion_FE : '',
-            diaVariacion_AB: itemEditandoServiciosFijos.servicios.diaVariacion_AB ? itemEditandoServiciosFijos.servicios.diaVariacion_AB : '',
-            diaVariacion_MA: itemEditandoServiciosFijos.servicios.diaVariacion_MA ? itemEditandoServiciosFijos.servicios.diaVariacion_MA : '',
-            diaVariacion_PO: itemEditandoServiciosFijos.servicios.diaVariacion_PO ? itemEditandoServiciosFijos.servicios.diaVariacion_PO : '',
-            diaVariacion_BA: itemEditandoServiciosFijos.servicios.diaVariacion_BA ? itemEditandoServiciosFijos.servicios.diaVariacion_BA : '',
-            diaVariacion_FT: itemEditandoServiciosFijos.servicios.diaVariacion_FT ? itemEditandoServiciosFijos.servicios.diaVariacion_FT : ''
+            diaVariacion_TO: itemEditandoServiciosFijos.servicios.variacion_TO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_TO : '',
+            diaVariacion_CR: itemEditandoServiciosFijos.servicios.variacion_CR !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CR : '',
+            diaVariacion_CE: itemEditandoServiciosFijos.servicios.variacion_CE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CE : '',
+            diaVariacion_CI: itemEditandoServiciosFijos.servicios.variacion_CI !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CI : '',
+            diaVariacion_MO: itemEditandoServiciosFijos.servicios.variacion_MO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_MO : '',
+            diaVariacion_OF: itemEditandoServiciosFijos.servicios.variacion_OF !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_OF : '',
+            diaVariacion_AL: itemEditandoServiciosFijos.servicios.variacion_AL !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_AL : '',
+            diaVariacion_LA: itemEditandoServiciosFijos.servicios.variacion_LA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_LA : '',
+            diaVariacion_TE: itemEditandoServiciosFijos.servicios.variacion_TE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_TE : '',
+            diaVariacion_FI: itemEditandoServiciosFijos.servicios.variacion_FI !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FI : '',
+            diaVariacion_FE: itemEditandoServiciosFijos.servicios.variacion_FE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FE : '',
+            diaVariacion_AB: itemEditandoServiciosFijos.servicios.variacion_AB !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_AB : '',
+            diaVariacion_MA: itemEditandoServiciosFijos.servicios.variacion_MA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_MA : '',
+            diaVariacion_PO: itemEditandoServiciosFijos.servicios.variacion_PO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_PO : '',
+            diaVariacion_BA: itemEditandoServiciosFijos.servicios.variacion_BA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_BA : '',
+            diaVariacion_FT: itemEditandoServiciosFijos.servicios.variacion_FT !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FT : '',
+            activo_TO: itemEditandoServiciosFijos.servicios.activo_TO,
+            activo_CR: itemEditandoServiciosFijos.servicios.activo_CR,
+            activo_CE: itemEditandoServiciosFijos.servicios.activo_CE,
+            activo_CI: itemEditandoServiciosFijos.servicios.activo_CI,
+            activo_MO: itemEditandoServiciosFijos.servicios.activo_MO,
+            activo_OF: itemEditandoServiciosFijos.servicios.activo_OF,
+            activo_AL: itemEditandoServiciosFijos.servicios.activo_AL,
+            activo_LA: itemEditandoServiciosFijos.servicios.activo_LA,
+            activo_TE: itemEditandoServiciosFijos.servicios.activo_TE,
+            activo_FI: itemEditandoServiciosFijos.servicios.activo_FI,
+            activo_FE: itemEditandoServiciosFijos.servicios.activo_FE,
+            activo_AB: itemEditandoServiciosFijos.servicios.activo_AB,
+            activo_MA: itemEditandoServiciosFijos.servicios.activo_MA,
+            activo_PO: itemEditandoServiciosFijos.servicios.activo_PO,
+            activo_BA: itemEditandoServiciosFijos.servicios.activo_BA,
+            activo_FT: itemEditandoServiciosFijos.servicios.activo_FT
         });
+        let arrayCuadranteServiciosFijos = [];
+        if (itemEditandoServiciosFijos.servicios.precioHora_TO) {
+            arrayCuadranteServiciosFijos.push({
+                tipoServiciofijo: 'TOL',
+                precioHora_TO: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_TO),
+                variacion_TO: parseFloat(itemEditandoServiciosFijos.servicios.variacion_TO),
+                diaVariacion_TO: itemEditandoServiciosFijos.servicios.variacion_TO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_TO : '',
+                activo_TO: itemEditandoServiciosFijos.servicios.activo_TO
+            });
+        };
+        if (itemEditandoServiciosFijos.servicios.precioHora_CR) {
+            arrayCuadranteServiciosFijos.push({
+                tipoServiciofijo: 'CRIS',
+                precioHora_CR: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CR),
+                variacion_CR: parseFloat(itemEditandoServiciosFijos.servicios.variacion_CR),
+                diaVariacion_CR: itemEditandoServiciosFijos.servicios.variacion_CR !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CR : '',
+                activo_CR: itemEditandoServiciosFijos.servicios.activo_CR
+            });
+        };
+        if (itemEditandoServiciosFijos.servicios.precioHora_CE) {
+            arrayCuadranteServiciosFijos.push({
+                tipoServiciofijo: 'CRISE',
+                precioHora_CE: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CE),
+                variacion_CE: parseFloat(itemEditandoServiciosFijos.servicios.variacion_CE),
+                diaVariacion_CE: itemEditandoServiciosFijos.servicios.variacion_CE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CE : '',
+                activo_CE: itemEditandoServiciosFijos.servicios.activo_CE
+            });
+        };
+        if (itemEditandoServiciosFijos.servicios.precioHora_CI) {
+            arrayCuadranteServiciosFijos.push({
+                tipoServiciofijo: 'CRISI',
+                precioHora_CI: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CI),
+                variacion_CI: parseFloat(itemEditandoServiciosFijos.servicios.variacion_CI),
+                diaVariacion_CI: itemEditandoServiciosFijos.servicios.variacion_CI !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CI : '',
+                activo_CI: itemEditandoServiciosFijos.servicios.activo_CI
+            });
+        };
+        if (itemEditandoServiciosFijos.servicios.precioHora_MO) {
+            arrayCuadranteServiciosFijos.push({
+                tipoServiciofijo: 'MOQ',
+                precioHora_MO: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_MO),
+                variacion_MO: parseFloat(itemEditandoServiciosFijos.servicios.variacion_MO),
+                diaVariacion_MO: itemEditandoServiciosFijos.servicios.variacion_MO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_MO : '',
+                activo_MO: itemEditandoServiciosFijos.servicios.activo_MO
+            });
+        };
+        if (itemEditandoServiciosFijos.servicios.precioHora_OF) {
+            arrayCuadranteServiciosFijos.push({
+                tipoServiciofijo: 'OF',
+                precioHora_OF: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_OF),
+                variacion_OF: parseFloat(itemEditandoServiciosFijos.servicios.variacion_OF),
+                diaVariacion_OF: itemEditandoServiciosFijos.servicios.variacion_OF !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_OF : '',
+                activo_OF: itemEditandoServiciosFijos.servicios.activo_OF
+            });
+        };
+        if (itemEditandoServiciosFijos.servicios.precioHora_AL) {
+            arrayCuadranteServiciosFijos.push({
+                tipoServiciofijo: 'ALMC',
+                precioHora_AL: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_AL),
+                variacion_AL: parseFloat(itemEditandoServiciosFijos.servicios.variacion_AL),
+                diaVariacion_AL: itemEditandoServiciosFijos.servicios.variacion_AL !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_AL : '',
+                activo_AL: itemEditandoServiciosFijos.servicios.activo_AL
+            });
+        };
+        if (itemEditandoServiciosFijos.servicios.precioHora_LA) {
+            arrayCuadranteServiciosFijos.push({
+                tipoServiciofijo: 'LAB',
+                precioHora_LA: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_LA),
+                variacion_LA: parseFloat(itemEditandoServiciosFijos.servicios.variacion_LA),
+                diaVariacion_LA: itemEditandoServiciosFijos.servicios.variacion_LA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_LA : '',
+                activo_LA: itemEditandoServiciosFijos.servicios.activo_LA
+            });
+        };
+        if (itemEditandoServiciosFijos.servicios.precioHora_TE) {
+            arrayCuadranteServiciosFijos.push({
+                tipoServiciofijo: 'TELÑ',
+                precioHora_TE: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_TE),
+                variacion_TE: parseFloat(itemEditandoServiciosFijos.servicios.variacion_TE),
+                diaVariacion_TE: itemEditandoServiciosFijos.servicios.variacion_TE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_TE : '',
+                activo_TE: itemEditandoServiciosFijos.servicios.activo_TE
+            });
+        };
+        if (itemEditandoServiciosFijos.servicios.precioHora_FI) {
+            arrayCuadranteServiciosFijos.push({
+                tipoServiciofijo: 'FCH.IN',
+                precioHora_FI: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FI),
+                variacion_FI: parseFloat(itemEditandoServiciosFijos.servicios.variacion_FI),
+                diaVariacion_FI: itemEditandoServiciosFijos.servicios.variacion_FI !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FI : '',
+                activo_FI: itemEditandoServiciosFijos.servicios.activo_FI
+            });
+        };
+        if (itemEditandoServiciosFijos.servicios.precioHora_FE) {
+            arrayCuadranteServiciosFijos.push({
+                tipoServiciofijo: 'FCH.EX',
+                precioHora_FE: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FE),
+                variacion_FE: parseFloat(itemEditandoServiciosFijos.servicios.variacion_FE),
+                diaVariacion_FE: itemEditandoServiciosFijos.servicios.variacion_FE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FE : '',
+                activo_FE: itemEditandoServiciosFijos.servicios.activo_FE
+            });
+        };
+        if (itemEditandoServiciosFijos.servicios.precioHora_AB) {
+            arrayCuadranteServiciosFijos.push({
+                tipoServiciofijo: 'ABRLL',
+                precioHora_AB: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_AB),
+                variacion_AB: parseFloat(itemEditandoServiciosFijos.servicios.variacion_AB),
+                diaVariacion_AB: itemEditandoServiciosFijos.servicios.variacion_AB !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_AB : '',
+                activo_AB: itemEditandoServiciosFijos.servicios.activo_AB
+            });
+        };
+        if (itemEditandoServiciosFijos.servicios.precioHora_MA) {
+            arrayCuadranteServiciosFijos.push({
+                tipoServiciofijo: 'MANT',
+                precioHora_MA: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_MA),
+                variacion_MA: parseFloat(itemEditandoServiciosFijos.servicios.variacion_MA),
+                diaVariacion_MA: itemEditandoServiciosFijos.servicios.variacion_MA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_MA : '',
+                activo_MA: itemEditandoServiciosFijos.servicios.activo_MA
+            });
+        };
+        if (itemEditandoServiciosFijos.servicios.precioHora_PO) {
+            arrayCuadranteServiciosFijos.push({
+                tipoServiciofijo: 'PORT',
+                precioHora_PO: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_PO),
+                variacion_PO: parseFloat(itemEditandoServiciosFijos.servicios.variacion_PO),
+                diaVariacion_PO: itemEditandoServiciosFijos.servicios.variacion_PO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_PO : '',
+                activo_PO: itemEditandoServiciosFijos.servicios.activo_PO
+            });
+        };
+        if (itemEditandoServiciosFijos.servicios.precioHora_BA) {
+            arrayCuadranteServiciosFijos.push({
+                tipoServiciofijo: 'BACT',
+                precioHora_BA: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_BA),
+                variacion_BA: parseFloat(itemEditandoServiciosFijos.servicios.variacion_BA),
+                diaVariacion_BA: itemEditandoServiciosFijos.servicios.variacion_BA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_BA : '',
+                activo_BA: itemEditandoServiciosFijos.servicios.activo_BA
+            });
+        };
+        if (itemEditandoServiciosFijos.servicios.precioHora_FT) {
+            arrayCuadranteServiciosFijos.push({
+                tipoServiciofijo: 'FEST',
+                precioHora_FT: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FT),
+                variacion_FT: parseFloat(itemEditandoServiciosFijos.servicios.variacion_FT),
+                diaVariacion_FT: itemEditandoServiciosFijos.servicios.variacion_FT !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FT : '',
+                activo_FT: itemEditandoServiciosFijos.servicios.activo_FT
+            });
+        };
+        dispatch(setCuadranteServiciosFijosAccion(gestionaColumnaServiciosFijosAccion(arrayCuadranteServiciosFijos, null)));
         setStateSwitchTipoServicioFijoCuadrante(itemEditandoServiciosFijos.switch);
         setItemPrevioEditandoServiciosFijos(null);
         dispatch(activarDesactivarCambioAccion(true));
@@ -4699,7 +4672,8 @@ const Cuadrantes = (props) => {
         let elArrayDatosCuadrante = [...objetoCuadrante.datosCuadrante.datosCuadrante];
         let elObjetoDatosCuadrante = {
             ...elArrayDatosCuadrante[cuadranteEnUsoCuadrantes - 1],
-            tipoHorarioGeneral: itemEditandoConfiguracion.tipoHorario
+            tipoHorarioGeneral: itemEditandoConfiguracion.tipoHorario,
+            observaciones: itemEditandoConfiguracion.observaciones
         };
         elArrayDatosCuadrante[cuadranteEnUsoCuadrantes - 1] = elObjetoDatosCuadrante;
         const losDatosCuadrante = {
@@ -4718,161 +4692,6 @@ const Cuadrantes = (props) => {
             dispatch(activarDesactivarCambioBotonActualizarAccion(false));
         };
         dispatch(registrarIntervencionAccion(false));
-    };
-
-    const retornaIconoVariacion = (columna, postRef, diaSemana) => {
-        const aRetornarIcono =
-            <Tooltip title={variaciones[columna[postRef].tipoVariacion - 1].label} placement="top-end" arrow >
-                <TimerIcon
-                    className={classes.gris}
-                    style={{ marginLeft: 3 }}
-                />
-            </Tooltip>;
-        switch (columna.tipoHorario) {
-            case 'rango':
-                switch (diaSemana) {
-                    case 'Lunes':
-                        if (columna[postRef].lunesInicioRango) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Martes':
-                        if (columna[postRef].martesInicioRango) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Miércoles':
-                        if (columna[postRef].miercolesInicioRango) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Jueves':
-                        if (columna[postRef].juevesInicioRango) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Viernes':
-                        if (columna[postRef].viernesInicioRango) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Sábado':
-                        if (columna[postRef].sabadoInicioRango) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Domingo':
-                        if (columna[postRef].domingoInicioRango) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    default:
-                }
-                break;
-            case 'rangoDescanso':
-                switch (diaSemana) {
-                    case 'Lunes':
-                        if (columna[postRef].lunesInicio1RangoDescanso) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Martes':
-                        if (columna[postRef].martesInicio1RangoDescanso) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Miércoles':
-                        if (columna[postRef].miercolesInicio1RangoDescanso) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Jueves':
-                        if (columna[postRef].juevesInicio1RangoDescanso) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Viernes':
-                        if (columna[postRef].viernesInicio1RangoDescanso) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Sábado':
-                        if (columna[postRef].sabadoInicio1RangoDescanso) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Domingo':
-                        if (columna[postRef].domingoInicio1RangoDescanso) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    default:
-                }
-                break;
-            case 'cantidad':
-                switch (diaSemana) {
-                    case 'Lunes':
-                        if (columna[postRef].lunesCantidad) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Martes':
-                        if (columna[postRef].martesCantidad) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Miércoles':
-                        if (columna[postRef].miercolesCantidad) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Jueves':
-                        if (columna[postRef].juevesCantidad) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Viernes':
-                        if (columna[postRef].viernesCantidad) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Sábado':
-                        if (columna[postRef].sabadoCantidad) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Domingo':
-                        if (columna[postRef].domingoCantidad) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    default:
-                }
-                break;
-            default:
-        }
-
     };
 
     const procesarDatosCuadrantePromesa = (index) => {
@@ -4974,7 +4793,7 @@ const Cuadrantes = (props) => {
             };
             if (sumatorioHoras < 1 && !hayServiciosFijos) {
                 setAlert({
-                    mensaje: "El cuadrante no se puede registrar a 0. El trabajador asignado está de baja, añade un suplente o un trabajador para computar o añade servicios fijos.",
+                    mensaje: "El cuadrante no se puede registrar a 0. El trabajador asignado está de baja, añade un suplente o un trabajador para computar o añade servicios extra.",
                     tipo: 'error'
                 })
                 setOpenSnack(true);
@@ -5097,7 +4916,7 @@ const Cuadrantes = (props) => {
             } else {
                 elObjetoDatosCuadrante = {
                     tipoHorarioGeneral: objetoCuadrante.datosCuadrante.datosCuadrante[index].tipoHorarioGeneral,
-                    arrayCuadrante: dispatch(limpiarCuadranteAccion(cuadrante)),
+                    arrayCuadrante: limpiarCuadranteAccion(),
                     total: elTotalAAFacturarTotal += sumatorioServiciosFijos
                 };
                 elObjetoDatosInforme = {
@@ -5321,11 +5140,9 @@ const Cuadrantes = (props) => {
         let sumatorioHoras_L2 = 0;
         let sumatorioHoras_F = 0;
         let sumatorioTotal = 0;
-        for (const prop in losServiciosFijos) {
-            if (losServiciosFijos[prop]) {
-                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-            };
-        };
+        cuadranteServiciosFijos.forEach((servicio, index) => {
+            sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+        });
         if (arrayDatosInforme.length > 0) {
             arrayDatosInforme.forEach((dato, index) => {
                 sumatorioHoras_L += (dato.totalHorasNormal_L + dato.totalHorasExtra_L);
@@ -5717,72 +5534,107 @@ const Cuadrantes = (props) => {
         arrayInforme.push(['divider', 'normal']);
         arrayInforme.push(['Servicios fijos:', 'normal']);
         let sumatorioServiciosFijos = 0;
-        for (const prop in losServiciosFijos) {
-            if (losServiciosFijos[prop] && prop === 'precioHora_TO') {
-                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA DE TOLDOS: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
+        cuadranteServiciosFijos.forEach((servicio) => {
+            for (const prop in servicio) {
+                if (servicio[prop] && prop === 'precioHora_TO') {
+                    if (servicio.activo_TO === 'si') {
+                        sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                        arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA DE TOLDOS: ' + parseFloat(servicio.totalServicioFijo) + ' €', 'normal']);
+                    };
+                };
+                if (servicio[prop] && prop === 'precioHora_CR') {
+                    if (servicio.activo_CR === 'si') {
+                        sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                        arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA DE CRISTALES: ' + parseFloat(servicio.totalServicioFijo) + ' €', 'normal']);
+                    };
+                };
+                if (servicio[prop] && prop === 'precioHora_CE') {
+                    if (servicio.activo_CE === 'si') {
+                        sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                        arrayInforme.push(['Total a facturar por LIMPIEZA CRISTALES EXTERIORES: ' + parseFloat(servicio.totalServicioFijo) + ' €', 'normal']);
+                    };
+                };
+                if (servicio[prop] && prop === 'precioHora_CI') {
+                    if (servicio.activo_CI === 'si') {
+                        sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                        arrayInforme.push(['Total a facturar por LIMPIEZA CRISTALES INTERIORES: ' + parseFloat(servicio.totalServicioFijo) + ' €', 'normal']);
+                    };
+                };
+                if (servicio[prop] && prop === 'precioHora_MO') {
+                    if (servicio.activo_MO === 'si') {
+                        sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                        arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA MOQUETA: ' + parseFloat(servicio.totalServicioFijo) + ' €', 'normal']);
+                    };
+                };
+                if (servicio[prop] && prop === 'precioHora_OF') {
+                    if (servicio.activo_OF === 'si') {
+                        sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                        arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA OFICINAS: ' + parseFloat(servicio.totalServicioFijo) + ' €', 'normal']);
+                    };
+                };
+                if (servicio[prop] && prop === 'precioHora_AL') {
+                    if (servicio.activo_AL === 'si') {
+                        sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                        arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA ALMACENES: ' + parseFloat(servicio.totalServicioFijo) + ' €', 'normal']);
+                    };
+                };
+                if (servicio[prop] && prop === 'precioHora_LA') {
+                    if (servicio.activo_LA === 'si') {
+                        sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                        arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA LABORATORIO: ' + parseFloat(servicio.totalServicioFijo) + ' €', 'normal']);
+                    };
+                };
+                if (servicio[prop] && prop === 'precioHora_TE') {
+                    if (servicio.activo_TE === 'si') {
+                        sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                        arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA TELARAÑAS: ' + parseFloat(servicio.totalServicioFijo) + ' €', 'normal']);
+                    };
+                };
+                if (servicio[prop] && prop === 'precioHora_FI') {
+                    if (servicio.activo_FI === 'si') {
+                        sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                        arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA FACHADA INTERIOR: ' + parseFloat(servicio.totalServicioFijo) + ' €', 'normal']);
+                    };
+                };
+                if (servicio[prop] && prop === 'precioHora_FE') {
+                    if (servicio.activo_FE === 'si') {
+                        sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                        arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA FACHADA EXTERIOR: ' + parseFloat(servicio.totalServicioFijo) + ' €', 'normal']);
+                    };
+                };
+                if (servicio[prop] && prop === 'precioHora_AB') {
+                    if (servicio.activo_AB === 'si') {
+                        sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                        arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA ABRILLANTADO: ' + parseFloat(servicio.totalServicioFijo) + ' €', 'normal']);
+                    };
+                };
+                if (servicio[prop] && prop === 'precioHora_MA') {
+                    if (servicio.activo_MA === 'si') {
+                        sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                        arrayInforme.push(['Total a facturar por SERVICIO DE MANTENIMIENTO MÁQUINA: ' + parseFloat(servicio.totalServicioFijo) + ' €', 'normal']);
+                    };
+                };
+                if (servicio[prop] && prop === 'precioHora_PO') {
+                    if (servicio.activo_PO === 'si') {
+                        sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                        arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA PORTERÍA: ' + parseFloat(servicio.totalServicioFijo) + ' €', 'normal']);
+                    };
+                };
+                if (servicio[prop] && prop === 'precioHora_BA') {
+                    if (servicio.activo_BA === 'si') {
+                        sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                        arrayInforme.push(['Total a facturar por BOT. NOUBACT: ' + parseFloat(servicio.totalServicioFijo) + ' €', 'normal']);
+                    };
+                };
+                if (servicio[prop] && prop === 'precioHora_FT') {
+                    if (servicio.activo_FT === 'si') {
+                        sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                        arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA DÍA FESTIVO: ' + parseFloat(servicio.totalServicioFijo) + ' €', 'normal']);
+                    };
+                };
             };
-            if (losServiciosFijos[prop] && prop === 'precioHora_CR') {
-                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA DE CRISTALES: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
-            };
-            if (losServiciosFijos[prop] && prop === 'precioHora_CE') {
-                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                arrayInforme.push(['Total a facturar por LIMPIEZA CRISTALES EXTERIORES: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
-            };
-            if (losServiciosFijos[prop] && prop === 'precioHora_CI') {
-                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                arrayInforme.push(['Total a facturar por LIMPIEZA CRISTALES INTERIORES: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
-            };
-            if (losServiciosFijos[prop] && prop === 'precioHora_MO') {
-                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA MOQUETA: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
-            };
-            if (losServiciosFijos[prop] && prop === 'precioHora_OF') {
-                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA OFICINAS: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
-            };
-            if (losServiciosFijos[prop] && prop === 'precioHora_AL') {
-                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA ALMACENES: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
-            };
-            if (losServiciosFijos[prop] && prop === 'precioHora_LA') {
-                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA LABORATORIO: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
-            };
-            if (losServiciosFijos[prop] && prop === 'precioHora_TE') {
-                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA TELARAÑAS: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
-            };
-            if (losServiciosFijos[prop] && prop === 'precioHora_FI') {
-                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA FACHADA INTERIOR: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
-            };
-            if (losServiciosFijos[prop] && prop === 'precioHora_FE') {
-                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA FACHADA EXTERIOR: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
-            };
-            if (losServiciosFijos[prop] && prop === 'precioHora_AB') {
-                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA ABRILLANTADO: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
-            };
-            if (losServiciosFijos[prop] && prop === 'precioHora_MA') {
-                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                arrayInforme.push(['Total a facturar por SERVICIO DE MANTENIMIENTO MÁQUINA: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
-            };
-            if (losServiciosFijos[prop] && prop === 'precioHora_PO') {
-                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA PORTERÍA: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
-            };
-            if (losServiciosFijos[prop] && prop === 'precioHora_BA') {
-                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                arrayInforme.push(['Total a facturar por BOT. NOUBACT: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
-            };
-            if (losServiciosFijos[prop] && prop === 'precioHora_FT') {
-                sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA DÍA FESTIVO: ' + parseFloat(losServiciosFijos[prop]) + ' €', 'normal']);
-            };
-        };
+        });
+
         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 1 || (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 3 && objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado)) {
             sumatorioTotal = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado;
         };
@@ -5885,68 +5737,6 @@ const Cuadrantes = (props) => {
         handleCloseMenu();
     };
 
-    const retornaIconoTipoServicio = (tipo) => {
-        switch (tipo) {
-            case 'LIM':
-                return (
-                    <Tooltip title="Servicio de limpieza" placement="top-end" arrow>
-                        <Avatar className={clsx(classes.tipoServ1, classes.small2)}>L</Avatar>
-                    </Tooltip>
-                )
-                break;
-            case 'LIME':
-                return (
-                    <Tooltip title="Servicio de limpieza especial" placement="top-end" arrow>
-                        <Avatar className={clsx(classes.tipoServ2, classes.small2)}>E</Avatar>
-                    </Tooltip>
-                )
-                break;
-            case 'LIMP':
-                return (
-                    <Tooltip title="Limpieza de limpieza del párking" placement="top-end" arrow>
-                        <Avatar className={clsx(classes.tipoServ3, classes.small2)}>P</Avatar>
-                    </Tooltip>
-                )
-                break;
-            case 'NAVE2':
-                return (
-                    <Tooltip title="Limpieza de limpieza de nave 2" placement="top-end" arrow>
-                        <Avatar className={clsx(classes.tipoServ4, classes.small2)}>N</Avatar>
-                    </Tooltip>
-                )
-                break;
-            case 'REFZ':
-                return (
-                    <Tooltip title="Servicio de limpieza de refuerzo" placement="top-end" arrow>
-                        <Avatar className={clsx(classes.tipoServ5, classes.small2)}>R</Avatar>
-                    </Tooltip>
-                )
-                break;
-            case 'LIM1':
-                return (
-                    <Tooltip title="Servicio de limpieza 1" placement="top-end" arrow>
-                        <Avatar className={clsx(classes.tipoServ6, classes.small2)}>1</Avatar>
-                    </Tooltip>
-                )
-                break;
-            case 'LIM2':
-                return (
-                    <Tooltip title="Servicio de limpieza 2" placement="top-end" arrow>
-                        <Avatar className={clsx(classes.tipoServ6, classes.small2)}>2</Avatar>
-                    </Tooltip>
-                )
-                break;
-            case 'FEST':
-                return (
-                    <Tooltip title="Servicio de limpieza día festivo" placement="top-end" arrow>
-                        <Avatar className={clsx(classes.tipoServ7, classes.small2)}>F</Avatar>
-                    </Tooltip>
-                )
-                break;
-            default:
-        }
-    };
-
     const handleClickActualizarCentro = () => {
         setVenimosDeActualizarCentro(true);
         dispatch(obtenerCentroAccion('centros', objetoCuadrante.datosCuadrante.centro));
@@ -6008,7 +5798,7 @@ const Cuadrantes = (props) => {
     const handleChangeTipoHorario = (index) => (e) => {
         let arrayCuadrante = [...cuadrante];
         arrayCuadrante[index].tipoHorario = e.target.value;
-        setCuadrante(arrayCuadrante);
+        dispatch(setCuadranteAccion(arrayCuadrante));
         if (arrayCuadrante[index].tipoTrabajador === 'trabajador') {
             setEsInicioTra(false);
             setEsCambioTra(true);
@@ -6187,12 +5977,12 @@ const Cuadrantes = (props) => {
                     m={0.3}
                     p={1.5}
                     ref={ref => { boxes.current[indexColumna] = ref }}
-                    className={gestionaClassesColoresGeneral(indexDia + 1, columna[postRef].baja, columna[postRef].modificado, columna.nombreTrabajador) || null}
+                    className={gestionaClassesColoresGeneralAccion(indexDia + 1, columna[postRef].baja, columna[postRef].modificado, columna.nombreTrabajador) || null}
                     style={{ width: dimensionsColumna.width, display: 'flex', flexDirection: 'row', justifycontent: 'space-between', alignItems: 'center' }}
                     onClick={abrePopoverGeneral(postRef, indexDia, dia[1][0], columna, indexColumna, indexColumna)}
                 >
                     <Grid item xs={10}>
-                        <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{gestionaTextoCasillas(indexDia + 1, postRef, columna, dia[1][0])}</Typography>
+                        <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{gestionaTextoCasillasAccion(indexDia + 1, postRef, columna, dia[1][0])}</Typography>
                     </Grid>
                     <Grid item xs={2}>
                         <Box style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
@@ -6204,10 +5994,10 @@ const Cuadrantes = (props) => {
                                 </Tooltip>
                             ) : null}
                             {columna[postRef].tipoVariacion && !columna[postRef].festivo && !columna[postRef].baja ? (
-                                retornaIconoVariacion(columna, postRef, dia[1][0])
+                                retornaIconoVariacionAccion(columna, postRef, dia[1][0])
                             ) : null}
                             {columna[postRef].tipoServicio && !columna[postRef].festivo && !columna[postRef].baja ? (
-                                retornaIconoTipoServicio(columna[postRef].tipoServicio)
+                                retornaIconoTipoServicioAccion(columna[postRef].tipoServicio)
                             ) : null}
                         </Box>
                     </Grid>
@@ -6216,150 +6006,100 @@ const Cuadrantes = (props) => {
         )
     };
 
-    const retornoServiciosFijosEnLayout = (elemento) => {
-        let hayServicios;
-        if (losServiciosFijos.precioHora_TO ||
-            losServiciosFijos.precioHora_CR ||
-            losServiciosFijos.precioHora_CE ||
-            losServiciosFijos.precioHora_CI ||
-            losServiciosFijos.precioHora_MO ||
-            losServiciosFijos.precioHora_OF ||
-            losServiciosFijos.precioHora_AL ||
-            losServiciosFijos.precioHora_LA ||
-            losServiciosFijos.precioHora_TE ||
-            losServiciosFijos.precioHora_FI ||
-            losServiciosFijos.precioHora_FE ||
-            losServiciosFijos.precioHora_AB ||
-            losServiciosFijos.precioHora_MA ||
-            losServiciosFijos.precioHora_PO ||
-            losServiciosFijos.precioHora_BA ||
-            losServiciosFijos.precioHora_FT) {
-            hayServicios = true;
-        };
-        if (elemento === 'grid') {
-            if (hayServicios) {
-                return (classes.conServicios)
-            } else {
-                return (classes.sinServicios)
+    const retornaCasillasServiciosFijos = (dia, indexDia, servicio, indice) => {
+        let tipo = servicio.tipoServiciofijo;
+        let postRef = dia[1][0] + dia[0][0];
+        let hayServicio = false;
+        let precio = '';
+        for (const prop in servicio) {
+            if (prop === postRef) {
+                hayServicio = true;
+                if (servicio['precioHora_TO']) {
+                    precio = servicio['precioHora_TO'];
+                };
+                if (servicio['precioHora_CR']) {
+                    precio = servicio['precioHora_CR'];
+                };
+                if (servicio['precioHora_CE']) {
+                    precio = servicio['precioHora_CE'];
+                };
+                if (servicio['precioHora_CI']) {
+                    precio = servicio['precioHora_CI'];
+                };
+                if (servicio['precioHora_MO']) {
+                    precio = servicio['precioHora_MO'];
+                };
+                if (servicio['precioHora_OF']) {
+                    precio = servicio['precioHora_OF'];
+                };
+                if (servicio['precioHora_AL']) {
+                    precio = servicio['precioHora_AL'];
+                };
+                if (servicio['precioHora_LA']) {
+                    precio = servicio['precioHora_LA'];
+                };
+                if (servicio['precioHora_TE']) {
+                    precio = servicio['precioHora_TE'];
+                };
+                if (servicio['precioHora_FI']) {
+                    precio = servicio['precioHora_FI'];
+                };
+                if (servicio['precioHora_FE']) {
+                    precio = servicio['precioHora_FE'];
+                };
+                if (servicio['precioHora_AB']) {
+                    precio = servicio['precioHora_AB'];
+                };
+                if (servicio['precioHora_MA']) {
+                    precio = servicio['precioHora_MA'];
+                };
+                if (servicio['precioHora_PO']) {
+                    precio = servicio['precioHora_PO'];
+                };
+                if (servicio['precioHora_BA']) {
+                    precio = servicio['precioHora_BA'];
+                };
+                if (servicio['precioHora_FT']) {
+                    precio = servicio['precioHora_FT'];
+                };
             };
         };
-        if (elemento === 'avatar') {
-            if (hayServicios) {
-                return (clsx(classes.conServiciosA, classes.small))
-            } else {
-                return (clsx(classes.sinServiciosA, classes.small))
-            };
+        if (servicio.activo_TO === 'si' ||
+            servicio.activo_CR === 'si' ||
+            servicio.activo_CE === 'si' ||
+            servicio.activo_CI === 'si' ||
+            servicio.activo_MO === 'si' ||
+            servicio.activo_OF === 'si' ||
+            servicio.activo_AL === 'si' ||
+            servicio.activo_LA === 'si' ||
+            servicio.activo_TE === 'si' ||
+            servicio.activo_FI === 'si' ||
+            servicio.activo_FE === 'si' ||
+            servicio.activo_AB === 'si' ||
+            servicio.activo_MA === 'si' ||
+            servicio.activo_PO === 'si' ||
+            servicio.activo_BA === 'si' ||
+            servicio.activo_FT === 'si') {
+            return (
+                <Grid
+                    container
+                    direction="column"
+                    justifycontent="flex-start"
+                    alignItems="flex-start"
+                    key={'Columna_sf' + (indexDia)}
+                >
+                    < Box
+                        m={0.3}
+                        p={1.5}
+                        className={gestionaClassesColoresServiciosFijosAccion(indexDia + 1, hayServicio) || null}
+                        style={{ width: dimensionsColumnaServiciosFijos.width }}
+                        onClick={abrePopoverSFCasillas(postRef, indexDia, dia[1][0], tipo, indice)}
+                    >
+                        <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{gestionaTextoCasillasServiciosFijosAccion(indexDia + 1, precio)}</Typography>
+                    </Box >
+                </Grid>
+            )
         };
-        if (elemento === 'icon') {
-            if (hayServicios) {
-                return (<NotificationsIcon />)
-            } else {
-                return (<NotificationsOffIcon />)
-            };
-        };
-        if (elemento === 'tooltip') {
-            if (hayServicios) {
-                return ('Cuadrante con servicios fijos')
-            } else {
-                return ('Cuadrante sin servicios fijos')
-            };
-        };
-    };
-
-    const retornaServiciosFijosEnLayoutAvatars = (tipo, index) => {
-        let laClase, elTooltip, laLetra;
-        switch (tipo.value) {
-            case 'TOL':
-                laClase = losServiciosFijos.precioHora_TO ? classes.displayBlock : classes.displayNone;
-                elTooltip = 'Servicio de limpieza de toldos: ' + losServiciosFijos.precioHora_TO + ' €';
-                laLetra = 'TO';
-                break;
-            case 'CRIS':
-                laClase = losServiciosFijos.precioHora_CR ? classes.displayBlock : classes.displayNone;
-                elTooltip = 'Servicio de limpieza de cristales: ' + losServiciosFijos.precioHora_CR + ' €';
-                laLetra = 'CR';
-                break;
-            case 'CRISE':
-                laClase = losServiciosFijos.precioHora_CE ? classes.displayBlock : classes.displayNone;
-                elTooltip = 'Limpieza cristales exteriores: ' + losServiciosFijos.precioHora_CE + ' €';
-                laLetra = 'CE';
-                break;
-            case 'CRISI':
-                laClase = losServiciosFijos.precioHora_CI ? classes.displayBlock : classes.displayNone;
-                elTooltip = 'Limpieza cristales interiores: ' + losServiciosFijos.precioHora_CI + ' €';
-                laLetra = 'CI';
-                break;
-            case 'MOQ':
-                laClase = losServiciosFijos.precioHora_MO ? classes.displayBlock : classes.displayNone;
-                elTooltip = 'Servicio de limpieza moqueta: ' + losServiciosFijos.precioHora_MO + ' €';
-                laLetra = 'MO';
-                break;
-            case 'OF':
-                laClase = losServiciosFijos.precioHora_OF ? classes.displayBlock : classes.displayNone;
-                elTooltip = 'Servicio de limpieza oficinas: ' + losServiciosFijos.precioHora_OF + ' €';
-                laLetra = 'OF';
-                break;
-            case 'ALMC':
-                laClase = losServiciosFijos.precioHora_AL ? classes.displayBlock : classes.displayNone;
-                elTooltip = 'Servicio de limpieza almacenes: ' + losServiciosFijos.precioHora_AL + ' €';
-                laLetra = 'AL';
-                break;
-            case 'LAB':
-                laClase = losServiciosFijos.precioHora_LA ? classes.displayBlock : classes.displayNone;
-                elTooltip = 'Servicio de limpieza laboratorio: ' + losServiciosFijos.precioHora_LA + ' €';
-                laLetra = 'LA';
-                break;
-            case 'TELÑ':
-                laClase = losServiciosFijos.precioHora_TE ? classes.displayBlock : classes.displayNone;
-                elTooltip = 'Servicio de limpieza telarañas: ' + losServiciosFijos.precioHora_TE + ' €';
-                laLetra = 'TE';
-                break;
-            case 'FCH.IN':
-                laClase = losServiciosFijos.precioHora_FI ? classes.displayBlock : classes.displayNone;
-                elTooltip = 'Servicio de limpieza fachada interior: ' + losServiciosFijos.precioHora_FI + ' €';
-                laLetra = 'FI';
-                break;
-            case 'FCH.EX':
-                laClase = losServiciosFijos.precioHora_FE ? classes.displayBlock : classes.displayNone;
-                elTooltip = 'Servicio de limpieza fachada exterior: ' + losServiciosFijos.precioHora_FE + ' €';
-                laLetra = 'FE';
-                break;
-            case 'ABRLL':
-                laClase = losServiciosFijos.precioHora_AB ? classes.displayBlock : classes.displayNone;
-                elTooltip = 'Servicio de limpieza abrillantado: ' + losServiciosFijos.precioHora_AB + ' €';
-                laLetra = 'AB';
-                break;
-            case 'MANT':
-                laClase = losServiciosFijos.precioHora_MA ? classes.displayBlock : classes.displayNone;
-                elTooltip = 'Servicio de mantenimiento máquina: ' + losServiciosFijos.precioHora_MA + ' €';
-                laLetra = 'MA';
-                break;
-            case 'PORT':
-                laClase = losServiciosFijos.precioHora_PO ? classes.displayBlock : classes.displayNone;
-                elTooltip = 'Servicio de limpieza portería: ' + losServiciosFijos.precioHora_PO + ' €';
-                laLetra = 'PO';
-                break;
-            case 'BACT':
-                laClase = losServiciosFijos.precioHora_BA ? classes.displayBlock : classes.displayNone;
-                elTooltip = 'Bot. Noubact: ' + losServiciosFijos.precioHora_BA + ' €';
-                laLetra = 'BA';
-                break;
-            case 'FEST':
-                laClase = losServiciosFijos.precioHora_FT ? classes.displayBlock : classes.displayNone;
-                elTooltip = 'Servicio de limpieza día festivo: ' + losServiciosFijos.precioHora_FT + ' €';
-                laLetra = 'FT';
-                break;
-            default:
-        };
-        return (
-            <Box style={{ paddingTop: 5 }} className={laClase} key={'avatar' + index}>
-                <LightTooltip title={elTooltip} placement="right">
-                    <Avatar variant="square" className={clsx(classes.conServiciosA2, classes.small4)}>
-                        <Typography style={{ fontSize: '0.7rem' }}>{laLetra}</Typography>
-                    </Avatar>
-                </LightTooltip>
-            </Box>
-        )
     };
 
     return (
@@ -6644,26 +6384,126 @@ const Cuadrantes = (props) => {
                                         className={classes.trabajador}
                                     >
                                         <Box
-                                            style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", paddingTop: 6, cursor: 'pointer' }}
+                                            style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", paddingTop: 4, cursor: 'pointer' }}
                                             onClick={abrePopoverConfiguracion()}
                                         >
                                             <Tooltip title="Configuración general cuadrante" placement="right" arrow>
-                                                <AssignmentIcon />
+                                                <SettingsIcon style={{ fontSize: 30 }} />
                                             </Tooltip>
                                         </Box>
                                     </Grid>
                                     <Grid item
-                                        style={{ width: 40, marginRight: 4, marginTop: 9, paddingTop: 5, height: heightScrollable - 47 }}
-                                        className={retornoServiciosFijosEnLayout('grid')}
+                                        style={{ width: 40, marginRight: 4, marginTop: 9, paddingTop: 5, height: 122 }}
+                                        className={classes.suplente}
+                                    >
+                                        <Box style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 4 }}>
+                                            {objetoCuadrante.datosCuadrante.datosCuadrante[cuadranteEnUsoCuadrantes - 1].observaciones ?
+                                                (
+                                                    <InfoTooltip title={objetoCuadrante.datosCuadrante.datosCuadrante[cuadranteEnUsoCuadrantes - 1].observaciones} placement="right" arrow>
+                                                        <ChatIcon
+                                                            style={{ fontSize: 28 }}
+                                                            className={classes.groc}
+                                                        />
+                                                    </InfoTooltip>
+                                                ) : (
+                                                    <ChatIcon
+                                                        style={{ fontSize: 28 }}
+                                                        className={classes.grisClaro}
+                                                    />
+                                                )}
+                                        </Box>
+                                        <Box style={{ paddingLeft: 5, paddingRight: 5 }}>
+                                            {cuadrante.length && cuadranteServiciosFijos.length > 0 && visibleCuadranteServiciosFijos ? (
+                                                visibleCuadrante ? (
+                                                    <Tooltip title="Ocultar columnas trabajadores" placement="right" arrow>
+                                                        <Avatar
+                                                            style={{ cursor: 'pointer' }}
+                                                            className={clsx(classes.small3, classes.trabajador)}
+                                                            id='ocultarTrabajadores'
+                                                            onClick={() => setVisibleCuadrante(false)}
+                                                        >
+                                                            <VisibilityIcon
+                                                                style={{ fontSize: 22 }}
+                                                            />
+                                                        </Avatar>
+                                                    </Tooltip>
+                                                ) : (
+                                                    <Tooltip title="Mostrar columnas trabajadores" placement="right" arrow>
+                                                        <Avatar
+                                                            style={{ cursor: 'pointer' }}
+                                                            className={clsx(classes.small3, classes.trabajador)}
+                                                            onClick={() => setVisibleCuadrante(true)}
+                                                        >
+                                                            <VisibilityOffIcon
+                                                                style={{ fontSize: 22 }}
+                                                            />
+                                                        </Avatar>
+                                                    </Tooltip>
+                                                )
+                                            ) : (
+                                                <Avatar
+                                                    className={clsx(classes.small3)}
+                                                    disabled={true}
+                                                    style={{ backgroundColor: 'rgba(0, 0, 0, 0.25' }}
+                                                >
+                                                    <VisibilityIcon
+                                                        style={{ fontSize: 22, color: 'rgba(255, 255, 255, 0.45' }}
+                                                    />
+                                                </Avatar>
+                                            )}
+                                        </Box>
+                                        <Box style={{ paddingLeft: 5, paddingRight: 5, paddingTop: 4 }}>
+                                            {cuadranteServiciosFijos.length > 0 && cuadrante.length > 0 && visibleCuadrante ? (
+                                                visibleCuadranteServiciosFijos ? (
+                                                    <Tooltip title="Ocultar columnas servicios extra" placement="right" arrow>
+                                                        <Avatar
+                                                            style={{ cursor: 'pointer' }}
+                                                            className={clsx(classes.small3, classes.cabeceraServicios)}
+                                                            onClick={() => setVisibleCuadranteServiciosFijos(false)}
+                                                        >
+                                                            <VisibilityIcon
+                                                                style={{ fontSize: 22 }}
+                                                            />
+                                                        </Avatar>
+                                                    </Tooltip>
+                                                ) : (
+                                                    <Tooltip title="Mostrar columnas servicios extra" placement="right" arrow>
+                                                        <Avatar
+                                                            style={{ cursor: 'pointer' }}
+                                                            className={clsx(classes.small3, classes.cabeceraServicios)}
+                                                            onClick={() => setVisibleCuadranteServiciosFijos(true)}
+                                                        >
+                                                            <VisibilityOffIcon
+                                                                style={{ fontSize: 22 }}
+                                                            />
+                                                        </Avatar>
+                                                    </Tooltip>
+                                                )
+                                            ) : (
+                                                <Avatar
+                                                    className={clsx(classes.small3)}
+                                                    disabled={true}
+                                                    style={{ backgroundColor: 'rgba(0, 150, 136, 0.25' }}
+                                                >
+                                                    <VisibilityIcon
+                                                        style={{ fontSize: 22, color: 'rgba(255, 255, 255, 0.45' }}
+                                                    />
+                                                </Avatar>
+                                            )}
+                                        </Box>
+                                    </Grid>
+                                    <Grid item
+                                        style={{ width: 40, marginRight: 4, marginTop: 6, paddingTop: 5, height: heightScrollable - 47 - 128 }}
+                                        className={retornoServiciosFijosEnLayoutAccion('grid', losServiciosFijos)}
                                     >
                                         <Box style={{ padding: 4 }}>
-                                            <Tooltip title={retornoServiciosFijosEnLayout('tooltip')} placement="right" arrow>
+                                            <Tooltip title={retornoServiciosFijosEnLayoutAccion('tooltip', losServiciosFijos)} placement="right" arrow>
                                                 <Avatar
                                                     style={{ cursor: 'pointer' }}
-                                                    className={retornoServiciosFijosEnLayout('avatar')}
+                                                    className={retornoServiciosFijosEnLayoutAccion('avatar', losServiciosFijos)}
                                                     onClick={abrePopoverServiciosFijos()}
                                                 >
-                                                    {retornoServiciosFijosEnLayout('icon')}
+                                                    {retornoServiciosFijosEnLayoutAccion('icon', losServiciosFijos)}
                                                 </Avatar>
                                             </Tooltip>
                                         </Box>
@@ -6673,9 +6513,11 @@ const Cuadrantes = (props) => {
                                             alignItems="center"
                                             justifyContent="center"
                                         >
-                                            {tiposDeServicio.map((tipo, index) => (
-                                                retornaServiciosFijosEnLayoutAvatars(tipo, index)
-                                            ))}
+                                            {cuadranteServiciosFijos.length > 0 ? (
+                                                cuadranteServiciosFijos.map((servicio, index) => (
+                                                    retornaServiciosFijosEnLayoutAvatarsAccion(servicio, index)
+                                                ))
+                                            ) : null}
                                         </Box>
                                     </Grid>
                                 </Box>
@@ -6711,163 +6553,185 @@ const Cuadrantes = (props) => {
                                                     >
                                                         <Typography variant='body2' color="textPrimary">{cuadranteEnUsoCuadrantes}</Typography>
                                                     </Avatar>
-
                                                 </Box>
-                                                {cuadrante.map((columnaCabecera, index) => (
-                                                    <Box
-                                                        key={`box_header_` + (index + 1)}
-                                                        mx={0.3}
-                                                    >
-                                                        <Accordion
-                                                            expanded={expandedAccordion === 'panel_' + (index + 1)}
-                                                            className={gestionaClassesColoresTrabajadores(columnaCabecera.tipoTrabajador)}
-                                                            style={{ width: dimensionsColumna.width }}
-                                                            onChange={(e, expandedAccordion) => { handleCambioAccordionHeader(expandedAccordion, 'panel_' + (index + 1), index) }}
-                                                        >
-                                                            <AccordionSummary
-                                                                expandIcon={<ExpandMoreIcon className={classes.blanc} />}
+                                                {visibleCuadranteServiciosFijos ? (
+                                                    cuadranteServiciosFijos.length > 0 ? (
+                                                        cuadranteServiciosFijos.map((servicio, index) => (
+                                                            retornaHeaderServiciosFijosAccion(servicio, index, dimensionsColumnaServiciosFijos.width)
+                                                        ))
+                                                    ) : null
+                                                ) : null}
+                                                {visibleCuadrante ? (
+                                                    <Fragment>
+                                                        {cuadrante.map((columnaCabecera, index) => (
+                                                            <Box
+                                                                key={`box_header_` + (index + 1)}
+                                                                mx={0.3}
                                                             >
-                                                                <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{columnaCabecera.nombreTrabajador}</Typography>
-                                                            </AccordionSummary>
-                                                            <AccordionDetails>
-                                                                <Grid container className={classes.mt5}>
-                                                                    <Grid
-                                                                        container
-                                                                        direction="column"
-                                                                        justifycontent="flex-start"
-                                                                        alignItems="flex-start"
+                                                                <Accordion
+                                                                    expanded={expandedAccordion === 'panel_' + (index + 1)}
+                                                                    className={gestionaClassesColoresTrabajadoresAccion(columnaCabecera.tipoTrabajador)}
+                                                                    style={{ width: dimensionsColumna.width }}
+                                                                    onChange={(e, expandedAccordion) => { handleCambioAccordionHeader(expandedAccordion, 'panel_' + (index + 1), index) }}
+                                                                >
+                                                                    <AccordionSummary
+                                                                        expandIcon={<ExpandMoreIcon className={classes.blanc} />}
                                                                     >
-                                                                        <Box
-                                                                            style={{ width: '100%', display: 'flex' }}
-                                                                            className={estadoFlex === 'fila' ? classes.flexRow : classes.flexColumn}
-                                                                        >
-                                                                            <Grid item xs={false}>
-                                                                            </Grid>
-                                                                            <Grid item xs={12}>
+                                                                        <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{columnaCabecera.nombreTrabajador}</Typography>
+                                                                    </AccordionSummary>
+                                                                    <AccordionDetails>
+                                                                        <Grid container className={classes.mt5}>
+                                                                            <Grid
+                                                                                container
+                                                                                direction="column"
+                                                                                justifycontent="flex-start"
+                                                                                alignItems="flex-start"
+                                                                            >
                                                                                 <Box
-                                                                                    display="flex"
-                                                                                    alignItems="center"
-                                                                                    justifyContent="flex-end"
+                                                                                    style={{ width: '100%', display: 'flex' }}
+                                                                                    className={estadoFlex === 'fila' ? classes.flexRow : classes.flexColumn}
                                                                                 >
-                                                                                    <Tooltip title={columnaCabecera.nombreTrabajador ? "Añadir suplente" : ""} placement="top-end" arrow>
-                                                                                        <div>
-                                                                                            <IconButton
-                                                                                                className={clsx(classes.btnAddSuplente, classes.blanc, classes.mb10)}
-                                                                                                onClick={() => handleClickAddColumna('suplente', index)}
-                                                                                                disabled={columnaCabecera.nombreTrabajador ? false : true}
-                                                                                            >
-                                                                                                <PersonAddIcon style={{ fontSize: 18 }} />
-                                                                                            </IconButton>
-                                                                                        </div>
-                                                                                    </Tooltip>
-                                                                                    <Tooltip title={columnaCabecera.nombreTrabajador ? "Actualizar trabajador" : ""} placement="top-end" arrow>
-                                                                                        <div>
-                                                                                            <IconButton
-                                                                                                className={clsx(classes.btnVariacion, classes.blanc, classes.mb10)}
-                                                                                                size="small"
-                                                                                                onClick={() => handleActualizarTrabajadores(index, columnaCabecera.tipoTrabajador, columnaCabecera.idTrabajador)}
-                                                                                                disabled={columnaCabecera.nombreTrabajador ? false : true}
-                                                                                            >
-                                                                                                <CachedIcon />
-                                                                                            </IconButton>
-                                                                                        </div>
-                                                                                    </Tooltip>
-                                                                                    <Tooltip title="Eliminar trabajador" placement="top-end" arrow>
-                                                                                        <IconButton
-                                                                                            className={clsx(classes.btnError, classes.mb10)}
-                                                                                            size="small"
-                                                                                            onClick={() => eliminarColumna(index, columnaCabecera.idTrabajador)}
+                                                                                    <Grid item xs={false}>
+                                                                                    </Grid>
+                                                                                    <Grid item xs={12}>
+                                                                                        <Box
+                                                                                            display="flex"
+                                                                                            alignItems="center"
+                                                                                            justifyContent="flex-end"
                                                                                         >
-                                                                                            <DeleteIcon />
-                                                                                        </IconButton>
-                                                                                    </Tooltip>
+                                                                                            <Tooltip title={columnaCabecera.nombreTrabajador ? "Añadir suplente" : ""} placement="top-end" arrow>
+                                                                                                <div>
+                                                                                                    <IconButton
+                                                                                                        className={clsx(classes.btnAddSuplente, classes.blanc, classes.mb10)}
+                                                                                                        onClick={() => handleClickAddColumna('suplente', index)}
+                                                                                                        disabled={columnaCabecera.nombreTrabajador ? false : true}
+                                                                                                    >
+                                                                                                        <PersonAddIcon style={{ fontSize: 18 }} />
+                                                                                                    </IconButton>
+                                                                                                </div>
+                                                                                            </Tooltip>
+                                                                                            <Tooltip title={columnaCabecera.nombreTrabajador ? "Actualizar trabajador" : ""} placement="top-end" arrow>
+                                                                                                <div>
+                                                                                                    <IconButton
+                                                                                                        className={clsx(classes.btnVariacion, classes.blanc, classes.mb10)}
+                                                                                                        size="small"
+                                                                                                        onClick={() => handleActualizarTrabajadores(index, columnaCabecera.tipoTrabajador, columnaCabecera.idTrabajador)}
+                                                                                                        disabled={columnaCabecera.nombreTrabajador ? false : true}
+                                                                                                    >
+                                                                                                        <CachedIcon />
+                                                                                                    </IconButton>
+                                                                                                </div>
+                                                                                            </Tooltip>
+                                                                                            <Tooltip title="Eliminar trabajador" placement="top-end" arrow>
+                                                                                                <IconButton
+                                                                                                    className={clsx(classes.btnError, classes.mb10)}
+                                                                                                    size="small"
+                                                                                                    onClick={() => eliminarColumna(index, columnaCabecera.idTrabajador)}
+                                                                                                >
+                                                                                                    <DeleteIcon />
+                                                                                                </IconButton>
+                                                                                            </Tooltip>
+                                                                                        </Box>
+                                                                                    </Grid>
                                                                                 </Box>
+                                                                                <FormControl
+                                                                                    variant="outlined"
+                                                                                    fullWidth
+                                                                                    className={classes.mt15}
+                                                                                    size="small"
+                                                                                >
+                                                                                    <InputLabel>{(columnaCabecera.tipoTrabajador === 'trabajador' || !columnaCabecera.tipoTrabajador) ? 'Trabajador' : 'Suplente'}</InputLabel>
+                                                                                    <Select
+                                                                                        id={`form-trabajador-` + (index + 1)}
+                                                                                        value={columnaCabecera.idTrabajador < 1000 ? columnaCabecera.idTrabajador : ''}
+                                                                                        onChange={handleChangeFormTrabajadores(index, columnaCabecera.tipoTrabajador)}
+                                                                                        onOpen={() => setValorPrevioAccordionAbierto(columnaCabecera.idTrabajador)}
+                                                                                        input={
+                                                                                            <OutlinedInput
+                                                                                                labelWidth={80}
+                                                                                            />
+                                                                                        }
+                                                                                    >
+                                                                                        {listadoTrabajadores.map((option) => (
+                                                                                            <MenuItem key={option.id} value={option.id}>
+                                                                                                {option.nombre}
+                                                                                            </MenuItem>
+                                                                                        ))}
+                                                                                    </Select>
+                                                                                </FormControl>
+                                                                                <FormControl
+                                                                                    variant="outlined"
+                                                                                    fullWidth
+                                                                                    className={classes.mt15}
+                                                                                    size="small"
+                                                                                >
+                                                                                    <InputLabel>Modo entrada datos</InputLabel>
+                                                                                    <Select
+                                                                                        id="form-tipo-cuadrantes"
+                                                                                        label="Modo entrada datos"
+                                                                                        value={columnaCabecera.tipoHorario || ''}
+                                                                                        onChange={handleChangeTipoHorario(index)}
+                                                                                        helpertext="Selecciona Modo entrada datos"
+                                                                                        disabled={columnaCabecera.nombreTrabajador ? false : true}
+                                                                                    >
+                                                                                        {tipos.map((option) => (
+                                                                                            <MenuItem key={option.value} value={option.value}>
+                                                                                                {option.label}
+                                                                                            </MenuItem>
+                                                                                        ))}
+                                                                                    </Select>
+                                                                                </FormControl>
                                                                             </Grid>
-                                                                        </Box>
-                                                                        <FormControl
-                                                                            variant="outlined"
-                                                                            fullWidth
-                                                                            className={classes.mt15}
-                                                                            size="small"
-                                                                        >
-                                                                            <InputLabel>{(columnaCabecera.tipoTrabajador === 'trabajador' || !columnaCabecera.tipoTrabajador) ? 'Trabajador' : 'Suplente'}</InputLabel>
-                                                                            <Select
-                                                                                id={`form-trabajador-` + (index + 1)}
-                                                                                value={columnaCabecera.idTrabajador < 1000 ? columnaCabecera.idTrabajador : ''}
-                                                                                onChange={handleChangeFormTrabajadores(index, columnaCabecera.tipoTrabajador)}
-                                                                                onOpen={() => setValorPrevioAccordionAbierto(columnaCabecera.idTrabajador)}
-                                                                                input={
-                                                                                    <OutlinedInput
-                                                                                        labelWidth={80}
-                                                                                    />
-                                                                                }
-                                                                            >
-                                                                                {listadoTrabajadores.map((option) => (
-                                                                                    <MenuItem key={option.id} value={option.id}>
-                                                                                        {option.nombre}
-                                                                                    </MenuItem>
-                                                                                ))}
-                                                                            </Select>
-                                                                        </FormControl>
-                                                                        <FormControl
-                                                                            variant="outlined"
-                                                                            fullWidth
-                                                                            className={classes.mt15}
-                                                                            size="small"
-                                                                        >
-                                                                            <InputLabel>Modo entrada datos</InputLabel>
-                                                                            <Select
-                                                                                id="form-tipo-cuadrantes"
-                                                                                label="Modo entrada datos"
-                                                                                value={columnaCabecera.tipoHorario || ''}
-                                                                                onChange={handleChangeTipoHorario(index)}
-                                                                                helpertext="Selecciona Modo entrada datos"
-                                                                                disabled={columnaCabecera.nombreTrabajador ? false : true}
-                                                                            >
-                                                                                {tipos.map((option) => (
-                                                                                    <MenuItem key={option.value} value={option.value}>
-                                                                                        {option.label}
-                                                                                    </MenuItem>
-                                                                                ))}
-                                                                            </Select>
-                                                                        </FormControl>
-                                                                    </Grid>
-                                                                </Grid>
-                                                            </AccordionDetails>
-                                                        </Accordion>
-                                                    </Box>
-                                                ))}
-                                                <Box
-                                                    m={0.3}
-                                                >
-                                                    <Tooltip title="Añadir trabajador" placement="right" arrow>
-                                                        <IconButton
-                                                            className={clsx(classes.btnAddTrabajador, classes.blanc)}
-                                                            onClick={() => handleClickAddColumna('trabajador', null)}
+                                                                        </Grid>
+                                                                    </AccordionDetails>
+                                                                </Accordion>
+                                                            </Box>
+                                                        ))}
+                                                        <Box
+                                                            m={0.3}
                                                         >
-                                                            <PersonAddIcon style={{ fontSize: 18 }} />
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                </Box>
+                                                            <Tooltip title="Añadir trabajador" placement="right" arrow>
+                                                                <IconButton
+                                                                    className={clsx(classes.btnAddTrabajador, classes.blanc)}
+                                                                    onClick={() => handleClickAddColumna('trabajador', null)}
+                                                                >
+                                                                    <PersonAddIcon style={{ fontSize: 18 }} />
+                                                                </IconButton>
+                                                            </Tooltip>
+                                                        </Box>
+                                                    </Fragment>
+                                                ) : null}
                                             </Grid>
                                             <Grid container
                                                 style={{ marginTop: 45 }}
                                             >
-                                                <Box
-                                                >
+                                                <Box>
                                                     {losDiasDelMes.map((dia, index) => (
                                                         retornaCasillasDias(dia, index)
                                                     ))}
                                                 </Box>
-                                                {cuadrante.map((columna, indexColumna) => (
-                                                    <Box
-                                                        key={'Box_' + indexColumna}
-                                                    >
-                                                        {losDiasDelMes.map((dia, indexDia) => (
-                                                            retornaCasillasGeneral(dia, indexDia, columna, indexColumna)
-                                                        ))}
-                                                    </Box>
-                                                ))}
+                                                {visibleCuadranteServiciosFijos ? (
+                                                    cuadranteServiciosFijos.length > 0 ? (
+                                                        cuadranteServiciosFijos.map((servicio, indexColSF) => (
+                                                            <Box key={'box' + indexColSF}>
+                                                                {losDiasDelMes.map((dia, indexDia) => (
+                                                                    retornaCasillasServiciosFijos(dia, indexDia, servicio, indexColSF)
+                                                                ))}
+                                                            </Box>
+                                                        ))
+                                                    ) : null
+                                                ) : null}
+                                                {visibleCuadrante ? (
+                                                    cuadrante.map((columna, indexColumna) => (
+                                                        <Box
+                                                            key={'Box_' + indexColumna}
+                                                        >
+                                                            {losDiasDelMes.map((dia, indexDia) => (
+                                                                retornaCasillasGeneral(dia, indexDia, columna, indexColumna)
+                                                            ))}
+                                                        </Box>
+                                                    ))
+                                                ) : null}
                                             </Grid>
                                         </Box>
                                         <Tooltip title="Informe Cuadrante" placement="left" arrow>
@@ -6919,6 +6783,36 @@ const Cuadrantes = (props) => {
                 </Box>
             </Popover>
             <Popover
+                open={openSFCasillas}
+                anchorEl={anchorElSFCasillas}
+                onClose={handleClosePopoverSFCasillas}
+                anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left"
+                }}
+                PaperProps={{
+                    style: {
+                        backgroundColor: "transparent",
+                        boxShadow: "none",
+                        borderRadius: 0
+                    }
+                }}
+            >
+                <Box
+                    className={classes.tooltip}
+                    style={{ width: dimensionsColumnaServiciosFijos.width }}>
+                    <Grid component="label" container alignItems="center" spacing={1}>
+                        <Grid item>
+                            <SwitchServiciosFijos
+                                prVariablesPopoverSFCasillas={variablesPopoverSFCasillas ? variablesPopoverSFCasillas : null}
+                                prHandleChangeSFCasillas={handleChangeSFCasillas}
+                            />
+                        </Grid>
+                        <Grid item><Typography variant="body2" color="textPrimary">Ina./Act.</Typography></Grid>
+                    </Grid>
+                </Box>
+            </Popover>
+            <Popover
                 open={openGeneral}
                 anchorEl={anchorElGeneral}
                 onClose={handleClosePopoverGeneral}
@@ -6948,8 +6842,8 @@ const Cuadrantes = (props) => {
                                             prIdInicio={'timePickerInicio-' + variablesPopoverGeneral.postRef}
                                             prIdFin={'timePickerFin-' + variablesPopoverGeneral.postRef}
                                             prIndex={variablesPopoverGeneral.indexColumna}
-                                            prValueTimePickerInicio={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillas(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 1) : null}
-                                            prValueTimePickerFin={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillas(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 2) : null}
+                                            prValueTimePickerInicio={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillasAccion(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 1) : null}
+                                            prValueTimePickerFin={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillasAccion(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 2) : null}
                                             prObservaciones={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].observaciones : null}
                                             prVisibleVariaciones={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].visibleVariaciones : false}
                                             prTipoVariacion={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].tipoVariacion : ''}
@@ -6970,7 +6864,7 @@ const Cuadrantes = (props) => {
                                             prTipo={'cantidad'}
                                             prIndex={variablesPopoverGeneral.indexColumna}
                                             prIdCantidad={'selectCantidad-' + variablesPopoverGeneral.postRef}
-                                            prValueCantidadHoras={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillas(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 1) : null}
+                                            prValueCantidadHoras={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillasAccion(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 1) : null}
                                             prObservaciones={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].observaciones : null}
                                             prVisibleVariaciones={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].visibleVariaciones : false}
                                             prTipoVariacion={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].tipoVariacion : ''}
@@ -6993,10 +6887,10 @@ const Cuadrantes = (props) => {
                                             prIdFin1={'timePickerFin1Descanso-' + variablesPopoverGeneral.postRef}
                                             prIdInicio2={'timePickerInicio2Descanso-' + variablesPopoverGeneral.postRef}
                                             prIdFin2={'timePickerFin2Descanso-' + variablesPopoverGeneral.postRef}
-                                            prValueTimePickerInicio1={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillas(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 1) : null}
-                                            prValueTimePickerFin1={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillas(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 2) : null}
-                                            prValueTimePickerInicio2={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillas(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 3) : null}
-                                            prValueTimePickerFin2={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillas(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 4) : null}
+                                            prValueTimePickerInicio1={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillasAccion(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 1) : null}
+                                            prValueTimePickerFin1={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillasAccion(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 2) : null}
+                                            prValueTimePickerInicio2={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillasAccion(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 3) : null}
+                                            prValueTimePickerFin2={(variablesPopoverGeneral.indexDia && variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna && variablesPopoverGeneral.dia) ? gestionaValoresCasillasAccion(variablesPopoverGeneral.indexDia + 1, variablesPopoverGeneral.postRef, variablesPopoverGeneral.columna, variablesPopoverGeneral.dia, 4) : null}
                                             prObservaciones={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].observaciones : null}
                                             prVisibleVariaciones={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].visibleVariaciones : false}
                                             prTipoVariacion={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].tipoVariacion : ''}
@@ -7042,9 +6936,9 @@ const Cuadrantes = (props) => {
                         color="secondary.contrastText"
                         className={clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
                     >
-                        Configuración servicios fijos
+                        Configuración servicios extra
                     </Box>
-                    <Box style={{ height: heightScrollable - 150, marginRight: -5, paddingRight: 10 }} className={classes.scrollable} >
+                    <Box style={{ height: heightScrollable - 150, marginRight: -5, paddingRight: 25 }} className={classes.scrollable} >
                         <ServiciosFijos
                             prItemEditandoServiciosFijos={itemEditandoServiciosFijos}
                             prHandleChangeFormConfiguracionServiciosFijos={handleChangeFormConfiguracionServiciosFijos}
@@ -7055,7 +6949,6 @@ const Cuadrantes = (props) => {
                         <Button
                             className={classes.mt15}
                             disabled={disabledItem}
-                            style={{width: '42%'}}
                             fullWidth
                             variant="contained"
                             size="small"
@@ -7152,8 +7045,8 @@ const Cuadrantes = (props) => {
                 prFullWidth={true}
                 prMaxWidth={true}
             />
-            {/* {console.log(itemEditandoServiciosFijos)} */}
-        </div>
+            {console.log(objetoCuadrante)}
+        </div >
     )
 }
 

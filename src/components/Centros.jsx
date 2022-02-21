@@ -238,7 +238,7 @@ const Centros = (props) => {
                                             <ListItemIcon>
                                                 {onEstem === 'editarCentros' ? <SystemUpdateAltIcon fontSize="small" /> : <SaveIcon fontSize="small" />}
                                             </ListItemIcon>
-                                            <ListItemText primary={onEstem === 'editarCentros' ? ('Actualizar centro') : ('Registrar centro')} />
+                                            <ListItemText primary={onEstem === 'editarCentros' ? ('Actualizar Centro') : ('Registrar Centro')} />
                                         </MenuItem>
                                         {
                                             onEstem === 'editarCentros' ? (

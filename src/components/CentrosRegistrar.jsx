@@ -29,6 +29,8 @@ import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
 
 //carga componentes
 import ItemListTime from './ItemListTime';
@@ -214,7 +216,23 @@ const CentrosRegistrar = forwardRef((props, ref) => {
         diaVariacion_MA: '',
         diaVariacion_PO: '',
         diaVariacion_BA: '',
-        diaVariacion_FT: ''
+        diaVariacion_FT: '',
+        activo_TO: 'si',
+        activo_CR: 'si',
+        activo_CE: 'si',
+        activo_CI: 'si',
+        activo_MO: 'si',
+        activo_OF: 'si',
+        activo_AL: 'si',
+        activo_LA: 'si',
+        activo_TE: 'si',
+        activo_FI: 'si',
+        activo_FE: 'si',
+        activo_AB: 'si',
+        activo_MA: 'si',
+        activo_PO: 'si',
+        activo_BA: 'si',
+        activo_FT: 'si'
     });
     const [valueTimePickerInicioRegistro, setValueTimePickerInicioRegistro] = useState([
         {
@@ -696,34 +714,10 @@ const CentrosRegistrar = forwardRef((props, ref) => {
 
     const handleChangeFormRegistro = (prop) => (e) => {
         if (prop === "categoria") {
-            if (numeroCuadrantesRegistro.length > 1) {
-                let foundCategoria = false;
-                numeroCuadrantesRegistro.forEach((cuadrante, index) => {
-                    if (cuadrante.cuadrante) {
-                        if (cuadrante.cuadrante.categoria === e.target.value) {
-                            foundCategoria = true;
-                        };
-                    };
-                });
-                if (foundCategoria) {
-                    setAlert({
-                        mensaje: "No es posible registrar un centro con la misma categoría en 2 cuadrantes.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                } else {
-                    setValuesFormRegistro({ ...valuesFormRegistro, [prop]: e.target.value });
-                    dispatch(registrarIntervencionAccion(false));
-                    dispatch(activarDesactivarRegistrarCentroAccion(false));
-                    return;
-                };
-            } else {
-                setValuesFormRegistro({ ...valuesFormRegistro, [prop]: e.target.value });
-                dispatch(registrarIntervencionAccion(false));
-                dispatch(activarDesactivarRegistrarCentroAccion(false));
-                return;
-            };
+            setValuesFormRegistro({ ...valuesFormRegistro, [prop]: e.target.value });
+            dispatch(registrarIntervencionAccion(false));
+            dispatch(activarDesactivarRegistrarCentroAccion(false));
+            return;
         };
         if (prop === "variacion") {
             setValuesFormRegistro({ ...valuesFormRegistro, [prop]: e.target.value });
@@ -2079,97 +2073,97 @@ const CentrosRegistrar = forwardRef((props, ref) => {
     const handleChangeSwitchTipoServicioFijoRegistro = (e) => {
         if (e.target.name.includes('TO')) {
             if (!e.target.checked) {
-                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_TO: null, variacion_TO: '', diaVariacion_TO: '' });
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_TO: null, variacion_TO: '', diaVariacion_TO: '', activo_TO: 'si' });
             };
             setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, TO: e.target.checked });
         };
         if (e.target.name.includes('CR')) {
             if (!e.target.checked) {
-                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_CR: null, variacion_CR: '', diaVariacion_CR: '' });
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_CR: null, variacion_CR: '', diaVariacion_CR: '', activo_CR: 'si' });
             };
             setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, CR: e.target.checked });
         };
         if (e.target.name.includes('CE')) {
             if (!e.target.checked) {
-                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_CE: null, variacion_CE: '', diaVariacion_CE: '' });
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_CE: null, variacion_CE: '', diaVariacion_CE: '', activo_CE: 'si' });
             };
             setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, CE: e.target.checked });
         };
         if (e.target.name.includes('CI')) {
             if (!e.target.checked) {
-                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_CI: null, variacion_CI: '', diaVariacion_CI: '' });
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_CI: null, variacion_CI: '', diaVariacion_CI: '', activo_CI: 'si' });
             };
             setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, CI: e.target.checked });
         };
         if (e.target.name.includes('MO')) {
             if (!e.target.checked) {
-                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_MO: null, variacion_MO: '', diaVariacion_MO: '' });
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_MO: null, variacion_MO: '', diaVariacion_MO: '', activo_MO: 'si' });
             };
             setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, MO: e.target.checked });
         };
         if (e.target.name.includes('OF')) {
             if (!e.target.checked) {
-                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_OF: null, variacion_OF: '', diaVariacion_OF: '' });
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_OF: null, variacion_OF: '', diaVariacion_OF: '', activo_OF: 'si' });
             };
             setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, OF: e.target.checked });
         };
         if (e.target.name.includes('AL')) {
             if (!e.target.checked) {
-                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_AL: null, variacion_AL: '', diaVariacion_AL: '' });
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_AL: null, variacion_AL: '', diaVariacion_AL: '', activo_AL: 'si' });
             };
             setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, AL: e.target.checked });
         };
         if (e.target.name.includes('LA')) {
             if (!e.target.checked) {
-                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_LA: null, variacion_LA: '', diaVariacion_LA: '' });
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_LA: null, variacion_LA: '', diaVariacion_LA: '', activo_LA: 'si' });
             };
             setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, LA: e.target.checked });
         };
         if (e.target.name.includes('TE')) {
             if (!e.target.checked) {
-                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_TE: null, variacion_TE: '', diaVariacion_TE: '' });
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_TE: null, variacion_TE: '', diaVariacion_TE: '', activo_TE: 'si' });
             };
             setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, TE: e.target.checked });
         };
         if (e.target.name.includes('FI')) {
             if (!e.target.checked) {
-                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_FI: null, variacion_FI: '', diaVariacion_FI: '' });
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_FI: null, variacion_FI: '', diaVariacion_FI: '', activo_FI: 'si' });
             };
             setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, FI: e.target.checked });
         };
         if (e.target.name.includes('FE')) {
             if (!e.target.checked) {
-                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_FE: null, variacion_FE: '', diaVariacion_FE: '' });
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_FE: null, variacion_FE: '', diaVariacion_FE: '', activo_FE: 'si' });
             };
             setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, FE: e.target.checked });
         };
         if (e.target.name.includes('AB')) {
             if (!e.target.checked) {
-                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_AB: null, variacion_AB: '', diaVariacion_AB: '' });
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_AB: null, variacion_AB: '', diaVariacion_AB: '', activo_AB: 'si' });
             };
             setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, AB: e.target.checked });
         };
         if (e.target.name.includes('MA')) {
             if (!e.target.checked) {
-                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_MA: null, variacion_MA: '', diaVariacion_MA: '' });
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_MA: null, variacion_MA: '', diaVariacion_MA: '', activo_MA: 'si' });
             };
             setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, MA: e.target.checked });
         };
         if (e.target.name.includes('PO')) {
             if (!e.target.checked) {
-                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_PO: null, variacion_PO: '', diaVariacion_PO: '' });
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_PO: null, variacion_PO: '', diaVariacion_PO: '', activo_PO: 'si' });
             };
             setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, PO: e.target.checked });
         };
         if (e.target.name.includes('BA')) {
             if (!e.target.checked) {
-                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_BA: null, variacion_BA: '', diaVariacion_BA: '' });
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_BA: null, variacion_BA: '', diaVariacion_BA: '', activo_BA: 'si' });
             };
             setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, BA: e.target.checked });
         };
         if (e.target.name.includes('FT')) {
             if (!e.target.checked) {
-                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_FT: null, variacion_FT: '', diaVariacion_FT: '' });
+                setValuesFormRegistro({ ...valuesFormRegistro, precioHora_FT: null, variacion_FT: '', diaVariacion_FT: '', activo_FT: 'si' });
             };
             setStateSwitchTipoServicioFijoRegistro({ ...stateSwitchTipoServicioFijoRegistro, FT: e.target.checked });
         };
@@ -2380,15 +2374,6 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 return;
             };
             let hayNombre = listadoCentros.some(centro => centro.nombre === valuesFormRegistroGenerales.nombre);
-            let hayCodigo = listadoCentros.some(centro => centro.codigo === valuesFormRegistroGenerales.codigo);
-            if (hayCodigo) {
-                setAlert({
-                    mensaje: "Ya existe un centro registrado con el mismo código. Revisa el formulario.",
-                    tipo: 'error'
-                })
-                setOpenSnack(true);
-                return;
-            };
             if (hayNombre) {
                 setAlert({
                     mensaje: "Ya existe un centro registrado con el mismo nombre. Revisa el formulario.",
@@ -3412,7 +3397,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     tipoServiciofijo: 'TOL',
                     precioHora_TO: parseFloat(valuesFormRegistro.precioHora_TO),
                     variacion_TO: parseFloat(valuesFormRegistro.variacion_TO),
-                    diaVariacion_TO: valuesFormRegistro.diaVariacion_TO
+                    diaVariacion_TO: valuesFormRegistro.variacion_TO !== 3 ? valuesFormRegistro.diaVariacion_TO : '',
+                    activo_TO: valuesFormRegistro.activo_TO
                 });
             };
             if (valuesFormRegistro.precioHora_CR) {
@@ -3420,7 +3406,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     tipoServiciofijo: 'CRIS',
                     precioHora_CR: parseFloat(valuesFormRegistro.precioHora_CR),
                     variacion_CR: parseFloat(valuesFormRegistro.variacion_CR),
-                    diaVariacion_CR: valuesFormRegistro.diaVariacion_CR
+                    diaVariacion_CR: valuesFormRegistro.variacion_CR !== 3 ? valuesFormRegistro.diaVariacion_CR : '',
+                    activo_CR: valuesFormRegistro.activo_CR
                 });
             };
             if (valuesFormRegistro.precioHora_CE) {
@@ -3428,7 +3415,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     tipoServiciofijo: 'CRISE',
                     precioHora_CE: parseFloat(valuesFormRegistro.precioHora_CE),
                     variacion_CE: parseFloat(valuesFormRegistro.variacion_CE),
-                    diaVariacion_CE: valuesFormRegistro.diaVariacion_CE
+                    diaVariacion_CE: valuesFormRegistro.variacion_CE !== 3 ? valuesFormRegistro.diaVariacion_CE : '',
+                    activo_CE: valuesFormRegistro.activo_CE
                 });
             };
             if (valuesFormRegistro.precioHora_CI) {
@@ -3436,7 +3424,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     tipoServiciofijo: 'CRISI',
                     precioHora_CI: parseFloat(valuesFormRegistro.precioHora_CI),
                     variacion_CI: parseFloat(valuesFormRegistro.variacion_CI),
-                    diaVariacion_CI: valuesFormRegistro.diaVariacion_CI
+                    diaVariacion_CI: valuesFormRegistro.variacion_CI !== 3 ? valuesFormRegistro.diaVariacion_CI : '',
+                    activo_CI: valuesFormRegistro.activo_CI
                 });
             };
             if (valuesFormRegistro.precioHora_MO) {
@@ -3444,7 +3433,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     tipoServiciofijo: 'MOQ',
                     precioHora_MO: parseFloat(valuesFormRegistro.precioHora_MO),
                     variacion_MO: parseFloat(valuesFormRegistro.variacion_MO),
-                    diaVariacion_MO: valuesFormRegistro.diaVariacion_MO
+                    diaVariacion_MO: valuesFormRegistro.variacion_MO !== 3 ? valuesFormRegistro.diaVariacion_MO : '',
+                    activo_MO: valuesFormRegistro.activo_MO
                 });
             };
             if (valuesFormRegistro.precioHora_OF) {
@@ -3452,7 +3442,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     tipoServiciofijo: 'OF',
                     precioHora_OF: parseFloat(valuesFormRegistro.precioHora_OF),
                     variacion_OF: parseFloat(valuesFormRegistro.variacion_OF),
-                    diaVariacion_OF: valuesFormRegistro.diaVariacion_OF
+                    diaVariacion_OF: valuesFormRegistro.variacion_OF !== 3 ? valuesFormRegistro.diaVariacion_OF : '',
+                    activo_OF: valuesFormRegistro.activo_OF
                 });
             };
             if (valuesFormRegistro.precioHora_AL) {
@@ -3460,7 +3451,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     tipoServiciofijo: 'ALMC',
                     precioHora_AL: parseFloat(valuesFormRegistro.precioHora_AL),
                     variacion_AL: parseFloat(valuesFormRegistro.variacion_AL),
-                    diaVariacion_AL: valuesFormRegistro.diaVariacion_AL
+                    diaVariacion_AL: valuesFormRegistro.variacion_AL !== 3 ? valuesFormRegistro.diaVariacion_AL : '',
+                    activo_AL: valuesFormRegistro.activo_AL
                 });
             };
             if (valuesFormRegistro.precioHora_LA) {
@@ -3468,7 +3460,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     tipoServiciofijo: 'LAB',
                     precioHora_LA: parseFloat(valuesFormRegistro.precioHora_LA),
                     variacion_LA: parseFloat(valuesFormRegistro.variacion_LA),
-                    diaVariacion_LA: valuesFormRegistro.diaVariacion_LA
+                    diaVariacion_LA: valuesFormRegistro.variacion_LA !== 3 ? valuesFormRegistro.diaVariacion_LA : '',
+                    activo_LA: valuesFormRegistro.activo_LA
                 });
             };
             if (valuesFormRegistro.precioHora_TE) {
@@ -3476,7 +3469,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     tipoServiciofijo: 'TELÑ',
                     precioHora_TE: parseFloat(valuesFormRegistro.precioHora_TE),
                     variacion_TE: parseFloat(valuesFormRegistro.variacion_TE),
-                    diaVariacion_TE: valuesFormRegistro.diaVariacion_TE
+                    diaVariacion_TE: valuesFormRegistro.variacion_TE !== 3 ? valuesFormRegistro.diaVariacion_TE : '',
+                    activo_TE: valuesFormRegistro.activo_TE
                 });
             };
             if (valuesFormRegistro.precioHora_FI) {
@@ -3484,7 +3478,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     tipoServiciofijo: 'FCH.IN',
                     precioHora_FI: parseFloat(valuesFormRegistro.precioHora_FI),
                     variacion_FI: parseFloat(valuesFormRegistro.variacion_FI),
-                    diaVariacion_FI: valuesFormRegistro.diaVariacion_FI
+                    diaVariacion_FI: valuesFormRegistro.variacion_FI !== 3 ? valuesFormRegistro.diaVariacion_FI : '',
+                    activo_FI: valuesFormRegistro.activo_FI
                 });
             };
             if (valuesFormRegistro.precioHora_FE) {
@@ -3492,7 +3487,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     tipoServiciofijo: 'FCH.EX',
                     precioHora_FE: parseFloat(valuesFormRegistro.precioHora_FE),
                     variacion_FE: parseFloat(valuesFormRegistro.variacion_FE),
-                    diaVariacion_FE: valuesFormRegistro.diaVariacion_FE
+                    diaVariacion_FE: valuesFormRegistro.variacion_FE !== 3 ? valuesFormRegistro.diaVariacion_FE : '',
+                    activo_FE: valuesFormRegistro.activo_FE
                 });
             };
             if (valuesFormRegistro.precioHora_AB) {
@@ -3500,7 +3496,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     tipoServiciofijo: 'ABRLL',
                     precioHora_AB: parseFloat(valuesFormRegistro.precioHora_AB),
                     variacion_AB: parseFloat(valuesFormRegistro.variacion_AB),
-                    diaVariacion_AB: valuesFormRegistro.diaVariacion_AB
+                    diaVariacion_AB: valuesFormRegistro.variacion_AB !== 3 ? valuesFormRegistro.diaVariacion_AB : '',
+                    activo_AB: valuesFormRegistro.activo_AB
                 });
             };
             if (valuesFormRegistro.precioHora_MA) {
@@ -3508,7 +3505,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     tipoServiciofijo: 'MANT',
                     precioHora_MA: parseFloat(valuesFormRegistro.precioHora_MA),
                     variacion_MA: parseFloat(valuesFormRegistro.variacion_MA),
-                    diaVariacion_MA: valuesFormRegistro.diaVariacion_MA
+                    diaVariacion_MA: valuesFormRegistro.variacion_MA !== 3 ? valuesFormRegistro.diaVariacion_MA : '',
+                    activo_MA: valuesFormRegistro.activo_MA
                 });
             };
             if (valuesFormRegistro.precioHora_PO) {
@@ -3516,7 +3514,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     tipoServiciofijo: 'PORT',
                     precioHora_PO: parseFloat(valuesFormRegistro.precioHora_PO),
                     variacion_PO: parseFloat(valuesFormRegistro.variacion_PO),
-                    diaVariacion_PO: valuesFormRegistro.diaVariacion_PO
+                    diaVariacion_PO: valuesFormRegistro.variacion_PO !== 3 ? valuesFormRegistro.diaVariacion_PO : '',
+                    activo_PO: valuesFormRegistro.activo_PO
                 });
             };
             if (valuesFormRegistro.precioHora_BA) {
@@ -3524,7 +3523,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     tipoServiciofijo: 'BACT',
                     precioHora_BA: parseFloat(valuesFormRegistro.precioHora_BA),
                     variacion_BA: parseFloat(valuesFormRegistro.variacion_BA),
-                    diaVariacion_BA: valuesFormRegistro.diaVariacion_BA
+                    diaVariacion_BA: valuesFormRegistro.variacion_BA !== 3 ? valuesFormRegistro.diaVariacion_BA : '',
+                    activo_BA: valuesFormRegistro.activo_BA
                 });
             };
             if (valuesFormRegistro.precioHora_FT) {
@@ -3532,7 +3532,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     tipoServiciofijo: 'FEST',
                     precioHora_FT: parseFloat(valuesFormRegistro.precioHora_FT),
                     variacion_FT: parseFloat(valuesFormRegistro.variacion_FT),
-                    diaVariacion_FT: valuesFormRegistro.diaVariacion_FT
+                    diaVariacion_FT: valuesFormRegistro.variacion_FT !== 3 ? valuesFormRegistro.diaVariacion_FT : '',
+                    activo_FT: valuesFormRegistro.activo_FT
                 });
             };
             if (serviciosFijosRegistro.servicio.length === 0) {
@@ -3825,7 +3826,23 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 diaVariacion_MA: '',
                 diaVariacion_PO: '',
                 diaVariacion_BA: '',
-                diaVariacion_FT: ''
+                diaVariacion_FT: '',
+                activo_TO: 'si',
+                activo_CR: 'si',
+                activo_CE: 'si',
+                activo_CI: 'si',
+                activo_MO: 'si',
+                activo_OF: 'si',
+                activo_AL: 'si',
+                activo_LA: 'si',
+                activo_TE: 'si',
+                activo_FI: 'si',
+                activo_FE: 'si',
+                activo_AB: 'si',
+                activo_MA: 'si',
+                activo_PO: 'si',
+                activo_BA: 'si',
+                activo_FT: 'si'
             });
             setValuesFormRegistroGenerales({
                 id: null,
@@ -3912,7 +3929,23 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 diaVariacion_MA: '',
                 diaVariacion_PO: '',
                 diaVariacion_BA: '',
-                diaVariacion_FT: ''
+                diaVariacion_FT: '',
+                activo_TO: 'si',
+                activo_CR: 'si',
+                activo_CE: 'si',
+                activo_CI: 'si',
+                activo_MO: 'si',
+                activo_OF: 'si',
+                activo_AL: 'si',
+                activo_LA: 'si',
+                activo_TE: 'si',
+                activo_FI: 'si',
+                activo_FE: 'si',
+                activo_AB: 'si',
+                activo_MA: 'si',
+                activo_PO: 'si',
+                activo_BA: 'si',
+                activo_FT: 'si'
             });
         };
         setValueTimePickerInicioRegistro([
@@ -4531,7 +4564,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
     };
 
     const retornaTipoServicioFijoRegistro = (tipo, index) => {
-        let checkeado, laLabelSw, laLabelIn, elId, elValue, laLabelWi, elPrecioHora, laClase, elValueVariaciones, laVariacion, elValueDia, elDia;
+        let checkeado, laLabelSw, laLabelIn, elId, elValue, laLabelWi, elPrecioHora, laClase, elValueVariaciones, laVariacion, elValueDia, elDia, elValueActivo, elActivo, desactivadoDia;
         switch (tipo.value) {
             case 'TOL':
                 checkeado = stateSwitchTipoServicioFijoRegistro.TO;
@@ -4541,11 +4574,18 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 elValue = valuesFormRegistro.precioHora_TO || '';
                 elValueVariaciones = valuesFormRegistro.variacion_TO || '';
                 elValueDia = valuesFormRegistro.diaVariacion_TO || '';
+                elValueActivo = valuesFormRegistro.activo_TO || '';
                 laLabelWi = 90;
                 elPrecioHora = 'precioHora_TO';
                 laVariacion = 'variacion_TO';
                 elDia = 'diaVariacion_TO';
-                laClase = valuesFormRegistro.precioHora_TO && valuesFormRegistro.variacion_TO ? classes.fondoGrisClaro : classes.paper;
+                elActivo = 'activo_TO';
+                laClase =
+                    (valuesFormRegistro.activo_TO === 'no') ?
+                        classes.fondoInactivoServicioFijo :
+                        (valuesFormRegistro.precioHora_TO && valuesFormRegistro.variacion_TO) ?
+                            classes.fondoGrisClaro : classes.paper;
+                desactivadoDia = valuesFormRegistro.variacion_TO === 3 ? true : false;
                 break;
             case 'CRIS':
                 checkeado = stateSwitchTipoServicioFijoRegistro.CR;
@@ -4555,11 +4595,18 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 elValue = valuesFormRegistro.precioHora_CR || '';
                 elValueVariaciones = valuesFormRegistro.variacion_CR || '';
                 elValueDia = valuesFormRegistro.diaVariacion_CR || '';
+                elValueActivo = valuesFormRegistro.activo_CR || '';
                 laLabelWi = 100;
                 elPrecioHora = 'precioHora_CR';
                 laVariacion = 'variacion_CR';
                 elDia = 'diaVariacion_CR';
-                laClase = valuesFormRegistro.precioHora_CR && valuesFormRegistro.variacion_CR ? classes.fondoGrisClaro : classes.paper;
+                elActivo = 'activo_CR';
+                laClase =
+                    (valuesFormRegistro.activo_CR === 'no') ?
+                        classes.fondoInactivoServicioFijo :
+                        (valuesFormRegistro.precioHora_CR && valuesFormRegistro.variacion_CR) ?
+                            classes.fondoGrisClaro : classes.paper;
+                desactivadoDia = valuesFormRegistro.variacion_CR === 3 ? true : false;
                 break;
             case 'CRISE':
                 checkeado = stateSwitchTipoServicioFijoRegistro.CE;
@@ -4569,11 +4616,18 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 elValue = valuesFormRegistro.precioHora_CE || '';
                 elValueVariaciones = valuesFormRegistro.variacion_CE || '';
                 elValueDia = valuesFormRegistro.diaVariacion_CE || '';
+                elValueActivo = valuesFormRegistro.activo_CE || '';
                 laLabelWi = 110;
                 elPrecioHora = 'precioHora_CE';
                 laVariacion = 'variacion_CE';
                 elDia = 'diaVariacion_CE';
-                laClase = valuesFormRegistro.precioHora_CE && valuesFormRegistro.variacion_CE ? classes.fondoGrisClaro : classes.paper;
+                elActivo = 'activo_CE';
+                laClase =
+                    (valuesFormRegistro.activo_CE === 'no') ?
+                        classes.fondoInactivoServicioFijo :
+                        (valuesFormRegistro.precioHora_CE && valuesFormRegistro.variacion_CE) ?
+                            classes.fondoGrisClaro : classes.paper;
+                desactivadoDia = valuesFormRegistro.variacion_CE === 3 ? true : false;
                 break;
             case 'CRISI':
                 checkeado = stateSwitchTipoServicioFijoRegistro.CI;
@@ -4583,11 +4637,18 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 elValue = valuesFormRegistro.precioHora_CI || '';
                 elValueVariaciones = valuesFormRegistro.variacion_CI || '';
                 elValueDia = valuesFormRegistro.diaVariacion_CI || '';
+                elValueActivo = valuesFormRegistro.activo_CI || '';
                 laLabelWi = 105;
                 elPrecioHora = 'precioHora_CI';
                 laVariacion = 'variacion_CI';
                 elDia = 'diaVariacion_CI';
-                laClase = valuesFormRegistro.precioHora_CI && valuesFormRegistro.variacion_CI ? classes.fondoGrisClaro : classes.paper;
+                elActivo = 'activo_CI';
+                laClase =
+                    (valuesFormRegistro.activo_CI === 'no') ?
+                        classes.fondoInactivoServicioFijo :
+                        (valuesFormRegistro.precioHora_CI && valuesFormRegistro.variacion_CI) ?
+                            classes.fondoGrisClaro : classes.paper;
+                desactivadoDia = valuesFormRegistro.variacion_CI === 3 ? true : false;
                 break;
             case 'MOQ':
                 checkeado = stateSwitchTipoServicioFijoRegistro.MO;
@@ -4597,11 +4658,18 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 elValue = valuesFormRegistro.precioHora_MO || '';
                 elValueVariaciones = valuesFormRegistro.variacion_MO || '';
                 elValueDia = valuesFormRegistro.diaVariacion_MO || '';
+                elValueActivo = valuesFormRegistro.activo_MO || '';
                 laLabelWi = 95;
                 elPrecioHora = 'precioHora_MO';
                 laVariacion = 'variacion_MO';
                 elDia = 'diaVariacion_MO';
-                laClase = valuesFormRegistro.precioHora_MO && valuesFormRegistro.variacion_MO ? classes.fondoGrisClaro : classes.paper;
+                elActivo = 'activo_MO';
+                laClase =
+                    (valuesFormRegistro.activo_MO === 'no') ?
+                        classes.fondoInactivoServicioFijo :
+                        (valuesFormRegistro.precioHora_MO && valuesFormRegistro.variacion_MO) ?
+                            classes.fondoGrisClaro : classes.paper;
+                desactivadoDia = valuesFormRegistro.variacion_MO === 3 ? true : false;
                 break;
             case 'OF':
                 checkeado = stateSwitchTipoServicioFijoRegistro.OF;
@@ -4611,11 +4679,18 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 elValue = valuesFormRegistro.precioHora_OF || '';
                 elValueVariaciones = valuesFormRegistro.variacion_OF || '';
                 elValueDia = valuesFormRegistro.diaVariacion_OF || '';
+                elValueActivo = valuesFormRegistro.activo_OF || '';
                 laLabelWi = 80;
                 elPrecioHora = 'precioHora_OF';
                 laVariacion = 'variacion_OF';
                 elDia = 'diaVariacion_OF';
-                laClase = valuesFormRegistro.precioHora_OF && valuesFormRegistro.variacion_OF ? classes.fondoGrisClaro : classes.paper;
+                elActivo = 'activo_OF';
+                laClase =
+                    (valuesFormRegistro.activo_OF === 'no') ?
+                        classes.fondoInactivoServicioFijo :
+                        (valuesFormRegistro.precioHora_OF && valuesFormRegistro.variacion_OF) ?
+                            classes.fondoGrisClaro : classes.paper;
+                desactivadoDia = valuesFormRegistro.variacion_OF === 3 ? true : false;
                 break;
             case 'ALMC':
                 checkeado = stateSwitchTipoServicioFijoRegistro.AL;
@@ -4625,11 +4700,18 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 elValue = valuesFormRegistro.precioHora_AL || '';
                 elValueVariaciones = valuesFormRegistro.variacion_AL || '';
                 elValueDia = valuesFormRegistro.diaVariacion_AL || '';
+                elValueActivo = valuesFormRegistro.activo_AL || '';
                 laLabelWi = 100;
                 elPrecioHora = 'precioHora_AL';
                 laVariacion = 'variacion_AL';
                 elDia = 'diaVariacion_AL';
-                laClase = valuesFormRegistro.precioHora_AL && valuesFormRegistro.variacion_AL ? classes.fondoGrisClaro : classes.paper;
+                elActivo = 'activo_AL';
+                laClase =
+                    (valuesFormRegistro.activo_AL === 'no') ?
+                        classes.fondoInactivoServicioFijo :
+                        (valuesFormRegistro.precioHora_AL && valuesFormRegistro.variacion_AL) ?
+                            classes.fondoGrisClaro : classes.paper;
+                desactivadoDia = valuesFormRegistro.variacion_AL === 3 ? true : false;
                 break;
             case 'LAB':
                 checkeado = stateSwitchTipoServicioFijoRegistro.LA;
@@ -4639,11 +4721,18 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 elValue = valuesFormRegistro.precioHora_LA || '';
                 elValueVariaciones = valuesFormRegistro.variacion_LA || '';
                 elValueDia = valuesFormRegistro.diaVariacion_LA || '';
+                elValueActivo = valuesFormRegistro.activo_LA || '';
                 laLabelWi = 90;
                 elPrecioHora = 'precioHora_LA';
                 laVariacion = 'variacion_LA';
                 elDia = 'diaVariacion_LA';
-                laClase = valuesFormRegistro.precioHora_LA && valuesFormRegistro.variacion_LA ? classes.fondoGrisClaro : classes.paper;
+                elActivo = 'activo_LA';
+                laClase =
+                    (valuesFormRegistro.activo_LA === 'no') ?
+                        classes.fondoInactivoServicioFijo :
+                        (valuesFormRegistro.precioHora_LA && valuesFormRegistro.variacion_LA) ?
+                            classes.fondoGrisClaro : classes.paper;
+                desactivadoDia = valuesFormRegistro.variacion_LA === 3 ? true : false;
                 break;
             case 'TELÑ':
                 checkeado = stateSwitchTipoServicioFijoRegistro.TE;
@@ -4653,11 +4742,18 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 elValue = valuesFormRegistro.precioHora_TE || '';
                 elValueVariaciones = valuesFormRegistro.variacion_TE || '';
                 elValueDia = valuesFormRegistro.diaVariacion_TE || '';
+                elValueActivo = valuesFormRegistro.activo_TE || '';
                 laLabelWi = 100;
                 elPrecioHora = 'precioHora_TE';
                 laVariacion = 'variacion_TE';
                 elDia = 'diaVariacion_TE';
-                laClase = valuesFormRegistro.precioHora_TE && valuesFormRegistro.variacion_TE ? classes.fondoGrisClaro : classes.paper;
+                elActivo = 'activo_TE';
+                laClase =
+                    (valuesFormRegistro.activo_TE === 'no') ?
+                        classes.fondoInactivoServicioFijo :
+                        (valuesFormRegistro.precioHora_TE && valuesFormRegistro.variacion_TE) ?
+                            classes.fondoGrisClaro : classes.paper;
+                desactivadoDia = valuesFormRegistro.variacion_TE === 3 ? true : false;
                 break;
             case 'FCH.IN':
                 checkeado = stateSwitchTipoServicioFijoRegistro.FI;
@@ -4665,13 +4761,20 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 laLabelIn = 'Precio FCH.IN';
                 elId = 'form-precio-hora_FI-registro';
                 elValue = valuesFormRegistro.precioHora_FI || '';
-                elValueVariaciones = valuesFormRegistro.variacion_FT || '';
-                elValueDia = valuesFormRegistro.diaVariacion_FT || '';
+                elValueVariaciones = valuesFormRegistro.variacion_FI || '';
+                elValueDia = valuesFormRegistro.diaVariacion_FI || '';
+                elValueActivo = valuesFormRegistro.activo_FI || '';
                 laLabelWi = 120;
                 elPrecioHora = 'precioHora_FI';
                 laVariacion = 'variacion_FI';
                 elDia = 'diaVariacion_FI';
-                laClase = valuesFormRegistro.precioHora_FI && valuesFormRegistro.variacion_FI ? classes.fondoGrisClaro : classes.paper;
+                elActivo = 'activo_FI';
+                laClase =
+                    (valuesFormRegistro.activo_FI === 'no') ?
+                        classes.fondoInactivoServicioFijo :
+                        (valuesFormRegistro.precioHora_FI && valuesFormRegistro.variacion_FI) ?
+                            classes.fondoGrisClaro : classes.paper;
+                desactivadoDia = valuesFormRegistro.variacion_FI === 3 ? true : false;
                 break;
             case 'FCH.EX':
                 checkeado = stateSwitchTipoServicioFijoRegistro.FE;
@@ -4681,11 +4784,18 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 elValue = valuesFormRegistro.precioHora_FE || '';
                 elValueVariaciones = valuesFormRegistro.variacion_FE || '';
                 elValueDia = valuesFormRegistro.diaVariacion_FE || '';
+                elValueActivo = valuesFormRegistro.activo_FE || '';
                 laLabelWi = 120;
                 elPrecioHora = 'precioHora_FE';
                 laVariacion = 'variacion_FE';
                 elDia = 'diaVariacion_FE';
-                laClase = valuesFormRegistro.precioHora_FE && valuesFormRegistro.variacion_FE ? classes.fondoGrisClaro : classes.paper;
+                elActivo = 'activo_FE';
+                laClase =
+                    (valuesFormRegistro.activo_FE === 'no') ?
+                        classes.fondoInactivoServicioFijo :
+                        (valuesFormRegistro.precioHora_FE && valuesFormRegistro.variacion_FE) ?
+                            classes.fondoGrisClaro : classes.paper;
+                desactivadoDia = valuesFormRegistro.variacion_FE === 3 ? true : false;
                 break;
             case 'ABRLL':
                 checkeado = stateSwitchTipoServicioFijoRegistro.AB;
@@ -4695,11 +4805,18 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 elValue = valuesFormRegistro.precioHora_AB || '';
                 elValueVariaciones = valuesFormRegistro.variacion_AB || '';
                 elValueDia = valuesFormRegistro.diaVariacion_AB || '';
+                elValueActivo = valuesFormRegistro.activo_AB || '';
                 laLabelWi = 110;
                 elPrecioHora = 'precioHora_AB';
                 laVariacion = 'variacion_AB';
                 elDia = 'diaVariacion_AB';
-                laClase = valuesFormRegistro.precioHora_AB && valuesFormRegistro.variacion_AB ? classes.fondoGrisClaro : classes.paper;
+                elActivo = 'activo_AB';
+                laClase =
+                    (valuesFormRegistro.activo_AB === 'no') ?
+                        classes.fondoInactivoServicioFijo :
+                        (valuesFormRegistro.precioHora_AB && valuesFormRegistro.variacion_AB) ?
+                            classes.fondoGrisClaro : classes.paper;
+                desactivadoDia = valuesFormRegistro.variacion_AB === 3 ? true : false;
                 break;
             case 'MANT':
                 checkeado = stateSwitchTipoServicioFijoRegistro.MA;
@@ -4709,11 +4826,18 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 elValue = valuesFormRegistro.precioHora_MA || '';
                 elValueVariaciones = valuesFormRegistro.variacion_MA || '';
                 elValueDia = valuesFormRegistro.diaVariacion_MA || '';
+                elValueActivo = valuesFormRegistro.activo_MA || '';
                 laLabelWi = 105;
                 elPrecioHora = 'precioHora_MA';
                 laVariacion = 'variacion_MA';
                 elDia = 'diaVariacion_MA';
-                laClase = valuesFormRegistro.precioHora_MA && valuesFormRegistro.variacion_MA ? classes.fondoGrisClaro : classes.paper;
+                elActivo = 'activo_MA';
+                laClase =
+                    (valuesFormRegistro.activo_MA === 'no') ?
+                        classes.fondoInactivoServicioFijo :
+                        (valuesFormRegistro.precioHora_MA && valuesFormRegistro.variacion_MA) ?
+                            classes.fondoGrisClaro : classes.paper;
+                desactivadoDia = valuesFormRegistro.variacion_MA === 3 ? true : false;
                 break;
             case 'PORT':
                 checkeado = stateSwitchTipoServicioFijoRegistro.PO;
@@ -4723,11 +4847,18 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 elValue = valuesFormRegistro.precioHora_PO || '';
                 elValueVariaciones = valuesFormRegistro.variacion_PO || '';
                 elValueDia = valuesFormRegistro.diaVariacion_PO || '';
+                elValueActivo = valuesFormRegistro.activo_PO || '';
                 laLabelWi = 100;
                 elPrecioHora = 'precioHora_PO';
                 laVariacion = 'variacion_PO';
                 elDia = 'diaVariacion_PO';
-                laClase = valuesFormRegistro.precioHora_PO && valuesFormRegistro.variacion_PO ? classes.fondoGrisClaro : classes.paper;
+                elActivo = 'activo_PO';
+                laClase =
+                    (valuesFormRegistro.activo_PO === 'no') ?
+                        classes.fondoInactivoServicioFijo :
+                        (valuesFormRegistro.precioHora_PO && valuesFormRegistro.variacion_PO) ?
+                            classes.fondoGrisClaro : classes.paper;
+                desactivadoDia = valuesFormRegistro.variacion_PO === 3 ? true : false;
                 break;
             case 'BACT':
                 checkeado = stateSwitchTipoServicioFijoRegistro.BA;
@@ -4737,11 +4868,18 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 elValue = valuesFormRegistro.precioHora_BA || '';
                 elValueVariaciones = valuesFormRegistro.variacion_BA || '';
                 elValueDia = valuesFormRegistro.diaVariacion_BA || '';
+                elValueActivo = valuesFormRegistro.activo_BA || '';
                 laLabelWi = 100;
                 elPrecioHora = 'precioHora_BA';
                 laVariacion = 'variacion_BA';
                 elDia = 'diaVariacion_BA';
-                laClase = valuesFormRegistro.precioHora_BA && valuesFormRegistro.variacion_BA ? classes.fondoGrisClaro : classes.paper;
+                elActivo = 'activo_BA';
+                laClase =
+                    (valuesFormRegistro.activo_BA === 'no') ?
+                        classes.fondoInactivoServicioFijo :
+                        (valuesFormRegistro.precioHora_BA && valuesFormRegistro.variacion_BA) ?
+                            classes.fondoGrisClaro : classes.paper;
+                desactivadoDia = valuesFormRegistro.variacion_BA === 3 ? true : false;
                 break;
             case 'FEST':
                 checkeado = stateSwitchTipoServicioFijoRegistro.FT;
@@ -4751,11 +4889,18 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 elValue = valuesFormRegistro.precioHora_FT || '';
                 elValueVariaciones = valuesFormRegistro.variacion_FT || '';
                 elValueDia = valuesFormRegistro.diaVariacion_FT || '';
+                elValueActivo = valuesFormRegistro.activo_FT || '';
                 laLabelWi = 100;
                 elPrecioHora = 'precioHora_FT';
                 laVariacion = 'variacion_FT';
                 elDia = 'diaVariacion_FT';
-                laClase = valuesFormRegistro.precioHora_FT && valuesFormRegistro.variacion_FT ? classes.fondoGrisClaro : classes.paper;
+                elActivo = 'activo_FT';
+                laClase =
+                    (valuesFormRegistro.activo_FT === 'no') ?
+                        classes.fondoInactivoServicioFijo :
+                        (valuesFormRegistro.precioHora_FT && valuesFormRegistro.variacion_FT) ?
+                            classes.fondoGrisClaro : classes.paper;
+                desactivadoDia = valuesFormRegistro.variacion_FT === 3 ? true : false;
                 break;
             default:
         };
@@ -4763,14 +4908,13 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             <Grid
                 container
                 direction="row"
-                justifycontent="flex-start"
                 alignItems="center"
-                spacing={2}
+                spacing={1}
                 className={laClase}
                 style={{ height: 80, paddingTop: 5, paddingBottom: 10, paddingRight: 10, paddingLeft: 10, marginBottom: 15 }}
                 key={'formServicio' + index}
             >
-                <Grid item xs={5} >
+                <Grid item item xs={4}>
                     <FormControlLabel
                         control={
                             <Switch
@@ -4782,6 +4926,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                         }
                         label={<Typography variant="body2">{laLabelSw}</Typography>}
                         labelPlacement="end"
+                        style={{ marginTop: 5 }}
                     />
                 </Grid>
                 <Grid item xs={2}>
@@ -4789,6 +4934,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                         variant="outlined"
                         className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
                         size="small"
+                        style={{ marginTop: 5 }}
                     >
                         <InputLabel>{laLabelIn}</InputLabel>
                         <OutlinedInput
@@ -4806,6 +4952,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                         variant="outlined"
                         className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
                         size="small"
+                        style={{ marginTop: 5 }}
                     >
                         <InputLabel>Variaciones</InputLabel>
                         <Select
@@ -4828,6 +4975,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                         variant="outlined"
                         className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
                         size="small"
+                        style={{ marginRight: 10, marginTop: 5 }}
                     >
                         <InputLabel>Día</InputLabel>
                         <Select
@@ -4836,6 +4984,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                             onChange={handleChangeFormRegistro(elDia)}
                             helpertext="Selecciona Día"
                             label="Día"
+                            disabled={desactivadoDia}
                         >
                             <MenuItem value=''>
                                 <em>No</em>
@@ -4847,6 +4996,37 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                             ))}
                         </Select>
                     </FormControl>
+                </Grid>
+                <Grid item xs={1}>
+                    <RadioGroup
+                        value={elValueActivo}
+                        onChange={handleChangeFormRegistro(elActivo)}
+                        className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
+                        style={{ marginTop: -5, marginBottom: -10 }}
+                    >
+                        <FormControlLabel
+                            value="si"
+                            control={
+                                <Radio
+                                    size='small'
+                                />
+                            }
+                            label={<Typography style={{ fontSize: '0.7rem', marginLeft: -5 }}>ON</Typography>}
+                            labelPlacement="end"
+                            style={{ marginBottom: -20 }}
+
+                        />
+                        <FormControlLabel
+                            value="no"
+                            control={
+                                <Radio
+                                    size='small'
+                                />
+                            }
+                            label={<Typography style={{ fontSize: '0.7rem', marginLeft: -5 }}>OFF</Typography>}
+                            labelPlacement="end"
+                        />
+                    </RadioGroup>
                 </Grid>
             </Grid>
         )
@@ -5007,8 +5187,23 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             diaVariacion_MA: '',
             diaVariacion_PO: '',
             diaVariacion_BA: '',
-            diaVariacion_FT: ''
-
+            diaVariacion_FT: '',
+            activo_TO: 'si',
+            activo_CR: 'si',
+            activo_CE: 'si',
+            activo_CI: 'si',
+            activo_MO: 'si',
+            activo_OF: 'si',
+            activo_AL: 'si',
+            activo_LA: 'si',
+            activo_TE: 'si',
+            activo_FI: 'si',
+            activo_FE: 'si',
+            activo_AB: 'si',
+            activo_MA: 'si',
+            activo_PO: 'si',
+            activo_BA: 'si',
+            activo_FT: 'si'
         };
         let objetoEstadosSwitch = {
             TO: false,
@@ -5034,96 +5229,112 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     myObjetoServiciosFijos.precioHora_TO = servicio.precioHora_TO;
                     myObjetoServiciosFijos.variacion_TO = servicio.variacion_TO;
                     myObjetoServiciosFijos.diaVariacion_TO = servicio.diaVariacion_TO;
+                    myObjetoServiciosFijos.activo_TO = servicio.activo_TO;
                     objetoEstadosSwitch.TO = true;
                 };
                 if (servicio.precioHora_CR) {
                     myObjetoServiciosFijos.precioHora_CR = servicio.precioHora_CR;
                     myObjetoServiciosFijos.variacion_CR = servicio.variacion_CR;
                     myObjetoServiciosFijos.diaVariacion_CR = servicio.diaVariacion_CR;
+                    myObjetoServiciosFijos.activo_CR = servicio.activo_CR;
                     objetoEstadosSwitch.CR = true;
                 };
                 if (servicio.precioHora_CE) {
                     myObjetoServiciosFijos.precioHora_CE = servicio.precioHora_CE;
                     myObjetoServiciosFijos.variacion_CE = servicio.variacion_CE;
                     myObjetoServiciosFijos.diaVariacion_CE = servicio.diaVariacion_CE;
+                    myObjetoServiciosFijos.activo_CE = servicio.activo_CE;
                     objetoEstadosSwitch.CE = true;
                 };
                 if (servicio.precioHora_CI) {
                     myObjetoServiciosFijos.precioHora_CI = servicio.precioHora_CI;
                     myObjetoServiciosFijos.variacion_CI = servicio.variacion_CI;
                     myObjetoServiciosFijos.diaVariacion_CI = servicio.diaVariacion_CI;
+                    myObjetoServiciosFijos.activo_CI = servicio.activo_CI;
                     objetoEstadosSwitch.CI = true;
                 };
                 if (servicio.precioHora_MO) {
                     myObjetoServiciosFijos.precioHora_MO = servicio.precioHora_MO;
                     myObjetoServiciosFijos.variacion_MO = servicio.variacion_MO;
                     myObjetoServiciosFijos.diaVariacion_MO = servicio.diaVariacion_MO;
+                    myObjetoServiciosFijos.activo_MO = servicio.activo_MO;
                     objetoEstadosSwitch.MO = true;
                 };
                 if (servicio.precioHora_OF) {
                     myObjetoServiciosFijos.precioHora_OF = servicio.precioHora_OF;
                     myObjetoServiciosFijos.variacion_OF = servicio.variacion_OF;
                     myObjetoServiciosFijos.diaVariacion_OF = servicio.diaVariacion_OF;
+                    myObjetoServiciosFijos.activo_OF = servicio.activo_OF;
                     objetoEstadosSwitch.OF = true;
                 };
                 if (servicio.precioHora_AL) {
                     myObjetoServiciosFijos.precioHora_AL = servicio.precioHora_AL;
                     myObjetoServiciosFijos.variacion_AL = servicio.variacion_AL;
                     myObjetoServiciosFijos.diaVariacion_AL = servicio.diaVariacion_AL;
+                    myObjetoServiciosFijos.activo_AL = servicio.activo_AL;
                     objetoEstadosSwitch.AL = true;
                 };
                 if (servicio.precioHora_LA) {
                     myObjetoServiciosFijos.precioHora_LA = servicio.precioHora_LA;
                     myObjetoServiciosFijos.variacion_LA = servicio.variacion_LA;
                     myObjetoServiciosFijos.diaVariacion_LA = servicio.diaVariacion_LA;
+                    myObjetoServiciosFijos.activo_LA = servicio.activo_LA;
                     objetoEstadosSwitch.LA = true;
                 };
                 if (servicio.precioHora_TE) {
                     myObjetoServiciosFijos.precioHora_TE = servicio.precioHora_TE;
                     myObjetoServiciosFijos.variacion_TE = servicio.variacion_TE;
                     myObjetoServiciosFijos.diaVariacion_TE = servicio.diaVariacion_TE;
+                    myObjetoServiciosFijos.activo_TE = servicio.activo_TE
                     objetoEstadosSwitch.TE = true;
                 };
                 if (servicio.precioHora_FI) {
                     myObjetoServiciosFijos.precioHora_FI = servicio.precioHora_FI;
                     myObjetoServiciosFijos.variacion_FI = servicio.variacion_FI;
                     myObjetoServiciosFijos.diaVariacion_FI = servicio.diaVariacion_FI;
+                    myObjetoServiciosFijos.activo_FI = servicio.activo_FI;
                     objetoEstadosSwitch.FI = true;
                 };
                 if (servicio.precioHora_FE) {
                     myObjetoServiciosFijos.precioHora_FE = servicio.precioHora_FE;
                     myObjetoServiciosFijos.variacion_FE = servicio.variacion_FE;
                     myObjetoServiciosFijos.diaVariacion_FE = servicio.diaVariacion_FE;
+                    myObjetoServiciosFijos.activo_FE = servicio.activo_FE;
                     objetoEstadosSwitch.FE = true;
                 };
                 if (servicio.precioHora_AB) {
                     myObjetoServiciosFijos.precioHora_AB = servicio.precioHora_AB;
                     myObjetoServiciosFijos.variacion_AB = servicio.variacion_AB;
                     myObjetoServiciosFijos.diaVariacion_AB = servicio.diaVariacion_AB;
+                    myObjetoServiciosFijos.activo_AB = servicio.activo_AB;
                     objetoEstadosSwitch.AB = true;
                 };
                 if (servicio.precioHora_MA) {
                     myObjetoServiciosFijos.precioHora_MA = servicio.precioHora_MA;
                     myObjetoServiciosFijos.variacion_MA = servicio.variacion_MA;
                     myObjetoServiciosFijos.diaVariacion_MA = servicio.diaVariacion_MA;
+                    myObjetoServiciosFijos.activo_MA = servicio.activo_MA;
                     objetoEstadosSwitch.MA = true;
                 };
                 if (servicio.precioHora_PO) {
                     myObjetoServiciosFijos.precioHora_PO = servicio.precioHora_PO;
                     myObjetoServiciosFijos.variacion_PO = servicio.variacion_PO;
                     myObjetoServiciosFijos.diaVariacion_PO = servicio.diaVariacion_PO;
+                    myObjetoServiciosFijos.activo_PO = servicio.activo_PO;
                     objetoEstadosSwitch.PO = true;
                 };
                 if (servicio.precioHora_BA) {
                     myObjetoServiciosFijos.precioHora_BA = servicio.precioHora_BA;
                     myObjetoServiciosFijos.variacion_BA = servicio.variacion_BA;
                     myObjetoServiciosFijos.diaVariacion_BA = servicio.diaVariacion_BA;
+                    myObjetoServiciosFijos.activo_BA = servicio.activo_BA;
                     objetoEstadosSwitch.BA = true;
                 };
                 if (servicio.precioHora_FT) {
                     myObjetoServiciosFijos.precioHora_FT = servicio.precioHora_FT;
                     myObjetoServiciosFijos.variacion_FT = servicio.variacion_FT;
                     myObjetoServiciosFijos.diaVariacion_FT = servicio.diaVariacion_FT;
+                    myObjetoServiciosFijos.activo_FT = servicio.activo_FT;
                     objetoEstadosSwitch.FT = true;
                 };
             });
@@ -5193,7 +5404,23 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             diaVariacion_MA: myObjetoServiciosFijos.diaVariacion_MA,
             diaVariacion_PO: myObjetoServiciosFijos.diaVariacion_PO,
             diaVariacion_BA: myObjetoServiciosFijos.diaVariacion_BA,
-            diaVariacion_FT: myObjetoServiciosFijos.diaVariacion_FT
+            diaVariacion_FT: myObjetoServiciosFijos.diaVariacion_FT,
+            activo_TO: myObjetoServiciosFijos.activo_TO,
+            activo_CR: myObjetoServiciosFijos.activo_CR,
+            activo_CE: myObjetoServiciosFijos.activo_CE,
+            activo_CI: myObjetoServiciosFijos.activo_CI,
+            activo_MO: myObjetoServiciosFijos.activo_MO,
+            activo_OF: myObjetoServiciosFijos.activo_OF,
+            activo_AL: myObjetoServiciosFijos.activo_AL,
+            activo_LA: myObjetoServiciosFijos.activo_LA,
+            activo_TE: myObjetoServiciosFijos.activo_TE,
+            activo_FI: myObjetoServiciosFijos.activo_FI,
+            activo_FE: myObjetoServiciosFijos.activo_FE,
+            activo_AB: myObjetoServiciosFijos.activo_AB,
+            activo_MA: myObjetoServiciosFijos.activo_MA,
+            activo_PO: myObjetoServiciosFijos.activo_PO,
+            activo_BA: myObjetoServiciosFijos.activo_BA,
+            activo_FT: myObjetoServiciosFijos.activo_FT
         });
         if (cuadranteAGestionar.horario) {
             if (cuadranteAGestionar.horario.tipo === "rango") {
@@ -6005,7 +6232,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                 <Tabs value={valueTabCentrosRegistro} onChange={handleChangeTabCentrosRegistro} className={classes.tabsStl}>
                                     <Tab label="Trabajadores" {...a11yProps(0)} style={{ paddingBottom: 10 }} />
                                     <Tab label="Horario de intervención" {...a11yProps(1)} style={{ paddingBottom: 10 }} />
-                                    <Tab label="Servicios fijos" {...a11yProps(2)} style={{ paddingBottom: 10 }} />
+                                    <Tab label="Servicios extra" {...a11yProps(2)} style={{ paddingBottom: 10 }} />
                                     <Tab label="Forma de pago" {...a11yProps(3)} style={{ paddingBottom: 10 }} />
                                 </Tabs>
                             </AppBar>
@@ -6229,7 +6456,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                         id="form-precio-hora_N-registro"
                                                         value={valuesFormRegistro.precioHora_N || ''}
                                                         onChange={handleChangeFormRegistro('precioHora_N')}
-                                                        labelWidth={130}
+                                                        labelWidth={140}
                                                         startAdornment={<InputAdornment position="start">€</InputAdornment>}
                                                     />
                                                 </FormControl>
@@ -6454,7 +6681,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     {alert.mensaje}
                 </Alert>
             </Snackbar>
-            {console.log(valuesFormRegistro)}
+            {/* {console.log(valuesFormRegistro)} */}
         </div>
     )
 })

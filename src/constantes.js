@@ -94,8 +94,7 @@ const Constantes = {
         { value: 3, label: 'Farmacias' },
         { value: 4, label: 'Fuera de Barcelona' },
         { value: 5, label: 'Pisos' },
-        { value: 6, label: 'Residencias' },
-        { value: 7, label: 'Cristales' }
+        { value: 6, label: 'Residencias' }
     ],
     CANTIDAD_HORAS_CENTROS: [
         { value: 60, label: '1 hora' },
@@ -185,7 +184,9 @@ const Constantes = {
         { value: 'MANT', label: 'SERVICIO DE MANTENIMIENTO MÁQUINA' },
         { value: 'PORT', label: 'SERVICIO DE LIMPIEZA PORTERÍA' },
         { value: 'BACT', label: 'BOT. NOUBACT' },
-        { value: 'FEST', label: 'SERVICIO DE LIMPIEZA DÍA FESTIVO' }     
+        { value: 'FEST', label: 'SERVICIO DE LIMPIEZA DÍA FESTIVO' },
+        { value: 'CRTRIM', label: 'LIMPIEZA DE CRISTALES TRIMESTRAL' },
+        { value: 'CRBIM', label: 'LIMPIEZA DE CRISTALES BIMENSUAL' }
     ],
     FORMA_DE_PAGO: [
         { value: 'C1', label: 'Cheque bancario a 30 días' },

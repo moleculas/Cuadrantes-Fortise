@@ -13,6 +13,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
+import TextField from '@material-ui/core/TextField';
 
 //importaciones acciones
 import { retornaFormaPagoAccion } from '../redux/cuadrantesDucks';
@@ -39,7 +40,8 @@ const ConfiguracionCuadrante = (props) => {
         precioHora_R: props.prItemEditandoConfiguracion.precioHora_R || '',
         precioHora_L1: props.prItemEditandoConfiguracion.precioHora_L1 || '',
         precioHora_L2: props.prItemEditandoConfiguracion.precioHora_L2 || '',
-        precioHora_F: props.prItemEditandoConfiguracion.precioHora_F || ''
+        precioHora_F: props.prItemEditandoConfiguracion.precioHora_F || '',
+        observaciones: props.prItemEditandoConfiguracion.observaciones || ''
     });
 
     //useEffect
@@ -99,6 +101,20 @@ const ConfiguracionCuadrante = (props) => {
                 </List>
             </Grid>            
                 <Grid item xs={12}>
+                <Box className={classes.mb15}>
+                <TextField
+                    label="Observaciones"
+                    id="form-tipo-cuadrante"
+                    value={props.prItemEditandoConfiguracion.observaciones || ''}
+                    className={classes.form}
+                    fullWidth
+                    placeholder="Observaciones Cuadrante"
+                    multiline
+                    rows={4}
+                    variant="outlined"
+                    onChange={handleChangeFormConfiguracionCuadrante('observaciones')}
+                />
+            </Box>
                     <FormControl
                         variant="outlined"
                         className={classes.form}

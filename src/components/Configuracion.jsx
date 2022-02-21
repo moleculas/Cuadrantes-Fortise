@@ -631,15 +631,15 @@ const Configuracion = (props) => {
                                                                 <br />  
                                                                 <Typography component="span" variant="body2">2.- Añadida sección en fichas centros para gestionar Servicios fijos en cuadrantes que no computan horas.</Typography>                                                              
                                                                 <br />  
-                                                                <Typography component="span" variant="body2">3.- Implementada posibilidad de registrar un centro sin cómputo de horas (siempre y cuando tenga servicios fijos añadidos).</Typography>    
+                                                                <Typography component="span" variant="body2">3.- Implementada posibilidad de registrar un centro sin cómputo de horas (siempre y cuando tenga servicios extra añadidos).</Typography>    
                                                                 <br />  
-                                                                <Typography component="span" variant="body2">4.- Añadida sección servicios fijos en fichas cuadrantes y posibilidad de gestionarlos independientemente de la configuración del centro.</Typography>                                                                                                                        
+                                                                <Typography component="span" variant="body2">4.- Añadida sección servicios extra en fichas cuadrantes y posibilidad de gestionarlos independientemente de la configuración del centro.</Typography>                                                                                                                        
                                                                 <br />  
                                                                 <Typography component="span" variant="body2">5.- Implementada funcionalidad para cambiar el Modo de entrada de datos para columnas trabajadores y posibilidad de gestionarlos independientemente de la configuración del centro.</Typography>   
                                                                 <br />  
                                                                 <Typography component="span" variant="body2">6.- Añadido botón para configuración personalizada en cuadrante y posibilidad de gestionarlo independientemente de la configuración del centro.</Typography>                                                                                                                        
                                                                 <br />  
-                                                                <Typography component="span" variant="body2">7.- Modificada funcionalidad para poder registrar cuadrantes sin trabajadores (siempre y cuando tenga servicios fijos añadidos).</Typography>        
+                                                                <Typography component="span" variant="body2">7.- Modificada funcionalidad para poder registrar cuadrantes sin trabajadores (siempre y cuando tenga servicios extra añadidos).</Typography>        
                                                                 </Fragment>
                                                             }
                                                         />
@@ -659,10 +659,19 @@ const Configuracion = (props) => {
                                                         <ListItemText
                                                             primary="V. 1.05 - 14/02/2022"
                                                             secondary={
+                                                                <Fragment>                                                               
+                                                                <Typography component="span" variant="body2">1.- Implementada funcionalidad de variaciones temporales para servicios extra en fichas centros.</Typography>
+                                                                <br />                                                                            
+                                                                </Fragment>
+                                                            }
+                                                        />
+                                                    </ListItem >
+                                                    <ListItem>
+                                                        <ListItemText
+                                                            primary="V. 1.06 - 18/02/2022"
+                                                            secondary={
                                                                 <Fragment>
-                                                                <Typography component="span" variant="body2">1.- Añadida categoría CRISTALES para gestión fichas centros.</Typography>
-                                                                <br />  
-                                                                <Typography component="span" variant="body2">2.- Implementada funcionalidad de variaciones temporales para servicios fijos en fichas centros.</Typography>
+                                                                <Typography component="span" variant="body2">1.- Implementada funcionalidad para poder añadir servicios extra que no computen en cuadrantes en fichas centros.</Typography>
                                                                 <br />                                                                            
                                                                 </Fragment>
                                                             }
