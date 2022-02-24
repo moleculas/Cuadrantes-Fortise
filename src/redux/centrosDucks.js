@@ -104,7 +104,7 @@ export default function centrosReducer(state = dataInicial, action) {
         case VACIAR_DATOS_CENTRO:
             return { ...state, objetoCentro: action.payload, categoriaPorCentro: '' }
         case CAMBIAR_ESTADO_YA_ESTA_REGISTRADO_CENTRO:
-            return { ...state, estadoYaEstaRegistradoRegistroCentro: action.payload.estado }
+            return { ...state, estadoYaEstaRegistradoRegistroCentro: action.payload.estado }         
         default:
             return { ...state }
     }
@@ -133,7 +133,7 @@ export const obtenerCentrosPorCategoriaAccion = (objeto, categoria) => async (di
             if (hayCategoria) {
                 arrayRespuesta.push(centro);
             };
-        });
+        });       
         arrayRespuesta.sort((a, b) => a.nombre.localeCompare(b.nombre));
         dispatch({
             type: OBTENER_CENTROS_POR_CATEGORIA_EXITO,
@@ -142,7 +142,7 @@ export const obtenerCentrosPorCategoriaAccion = (objeto, categoria) => async (di
                 errorDeCargaCentros: false
             }
         })
-    } catch (error) {
+    } catch (error) {      
         dispatch({
             type: ERROR_DE_CARGA_CENTROS
         })
@@ -265,7 +265,7 @@ export const vaciarDatosCentroAccion = () => (dispatch, getState) => {
     });
 }
 
-export const obtenerCentroAccion = (objeto, id) => async (dispatch, getState) => {
+export const obtenerCentroAccion = (objeto, id) => async (dispatch, getState) => {    
     dispatch({
         type: LOADING_CENTROS
     });
@@ -304,14 +304,14 @@ export const obtenerCentroAccion = (objeto, id) => async (dispatch, getState) =>
                 trabajadores: JSON.parse(res.data.trabajadores),
             }
         });
-    } catch (error) {
+    } catch (error) {        
         dispatch({
             type: ERROR_DE_CARGA_CENTROS
         })
     }
 }
 
-export const obtenerCategoriaPorCentroAccion = (objeto, id) => async (dispatch, getState) => {
+export const obtenerCategoriaPorCentroAccion = (objeto, id, numeroCuadrante) => async (dispatch, getState) => {  
     dispatch({
         type: LOADING_CENTROS
     });
@@ -326,7 +326,7 @@ export const obtenerCategoriaPorCentroAccion = (objeto, id) => async (dispatch, 
             }
         });
         let laCategoriaPre = JSON.parse(res.data.categoria);
-        let laCategoria = laCategoriaPre.categoria[0];
+        let laCategoria = laCategoriaPre.categoria[numeroCuadrante];
         dispatch({
             type: OBTENER_CATEGORIA_POR_CENTRO_EXITO,
             payload: {

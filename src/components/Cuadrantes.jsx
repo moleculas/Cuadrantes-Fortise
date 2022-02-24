@@ -66,9 +66,9 @@ import ConfiguracionCuadrante from './ConfiguracionCuadrante';
 import SwitchServiciosFijos from './SwitchServiciosFijos';
 
 //helpers
-import Helpers_1 from './Helpers_1';
-import Helpers_2 from './Helpers_2';
-import Helpers_3 from './Helpers_3';
+import HelpersLayoutCuadrantes from './HelpersLayoutCuadrantes';
+import HelpersCuadranteServiciosFijos from './HelpersCuadranteServiciosFijos';
+import HelpersCuadranteTrabajadores from './HelpersCuadranteTrabajadores';
 
 //estilos
 import Clases from "../clases";
@@ -185,13 +185,13 @@ const StyledMenu = withStyles({
 const InfoTooltip = withStyles((theme) => ({
     tooltip: {
         backgroundColor: '#ffeb3b',
-        color: 'rgba(0, 0, 0, 0.87)',       
+        color: 'rgba(0, 0, 0, 0.87)',
     },
     arrow: {
-        "&:before": {      
+        "&:before": {
         },
         color: '#ffeb3b',
-      },
+    },
 }))(Tooltip);
 
 const Cuadrantes = (props) => {
@@ -254,18 +254,19 @@ const Cuadrantes = (props) => {
         retornaHeaderServiciosFijosAccion,
         retornoServiciosFijosEnLayoutAccion,
         retornaServiciosFijosEnLayoutAvatarsAccion
-    } = Helpers_1();
+    } = HelpersLayoutCuadrantes();
 
     const {
-        gestionaColumnaServiciosFijosAccion,
+        gestionaColumnaServiciosFijosInicioAccion,
+        gestionaColumnaServiciosFijosCambiosAccion
+    } = HelpersCuadranteServiciosFijos();
+
+    const {
         gestionarInformeAccion,
         limpiarCuadranteAccion,
-        completarCuadranteAccion
-    } = Helpers_2();
-
-    const {
+        completarCuadranteAccion,
         gestionaColumnaCuadranteInteriorAccion
-    } = Helpers_3();
+    } = HelpersCuadranteTrabajadores();
 
     //refs
 
@@ -330,7 +331,6 @@ const Cuadrantes = (props) => {
     const [arrayDatosInforme, setArrayDatosInforme] = useState([]);
     const [arrayInformeLineas, setArrayInformeLineas] = useState([]);
     const [heightScrollable, setHeightScrollable] = useState(getHeightScrollable());
-    const [venimosDeActualizarCentro, setVenimosDeActualizarCentro] = useState(false);
     const [openFacturacion, setOpenFacturacion] = useState(false);
     const [openFacturacionInterior, setOpenFacturacionInterior] = useState(false);
     const [numeroFactusol, setNumeroFactusol] = useState(null);
@@ -354,7 +354,11 @@ const Cuadrantes = (props) => {
         MA: false,
         PO: false,
         BA: false,
-        FT: false
+        FT: false,
+        C3: false,
+        C2: false,
+        ES: false,
+        PA: false,
     });
     const [losServiciosFijos, setLosServiciosFijos] = useState({});
     const [cuadranteVacio, setCuadranteVacio] = useState(false);
@@ -376,7 +380,11 @@ const Cuadrantes = (props) => {
             MA: false,
             PO: false,
             BA: false,
-            FT: false
+            FT: false,
+            C3: false,
+            C2: false,
+            ES: false,
+            PA: false
         },
         servicios: {
             precioHora_TO: '',
@@ -395,6 +403,10 @@ const Cuadrantes = (props) => {
             precioHora_PO: '',
             precioHora_BA: '',
             precioHora_FT: '',
+            precioHora_C3: '',
+            precioHora_C2: '',
+            precioHora_ES: '',
+            precioHora_PA: '',
             variacion_TO: '',
             variacion_CR: '',
             variacion_CE: '',
@@ -411,6 +423,10 @@ const Cuadrantes = (props) => {
             variacion_PO: '',
             variacion_BA: '',
             variacion_FT: '',
+            variacion_C3: '',
+            variacion_C2: '',
+            variacion_ES: '',
+            variacion_PA: '',
             diaVariacion_TO: '',
             diaVariacion_CR: '',
             diaVariacion_CE: '',
@@ -427,6 +443,10 @@ const Cuadrantes = (props) => {
             diaVariacion_PO: '',
             diaVariacion_BA: '',
             diaVariacion_FT: '',
+            diaVariacion_C3: '',
+            diaVariacion_C2: '',
+            diaVariacion_ES: '',
+            diaVariacion_PA: '',
             activo_TO: 'si',
             activo_CR: 'si',
             activo_CE: 'si',
@@ -442,7 +462,11 @@ const Cuadrantes = (props) => {
             activo_MA: 'si',
             activo_PO: 'si',
             activo_BA: 'si',
-            activo_FT: 'si'
+            activo_FT: 'si',
+            activo_C3: 'si',
+            activo_C2: 'si',
+            activo_ES: 'si',
+            activo_PA: 'si'
         }
     });
     const [itemPrevioEditandoConfiguracion, setItemPrevioEditandoConfiguracion] = useState(null);
@@ -468,6 +492,7 @@ const Cuadrantes = (props) => {
     const [dimensionsColumnaServiciosFijos, setDimensionsColumnaServiciosFijos] = useState({ width: 165 });
     const [visibleCuadrante, setVisibleCuadrante] = useState(true);
     const [visibleCuadranteServiciosFijos, setVisibleCuadranteServiciosFijos] = useState(true);
+    const [venimosDeCambioCuadrante, setVenimosDeCambioCuadrante] = useState(false);
 
     //useEffect
 
@@ -516,7 +541,6 @@ const Cuadrantes = (props) => {
             array.push([[i + 1], [dispatch(diaDeLaSemanaAccion(dateStr))]]);
         };
         dispatch(setLosDiasDelMesAccion(array));
-        //setLosDiasDelMes(array);
     }, [calendarioAGestionar]);
 
     useEffect(() => {
@@ -544,7 +568,6 @@ const Cuadrantes = (props) => {
             };
         };
         if (controladorDeEstado === 'venimosDeRegistrar') {
-            //setFirmaActualizacion(objetoCuadrante.actualizacion);
             setControladorDeEstado('inicio');
         };
         if (controladorDeEstado === 'venimosDeInforme') {
@@ -565,17 +588,20 @@ const Cuadrantes = (props) => {
 
     useEffect(() => {
         if (cuadranteRegistrado === 'no') {
-            if (!estadoVenimosDePendientes) {
+            if (!estadoVenimosDePendientes && !venimosDeCambioCuadrante) {
                 dispatch(obtenerCentroAccion('centros', centro));
                 dispatch(cambioEstadoInicioCuadrantesAccion(false));
                 dispatch(activarDesactivarCambioBotonRegistrarAccion(false));
                 dispatch(registrarIntervencionCuadranteNuevoAccion(false));
             };
+            if (venimosDeCambioCuadrante) {
+                setVenimosDeCambioCuadrante(false);
+            };
             dispatch(activarDesactivarCambioBotonResetearAccion(true));
         };
         if (cuadranteRegistrado === 'si') {
             if (!estadoVenimosDeRegistrados) {
-                dispatch(obtenerCentroAccion('centros', centro));
+                gestionaCuadranteIndividual(cuadranteEnUsoCuadrantes);
                 dispatch(cambioEstadoInicioCuadrantesAccion(false));
                 dispatch(activarDesactivarCambioBotonRegistrarAccion(false));
                 dispatch(registrarIntervencionCuadranteNuevoAccion(true));
@@ -604,6 +630,10 @@ const Cuadrantes = (props) => {
             precioHora_PO: null,
             precioHora_BA: null,
             precioHora_FT: null,
+            precioHora_C3: null,
+            precioHora_C2: null,
+            precioHora_ES: null,
+            precioHora_PA: null,
             variacion_TO: '',
             variacion_CR: '',
             variacion_CE: '',
@@ -620,6 +650,10 @@ const Cuadrantes = (props) => {
             variacion_PO: '',
             variacion_BA: '',
             variacion_FT: '',
+            variacion_C3: '',
+            variacion_C2: '',
+            variacion_ES: '',
+            variacion_PA: '',
             diaVariacion_TO: '',
             diaVariacion_CR: '',
             diaVariacion_CE: '',
@@ -636,6 +670,10 @@ const Cuadrantes = (props) => {
             diaVariacion_PO: '',
             diaVariacion_BA: '',
             diaVariacion_FT: '',
+            diaVariacion_C3: '',
+            diaVariacion_C2: '',
+            diaVariacion_ES: '',
+            diaVariacion_PA: '',
             activo_TO: 'si',
             activo_CR: 'si',
             activo_CE: 'si',
@@ -651,7 +689,11 @@ const Cuadrantes = (props) => {
             activo_MA: 'si',
             activo_PO: 'si',
             activo_BA: 'si',
-            activo_FT: 'si'
+            activo_FT: 'si',
+            activo_C3: 'si',
+            activo_C2: 'si',
+            activo_ES: 'si',
+            activo_PA: 'si'
         };
         let objetoEstadosSwitch = {
             TO: false,
@@ -669,7 +711,11 @@ const Cuadrantes = (props) => {
             MA: false,
             PO: false,
             BA: false,
-            FT: false
+            FT: false,
+            C3: false,
+            C2: false,
+            ES: false,
+            PA: false
         };
         if (!objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].tipoHorarioGeneral) {
             setCuadranteVacio(true);
@@ -788,24 +834,74 @@ const Cuadrantes = (props) => {
                     myObjetoServiciosFijos.activo_FT = servicio.activo_FT;
                     objetoEstadosSwitch.FT = true;
                 };
+                if (servicio.precioHora_C3) {
+                    myObjetoServiciosFijos.precioHora_C3 = servicio.precioHora_C3;
+                    myObjetoServiciosFijos.variacion_C3 = servicio.variacion_C3;
+                    myObjetoServiciosFijos.diaVariacion_C3 = servicio.diaVariacion_C3;
+                    myObjetoServiciosFijos.activo_C3 = servicio.activo_C3;
+                    objetoEstadosSwitch.C3 = true;
+                };
+                if (servicio.precioHora_C2) {
+                    myObjetoServiciosFijos.precioHora_C2 = servicio.precioHora_C2;
+                    myObjetoServiciosFijos.variacion_C2 = servicio.variacion_C2;
+                    myObjetoServiciosFijos.diaVariacion_C2 = servicio.diaVariacion_C2;
+                    myObjetoServiciosFijos.activo_C2 = servicio.activo_C2;
+                    objetoEstadosSwitch.C2 = true;
+                };
+                if (servicio.precioHora_ES) {
+                    myObjetoServiciosFijos.precioHora_ES = servicio.precioHora_ES;
+                    myObjetoServiciosFijos.variacion_ES = servicio.variacion_ES;
+                    myObjetoServiciosFijos.diaVariacion_ES = servicio.diaVariacion_ES;
+                    myObjetoServiciosFijos.activo_ES = servicio.activo_ES;
+                    objetoEstadosSwitch.ES = true;
+                };
+                if (servicio.precioHora_PA) {
+                    myObjetoServiciosFijos.precioHora_PA = servicio.precioHora_PA;
+                    myObjetoServiciosFijos.variacion_PA = servicio.variacion_PA;
+                    myObjetoServiciosFijos.diaVariacion_PA = servicio.diaVariacion_PA;
+                    myObjetoServiciosFijos.activo_PA = servicio.activo_PA;
+                    objetoEstadosSwitch.PA = true;
+                };
             });
+            dispatch(setCuadranteServiciosFijosAccion(gestionaColumnaServiciosFijosInicioAccion(objetoCuadrante.datosServicios.datosServicios[numeroCuadrante - 1])));
         };
-        if (objetoCuadrante.datosTrabajadoresIniciales.datosTrabajadoresIniciales[numeroCuadrante - 1]) {
-            objetoCuadrante.datosTrabajadoresIniciales.datosTrabajadoresIniciales[numeroCuadrante - 1].trabajadores.forEach((trabajadorIterado, index) => {
-                setTimeout(
-                    function () {
-                        if (trabajadorIterado['trabajador_' + (index + 1)]) {
-                            setTimeout(() => {
-                                dispatch(obtenerTrabajadorAccion('trabajadores', trabajadorIterado['trabajador_' + (index + 1)]));
-                            }, 1);
-                        };
-                        if (trabajadorIterado['suplente_' + (index + 1)]) {
-                            setTimeout(() => {
-                                dispatch(obtenerSuplenteAccion('trabajadores', trabajadorIterado['suplente_' + (index + 1)]));
-                            }, 500);
-                        };
-                    }, index * 1000);
-            });
+        if (cuadranteRegistrado === 'no') {
+            if (objetoCuadrante.datosTrabajadoresIniciales.datosTrabajadoresIniciales[numeroCuadrante - 1]) {
+                objetoCuadrante.datosTrabajadoresIniciales.datosTrabajadoresIniciales[numeroCuadrante - 1].trabajadores.forEach((trabajadorIterado, index) => {
+                    setTimeout(
+                        function () {
+                            if (trabajadorIterado['trabajador_' + (index + 1)]) {
+                                setTimeout(() => {
+                                    dispatch(obtenerTrabajadorAccion('trabajadores', trabajadorIterado['trabajador_' + (index + 1)]));
+                                }, 1);
+                            };
+                            if (trabajadorIterado['suplente_' + (index + 1)]) {
+                                setTimeout(() => {
+                                    dispatch(obtenerSuplenteAccion('trabajadores', trabajadorIterado['suplente_' + (index + 1)]));
+                                }, 500);
+                            };
+                        }, index * 1000);
+                });
+            };
+        };
+        if (cuadranteRegistrado === 'si') {
+            if (objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].arrayCuadrante.length > 0) {
+                objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].arrayCuadrante.forEach((trabajadorIterado, index) => {
+                    setTimeout(
+                        function () {
+                            if (trabajadorIterado.tipoTrabajador === 'trabajador') {
+                                setTimeout(() => {
+                                    dispatch(obtenerTrabajadorAccion('trabajadores', trabajadorIterado.idTrabajador));
+                                }, 1);
+                            };
+                            if (trabajadorIterado.tipoTrabajador === 'suplente') {
+                                setTimeout(() => {
+                                    dispatch(obtenerSuplenteAccion('trabajadores', trabajadorIterado.idTrabajador));
+                                }, 500);
+                            };
+                        }, index * 1000);
+                });
+            };
         };
         setLosServiciosFijos(myObjetoServiciosFijos);
         setStateSwitchTipoServicioFijoCuadrante(objetoEstadosSwitch);
@@ -813,9 +909,10 @@ const Cuadrantes = (props) => {
             switch: objetoEstadosSwitch,
             servicios: myObjetoServiciosFijos
         });
-        dispatch(setCuadranteServiciosFijosAccion(objetoCuadrante.datosServicios.datosServicios[numeroCuadrante - 1]));
+        let objetoDatosCuadrante = {};
         if (objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].computo && objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].tipoHorarioGeneral) {
-            setItemEditandoConfiguracion({
+            objetoDatosCuadrante = {
+                ...objetoDatosCuadrante,
                 tipoHorario: objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].tipoHorarioGeneral,
                 computo: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].computo,
                 mensualPactado: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].mensualPactado ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].mensualPactado : '',
@@ -827,9 +924,13 @@ const Cuadrantes = (props) => {
                 precioHora_L1: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_L1 ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_L1 : '',
                 precioHora_L2: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_L2 ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_L2 : '',
                 precioHora_F: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_F ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_F : '',
-                observaciones: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].observaciones ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].observaciones : ''
-            });
+            };
         };
+        objetoDatosCuadrante = {
+            ...objetoDatosCuadrante,
+            observaciones: objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].observaciones ? objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].observaciones : ''
+        };
+        setItemEditandoConfiguracion(objetoDatosCuadrante);
         if (objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].arrayCuadrante.length > 0) {
             const { arrayResultante, arrayFestivos } = completarCuadranteAccion(objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].arrayCuadrante);
             dispatch(setCuadranteAccion(arrayResultante));
@@ -850,289 +951,107 @@ const Cuadrantes = (props) => {
                     arrayAAnadir.push({ value: i + 1, revisado: false });
                 };
                 setNumeroCuadrantesCuadrantes(arrayAAnadir);
-                if (!venimosDeActualizarCentro) {
-                    if (cuadranteRegistrado === 'no') {
-                        //registramos objeto cuadrante completo
-                        let hayHorario, hayServiciosFijos, hayTrabajadores;
-                        let arrayHorario = [];
-                        let arrayServiciosFijos = [];
-                        let arrayTrabajadores = [];
-                        let arrayInforme = [];
-                        for (let i = 0; i < centroAGestionar.categoria.categoria.length; i++) {
-                            centroAGestionar.horario.horario[i] ? hayHorario = true : hayHorario = false;
-                            centroAGestionar.serviciosFijos.serviciosFijos[i] ? hayServiciosFijos = true : hayServiciosFijos = false;
-                            centroAGestionar.trabajadores.trabajadores[i] ? hayTrabajadores = true : hayTrabajadores = false;
-                            if (hayHorario) {
-                                arrayHorario.push({
-                                    tipoHorarioGeneral: centroAGestionar.horario.horario[i].tipo,
-                                    arrayCuadrante: [],
-                                    observaciones: ''
-                                });
-                                arrayInforme.push({
-                                    computo: centroAGestionar.horario.horario[i].computo,
-                                    mensualPactado: centroAGestionar.horario.horario[i].mensualPactado ? centroAGestionar.horario.horario[i].mensualPactado : null,
-                                    precioHora_L: centroAGestionar.horario.horario[i].precioHora_L ? centroAGestionar.horario.horario[i].precioHora_L : null,
-                                    precioHora_E: centroAGestionar.horario.horario[i].precioHora_E ? centroAGestionar.horario.horario[i].precioHora_E : null,
-                                    precioHora_P: centroAGestionar.horario.horario[i].precioHora_P ? centroAGestionar.horario.horario[i].precioHora_P : null,
-                                    precioHora_N: centroAGestionar.horario.horario[i].precioHora_N ? centroAGestionar.horario.horario[i].precioHora_N : null,
-                                    precioHora_R: centroAGestionar.horario.horario[i].precioHora_R ? centroAGestionar.horario.horario[i].precioHora_R : null,
-                                    precioHora_L1: centroAGestionar.horario.horario[i].precioHora_L1 ? centroAGestionar.horario.horario[i].precioHora_L1 : null,
-                                    precioHora_L2: centroAGestionar.horario.horario[i].precioHora_L2 ? centroAGestionar.horario.horario[i].precioHora_L2 : null,
-                                    precioHora_F: centroAGestionar.horario.horario[i].precioHora_F ? centroAGestionar.horario.horario[i].precioHora_F : null,
-                                    arrayTrabajadores: [],
-                                    totalFacturado_M: null,
-                                    totalFacturado_L: null,
-                                    totalFacturado_E: null,
-                                    totalFacturado_P: null,
-                                    totalFacturado_N: null,
-                                    totalFacturado_R: null,
-                                    totalFacturado_L1: null,
-                                    totalFacturado_L2: null,
-                                    totalFacturado_F: null
-                                });
-                            } else {
-                                arrayHorario.push({
-                                    tipoHorarioGeneral: '',
-                                    arrayCuadrante: [],
-                                    observaciones: ''
-                                });
-                                arrayInforme.push({
-                                    tipoRegistro: '',
-                                    computo: '',
-                                    mensualPactado: null,
-                                    precioHora_L: null,
-                                    precioHora_E: null,
-                                    precioHora_P: null,
-                                    precioHora_N: null,
-                                    precioHora_R: null,
-                                    precioHora_L1: null,
-                                    precioHora_L2: null,
-                                    precioHora_F: null,
-                                    arrayTrabajadores: [],
-                                    totalFacturado_M: null,
-                                    totalFacturado_L: null,
-                                    totalFacturado_E: null,
-                                    totalFacturado_P: null,
-                                    totalFacturado_N: null,
-                                    totalFacturado_R: null,
-                                    totalFacturado_L1: null,
-                                    totalFacturado_L2: null,
-                                    totalFacturado_F: null
-                                });
-                            };
-                            if (hayServiciosFijos) {
-                                arrayServiciosFijos.push(gestionaColumnaServiciosFijosAccion(centroAGestionar.serviciosFijos.serviciosFijos[i].servicio), null);
-                            } else {
-                                arrayServiciosFijos.push([])
-                            };
-                            if (hayTrabajadores) {
-                                arrayTrabajadores.push(centroAGestionar.trabajadores.trabajadores[i]);
-                            } else {
-                                arrayTrabajadores.push(null);
-                            };
-                        };
-                        dispatch(actualizarObjetoCuadranteAccion({
-                            ...objetoCuadrante,
-                            nombre: calendarioAGestionar + '-' + centroAGestionar.id,
-                            datosCuadrante: {
-                                objeto: 'cuadrante',
-                                centro: centroAGestionar.id,
-                                datosCuadrante: arrayHorario
-                            },
-                            datosServicios: {
-                                objeto: 'serviciosFijos',
-                                datosServicios: arrayServiciosFijos
-                            },
-                            datosInforme: {
-                                objeto: 'informe',
-                                datosInforme: arrayInforme
-                            },
-                            datosTrabajadoresIniciales: {
-                                objeto: 'trabajadores',
-                                datosTrabajadoresIniciales: arrayTrabajadores
-                            }
-                        }));
-                    };
-                    if (cuadranteRegistrado === 'si') {
-                        if (objetoCuadrante.datosCuadrante.arrayCuadrante.length === 0) {
-                            setCuadranteVacio(true);
-                        };
-                        // objetoCuadrante.datosServicios.servicio.forEach((servicio) => {
-                        //     if (servicio.precioHora_TO) {
-                        //         myObjetoServiciosFijos.precioHora_TO = servicio.precioHora_TO;
-                        //         objetoEstadosSwitch.TO = true;
-                        //     };
-                        //     if (servicio.precioHora_CR) {
-                        //         myObjetoServiciosFijos.precioHora_CR = servicio.precioHora_CR;
-                        //         objetoEstadosSwitch.CR = true;
-                        //     };
-                        //     if (servicio.precioHora_CE) {
-                        //         myObjetoServiciosFijos.precioHora_CE = servicio.precioHora_CE;
-                        //         objetoEstadosSwitch.CE = true;
-                        //     };
-                        //     if (servicio.precioHora_CI) {
-                        //         myObjetoServiciosFijos.precioHora_CI = servicio.precioHora_CI;
-                        //         objetoEstadosSwitch.CI = true;
-                        //     };
-                        //     if (servicio.precioHora_MO) {
-                        //         myObjetoServiciosFijos.precioHora_MO = servicio.precioHora_MO;
-                        //         objetoEstadosSwitch.MO = true;
-                        //     };
-                        //     if (servicio.precioHora_OF) {
-                        //         myObjetoServiciosFijos.precioHora_OF = servicio.precioHora_OF;
-                        //         objetoEstadosSwitch.OF = true;
-                        //     };
-                        //     if (servicio.precioHora_AL) {
-                        //         myObjetoServiciosFijos.precioHora_AL = servicio.precioHora_AL;
-                        //         objetoEstadosSwitch.AL = true;
-                        //     };
-                        //     if (servicio.precioHora_LA) {
-                        //         myObjetoServiciosFijos.precioHora_LA = servicio.precioHora_LA;
-                        //         objetoEstadosSwitch.LA = true;
-                        //     };
-                        //     if (servicio.precioHora_TE) {
-                        //         myObjetoServiciosFijos.precioHora_TE = servicio.precioHora_TE;
-                        //         objetoEstadosSwitch.TE = true;
-                        //     };
-                        //     if (servicio.precioHora_FI) {
-                        //         myObjetoServiciosFijos.precioHora_FI = servicio.precioHora_FI;
-                        //         objetoEstadosSwitch.FI = true;
-                        //     };
-                        //     if (servicio.precioHora_FE) {
-                        //         myObjetoServiciosFijos.precioHora_FE = servicio.precioHora_FE;
-                        //         objetoEstadosSwitch.FE = true;
-                        //     };
-                        //     if (servicio.precioHora_AB) {
-                        //         myObjetoServiciosFijos.precioHora_AB = servicio.precioHora_AB;
-                        //         objetoEstadosSwitch.AB = true;
-                        //     };
-                        //     if (servicio.precioHora_MA) {
-                        //         myObjetoServiciosFijos.precioHora_MA = servicio.precioHora_MA;
-                        //         objetoEstadosSwitch.MA = true;
-                        //     };
-                        //     if (servicio.precioHora_PO) {
-                        //         myObjetoServiciosFijos.precioHora_PO = servicio.precioHora_PO;
-                        //         objetoEstadosSwitch.PO = true;
-                        //     };
-                        //     if (servicio.precioHora_BA) {
-                        //         myObjetoServiciosFijos.precioHora_BA = servicio.precioHora_BA;
-                        //         objetoEstadosSwitch.BA = true;
-                        //     };
-                        //     if (servicio.precioHora_FT) {
-                        //         myObjetoServiciosFijos.precioHora_FT = servicio.precioHora_FT;
-                        //         objetoEstadosSwitch.FT = true;
-                        //     };
-                        // });
-                        if (objetoCuadrante.datosCuadrante.arrayCuadrante.length > 0) {
-                            objetoCuadrante.datosCuadrante.arrayCuadrante.forEach((trabajadorIterado, index) => {
-                                if (trabajadorIterado.tipoTrabajador === 'trabajador') {
-                                    dispatch(obtenerTrabajadorAccion('trabajadores', trabajadorIterado.idTrabajador));
-                                } else {
-                                    dispatch(obtenerSuplenteAccion('trabajadores', trabajadorIterado.idTrabajador));
-                                };
+                if (cuadranteRegistrado === 'no') {
+                    //registramos objeto cuadrante completo
+                    let hayHorario, hayServiciosFijos, hayTrabajadores;
+                    let arrayHorario = [];
+                    let arrayServiciosFijos = [];
+                    let arrayTrabajadores = [];
+                    let arrayInforme = [];
+                    for (let i = 0; i < centroAGestionar.categoria.categoria.length; i++) {
+                        centroAGestionar.horario.horario[i] ? hayHorario = true : hayHorario = false;
+                        centroAGestionar.serviciosFijos.serviciosFijos[i] ? hayServiciosFijos = true : hayServiciosFijos = false;
+                        centroAGestionar.trabajadores.trabajadores[i] ? hayTrabajadores = true : hayTrabajadores = false;
+                        if (hayHorario) {
+                            arrayHorario.push({
+                                tipoHorarioGeneral: centroAGestionar.horario.horario[i].tipo,
+                                arrayCuadrante: [],
+                                observaciones: ''
                             });
-                        }
+                            arrayInforme.push({
+                                computo: centroAGestionar.horario.horario[i].computo,
+                                mensualPactado: centroAGestionar.horario.horario[i].mensualPactado ? centroAGestionar.horario.horario[i].mensualPactado : null,
+                                precioHora_L: centroAGestionar.horario.horario[i].precioHora_L ? centroAGestionar.horario.horario[i].precioHora_L : null,
+                                precioHora_E: centroAGestionar.horario.horario[i].precioHora_E ? centroAGestionar.horario.horario[i].precioHora_E : null,
+                                precioHora_P: centroAGestionar.horario.horario[i].precioHora_P ? centroAGestionar.horario.horario[i].precioHora_P : null,
+                                precioHora_N: centroAGestionar.horario.horario[i].precioHora_N ? centroAGestionar.horario.horario[i].precioHora_N : null,
+                                precioHora_R: centroAGestionar.horario.horario[i].precioHora_R ? centroAGestionar.horario.horario[i].precioHora_R : null,
+                                precioHora_L1: centroAGestionar.horario.horario[i].precioHora_L1 ? centroAGestionar.horario.horario[i].precioHora_L1 : null,
+                                precioHora_L2: centroAGestionar.horario.horario[i].precioHora_L2 ? centroAGestionar.horario.horario[i].precioHora_L2 : null,
+                                precioHora_F: centroAGestionar.horario.horario[i].precioHora_F ? centroAGestionar.horario.horario[i].precioHora_F : null,
+                                arrayTrabajadores: [],
+                                totalFacturado_M: null,
+                                totalFacturado_L: null,
+                                totalFacturado_E: null,
+                                totalFacturado_P: null,
+                                totalFacturado_N: null,
+                                totalFacturado_R: null,
+                                totalFacturado_L1: null,
+                                totalFacturado_L2: null,
+                                totalFacturado_F: null
+                            });
+                        } else {
+                            arrayHorario.push({
+                                tipoHorarioGeneral: '',
+                                arrayCuadrante: [],
+                                observaciones: ''
+                            });
+                            arrayInforme.push({
+                                tipoRegistro: '',
+                                computo: '',
+                                mensualPactado: null,
+                                precioHora_L: null,
+                                precioHora_E: null,
+                                precioHora_P: null,
+                                precioHora_N: null,
+                                precioHora_R: null,
+                                precioHora_L1: null,
+                                precioHora_L2: null,
+                                precioHora_F: null,
+                                arrayTrabajadores: [],
+                                totalFacturado_M: null,
+                                totalFacturado_L: null,
+                                totalFacturado_E: null,
+                                totalFacturado_P: null,
+                                totalFacturado_N: null,
+                                totalFacturado_R: null,
+                                totalFacturado_L1: null,
+                                totalFacturado_L2: null,
+                                totalFacturado_F: null
+                            });
+                        };
+                        if (hayServiciosFijos) {
+                            arrayServiciosFijos.push(centroAGestionar.serviciosFijos.serviciosFijos[i].servicio);
+                        } else {
+                            arrayServiciosFijos.push([])
+                        };
+                        if (hayTrabajadores) {
+                            arrayTrabajadores.push(centroAGestionar.trabajadores.trabajadores[i]);
+                        } else {
+                            arrayTrabajadores.push(null);
+                        };
                     };
-                } else {
-                    if (!centroAGestionar.horario.tipo) {
-                        setCuadranteVacio(true);
-                    };
-                    // centroAGestionar.serviciosFijos.servicio.forEach((servicio) => {
-                    //     if (servicio.precioHora_TO) {
-                    //         myObjetoServiciosFijos.precioHora_TO = servicio.precioHora_TO;
-                    //         objetoEstadosSwitch.TO = true;
-                    //     };
-                    //     if (servicio.precioHora_CR) {
-                    //         myObjetoServiciosFijos.precioHora_CR = servicio.precioHora_CR;
-                    //         objetoEstadosSwitch.CR = true;
-                    //     };
-                    //     if (servicio.precioHora_CE) {
-                    //         myObjetoServiciosFijos.precioHora_CE = servicio.precioHora_CE;
-                    //         objetoEstadosSwitch.CE = true;
-                    //     };
-                    //     if (servicio.precioHora_CI) {
-                    //         myObjetoServiciosFijos.precioHora_CI = servicio.precioHora_CI;
-                    //         objetoEstadosSwitch.CI = true;
-                    //     };
-                    //     if (servicio.precioHora_MO) {
-                    //         myObjetoServiciosFijos.precioHora_MO = servicio.precioHora_MO;
-                    //         objetoEstadosSwitch.MO = true;
-                    //     };
-                    //     if (servicio.precioHora_OF) {
-                    //         myObjetoServiciosFijos.precioHora_OF = servicio.precioHora_OF;
-                    //         objetoEstadosSwitch.OF = true;
-                    //     };
-                    //     if (servicio.precioHora_AL) {
-                    //         myObjetoServiciosFijos.precioHora_AL = servicio.precioHora_AL;
-                    //         objetoEstadosSwitch.AL = true;
-                    //     };
-                    //     if (servicio.precioHora_LA) {
-                    //         myObjetoServiciosFijos.precioHora_LA = servicio.precioHora_LA;
-                    //         objetoEstadosSwitch.LA = true;
-                    //     };
-                    //     if (servicio.precioHora_TE) {
-                    //         myObjetoServiciosFijos.precioHora_TE = servicio.precioHora_TE;
-                    //         objetoEstadosSwitch.TE = true;
-                    //     };
-                    //     if (servicio.precioHora_FI) {
-                    //         myObjetoServiciosFijos.precioHora_FI = servicio.precioHora_FI;
-                    //         objetoEstadosSwitch.FI = true;
-                    //     };
-                    //     if (servicio.precioHora_FE) {
-                    //         myObjetoServiciosFijos.precioHora_FE = servicio.precioHora_FE;
-                    //         objetoEstadosSwitch.FE = true;
-                    //     };
-                    //     if (servicio.precioHora_AB) {
-                    //         myObjetoServiciosFijos.precioHora_AB = servicio.precioHora_AB;
-                    //         objetoEstadosSwitch.AB = true;
-                    //     };
-                    //     if (servicio.precioHora_MA) {
-                    //         myObjetoServiciosFijos.precioHora_MA = servicio.precioHora_MA;
-                    //         objetoEstadosSwitch.MA = true;
-                    //     };
-                    //     if (servicio.precioHora_PO) {
-                    //         myObjetoServiciosFijos.precioHora_PO = servicio.precioHora_PO;
-                    //         objetoEstadosSwitch.PO = true;
-                    //     };
-                    //     if (servicio.precioHora_BA) {
-                    //         myObjetoServiciosFijos.precioHora_BA = servicio.precioHora_BA;
-                    //         objetoEstadosSwitch.BA = true;
-                    //     };
-                    //     if (servicio.precioHora_FT) {
-                    //         myObjetoServiciosFijos.precioHora_FT = servicio.precioHora_FT;
-                    //         objetoEstadosSwitch.FT = true;
-                    //     };
-                    // });
-                    const losDatosServiciosFijos = centroAGestionar.serviciosFijos;
-                    const losDatosInforme = {
-                        ...objetoCuadrante.datosInforme,
-                        computo: centroAGestionar.horario.computo,
-                        mensualPactado: centroAGestionar.horario.mensualPactado ? centroAGestionar.horario.mensualPactado : null,
-                        precioHora_L: centroAGestionar.horario.precioHora_L ? centroAGestionar.horario.precioHora_L : null,
-                        precioHora_E: centroAGestionar.horario.precioHora_E ? centroAGestionar.horario.precioHora_E : null,
-                        precioHora_P: centroAGestionar.horario.precioHora_P ? centroAGestionar.horario.precioHora_P : null,
-                        precioHora_N: centroAGestionar.horario.precioHora_N ? centroAGestionar.horario.precioHora_N : null,
-                        precioHora_R: centroAGestionar.horario.precioHora_R ? centroAGestionar.horario.precioHora_R : null,
-                        precioHora_L1: centroAGestionar.horario.precioHora_L1 ? centroAGestionar.horario.precioHora_L1 : null,
-                        precioHora_L2: centroAGestionar.horario.precioHora_L2 ? centroAGestionar.horario.precioHora_L2 : null,
-                        precioHora_F: centroAGestionar.horario.precioHora_F ? centroAGestionar.horario.precioHora_F : null
-                    }
-                    const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, tipoHorarioGeneral: centroAGestionar.horario.tipo, arrayCuadrante: cuadrante };
                     dispatch(actualizarObjetoCuadranteAccion({
                         ...objetoCuadrante,
-                        actualizacion: firmaActualizacion,
-                        datosCuadrante: losDatosCuadrante,
-                        datosServicios: losDatosServiciosFijos,
-                        datosInforme: losDatosInforme
+                        nombre: calendarioAGestionar + '-' + centroAGestionar.id,
+                        datosCuadrante: {
+                            objeto: 'cuadrante',
+                            centro: centroAGestionar.id,
+                            datosCuadrante: arrayHorario
+                        },
+                        datosServicios: {
+                            objeto: 'serviciosFijos',
+                            datosServicios: arrayServiciosFijos
+                        },
+                        datosInforme: {
+                            objeto: 'informe',
+                            datosInforme: arrayInforme
+                        },
+                        datosTrabajadoresIniciales: {
+                            objeto: 'trabajadores',
+                            datosTrabajadoresIniciales: arrayTrabajadores
+                        }
                     }));
-                    setVenimosDeActualizarCentro(false);
-                    setAlert({
-                        mensaje: "Datos del centro actualizados exitosamente.",
-                        tipo: 'success'
-                    })
-                    setOpenSnack(true);
-                    dispatch(activarDesactivarCambioBotonActualizarAccion(false));
-                    dispatch(registrarIntervencionAccion(false));
                 };
             };
             setOpenLoading(false);
@@ -1317,40 +1236,29 @@ const Cuadrantes = (props) => {
     useEffect(() => {
         if (estadoVenimosDePendientes) {
             if (centro) {
-                dispatch(obtenerCategoriaPorCentroAccion('centros', centro));
-                // const nombreCuadrante = calendarioAGestionar + '-' + centro;
-                // const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, centro: centro, arrayCuadrante: [] };
-                // dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, id: null, nombre: nombreCuadrante, actualizacion: '', datosCuadrante: losDatosCuadrante }));
+                dispatch(obtenerCategoriaPorCentroAccion('centros', centro, 0));
             };
+            dispatch(venimosDePendientesAccion(false));
         }
     }, [estadoVenimosDePendientes]);
 
     useEffect(() => {
         if (estadoVenimosDeRegistrados) {
             if (centro) {
-                dispatch(obtenerCategoriaPorCentroAccion('centros', centro));
+                dispatch(obtenerCategoriaPorCentroAccion('centros', centro, 0));
                 const nombreCuadrante = calendarioAGestionar + '-' + centro;
-                // const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, centro: centro };
-                // dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, nombre: nombreCuadrante, actualizacion: '', datosCuadrante: losDatosCuadrante }));
                 dispatch(obtenerCuadranteAccion('cuadrantes', nombreCuadrante));
             };
+            dispatch(venimosDeRegistradosAccion(false));
         }
     }, [estadoVenimosDeRegistrados]);
 
     useEffect(() => {
-        if (estadoVenimosDePendientes || estadoVenimosDeRegistrados) {
-            if (categoriaPorCentro) {
-                dispatch(setCategoriaAccion(categoriaPorCentro));
-                dispatch(obtenerCentrosPorCategoriaAccion('centros', categoriaPorCentro));
-                setDisableSelectCentros(false);
-            };
-            if (estadoVenimosDePendientes) {
-                dispatch(venimosDePendientesAccion(false));
-            };
-            if (estadoVenimosDeRegistrados) {
-                dispatch(venimosDeRegistradosAccion(false));
-            };
-        }
+        if (categoriaPorCentro) {
+            dispatch(setCategoriaAccion(categoriaPorCentro));
+            dispatch(obtenerCentrosPorCategoriaAccion('centros', categoriaPorCentro));
+            setDisableSelectCentros(false);
+        };
     }, [categoriaPorCentro]);
 
     //secuencia alertas
@@ -1467,6 +1375,12 @@ const Cuadrantes = (props) => {
         };
     };
 
+    const cambiarEstadoCuadranteEnUsoRevisado = (estado) => {
+        let arrayNumeroCuadrantes = [...numeroCuadrantesCuadrantes];
+        arrayNumeroCuadrantes = arrayNumeroCuadrantes.map(cuadrante => (cuadrante.value === cuadranteEnUsoCuadrantes ? { ...cuadrante, revisado: estado } : cuadrante));
+        setNumeroCuadrantesCuadrantes(arrayNumeroCuadrantes);
+    };
+
     const handleClickMenu = (e) => {
         setAnchorElMenu(anchorElMenu ? null : e.currentTarget);
     };
@@ -1498,6 +1412,7 @@ const Cuadrantes = (props) => {
     const handleChangeSelectCalendario = (newValue) => {
         if (esInicioCuadrantes) {
             reseteaContenidoCuadrante();
+            dispatch(vaciarDatosCentroAccion());
             dispatch(vaciarDatosCuadrantesAccion());
             setValueDatePicker(newValue);
             setDisableSelectCentros(true);
@@ -1512,6 +1427,7 @@ const Cuadrantes = (props) => {
                     setPreValueValor({ valor: newValue, origen: 'cuadrantes' });
                 } else {
                     reseteaContenidoCuadrante();
+                    dispatch(vaciarDatosCentroAccion());
                     dispatch(vaciarDatosCuadrantesAccion());
                     setValueDatePicker(newValue);
                     setDisableSelectCentros(true);
@@ -1532,30 +1448,13 @@ const Cuadrantes = (props) => {
     const handleChangeSelectCentro = (e) => {
         if (esInicioCuadrantes) {
             reseteaContenidoCentro();
+            dispatch(vaciarDatosCentroAccion());
             dispatch(setCentroAccion(e.target.value));
             const nombreCuadrante = calendarioAGestionar + '-' + e.target.value;
-            // const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, centro: e.target.value };
-            // dispatch(actualizarObjetoCuadranteAccion({
-            //     ...objetoCuadrante,
-            //     nombre: nombreCuadrante,
-            //     actualizacion: '',
-            //     datosCuadrante: losDatosCuadrante,
-            //     estado: 'registrado',
-            //     total: null,
-            //     horas: {
-            //         objeto: 'horas',
-            //         M: null,
-            //         L: null,
-            //         E: null,
-            //         P: null,
-            //         N: null,
-            //         R: null,
-            //         L1: null,
-            //         L2: null,
-            //         F: null
-            //     }
-            // }));
+            dispatch(vaciarDatosCuadrantesAccion());
             dispatch(obtenerCuadranteAccion('cuadrantes', nombreCuadrante));
+            dispatch(vaciarDatosCentroAccion());
+            dispatch(obtenerCategoriaPorCentroAccion('centros', e.target.value, 0));
         } else {
             if (!cuadranteNuevoRegistrado) {
                 handleClickOpenDialogCuadrantes2();
@@ -1565,31 +1464,12 @@ const Cuadrantes = (props) => {
                     setPreValueValor({ valor: e.target.value, origen: 'centros' });
                 } else {
                     reseteaContenidoCentro();
+                    dispatch(vaciarDatosCentroAccion());
                     dispatch(setCentroAccion(e.target.value));
                     const nombreCuadrante = calendarioAGestionar + '-' + e.target.value;
-                    // const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, centro: e.target.value, arrayCuadrante: [] };
-                    // dispatch(actualizarObjetoCuadranteAccion({
-                    //     ...objetoCuadrante,
-                    //     id: null,
-                    //     nombre: nombreCuadrante,
-                    //     actualizacion: '',
-                    //     datosCuadrante: losDatosCuadrante,
-                    //     estado: 'registrado',
-                    //     total: null,
-                    //     horas: {
-                    //         objeto: 'horas',
-                    //         M: null,
-                    //         L: null,
-                    //         E: null,
-                    //         P: null,
-                    //         N: null,
-                    //         R: null,
-                    //         L1: null,
-                    //         L2: null,
-                    //         F: null
-                    //     }
-                    // }));
+                    dispatch(vaciarDatosCuadrantesAccion());
                     dispatch(obtenerCuadranteAccion('cuadrantes', nombreCuadrante));
+                    dispatch(obtenerCategoriaPorCentroAccion('centros', e.target.value, 0));
                 }
             }
         }
@@ -1802,7 +1682,9 @@ const Cuadrantes = (props) => {
             MA: false,
             PO: false,
             BA: false,
-            FT: false
+            FT: false,
+            C3: false,
+            C2: false
         });
         setCuadranteVacio(false);
         setItemPrevioEditandoServiciosFijos(null);
@@ -1823,7 +1705,9 @@ const Cuadrantes = (props) => {
                 MA: false,
                 PO: false,
                 BA: false,
-                FT: false
+                FT: false,
+                C3: false,
+                C2: false
             },
             servicios: {
                 precioHora_TO: '',
@@ -1842,6 +1726,8 @@ const Cuadrantes = (props) => {
                 precioHora_PO: '',
                 precioHora_BA: '',
                 precioHora_FT: '',
+                precioHora_C3: '',
+                precioHora_C2: '',
                 variacion_TO: '',
                 variacion_CR: '',
                 variacion_CE: '',
@@ -1858,6 +1744,8 @@ const Cuadrantes = (props) => {
                 variacion_PO: '',
                 variacion_BA: '',
                 variacion_FT: '',
+                variacion_C3: '',
+                variacion_C2: '',
                 diaVariacion_TO: '',
                 diaVariacion_CR: '',
                 diaVariacion_CE: '',
@@ -1874,6 +1762,8 @@ const Cuadrantes = (props) => {
                 diaVariacion_PO: '',
                 diaVariacion_BA: '',
                 diaVariacion_FT: '',
+                diaVariacion_C3: '',
+                diaVariacion_C2: '',
                 activo_TO: 'si',
                 activo_CR: 'si',
                 activo_CE: 'si',
@@ -1889,9 +1779,10 @@ const Cuadrantes = (props) => {
                 activo_MA: 'si',
                 activo_PO: 'si',
                 activo_BA: 'si',
-                activo_FT: 'si'
+                activo_FT: 'si',
+                activo_C3: 'si',
+                activo_C2: 'si'
             }
-
         });
         setItemPrevioEditandoConfiguracion(null);
         setItemEditandoConfiguracion({
@@ -1965,6 +1856,7 @@ const Cuadrantes = (props) => {
             dispatch(activarDesactivarCambioBotonActualizarAccion(false));
         };
         dispatch(registrarIntervencionAccion(false));
+        cambiarEstadoCuadranteEnUsoRevisado(false);
         scrollable.current.classList.remove(classes.openAccordion);
     };
 
@@ -1973,58 +1865,6 @@ const Cuadrantes = (props) => {
         let arrayCuadrante = [...cuadrante];
         let numTrabajadoresQuedanSinNombre = 0;
         let numTrabajadoresQuedanConNombre = 0;
-        // let hayServiciosFijos = false;
-        // for (const prop in losServiciosFijos) {
-        //     if (losServiciosFijos[prop] && prop === 'precioHora_TO') {
-        //         hayServiciosFijos = true;
-        //     };
-        //     if (losServiciosFijos[prop] && prop === 'precioHora_CR') {
-        //         hayServiciosFijos = true;
-        //     };
-        //     if (losServiciosFijos[prop] && prop === 'precioHora_CE') {
-        //         hayServiciosFijos = true;
-        //     };
-        //     if (losServiciosFijos[prop] && prop === 'precioHora_CI') {
-        //         hayServiciosFijos = true;
-        //     };
-        //     if (losServiciosFijos[prop] && prop === 'precioHora_MO') {
-        //         hayServiciosFijos = true;
-        //     };
-        //     if (losServiciosFijos[prop] && prop === 'precioHora_OF') {
-        //         hayServiciosFijos = true;
-        //     };
-        //     if (losServiciosFijos[prop] && prop === 'precioHora_AL') {
-        //         hayServiciosFijos = true;
-        //     };
-        //     if (losServiciosFijos[prop] && prop === 'precioHora_LA') {
-        //         hayServiciosFijos = true;
-        //     };
-        //     if (losServiciosFijos[prop] && prop === 'precioHora_TE') {
-        //         hayServiciosFijos = true;
-        //     };
-        //     if (losServiciosFijos[prop] && prop === 'precioHora_FI') {
-        //         hayServiciosFijos = true;
-        //     };
-        //     if (losServiciosFijos[prop] && prop === 'precioHora_FE') {
-        //         hayServiciosFijos = true;
-        //     };
-        //     if (losServiciosFijos[prop] && prop === 'precioHora_AB') {
-        //         hayServiciosFijos = true;
-        //     };
-        //     if (losServiciosFijos[prop] && prop === 'precioHora_MA') {
-        //         hayServiciosFijos = true;
-        //     };
-        //     if (losServiciosFijos[prop] && prop === 'precioHora_PO') {
-        //         hayServiciosFijos = true;
-        //     };
-        //     if (losServiciosFijos[prop] && prop === 'precioHora_BA') {
-        //         hayServiciosFijos = true;
-        //     };
-        //     if (losServiciosFijos[prop] && prop === 'precioHora_FT') {
-        //         hayServiciosFijos = true;
-        //     };
-        // };
-
         arrayCuadrante.forEach((elemento) => {
             if (elemento.tipoTrabajador === 'trabajador' && !elemento.nombreTrabajador) {
                 numTrabajadoresQuedanSinNombre++;
@@ -2136,6 +1976,7 @@ const Cuadrantes = (props) => {
         };
         //setEstamosActualizandoCuadrante({ estado: true, columna: columna });
         dispatch(registrarIntervencionAccion(false));
+        cambiarEstadoCuadranteEnUsoRevisado(false);
     };
 
     const handleCambioAccordionHeader = (expandedAccordion, panel, index) => {
@@ -2448,12 +2289,13 @@ const Cuadrantes = (props) => {
                 tipo: '',
                 valor: e.target.checked
             };
-            dispatch(setCuadranteServiciosFijosAccion(gestionaColumnaServiciosFijosAccion(cuadranteServiciosFijos, casilla)));
+            dispatch(setCuadranteServiciosFijosAccion(gestionaColumnaServiciosFijosCambiosAccion(cuadranteServiciosFijos, casilla)));
         };
         if (cuadranteRegistrado === 'si') {
             dispatch(activarDesactivarCambioBotonActualizarAccion(false));
         };
         dispatch(registrarIntervencionAccion(false));
+        cambiarEstadoCuadranteEnUsoRevisado(false);
     };
 
     const handleChangeSFCasillas = (postRef, indice, tipo, e) => {
@@ -2463,11 +2305,12 @@ const Cuadrantes = (props) => {
             indice: indice,
             tipo: tipo
         };
-        dispatch(setCuadranteServiciosFijosAccion(gestionaColumnaServiciosFijosAccion(cuadranteServiciosFijos, casilla)));
+        dispatch(setCuadranteServiciosFijosAccion(gestionaColumnaServiciosFijosCambiosAccion(cuadranteServiciosFijos, casilla)));
         if (cuadranteRegistrado === 'si') {
             dispatch(activarDesactivarCambioBotonActualizarAccion(false));
         };
         dispatch(registrarIntervencionAccion(false));
+        cambiarEstadoCuadranteEnUsoRevisado(false);
     };
 
     const handleChangeFormTrabajadores = (index, tipoTrabajador) => (e) => {
@@ -2518,6 +2361,7 @@ const Cuadrantes = (props) => {
             dispatch(activarDesactivarCambioBotonActualizarAccion(false));
         };
         dispatch(registrarIntervencionAccion(false));
+        cambiarEstadoCuadranteEnUsoRevisado(false);
     };
 
     const handleActualizarTrabajadores = (index, tipoTrabajador, idTrabajador) => {
@@ -2548,6 +2392,7 @@ const Cuadrantes = (props) => {
             dispatch(activarDesactivarCambioBotonActualizarAccion(false));
         };
         dispatch(registrarIntervencionAccion(false));
+        cambiarEstadoCuadranteEnUsoRevisado(false);
     };
 
     const abrePopoverDias = (postRef, index, dia) => (e) => {
@@ -2560,6 +2405,7 @@ const Cuadrantes = (props) => {
             dia: dia
         })
     };
+
     const abrePopoverSFCasillas = (postRef, index, dia, tipo, indice) => (e) => {
         setExpandedAccordion(false);
         scrollable.current.classList.add(classes.openAccordion);
@@ -3292,6 +3138,42 @@ const Cuadrantes = (props) => {
                     losServicios['activo_FT'] = 'si';
                 };
                 losEstados['FT'] = e.target.checked;
+            };
+            if (e.target.name.includes('C3')) {
+                if (!e.target.checked) {
+                    losServicios['precioHora_C3'] = '';
+                    losServicios['variacion_C3'] = '';
+                    losServicios['diaVariacion_C3'] = '';
+                    losServicios['activo_C3'] = 'si';
+                };
+                losEstados['C3'] = e.target.checked;
+            };
+            if (e.target.name.includes('C2')) {
+                if (!e.target.checked) {
+                    losServicios['precioHora_C2'] = '';
+                    losServicios['variacion_C2'] = '';
+                    losServicios['diaVariacion_C2'] = '';
+                    losServicios['activo_C2'] = 'si';
+                };
+                losEstados['C2'] = e.target.checked;
+            };
+            if (e.target.name.includes('ES')) {
+                if (!e.target.checked) {
+                    losServicios['precioHora_ES'] = '';
+                    losServicios['variacion_ES'] = '';
+                    losServicios['diaVariacion_ES'] = '';
+                    losServicios['activo_ES'] = 'si';
+                };
+                losEstados['ES'] = e.target.checked;
+            };
+            if (e.target.name.includes('PA')) {
+                if (!e.target.checked) {
+                    losServicios['precioHora_PA'] = '';
+                    losServicios['variacion_PA'] = '';
+                    losServicios['diaVariacion_PA'] = '';
+                    losServicios['activo_PA'] = 'si';
+                };
+                losEstados['PA'] = e.target.checked;
             };
             setItemEditandoServiciosFijos({ switch: losEstados, servicios: losServicios });
         };
@@ -4310,6 +4192,7 @@ const Cuadrantes = (props) => {
             dispatch(activarDesactivarCambioBotonActualizarAccion(false));
         };
         dispatch(registrarIntervencionAccion(false));
+        cambiarEstadoCuadranteEnUsoRevisado(false);
     };
 
     const gestionItemPrevioEditandoServiciosFijos = (valores) => {
@@ -4335,7 +4218,11 @@ const Cuadrantes = (props) => {
             (itemEditandoServiciosFijos.switch.MA && (!itemEditandoServiciosFijos.servicios.variacion_MA || !itemEditandoServiciosFijos.servicios.precioHora_MA)) ||
             (itemEditandoServiciosFijos.switch.PO && (!itemEditandoServiciosFijos.servicios.variacion_PO || !itemEditandoServiciosFijos.servicios.precioHora_PO)) ||
             (itemEditandoServiciosFijos.switch.BA && (!itemEditandoServiciosFijos.servicios.variacion_BA || !itemEditandoServiciosFijos.servicios.precioHora_BA)) ||
-            (itemEditandoServiciosFijos.switch.FT && (!itemEditandoServiciosFijos.servicios.variacion_FT || !itemEditandoServiciosFijos.servicios.precioHora_FT))
+            (itemEditandoServiciosFijos.switch.FT && (!itemEditandoServiciosFijos.servicios.variacion_FT || !itemEditandoServiciosFijos.servicios.precioHora_FT)) ||
+            (itemEditandoServiciosFijos.switch.C3 && (!itemEditandoServiciosFijos.servicios.variacion_C3 || !itemEditandoServiciosFijos.servicios.precioHora_C3)) ||
+            (itemEditandoServiciosFijos.switch.C2 && (!itemEditandoServiciosFijos.servicios.variacion_C2 || !itemEditandoServiciosFijos.servicios.precioHora_C2)) ||
+            (itemEditandoServiciosFijos.switch.ES && (!itemEditandoServiciosFijos.servicios.variacion_ES || !itemEditandoServiciosFijos.servicios.precioHora_ES)) ||
+            (itemEditandoServiciosFijos.switch.PA && (!itemEditandoServiciosFijos.servicios.variacion_PA || !itemEditandoServiciosFijos.servicios.precioHora_PA))
         ) {
             setAlert({
                 mensaje: "Has selecionado un tipo de servicio fijo pero no has asignado precio o variación. Revisa el formulario.",
@@ -4359,7 +4246,11 @@ const Cuadrantes = (props) => {
             ((itemEditandoServiciosFijos.servicios.variacion_MA === 1 || itemEditandoServiciosFijos.servicios.variacion_MA === 2) && !itemEditandoServiciosFijos.servicios.diaVariacion_MA) ||
             ((itemEditandoServiciosFijos.servicios.variacion_PO === 1 || itemEditandoServiciosFijos.servicios.variacion_PO === 2) && !itemEditandoServiciosFijos.servicios.diaVariacion_PO) ||
             ((itemEditandoServiciosFijos.servicios.variacion_BA === 1 || itemEditandoServiciosFijos.servicios.variacion_BA === 2) && !itemEditandoServiciosFijos.servicios.diaVariacion_BA) ||
-            ((itemEditandoServiciosFijos.servicios.variacion_FT === 1 || itemEditandoServiciosFijos.servicios.variacion_FT === 2) && !itemEditandoServiciosFijos.servicios.diaVariacion_FT)
+            ((itemEditandoServiciosFijos.servicios.variacion_FT === 1 || itemEditandoServiciosFijos.servicios.variacion_FT === 2) && !itemEditandoServiciosFijos.servicios.diaVariacion_FT) ||
+            ((itemEditandoServiciosFijos.servicios.variacion_C3 === 1 || itemEditandoServiciosFijos.servicios.variacion_C3 === 2) && !itemEditandoServiciosFijos.servicios.diaVariacion_C3) ||
+            ((itemEditandoServiciosFijos.servicios.variacion_C2 === 1 || itemEditandoServiciosFijos.servicios.variacion_C2 === 2) && !itemEditandoServiciosFijos.servicios.diaVariacion_C2) ||
+            ((itemEditandoServiciosFijos.servicios.variacion_ES === 1 || itemEditandoServiciosFijos.servicios.variacion_ES === 2) && !itemEditandoServiciosFijos.servicios.diaVariacion_ES) ||
+            ((itemEditandoServiciosFijos.servicios.variacion_PA === 1 || itemEditandoServiciosFijos.servicios.variacion_PA === 2) && !itemEditandoServiciosFijos.servicios.diaVariacion_PA)
         ) {
             setAlert({
                 mensaje: "Debes seleccionar un día de la semana para la variación de servicio fijo elegida. Revisa el formulario.",
@@ -4385,6 +4276,8 @@ const Cuadrantes = (props) => {
             precioHora_PO: itemEditandoServiciosFijos.servicios.precioHora_PO ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_PO) : null,
             precioHora_BA: itemEditandoServiciosFijos.servicios.precioHora_BA ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_BA) : null,
             precioHora_FT: itemEditandoServiciosFijos.servicios.precioHora_FT ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FT) : null,
+            precioHora_C3: itemEditandoServiciosFijos.servicios.precioHora_C3 ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_C3) : null,
+            precioHora_C2: itemEditandoServiciosFijos.servicios.precioHora_C2 ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_C2) : null,
             variacion_TO: itemEditandoServiciosFijos.servicios.variacion_TO ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_TO) : null,
             variacion_CR: itemEditandoServiciosFijos.servicios.variacion_CR ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_CR) : null,
             variacion_CE: itemEditandoServiciosFijos.servicios.variacion_CE ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_CE) : null,
@@ -4401,6 +4294,8 @@ const Cuadrantes = (props) => {
             variacion_PO: itemEditandoServiciosFijos.servicios.variacion_PO ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_PO) : null,
             variacion_BA: itemEditandoServiciosFijos.servicios.variacion_BA ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_BA) : null,
             variacion_FT: itemEditandoServiciosFijos.servicios.variacion_FT ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_FT) : null,
+            variacion_C3: itemEditandoServiciosFijos.servicios.variacion_C3 ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_C3) : null,
+            variacion_C2: itemEditandoServiciosFijos.servicios.variacion_C2 ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_C2) : null,
             diaVariacion_TO: itemEditandoServiciosFijos.servicios.variacion_TO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_TO : '',
             diaVariacion_CR: itemEditandoServiciosFijos.servicios.variacion_CR !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CR : '',
             diaVariacion_CE: itemEditandoServiciosFijos.servicios.variacion_CE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CE : '',
@@ -4417,6 +4312,8 @@ const Cuadrantes = (props) => {
             diaVariacion_PO: itemEditandoServiciosFijos.servicios.variacion_PO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_PO : '',
             diaVariacion_BA: itemEditandoServiciosFijos.servicios.variacion_BA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_BA : '',
             diaVariacion_FT: itemEditandoServiciosFijos.servicios.variacion_FT !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FT : '',
+            diaVariacion_C3: itemEditandoServiciosFijos.servicios.variacion_C3 !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_C3 : '',
+            diaVariacion_C2: itemEditandoServiciosFijos.servicios.variacion_C2 !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_C2 : '',
             activo_TO: itemEditandoServiciosFijos.servicios.activo_TO,
             activo_CR: itemEditandoServiciosFijos.servicios.activo_CR,
             activo_CE: itemEditandoServiciosFijos.servicios.activo_CE,
@@ -4432,154 +4329,433 @@ const Cuadrantes = (props) => {
             activo_MA: itemEditandoServiciosFijos.servicios.activo_MA,
             activo_PO: itemEditandoServiciosFijos.servicios.activo_PO,
             activo_BA: itemEditandoServiciosFijos.servicios.activo_BA,
-            activo_FT: itemEditandoServiciosFijos.servicios.activo_FT
+            activo_FT: itemEditandoServiciosFijos.servicios.activo_FT,
+            activo_C3: itemEditandoServiciosFijos.servicios.activo_C3,
+            activo_C2: itemEditandoServiciosFijos.servicios.activo_C2
         });
         let arrayCuadranteServiciosFijos = [];
+        let objetoServicioActivo;
         if (itemEditandoServiciosFijos.servicios.precioHora_TO) {
-            arrayCuadranteServiciosFijos.push({
-                tipoServiciofijo: 'TOL',
-                precioHora_TO: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_TO),
-                variacion_TO: parseFloat(itemEditandoServiciosFijos.servicios.variacion_TO),
-                diaVariacion_TO: itemEditandoServiciosFijos.servicios.variacion_TO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_TO : '',
-                activo_TO: itemEditandoServiciosFijos.servicios.activo_TO
-            });
+            objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'TOL');
+            if (objetoServicioActivo) {
+                arrayCuadranteServiciosFijos.push({
+                    ...objetoServicioActivo,
+                    tipoServiciofijo: 'TOL',
+                    precioHora_TO: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_TO),
+                    variacion_TO: parseFloat(itemEditandoServiciosFijos.servicios.variacion_TO),
+                    diaVariacion_TO: itemEditandoServiciosFijos.servicios.variacion_TO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_TO : '',
+                    activo_TO: itemEditandoServiciosFijos.servicios.activo_TO
+                });
+            } else {
+                arrayCuadranteServiciosFijos.push({
+                    tipoServiciofijo: 'TOL',
+                    precioHora_TO: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_TO),
+                    variacion_TO: parseFloat(itemEditandoServiciosFijos.servicios.variacion_TO),
+                    diaVariacion_TO: itemEditandoServiciosFijos.servicios.variacion_TO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_TO : '',
+                    activo_TO: itemEditandoServiciosFijos.servicios.activo_TO
+                });
+            };
         };
         if (itemEditandoServiciosFijos.servicios.precioHora_CR) {
-            arrayCuadranteServiciosFijos.push({
-                tipoServiciofijo: 'CRIS',
-                precioHora_CR: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CR),
-                variacion_CR: parseFloat(itemEditandoServiciosFijos.servicios.variacion_CR),
-                diaVariacion_CR: itemEditandoServiciosFijos.servicios.variacion_CR !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CR : '',
-                activo_CR: itemEditandoServiciosFijos.servicios.activo_CR
-            });
+            objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'CRIS');
+            if (objetoServicioActivo) {
+                arrayCuadranteServiciosFijos.push({
+                    ...objetoServicioActivo,
+                    tipoServiciofijo: 'CRIS',
+                    precioHora_CR: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CR),
+                    variacion_CR: parseFloat(itemEditandoServiciosFijos.servicios.variacion_CR),
+                    diaVariacion_CR: itemEditandoServiciosFijos.servicios.variacion_CR !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CR : '',
+                    activo_CR: itemEditandoServiciosFijos.servicios.activo_CR
+                });
+            } else {
+                arrayCuadranteServiciosFijos.push({
+                    tipoServiciofijo: 'CRIS',
+                    precioHora_CR: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CR),
+                    variacion_CR: parseFloat(itemEditandoServiciosFijos.servicios.variacion_CR),
+                    diaVariacion_CR: itemEditandoServiciosFijos.servicios.variacion_CR !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CR : '',
+                    activo_CR: itemEditandoServiciosFijos.servicios.activo_CR
+                });
+            };
         };
         if (itemEditandoServiciosFijos.servicios.precioHora_CE) {
-            arrayCuadranteServiciosFijos.push({
-                tipoServiciofijo: 'CRISE',
-                precioHora_CE: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CE),
-                variacion_CE: parseFloat(itemEditandoServiciosFijos.servicios.variacion_CE),
-                diaVariacion_CE: itemEditandoServiciosFijos.servicios.variacion_CE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CE : '',
-                activo_CE: itemEditandoServiciosFijos.servicios.activo_CE
-            });
+            objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'CRISE');
+            if (objetoServicioActivo) {
+                arrayCuadranteServiciosFijos.push({
+                    ...objetoServicioActivo,
+                    tipoServiciofijo: 'CRISE',
+                    precioHora_CE: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CE),
+                    variacion_CE: parseFloat(itemEditandoServiciosFijos.servicios.variacion_CE),
+                    diaVariacion_CE: itemEditandoServiciosFijos.servicios.variacion_CE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CE : '',
+                    activo_CE: itemEditandoServiciosFijos.servicios.activo_CE
+                });
+            } else {
+                arrayCuadranteServiciosFijos.push({
+                    tipoServiciofijo: 'CRISE',
+                    precioHora_CE: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CE),
+                    variacion_CE: parseFloat(itemEditandoServiciosFijos.servicios.variacion_CE),
+                    diaVariacion_CE: itemEditandoServiciosFijos.servicios.variacion_CE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CE : '',
+                    activo_CE: itemEditandoServiciosFijos.servicios.activo_CE
+                });
+            };
         };
         if (itemEditandoServiciosFijos.servicios.precioHora_CI) {
-            arrayCuadranteServiciosFijos.push({
-                tipoServiciofijo: 'CRISI',
-                precioHora_CI: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CI),
-                variacion_CI: parseFloat(itemEditandoServiciosFijos.servicios.variacion_CI),
-                diaVariacion_CI: itemEditandoServiciosFijos.servicios.variacion_CI !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CI : '',
-                activo_CI: itemEditandoServiciosFijos.servicios.activo_CI
-            });
+            objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'CRISI');
+            if (objetoServicioActivo) {
+                arrayCuadranteServiciosFijos.push({
+                    ...objetoServicioActivo,
+                    tipoServiciofijo: 'CRISI',
+                    precioHora_CI: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CI),
+                    variacion_CI: parseFloat(itemEditandoServiciosFijos.servicios.variacion_CI),
+                    diaVariacion_CI: itemEditandoServiciosFijos.servicios.variacion_CI !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CI : '',
+                    activo_CI: itemEditandoServiciosFijos.servicios.activo_CI
+                });
+            } else {
+                arrayCuadranteServiciosFijos.push({
+                    tipoServiciofijo: 'CRISI',
+                    precioHora_CI: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CI),
+                    variacion_CI: parseFloat(itemEditandoServiciosFijos.servicios.variacion_CI),
+                    diaVariacion_CI: itemEditandoServiciosFijos.servicios.variacion_CI !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CI : '',
+                    activo_CI: itemEditandoServiciosFijos.servicios.activo_CI
+                });
+            };
         };
         if (itemEditandoServiciosFijos.servicios.precioHora_MO) {
-            arrayCuadranteServiciosFijos.push({
-                tipoServiciofijo: 'MOQ',
-                precioHora_MO: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_MO),
-                variacion_MO: parseFloat(itemEditandoServiciosFijos.servicios.variacion_MO),
-                diaVariacion_MO: itemEditandoServiciosFijos.servicios.variacion_MO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_MO : '',
-                activo_MO: itemEditandoServiciosFijos.servicios.activo_MO
-            });
+            objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'MOQ');
+            if (objetoServicioActivo) {
+                arrayCuadranteServiciosFijos.push({
+                    ...objetoServicioActivo,
+                    tipoServiciofijo: 'MOQ',
+                    precioHora_MO: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_MO),
+                    variacion_MO: parseFloat(itemEditandoServiciosFijos.servicios.variacion_MO),
+                    diaVariacion_MO: itemEditandoServiciosFijos.servicios.variacion_MO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_MO : '',
+                    activo_MO: itemEditandoServiciosFijos.servicios.activo_MO
+                });
+            } else {
+                arrayCuadranteServiciosFijos.push({
+                    tipoServiciofijo: 'MOQ',
+                    precioHora_MO: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_MO),
+                    variacion_MO: parseFloat(itemEditandoServiciosFijos.servicios.variacion_MO),
+                    diaVariacion_MO: itemEditandoServiciosFijos.servicios.variacion_MO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_MO : '',
+                    activo_MO: itemEditandoServiciosFijos.servicios.activo_MO
+                });
+            };
         };
         if (itemEditandoServiciosFijos.servicios.precioHora_OF) {
-            arrayCuadranteServiciosFijos.push({
-                tipoServiciofijo: 'OF',
-                precioHora_OF: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_OF),
-                variacion_OF: parseFloat(itemEditandoServiciosFijos.servicios.variacion_OF),
-                diaVariacion_OF: itemEditandoServiciosFijos.servicios.variacion_OF !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_OF : '',
-                activo_OF: itemEditandoServiciosFijos.servicios.activo_OF
-            });
+            objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'OF');
+            if (objetoServicioActivo) {
+                arrayCuadranteServiciosFijos.push({
+                    ...objetoServicioActivo,
+                    tipoServiciofijo: 'OF',
+                    precioHora_OF: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_OF),
+                    variacion_OF: parseFloat(itemEditandoServiciosFijos.servicios.variacion_OF),
+                    diaVariacion_OF: itemEditandoServiciosFijos.servicios.variacion_OF !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_OF : '',
+                    activo_OF: itemEditandoServiciosFijos.servicios.activo_OF
+                });
+            } else {
+                arrayCuadranteServiciosFijos.push({
+                    tipoServiciofijo: 'OF',
+                    precioHora_OF: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_OF),
+                    variacion_OF: parseFloat(itemEditandoServiciosFijos.servicios.variacion_OF),
+                    diaVariacion_OF: itemEditandoServiciosFijos.servicios.variacion_OF !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_OF : '',
+                    activo_OF: itemEditandoServiciosFijos.servicios.activo_OF
+                });
+            };
         };
         if (itemEditandoServiciosFijos.servicios.precioHora_AL) {
-            arrayCuadranteServiciosFijos.push({
-                tipoServiciofijo: 'ALMC',
-                precioHora_AL: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_AL),
-                variacion_AL: parseFloat(itemEditandoServiciosFijos.servicios.variacion_AL),
-                diaVariacion_AL: itemEditandoServiciosFijos.servicios.variacion_AL !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_AL : '',
-                activo_AL: itemEditandoServiciosFijos.servicios.activo_AL
-            });
+            objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'ALMC');
+            if (objetoServicioActivo) {
+                arrayCuadranteServiciosFijos.push({
+                    ...objetoServicioActivo,
+                    tipoServiciofijo: 'ALMC',
+                    precioHora_AL: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_AL),
+                    variacion_AL: parseFloat(itemEditandoServiciosFijos.servicios.variacion_AL),
+                    diaVariacion_AL: itemEditandoServiciosFijos.servicios.variacion_AL !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_AL : '',
+                    activo_AL: itemEditandoServiciosFijos.servicios.activo_AL
+                });
+            } else {
+                arrayCuadranteServiciosFijos.push({
+                    tipoServiciofijo: 'ALMC',
+                    precioHora_AL: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_AL),
+                    variacion_AL: parseFloat(itemEditandoServiciosFijos.servicios.variacion_AL),
+                    diaVariacion_AL: itemEditandoServiciosFijos.servicios.variacion_AL !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_AL : '',
+                    activo_AL: itemEditandoServiciosFijos.servicios.activo_AL
+                });
+            };
         };
         if (itemEditandoServiciosFijos.servicios.precioHora_LA) {
-            arrayCuadranteServiciosFijos.push({
-                tipoServiciofijo: 'LAB',
-                precioHora_LA: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_LA),
-                variacion_LA: parseFloat(itemEditandoServiciosFijos.servicios.variacion_LA),
-                diaVariacion_LA: itemEditandoServiciosFijos.servicios.variacion_LA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_LA : '',
-                activo_LA: itemEditandoServiciosFijos.servicios.activo_LA
-            });
+            objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'LAB');
+            if (objetoServicioActivo) {
+                arrayCuadranteServiciosFijos.push({
+                    ...objetoServicioActivo,
+                    tipoServiciofijo: 'LAB',
+                    precioHora_LA: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_LA),
+                    variacion_LA: parseFloat(itemEditandoServiciosFijos.servicios.variacion_LA),
+                    diaVariacion_LA: itemEditandoServiciosFijos.servicios.variacion_LA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_LA : '',
+                    activo_LA: itemEditandoServiciosFijos.servicios.activo_LA
+                });
+            } else {
+                arrayCuadranteServiciosFijos.push({
+                    tipoServiciofijo: 'LAB',
+                    precioHora_LA: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_LA),
+                    variacion_LA: parseFloat(itemEditandoServiciosFijos.servicios.variacion_LA),
+                    diaVariacion_LA: itemEditandoServiciosFijos.servicios.variacion_LA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_LA : '',
+                    activo_LA: itemEditandoServiciosFijos.servicios.activo_LA
+                });
+            };
         };
         if (itemEditandoServiciosFijos.servicios.precioHora_TE) {
-            arrayCuadranteServiciosFijos.push({
-                tipoServiciofijo: 'TELÑ',
-                precioHora_TE: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_TE),
-                variacion_TE: parseFloat(itemEditandoServiciosFijos.servicios.variacion_TE),
-                diaVariacion_TE: itemEditandoServiciosFijos.servicios.variacion_TE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_TE : '',
-                activo_TE: itemEditandoServiciosFijos.servicios.activo_TE
-            });
+            objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'TELÑ');
+            if (objetoServicioActivo) {
+                arrayCuadranteServiciosFijos.push({
+                    ...objetoServicioActivo,
+                    tipoServiciofijo: 'TELÑ',
+                    precioHora_TE: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_TE),
+                    variacion_TE: parseFloat(itemEditandoServiciosFijos.servicios.variacion_TE),
+                    diaVariacion_TE: itemEditandoServiciosFijos.servicios.variacion_TE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_TE : '',
+                    activo_TE: itemEditandoServiciosFijos.servicios.activo_TE
+                });
+            } else {
+                arrayCuadranteServiciosFijos.push({
+                    tipoServiciofijo: 'TELÑ',
+                    precioHora_TE: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_TE),
+                    variacion_TE: parseFloat(itemEditandoServiciosFijos.servicios.variacion_TE),
+                    diaVariacion_TE: itemEditandoServiciosFijos.servicios.variacion_TE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_TE : '',
+                    activo_TE: itemEditandoServiciosFijos.servicios.activo_TE
+                });
+            };
         };
         if (itemEditandoServiciosFijos.servicios.precioHora_FI) {
-            arrayCuadranteServiciosFijos.push({
-                tipoServiciofijo: 'FCH.IN',
-                precioHora_FI: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FI),
-                variacion_FI: parseFloat(itemEditandoServiciosFijos.servicios.variacion_FI),
-                diaVariacion_FI: itemEditandoServiciosFijos.servicios.variacion_FI !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FI : '',
-                activo_FI: itemEditandoServiciosFijos.servicios.activo_FI
-            });
+            objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'FCH.IN');
+            if (objetoServicioActivo) {
+                arrayCuadranteServiciosFijos.push({
+                    ...objetoServicioActivo,
+                    tipoServiciofijo: 'FCH.IN',
+                    precioHora_FI: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FI),
+                    variacion_FI: parseFloat(itemEditandoServiciosFijos.servicios.variacion_FI),
+                    diaVariacion_FI: itemEditandoServiciosFijos.servicios.variacion_FI !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FI : '',
+                    activo_FI: itemEditandoServiciosFijos.servicios.activo_FI
+                });
+            } else {
+                arrayCuadranteServiciosFijos.push({
+                    tipoServiciofijo: 'FCH.IN',
+                    precioHora_FI: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FI),
+                    variacion_FI: parseFloat(itemEditandoServiciosFijos.servicios.variacion_FI),
+                    diaVariacion_FI: itemEditandoServiciosFijos.servicios.variacion_FI !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FI : '',
+                    activo_FI: itemEditandoServiciosFijos.servicios.activo_FI
+                });
+            };
         };
         if (itemEditandoServiciosFijos.servicios.precioHora_FE) {
-            arrayCuadranteServiciosFijos.push({
-                tipoServiciofijo: 'FCH.EX',
-                precioHora_FE: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FE),
-                variacion_FE: parseFloat(itemEditandoServiciosFijos.servicios.variacion_FE),
-                diaVariacion_FE: itemEditandoServiciosFijos.servicios.variacion_FE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FE : '',
-                activo_FE: itemEditandoServiciosFijos.servicios.activo_FE
-            });
+            objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'FCH.EX');
+            if (objetoServicioActivo) {
+                arrayCuadranteServiciosFijos.push({
+                    ...objetoServicioActivo,
+                    tipoServiciofijo: 'FCH.EX',
+                    precioHora_FE: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FE),
+                    variacion_FE: parseFloat(itemEditandoServiciosFijos.servicios.variacion_FE),
+                    diaVariacion_FE: itemEditandoServiciosFijos.servicios.variacion_FE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FE : '',
+                    activo_FE: itemEditandoServiciosFijos.servicios.activo_FE
+                });
+            } else {
+                arrayCuadranteServiciosFijos.push({
+                    tipoServiciofijo: 'FCH.EX',
+                    precioHora_FE: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FE),
+                    variacion_FE: parseFloat(itemEditandoServiciosFijos.servicios.variacion_FE),
+                    diaVariacion_FE: itemEditandoServiciosFijos.servicios.variacion_FE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FE : '',
+                    activo_FE: itemEditandoServiciosFijos.servicios.activo_FE
+                });
+            };
         };
         if (itemEditandoServiciosFijos.servicios.precioHora_AB) {
-            arrayCuadranteServiciosFijos.push({
-                tipoServiciofijo: 'ABRLL',
-                precioHora_AB: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_AB),
-                variacion_AB: parseFloat(itemEditandoServiciosFijos.servicios.variacion_AB),
-                diaVariacion_AB: itemEditandoServiciosFijos.servicios.variacion_AB !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_AB : '',
-                activo_AB: itemEditandoServiciosFijos.servicios.activo_AB
-            });
+            objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'ABRLL');
+            if (objetoServicioActivo) {
+                arrayCuadranteServiciosFijos.push({
+                    ...objetoServicioActivo,
+                    tipoServiciofijo: 'ABRLL',
+                    precioHora_AB: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_AB),
+                    variacion_AB: parseFloat(itemEditandoServiciosFijos.servicios.variacion_AB),
+                    diaVariacion_AB: itemEditandoServiciosFijos.servicios.variacion_AB !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_AB : '',
+                    activo_AB: itemEditandoServiciosFijos.servicios.activo_AB
+                });
+            } else {
+                arrayCuadranteServiciosFijos.push({
+                    tipoServiciofijo: 'ABRLL',
+                    precioHora_AB: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_AB),
+                    variacion_AB: parseFloat(itemEditandoServiciosFijos.servicios.variacion_AB),
+                    diaVariacion_AB: itemEditandoServiciosFijos.servicios.variacion_AB !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_AB : '',
+                    activo_AB: itemEditandoServiciosFijos.servicios.activo_AB
+                });
+            };
         };
         if (itemEditandoServiciosFijos.servicios.precioHora_MA) {
-            arrayCuadranteServiciosFijos.push({
-                tipoServiciofijo: 'MANT',
-                precioHora_MA: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_MA),
-                variacion_MA: parseFloat(itemEditandoServiciosFijos.servicios.variacion_MA),
-                diaVariacion_MA: itemEditandoServiciosFijos.servicios.variacion_MA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_MA : '',
-                activo_MA: itemEditandoServiciosFijos.servicios.activo_MA
-            });
+            objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'MANT');
+            if (objetoServicioActivo) {
+                arrayCuadranteServiciosFijos.push({
+                    ...objetoServicioActivo,
+                    tipoServiciofijo: 'MANT',
+                    precioHora_MA: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_MA),
+                    variacion_MA: parseFloat(itemEditandoServiciosFijos.servicios.variacion_MA),
+                    diaVariacion_MA: itemEditandoServiciosFijos.servicios.variacion_MA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_MA : '',
+                    activo_MA: itemEditandoServiciosFijos.servicios.activo_MA
+                });
+            } else {
+                arrayCuadranteServiciosFijos.push({
+                    tipoServiciofijo: 'MANT',
+                    precioHora_MA: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_MA),
+                    variacion_MA: parseFloat(itemEditandoServiciosFijos.servicios.variacion_MA),
+                    diaVariacion_MA: itemEditandoServiciosFijos.servicios.variacion_MA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_MA : '',
+                    activo_MA: itemEditandoServiciosFijos.servicios.activo_MA
+                });
+            };
         };
         if (itemEditandoServiciosFijos.servicios.precioHora_PO) {
-            arrayCuadranteServiciosFijos.push({
-                tipoServiciofijo: 'PORT',
-                precioHora_PO: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_PO),
-                variacion_PO: parseFloat(itemEditandoServiciosFijos.servicios.variacion_PO),
-                diaVariacion_PO: itemEditandoServiciosFijos.servicios.variacion_PO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_PO : '',
-                activo_PO: itemEditandoServiciosFijos.servicios.activo_PO
-            });
+            objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'PORT');
+            if (objetoServicioActivo) {
+                arrayCuadranteServiciosFijos.push({
+                    ...objetoServicioActivo,
+                    tipoServiciofijo: 'PORT',
+                    precioHora_PO: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_PO),
+                    variacion_PO: parseFloat(itemEditandoServiciosFijos.servicios.variacion_PO),
+                    diaVariacion_PO: itemEditandoServiciosFijos.servicios.variacion_PO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_PO : '',
+                    activo_PO: itemEditandoServiciosFijos.servicios.activo_PO
+                });
+            } else {
+                arrayCuadranteServiciosFijos.push({
+                    tipoServiciofijo: 'PORT',
+                    precioHora_PO: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_PO),
+                    variacion_PO: parseFloat(itemEditandoServiciosFijos.servicios.variacion_PO),
+                    diaVariacion_PO: itemEditandoServiciosFijos.servicios.variacion_PO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_PO : '',
+                    activo_PO: itemEditandoServiciosFijos.servicios.activo_PO
+                });
+            };
         };
         if (itemEditandoServiciosFijos.servicios.precioHora_BA) {
-            arrayCuadranteServiciosFijos.push({
-                tipoServiciofijo: 'BACT',
-                precioHora_BA: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_BA),
-                variacion_BA: parseFloat(itemEditandoServiciosFijos.servicios.variacion_BA),
-                diaVariacion_BA: itemEditandoServiciosFijos.servicios.variacion_BA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_BA : '',
-                activo_BA: itemEditandoServiciosFijos.servicios.activo_BA
-            });
+            objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'BACT');
+            if (objetoServicioActivo) {
+                arrayCuadranteServiciosFijos.push({
+                    ...objetoServicioActivo,
+                    tipoServiciofijo: 'BACT',
+                    precioHora_BA: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_BA),
+                    variacion_BA: parseFloat(itemEditandoServiciosFijos.servicios.variacion_BA),
+                    diaVariacion_BA: itemEditandoServiciosFijos.servicios.variacion_BA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_BA : '',
+                    activo_BA: itemEditandoServiciosFijos.servicios.activo_BA
+                });
+            } else {
+                arrayCuadranteServiciosFijos.push({
+                    tipoServiciofijo: 'BACT',
+                    precioHora_BA: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_BA),
+                    variacion_BA: parseFloat(itemEditandoServiciosFijos.servicios.variacion_BA),
+                    diaVariacion_BA: itemEditandoServiciosFijos.servicios.variacion_BA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_BA : '',
+                    activo_BA: itemEditandoServiciosFijos.servicios.activo_BA
+                });
+            };
         };
         if (itemEditandoServiciosFijos.servicios.precioHora_FT) {
-            arrayCuadranteServiciosFijos.push({
-                tipoServiciofijo: 'FEST',
-                precioHora_FT: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FT),
-                variacion_FT: parseFloat(itemEditandoServiciosFijos.servicios.variacion_FT),
-                diaVariacion_FT: itemEditandoServiciosFijos.servicios.variacion_FT !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FT : '',
-                activo_FT: itemEditandoServiciosFijos.servicios.activo_FT
-            });
+            objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'FEST');
+            if (objetoServicioActivo) {
+                arrayCuadranteServiciosFijos.push({
+                    ...objetoServicioActivo,
+                    tipoServiciofijo: 'FEST',
+                    precioHora_FT: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FT),
+                    variacion_FT: parseFloat(itemEditandoServiciosFijos.servicios.variacion_FT),
+                    diaVariacion_FT: itemEditandoServiciosFijos.servicios.variacion_FT !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FT : '',
+                    activo_FT: itemEditandoServiciosFijos.servicios.activo_FT
+                });
+            } else {
+                arrayCuadranteServiciosFijos.push({
+                    tipoServiciofijo: 'FEST',
+                    precioHora_FT: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FT),
+                    variacion_FT: parseFloat(itemEditandoServiciosFijos.servicios.variacion_FT),
+                    diaVariacion_FT: itemEditandoServiciosFijos.servicios.variacion_FT !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FT : '',
+                    activo_FT: itemEditandoServiciosFijos.servicios.activo_FT
+                });
+            };
         };
-        dispatch(setCuadranteServiciosFijosAccion(gestionaColumnaServiciosFijosAccion(arrayCuadranteServiciosFijos, null)));
+        if (itemEditandoServiciosFijos.servicios.precioHora_C3) {
+            objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'CRTRIM');
+            if (objetoServicioActivo) {
+                arrayCuadranteServiciosFijos.push({
+                    ...objetoServicioActivo,
+                    tipoServiciofijo: 'CRTRIM',
+                    precioHora_C3: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_C3),
+                    variacion_C3: parseFloat(itemEditandoServiciosFijos.servicios.variacion_C3),
+                    diaVariacion_C3: itemEditandoServiciosFijos.servicios.variacion_C3 !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_C3 : '',
+                    activo_C3: itemEditandoServiciosFijos.servicios.activo_C3
+                });
+            } else {
+                arrayCuadranteServiciosFijos.push({
+                    tipoServiciofijo: 'CRTRIM',
+                    precioHora_C3: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_C3),
+                    variacion_C3: parseFloat(itemEditandoServiciosFijos.servicios.variacion_C3),
+                    diaVariacion_C3: itemEditandoServiciosFijos.servicios.variacion_C3 !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_C3 : '',
+                    activo_C3: itemEditandoServiciosFijos.servicios.activo_C3
+                });
+            };
+        };
+        if (itemEditandoServiciosFijos.servicios.precioHora_C2) {
+            objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'CRBIM');
+            if (objetoServicioActivo) {
+                arrayCuadranteServiciosFijos.push({
+                    ...objetoServicioActivo,
+                    tipoServiciofijo: 'CRBIM',
+                    precioHora_C2: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_C2),
+                    variacion_C2: parseFloat(itemEditandoServiciosFijos.servicios.variacion_C2),
+                    diaVariacion_C2: itemEditandoServiciosFijos.servicios.variacion_C2 !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_C2 : '',
+                    activo_C2: itemEditandoServiciosFijos.servicios.activo_C2
+                });
+            } else {
+                arrayCuadranteServiciosFijos.push({
+                    tipoServiciofijo: 'CRBIM',
+                    precioHora_C2: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_C2),
+                    variacion_C2: parseFloat(itemEditandoServiciosFijos.servicios.variacion_C2),
+                    diaVariacion_C2: itemEditandoServiciosFijos.servicios.variacion_C2 !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_C2 : '',
+                    activo_C2: itemEditandoServiciosFijos.servicios.activo_C2
+                });
+            };
+        };
+        if (itemEditandoServiciosFijos.servicios.precioHora_ES) {
+            objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'LIME');
+            if (objetoServicioActivo) {
+                arrayCuadranteServiciosFijos.push({
+                    ...objetoServicioActivo,
+                    tipoServiciofijo: 'LIME',
+                    precioHora_ES: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_ES),
+                    variacion_ES: parseFloat(itemEditandoServiciosFijos.servicios.variacion_ES),
+                    diaVariacion_ES: itemEditandoServiciosFijos.servicios.variacion_ES !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_ES : '',
+                    activo_ES: itemEditandoServiciosFijos.servicios.activo_ES
+                });
+            } else {
+                arrayCuadranteServiciosFijos.push({
+                    tipoServiciofijo: 'LIME',
+                    precioHora_ES: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_ES),
+                    variacion_ES: parseFloat(itemEditandoServiciosFijos.servicios.variacion_ES),
+                    diaVariacion_ES: itemEditandoServiciosFijos.servicios.variacion_ES !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_ES : '',
+                    activo_ES: itemEditandoServiciosFijos.servicios.activo_ES
+                });
+            };
+        };
+        if (itemEditandoServiciosFijos.servicios.precioHora_PA) {
+            objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'LIMP');
+            if (objetoServicioActivo) {
+                arrayCuadranteServiciosFijos.push({
+                    ...objetoServicioActivo,
+                    tipoServiciofijo: 'LIMP',
+                    precioHora_PA: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_PA),
+                    variacion_PA: parseFloat(itemEditandoServiciosFijos.servicios.variacion_PA),
+                    diaVariacion_PA: itemEditandoServiciosFijos.servicios.variacion_PA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_PA : '',
+                    activo_PA: itemEditandoServiciosFijos.servicios.activo_PA
+                });
+            } else {
+                arrayCuadranteServiciosFijos.push({
+                    tipoServiciofijo: 'LIMP',
+                    precioHora_PA: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_PA),
+                    variacion_PA: parseFloat(itemEditandoServiciosFijos.servicios.variacion_PA),
+                    diaVariacion_PA: itemEditandoServiciosFijos.servicios.variacion_PA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_PA : '',
+                    activo_PA: itemEditandoServiciosFijos.servicios.activo_PA
+                });
+            };
+        };
+        dispatch(setCuadranteServiciosFijosAccion(gestionaColumnaServiciosFijosInicioAccion(arrayCuadranteServiciosFijos)));
         setStateSwitchTipoServicioFijoCuadrante(itemEditandoServiciosFijos.switch);
         setItemPrevioEditandoServiciosFijos(null);
         dispatch(activarDesactivarCambioAccion(true));
@@ -4587,6 +4763,7 @@ const Cuadrantes = (props) => {
             dispatch(activarDesactivarCambioBotonActualizarAccion(false));
         };
         dispatch(registrarIntervencionAccion(false));
+        cambiarEstadoCuadranteEnUsoRevisado(false);
     };
 
     const gestionItemPrevioEditandoConfiguracion = (valores) => {
@@ -4692,9 +4869,16 @@ const Cuadrantes = (props) => {
             dispatch(activarDesactivarCambioBotonActualizarAccion(false));
         };
         dispatch(registrarIntervencionAccion(false));
+        cambiarEstadoCuadranteEnUsoRevisado(false);
     };
 
-    const procesarDatosCuadrantePromesa = (index) => {
+    const handleChangeSelectNumeroCuadrante = (e) => {
+        setVenimosDeCambioCuadrante(true);
+        procesarCambioCuadrante(e.target.value);
+        setEstamosActualizandoCuadranteSinCarga(true);
+    };
+
+    const procesarDatosCuadrantePromesa = (index, noHayRegistro) => {
         return new Promise((resolve, reject) => {
             //revisamos que el cuadrante no esté a 0
             let sumatorioHoras = 0;
@@ -4704,93 +4888,130 @@ const Cuadrantes = (props) => {
                 });
             }
             let hayServiciosFijos = false;
-            let objetoFinalServiciosFijos = {
-                objeto: 'serviciosFijos',
-                servicio: []
-            };
-            let sumatorioServiciosFijos = 0;
-            for (const prop in losServiciosFijos) {
-                if (losServiciosFijos[prop] && prop === 'precioHora_TO') {
-                    sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                    objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'TOL', precioHora_TO: parseFloat(losServiciosFijos[prop]) });
+            let arrayFinalServiciosFijos = [];
+            let sumatorioServiciosFijos = 0;            
+            cuadranteServiciosFijos.forEach((servicio) => {
+                if (servicio.tipoServiciofijo === 'TOL') {
+                    sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                    delete servicio.estados;
+                    arrayFinalServiciosFijos.push({ ...servicio });
                     hayServiciosFijos = true;
                 };
-                if (losServiciosFijos[prop] && prop === 'precioHora_CR') {
-                    sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                    objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'CRIS', precioHora_CR: parseFloat(losServiciosFijos[prop]) });
+                if (servicio.tipoServiciofijo === 'CRIS') {
+                    sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                    delete servicio.estados;
+                    arrayFinalServiciosFijos.push({ ...servicio });
                     hayServiciosFijos = true;
                 };
-                if (losServiciosFijos[prop] && prop === 'precioHora_CE') {
-                    sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                    objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'CRISE', precioHora_CE: parseFloat(losServiciosFijos[prop]) });
+                if (servicio.tipoServiciofijo === 'CRISE') {
+                    sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                    delete servicio.estados;
+                    arrayFinalServiciosFijos.push({ ...servicio });
                     hayServiciosFijos = true;
                 };
-                if (losServiciosFijos[prop] && prop === 'precioHora_CI') {
-                    sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                    objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'CRISI', precioHora_CI: parseFloat(losServiciosFijos[prop]) });
+                if (servicio.tipoServiciofijo === 'CRISI') {
+                    sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                    delete servicio.estados;
+                    arrayFinalServiciosFijos.push({ ...servicio });
                     hayServiciosFijos = true;
                 };
-                if (losServiciosFijos[prop] && prop === 'precioHora_MO') {
-                    sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                    objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'MOQ', precioHora_MO: parseFloat(losServiciosFijos[prop]) });
+                if (servicio.tipoServiciofijo === 'MOQ') {
+                    sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                    delete servicio.estados;
+                    arrayFinalServiciosFijos.push({ ...servicio });
                     hayServiciosFijos = true;
                 };
-                if (losServiciosFijos[prop] && prop === 'precioHora_OF') {
-                    sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                    objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'OF', precioHora_OF: parseFloat(losServiciosFijos[prop]) });
+                if (servicio.tipoServiciofijo === 'OF') {
+                    sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                    delete servicio.estados;
+                    arrayFinalServiciosFijos.push({ ...servicio });
                     hayServiciosFijos = true;
                 };
-                if (losServiciosFijos[prop] && prop === 'precioHora_AL') {
-                    sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                    objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'ALMC', precioHora_AL: parseFloat(losServiciosFijos[prop]) });
+                if (servicio.tipoServiciofijo === 'ALMC') {
+                    sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                    delete servicio.estados;
+                    arrayFinalServiciosFijos.push({ ...servicio });
                     hayServiciosFijos = true;
                 };
-                if (losServiciosFijos[prop] && prop === 'precioHora_LA') {
-                    sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                    objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'LAB', precioHora_LA: parseFloat(losServiciosFijos[prop]) });
+                if (servicio.tipoServiciofijo === 'LAB') {
+                    sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                    delete servicio.estados;
+                    arrayFinalServiciosFijos.push({ ...servicio });
                     hayServiciosFijos = true;
                 };
-                if (losServiciosFijos[prop] && prop === 'precioHora_TE') {
-                    sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                    objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'TELÑ', precioHora_TE: parseFloat(losServiciosFijos[prop]) });
+                if (servicio.tipoServiciofijo === 'TELÑ') {
+                    sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                    delete servicio.estados;
+                    arrayFinalServiciosFijos.push({ ...servicio });
                     hayServiciosFijos = true;
                 };
-                if (losServiciosFijos[prop] && prop === 'precioHora_FI') {
-                    sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                    objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'FCH.IN', precioHora_FI: parseFloat(losServiciosFijos[prop]) });
+                if (servicio.tipoServiciofijo === 'FCH.IN') {
+                    sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                    delete servicio.estados;
+                    arrayFinalServiciosFijos.push({ ...servicio });
                     hayServiciosFijos = true;
                 };
-                if (losServiciosFijos[prop] && prop === 'precioHora_FE') {
-                    sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                    objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'FCH.EX', precioHora_FE: parseFloat(losServiciosFijos[prop]) });
+                if (servicio.tipoServiciofijo === 'FCH.EX') {
+                    sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                    delete servicio.estados;
+                    arrayFinalServiciosFijos.push({ ...servicio });
                     hayServiciosFijos = true;
                 };
-                if (losServiciosFijos[prop] && prop === 'precioHora_AB') {
-                    sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                    objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'ABRLL', precioHora_AB: parseFloat(losServiciosFijos[prop]) });
+                if (servicio.tipoServiciofijo === 'ABRLL') {
+                    sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                    delete servicio.estados;
+                    arrayFinalServiciosFijos.push({ ...servicio });
                     hayServiciosFijos = true;
                 };
-                if (losServiciosFijos[prop] && prop === 'precioHora_MA') {
-                    sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                    objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'MANT', precioHora_MA: parseFloat(losServiciosFijos[prop]) });
+                if (servicio.tipoServiciofijo === 'MANT') {
+                    sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                    delete servicio.estados;
+                    arrayFinalServiciosFijos.push({ ...servicio });
                     hayServiciosFijos = true;
                 };
-                if (losServiciosFijos[prop] && prop === 'precioHora_PO') {
-                    sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                    objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'PORT', precioHora_PO: parseFloat(losServiciosFijos[prop]) });
+                if (servicio.tipoServiciofijo === 'PORT') {
+                    sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                    delete servicio.estados;
+                    arrayFinalServiciosFijos.push({ ...servicio });
                     hayServiciosFijos = true;
                 };
-                if (losServiciosFijos[prop] && prop === 'precioHora_BA') {
-                    sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                    objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'BACT', precioHora_BA: parseFloat(losServiciosFijos[prop]) });
+                if (servicio.tipoServiciofijo === 'BACT') {
+                    sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                    delete servicio.estados;
+                    arrayFinalServiciosFijos.push({ ...servicio });
                     hayServiciosFijos = true;
                 };
-                if (losServiciosFijos[prop] && prop === 'precioHora_FT') {
-                    sumatorioServiciosFijos += parseFloat(losServiciosFijos[prop]);
-                    objetoFinalServiciosFijos.servicio.push({ tipoServiciofijo: 'FEST', precioHora_FT: parseFloat(losServiciosFijos[prop]) });
+                if (servicio.tipoServiciofijo === 'FEST') {
+                    sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                    delete servicio.estados;
+                    arrayFinalServiciosFijos.push({ ...servicio });
                     hayServiciosFijos = true;
                 };
-            };
+                if (servicio.tipoServiciofijo === 'CRTRIM') {
+                    sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                    delete servicio.estados;
+                    arrayFinalServiciosFijos.push({ ...servicio });
+                    hayServiciosFijos = true;
+                };
+                if (servicio.tipoServiciofijo === 'CRBIM') {
+                    sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                    delete servicio.estados;
+                    arrayFinalServiciosFijos.push({ ...servicio });
+                    hayServiciosFijos = true;
+                };
+                if (servicio.tipoServiciofijo === 'LIME') {
+                    sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                    delete servicio.estados;
+                    arrayFinalServiciosFijos.push({ ...servicio });
+                    hayServiciosFijos = true;
+                };
+                if (servicio.tipoServiciofijo === 'LIMP') {
+                    sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                    delete servicio.estados;
+                    arrayFinalServiciosFijos.push({ ...servicio });
+                    hayServiciosFijos = true;
+                };
+            });
             if (sumatorioHoras < 1 && !hayServiciosFijos) {
                 setAlert({
                     mensaje: "El cuadrante no se puede registrar a 0. El trabajador asignado está de baja, añade un suplente o un trabajador para computar o añade servicios extra.",
@@ -4825,7 +5046,7 @@ const Cuadrantes = (props) => {
             let elTotalAAFacturarTotal = null;
 
             if (objetoCuadrante.datosInforme.datosInforme[index].computo === 1) {
-                elTotalAAFacturar_M = objetoCuadrante.datosInforme.mensualPactado;
+                elTotalAAFacturar_M = parseFloat(objetoCuadrante.datosInforme.datosInforme[index].mensualPactado);
                 elTotalAAFacturarTotal = elTotalAAFacturar_M;
             };
             if (objetoCuadrante.datosInforme.datosInforme[index].computo === 2) {
@@ -4908,15 +5129,24 @@ const Cuadrantes = (props) => {
             if (cuadrante.length === 0) {
                 elObjetoDatosCuadrante = {
                     tipoHorarioGeneral: '',
-                    arrayCuadrante: []
+                    arrayCuadrante: [],
+                    observaciones: objetoCuadrante.datosCuadrante.datosCuadrante[index].observaciones,
+                    total: elTotalAAFacturarTotal += sumatorioServiciosFijos
                 };
                 elObjetoDatosInforme = null;
                 elObjetoHoras = null;
-                elObjetoServiciosFijos = objetoFinalServiciosFijos
+                elObjetoServiciosFijos = arrayFinalServiciosFijos
             } else {
+                let elArrayCuadranteARegistrar;
+                if (!noHayRegistro) {
+                    elArrayCuadranteARegistrar = limpiarCuadranteAccion();
+                } else {
+                    elArrayCuadranteARegistrar = objetoCuadrante.datosCuadrante.datosCuadrante[index].arrayCuadrante;
+                };
                 elObjetoDatosCuadrante = {
                     tipoHorarioGeneral: objetoCuadrante.datosCuadrante.datosCuadrante[index].tipoHorarioGeneral,
-                    arrayCuadrante: limpiarCuadranteAccion(),
+                    arrayCuadrante: elArrayCuadranteARegistrar,
+                    observaciones: objetoCuadrante.datosCuadrante.datosCuadrante[index].observaciones,
                     total: elTotalAAFacturarTotal += sumatorioServiciosFijos
                 };
                 elObjetoDatosInforme = {
@@ -4953,7 +5183,7 @@ const Cuadrantes = (props) => {
                     F: sumatorioHoras_F ? sumatorioHoras_F : null
                 };
                 if (hayServiciosFijos) {
-                    elObjetoServiciosFijos = objetoFinalServiciosFijos
+                    elObjetoServiciosFijos = arrayFinalServiciosFijos
                 } else {
                     elObjetoServiciosFijos = null
                 };
@@ -4962,7 +5192,7 @@ const Cuadrantes = (props) => {
         });
     };
 
-    const procesarDatosCuadrante = (source, totalFacturado) => {
+    const procesarDatosCuadrante = (source) => {
         handleCloseMenu();
         //revisamos que no sea cuadrante múltiple
         let faltanPorRevisar = false;
@@ -4989,7 +5219,7 @@ const Cuadrantes = (props) => {
             if (!cuadrante.revisado) {
                 todosRevisados = false;
             } else {
-                elTotalGeneral += objetoCuadrante.datosCuadrante.datosCuadrante[index].total;
+                elTotalGeneral += parseFloat(objetoCuadrante.datosCuadrante.datosCuadrante[index].total);
             };
         });
         let elArrayDatosCuadrante = [...objetoCuadrante.datosCuadrante.datosCuadrante];
@@ -5000,9 +5230,8 @@ const Cuadrantes = (props) => {
         let losDatosInforme = {};
         let losDatosServiciosFijos = {};
         let losDatosHoras = {};
-        let cuadranteAGuardar = {};
         if (!todosRevisados) {
-            procesarDatosCuadrantePromesa(cuadranteEnUsoCuadrantes - 1)
+            procesarDatosCuadrantePromesa(cuadranteEnUsoCuadrantes - 1, false)
                 .then(values => {
                     if (values.resuelto) {
                         elArrayDatosCuadrante[cuadranteEnUsoCuadrantes - 1] = values.cuadrante;
@@ -5025,19 +5254,19 @@ const Cuadrantes = (props) => {
                             ...objetoCuadrante.horas,
                             horas: elArrayHoras
                         };
-                        cuadranteAGuardar = {
-                            id: objetoCuadrante.id,
-                            nombre: objetoCuadrante.nombre,
-                            actualizacion: laFirmaActualizacion,
-                            datos_cuadrante: JSON.stringify(losDatosCuadrante),
-                            datos_servicios: JSON.stringify(losDatosServiciosFijos),
-                            datos_informe: JSON.stringify(losDatosInforme),
-                            estado: source === 'informe' ? 'facturado' : objetoCuadrante.estado,
-                            total: source === 'informe' ? values.total + elTotalGeneral : objetoCuadrante.estado === 'facturado' ? values.total + elTotalGeneral : null,
-                            horas: JSON.stringify(losDatosHoras)
-                        };
-                        finalizaRegistroCuadrante(cuadranteAGuardar, source, true, laFirmaActualizacion);
+                        elTotalGeneral += parseFloat(values.cuadrante.total);
+                        finalizaRegistroCuadrante(
+                            source,
+                            true,
+                            laFirmaActualizacion,
+                            losDatosCuadrante,
+                            losDatosInforme,
+                            losDatosServiciosFijos,
+                            losDatosHoras,
+                            elTotalGeneral
+                        );
                     };
+                    cambiarEstadoCuadranteEnUsoRevisado(true);
                 });
         } else {
             losDatosCuadrante = {
@@ -5056,53 +5285,125 @@ const Cuadrantes = (props) => {
                 ...objetoCuadrante.horas,
                 horas: elArrayHoras
             };
-            cuadranteAGuardar = {
-                id: objetoCuadrante.id,
-                nombre: objetoCuadrante.nombre,
-                actualizacion: laFirmaActualizacion,
-                datos_cuadrante: JSON.stringify(losDatosCuadrante),
-                datos_servicios: JSON.stringify(losDatosServiciosFijos),
-                datos_informe: JSON.stringify(losDatosInforme),
-                estado: source === 'informe' ? 'facturado' : objetoCuadrante.estado,
-                total: source === 'informe' ? elTotalGeneral : objetoCuadrante.estado === 'facturado' ? elTotalGeneral : null,
-                horas: JSON.stringify(losDatosHoras)
-            };
-            finalizaRegistroCuadrante(cuadranteAGuardar, source, false, laFirmaActualizacion);
+            finalizaRegistroCuadrante(
+                source,
+                false,
+                laFirmaActualizacion,
+                losDatosCuadrante,
+                losDatosInforme,
+                losDatosServiciosFijos,
+                losDatosHoras,
+                elTotalGeneral
+            );
         };
     };
 
-    const finalizaRegistroCuadrante = (cuadranteAGuardar, source, faltaActualizar, laFirmaActualizacion) => {
-        console.log(cuadranteAGuardar)
-        // if (cuadranteRegistrado === 'no') {
-        //     dispatch(registrarCuadranteAccion('cuadrantes', cuadranteAGuardar.id, cuadranteAGuardar));
-        //     dispatch(cambiarACuadranteRegistradoAccion());
-        //     dispatch(activarDesactivarCambioBotonActualizarAccion(true));
-        //     setControladorDeEstado('venimosDeRegistrar');
-        // };
-        // if (cuadranteRegistrado === 'si') {
-        //     if (source === 'informe') {
-        //         setControladorDeEstado('venimosDeInforme');
-        //     }
-        //     dispatch(actualizarCuadranteAccion('cuadrantes', cuadranteAGuardar.id, cuadranteAGuardar));
-        //     dispatch(activarDesactivarCambioBotonActualizarAccion(true));
-        // };
-        // dispatch(registrarIntervencionAccion(true));
-        // if (source !== 'informe') {
-        //     const losDatosInforme = {
-        //         ...objetoCuadrante.datosInforme,
-        //         totalFacturado_M: elTotalAAFacturar_M,
-        //         totalFacturado_L: elTotalAAFacturar_L,
-        //         totalFacturado_E: elTotalAAFacturar_E,
-        //         totalFacturado_P: elTotalAAFacturar_P,
-        //         totalFacturado_N: elTotalAAFacturar_N,
-        //         totalFacturado_R: elTotalAAFacturar_R,
-        //         totalFacturado_L1: elTotalAAFacturar_L1,
-        //         totalFacturado_L2: elTotalAAFacturar_L2,
-        //         totalFacturado_F: elTotalAAFacturar_F
-        //     };
-        //     const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, arrayCuadrante: cuadrante };
-        //     dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, actualizacion: laFirmaActualizacion, datosCuadrante: losDatosCuadrante, datosInforme: losDatosInforme, horas: objetoFinalHoras }));
-        // }
+    const procesarCambioCuadrante = (target) => {
+        let elArrayDatosCuadrante = [...objetoCuadrante.datosCuadrante.datosCuadrante];
+        let elArrayDatosInforme = [...objetoCuadrante.datosInforme.datosInforme];
+        let elArrayDatosServiciosFijos = [...objetoCuadrante.datosServicios.datosServicios];
+        let elArrayHoras = [...objetoCuadrante.horas.horas];
+        let losDatosCuadrante = {};
+        let losDatosInforme = {};
+        let losDatosServiciosFijos = {};
+        let losDatosHoras = {};
+        procesarDatosCuadrantePromesa(cuadranteEnUsoCuadrantes - 1, true)
+            .then(values => {
+                if (values.resuelto) {
+                    elArrayDatosCuadrante[cuadranteEnUsoCuadrantes - 1] = values.cuadrante;
+                    elArrayDatosInforme[cuadranteEnUsoCuadrantes - 1] = values.informe;
+                    elArrayDatosServiciosFijos[cuadranteEnUsoCuadrantes - 1] = values.serviciosFijos;
+                    elArrayHoras[cuadranteEnUsoCuadrantes - 1] = values.horas;
+                    losDatosCuadrante = {
+                        ...objetoCuadrante.datosCuadrante,
+                        datosCuadrante: elArrayDatosCuadrante
+                    };
+                    losDatosInforme = {
+                        ...objetoCuadrante.datosInforme,
+                        datosInforme: elArrayDatosInforme
+                    };
+                    losDatosServiciosFijos = {
+                        ...objetoCuadrante.datosServicios,
+                        datosServicios: elArrayDatosServiciosFijos
+                    };
+                    losDatosHoras = {
+                        ...objetoCuadrante.horas,
+                        horas: elArrayHoras
+                    };
+
+                };
+                cambiarEstadoCuadranteEnUsoRevisado(true);
+                dispatch(registrarIntervencionAccion(true));
+                dispatch(actualizarObjetoCuadranteAccion({
+                    ...objetoCuadrante,
+                    datosCuadrante: losDatosCuadrante,
+                    datosInforme: losDatosInforme,
+                    datosServicios: losDatosServiciosFijos,
+                    horas: losDatosHoras
+                }));
+                reseteaContenidoCentro();
+                dispatch(cambiarACuadranteNoRegistradoAccion());
+                setCuadranteEnUsoCuadrantes(target);
+                gestionaCuadranteIndividual(target);
+                dispatch(obtenerCategoriaPorCentroAccion('centros', objetoCuadrante.datosCuadrante.centro, target - 1));
+            });
+    };
+
+    const finalizaRegistroCuadrante = (
+        source,
+        faltaActualizar,
+        laFirmaActualizacion,
+        losDatosCuadrante,
+        losDatosInforme,
+        losDatosServiciosFijos,
+        losDatosHoras,
+        elTotalGeneral
+    ) => {
+        const cuadranteAGuardar = {
+            id: objetoCuadrante.id,
+            nombre: objetoCuadrante.nombre,
+            actualizacion: laFirmaActualizacion,
+            datos_cuadrante: JSON.stringify(losDatosCuadrante),
+            datos_servicios: JSON.stringify(losDatosServiciosFijos),
+            datos_informe: JSON.stringify(losDatosInforme),
+            estado: source === 'informe' ? 'facturado' : objetoCuadrante.estado,
+            total: source === 'informe' ? elTotalGeneral : objetoCuadrante.estado === 'facturado' ? elTotalGeneral : null,
+            horas: JSON.stringify(losDatosHoras)
+        };
+        if (cuadranteRegistrado === 'no') {
+            dispatch(registrarCuadranteAccion('cuadrantes', cuadranteAGuardar.id, cuadranteAGuardar));
+            dispatch(cambiarACuadranteRegistradoAccion());
+            dispatch(activarDesactivarCambioBotonActualizarAccion(true));
+            setControladorDeEstado('venimosDeRegistrar');
+        };
+        if (cuadranteRegistrado === 'si') {
+            if (source === 'informe') {
+                setControladorDeEstado('venimosDeInforme');
+            }
+            dispatch(actualizarCuadranteAccion('cuadrantes', cuadranteAGuardar.id, cuadranteAGuardar));
+            dispatch(activarDesactivarCambioBotonActualizarAccion(true));
+        };
+        dispatch(registrarIntervencionAccion(true));
+        if (source !== 'informe') {
+            dispatch(actualizarObjetoCuadranteAccion({
+                ...objetoCuadrante,
+                actualizacion: laFirmaActualizacion,
+                datosCuadrante: losDatosCuadrante,
+                datosInforme: losDatosInforme,
+                datosServicios: losDatosServiciosFijos,
+                horas: losDatosHoras
+            }));
+        } else {
+            dispatch(actualizarObjetoCuadranteAccion({
+                ...objetoCuadrante,
+                actualizacion: laFirmaActualizacion,
+                datosCuadrante: losDatosCuadrante,
+                datosInforme: losDatosInforme,
+                datosServicios: losDatosServiciosFijos,
+                horas: losDatosHoras,
+                estado: 'facturado'
+            }));
+        }
     };
 
     const goToInicioCuadrantes = () => {
@@ -5532,7 +5833,7 @@ const Cuadrantes = (props) => {
             };
         };
         arrayInforme.push(['divider', 'normal']);
-        arrayInforme.push(['Servicios fijos:', 'normal']);
+        arrayInforme.push(['Servicios extra:', 'normal']);
         let sumatorioServiciosFijos = 0;
         cuadranteServiciosFijos.forEach((servicio) => {
             for (const prop in servicio) {
@@ -5632,6 +5933,30 @@ const Cuadrantes = (props) => {
                         arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA DÍA FESTIVO: ' + parseFloat(servicio.totalServicioFijo) + ' €', 'normal']);
                     };
                 };
+                if (servicio[prop] && prop === 'precioHora_C3') {
+                    if (servicio.activo_C3 === 'si') {
+                        sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                        arrayInforme.push(['Total a facturar por LIMPIEZA DE CRISTALES TRIMESTRAL: ' + parseFloat(servicio.totalServicioFijo) + ' €', 'normal']);
+                    };
+                };
+                if (servicio[prop] && prop === 'precioHora_C2') {
+                    if (servicio.activo_C2 === 'si') {
+                        sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                        arrayInforme.push(['Total a facturar por LIMPIEZA DE CRISTALES BIMENSUAL: ' + parseFloat(servicio.totalServicioFijo) + ' €', 'normal']);
+                    };
+                };
+                if (servicio[prop] && prop === 'precioHora_ES') {
+                    if (servicio.activo_ES === 'si') {
+                        sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                        arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA ESPECIAL: ' + parseFloat(servicio.totalServicioFijo) + ' €', 'normal']);
+                    };
+                };
+                if (servicio[prop] && prop === 'precioHora_PA') {
+                    if (servicio.activo_PA === 'si') {
+                        sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                        arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA DEL PARKING: ' + parseFloat(servicio.totalServicioFijo) + ' €', 'normal']);
+                    };
+                };
             };
         });
 
@@ -5643,7 +5968,7 @@ const Cuadrantes = (props) => {
         arrayInforme.push(['Total General a facturar: ' + sumatorioTotal + ' €', 'normal']);
         arrayInforme.push(['Forma de pago: ' + dispatch(retornaFormaPagoAccion(centroAGestionar.formaPago)), 'normal']);
         if (centroAGestionar.diaPago) {
-            arrayInforme.push(['Día de pago: ' + centroAGestionar.formaPago, 'normal']);
+            arrayInforme.push(['Día de pago: ' + centroAGestionar.diaPago, 'normal']);
         };
         arrayInforme.push(['Frecuencia de pago: ' + centroAGestionar.tempPago, 'normal']);
         setArrayInformeLineas(arrayInforme);
@@ -5669,39 +5994,6 @@ const Cuadrantes = (props) => {
                 </Grid>
             </Fragment>
         )
-    };
-
-    const calculoTotalAFacturar = () => {
-
-        let elTotalFacturado = 0;
-        if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_M) {
-            elTotalFacturado += objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_M
-        };
-        if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_L) {
-            elTotalFacturado += objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_L
-        };
-        if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_E) {
-            elTotalFacturado += objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_E
-        };
-        if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_P) {
-            elTotalFacturado += objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_P
-        };
-        if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_N) {
-            elTotalFacturado += objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_N
-        };
-        if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_R) {
-            elTotalFacturado += objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_R
-        };
-        if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_L1) {
-            elTotalFacturado += objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_L1
-        };
-        if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_L2) {
-            elTotalFacturado += objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_L2
-        };
-        if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_F) {
-            elTotalFacturado += objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_F
-        };
-        return elTotalFacturado;
     };
 
     const calculoTotalHoras = () => {
@@ -5731,15 +6023,7 @@ const Cuadrantes = (props) => {
     };
 
     const handleClickFacturarCuadrante = () => {
-        const elTotalFacturado = calculoTotalAFacturar();
-        dispatch(actualizarObjetoCuadranteAccion({ ...objetoCuadrante, estado: 'facturado', total: elTotalFacturado }));
-        procesarDatosCuadrante('informe', elTotalFacturado);
-        handleCloseMenu();
-    };
-
-    const handleClickActualizarCentro = () => {
-        setVenimosDeActualizarCentro(true);
-        dispatch(obtenerCentroAccion('centros', objetoCuadrante.datosCuadrante.centro));
+        procesarDatosCuadrante('informe');
         handleCloseMenu();
     };
 
@@ -5761,8 +6045,17 @@ const Cuadrantes = (props) => {
         }
     };
 
+    const calculoTotalAFacturar = () => {
+        let elTotalGeneral = 0;
+        numeroCuadrantesCuadrantes.forEach((cuadrante, index) => {
+            elTotalGeneral += objetoCuadrante.datosCuadrante.datosCuadrante[index].total;
+        });
+        return elTotalGeneral;
+    };
+
     const handleGenerarArchivos = () => {
         if (numeroFactusol) {
+            //x revisar
             const objetoDesgloseConceptos = {
                 MT: objetoCuadrante.datosInforme.totalFacturado_M ? objetoCuadrante.datosInforme.totalFacturado_M : null,
                 LT: objetoCuadrante.datosInforme.totalFacturado_L ? objetoCuadrante.datosInforme.totalFacturado_L : null,
@@ -5814,6 +6107,7 @@ const Cuadrantes = (props) => {
             dispatch(activarDesactivarCambioBotonActualizarAccion(false));
         };
         dispatch(registrarIntervencionAccion(false));
+        cambiarEstadoCuadranteEnUsoRevisado(false);
     };
 
     //dialog
@@ -5852,33 +6146,13 @@ const Cuadrantes = (props) => {
             reseteaContenidoCentro();
             dispatch(setCentroAccion(centroId));
             dispatch(cambiarACuadranteNoRegistradoAccion());
-            const nombreCuadrante = calendarioAGestionar + '-' + centroId;
-            const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, centro: centroId, tipoHorarioGeneral: '', arrayCuadrante: [] };
-            dispatch(actualizarObjetoCuadranteAccion({
-                ...objetoCuadrante,
-                id: null,
-                nombre: nombreCuadrante,
-                actualizacion: '',
-                datosCuadrante: losDatosCuadrante,
-                estado: 'registrado',
-                total: null,
-                horas: {
-                    objeto: 'horas',
-                    M: null,
-                    L: null,
-                    E: null,
-                    P: null,
-                    N: null,
-                    R: null,
-                    L1: null,
-                    L2: null,
-                    F: null
-                }
-            }));
+            dispatch(vaciarDatosCuadrantesAccion());
             dispatch(activarDesactivarCambioBotonResetearAccion(true));
             setControladorDeEstado('venimosDeResetear');
             setPreValueCalendarioAGestionarReseteo(calendarioAGestionar);
             dispatch(setCalendarioAGestionarAccion(''));
+            dispatch(setCategoriaAccion(categoriaPorCentro));
+            dispatch(obtenerCentrosPorCategoriaAccion('centros', categoriaPorCentro));
         }
         dispatch(cierraObjetoDialogAccion());
     };
@@ -5886,32 +6160,12 @@ const Cuadrantes = (props) => {
     const handleCloseDialogBotonesCuadrantes3 = (respuesta) => {
         if (respuesta === "acuerdo") {
             dispatch(registrarIntervencionAccion(true));
+            console.log('prevalue: ', preValueValor)
             if (preValueValor.origen === 'centros') {
                 reseteaContenidoCentro();
                 dispatch(setCentroAccion(preValueValor.valor));
+                dispatch(vaciarDatosCuadrantesAccion());
                 const nombreCuadrante = calendarioAGestionar + '-' + preValueValor.valor;
-                const losDatosCuadrante = { ...objetoCuadrante.datosCuadrante, centro: preValueValor.valor, tipoHorarioGeneral: '', arrayCuadrante: [] };
-                dispatch(actualizarObjetoCuadranteAccion({
-                    ...objetoCuadrante,
-                    id: null,
-                    nombre: nombreCuadrante,
-                    actualizacion: '',
-                    datosCuadrante: losDatosCuadrante,
-                    estado: 'registrado',
-                    total: null,
-                    horas: {
-                        objeto: 'horas',
-                        M: null,
-                        L: null,
-                        E: null,
-                        P: null,
-                        N: null,
-                        R: null,
-                        L1: null,
-                        L2: null,
-                        R: null
-                    }
-                }));
                 dispatch(obtenerCuadranteAccion('cuadrantes', nombreCuadrante));
             };
             if (preValueValor.origen === 'cuadrantes') {
@@ -6012,7 +6266,7 @@ const Cuadrantes = (props) => {
         let hayServicio = false;
         let precio = '';
         for (const prop in servicio) {
-            if (prop === postRef) {
+            if (prop === postRef && servicio[prop] !== 'anulado') {
                 hayServicio = true;
                 if (servicio['precioHora_TO']) {
                     precio = servicio['precioHora_TO'];
@@ -6062,6 +6316,18 @@ const Cuadrantes = (props) => {
                 if (servicio['precioHora_FT']) {
                     precio = servicio['precioHora_FT'];
                 };
+                if (servicio['precioHora_C3']) {
+                    precio = servicio['precioHora_C3'];
+                };
+                if (servicio['precioHora_C2']) {
+                    precio = servicio['precioHora_C2'];
+                };
+                if (servicio['precioHora_ES']) {
+                    precio = servicio['precioHora_ES'];
+                };
+                if (servicio['precioHora_PA']) {
+                    precio = servicio['precioHora_PA'];
+                };
             };
         };
         if (servicio.activo_TO === 'si' ||
@@ -6079,7 +6345,11 @@ const Cuadrantes = (props) => {
             servicio.activo_MA === 'si' ||
             servicio.activo_PO === 'si' ||
             servicio.activo_BA === 'si' ||
-            servicio.activo_FT === 'si') {
+            servicio.activo_FT === 'si' ||
+            servicio.activo_C3 === 'si' ||
+            servicio.activo_C2 === 'si' ||
+            servicio.activo_ES === 'si' ||
+            servicio.activo_PA === 'si') {
             return (
                 <Grid
                     container
@@ -6174,7 +6444,7 @@ const Cuadrantes = (props) => {
                                             <ListItemText primary="Inicio Cuadrantes" />
                                         </MenuItem>
                                         <MenuItem
-                                            onClick={() => procesarDatosCuadrante('normal', null)}
+                                            onClick={() => procesarDatosCuadrante('normal')}
                                             disabled={cuadranteRegistrado === 'si' ? disabledItemBotonActualizar : disabledItemBotonRegistrar}
                                         >
                                             <ListItemIcon>
@@ -6241,14 +6511,6 @@ const Cuadrantes = (props) => {
                                                 </MenuItem> */}
                                         </Collapse>
                                         <MenuItem
-                                            onClick={handleClickActualizarCentro}
-                                        >
-                                            <ListItemIcon>
-                                                <CachedIcon fontSize="small" />
-                                            </ListItemIcon>
-                                            <ListItemText primary="Actualizar Centro" />
-                                        </MenuItem>
-                                        <MenuItem
                                             onClick={handleClickOpenDialogCuadrantes1}
                                             disabled={disabledItemBotonResetear}
                                         >
@@ -6301,7 +6563,7 @@ const Cuadrantes = (props) => {
                                         onChange={handleChangeSelectCategoria}
                                         input={
                                             <OutlinedInput
-                                                labelWidth={135}
+                                                labelWidth={130}
                                             />
                                         }
                                     >
@@ -6329,7 +6591,7 @@ const Cuadrantes = (props) => {
                                         onChange={handleChangeSelectCentro}
                                         input={
                                             <OutlinedInput
-                                                labelWidth={50}
+                                                labelWidth={55}
                                             />
                                         }
                                     >
@@ -6354,7 +6616,7 @@ const Cuadrantes = (props) => {
                                     <Select
                                         id="form-numero-cuadrantes"
                                         value={cuadranteEnUsoCuadrantes}
-                                        // onChange={handleChangeSelectCategoria}
+                                        onChange={handleChangeSelectNumeroCuadrante}
                                         input={
                                             <OutlinedInput
                                                 labelWidth={80}
@@ -6549,9 +6811,9 @@ const Cuadrantes = (props) => {
                                                 >
                                                     <Typography variant="body2">Cuadrante</Typography>
                                                     <Avatar
-                                                        className={clsx(classes.small4)}
+                                                        className={clsx(classes.small4, classes.suplente)}
                                                     >
-                                                        <Typography variant='body2' color="textPrimary">{cuadranteEnUsoCuadrantes}</Typography>
+                                                        <Typography variant='body2' color="initial">{cuadranteEnUsoCuadrantes}</Typography>
                                                     </Avatar>
                                                 </Box>
                                                 {visibleCuadranteServiciosFijos ? (
@@ -6562,144 +6824,146 @@ const Cuadrantes = (props) => {
                                                     ) : null
                                                 ) : null}
                                                 {visibleCuadrante ? (
-                                                    <Fragment>
-                                                        {cuadrante.map((columnaCabecera, index) => (
-                                                            <Box
-                                                                key={`box_header_` + (index + 1)}
-                                                                mx={0.3}
-                                                            >
-                                                                <Accordion
-                                                                    expanded={expandedAccordion === 'panel_' + (index + 1)}
-                                                                    className={gestionaClassesColoresTrabajadoresAccion(columnaCabecera.tipoTrabajador)}
-                                                                    style={{ width: dimensionsColumna.width }}
-                                                                    onChange={(e, expandedAccordion) => { handleCambioAccordionHeader(expandedAccordion, 'panel_' + (index + 1), index) }}
+                                                    cuadrante.length > 0 ? (
+                                                        <Fragment>
+                                                            {cuadrante.map((columnaCabecera, index) => (
+                                                                <Box
+                                                                    key={`box_header_` + (index + 1)}
+                                                                    mx={0.3}
                                                                 >
-                                                                    <AccordionSummary
-                                                                        expandIcon={<ExpandMoreIcon className={classes.blanc} />}
+                                                                    <Accordion
+                                                                        expanded={expandedAccordion === 'panel_' + (index + 1)}
+                                                                        className={gestionaClassesColoresTrabajadoresAccion(columnaCabecera.tipoTrabajador)}
+                                                                        style={{ width: dimensionsColumna.width }}
+                                                                        onChange={(e, expandedAccordion) => { handleCambioAccordionHeader(expandedAccordion, 'panel_' + (index + 1), index) }}
                                                                     >
-                                                                        <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{columnaCabecera.nombreTrabajador}</Typography>
-                                                                    </AccordionSummary>
-                                                                    <AccordionDetails>
-                                                                        <Grid container className={classes.mt5}>
-                                                                            <Grid
-                                                                                container
-                                                                                direction="column"
-                                                                                justifycontent="flex-start"
-                                                                                alignItems="flex-start"
-                                                                            >
-                                                                                <Box
-                                                                                    style={{ width: '100%', display: 'flex' }}
-                                                                                    className={estadoFlex === 'fila' ? classes.flexRow : classes.flexColumn}
+                                                                        <AccordionSummary
+                                                                            expandIcon={<ExpandMoreIcon className={classes.blanc} />}
+                                                                        >
+                                                                            <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{columnaCabecera.nombreTrabajador}</Typography>
+                                                                        </AccordionSummary>
+                                                                        <AccordionDetails>
+                                                                            <Grid container className={classes.mt5}>
+                                                                                <Grid
+                                                                                    container
+                                                                                    direction="column"
+                                                                                    justifycontent="flex-start"
+                                                                                    alignItems="flex-start"
                                                                                 >
-                                                                                    <Grid item xs={false}>
-                                                                                    </Grid>
-                                                                                    <Grid item xs={12}>
-                                                                                        <Box
-                                                                                            display="flex"
-                                                                                            alignItems="center"
-                                                                                            justifyContent="flex-end"
-                                                                                        >
-                                                                                            <Tooltip title={columnaCabecera.nombreTrabajador ? "Añadir suplente" : ""} placement="top-end" arrow>
-                                                                                                <div>
+                                                                                    <Box
+                                                                                        style={{ width: '100%', display: 'flex' }}
+                                                                                        className={estadoFlex === 'fila' ? classes.flexRow : classes.flexColumn}
+                                                                                    >
+                                                                                        <Grid item xs={false}>
+                                                                                        </Grid>
+                                                                                        <Grid item xs={12}>
+                                                                                            <Box
+                                                                                                display="flex"
+                                                                                                alignItems="center"
+                                                                                                justifyContent="flex-end"
+                                                                                            >
+                                                                                                <Tooltip title={columnaCabecera.nombreTrabajador ? "Añadir suplente" : ""} placement="top-end" arrow>
+                                                                                                    <div>
+                                                                                                        <IconButton
+                                                                                                            className={clsx(classes.btnAddSuplente, classes.blanc, classes.mb10)}
+                                                                                                            onClick={() => handleClickAddColumna('suplente', index)}
+                                                                                                            disabled={columnaCabecera.nombreTrabajador ? false : true}
+                                                                                                        >
+                                                                                                            <PersonAddIcon style={{ fontSize: 18 }} />
+                                                                                                        </IconButton>
+                                                                                                    </div>
+                                                                                                </Tooltip>
+                                                                                                <Tooltip title={columnaCabecera.nombreTrabajador ? "Actualizar trabajador" : ""} placement="top-end" arrow>
+                                                                                                    <div>
+                                                                                                        <IconButton
+                                                                                                            className={clsx(classes.btnVariacion, classes.blanc, classes.mb10)}
+                                                                                                            size="small"
+                                                                                                            onClick={() => handleActualizarTrabajadores(index, columnaCabecera.tipoTrabajador, columnaCabecera.idTrabajador)}
+                                                                                                            disabled={columnaCabecera.nombreTrabajador ? false : true}
+                                                                                                        >
+                                                                                                            <CachedIcon />
+                                                                                                        </IconButton>
+                                                                                                    </div>
+                                                                                                </Tooltip>
+                                                                                                <Tooltip title="Eliminar trabajador" placement="top-end" arrow>
                                                                                                     <IconButton
-                                                                                                        className={clsx(classes.btnAddSuplente, classes.blanc, classes.mb10)}
-                                                                                                        onClick={() => handleClickAddColumna('suplente', index)}
-                                                                                                        disabled={columnaCabecera.nombreTrabajador ? false : true}
-                                                                                                    >
-                                                                                                        <PersonAddIcon style={{ fontSize: 18 }} />
-                                                                                                    </IconButton>
-                                                                                                </div>
-                                                                                            </Tooltip>
-                                                                                            <Tooltip title={columnaCabecera.nombreTrabajador ? "Actualizar trabajador" : ""} placement="top-end" arrow>
-                                                                                                <div>
-                                                                                                    <IconButton
-                                                                                                        className={clsx(classes.btnVariacion, classes.blanc, classes.mb10)}
+                                                                                                        className={clsx(classes.btnError, classes.mb10)}
                                                                                                         size="small"
-                                                                                                        onClick={() => handleActualizarTrabajadores(index, columnaCabecera.tipoTrabajador, columnaCabecera.idTrabajador)}
-                                                                                                        disabled={columnaCabecera.nombreTrabajador ? false : true}
+                                                                                                        onClick={() => eliminarColumna(index, columnaCabecera.idTrabajador)}
                                                                                                     >
-                                                                                                        <CachedIcon />
+                                                                                                        <DeleteIcon />
                                                                                                     </IconButton>
-                                                                                                </div>
-                                                                                            </Tooltip>
-                                                                                            <Tooltip title="Eliminar trabajador" placement="top-end" arrow>
-                                                                                                <IconButton
-                                                                                                    className={clsx(classes.btnError, classes.mb10)}
-                                                                                                    size="small"
-                                                                                                    onClick={() => eliminarColumna(index, columnaCabecera.idTrabajador)}
-                                                                                                >
-                                                                                                    <DeleteIcon />
-                                                                                                </IconButton>
-                                                                                            </Tooltip>
-                                                                                        </Box>
-                                                                                    </Grid>
-                                                                                </Box>
-                                                                                <FormControl
-                                                                                    variant="outlined"
-                                                                                    fullWidth
-                                                                                    className={classes.mt15}
-                                                                                    size="small"
-                                                                                >
-                                                                                    <InputLabel>{(columnaCabecera.tipoTrabajador === 'trabajador' || !columnaCabecera.tipoTrabajador) ? 'Trabajador' : 'Suplente'}</InputLabel>
-                                                                                    <Select
-                                                                                        id={`form-trabajador-` + (index + 1)}
-                                                                                        value={columnaCabecera.idTrabajador < 1000 ? columnaCabecera.idTrabajador : ''}
-                                                                                        onChange={handleChangeFormTrabajadores(index, columnaCabecera.tipoTrabajador)}
-                                                                                        onOpen={() => setValorPrevioAccordionAbierto(columnaCabecera.idTrabajador)}
-                                                                                        input={
-                                                                                            <OutlinedInput
-                                                                                                labelWidth={80}
-                                                                                            />
-                                                                                        }
+                                                                                                </Tooltip>
+                                                                                            </Box>
+                                                                                        </Grid>
+                                                                                    </Box>
+                                                                                    <FormControl
+                                                                                        variant="outlined"
+                                                                                        fullWidth
+                                                                                        className={classes.mt15}
+                                                                                        size="small"
                                                                                     >
-                                                                                        {listadoTrabajadores.map((option) => (
-                                                                                            <MenuItem key={option.id} value={option.id}>
-                                                                                                {option.nombre}
-                                                                                            </MenuItem>
-                                                                                        ))}
-                                                                                    </Select>
-                                                                                </FormControl>
-                                                                                <FormControl
-                                                                                    variant="outlined"
-                                                                                    fullWidth
-                                                                                    className={classes.mt15}
-                                                                                    size="small"
-                                                                                >
-                                                                                    <InputLabel>Modo entrada datos</InputLabel>
-                                                                                    <Select
-                                                                                        id="form-tipo-cuadrantes"
-                                                                                        label="Modo entrada datos"
-                                                                                        value={columnaCabecera.tipoHorario || ''}
-                                                                                        onChange={handleChangeTipoHorario(index)}
-                                                                                        helpertext="Selecciona Modo entrada datos"
-                                                                                        disabled={columnaCabecera.nombreTrabajador ? false : true}
+                                                                                        <InputLabel>{(columnaCabecera.tipoTrabajador === 'trabajador' || !columnaCabecera.tipoTrabajador) ? 'Trabajador' : 'Suplente'}</InputLabel>
+                                                                                        <Select
+                                                                                            id={`form-trabajador-` + (index + 1)}
+                                                                                            value={columnaCabecera.idTrabajador < 1000 ? columnaCabecera.idTrabajador : ''}
+                                                                                            onChange={handleChangeFormTrabajadores(index, columnaCabecera.tipoTrabajador)}
+                                                                                            onOpen={() => setValorPrevioAccordionAbierto(columnaCabecera.idTrabajador)}
+                                                                                            input={
+                                                                                                <OutlinedInput
+                                                                                                    labelWidth={80}
+                                                                                                />
+                                                                                            }
+                                                                                        >
+                                                                                            {listadoTrabajadores.map((option) => (
+                                                                                                <MenuItem key={option.id} value={option.id}>
+                                                                                                    {option.nombre}
+                                                                                                </MenuItem>
+                                                                                            ))}
+                                                                                        </Select>
+                                                                                    </FormControl>
+                                                                                    <FormControl
+                                                                                        variant="outlined"
+                                                                                        fullWidth
+                                                                                        className={classes.mt15}
+                                                                                        size="small"
                                                                                     >
-                                                                                        {tipos.map((option) => (
-                                                                                            <MenuItem key={option.value} value={option.value}>
-                                                                                                {option.label}
-                                                                                            </MenuItem>
-                                                                                        ))}
-                                                                                    </Select>
-                                                                                </FormControl>
+                                                                                        <InputLabel>Modo entrada datos</InputLabel>
+                                                                                        <Select
+                                                                                            id="form-tipo-cuadrantes"
+                                                                                            label="Modo entrada datos"
+                                                                                            value={columnaCabecera.tipoHorario || ''}
+                                                                                            onChange={handleChangeTipoHorario(index)}
+                                                                                            helpertext="Selecciona Modo entrada datos"
+                                                                                            disabled={columnaCabecera.nombreTrabajador ? false : true}
+                                                                                        >
+                                                                                            {tipos.map((option) => (
+                                                                                                <MenuItem key={option.value} value={option.value}>
+                                                                                                    {option.label}
+                                                                                                </MenuItem>
+                                                                                            ))}
+                                                                                        </Select>
+                                                                                    </FormControl>
+                                                                                </Grid>
                                                                             </Grid>
-                                                                        </Grid>
-                                                                    </AccordionDetails>
-                                                                </Accordion>
+                                                                        </AccordionDetails>
+                                                                    </Accordion>
+                                                                </Box>
+                                                            ))}
+                                                            <Box
+                                                                m={0.3}
+                                                            >
+                                                                <Tooltip title="Añadir trabajador" placement="right" arrow>
+                                                                    <IconButton
+                                                                        className={clsx(classes.btnAddTrabajador, classes.blanc)}
+                                                                        onClick={() => handleClickAddColumna('trabajador', null)}
+                                                                    >
+                                                                        <PersonAddIcon style={{ fontSize: 18 }} />
+                                                                    </IconButton>
+                                                                </Tooltip>
                                                             </Box>
-                                                        ))}
-                                                        <Box
-                                                            m={0.3}
-                                                        >
-                                                            <Tooltip title="Añadir trabajador" placement="right" arrow>
-                                                                <IconButton
-                                                                    className={clsx(classes.btnAddTrabajador, classes.blanc)}
-                                                                    onClick={() => handleClickAddColumna('trabajador', null)}
-                                                                >
-                                                                    <PersonAddIcon style={{ fontSize: 18 }} />
-                                                                </IconButton>
-                                                            </Tooltip>
-                                                        </Box>
-                                                    </Fragment>
+                                                        </Fragment>
+                                                    ) : null
                                                 ) : null}
                                             </Grid>
                                             <Grid container
@@ -6722,15 +6986,17 @@ const Cuadrantes = (props) => {
                                                     ) : null
                                                 ) : null}
                                                 {visibleCuadrante ? (
-                                                    cuadrante.map((columna, indexColumna) => (
-                                                        <Box
-                                                            key={'Box_' + indexColumna}
-                                                        >
-                                                            {losDiasDelMes.map((dia, indexDia) => (
-                                                                retornaCasillasGeneral(dia, indexDia, columna, indexColumna)
-                                                            ))}
-                                                        </Box>
-                                                    ))
+                                                    cuadrante.length > 0 ? (
+                                                        cuadrante.map((columna, indexColumna) => (
+                                                            <Box
+                                                                key={'Box_' + indexColumna}
+                                                            >
+                                                                {losDiasDelMes.map((dia, indexDia) => (
+                                                                    retornaCasillasGeneral(dia, indexDia, columna, indexColumna)
+                                                                ))}
+                                                            </Box>
+                                                        ))
+                                                    ) : null
                                                 ) : null}
                                             </Grid>
                                         </Box>
@@ -6745,7 +7011,23 @@ const Cuadrantes = (props) => {
                                             </Fab>
                                         </Tooltip>
                                     </Grid>
-                                ) : null}
+                                ) : (
+                                    <Grid
+                                        spacing={1}
+                                        container
+                                        direction="column"
+                                        justify="center"
+                                        alignItems="center"
+                                        p={2}
+                                        style={{ minHeight: heightScrollable - 50, maxHeight: heightScrollable - 50, width: '100%' }}
+                                    >
+                                        <Box
+                                            className={classes.centrado}
+                                        >
+                                            <CircularProgress />
+                                        </Box>
+                                    </Grid>
+                                )}
                             </Grid>
                         </Grid>
                     )}
@@ -7045,7 +7327,7 @@ const Cuadrantes = (props) => {
                 prFullWidth={true}
                 prMaxWidth={true}
             />
-            {console.log(objetoCuadrante)}
+            {/* {console.log(objetoCuadrante)} */}
         </div >
     )
 }

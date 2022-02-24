@@ -677,6 +677,21 @@ const Configuracion = (props) => {
                                                             }
                                                         />
                                                     </ListItem >
+                                                    <ListItem>
+                                                        <ListItemText
+                                                            primary="V. 1.07 - 21/02/2022"
+                                                            secondary={
+                                                                <Fragment>
+                                                                <Typography component="span" variant="body2">1.- Añadidos servicios extra de limpieza de cristales para cómputos bi/trimensual en fichas centros.</Typography>
+                                                                <br />       
+                                                                <Typography component="span" variant="body2">2.- Implementada funcionalidad para mostrar/ocultar columnas de Servicios extra o trabajadores en fichas cuadrantes.</Typography>
+                                                                <br /> 
+                                                                <Typography component="span" variant="body2">3.- Programada opción para insertar comentarios generales en cuadrantes en fichas cuadrantes.</Typography>
+                                                                <br />                                                                      
+                                                                </Fragment>
+                                                            }
+                                                        />
+                                                    </ListItem >
                                                 </List>
                                             </Box>
                                         </Box>

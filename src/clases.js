@@ -73,6 +73,15 @@ const Clases = makeStyles((theme) => ({
             margin: theme.spacing(0.5),
         },
     },
+    form2: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        flexWrap: 'wrap',
+        '& > *': {
+            margin: theme.spacing(0.2),
+        },
+    },
     formTipo: {
         display: 'flex',
         marginRight: -10,

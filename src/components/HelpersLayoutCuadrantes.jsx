@@ -41,7 +41,7 @@ const LightTooltipInactivo = withStyles((theme) => ({
     },
 }))(Tooltip);
 
-const Helpers_1 = () => {
+const HelpersLayoutCuadrantes = () => {
     const classes = Clases();
     const dispatch = useDispatch();
     const stateFestivo = useSelector(store => store.variablesCuadrantes.stateFestivo);
@@ -766,6 +766,18 @@ const Helpers_1 = () => {
             case 'FEST':
                 return 'L. Día festivo'
                 break;
+            case 'CRTRIM':
+                return 'Crist. Trim.'
+                break;
+            case 'CRBIM':
+                return 'Crist. Bim.'
+                break;
+            case 'LIME':
+                return 'L. Especial'
+                break;
+            case 'LIMP':
+                return 'L. Párking.'
+                break;
             default:
         };
     };
@@ -786,7 +798,11 @@ const Helpers_1 = () => {
             servicio.activo_MA === 'si' ||
             servicio.activo_PO === 'si' ||
             servicio.activo_BA === 'si' ||
-            servicio.activo_FT === 'si') {
+            servicio.activo_FT === 'si' ||
+            servicio.activo_C3 === 'si' ||
+            servicio.activo_C2 === 'si' ||
+            servicio.activo_ES === 'si' ||
+            servicio.activo_PA === 'si') {
             return (
                 <Box
                     p={1.5}
@@ -819,7 +835,11 @@ const Helpers_1 = () => {
             losServiciosFijos.precioHora_MA ||
             losServiciosFijos.precioHora_PO ||
             losServiciosFijos.precioHora_BA ||
-            losServiciosFijos.precioHora_FT) {
+            losServiciosFijos.precioHora_FT ||
+            losServiciosFijos.precioHora_C3 ||
+            losServiciosFijos.precioHora_C2 ||
+            losServiciosFijos.precioHora_ES ||
+            losServiciosFijos.precioHora_PA) {
             hayServicios = true;
         };
         if (elemento === 'grid') {
@@ -966,6 +986,34 @@ const Helpers_1 = () => {
             laLetra = 'FT';
             hayBaja = servicio.activo_FT === 'no' ? true : false;
         };
+        if (servicio.precioHora_C3) {
+            laClase = servicio.activo_C3 === 'si' ? (clsx(classes.conServiciosA2, classes.small4)) : (clsx(classes.fondoBaja, classes.small4));
+            elTooltip = 'Limpieza de cristales trimestral: ' + servicio.totalServicioFijo + ' €';
+            elAnadidoTooltip = servicio.activo_C3 === 'si' ? '' : ' (Inactivo)';
+            laLetra = 'C3';
+            hayBaja = servicio.activo_C3 === 'no' ? true : false;
+        };
+        if (servicio.precioHora_C2) {
+            laClase = servicio.activo_C2 === 'si' ? (clsx(classes.conServiciosA2, classes.small4)) : (clsx(classes.fondoBaja, classes.small4));
+            elTooltip = 'Limpieza de cristales bimensual: ' + servicio.totalServicioFijo + ' €';
+            elAnadidoTooltip = servicio.activo_C2 === 'si' ? '' : ' (Inactivo)';
+            laLetra = 'C2';
+            hayBaja = servicio.activo_C2 === 'no' ? true : false;
+        };
+        if (servicio.precioHora_ES) {
+            laClase = servicio.activo_ES === 'si' ? (clsx(classes.conServiciosA2, classes.small4)) : (clsx(classes.fondoBaja, classes.small4));
+            elTooltip = 'Servicio limpieza especial: ' + servicio.totalServicioFijo + ' €';
+            elAnadidoTooltip = servicio.activo_ES === 'si' ? '' : ' (Inactivo)';
+            laLetra = 'ES';
+            hayBaja = servicio.activo_ES === 'no' ? true : false;
+        };
+        if (servicio.precioHora_PA) {
+            laClase = servicio.activo_PA === 'si' ? (clsx(classes.conServiciosA2, classes.small4)) : (clsx(classes.fondoBaja, classes.small4));
+            elTooltip = 'Servicio limpieza de párking: ' + servicio.totalServicioFijo + ' €';
+            elAnadidoTooltip = servicio.activo_PA === 'si' ? '' : ' (Inactivo)';
+            laLetra = 'PA';
+            hayBaja = servicio.activo_PA === 'no' ? true : false;
+        };
 
         return (
             <Box style={{ paddingTop: 5 }} key={'avatar' + index}>
@@ -1001,4 +1049,4 @@ const Helpers_1 = () => {
     }
 }
 
-export default Helpers_1
+export default HelpersLayoutCuadrantes

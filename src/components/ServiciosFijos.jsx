@@ -42,7 +42,11 @@ const ServiciosFijos = (props) => {
             MA: props.prItemEditandoServiciosFijos.switch.MA || false,
             PO: props.prItemEditandoServiciosFijos.switch.PO || false,
             BA: props.prItemEditandoServiciosFijos.switch.BA || false,
-            FT: props.prItemEditandoServiciosFijos.switch.FT || false
+            FT: props.prItemEditandoServiciosFijos.switch.FT || false,
+            C3: props.prItemEditandoServiciosFijos.switch.C3 || false,
+            C2: props.prItemEditandoServiciosFijos.switch.C2 || false,
+            ES: props.prItemEditandoServiciosFijos.switch.ES || false,
+            PA: props.prItemEditandoServiciosFijos.switch.PA || false
         },
         servicios: {
             precioHora_TO: props.prItemEditandoServiciosFijos.servicios.precioHora_TO || '',
@@ -61,6 +65,10 @@ const ServiciosFijos = (props) => {
             precioHora_PO: props.prItemEditandoServiciosFijos.servicios.precioHora_PO || '',
             precioHora_BA: props.prItemEditandoServiciosFijos.servicios.precioHora_BA || '',
             precioHora_FT: props.prItemEditandoServiciosFijos.servicios.precioHora_FT || '',
+            precioHora_C3: props.prItemEditandoServiciosFijos.servicios.precioHora_C3 || '',
+            precioHora_C2: props.prItemEditandoServiciosFijos.servicios.precioHora_C2 || '',
+            precioHora_ES: props.prItemEditandoServiciosFijos.servicios.precioHora_ES || '',
+            precioHora_PA: props.prItemEditandoServiciosFijos.servicios.precioHora_PA || '',
             variacion_TO: props.prItemEditandoServiciosFijos.servicios.variacion_TO || '',
             variacion_CR: props.prItemEditandoServiciosFijos.servicios.variacion_CR || '',
             variacion_CE: props.prItemEditandoServiciosFijos.servicios.variacion_CE || '',
@@ -77,6 +85,10 @@ const ServiciosFijos = (props) => {
             variacion_PO: props.prItemEditandoServiciosFijos.servicios.variacion_PO || '',
             variacion_BA: props.prItemEditandoServiciosFijos.servicios.variacion_BA || '',
             variacion_FT: props.prItemEditandoServiciosFijos.servicios.variacion_FT || '',
+            variacion_C3: props.prItemEditandoServiciosFijos.servicios.variacion_C3 || '',
+            variacion_C2: props.prItemEditandoServiciosFijos.servicios.variacion_C2 || '',
+            variacion_ES: props.prItemEditandoServiciosFijos.servicios.variacion_ES || '',
+            variacion_PA: props.prItemEditandoServiciosFijos.servicios.variacion_PA || '',
             diaVariacion_TO: props.prItemEditandoServiciosFijos.servicios.diaVariacion_TO || '',
             diaVariacion_CR: props.prItemEditandoServiciosFijos.servicios.diaVariacion_CR || '',
             diaVariacion_CE: props.prItemEditandoServiciosFijos.servicios.diaVariacion_CE || '',
@@ -93,6 +105,10 @@ const ServiciosFijos = (props) => {
             diaVariacion_PO: props.prItemEditandoServiciosFijos.servicios.diaVariacion_PO || '',
             diaVariacion_BA: props.prItemEditandoServiciosFijos.servicios.diaVariacion_BA || '',
             diaVariacion_FT: props.prItemEditandoServiciosFijos.servicios.diaVariacion_FT || '',
+            diaVariacion_C3: props.prItemEditandoServiciosFijos.servicios.diaVariacion_C3 || '',
+            diaVariacion_C2: props.prItemEditandoServiciosFijos.servicios.diaVariacion_C2 || '',
+            diaVariacion_ES: props.prItemEditandoServiciosFijos.servicios.diaVariacion_ES || '',
+            diaVariacion_PA: props.prItemEditandoServiciosFijos.servicios.diaVariacion_PA || '',
             activo_TO: props.prItemEditandoServiciosFijos.servicios.activo_TO || '',
             activo_CR: props.prItemEditandoServiciosFijos.servicios.activo_CR || '',
             activo_CE: props.prItemEditandoServiciosFijos.servicios.activo_CE || '',
@@ -108,7 +124,11 @@ const ServiciosFijos = (props) => {
             activo_MA: props.prItemEditandoServiciosFijos.servicios.activo_MA || '',
             activo_PO: props.prItemEditandoServiciosFijos.servicios.activo_PO || '',
             activo_BA: props.prItemEditandoServiciosFijos.servicios.activo_BA || '',
-            activo_FT: props.prItemEditandoServiciosFijos.servicios.activo_FT || ''
+            activo_FT: props.prItemEditandoServiciosFijos.servicios.activo_FT || '',
+            activo_C3: props.prItemEditandoServiciosFijos.servicios.activo_C3 || '',
+            activo_C2: props.prItemEditandoServiciosFijos.servicios.activo_C2 || '',
+            activo_ES: props.prItemEditandoServiciosFijos.servicios.activo_ES || '',
+            activo_PA: props.prItemEditandoServiciosFijos.servicios.activo_PA || ''
         }
     });
 
@@ -404,6 +424,74 @@ const ServiciosFijos = (props) => {
                     (props.prItemEditandoServiciosFijos.servicios.activo_FT === 'no') ?
                         classes.fondoInactivoServicioFijo : classes.paper;
                 desactivadoDia = props.prItemEditandoServiciosFijos.servicios.variacion_FT === 3 ? true : false;
+                break;
+            case 'CRTRIM':
+                checkeado = props.prItemEditandoServiciosFijos.switch.C3;
+                laLabelSw = 'LIMPIEZA DE CRISTALES TRIMESTRAL';
+                elId = 'form-precio-hora_C3-cuadrantes';
+                elValue = props.prItemEditandoServiciosFijos.servicios.precioHora_C3 || '';
+                elValueVariaciones = props.prItemEditandoServiciosFijos.servicios.variacion_C3 || '';
+                elValueDia = props.prItemEditandoServiciosFijos.servicios.diaVariacion_C3 || '';
+                elValueActivo = props.prItemEditandoServiciosFijos.servicios.activo_C3 || '';
+                elPrecioHora = 'precioHora_C3';
+                laVariacion = 'variacion_C3';
+                elDia = 'diaVariacion_C3';
+                elActivo = 'activo_C3';
+                laClase =
+                    (props.prItemEditandoServiciosFijos.servicios.activo_C3 === 'no') ?
+                        classes.fondoInactivoServicioFijo : classes.paper;
+                desactivadoDia = props.prItemEditandoServiciosFijos.servicios.variacion_C3 === 3 ? true : false;
+                break;
+            case 'CRBIM':
+                checkeado = props.prItemEditandoServiciosFijos.switch.C2;
+                laLabelSw = 'LIMPIEZA DE CRISTALES BIMENSUAL';
+                elId = 'form-precio-hora_C2-cuadrantes';
+                elValue = props.prItemEditandoServiciosFijos.servicios.precioHora_C2 || '';
+                elValueVariaciones = props.prItemEditandoServiciosFijos.servicios.variacion_C2 || '';
+                elValueDia = props.prItemEditandoServiciosFijos.servicios.diaVariacion_C2 || '';
+                elValueActivo = props.prItemEditandoServiciosFijos.servicios.activo_C2 || '';
+                elPrecioHora = 'precioHora_C2';
+                laVariacion = 'variacion_C2';
+                elDia = 'diaVariacion_C2';
+                elActivo = 'activo_C2';
+                laClase =
+                    (props.prItemEditandoServiciosFijos.servicios.activo_C2 === 'no') ?
+                        classes.fondoInactivoServicioFijo : classes.paper;
+                desactivadoDia = props.prItemEditandoServiciosFijos.servicios.variacion_C2 === 3 ? true : false;
+                break;
+            case 'LIME':
+                checkeado = props.prItemEditandoServiciosFijos.switch.ES;
+                laLabelSw = 'SERVICIO DE LIMPIEZA ESPECIAL';
+                elId = 'form-precio-hora_ES-cuadrantes';
+                elValue = props.prItemEditandoServiciosFijos.servicios.precioHora_ES || '';
+                elValueVariaciones = props.prItemEditandoServiciosFijos.servicios.variacion_ES || '';
+                elValueDia = props.prItemEditandoServiciosFijos.servicios.diaVariacion_ES || '';
+                elValueActivo = props.prItemEditandoServiciosFijos.servicios.activo_ES || '';
+                elPrecioHora = 'precioHora_ES';
+                laVariacion = 'variacion_ES';
+                elDia = 'diaVariacion_ES';
+                elActivo = 'activo_ES';
+                laClase =
+                    (props.prItemEditandoServiciosFijos.servicios.activo_ES === 'no') ?
+                        classes.fondoInactivoServicioFijo : classes.paper;
+                desactivadoDia = props.prItemEditandoServiciosFijos.servicios.variacion_ES === 3 ? true : false;
+                break;
+            case 'LIMP':
+                checkeado = props.prItemEditandoServiciosFijos.switch.PA;
+                laLabelSw = 'SERVICIO DE LIMPIEZA DEL PARKING';
+                elId = 'form-precio-hora_PA-cuadrantes';
+                elValue = props.prItemEditandoServiciosFijos.servicios.precioHora_PA || '';
+                elValueVariaciones = props.prItemEditandoServiciosFijos.servicios.variacion_PA || '';
+                elValueDia = props.prItemEditandoServiciosFijos.servicios.diaVariacion_PA || '';
+                elValueActivo = props.prItemEditandoServiciosFijos.servicios.activo_PA || '';
+                elPrecioHora = 'precioHora_PA';
+                laVariacion = 'variacion_PA';
+                elDia = 'diaVariacion_PA';
+                elActivo = 'activo_PA';
+                laClase =
+                    (props.prItemEditandoServiciosFijos.servicios.activo_PA === 'no') ?
+                        classes.fondoInactivoServicioFijo : classes.paper;
+                desactivadoDia = props.prItemEditandoServiciosFijos.servicios.variacion_PA === 3 ? true : false;
                 break;
             default:
         };

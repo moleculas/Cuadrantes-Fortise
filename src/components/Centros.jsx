@@ -36,6 +36,7 @@ import { abreObjetoDialogAccion } from '../redux/appDucks';
 import { cierraObjetoDialogAccion } from '../redux/appDucks';
 import { activarDesactivarAccion } from '../redux/appDucks';
 import { vaciarDatosCentroAccion } from '../redux/centrosDucks';
+import { vaciarDatosCentrosAccion } from '../redux/centrosDucks';
 
 //menu
 const StyledMenu = withStyles({
@@ -152,7 +153,10 @@ const Centros = (props) => {
             setValueTab(newValue);
             dispatch(vaciarDatosCentroAccion());
             setVenimosCentroFuera(null);
-            props.history.push('/centros');
+            props.history.push('/centros');           
+            if(onEstem==='registrarCentros'){
+               dispatch(vaciarDatosCentrosAccion());
+            };           
         };      
     };
 
@@ -167,7 +171,7 @@ const Centros = (props) => {
         if (funcionesEnCentrosEditarRef.current) {
             funcionesEnCentrosEditarRef.current.funcionesEnCentrosEditar('eliminarCentro');
         };
-        handleCloseMenu();
+        handleCloseMenu();        
     };
 
     const procesarDatosRegistroParent = () => {
