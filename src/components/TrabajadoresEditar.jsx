@@ -387,7 +387,7 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
     };
 
     const tituloDialog = "¿Estás seguro que quieres eliminar el Trabajador?";
-    const descripcionDialog = "Para confirmar pulsa 'De acuerdo', de lo contrario pulsa 'Desacuerdo'."
+    const descripcionDialog = "Para confirmar pulsa 'De acuerdo', de lo contrario pulsa 'No'."
 
     const handleClickOpenDialog = () => {
         dispatch(abreObjetoDialogAccion('2'));

@@ -215,43 +215,43 @@ const HelpersLayoutCuadrantes = () => {
                     switch (diaSemana) {
                         case 'Lunes':
                             if (columna[dia].lunesCantidad) {
-                                return columna[dia].lunesCantidad / 60 + ' horas';
+                                return parseFloat(columna[dia].lunesCantidad / 60).toFixed(2) + ' horas';
                             } else {
                                 return '';
                             };
                         case 'Martes':
                             if (columna[dia].martesCantidad) {
-                                return columna[dia].martesCantidad / 60 + ' horas';
+                                return parseFloat(columna[dia].martesCantidad / 60).toFixed(2) + ' horas';
                             } else {
                                 return '';
                             };
                         case 'Miércoles':
                             if (columna[dia].miercolesCantidad) {
-                                return columna[dia].miercolesCantidad / 60 + ' horas';
+                                return parseFloat(columna[dia].miercolesCantidad / 60).toFixed(2) + ' horas';
                             } else {
                                 return '';
                             };
                         case 'Jueves':
                             if (columna[dia].juevesCantidad) {
-                                return columna[dia].juevesCantidad / 60 + ' horas';
+                                return parseFloat(columna[dia].juevesCantidad / 60).toFixed(2) + ' horas';
                             } else {
                                 return '';
                             };
                         case 'Viernes':
                             if (columna[dia].viernesCantidad) {
-                                return columna[dia].viernesCantidad / 60 + ' horas';
+                                return parseFloat(columna[dia].viernesCantidad / 60).toFixed(2) + ' horas';
                             } else {
                                 return '';
                             };
                         case 'Sábado':
                             if (columna[dia].sabadoCantidad) {
-                                return columna[dia].sabadoCantidad / 60 + ' horas';
+                                return parseFloat(columna[dia].sabadoCantidad / 60).toFixed(2) + ' horas';
                             } else {
                                 return '';
                             };
                         case 'Domingo':
                             if (columna[dia].domingoCantidad) {
-                                return columna[dia].domingoCantidad / 60 + ' horas';
+                                return parseFloat(columna[dia].domingoCantidad / 60).toFixed(2) + ' horas';
                             } else {
                                 return '';
                             };

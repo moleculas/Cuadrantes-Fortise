@@ -33,7 +33,7 @@ const DialogComponente = (props) => {
                                 De acuerdo
                             </Button>
                             <Button onClick={() => { handleCloseDialogBotones('desacuerdo') }} color="primary">
-                                Desacuerdo
+                                No
                             </Button>
                         </Fragment>
                     ) : null}

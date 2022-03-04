@@ -190,7 +190,7 @@ const Centros = (props) => {
     //dialog
 
     const tituloDialog = "¿Estás seguro que quieres cambiar de pantalla?";
-    const descripcionDialog = "Estás tratando de cambiar de pantalla pero no has registrado los datos de tu última intervención. Si no deseas guardar los datos pulsa 'De acuerdo', de lo contrario pulsa 'Desacuerdo' y registra los datos.";
+    const descripcionDialog = "Estás tratando de cambiar de pantalla pero no has registrado los datos de tu última intervención. Si no deseas guardar los datos pulsa 'De acuerdo', de lo contrario pulsa 'No' y registra los datos.";
 
     const handleClickOpenDialog = () => {
         dispatch(abreObjetoDialogAccion('1'));

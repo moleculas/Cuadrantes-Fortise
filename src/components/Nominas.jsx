@@ -141,7 +141,7 @@ const Nominas = (props) => {
     const [anchorElMenu, setAnchorElMenu] = useState(null);
     const [heightScrollable, setHeightScrollable] = useState(getHeightScrollable());
     const [openLoading, setOpenLoading] = useState(false);
-    const [valueDatePickerNominas, setValueDatePickerNominas] = useState(new Date(dispatch(retornaAnoMesAccion())));
+    const [valueDatePickerNominas, setValueDatePickerNominas] = useState(new Date(retornaAnoMesAccion()));
     const { monthLet } = dispatch(retornaAnoMesCuadranteAccion(calendarioAGestionarNominas));
     const [openSnack, setOpenSnack] = useState(false);
     const [alert, setAlert] = useState({});
@@ -176,7 +176,7 @@ const Nominas = (props) => {
 
     useEffect(() => {
         dispatch(onEstemAccion('nominas'));
-        dispatch(setCalendarioAGestionarNominasAccion(dispatch(retornaAnoMesAccion())));
+        dispatch(setCalendarioAGestionarNominasAccion(retornaAnoMesAccion()));
         dispatch(forzarRecargaGraficosNominasAccion(true));
         if (listadoCentros.length === 0) {
             dispatch(obtenerCentrosAccion('centros', true));
@@ -580,7 +580,7 @@ const Nominas = (props) => {
     //dialog
 
     const tituloDialogNominas1 = "¿Estás seguro que quieres eliminar la nómina registrada?";
-    const descripcionDialogNominas1 = "Para eliminar la nómina registrada pulsa 'De acuerdo', de lo contrario pulsa 'Desacuerdo'.";
+    const descripcionDialogNominas1 = "Para eliminar la nómina registrada pulsa 'De acuerdo', de lo contrario pulsa 'No'.";
     const tituloDialogNominas2 = "Registra la nómina";
     const descripcionDialogNominas2 = "Debes registrar la nómina nueva antes de cambiar. Pulsa 'Registrar Nómina' en el menú superior.";
 
@@ -909,7 +909,7 @@ const Nominas = (props) => {
                                     format="MM/yyyy"
                                     label="Mes a gestionar"
                                     minDate={new Date('2021-1')}
-                                    maxDate={new Date(dispatch(retornaAnoMesAccion()))}
+                                    maxDate={new Date(retornaAnoMesAccion())}
                                     value={valueDatePickerNominas}
                                     onChange={(newValue) => {
                                         handleChangeSelectCalendarioNominas(newValue);

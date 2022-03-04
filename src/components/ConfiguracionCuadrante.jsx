@@ -99,245 +99,249 @@ const ConfiguracionCuadrante = (props) => {
                         />
                     </ListItem >
                 </List>
-            </Grid>            
-                <Grid item xs={12}>
+            </Grid>
+            <Grid item xs={12}>
                 <Box className={classes.mb15}>
-                <TextField
-                    label="Observaciones"
-                    id="form-tipo-cuadrante"
-                    value={props.prItemEditandoConfiguracion.observaciones || ''}
-                    className={classes.form}
-                    fullWidth
-                    placeholder="Observaciones Cuadrante"
-                    multiline
-                    rows={4}
-                    variant="outlined"
-                    onChange={handleChangeFormConfiguracionCuadrante('observaciones')}
-                />
-            </Box>
-                    <FormControl
-                        variant="outlined"
+                    <TextField
+                        label="Observaciones"
+                        id="form-tipo-cuadrante"
+                        value={props.prItemEditandoConfiguracion.observaciones || ''}
                         className={classes.form}
-                        size="small"
-                    >
-                        <InputLabel>Modo entrada datos</InputLabel>
-                        <Select
-                            fullWidth
-                            className={classes.mb15}
-                            id="form-tipo-cuadrante"
-                            label="Modo entrada datos"
-                            value={props.prItemEditandoConfiguracion.tipoHorario || ''}
-                            onChange={handleChangeFormConfiguracionCuadrante('tipoHorario')}
-                            helpertext="Selecciona Modo entrada datos"
-                        >
-                            {
-                                tipos.map((option) => (
-                                    <MenuItem key={option.value} value={option.value}>
-                                        {option.label}
-                                    </MenuItem>
-                                ))
-                            }
-                        </Select>
-                    </FormControl>
-                    <FormControl
+                        fullWidth
+                        placeholder="Observaciones Cuadrante"
+                        multiline
+                        rows={4}
                         variant="outlined"
-                        className={classes.form}
-                        size="small"
-                    >
-                        <InputLabel>Tipo cómputo</InputLabel>
-                        <Select
-                            fullWidth
-                            className={classes.mb15}
-                            id="form-tipo-computo-cuadrantes"
-                            label="Tipo cómputo"
-                            value={props.prItemEditandoConfiguracion.computo || ''}
-                            onChange={handleChangeFormConfiguracionCuadrante('computo')}
-                            helpertext="Selecciona cómputo de horas"
-                        >
-                            {
-                                computoHoras.map((option) => (
-                                    <MenuItem key={option.value} value={option.value}>
-                                        {option.label}
-                                    </MenuItem>
-                                ))
-                            }
-                        </Select>
-                    </FormControl>
-                    {props.prItemEditandoConfiguracion.computo === 1 || props.prItemEditandoConfiguracion.computo === 3 ? (
+                        onChange={handleChangeFormConfiguracionCuadrante('observaciones')}
+                    />
+                </Box>
+                {!props.prCuadranteVacio ? (
+                    <Fragment>
                         <FormControl
                             variant="outlined"
                             className={classes.form}
                             size="small"
                         >
-                            <InputLabel>Mensual pactado</InputLabel>
-                            <OutlinedInput
-                                className={classes.mb15}
+                            <InputLabel>Modo entrada datos</InputLabel>
+                            <Select
                                 fullWidth
-                                id="form-mensual-pactado-cuadrante"
-                                value={props.prItemEditandoConfiguracion.mensualPactado || ''}
-                                onChange={handleChangeFormConfiguracionCuadrante('mensualPactado')}
-                                labelWidth={130}
-                                startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                            />
+                                className={classes.mb15}
+                                id="form-tipo-cuadrante"
+                                label="Modo entrada datos"
+                                value={props.prItemEditandoConfiguracion.tipoHorario || ''}
+                                onChange={handleChangeFormConfiguracionCuadrante('tipoHorario')}
+                                helpertext="Selecciona Modo entrada datos"
+                            >
+                                {
+                                    tipos.map((option) => (
+                                        <MenuItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </MenuItem>
+                                    ))
+                                }
+                            </Select>
                         </FormControl>
-                    ) : null}
-                    {props.prItemEditandoConfiguracion.computo === 2 || props.prItemEditandoConfiguracion.computo === 3 ? (
-                        <Fragment>
+                        <FormControl
+                            variant="outlined"
+                            className={classes.form}
+                            size="small"
+                        >
+                            <InputLabel>Tipo cómputo</InputLabel>
+                            <Select
+                                fullWidth
+                                className={classes.mb15}
+                                id="form-tipo-computo-cuadrantes"
+                                label="Tipo cómputo"
+                                value={props.prItemEditandoConfiguracion.computo || ''}
+                                onChange={handleChangeFormConfiguracionCuadrante('computo')}
+                                helpertext="Selecciona cómputo de horas"
+                            >
+                                {
+                                    computoHoras.map((option) => (
+                                        <MenuItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </MenuItem>
+                                    ))
+                                }
+                            </Select>
+                        </FormControl>
+                        {props.prItemEditandoConfiguracion.computo === 1 || props.prItemEditandoConfiguracion.computo === 3 ? (
                             <FormControl
                                 variant="outlined"
                                 className={classes.form}
                                 size="small"
                             >
-                                <InputLabel>Precio hora LIM</InputLabel>
+                                <InputLabel>Mensual pactado</InputLabel>
                                 <OutlinedInput
                                     className={classes.mb15}
                                     fullWidth
-                                    id="form-precio-hora_L-cuadrante"
-                                    value={props.prItemEditandoConfiguracion.precioHora_L || ''}
-                                    onChange={handleChangeFormConfiguracionCuadrante('precioHora_L')}
-                                    labelWidth={120}
-                                    startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                                />
-                            </FormControl>
-                            <Box className={classes.boxMiniServicios}>
-                                <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza</Typography>
-                            </Box>
-                            <FormControl
-                                variant="outlined"
-                                className={classes.form}
-                                size="small"
-                            >
-                                <InputLabel>Precio hora LIME</InputLabel>
-                                <OutlinedInput
-                                    className={classes.mb15}
-                                    fullWidth
-                                    id="form-precio-hora_E-cuadrante"
-                                    value={props.prItemEditandoConfiguracion.precioHora_E || ''}
-                                    onChange={handleChangeFormConfiguracionCuadrante('precioHora_E')}
-                                    labelWidth={125}
-                                    startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                                />
-                            </FormControl>
-                            <Box className={classes.boxMiniServicios}>
-                                <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza especial</Typography>
-                            </Box>
-                            <FormControl
-                                variant="outlined"
-                                className={classes.form}
-                                size="small"
-                            >
-                                <InputLabel>Precio hora LIMP</InputLabel>
-                                <OutlinedInput
-                                    className={classes.mb15}
-                                    fullWidth
-                                    id="form-precio-hora_P-cuadrante"
-                                    value={props.prItemEditandoConfiguracion.precioHora_P || ''}
-                                    onChange={handleChangeFormConfiguracionCuadrante('precioHora_P')}
+                                    id="form-mensual-pactado-cuadrante"
+                                    value={props.prItemEditandoConfiguracion.mensualPactado || ''}
+                                    onChange={handleChangeFormConfiguracionCuadrante('mensualPactado')}
                                     labelWidth={130}
                                     startAdornment={<InputAdornment position="start">€</InputAdornment>}
                                 />
                             </FormControl>
-                            <Box className={classes.boxMiniServicios}>
-                                <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza del parking</Typography>
-                            </Box>
-                            <FormControl
-                                variant="outlined"
-                                className={classes.form}
-                                size="small"
-                            >
-                                <InputLabel>Precio hora NAVE2</InputLabel>
-                                <OutlinedInput
-                                    className={classes.mb15}
-                                    fullWidth
-                                    id="form-precio-hora_N-cuadrante"
-                                    value={props.prItemEditandoConfiguracion.precioHora_N || ''}
-                                    onChange={handleChangeFormConfiguracionCuadrante('precioHora_N')}
-                                    labelWidth={130}
-                                    startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                                />
-                            </FormControl>
-                            <Box className={classes.boxMiniServicios}>
-                                <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza nave 2</Typography>
-                            </Box>
-                            <FormControl
-                                variant="outlined"
-                                className={classes.form}
-                                size="small"
-                            >
-                                <InputLabel>Precio hora REFZ</InputLabel>
-                                <OutlinedInput
-                                    className={classes.mb15}
-                                    fullWidth
-                                    id="form-precio-hora_R-cuadrante"
-                                    value={props.prItemEditandoConfiguracion.precioHora_R || ''}
-                                    onChange={handleChangeFormConfiguracionCuadrante('precioHora_R')}
-                                    labelWidth={125}
-                                    startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                                />
-                            </FormControl>
-                            <Box className={classes.boxMiniServicios}>
-                                <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza refuerzo</Typography>
-                            </Box>
-                            <FormControl
-                                variant="outlined"
-                                className={classes.form}
-                                size="small"
-                            >
-                                <InputLabel>Precio hora LIM1</InputLabel>
-                                <OutlinedInput
-                                    className={classes.mb15}
-                                    fullWidth
-                                    id="form-precio-hora_L1-cuadrante"
-                                    value={props.prItemEditandoConfiguracion.precioHora_L1 || ''}
-                                    onChange={handleChangeFormConfiguracionCuadrante('precioHora_L1')}
-                                    labelWidth={120}
-                                    startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                                />
-                            </FormControl>
-                            <Box className={classes.boxMiniServicios}>
-                                <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza 1</Typography>
-                            </Box>
-                            <FormControl
-                                variant="outlined"
-                                className={classes.form}
-                                size="small"
-                            >
-                                <InputLabel>Precio hora LIM2</InputLabel>
-                                <OutlinedInput
-                                    className={classes.mb15}
-                                    fullWidth
-                                    id="form-precio-hora_L2-cuadrante"
-                                    value={props.prItemEditandoConfiguracion.precioHora_L2 || ''}
-                                    onChange={handleChangeFormConfiguracionCuadrante('precioHora_L2')}
-                                    labelWidth={125}
-                                    startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                                />
-                            </FormControl>
-                            <Box className={classes.boxMiniServicios}>
-                                <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza 2</Typography>
-                            </Box>
-                            <FormControl
-                                variant="outlined"
-                                className={classes.form}
-                                size="small"
-                            >
-                                <InputLabel>Precio hora FEST</InputLabel>
-                                <OutlinedInput
-                                    className={classes.mb15}
-                                    fullWidth
-                                    id="form-precio-hora_F-cuadrante"
-                                    value={props.prItemEditandoConfiguracion.precioHora_F || ''}
-                                    onChange={handleChangeFormConfiguracionCuadrante('precioHora_F')}
-                                    labelWidth={125}
-                                    startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                                />
-                            </FormControl>
-                            <Box className={classes.boxMiniServicios}>
-                                <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza día festivo</Typography>
-                            </Box>
-                        </Fragment>
-                    ) : null}
-                </Grid>            
+                        ) : null}
+                        {props.prItemEditandoConfiguracion.computo === 2 || props.prItemEditandoConfiguracion.computo === 3 ? (
+                            <Fragment>
+                                <FormControl
+                                    variant="outlined"
+                                    className={classes.form}
+                                    size="small"
+                                >
+                                    <InputLabel>Precio hora LIM</InputLabel>
+                                    <OutlinedInput
+                                        className={classes.mb15}
+                                        fullWidth
+                                        id="form-precio-hora_L-cuadrante"
+                                        value={props.prItemEditandoConfiguracion.precioHora_L || ''}
+                                        onChange={handleChangeFormConfiguracionCuadrante('precioHora_L')}
+                                        labelWidth={120}
+                                        startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                    />
+                                </FormControl>
+                                <Box className={classes.boxMiniServicios}>
+                                    <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza</Typography>
+                                </Box>
+                                <FormControl
+                                    variant="outlined"
+                                    className={classes.form}
+                                    size="small"
+                                >
+                                    <InputLabel>Precio hora LIME</InputLabel>
+                                    <OutlinedInput
+                                        className={classes.mb15}
+                                        fullWidth
+                                        id="form-precio-hora_E-cuadrante"
+                                        value={props.prItemEditandoConfiguracion.precioHora_E || ''}
+                                        onChange={handleChangeFormConfiguracionCuadrante('precioHora_E')}
+                                        labelWidth={125}
+                                        startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                    />
+                                </FormControl>
+                                <Box className={classes.boxMiniServicios}>
+                                    <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza especial</Typography>
+                                </Box>
+                                <FormControl
+                                    variant="outlined"
+                                    className={classes.form}
+                                    size="small"
+                                >
+                                    <InputLabel>Precio hora LIMP</InputLabel>
+                                    <OutlinedInput
+                                        className={classes.mb15}
+                                        fullWidth
+                                        id="form-precio-hora_P-cuadrante"
+                                        value={props.prItemEditandoConfiguracion.precioHora_P || ''}
+                                        onChange={handleChangeFormConfiguracionCuadrante('precioHora_P')}
+                                        labelWidth={130}
+                                        startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                    />
+                                </FormControl>
+                                <Box className={classes.boxMiniServicios}>
+                                    <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza del parking</Typography>
+                                </Box>
+                                <FormControl
+                                    variant="outlined"
+                                    className={classes.form}
+                                    size="small"
+                                >
+                                    <InputLabel>Precio hora NAVE2</InputLabel>
+                                    <OutlinedInput
+                                        className={classes.mb15}
+                                        fullWidth
+                                        id="form-precio-hora_N-cuadrante"
+                                        value={props.prItemEditandoConfiguracion.precioHora_N || ''}
+                                        onChange={handleChangeFormConfiguracionCuadrante('precioHora_N')}
+                                        labelWidth={130}
+                                        startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                    />
+                                </FormControl>
+                                <Box className={classes.boxMiniServicios}>
+                                    <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza nave 2</Typography>
+                                </Box>
+                                <FormControl
+                                    variant="outlined"
+                                    className={classes.form}
+                                    size="small"
+                                >
+                                    <InputLabel>Precio hora REFZ</InputLabel>
+                                    <OutlinedInput
+                                        className={classes.mb15}
+                                        fullWidth
+                                        id="form-precio-hora_R-cuadrante"
+                                        value={props.prItemEditandoConfiguracion.precioHora_R || ''}
+                                        onChange={handleChangeFormConfiguracionCuadrante('precioHora_R')}
+                                        labelWidth={125}
+                                        startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                    />
+                                </FormControl>
+                                <Box className={classes.boxMiniServicios}>
+                                    <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza refuerzo</Typography>
+                                </Box>
+                                <FormControl
+                                    variant="outlined"
+                                    className={classes.form}
+                                    size="small"
+                                >
+                                    <InputLabel>Precio hora LIM1</InputLabel>
+                                    <OutlinedInput
+                                        className={classes.mb15}
+                                        fullWidth
+                                        id="form-precio-hora_L1-cuadrante"
+                                        value={props.prItemEditandoConfiguracion.precioHora_L1 || ''}
+                                        onChange={handleChangeFormConfiguracionCuadrante('precioHora_L1')}
+                                        labelWidth={120}
+                                        startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                    />
+                                </FormControl>
+                                <Box className={classes.boxMiniServicios}>
+                                    <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza 1</Typography>
+                                </Box>
+                                <FormControl
+                                    variant="outlined"
+                                    className={classes.form}
+                                    size="small"
+                                >
+                                    <InputLabel>Precio hora LIM2</InputLabel>
+                                    <OutlinedInput
+                                        className={classes.mb15}
+                                        fullWidth
+                                        id="form-precio-hora_L2-cuadrante"
+                                        value={props.prItemEditandoConfiguracion.precioHora_L2 || ''}
+                                        onChange={handleChangeFormConfiguracionCuadrante('precioHora_L2')}
+                                        labelWidth={125}
+                                        startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                    />
+                                </FormControl>
+                                <Box className={classes.boxMiniServicios}>
+                                    <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza 2</Typography>
+                                </Box>
+                                <FormControl
+                                    variant="outlined"
+                                    className={classes.form}
+                                    size="small"
+                                >
+                                    <InputLabel>Precio hora FEST</InputLabel>
+                                    <OutlinedInput
+                                        className={classes.mb15}
+                                        fullWidth
+                                        id="form-precio-hora_F-cuadrante"
+                                        value={props.prItemEditandoConfiguracion.precioHora_F || ''}
+                                        onChange={handleChangeFormConfiguracionCuadrante('precioHora_F')}
+                                        labelWidth={125}
+                                        startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                    />
+                                </FormControl>
+                                <Box className={classes.boxMiniServicios}>
+                                    <Typography className={classes.labelBoxMiniServicios}>Servicio de limpieza día festivo</Typography>
+                                </Box>
+                            </Fragment>
+                        ) : null}
+                    </Fragment>
+                ) : null}
+            </Grid>
             {/* {console.log(props.prCentro.computo)} */}
         </div>
     )

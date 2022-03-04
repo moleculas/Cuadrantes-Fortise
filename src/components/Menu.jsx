@@ -78,10 +78,10 @@ const Menu = (props) => {
         };
         //gestión pendientes
         dispatch(vaciarDatosPendientesAccion());
-        dispatch(setCalendarioAGestionarAccion(dispatch(retornaAnoMesAccion())));
+        dispatch(setCalendarioAGestionarAccion(retornaAnoMesAccion()));
         //gestión faltantes
         dispatch(vaciarDatosFaltantesAccion());
-        dispatch(setCalendarioAGestionarNominasAccion(dispatch(retornaAnoMesAccion())));
+        dispatch(setCalendarioAGestionarNominasAccion(retornaAnoMesAccion()));
         //
         dispatch(activarDesactivarAccion(true));
         dispatch(vaciarDatosCuadrantesAccion());
@@ -204,7 +204,7 @@ const Menu = (props) => {
     //dialog
 
     const tituloDialogMenu1 = "¿Estás seguro que quieres cambiar de pantalla?";
-    const descripcionDialogMenu1 = "Estás tratando de cambiar de pantalla pero no has registrado los datos de tu última intervención. Si no deseas guardar los datos pulsa 'De acuerdo', de lo contrario pulsa 'Desacuerdo' y registra los datos.";
+    const descripcionDialogMenu1 = "Estás tratando de cambiar de pantalla pero no has registrado los datos de tu última intervención. Si no deseas guardar los datos pulsa 'De acuerdo', de lo contrario pulsa 'No' y registra los datos.";
     const tituloDialogMenu2 = "Registra el cuadrante";
     const descripcionDialogMenu2 = "Debes registrar el cuadrante nuevo antes de cambiar. Pulsa 'Registrar Cuadrante' en el menú superior.";
     const tituloDialogMenu3 = "Registra la nómina";

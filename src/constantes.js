@@ -97,32 +97,32 @@ const Constantes = {
         { value: 6, label: 'Residencias' }
     ],
     CANTIDAD_HORAS_CENTROS: [
-        { value: 60, label: '1 hora' },     
-        { value: 120, label: '2 horas' },       
-        { value: 180, label: '3 horas' },      
-        { value: 240, label: '4 horas' },        
-        { value: 300, label: '5 horas' },    
-        { value: 360, label: '6 horas' },  
-        { value: 420, label: '7 horas' },      
-        { value: 480, label: '8 horas' },      
-        { value: 540, label: '9 horas' },       
-        { value: 600, label: '10 horas' },        
-        { value: 660, label: '11 horas' },       
+        { value: 30, label: '30 mts.' },
+        { value: 45, label: '45 mts.' },
+        { value: 60, label: '1 hora' },
+        { value: 75, label: '1 hora 15 mts.' },
+        { value: 90, label: '1 hora 30 mts.' },
+        { value: 105, label: '1 hora 45 mts.' },
+        { value: 120, label: '2 horas' },
+        { value: 135, label: '2 horas 15 mts.' },
+        { value: 140, label: '2 horas 20 mts.' },
+        { value: 150, label: '2 horas 30 mts.' },
+        { value: 165, label: '2 horas 45 mts.' },
+        { value: 180, label: '3 horas' },
+        { value: 210, label: '3 horas 30 mts.' },
+        { value: 240, label: '4 horas' },
+        { value: 270, label: '4 horas 30 mts.' },
+        { value: 300, label: '5 horas' },
+        { value: 330, label: '5 horas 30 mts.' },
+        { value: 360, label: '6 horas' },
+        { value: 390, label: '6 horas 30 mts.' },
+        { value: 420, label: '7 horas' },
+        { value: 450, label: '7 horas 30 mts.' },
+        { value: 480, label: '8 horas' },
+        { value: 540, label: '9 horas' },
+        { value: 600, label: '10 horas' },
+        { value: 660, label: '11 horas' },
         { value: 720, label: '12 horas' }
-    ],
-    CANTIDAD_MINUTOS_CENTROS: [
-        { value: 0, label: '0 mts' },     
-        { value: 5, label: '5 mts' },       
-        { value: 10, label: '10 mts' },     
-        { value: 15, label: '15 mts' }, 
-        { value: 20, label: '20 mts' },     
-        { value: 25, label: '25 mts' }, 
-        { value: 30, label: '30 mts' },     
-        { value: 35, label: '35 mts' }, 
-        { value: 40, label: '40 mts' },     
-        { value: 45, label: '45 mts' }, 
-        { value: 50, label: '50 mts' },     
-        { value: 55, label: '55 mts' }      
     ],
     VARIACIONES_HORARIOS_CENTROS: [
         { value: 'todasSemanas', label: 'Todas las semanas' },
@@ -162,16 +162,16 @@ const Constantes = {
         { value: 3, label: 'Gestión especial horas' }
     ],
     TIPO_SERVICIO: [
-        { value: 'LIM', label: 'SERVICIO DE LIMPIEZA' },        
-        { value: 'LIME', label: 'SERVICIO DE LIMPIEZA ESPECIAL' },      
+        { value: 'LIM', label: 'SERVICIO DE LIMPIEZA' },
+        { value: 'LIME', label: 'SERVICIO DE LIMPIEZA ESPECIAL' },
         { value: 'LIMP', label: 'SERVICIO DE LIMPIEZA DEL PARKING' },
         { value: 'NAVE2', label: 'SERVICIO DE LIMPIEZA NAVE 2' },
         { value: 'REFZ', label: 'SERVICIO DE LIMPIEZA REFUERZO' },
-        { value: 'LIM1', label: 'SERVICIO DE LIMPIEZA_1' },  
-        { value: 'LIM2', label: 'SERVICIO DE LIMPIEZA_2' },  
+        { value: 'LIM1', label: 'SERVICIO DE LIMPIEZA_1' },
+        { value: 'LIM2', label: 'SERVICIO DE LIMPIEZA_2' },
         { value: 'FEST', label: 'SERVICIO DE LIMPIEZA DÍA FESTIVO' }
     ],
-    TIPO_SERVICIO_FIJO: [        
+    TIPO_SERVICIO_FIJO: [
         { value: 'TOL', label: 'SERVICIO DE LIMPIEZA DE TOLDOS' },
         { value: 'CRIS', label: 'SERVICIO DE LIMPIEZA DE CRISTALES' },
         { value: 'CRISE', label: 'LIMPIEZA CRISTALES EXTERIORES' },
@@ -190,7 +190,7 @@ const Constantes = {
         { value: 'FEST', label: 'SERVICIO DE LIMPIEZA DÍA FESTIVO' },
         { value: 'CRTRIM', label: 'LIMPIEZA DE CRISTALES TRIMESTRAL' },
         { value: 'CRBIM', label: 'LIMPIEZA DE CRISTALES BIMENSUAL' },
-        { value: 'LIME', label: 'SERVICIO DE LIMPIEZA ESPECIAL' },      
+        { value: 'LIME', label: 'SERVICIO DE LIMPIEZA ESPECIAL' },
         { value: 'LIMP', label: 'SERVICIO DE LIMPIEZA DEL PARKING' }
     ],
     FORMA_DE_PAGO: [
@@ -207,18 +207,18 @@ const Constantes = {
         { value: 'RE', label: 'Recibo domiciliado' },
         { value: 'R1', label: 'Recibo domiciliado a 30 días' },
         { value: 'R2', label: 'Recibo domiciliado a 60 días' },
-        { value: 'R3', label: 'Recibo domiciliado a 90 días' },       
+        { value: 'R3', label: 'Recibo domiciliado a 90 días' },
         { value: '@T', label: 'Tarjeta de crédito' },
         { value: 'TR', label: 'Transferencia' },
         { value: 'T1', label: 'Transferencia a 30 días' },
         { value: 'T4', label: 'Transferencia a 45 días' },
         { value: 'T2', label: 'Transferencia a 60 días' },
-        { value: 'T3', label: 'Transferencia a 90 días' }       
+        { value: 'T3', label: 'Transferencia a 90 días' }
     ],
     TEMPORIZACION_PAGO: [
         { value: 'mensual', label: 'Mensual' },
         { value: 'bimensual', label: 'Bimensual' },
-        { value: 'trimestral', label: 'Trimestral' }      
+        { value: 'trimestral', label: 'Trimestral' }
     ],
     DIA_PAGO: [
         { value: 1, label: 'Día 1' },
@@ -251,7 +251,7 @@ const Constantes = {
         { value: 28, label: 'Día 28' },
         { value: 29, label: 'Día 29' },
         { value: 30, label: 'Día 30' },
-        { value: 31, label: 'Día 31' }    
+        { value: 31, label: 'Día 31' }
     ],
     VARIACIONES_SERVICIOS_FIJOS_CENTROS: [
         { value: 1, label: 'Todas las semanas' },

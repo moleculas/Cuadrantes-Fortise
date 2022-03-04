@@ -17,7 +17,6 @@ import clsx from 'clsx';
 import Clases from "../clases";
 
 const cantidadHoras = Constantes.CANTIDAD_HORAS_CENTROS;
-const cantidadMinutos = Constantes.CANTIDAD_MINUTOS_CENTROS;
 const tiposServicios = Constantes.TIPO_SERVICIO;
 
 const ItemListTime = (props) => {
@@ -33,10 +32,7 @@ const ItemListTime = (props) => {
     const handleChangeTimePickerFinEdicion = (id) => (hora) => {
         props.prHandleChangeTimePickerFinEdicion(id, hora);
     };
-    const handleChangeSelectCantidadHorasEdicion = (e) => {
-        props.prHandleChangeSelectCantidadEdicion(e);
-    };
-    const handleChangeSelectCantidadMinutosEdicion = (e) => {
+    const handleChangeSelectCantidadEdicion = (e) => {
         props.prHandleChangeSelectCantidadEdicion(e);
     };
     const handleChangeTimePickerInicioRegistro = (id) => (hora) => {
@@ -45,11 +41,8 @@ const ItemListTime = (props) => {
     const handleChangeTimePickerFinRegistro = (id) => (hora) => {
         props.prHandleChangeTimePickerFinRegistro(id, hora);
     };
-    const handleChangeSelectCantidadHorasRegistro = (e) => {
-        props.prHandleChangeSelectCantidadHorasRegistro(e);
-    };
-    const handleChangeSelectCantidadMinutosRegistro = (e) => {
-        props.prHandleChangeSelectCantidadMinutosRegistro(e);
+    const handleChangeSelectCantidadRegistro = (e) => {
+        props.prHandleChangeSelectCantidadRegistro(e);
     };
     const handleChangeSelectTipoServicioEdicion = (e) => {
         props.prHandleChangeSelectTipoServicioEdicion(e);
@@ -69,9 +62,9 @@ const ItemListTime = (props) => {
         };
         if (tipo === 'cantidad') {
             if (props.prValueCantidadHoras && props.prValueTipoServicio) {
-                elEstilo = { padding: 12, marginBottom: 5, backgroundColor: '#f5f5f5' }
+                elEstilo = { paddingTop: 8, paddingLeft: 12, paddingBottom: 8, marginBottom: 5, backgroundColor: '#f5f5f5' }
             } else {
-                elEstilo = { padding: 12, marginBottom: 5 }
+                elEstilo = { paddingTop: 8, paddingLeft: 12, paddingBottom: 8, marginBottom: 5 }
             };
         };
         if (tipo === 'rangoDescanso') {
@@ -90,7 +83,7 @@ const ItemListTime = (props) => {
         return (
             <FormControl
                 variant="outlined"
-                className={classes.formTipo}
+                className={props.prTipo === 'cantidad' ? classes.form : classes.formTipo}
                 size="small"
             >
                 <InputLabel>Tipo Servicio</InputLabel>
@@ -185,19 +178,19 @@ const ItemListTime = (props) => {
                             <Grid item xs={3}>
                                 <ListItemText primary={props.prDia} />
                             </Grid>
-                            <Grid item xs={4}>
-                            <FormControl
+                            <Grid item xs={8}>
+                                <FormControl
                                     variant="outlined"
-                                    className={classes.form2}
+                                    className={classes.form}
                                     size="small"
                                 >
-                                    <InputLabel>Horas</InputLabel>
+                                    <InputLabel>Cantidad horas</InputLabel>
                                     <Select
                                         fullWidth
-                                        name={props.prIdCantidadHoras}
-                                        label="Horas"
+                                        name={props.prIdCantidad}
+                                        label="Cantidad horas"
                                         value={props.prValueCantidadHoras}
-                                        onChange={onEstem === 'editarCentros' ? (handleChangeSelectCantidadHorasEdicion) : (handleChangeSelectCantidadHorasRegistro)}
+                                        onChange={onEstem === 'editarCentros' ? (handleChangeSelectCantidadEdicion) : (handleChangeSelectCantidadRegistro)}
                                         helpertext="Cantidad horas"
                                     >
                                         <MenuItem value=''>
@@ -213,34 +206,6 @@ const ItemListTime = (props) => {
                                     </Select>
                                 </FormControl>
                             </Grid>
-                            <Grid item xs={4} style={{ marginLeft: 10 }}>
-                            <FormControl
-                                    variant="outlined"
-                                    className={classes.form2}                               
-                                    size="small"
-                                >
-                                    <InputLabel>Minutos</InputLabel>
-                                    <Select
-                                        fullWidth
-                                        name={props.prIdCantidadMinutos}
-                                        label="Minutos"
-                                        value={props.prValueCantidadMinutos}
-                                        onChange={onEstem === 'editarCentros' ? (handleChangeSelectCantidadMinutosEdicion) : (handleChangeSelectCantidadMinutosRegistro)}
-                                        helpertext="Cantidad minutos"
-                                    >
-                                        <MenuItem value=''>
-                                            <em>No</em>
-                                        </MenuItem>
-                                        {
-                                            cantidadMinutos.map((option) => (
-                                                <MenuItem key={option.value} value={option.value}>
-                                                    {option.label}
-                                                </MenuItem>
-                                            ))
-                                        }
-                                    </Select>
-                                </FormControl>
-                            </Grid>                           
                         </Grid>
                         <Grid container>
                             <Grid item xs={3}>

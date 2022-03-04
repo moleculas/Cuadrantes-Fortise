@@ -36,7 +36,7 @@ const dataInicial = {
         horas: {
             objeto: 'horas',
             horas: []
-        }
+        },        
     },
     cuadranteRegistrado: '',
     categoria: '',
@@ -47,8 +47,7 @@ const dataInicial = {
     calendarioAGestionar: '',
     stateFestivo: {},
     losDiasDelMes: [],
-    cuadrante: [],
-    cuadranteServiciosFijos: []
+    cuadrante: [],    
 };
 
 //types
@@ -77,7 +76,6 @@ const ACTUALIZAR_OBJETO_CUADRANTE = 'ACTUALIZAR_OBJETO_CUADRANTE';
 const SET_LOS_DIAS_DE_MES = 'SET_LOS_DIAS_DE_MES';
 const SET_STATE_FESTIVO = 'SET_STATE_FESTIVO';
 const SET_CUADRANTE = 'SET_CUADRANTE';
-const SET_CUADRANTE_SERVICIOS_FIJOS = 'SET_CUADRANTE_SERVICIOS_FIJOS';
 
 //reducer
 export default function cuadrantesReducer(state = dataInicial, action) {
@@ -131,9 +129,7 @@ export default function cuadrantesReducer(state = dataInicial, action) {
         case SET_STATE_FESTIVO:
             return { ...state, stateFestivo: action.payload.objeto }
         case SET_CUADRANTE:
-            return { ...state, cuadrante: action.payload.array }
-        case SET_CUADRANTE_SERVICIOS_FIJOS:
-            return { ...state, cuadranteServiciosFijos: action.payload.array }
+            return { ...state, cuadrante: action.payload.array }        
         default:
             return { ...state }
     }
@@ -153,15 +149,6 @@ export const setLosDiasDelMesAccion = (array) => (dispatch, getState) => {
 export const setCuadranteAccion = (array) => (dispatch, getState) => {
     dispatch({
         type: SET_CUADRANTE,
-        payload: {
-            array: array
-        }
-    });
-}
-
-export const setCuadranteServiciosFijosAccion = (array) => (dispatch, getState) => {
-    dispatch({
-        type: SET_CUADRANTE_SERVICIOS_FIJOS,
         payload: {
             array: array
         }
