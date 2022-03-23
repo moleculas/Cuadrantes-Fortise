@@ -379,7 +379,6 @@ export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
         let laDiferenciaTotal;
         if (!diferencia_L && !diferencia_E && !diferencia_P && !diferencia_N && !diferencia_R && !diferencia_L1 && !diferencia_L2 && !diferencia_F) {
             laDiferenciaTotal = '';
-            console.log('no hay')
         } else {
             if (diferencia_L) {
                 laDiferencia_L = ' + diferencia de horas en concepto de SERVICIO DE LIMPIEZA: ' + parseFloat(diferencia_L).toFixed(2) + ' €'

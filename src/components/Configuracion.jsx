@@ -703,6 +703,21 @@ const Configuracion = (props) => {
                                                             }
                                                         />
                                                     </ListItem >
+                                                    <ListItem>
+                                                        <ListItemText
+                                                            primary="V. 1.09 - 23/03/2022"
+                                                            secondary={
+                                                                <Fragment>
+                                                                <Typography component="span" variant="body2">1.- Añadido botón para limpiar horario en columnas de trabajadores en fichas cuadrantes.</Typography>
+                                                                <br />     
+                                                                <Typography component="span" variant="body2">2.- Revisada y corregida funcionalidad para gestión de festivos en fichas cuadrantes.</Typography>
+                                                                <br />    
+                                                                <Typography component="span" variant="body2">3.- Implementada funcionalidad para activar línea de cuenta corriente en ítems de facturas para programa Factusol en fichas centros.</Typography>
+                                                                <br />                                                 
+                                                                </Fragment>
+                                                            }
+                                                        />
+                                                    </ListItem >
                                                 </List>
                                             </Box>
                                         </Box>

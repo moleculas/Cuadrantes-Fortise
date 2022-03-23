@@ -69,11 +69,13 @@ const gestionaFestivosInicio = (arrayFestivos) => (dispatch, getState) => {
     if (objetoCuadrante.datosBuffer.datosBuffer.length > 0 && bufferSwitchedDiasFestivosCuadrante.length === 0) {
         dispatch(traspasoBufferFestivosAccion(true));
     } else if (objetoCuadrante.datosBuffer.datosBuffer.length === 0 && bufferSwitchedDiasFestivosCuadrante.length === 0) {
-        let object = { ...stateFestivo };
-        arrayFestivos.forEach((festivo, index) => {
-            object['estadoFestivoDia' + festivo[1]] = true;
-        });
-        dispatch(setStateFestivoAccion(object));
+        if (arrayFestivos && arrayFestivos.length > 0) {
+            let object = { ...stateFestivo };
+            arrayFestivos.forEach((festivo, index) => {
+                object['estadoFestivoDia' + festivo[1]] = true;
+            });
+            dispatch(setStateFestivoAccion(object));
+        };
     };
 };
 
@@ -415,7 +417,7 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
     if (cuadranteRegistrado === 'si') {
         if (objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].arrayCuadrante.length > 0) {
             const { arrayResultante, arrayFestivos } = dispatch(completarCuadranteAccion(objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].arrayCuadrante));
-            dispatch(setCuadranteAccion(arrayResultante));
+            dispatch(setCuadranteAccion(arrayResultante));           
             dispatch(gestionaFestivosInicio(arrayFestivos));
             let objetoDatosInforme = {
                 computo: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].computo,
@@ -463,7 +465,7 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
                 ...objetoCuadrante,
                 datosInforme: losDatosInforme
             }));
-        }else{
+        } else {
             dispatch(gestionaFestivosInicio(null));
         };
     };

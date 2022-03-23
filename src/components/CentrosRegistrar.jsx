@@ -32,6 +32,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import TextField from '@material-ui/core/TextField';
+import Checkbox from '@material-ui/core/Checkbox';
 
 //carga componentes
 import ItemListTime from './ItemListTime';
@@ -461,7 +462,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
         telefono2: '',
         formaPago: '',
         tempPago: '',
-        diaPago: ''
+        diaPago: '',
+        activoNumCuenta: false
     });
 
     //useEffect
@@ -1024,6 +1026,12 @@ const CentrosRegistrar = forwardRef((props, ref) => {
     };
 
     const handleChangeFormRegistroGenerales = (prop) => (e) => {
+        if (prop === "activoNumCuenta") {
+            setValuesFormRegistroGenerales({ ...valuesFormRegistroGenerales, [prop]: e.target.checked });
+            dispatch(registrarIntervencionAccion(false));
+            dispatch(activarDesactivarRegistrarCentroAccion(false));
+            return;
+        };
         setValuesFormRegistroGenerales({ ...valuesFormRegistroGenerales, [prop]: e.target.value });
         dispatch(registrarIntervencionAccion(false));
         dispatch(activarDesactivarRegistrarCentroAccion(false));
@@ -3705,6 +3713,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                             forma_pago: valuesFormRegistroGenerales.formaPago,
                                             temp_pago: valuesFormRegistroGenerales.tempPago,
                                             dia_pago: valuesFormRegistroGenerales.diaPago ? valuesFormRegistroGenerales.diaPago : null,
+                                            activo_num_cuenta: valuesFormRegistroGenerales.activoNumCuenta ? 'si' : 'no',
                                             horario: values.horario ? (values.horario) : null,
                                             servicios_fijos: values.servicios ? (values.servicios) : null,
                                             trabajadores: values.trabajadores ? (values.trabajadores) : null
@@ -3786,6 +3795,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                             forma_pago: valuesFormRegistroGenerales.formaPago,
                                             temp_pago: valuesFormRegistroGenerales.tempPago,
                                             dia_pago: valuesFormRegistroGenerales.diaPago ? valuesFormRegistroGenerales.diaPago : null,
+                                            activo_num_cuenta: valuesFormRegistroGenerales.activoNumCuenta ? 'si' : 'no',
                                             horario: values.horario ? (values.horario) : null,
                                             servicios_fijos: values.servicios ? (values.servicios) : null,
                                             trabajadores: values.trabajadores ? (values.trabajadores) : null
@@ -4008,7 +4018,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 telefono2: '',
                 formaPago: '',
                 tempPago: '',
-                diaPago: ''
+                diaPago: '',
+                activoNumCuenta: false
             });
             setNumeroCuadrantesRegistro([{ value: 1, cuadrante: null, guardado: false }]);
             setCuadranteEnUsoRegistro(1);
@@ -7022,6 +7033,18 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                 }
                                             </Select>
                                         </FormControl>
+                                        <FormControlLabel
+                                            style={{ marginLeft: 0, marginTop: 5 }}
+                                            control={
+                                                <Checkbox
+                                                    checked={valuesFormRegistroGenerales.activoNumCuenta || false}
+                                                    onChange={handleChangeFormRegistroGenerales('activoNumCuenta')}
+                                                    name="checkedNumCuenta-registro"
+                                                    color="primary"
+                                                />
+                                            }
+                                            label={<Typography className={classes.colorText} style={{ fontSize: '0.9rem' }}>Activar línea número de cuenta en Factura Factusol.</Typography>}
+                                        />
                                     </Box>
                                 </Grid>
                             </TabPanel>

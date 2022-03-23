@@ -33,6 +33,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
+import Checkbox from '@material-ui/core/Checkbox';
 
 //carga componentes
 import ItemListTime from './ItemListTime';
@@ -474,7 +475,8 @@ const CentrosEditar = forwardRef((props, ref) => {
         telefono2: '',
         formaPago: '',
         tempPago: '',
-        diaPago: ''
+        diaPago: '',
+        activoNumCuenta: false
     });
 
     //useEffect
@@ -572,7 +574,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                 telefono2: centroAEditar.telefono2 || '',
                 formaPago: centroAEditar.formaPago || '',
                 tempPago: centroAEditar.tempPago || '',
-                diaPago: centroAEditar.diaPago ? centroAEditar.diaPago : ''
+                diaPago: centroAEditar.diaPago ? centroAEditar.diaPago : '',
+                activoNumCuenta: centroAEditar.activoNumCuenta === 'si' ? true : false
             });
         };
     }, [centroAEditar]);
@@ -1112,11 +1115,16 @@ const CentrosEditar = forwardRef((props, ref) => {
     };
 
     const handleChangeFormEdicionGenerales = (prop) => (e) => {
+        if (prop === "activoNumCuenta") {
+            setValuesFormEdicionGenerales({ ...valuesFormEdicionGenerales, [prop]: e.target.checked });
+            dispatch(registrarIntervencionAccion(false));
+            dispatch(activarDesactivarActualizarCentroAccion(false));
+            return;
+        };
         setValuesFormEdicionGenerales({ ...valuesFormEdicionGenerales, [prop]: e.target.value });
         dispatch(registrarIntervencionAccion(false));
         dispatch(activarDesactivarActualizarCentroAccion(false));
     };
-
 
     const handleChangeFormEdicionSelectsTrabajadores = (tipo, index) => (e) => {
         let encontrado = false;
@@ -3808,6 +3816,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                             forma_pago: valuesFormEdicionGenerales.formaPago,
                                             temp_pago: valuesFormEdicionGenerales.tempPago,
                                             dia_pago: valuesFormEdicionGenerales.diaPago ? valuesFormEdicionGenerales.diaPago : null,
+                                            activo_num_cuenta: valuesFormEdicionGenerales.activoNumCuenta ? 'si' : 'no',
                                             horario: values.horario ? (values.horario) : null,
                                             servicios_fijos: values.servicios ? (values.servicios) : null,
                                             trabajadores: values.trabajadores ? (values.trabajadores) : null
@@ -3887,6 +3896,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                             forma_pago: valuesFormEdicionGenerales.formaPago,
                                             temp_pago: valuesFormEdicionGenerales.tempPago,
                                             dia_pago: valuesFormEdicionGenerales.diaPago ? valuesFormEdicionGenerales.diaPago : null,
+                                            activo_num_cuenta: valuesFormEdicionGenerales.activoNumCuenta ? 'si' : 'no',
                                             horario: values.horario ? (values.horario) : null,
                                             servicios_fijos: values.servicios ? (values.servicios) : null,
                                             trabajadores: values.trabajadores ? (values.trabajadores) : null
@@ -3896,7 +3906,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                             if (cuadrante.value === cuadranteEnUsoEdicion) {
                                                 cuadrante.cuadrante = {
                                                     categoria: valuesFormEdicion.categoria,
-                                                    observaciones: valuesFormEdicion.observaciones ? valuesFormEdicion.observaciones: null,
+                                                    observaciones: valuesFormEdicion.observaciones ? valuesFormEdicion.observaciones : null,
                                                     horario: values.horario ? (values.horario) : null,
                                                     servicios_fijos: values.servicios ? (values.servicios) : null,
                                                     trabajadores: values.trabajadores ? (values.trabajadores) : null
@@ -4109,7 +4119,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                 telefono2: '',
                 formaPago: '',
                 tempPago: '',
-                diaPago: ''
+                diaPago: '',
+                activoNumCuenta: false
             });
             setNumeroCuadrantesEdicion([{ value: 1, cuadrante: null, guardado: false }]);
             setCuadranteEnUsoEdicion(1);
@@ -7171,6 +7182,19 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                 }
                                             </Select>
                                         </FormControl>
+                                        <FormControlLabel
+                                            style={{ marginLeft: 0, marginTop: 5 }}
+                                            control={
+                                                <Checkbox
+                                                    checked={valuesFormEdicionGenerales.activoNumCuenta || false}
+                                                    onChange={handleChangeFormEdicionGenerales('activoNumCuenta')}
+                                                    name="checkedNumCuenta-edicion"
+                                                    color="primary"
+                                                    disabled={disabledItem}
+                                                />
+                                            }
+                                            label={<Typography className={classes.colorText} style={{ fontSize: '0.9rem' }}>Activar línea número de cuenta en Factura Factusol.</Typography>}
+                                        />
                                     </Box>
                                 </Grid>
                             </TabPanel>

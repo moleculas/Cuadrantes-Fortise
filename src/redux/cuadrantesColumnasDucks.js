@@ -765,7 +765,7 @@ export const gestionarInformeAccion = () => (dispatch, getState) => {
     let sumatorioTotalHorasNormal_L1 = 0;
     let sumatorioTotalHorasNormal_L2 = 0;
     let sumatorioTotalHorasNormal_F = 0;
-    let sumatorioHorasBajasComputables = 0;    
+    let sumatorioHorasBajasComputables = 0;
     cuadrante.forEach((cuadranteColumna, index) => {
         switch (cuadranteColumna.tipoHorario) {
             case 'rango':
@@ -2740,8 +2740,9 @@ export const gestionarInformeAccion = () => (dispatch, getState) => {
     let totalMensualPactado;
     let proporcion;
     let sumatorioHorasFestivasTotal;
-    //gestion mensualPactado
-    if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado) {
+    //gestion mensualPactado    
+    let cantidadMensualPactado = parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado);   
+    if (cantidadMensualPactado >= 0) {
         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].iniciado) {
             //caudrante iniciado
             //control de excepciones
@@ -7652,7 +7653,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
         if (hayTrabajador && !esInicio) {
             dispatch(setBufferSwitchedDiasFestivosCuadranteAccion(arrayBuffer));
         };
-    };    
+    };
     return {
         columnaAnadir,
         hayTrabajador
@@ -7710,11 +7711,11 @@ export const gestionaColumnaCuadranteAccion = (trabajador, tipoTrabajador, esRev
     if (cuadrante.length > 0) {
         if (cuadrante[posicionAnterior]) {
             if (tipoTrabajador === 'suplente' && !cuadrante[posicionAnterior].hayBaja && !esRevision) {
-                dispatch(setAlertaAccion({
-                    abierto: true,
-                    mensaje: "El trabajador no está o no ha estado de baja, no necesita suplente.",
-                    tipo: 'warning'
-                }));
+                // dispatch(setAlertaAccion({
+                //     abierto: true,
+                //     mensaje: "El trabajador no está o no ha estado de baja, no necesita suplente.",
+                //     tipo: 'warning'
+                // }));
                 return;
             };
         };

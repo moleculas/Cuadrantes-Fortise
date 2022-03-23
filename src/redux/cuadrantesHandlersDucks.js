@@ -5944,3 +5944,24 @@ export const handleChangeTipoHorarioAccion = (index, event) => (dispatch, getSta
     dispatch(registrarIntervencionAccion(false));
     dispatch(cambiarEstadoCuadranteEnUsoRevisadoAccion(false));
 };
+
+export const handleLimpiezaHorarioAccion = (index) => (dispatch, getState) => {
+    const { cuadranteRegistrado, cuadrante } = getState().variablesCuadrantes;
+    const { trabajadoresEnCuadrante, suplentesEnCuadrante } = getState().variablesCuadrantesSetters;   
+    if (cuadrante[index].tipoTrabajador === 'trabajador') {
+        dispatch(setEsInicioTraAccion(false));
+        dispatch(setEsCambioTraAccion(true));
+        let trabajador = trabajadoresEnCuadrante.find(trabajador => trabajador.id === cuadrante[index].idTrabajador);
+        dispatch(gestionaColumnaCuadranteAccion(trabajador, 'trabajador', true, index, false, true, cuadrante[index].tipoHorario));
+    } else {
+        dispatch(setEsInicioSupAccion(false));
+        dispatch(setEsCambioSupAccion(true));
+        let suplente = suplentesEnCuadrante.find(suplente => suplente.id === cuadrante[index].idTrabajador);
+        dispatch(gestionaColumnaCuadranteAccion(suplente, 'suplente', true, index, false, true, cuadrante[index].tipoHorario));
+    }
+    if (cuadranteRegistrado === 'si') {
+        dispatch(activarDesactivarCambioBotonActualizarAccion(false));
+    };
+    dispatch(registrarIntervencionAccion(false));
+    dispatch(cambiarEstadoCuadranteEnUsoRevisadoAccion(false));
+};

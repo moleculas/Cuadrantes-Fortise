@@ -43,6 +43,11 @@ import { setCalendarioAGestionarNominasAccion } from '../redux/nominasDucks';
 import { vaciarDatosUltimasIntervencionesAccion } from '../redux/appDucks';
 import { vaciarDatosCentroAccion } from '../redux/centrosDucks';
 import { vaciarDatosTrabajadorAccion } from '../redux/trabajadoresDucks';
+import { reseteaContenidoCuadranteAccion } from '../redux/cuadrantesSettersDucks';
+import { setDisableSelectCentrosAccion } from '../redux/cuadrantesSettersDucks';
+import { setCategoriaAccion } from '../redux/cuadrantesDucks';
+import { setAnchorElMenuAccion } from '../redux/cuadrantesSettersDucks';
+import { forzarRecargaGraficosCuadrantesAccion } from '../redux/graficosDucks';
 
 const Menu = (props) => {
 
@@ -95,6 +100,14 @@ const Menu = (props) => {
         dispatch(vaciarDatosUltimasIntervencionesAccion());
         dispatch(vaciarDatosCentroAccion());
         dispatch(vaciarDatosTrabajadorAccion());
+        //
+        if (onEstem === 'cuadrantes') {
+            dispatch(reseteaContenidoCuadranteAccion());
+            dispatch(setDisableSelectCentrosAccion(true));
+            dispatch(setCategoriaAccion(''));
+            dispatch(setAnchorElMenuAccion(null));
+            dispatch(forzarRecargaGraficosCuadrantesAccion(true));
+        };
     };
 
     const handleClick = (link) => {
@@ -276,7 +289,7 @@ const Menu = (props) => {
                     >
                         <ListItem
                             button
-                            disabled={onEstem === 'cuadrantes' ? true : false}    
+                            disabled={onEstem === 'cuadrantes' ? true : false}
                             //disabled={true}
                             onClick={() => handleClick('/cuadrantes')}
                         >

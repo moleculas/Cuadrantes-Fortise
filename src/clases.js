@@ -63,6 +63,14 @@ const Clases = makeStyles((theme) => ({
         },
         marginLeft: 5
     },
+    btnLimpieza: {
+        backgroundColor: theme.palette.secondary.light,
+        color: theme.palette.error.contrastText,
+        "&:hover": {
+            backgroundColor: theme.palette.secondary.light,
+        },
+        marginLeft: 5
+    },
     //form
     form: {
         display: 'flex',

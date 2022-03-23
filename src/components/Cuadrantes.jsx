@@ -57,6 +57,7 @@ import VisibilityIcon from '@material-ui/icons/Visibility';
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import SettingsIcon from '@material-ui/icons/Settings';
 import PopupState, { bindTrigger, bindPopover } from 'material-ui-popup-state';
+import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 
 //carga componentes
 import ItemCuadrante from './ItemCuadrante';
@@ -162,7 +163,8 @@ import {
     gestionItemPrevioEditandoConfiguracionAccion,
     handleRegistrarCambioEnCasillaConfiguracionAccion,
     handleChangeTipoHorarioAccion,
-    configuraStateFestivoAccion
+    configuraStateFestivoAccion,
+    handleLimpiezaHorarioAccion
 } from '../redux/cuadrantesHandlersDucks';
 import {
     retornaInfoFabButtonAccion,
@@ -1525,6 +1527,18 @@ const Cuadrantes = (props) => {
                                                                                                         </IconButton>
                                                                                                     </div>
                                                                                                 </Tooltip>
+                                                                                                <Tooltip title={columnaCabecera.nombreTrabajador ? "Limpiar horario columna" : ""} placement="top-end" arrow>
+                                                                                                    <div>
+                                                                                                        <IconButton
+                                                                                                            className={clsx(classes.btnLimpieza, classes.blanc, classes.mb10)}
+                                                                                                            size="small"
+                                                                                                            onClick={() => dispatch(handleLimpiezaHorarioAccion(index))}
+                                                                                                            disabled={columnaCabecera.nombreTrabajador ? false : true}
+                                                                                                        >
+                                                                                                            <RemoveCircleOutlineIcon />
+                                                                                                        </IconButton>
+                                                                                                    </div>
+                                                                                                </Tooltip>
                                                                                                 <Tooltip title={columnaCabecera.nombreTrabajador ? "Actualizar trabajador" : ""} placement="top-end" arrow>
                                                                                                     <div>
                                                                                                         <IconButton
@@ -1956,7 +1970,7 @@ const Cuadrantes = (props) => {
                 prTituloDialog={tituloDialogCuadrantes5}
                 prDescripcionDialog={descripcionDialogCuadrantes5}
             />
-            {console.log(bufferSwitchedDiasFestivosCuadrante)}
+            {/* {console.log(objetoCuadrante)} */}
         </div >
     )
 }
