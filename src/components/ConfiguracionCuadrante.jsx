@@ -23,6 +23,7 @@ import Clases from "../clases";
 
 const tipos = Constantes.MODO_ENTRADA_HORARIOS;
 const computoHoras = Constantes.COMPUTO_HORAS;
+const excepciones = Constantes.EXCEPCIONES_CENTROS;
 
 const ConfiguracionCuadrante = (props) => {
 
@@ -32,6 +33,7 @@ const ConfiguracionCuadrante = (props) => {
     const [valoresPreviosConfiguracion, setValoresPreviosConfiguracion] = useState({
         tipoHorario: props.prItemEditandoConfiguracion.tipoHorario || '',
         computo: props.prItemEditandoConfiguracion.computo || '',
+        excepcion: props.prItemEditandoConfiguracion.excepcion || '',
         mensualPactado: props.prItemEditandoConfiguracion.mensualPactado || '',
         precioHora_L: props.prItemEditandoConfiguracion.precioHora_L || '',
         precioHora_E: props.prItemEditandoConfiguracion.precioHora_E || '',
@@ -104,7 +106,7 @@ const ConfiguracionCuadrante = (props) => {
                 <Box className={classes.mb15}>
                     <TextField
                         label="Observaciones"
-                        id="form-tipo-cuadrante"
+                        id="form-observaciones-cuadrante"
                         value={props.prItemEditandoConfiguracion.observaciones || ''}
                         className={classes.form}
                         fullWidth
@@ -134,6 +136,33 @@ const ConfiguracionCuadrante = (props) => {
                             >
                                 {
                                     tipos.map((option) => (
+                                        <MenuItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </MenuItem>
+                                    ))
+                                }
+                            </Select>
+                        </FormControl>
+                        <FormControl
+                            variant="outlined"
+                            className={classes.form}
+                            size="small"
+                        >
+                            <InputLabel>Excepciones</InputLabel>
+                            <Select
+                                fullWidth
+                                className={classes.mb15}
+                                id="form-excepcion-cuadrante"
+                                label="Excepciones"
+                                value={props.prItemEditandoConfiguracion.excepcion || ''}
+                                onChange={handleChangeFormConfiguracionCuadrante('excepcion')}
+                                helpertext="Selecciona Excepción"
+                            >
+                                <MenuItem value=''>
+                                    <em>No</em>
+                                </MenuItem>
+                                {
+                                    excepciones.map((option) => (
                                         <MenuItem key={option.value} value={option.value}>
                                             {option.label}
                                         </MenuItem>

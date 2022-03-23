@@ -83,11 +83,13 @@ export const obtenerCuadrantesPorAnyoAccion = (objeto) => (dispatch, getState) =
             //finished all queries
             let array = [];
             let sumatorio = 0;
+            let elObjetoTotal;
             arrayCuadrantes.forEach((mes, index) => {
                 if (mes.length > 0) {
                     mes.forEach((mesInt, index) => {
+                        elObjetoTotal = JSON.parse(mesInt.total);
                         if (mesInt.total) {
-                            sumatorio += parseFloat(mesInt.total);
+                            sumatorio += parseFloat(elObjetoTotal.total);
                         }
                     });
                     array.push({
@@ -145,11 +147,14 @@ export const obtenerNominasPorAnyoAccion = (objeto) => (dispatch, getState) => {
             //finished all queries
             let array = [];
             let sumatorio = 0;
+            let elObjetoTotal;
             arrayNominas.forEach((mes, index) => {
                 if (mes.length > 0) {
                     mes.forEach((mesInt, index) => {
                         if (mesInt.total) {
-                            sumatorio += parseFloat(mesInt.total);
+                            elObjetoTotal = JSON.parse(mesInt.total.total);
+                            console.log(elObjetoTotal)
+                            sumatorio += parseFloat(elObjetoTotal.total);
                         }
                     });
                     array.push({

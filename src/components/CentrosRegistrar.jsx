@@ -31,6 +31,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
+import TextField from '@material-ui/core/TextField';
 
 //carga componentes
 import ItemListTime from './ItemListTime';
@@ -64,6 +65,7 @@ const diaDelPago = Constantes.DIA_PAGO;
 const tiposDeServicio = Constantes.TIPO_SERVICIO_FIJO;
 const variacionesServiciosFijos = Constantes.VARIACIONES_SERVICIOS_FIJOS_CENTROS;
 const diasSemana = Constantes.DIAS_SEMANA;
+const excepciones = Constantes.EXCEPCIONES_CENTROS;
 
 const getHeightScrollable = () => (window.innerHeight - 260) || (document.documentElement.clientHeight - 260) || (document.body.clientHeight - 260);
 
@@ -155,6 +157,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
     const [valuesFormRegistro, setValuesFormRegistro] = useState({
         categoria: '',
         variacion: '',
+        excepcion: '',
+        observaciones: '',
         tipo: '',
         numeroTrabajadores: '',
         datosTrabajadores: [],
@@ -341,6 +345,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
     const [horarioIntervencionRegistro, setHorarioIntervencionRegistro] = useState({
         tipo: '',
         variacion: '',
+        excepcion: '',
         tipoRegistro: 'comun',
         tipoRegistroTrabajador: [
             {
@@ -742,6 +747,12 @@ const CentrosRegistrar = forwardRef((props, ref) => {
         if (prop === "variacion") {
             setValuesFormRegistro({ ...valuesFormRegistro, [prop]: e.target.value });
             setHorarioIntervencionRegistro({ ...horarioIntervencionRegistro, variacion: e.target.value });
+            dispatch(activarDesactivarRegistrarCentroAccion(false));
+            return;
+        };
+        if (prop === "excepcion") {
+            setValuesFormRegistro({ ...valuesFormRegistro, [prop]: e.target.value });
+            setHorarioIntervencionRegistro({ ...horarioIntervencionRegistro, excepcion: e.target.value });
             dispatch(activarDesactivarRegistrarCentroAccion(false));
             return;
         };
@@ -3298,6 +3309,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     tipo: horarioIntervencionRegistro.tipo,
                     tipoRegistro: horarioIntervencionRegistro.tipoRegistro,
                     variacion: horarioIntervencionRegistro.variacion,
+                    excepcion: horarioIntervencionRegistro.excepcion,
                     tipoRegistroTrabajador: elArrayTipoRegistroTrabajador
                 };
             };
@@ -3373,6 +3385,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     tipo: horarioIntervencionRegistro.tipo,
                     tipoRegistro: horarioIntervencionRegistro.tipoRegistro,
                     variacion: horarioIntervencionRegistro.variacion,
+                    excepcion: horarioIntervencionRegistro.excepcion,
                     tipoRegistroTrabajador: elArrayTipoRegistroTrabajador
                 };
             };
@@ -3413,6 +3426,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     tipo: horarioIntervencionRegistro.tipo,
                     tipoRegistro: horarioIntervencionRegistro.tipoRegistro,
                     variacion: horarioIntervencionRegistro.variacion,
+                    excepcion: horarioIntervencionRegistro.excepcion,
                     tipoRegistroTrabajador: elArrayTipoRegistroTrabajador
                 };
             };
@@ -3661,7 +3675,11 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 case 'procesarDatosRegistro':
                     const procesarDatosRegistro = () => {
                         let centroAGuardar;
-                        let objCategorias, objHorario, objServiciosFijos, objTrabajadores = null;
+                        let objCategorias = null;
+                        let objHorario = null;
+                        let objServiciosFijos = null;
+                        let objTrabajadores = null;
+                        let objObservaciones = null;
                         let centroDefinitivoAGuardar;
                         if (numeroCuadrantesRegistro.length === 1) {
                             procesarDatosRegistroPromesa()
@@ -3673,6 +3691,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                             nombre: valuesFormRegistroGenerales.nombre,
                                             estado: valuesFormRegistroGenerales.estado,
                                             categoria: valuesFormRegistro.categoria,
+                                            observaciones: valuesFormRegistro.observaciones ? valuesFormRegistro.observaciones : null,
                                             codigo: valuesFormRegistroGenerales.codigo ? valuesFormRegistroGenerales.codigo : null,
                                             domicilio: valuesFormRegistroGenerales.domicilio ? valuesFormRegistroGenerales.domicilio : null,
                                             codigo_postal: valuesFormRegistroGenerales.codigoPostal ? valuesFormRegistroGenerales.codigoPostal : null,
@@ -3707,7 +3726,12 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                             objeto: 'trabajadores',
                                             trabajadores: []
                                         };
+                                        objObservaciones = {
+                                            objeto: 'observaciones',
+                                            observaciones: []
+                                        };
                                         objCategorias.categoria.push(centroAGuardar.categoria);
+                                        objObservaciones.observaciones.push(centroAGuardar.observaciones);
                                         if (centroAGuardar.horario) {
                                             objHorario.horario.push(centroAGuardar.horario);
                                         } else {
@@ -3728,7 +3752,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                             categoria: JSON.stringify(objCategorias),
                                             horario: JSON.stringify(objHorario),
                                             servicios_fijos: JSON.stringify(objServiciosFijos),
-                                            trabajadores: JSON.stringify(objTrabajadores)
+                                            trabajadores: JSON.stringify(objTrabajadores),
+                                            observaciones: JSON.stringify(objObservaciones)
                                         };
                                         dispatch(registrarCentroAccion('centros', centroDefinitivoAGuardar.id, centroDefinitivoAGuardar));
                                         dispatch(registrarIntervencionAccion(true));
@@ -3747,6 +3772,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                             nombre: valuesFormRegistroGenerales.nombre,
                                             estado: valuesFormRegistroGenerales.estado,
                                             categoria: valuesFormRegistro.categoria,
+                                            observaciones: valuesFormRegistro.observaciones ? valuesFormRegistro.observaciones : null,
                                             codigo: valuesFormRegistroGenerales.codigo ? valuesFormRegistroGenerales.codigo : null,
                                             domicilio: valuesFormRegistroGenerales.domicilio ? valuesFormRegistroGenerales.domicilio : null,
                                             codigo_postal: valuesFormRegistroGenerales.codigoPostal ? valuesFormRegistroGenerales.codigoPostal : null,
@@ -3769,6 +3795,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                             if (cuadrante.value === cuadranteEnUsoRegistro) {
                                                 cuadrante.cuadrante = {
                                                     categoria: valuesFormRegistro.categoria,
+                                                    observaciones: valuesFormRegistro.observaciones ? valuesFormRegistro.observaciones : null,
                                                     horario: values.horario ? (values.horario) : null,
                                                     servicios_fijos: values.servicios ? (values.servicios) : null,
                                                     trabajadores: values.trabajadores ? (values.trabajadores) : null
@@ -3793,9 +3820,14 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                             objeto: 'trabajadores',
                                             trabajadores: []
                                         };
+                                        objObservaciones = {
+                                            objeto: 'observaciones',
+                                            observaciones: []
+                                        };
                                         arrayCuadrantes.forEach((cuadrante, index) => {
                                             if (cuadrante.guardado) {
                                                 objCategorias.categoria.push(cuadrante.cuadrante.categoria);
+                                                objObservaciones.observaciones.push(cuadrante.cuadrante.observaciones);
                                                 if (cuadrante.cuadrante.horario) {
                                                     objHorario.horario.push(cuadrante.cuadrante.horario);
                                                 } else {
@@ -3813,6 +3845,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                 };
                                             } else {
                                                 objCategorias.categoria.push(centroAGuardar.categoria);
+                                                objCategorias.observaciones.push(centroAGuardar.observaciones);
                                                 if (centroAGuardar.horario) {
                                                     objHorario.horario.push(centroAGuardar.horario);
                                                 } else {
@@ -3837,7 +3870,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                             categoria: JSON.stringify(objCategorias),
                                             horario: JSON.stringify(objHorario),
                                             servicios_fijos: JSON.stringify(objServiciosFijos),
-                                            trabajadores: JSON.stringify(objTrabajadores)
+                                            trabajadores: JSON.stringify(objTrabajadores),
+                                            observaciones: JSON.stringify(objObservaciones)
                                         };
                                         dispatch(registrarCentroAccion('centros', centroDefinitivoAGuardar.id, centroDefinitivoAGuardar));
                                         dispatch(registrarIntervencionAccion(true));
@@ -3861,6 +3895,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             setValuesFormRegistro({
                 categoria: '',
                 variacion: '',
+                excepcion: '',
+                observaciones: '',
                 tipo: '',
                 numeroTrabajadores: '',
                 datosTrabajadores: [],
@@ -3980,6 +4016,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             setValuesFormRegistro({
                 categoria: '',
                 variacion: '',
+                excepcion: '',
+                observaciones: '',
                 tipo: '',
                 numeroTrabajadores: '',
                 datosTrabajadores: [],
@@ -4167,6 +4205,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
         setHorarioIntervencionRegistro({
             tipo: '',
             variacion: '',
+            excepcion: '',
             tipoRegistro: 'comun',
             tipoRegistroTrabajador: [
                 {
@@ -5130,7 +5169,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 style={{ height: 80, paddingTop: 5, paddingBottom: 10, paddingRight: 10, paddingLeft: 10, marginBottom: 15 }}
                 key={'formServicio' + index}
             >
-                <Grid item item xs={4}>
+                <Grid item xs={4}>
                     <FormControlLabel
                         control={
                             <Switch
@@ -5255,6 +5294,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     //registramos
                     const centroAGuardar = {
                         categoria: valuesFormRegistro.categoria,
+                        observaciones: valuesFormRegistro.observaciones ? valuesFormRegistro.observaciones : null,
                         horario: values.horario ? (values.horario) : null,
                         servicios_fijos: values.servicios ? (values.servicios) : null,
                         trabajadores: values.trabajadores ? (values.trabajadores) : null
@@ -5303,6 +5343,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     //registramos
                     const centroAGuardar = {
                         categoria: valuesFormRegistro.categoria,
+                        observaciones: valuesFormRegistro.observaciones ? valuesFormRegistro.observaciones : null,
                         horario: values.horario ? (values.horario) : null,
                         servicios_fijos: values.servicios ? (values.servicios) : null,
                         trabajadores: values.trabajadores ? (values.trabajadores) : null
@@ -5607,6 +5648,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
         setValuesFormRegistro({
             categoria: cuadranteAGestionar.categoria,
             variacion: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.variacion : '',
+            excepcion: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.excepcion : '',
+            observaciones: cuadranteAGestionar.observaciones ? cuadranteAGestionar.observaciones : '',
             tipo: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.tipo : '',
             numeroTrabajadores: cuadranteAGestionar.trabajadores ? cuadranteAGestionar.trabajadores.cantidad : '',
             datosTrabajadores: arrayTr,
@@ -6015,6 +6058,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             setHorarioIntervencionRegistro({
                 tipo: cuadranteAGestionar.horario.tipo,
                 variacion: cuadranteAGestionar.horario.variacion,
+                excepcion: cuadranteAGestionar.horario.excepcion ? cuadranteAGestionar.horario.excepcion : '',
                 tipoRegistro: cuadranteAGestionar.horario.tipoRegistro,
                 tipoRegistroTrabajador: arrayValoresHorario
             });
@@ -6110,6 +6154,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             setHorarioIntervencionRegistro({
                 tipo: '',
                 variacion: '',
+                excepcion: '',
                 tipoRegistro: 'comun',
                 tipoRegistroTrabajador: [
                     {
@@ -6493,7 +6538,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         >
                                             <InputLabel>Teléfono 2</InputLabel>
                                             <OutlinedInput
-                                                className={classes.mb25}
+                                                className={classes.mb15}
                                                 fullWidth
                                                 id="form-telefono2-centro-registro"
                                                 value={valuesFormRegistroGenerales.telefono2}
@@ -6511,9 +6556,10 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                             <AppBar position="static" className={valuesFormRegistroGenerales.estado === 'baja' ? clsx(classes.fondoBaja) : clsx(classes.fondoAlta)}>
                                 <Tabs value={valueTabCentrosRegistro} onChange={handleChangeTabCentrosRegistro} className={classes.tabsStl}>
                                     <Tab label="Trabajadores" {...a11yProps(0)} style={{ paddingBottom: 10 }} />
-                                    <Tab label="Horario de intervención" {...a11yProps(1)} style={{ paddingBottom: 10 }} />
+                                    <Tab label="Horario" {...a11yProps(1)} style={{ paddingBottom: 10 }} />
                                     <Tab label="Servicios extra" {...a11yProps(2)} style={{ paddingBottom: 10 }} />
                                     <Tab label="Forma de pago" {...a11yProps(3)} style={{ paddingBottom: 10 }} />
+                                    <Tab label="Observaciones" {...a11yProps(4)} style={{ paddingBottom: 10 }} />
                                 </Tabs>
                             </AppBar>
                             <TabPanel value={valueTabCentrosRegistro} index={0} className={classes.scrollable} style={{ height: heightScrollable }}>
@@ -6594,7 +6640,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                             <InputLabel>Variaciones</InputLabel>
                                             <Select
                                                 fullWidth
-                                                className={classes.mb25}
+                                                className={classes.mb15}
                                                 id="form-variaciones-registro"
                                                 label="Variaciones"
                                                 value={valuesFormRegistro.variacion}
@@ -6606,6 +6652,33 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                 </MenuItem>
                                                 {
                                                     variaciones.map((option) => (
+                                                        <MenuItem key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </MenuItem>
+                                                    ))
+                                                }
+                                            </Select>
+                                        </FormControl>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>Excepciones</InputLabel>
+                                            <Select
+                                                fullWidth
+                                                className={classes.mb25}
+                                                id="form-excepciones-registro"
+                                                label="Excepciones"
+                                                value={valuesFormRegistro.excepcion}
+                                                onChange={handleChangeFormRegistro('excepcion')}
+                                                helpertext="Selecciona excepciones"
+                                            >
+                                                <MenuItem value=''>
+                                                    <em>No</em>
+                                                </MenuItem>
+                                                {
+                                                    excepciones.map((option) => (
                                                         <MenuItem key={option.value} value={option.value}>
                                                             {option.label}
                                                         </MenuItem>
@@ -6950,6 +7023,22 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                             </Select>
                                         </FormControl>
                                     </Box>
+                                </Grid>
+                            </TabPanel>
+                            <TabPanel value={valueTabCentrosRegistro} index={4} className={classes.scrollable} style={{ height: heightScrollable }}>
+                                <Grid item lg={6} sm={6} xs={12}>
+                                    <TextField
+                                        label="Observaciones"
+                                        id="form-observaciones-registro"
+                                        value={valuesFormRegistro.observaciones || ''}
+                                        className={clsx(classes.form, classes.mb25)}
+                                        fullWidth
+                                        placeholder={'Observaciones Cuadrante ' + cuadranteEnUsoRegistro}
+                                        multiline
+                                        rows={3}
+                                        variant="outlined"
+                                        onChange={handleChangeFormRegistro('observaciones')}
+                                    />
                                 </Grid>
                             </TabPanel>
                         </div>

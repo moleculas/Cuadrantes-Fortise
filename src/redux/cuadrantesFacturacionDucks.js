@@ -25,23 +25,8 @@ export default function cuadrantesFacturacionReducer(state = dataInicial, action
 }
 
 //acciones
-const calculoMensualPactado = (objetoSumatorio, index) => (dispatch, getState) => {
-    let diferencia_L_gestion = 0;
-    let diferencia_E_gestion = 0;
-    let diferencia_P_gestion = 0;
-    let diferencia_N_gestion = 0;
-    let diferencia_R_gestion = 0;
-    let diferencia_L1_gestion = 0;
-    let diferencia_L2_gestion = 0;
-    let diferencia_F_gestion = 0;
-    let diferencia_L_inicial = 0;
-    let diferencia_E_inicial = 0;
-    let diferencia_P_inicial = 0;
-    let diferencia_N_inicial = 0;
-    let diferencia_R_inicial = 0;
-    let diferencia_L1_inicial = 0;
-    let diferencia_L2_inicial = 0;
-    let diferencia_F_inicial = 0;
+const calculoDiferenciaMensualPactado = (objetoSumatorio, index, excepcion) => (dispatch, getState) => {
+    const { objetoCuadrante } = getState().variablesCuadrantes;
     let diferencia_L = 0;
     let diferencia_E = 0;
     let diferencia_P = 0;
@@ -50,114 +35,63 @@ const calculoMensualPactado = (objetoSumatorio, index) => (dispatch, getState) =
     let diferencia_L1 = 0;
     let diferencia_L2 = 0;
     let diferencia_F = 0;
-    let totalMensualPactado = 0;
-    const { objetoCuadrante } = getState().variablesCuadrantes;
     if (objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_L) {
-        if (objetoCuadrante.datosInforme.datosInforme[index].horasFestivasComputables_L) {
-            diferencia_L_inicial = (-1 * (objetoCuadrante.datosInforme.datosInforme[index].mensualPactado -
-                ((objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_L * objetoCuadrante.datosInforme.datosInforme[index].mensualPactado) /
-                    (objetoCuadrante.datosInforme.datosInforme[index].horasFestivasComputables_L + objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_L))));
-        };
         if (objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_L !== objetoSumatorio.sumatorioHoras_L) {
-            diferencia_L_gestion = (-1 * (objetoCuadrante.datosInforme.datosInforme[index].mensualPactado -
-                ((objetoSumatorio.sumatorioHoras_L * objetoCuadrante.datosInforme.datosInforme[index].mensualPactado) /
+            diferencia_L = (-1 * (objetoCuadrante.datosInforme.datosInforme[index].mensualPactadoInicial -
+                ((objetoSumatorio.sumatorioHoras_L * objetoCuadrante.datosInforme.datosInforme[index].mensualPactadoInicial) /
                     objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_L)));
         };
-        diferencia_L = diferencia_L_inicial + diferencia_L_gestion;
     };
     if (objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_E) {
-        if (objetoCuadrante.datosInforme.datosInforme[index].horasFestivasComputables_E) {
-            diferencia_E_inicial = (-1 * (objetoCuadrante.datosInforme.datosInforme[index].mensualPactado -
-                ((objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_E * objetoCuadrante.datosInforme.datosInforme[index].mensualPactado) /
-                    (objetoCuadrante.datosInforme.datosInforme[index].horasFestivasComputables_E + objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_E))));
-        };
         if (objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_E !== objetoSumatorio.sumatorioHoras_E) {
-            diferencia_E_gestion = (-1 * (objetoCuadrante.datosInforme.datosInforme[index].mensualPactado -
-                ((objetoSumatorio.sumatorioHoras_E * objetoCuadrante.datosInforme.datosInforme[index].mensualPactado) /
+            diferencia_E = (-1 * (objetoCuadrante.datosInforme.datosInforme[index].mensualPactadoInicial -
+                ((objetoSumatorio.sumatorioHoras_E * objetoCuadrante.datosInforme.datosInforme[index].mensualPactadoInicial) /
                     objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_E)));
         };
-        diferencia_E = diferencia_E_inicial + diferencia_E_gestion;
     };
     if (objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_P) {
-        if (objetoCuadrante.datosInforme.datosInforme[index].horasFestivasComputables_P) {
-            diferencia_P_inicial = (-1 * (objetoCuadrante.datosInforme.datosInforme[index].mensualPactado -
-                ((objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_P * objetoCuadrante.datosInforme.datosInforme[index].mensualPactado) /
-                    (objetoCuadrante.datosInforme.datosInforme[index].horasFestivasComputables_P + objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_P))));
-        };
         if (objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_P !== objetoSumatorio.sumatorioHoras_P) {
-            diferencia_P_gestion = (-1 * (objetoCuadrante.datosInforme.datosInforme[index].mensualPactado -
-                ((objetoSumatorio.sumatorioHoras_P * objetoCuadrante.datosInforme.datosInforme[index].mensualPactado) /
+            diferencia_P = (-1 * (objetoCuadrante.datosInforme.datosInforme[index].mensualPactadoInicial -
+                ((objetoSumatorio.sumatorioHoras_P * objetoCuadrante.datosInforme.datosInforme[index].mensualPactadoInicial) /
                     objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_P)));
         };
-        diferencia_P = diferencia_P_inicial + diferencia_P_gestion;
     };
     if (objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_N) {
-        if (objetoCuadrante.datosInforme.datosInforme[index].horasFestivasComputables_N) {
-            diferencia_N_inicial = (-1 * (objetoCuadrante.datosInforme.datosInforme[index].mensualPactado -
-                ((objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_N * objetoCuadrante.datosInforme.datosInforme[index].mensualPactado) /
-                    (objetoCuadrante.datosInforme.datosInforme[index].horasFestivasComputables_N + objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_N))));
-        };
         if (objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_N !== objetoSumatorio.sumatorioHoras_N) {
-            diferencia_N_gestion = (-1 * (objetoCuadrante.datosInforme.datosInforme[index].mensualPactado -
-                ((objetoSumatorio.sumatorioHoras_N * objetoCuadrante.datosInforme.datosInforme[index].mensualPactado) /
-                    objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_N)));
+            diferencia_N = (-1 * (objetoCuadrante.datosInforme.datosInforme[index].mensualPactadoInicial -
+                ((objetoSumatorio.sumatorioHoras_N * objetoCuadrante.datosInforme.datosInforme[index].mensualPactadoInicial) /
+                    objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_L)));
         };
-        diferencia_N = diferencia_N_inicial + diferencia_N_gestion;
     };
     if (objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_R) {
-        if (objetoCuadrante.datosInforme.datosInforme[index].horasFestivasComputables_R) {
-            diferencia_R_inicial = (-1 * (objetoCuadrante.datosInforme.datosInforme[index].mensualPactado -
-                ((objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_R * objetoCuadrante.datosInforme.datosInforme[index].mensualPactado) /
-                    (objetoCuadrante.datosInforme.datosInforme[index].horasFestivasComputables_R + objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_R))));
-        };
         if (objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_R !== objetoSumatorio.sumatorioHoras_R) {
-            diferencia_R_gestion = (-1 * (objetoCuadrante.datosInforme.datosInforme[index].mensualPactado -
-                ((objetoSumatorio.sumatorioHoras_R * objetoCuadrante.datosInforme.datosInforme[index].mensualPactado) /
+            diferencia_R = (-1 * (objetoCuadrante.datosInforme.datosInforme[index].mensualPactadoInicial -
+                ((objetoSumatorio.sumatorioHoras_R * objetoCuadrante.datosInforme.datosInforme[index].mensualPactadoInicial) /
                     objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_R)));
         };
-        diferencia_R = diferencia_R_inicial + diferencia_R_gestion;
     };
     if (objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_L1) {
-        if (objetoCuadrante.datosInforme.datosInforme[index].horasFestivasComputables_L1) {
-            diferencia_L1_inicial = (-1 * (objetoCuadrante.datosInforme.datosInforme[index].mensualPactado -
-                ((objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_L1 * objetoCuadrante.datosInforme.datosInforme[index].mensualPactado) /
-                    (objetoCuadrante.datosInforme.datosInforme[index].horasFestivasComputables_L1 + objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_L1))));
-        };
         if (objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_L1 !== objetoSumatorio.sumatorioHoras_L1) {
-            diferencia_L1_gestion = (-1 * (objetoCuadrante.datosInforme.datosInforme[index].mensualPactado -
-                ((objetoSumatorio.sumatorioHoras_L1 * objetoCuadrante.datosInforme.datosInforme[index].mensualPactado) /
+            diferencia_L1 = (-1 * (objetoCuadrante.datosInforme.datosInforme[index].mensualPactadoInicial -
+                ((objetoSumatorio.sumatorioHoras_L1 * objetoCuadrante.datosInforme.datosInforme[index].mensualPactadoInicial) /
                     objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_L1)));
         };
-        diferencia_L1 = diferencia_L1_inicial + diferencia_L1_gestion;
     };
     if (objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_L2) {
-        if (objetoCuadrante.datosInforme.datosInforme[index].horasFestivasComputables_L2) {
-            diferencia_L2_inicial = (-1 * (objetoCuadrante.datosInforme.datosInforme[index].mensualPactado -
-                ((objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_L2 * objetoCuadrante.datosInforme.datosInforme[index].mensualPactado) /
-                    (objetoCuadrante.datosInforme.datosInforme[index].horasFestivasComputables_L2 + objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_L2))));
-        };
         if (objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_L2 !== objetoSumatorio.sumatorioHoras_L2) {
-            diferencia_L2_gestion = (-1 * (objetoCuadrante.datosInforme.datosInforme[index].mensualPactado -
-                ((objetoSumatorio.sumatorioHoras_L2 * objetoCuadrante.datosInforme.datosInforme[index].mensualPactado) /
+            diferencia_L2 = (-1 * (objetoCuadrante.datosInforme.datosInforme[index].mensualPactadoInicial -
+                ((objetoSumatorio.sumatorioHoras_L2 * objetoCuadrante.datosInforme.datosInforme[index].mensualPactadoInicial) /
                     objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_L2)));
         };
-        diferencia_L2 = diferencia_L2_inicial + diferencia_L2_gestion;
     };
     if (objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_F) {
-        if (objetoCuadrante.datosInforme.datosInforme[index].horasFestivasComputables_F) {
-            diferencia_F_inicial = (-1 * (objetoCuadrante.datosInforme.datosInforme[index].mensualPactado -
-                ((objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_F * objetoCuadrante.datosInforme.datosInforme[index].mensualPactado) /
-                    (objetoCuadrante.datosInforme.datosInforme[index].horasFestivasComputables_F + objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_F))));
-        };
         if (objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_F !== objetoSumatorio.sumatorioHoras_F) {
-            diferencia_F_gestion = (-1 * (objetoCuadrante.datosInforme.datosInforme[index].mensualPactado -
-                ((objetoSumatorio.sumatorioHoras_F * objetoCuadrante.datosInforme.datosInforme[index].mensualPactado) /
+            diferencia_F = (-1 * (objetoCuadrante.datosInforme.datosInforme[index].mensualPactadoInicial -
+                ((objetoSumatorio.sumatorioHoras_F * objetoCuadrante.datosInforme.datosInforme[index].mensualPactadoInicial) /
                     objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial_F)));
         };
-        diferencia_F = diferencia_F_inicial + diferencia_F_gestion;
     };
-    totalMensualPactado = objetoCuadrante.datosInforme.datosInforme[index].mensualPactado + diferencia_L + diferencia_E + diferencia_P + diferencia_N + diferencia_R + diferencia_L1 + diferencia_L2 + diferencia_F;
-    return { diferencia_L, diferencia_E, diferencia_P, diferencia_N, diferencia_R, diferencia_L1, diferencia_L2, diferencia_F, totalMensualPactado }
+    return { diferencia_L, diferencia_E, diferencia_P, diferencia_N, diferencia_R, diferencia_L1, diferencia_L2, diferencia_F }
 };
 
 export const retornaInfoFabButtonAccion = () => (dispatch, getState) => {
@@ -193,20 +127,8 @@ export const retornaInfoFabButtonAccion = () => (dispatch, getState) => {
             sumatorioHoras_F += (dato.totalHorasNormal_F + dato.totalHorasExtra_F);
             sumatorioTotal += dato.totalHoras;
         });
-        const objetoSumatorio = {
-            sumatorioHoras_L: sumatorioHoras_L,
-            sumatorioHoras_E: sumatorioHoras_E,
-            sumatorioHoras_P: sumatorioHoras_P,
-            sumatorioHoras_N: sumatorioHoras_N,
-            sumatorioHoras_R: sumatorioHoras_R,
-            sumatorioHoras_L1: sumatorioHoras_L1,
-            sumatorioHoras_L2: sumatorioHoras_L2,
-            sumatorioHoras_F: sumatorioHoras_F
-        };
-        const { totalMensualPactado } = dispatch(calculoMensualPactado(objetoSumatorio, cuadranteEnUsoCuadrantes - 1));
         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 1) {
-            return cuadranteMultiple + 'Horas: ' + parseFloat(sumatorioTotal).toFixed(2) + ' - Total: ' + parseFloat(totalMensualPactado + sumatorioServiciosFijos).toFixed(2) + ' €'
-            //return cuadranteMultiple + 'Horas: ' + parseFloat(sumatorioTotal).toFixed(2) + ' - Total: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado + sumatorioServiciosFijos).toFixed(2) + ' €'
+            return cuadranteMultiple + 'Horas: ' + parseFloat(sumatorioTotal).toFixed(2) + ' - Total: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado + sumatorioServiciosFijos).toFixed(2) + ' €';
         };
         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 2) {
             return cuadranteMultiple + 'Horas: ' + parseFloat(sumatorioTotal).toFixed(2) + ' - Total: ' +
@@ -222,7 +144,7 @@ export const retornaInfoFabButtonAccion = () => (dispatch, getState) => {
         };
         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 3) {
             if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado) {
-                return cuadranteMultiple + 'Horas: ' + parseFloat(sumatorioTotal).toFixed(2) + ' - Total: ' + parseFloat(totalMensualPactado + sumatorioServiciosFijos).toFixed(2) + ' €'
+                return cuadranteMultiple + 'Horas: ' + parseFloat(sumatorioTotal).toFixed(2) + ' - Total: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado + sumatorioServiciosFijos).toFixed(2) + ' €'
             } else {
                 return cuadranteMultiple + 'Horas: ' + parseFloat(sumatorioTotal).toFixed(2) + ' - Total: ' +
                     parseFloat((objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L * sumatorioHoras_L) +
@@ -274,7 +196,7 @@ export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
     let elTotalMensualPactado;
     if (arrayDatosInforme.length > 0) {
         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 1) {
-            arrayInforme.push(['Cómputo de horas por precio mensual pactado: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado).toFixed(2) + ' €', 'normal']);
+            arrayInforme.push(['Cómputo de horas por precio mensual pactado: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial).toFixed(2) + ' €', 'normal']);
         };
         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 2) {
             if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L) {
@@ -304,7 +226,7 @@ export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
         };
         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 3) {
             if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado) {
-                arrayInforme.push(['Cómputo de horas (gestión especial de horas) por precio mensual pactado: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado).toFixed(2) + ' €', 'normal']);
+                arrayInforme.push(['Cómputo de horas (gestión especial de horas) por precio mensual pactado: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial).toFixed(2) + ' €', 'normal']);
             } else {
                 if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L) {
                     arrayInforme.push(['Cómputo de horas por precio/hora SERVICIO DE LIMPIEZA: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L).toFixed(2) + ' €', 'normal']);
@@ -443,8 +365,8 @@ export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
             sumatorioHoras_L2: sumatorioHoras_L2,
             sumatorioHoras_F: sumatorioHoras_F
         };
-        const { diferencia_L, diferencia_E, diferencia_P, diferencia_N, diferencia_R, diferencia_L1, diferencia_L2, diferencia_F, totalMensualPactado } = dispatch(calculoMensualPactado(objetoSumatorio, cuadranteEnUsoCuadrantes - 1));
-        elTotalMensualPactado = totalMensualPactado;
+        const { diferencia_L, diferencia_E, diferencia_P, diferencia_N, diferencia_R, diferencia_L1, diferencia_L2, diferencia_F } = dispatch(calculoDiferenciaMensualPactado(objetoSumatorio, cuadranteEnUsoCuadrantes - 1));
+        elTotalMensualPactado = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado;
         arrayInforme.push(['divider', 'normal']);
         let laDiferencia_L = '';
         let laDiferencia_E = '';
@@ -456,7 +378,8 @@ export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
         let laDiferencia_F = '';
         let laDiferenciaTotal;
         if (!diferencia_L && !diferencia_E && !diferencia_P && !diferencia_N && !diferencia_R && !diferencia_L1 && !diferencia_L2 && !diferencia_F) {
-            laDiferenciaTotal = ''
+            laDiferenciaTotal = '';
+            console.log('no hay')
         } else {
             if (diferencia_L) {
                 laDiferencia_L = ' + diferencia de horas en concepto de SERVICIO DE LIMPIEZA: ' + parseFloat(diferencia_L).toFixed(2) + ' €'
@@ -483,11 +406,11 @@ export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
                 laDiferencia_F = ' + diferencia de horas en concepto de SERVICIO DE LIMPIEZA DÍA FESTIVO: ' + parseFloat(diferencia_F).toFixed(2) + ' €'
             };
             laDiferenciaTotal = laDiferencia_L + laDiferencia_E + laDiferencia_P + laDiferencia_N + laDiferencia_R + laDiferencia_L1 + laDiferencia_L2 + laDiferencia_F +
-                ' = ' + parseFloat(totalMensualPactado).toFixed(2) + ' €';
+                ' = ' + parseFloat(elTotalMensualPactado).toFixed(2) + ' €';
         };
         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 1) {
             arrayInforme.push(['Total a facturar según cómputo mensual pactado: ' +
-                parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado).toFixed(2) +
+                parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial).toFixed(2) +
                 ' €' + laDiferenciaTotal, 'normal']);
         };
         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 2) {
@@ -567,7 +490,7 @@ export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 3) {
             if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado) {
                 arrayInforme.push(['Total a facturar  (gestión especial de horas) según cómputo mensual pactado: ' +
-                    parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado).toFixed(2) +
+                    parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial).toFixed(2) +
                     ' €' + laDiferenciaTotal, 'normal']);
             } else {
                 if (sumatorioHoras_L) {
@@ -647,8 +570,8 @@ export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
     };
     arrayInforme.push(['divider', 'normal']);
     let sumatorioServiciosFijos = 0;
-    if(cuadranteServiciosFijos.length >0){
-        arrayInforme.push(['Servicios extra:', 'normal']);        
+    if (cuadranteServiciosFijos.length > 0) {
+        arrayInforme.push(['Servicios extra:', 'normal']);
         cuadranteServiciosFijos.forEach((servicio) => {
             for (const prop in servicio) {
                 if (servicio[prop] && prop === 'precioHora_TO') {
@@ -773,7 +696,7 @@ export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
                 };
             };
         });
-    };   
+    };
     if (arrayDatosInforme.length > 0) {
         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 1 || (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 3 && objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado)) {
             sumatorioTotal = elTotalMensualPactado;
@@ -808,45 +731,14 @@ export const handleClickFacturacionInteriorMenuAccion = () => (dispatch, getStat
 export const handleChangeFormNumumeroFactusolAccion = (event) => (dispatch) => {
     if (isNumeric(event.target.value)) {
         dispatch(setNumeroFactusolAccion(event.target.value));
-    }
-};
-
-const calculoTotalAFacturar = () => (dispatch, getState) => {
-    const { numeroCuadrantesCuadrantes } = getState().variablesCuadrantesSetters;
-    const { objetoCuadrante } = getState().variablesCuadrantes;
-    let elTotalGeneral = 0;
-    numeroCuadrantesCuadrantes.forEach((cuadrante, index) => {
-        elTotalGeneral += objetoCuadrante.datosCuadrante.datosCuadrante[index].total;
-    });
-    return elTotalGeneral;
+    };
 };
 
 export const handleGenerarArchivosAccion = () => (dispatch, getState) => {
     const { numeroFactusol } = getState().variablesCuadrantesSetters;
-    const { objetoCuadrante, centro } = getState().variablesCuadrantes;
+    const { objetoCuadrante } = getState().variablesCuadrantes;
     if (numeroFactusol) {
-        //x revisar
-        const objetoDesgloseConceptos = {
-            MT: objetoCuadrante.datosInforme.totalFacturado_M ? objetoCuadrante.datosInforme.totalFacturado_M : null,
-            LT: objetoCuadrante.datosInforme.totalFacturado_L ? objetoCuadrante.datosInforme.totalFacturado_L : null,
-            ET: objetoCuadrante.datosInforme.totalFacturado_E ? objetoCuadrante.datosInforme.totalFacturado_E : null,
-            PT: objetoCuadrante.datosInforme.totalFacturado_P ? objetoCuadrante.datosInforme.totalFacturado_P : null,
-            NT: objetoCuadrante.datosInforme.totalFacturado_N ? objetoCuadrante.datosInforme.totalFacturado_N : null,
-            RT: objetoCuadrante.datosInforme.totalFacturado_R ? objetoCuadrante.datosInforme.totalFacturado_R : null,
-            L1T: objetoCuadrante.datosInforme.totalFacturado_L1 ? objetoCuadrante.datosInforme.totalFacturado_L1 : null,
-            L2T: objetoCuadrante.datosInforme.totalFacturado_L2 ? objetoCuadrante.datosInforme.totalFacturado_L2 : null,
-            FT: objetoCuadrante.datosInforme.totalFacturado_F ? objetoCuadrante.datosInforme.totalFacturado_F : null,
-            MH: objetoCuadrante.datosInforme.totalFacturado_M ? 1 : null,
-            LH: objetoCuadrante.horas.L,
-            EH: objetoCuadrante.horas.E,
-            PH: objetoCuadrante.horas.P,
-            NH: objetoCuadrante.horas.N,
-            RH: objetoCuadrante.horas.R,
-            L1H: objetoCuadrante.horas.L1,
-            L2H: objetoCuadrante.horas.L2,
-            FH: objetoCuadrante.horas.F
-        };
-        dispatch(generarArchivosXLSAccion('centros', numeroFactusol, centro, calculoTotalAFacturar(), objetoDesgloseConceptos));
+        dispatch(generarArchivosXLSAccion(numeroFactusol, objetoCuadrante.datosCuadrante.centro, objetoCuadrante.total));
         dispatch(handleCloseMenuAccion());
     } else {
         dispatch(setAlertaAccion({

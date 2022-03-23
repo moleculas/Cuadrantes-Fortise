@@ -41,6 +41,10 @@ const dataInicial = {
             objeto: 'trabajadores',
             trabajadores: []
         },
+        observaciones: {
+            objeto: 'observaciones',
+            observaciones: []
+        },
     },
     exitoActualizacionCentro: false,
     exitoRegistroCentro: false,
@@ -216,6 +220,7 @@ export const vaciarDatosCentroAccion = () => (dispatch, getState) => {
             horario: {
                 tipo: '',
                 variacion: '',
+                excepcion: '',
                 computo: '',
                 mensualPactado: null,
                 precioHora_L: null,
@@ -258,8 +263,12 @@ export const vaciarDatosCentroAccion = () => (dispatch, getState) => {
                 ]
             },
             trabajadores: {
-                cantidad: '',
+                objeto: 'trabajadores',
                 trabajadores: []
+            },
+            observaciones: {
+                objeto: 'observaciones',
+                observaciones: []
             },
         }
     });
@@ -302,6 +311,7 @@ export const obtenerCentroAccion = (objeto, id) => async (dispatch, getState) =>
                 horario: JSON.parse(res.data.horario),
                 serviciosFijos: JSON.parse(res.data.servicios_fijos),
                 trabajadores: JSON.parse(res.data.trabajadores),
+                observaciones: JSON.parse(res.data.observaciones),
             }
         });
     } catch (error) {        

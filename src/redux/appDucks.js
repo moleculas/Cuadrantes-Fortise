@@ -584,222 +584,213 @@ const exportarAExcel = (apiData, fileName) => {
     XLSX.writeFile(wb, fileName + fileExtension)
 }
 
-export const generarArchivosXLSAccion = (objeto, numFactusol, centro, totalFacturado, objetoDesgloseConceptos) => async (dispatch, getState) => {
-    const elNumFactusol = parseInt(numFactusol) + 1;
-    try {
-        const formData = new FormData();
-        formData.append("objeto", objeto);
-        formData.append("id", centro);
-        let apiUrl = rutaApi + "obtener_para_parsear.php";
-        const res = await axios.post(apiUrl, formData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            }
-        });
-        const objetoCentroParsear = {
-            nombre: res.data.nombre,
-            codigo: res.data.codigo,
-            domicilio: res.data.domicilio,
-            codigoPostal: res.data.codigo_postal,
-            poblacion: res.data.poblacion,
-            provincia: res.data.provincia,
-            nif: res.data.nif,
-            formaPago: res.data.forma_pago,
-            horario: JSON.parse(res.data.horario)
-        };
-        let dateObj = new Date();
-        let month = dateObj.getUTCMonth() + 1;
-        let day = dateObj.getUTCDate();
-        let year = dateObj.getUTCFullYear();
-        const fechaHoy = day + "/" + month + "/" + year;
-        const dataFAC = [[
-            1,
-            elNumFactusol,
-            '',
-            fechaHoy,
-            0,
-            '',
-            1,
-            '',
-            parseInt(objetoCentroParsear.codigo),
-            objetoCentroParsear.nombre,
-            objetoCentroParsear.domicilio,
-            objetoCentroParsear.poblacion,
-            objetoCentroParsear.codigoPostal,
-            objetoCentroParsear.provincia,
-            objetoCentroParsear.nif,
-            0,
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            totalFacturado,
-            objetoCentroParsear.formaPago,
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            'N',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            ''
-        ]];
-        exportarAExcel(dataFAC, 'FAC');
-        const dataLFA = [];
-        let arrayElementos = [];
-        if (objetoDesgloseConceptos.MT) {
-            arrayElementos.push([tipos[0].value, tipos[0].label, objetoDesgloseConceptos.MT, objetoCentroParsear.horario.mensualPactado, objetoDesgloseConceptos.MH]);
-        };
-        if (objetoDesgloseConceptos.LT) {
-            arrayElementos.push([tipos[0].value, tipos[0].label, objetoDesgloseConceptos.LT, objetoCentroParsear.horario.precioHora_L, objetoDesgloseConceptos.LH]);
-        };
-        if (objetoDesgloseConceptos.CT) {
-            arrayElementos.push([tipos[1].value, tipos[1].label, objetoDesgloseConceptos.CT, objetoCentroParsear.horario.precioHora_C, objetoDesgloseConceptos.CH]);
-        };
-        if (objetoDesgloseConceptos.ET) {
-            arrayElementos.push([tipos[2].value, tipos[2].label, objetoDesgloseConceptos.ET, objetoCentroParsear.horario.precioHora_E, objetoDesgloseConceptos.EH]);
-        };
-        if (objetoDesgloseConceptos.IT) {
-            arrayElementos.push([tipos[3].value, tipos[3].label, objetoDesgloseConceptos.IT, objetoCentroParsear.horario.precioHora_I, objetoDesgloseConceptos.IH]);
-        };
-        if (objetoDesgloseConceptos.ZT) {
-            arrayElementos.push([tipos[4].value, tipos[4].label, objetoDesgloseConceptos.ZT, objetoCentroParsear.horario.precioHora_Z, objetoDesgloseConceptos.ZH]);
-        };
-        if (objetoDesgloseConceptos.TT) {
-            arrayElementos.push([tipos[5].value, tipos[5].label, objetoDesgloseConceptos.TT, objetoCentroParsear.horario.precioHora_T, objetoDesgloseConceptos.TH]);
-        };
-        if (objetoDesgloseConceptos.PT) {
-            arrayElementos.push([tipos[6].value, tipos[6].label, objetoDesgloseConceptos.PT, objetoCentroParsear.horario.precioHora_P, objetoDesgloseConceptos.PH]);
-        };
-        arrayElementos.forEach((elemento, index) => {
-            dataLFA.push([
-                1,
-                elNumFactusol,
-                index + 1,
-                elemento[0],
-                elemento[1],
-                elemento[4],
-                '',
-                '',
-                '',
-                elemento[3],
-                elemento[2],
-                0,
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                ''
-            ])
-        });
-        exportarAExcel(dataLFA, 'LFA');
-        dispatch({
-            type: GENERAR_ARCHIVOS_EXITO
-        });
-        dispatch({
-            type: RESETEA_EXITO_CONFIGURACION
-        });
-    } catch (error) {
-        dispatch({
-            type: ERROR_DE_CARGA_CONFIGURACION
-        })
-    }
+export const generarArchivosXLSAccion = (numFactusol, centro, objetoConceptos) => async (dispatch, getState) => {
+    // const elNumFactusol = parseInt(numFactusol) + 1;
+    // try {        
+    //     const objetoCentroParsear = {
+    //         nombre: objetoConceptos.nombreCentro,
+    //         codigo: objetoConceptos.codigo,
+    //         domicilio: objetoConceptos.domicilio,
+    //         codigoPostal: objetoConceptos.codigoPostal,
+    //         poblacion:objetoConceptos.poblacion,
+    //         provincia: objetoConceptos.provincia,
+    //         nif: objetoConceptos.nif,
+    //         formaPago: objetoConceptos.forma_pago,
+    //         horario: JSON.parse(res.data.horario)
+    //     };
+    //     let dateObj = new Date();
+    //     let month = dateObj.getUTCMonth() + 1;
+    //     let day = dateObj.getUTCDate();
+    //     let year = dateObj.getUTCFullYear();
+    //     const fechaHoy = day + "/" + month + "/" + year;
+    //     const dataFAC = [[
+    //         1,
+    //         elNumFactusol,
+    //         '',
+    //         fechaHoy,
+    //         0,
+    //         '',
+    //         1,
+    //         '',
+    //         parseInt(objetoCentroParsear.codigo),
+    //         objetoCentroParsear.nombre,
+    //         objetoCentroParsear.domicilio,
+    //         objetoCentroParsear.poblacion,
+    //         objetoCentroParsear.codigoPostal,
+    //         objetoCentroParsear.provincia,
+    //         objetoCentroParsear.nif,
+    //         0,
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         objetoCentroParsear.total,
+    //         objetoCentroParsear.formaPago,
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         'N',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         '',
+    //         ''
+    //     ]];
+    //     exportarAExcel(dataFAC, 'FAC');
+    //     const dataLFA = [];
+    //     let arrayElementos = [];
+    //     if (objetoDesgloseConceptos.MT) {
+    //         arrayElementos.push([tipos[0].value, tipos[0].label, objetoDesgloseConceptos.MT, objetoCentroParsear.horario.mensualPactado, objetoDesgloseConceptos.MH]);
+    //     };
+    //     if (objetoDesgloseConceptos.LT) {
+    //         arrayElementos.push([tipos[0].value, tipos[0].label, objetoDesgloseConceptos.LT, objetoCentroParsear.horario.precioHora_L, objetoDesgloseConceptos.LH]);
+    //     };
+    //     if (objetoDesgloseConceptos.CT) {
+    //         arrayElementos.push([tipos[1].value, tipos[1].label, objetoDesgloseConceptos.CT, objetoCentroParsear.horario.precioHora_C, objetoDesgloseConceptos.CH]);
+    //     };
+    //     if (objetoDesgloseConceptos.ET) {
+    //         arrayElementos.push([tipos[2].value, tipos[2].label, objetoDesgloseConceptos.ET, objetoCentroParsear.horario.precioHora_E, objetoDesgloseConceptos.EH]);
+    //     };
+    //     if (objetoDesgloseConceptos.IT) {
+    //         arrayElementos.push([tipos[3].value, tipos[3].label, objetoDesgloseConceptos.IT, objetoCentroParsear.horario.precioHora_I, objetoDesgloseConceptos.IH]);
+    //     };
+    //     if (objetoDesgloseConceptos.ZT) {
+    //         arrayElementos.push([tipos[4].value, tipos[4].label, objetoDesgloseConceptos.ZT, objetoCentroParsear.horario.precioHora_Z, objetoDesgloseConceptos.ZH]);
+    //     };
+    //     if (objetoDesgloseConceptos.TT) {
+    //         arrayElementos.push([tipos[5].value, tipos[5].label, objetoDesgloseConceptos.TT, objetoCentroParsear.horario.precioHora_T, objetoDesgloseConceptos.TH]);
+    //     };
+    //     if (objetoDesgloseConceptos.PT) {
+    //         arrayElementos.push([tipos[6].value, tipos[6].label, objetoDesgloseConceptos.PT, objetoCentroParsear.horario.precioHora_P, objetoDesgloseConceptos.PH]);
+    //     };
+    //     arrayElementos.forEach((elemento, index) => {
+    //         dataLFA.push([
+    //             1,
+    //             elNumFactusol,
+    //             index + 1,
+    //             elemento[0],
+    //             elemento[1],
+    //             elemento[4],
+    //             '',
+    //             '',
+    //             '',
+    //             elemento[3],
+    //             elemento[2],
+    //             0,
+    //             '',
+    //             '',
+    //             '',
+    //             '',
+    //             '',
+    //             '',
+    //             '',
+    //             '',
+    //             '',
+    //             '',
+    //             '',
+    //             '',
+    //             '',
+    //             '',
+    //             '',
+    //             '',
+    //             '',
+    //             '',
+    //             ''
+    //         ])
+    //     });
+    //     exportarAExcel(dataLFA, 'LFA');
+    //     dispatch({
+    //         type: GENERAR_ARCHIVOS_EXITO
+    //     });
+    //     dispatch({
+    //         type: RESETEA_EXITO_CONFIGURACION
+    //     });
+    // } catch (error) {
+    //     dispatch({
+    //         type: ERROR_DE_CARGA_CONFIGURACION
+    //     })
+    // }
 }
 
 const actualizarCuadrante = async (datos) => {

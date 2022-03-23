@@ -129,9 +129,12 @@ const Constantes = {
         { value: 'semanaSiNo', label: 'Semana sí, semana no' }
     ],
     MODO_ENTRADA_HORARIOS: [
-        { value: 'rango', label: 'Modo Rango de horas' },
-        { value: 'cantidad', label: 'Modo Cantidad de horas' },
-        { value: 'rangoDescanso', label: 'Modo Rango de horas con descanso' }
+        { value: 'rango', label: 'Rango de horas' },
+        { value: 'cantidad', label: 'Cantidad de horas' },
+        { value: 'rangoDescanso', label: 'Rango de horas con descanso' }
+    ],
+    EXCEPCIONES_CENTROS: [
+        { value: 1, label: 'Festivos restan cómputo horas' }
     ],
     TRABAJADORES_ASIGNADOS_CENTRO: [
         { value: 1, label: '1' },

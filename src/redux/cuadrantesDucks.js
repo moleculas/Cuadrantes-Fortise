@@ -31,12 +31,16 @@ const dataInicial = {
             objeto: 'informe',
             datosInforme: []
         },
+        datosBuffer: {
+            objeto: 'buffer',
+            datosBuffer: []
+        },
         estado: 'registrado',
         total: null,
         horas: {
             objeto: 'horas',
             horas: []
-        },        
+        },
     },
     cuadranteRegistrado: '',
     categoria: '',
@@ -45,9 +49,9 @@ const dataInicial = {
     estadoIntervencionCuadranteNuevoRegistrada: true,
     ultimoIdRegistrado: null,
     calendarioAGestionar: '',
-    stateFestivo: {},
+    stateFestivo: {},   
     losDiasDelMes: [],
-    cuadrante: [],    
+    cuadrante: [],
 };
 
 //types
@@ -127,9 +131,9 @@ export default function cuadrantesReducer(state = dataInicial, action) {
         case SET_LOS_DIAS_DE_MES:
             return { ...state, losDiasDelMes: action.payload.array }
         case SET_STATE_FESTIVO:
-            return { ...state, stateFestivo: action.payload.objeto }
+            return { ...state, stateFestivo: action.payload.objeto }       
         case SET_CUADRANTE:
-            return { ...state, cuadrante: action.payload.array }        
+            return { ...state, cuadrante: action.payload.array }
         default:
             return { ...state }
     }
@@ -243,6 +247,10 @@ export const vaciarDatosCuadrantesAccion = () => (dispatch, getState) => {
                 objeto: 'informe',
                 datosInforme: []
             },
+            datosBuffer: {
+                objeto: 'buffer',
+                datosBuffer: []
+            },
             estado: 'registrado',
             total: null,
             horas: {
@@ -335,9 +343,10 @@ export const obtenerCuadranteAccion = (objeto, id) => async (dispatch, getState)
                     datosCuadrante: JSON.parse(res.data.datos_cuadrante),
                     datosServicios: res.data.datos_servicios ? JSON.parse(res.data.datos_servicios) : dataInicial.objetoCuadrante.datosServicios,
                     datosInforme: res.data.datos_informe ? JSON.parse(res.data.datos_informe) : dataInicial.objetoCuadrante.datosInforme,
+                    datosBuffer: res.data.datos_buffer ? JSON.parse(res.data.datos_buffer) : dataInicial.objetoCuadrante.datosBuffer,
                     estado: res.data.estado,
-                    total: res.data.total,
-                    horas: res.data.horas ? JSON.parse(res.data.horas) : dataInicial.horas
+                    total: res.data.total ? JSON.parse(res.data.total) : dataInicial.objetoCuadrante.total,
+                    horas: res.data.horas ? JSON.parse(res.data.horas) : dataInicial.objetoCuadrante.horas
                 }
             });
         };

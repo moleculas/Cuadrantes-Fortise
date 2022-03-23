@@ -70,6 +70,7 @@ const diaDelPago = Constantes.DIA_PAGO;
 const tiposDeServicio = Constantes.TIPO_SERVICIO_FIJO;
 const variacionesServiciosFijos = Constantes.VARIACIONES_SERVICIOS_FIJOS_CENTROS;
 const diasSemana = Constantes.DIAS_SEMANA;
+const excepciones = Constantes.EXCEPCIONES_CENTROS;
 
 const getHeightScrollable = () => (window.innerHeight - 260) || (document.documentElement.clientHeight - 260) || (document.body.clientHeight - 260);
 
@@ -168,6 +169,8 @@ const CentrosEditar = forwardRef((props, ref) => {
     const [valuesFormEdicion, setValuesFormEdicion] = useState({
         categoria: '',
         variacion: '',
+        excepcion: '',
+        observaciones: '',
         tipo: '',
         numeroTrabajadores: '',
         datosTrabajadores: [],
@@ -354,6 +357,7 @@ const CentrosEditar = forwardRef((props, ref) => {
     const [horarioIntervencionEdicion, setHorarioIntervencionEdicion] = useState({
         tipo: '',
         variacion: '',
+        excepcion: '',
         tipoRegistro: 'comun',
         tipoRegistroTrabajador: [
             {
@@ -488,7 +492,6 @@ const CentrosEditar = forwardRef((props, ref) => {
     useEffect(() => {
         dispatch(onEstemAccion('editarCentros'));
         if (listadoCentros.length === 0) {
-            console.log('pasamos')
             dispatch(obtenerCentrosAccion('centros', false));
         };
         if (listadoTrabajadores.length === 0) {
@@ -544,7 +547,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                         categoria: centroAEditar.categoria.categoria[i],
                         horario: centroAEditar.horario.horario[i],
                         servicios_fijos: centroAEditar.serviciosFijos.serviciosFijos[i],
-                        trabajadores: centroAEditar.trabajadores.trabajadores[i]
+                        trabajadores: centroAEditar.trabajadores.trabajadores[i],
+                        observaciones: centroAEditar.observaciones.observaciones[i]
                     },
                     guardado: true
                 };
@@ -831,6 +835,12 @@ const CentrosEditar = forwardRef((props, ref) => {
             setValuesFormEdicion({ ...valuesFormEdicion, [prop]: e.target.value });
             setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, variacion: e.target.value });
             dispatch(registrarIntervencionAccion(false));
+            dispatch(activarDesactivarActualizarCentroAccion(false));
+            return;
+        };
+        if (prop === "excepcion") {
+            setValuesFormEdicion({ ...valuesFormEdicion, [prop]: e.target.value });
+            setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, excepcion: e.target.value });
             dispatch(activarDesactivarActualizarCentroAccion(false));
             return;
         };
@@ -3403,6 +3413,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                     tipo: horarioIntervencionEdicion.tipo,
                     tipoRegistro: horarioIntervencionEdicion.tipoRegistro,
                     variacion: horarioIntervencionEdicion.variacion,
+                    excepcion: horarioIntervencionEdicion.excepcion,
                     tipoRegistroTrabajador: elArrayTipoRegistroTrabajador
                 };
             };
@@ -3478,6 +3489,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                     tipo: horarioIntervencionEdicion.tipo,
                     tipoRegistro: horarioIntervencionEdicion.tipoRegistro,
                     variacion: horarioIntervencionEdicion.variacion,
+                    excepcion: horarioIntervencionEdicion.excepcion,
                     tipoRegistroTrabajador: elArrayTipoRegistroTrabajador
                 };
             };
@@ -3518,6 +3530,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                     tipo: horarioIntervencionEdicion.tipo,
                     tipoRegistro: horarioIntervencionEdicion.tipoRegistro,
                     variacion: horarioIntervencionEdicion.variacion,
+                    excepcion: horarioIntervencionEdicion.excepcion,
                     tipoRegistroTrabajador: elArrayTipoRegistroTrabajador
                 };
             };
@@ -3765,7 +3778,11 @@ const CentrosEditar = forwardRef((props, ref) => {
                 case 'procesarDatosEdicion':
                     const procesarDatosEdicion = () => {
                         let centroAGuardar;
-                        let objCategorias, objHorario, objServiciosFijos, objTrabajadores = null;
+                        let objCategorias = null;
+                        let objHorario = null;
+                        let objServiciosFijos = null;
+                        let objTrabajadores = null;
+                        let objObservaciones = null;
                         let centroDefinitivoAGuardar;
                         if (numeroCuadrantesEdicion.length === 1) {
                             procesarDatosEdicionPromesa()
@@ -3777,6 +3794,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                             nombre: valuesFormEdicionGenerales.nombre,
                                             estado: valuesFormEdicionGenerales.estado,
                                             categoria: valuesFormEdicion.categoria,
+                                            observaciones: valuesFormEdicion.observaciones ? valuesFormEdicion.observaciones : null,
                                             codigo: valuesFormEdicionGenerales.codigo ? valuesFormEdicionGenerales.codigo : null,
                                             domicilio: valuesFormEdicionGenerales.domicilio ? valuesFormEdicionGenerales.domicilio : null,
                                             codigo_postal: valuesFormEdicionGenerales.codigoPostal ? valuesFormEdicionGenerales.codigoPostal : null,
@@ -3811,7 +3829,12 @@ const CentrosEditar = forwardRef((props, ref) => {
                                             objeto: 'trabajadores',
                                             trabajadores: []
                                         };
+                                        objObservaciones = {
+                                            objeto: 'observaciones',
+                                            observaciones: []
+                                        };
                                         objCategorias.categoria.push(centroAGuardar.categoria);
+                                        objObservaciones.observaciones.push(centroAGuardar.observaciones);
                                         if (centroAGuardar.horario) {
                                             objHorario.horario.push(centroAGuardar.horario);
                                         } else {
@@ -3832,7 +3855,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                                             categoria: JSON.stringify(objCategorias),
                                             horario: JSON.stringify(objHorario),
                                             servicios_fijos: JSON.stringify(objServiciosFijos),
-                                            trabajadores: JSON.stringify(objTrabajadores)
+                                            trabajadores: JSON.stringify(objTrabajadores),
+                                            observaciones: JSON.stringify(objObservaciones)
                                         };
                                         dispatch(actualizarCentroAccion('centros', centroDefinitivoAGuardar.id, centroDefinitivoAGuardar));
                                         dispatch(registrarIntervencionAccion(true));
@@ -3849,6 +3873,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                             nombre: valuesFormEdicionGenerales.nombre,
                                             estado: valuesFormEdicionGenerales.estado,
                                             categoria: valuesFormEdicion.categoria,
+                                            observaciones: valuesFormEdicion.observaciones ? valuesFormEdicion.observaciones : null,
                                             codigo: valuesFormEdicionGenerales.codigo ? valuesFormEdicionGenerales.codigo : null,
                                             domicilio: valuesFormEdicionGenerales.domicilio ? valuesFormEdicionGenerales.domicilio : null,
                                             codigo_postal: valuesFormEdicionGenerales.codigoPostal ? valuesFormEdicionGenerales.codigoPostal : null,
@@ -3871,6 +3896,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                             if (cuadrante.value === cuadranteEnUsoEdicion) {
                                                 cuadrante.cuadrante = {
                                                     categoria: valuesFormEdicion.categoria,
+                                                    observaciones: valuesFormEdicion.observaciones ? valuesFormEdicion.observaciones: null,
                                                     horario: values.horario ? (values.horario) : null,
                                                     servicios_fijos: values.servicios ? (values.servicios) : null,
                                                     trabajadores: values.trabajadores ? (values.trabajadores) : null
@@ -3895,9 +3921,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                                             objeto: 'trabajadores',
                                             trabajadores: []
                                         };
+                                        objObservaciones = {
+                                            objeto: 'observaciones',
+                                            observaciones: []
+                                        };
                                         arrayCuadrantes.forEach((cuadrante, index) => {
                                             if (cuadrante.guardado) {
                                                 objCategorias.categoria.push(cuadrante.cuadrante.categoria);
+                                                objObservaciones.observaciones.push(cuadrante.cuadrante.observaciones);
                                                 if (cuadrante.cuadrante.horario) {
                                                     objHorario.horario.push(cuadrante.cuadrante.horario);
                                                 } else {
@@ -3915,6 +3946,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                 };
                                             } else {
                                                 objCategorias.categoria.push(centroAGuardar.categoria);
+                                                objObservaciones.observaciones.push(centroAGuardar.observaciones);
                                                 if (centroAGuardar.horario) {
                                                     objHorario.horario.push(centroAGuardar.horario);
                                                 } else {
@@ -3939,7 +3971,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                                             categoria: JSON.stringify(objCategorias),
                                             horario: JSON.stringify(objHorario),
                                             servicios_fijos: JSON.stringify(objServiciosFijos),
-                                            trabajadores: JSON.stringify(objTrabajadores)
+                                            trabajadores: JSON.stringify(objTrabajadores),
+                                            observaciones: JSON.stringify(objObservaciones)
                                         };
                                         dispatch(actualizarCentroAccion('centros', centroDefinitivoAGuardar.id, centroDefinitivoAGuardar));
                                         dispatch(registrarIntervencionAccion(true));
@@ -3963,6 +3996,8 @@ const CentrosEditar = forwardRef((props, ref) => {
             setValuesFormEdicion({
                 categoria: '',
                 variacion: '',
+                excepcion: '',
+                observaciones: '',
                 tipo: '',
                 numeroTrabajadores: '',
                 datosTrabajadores: [],
@@ -4083,6 +4118,8 @@ const CentrosEditar = forwardRef((props, ref) => {
             setValuesFormEdicion({
                 categoria: '',
                 variacion: '',
+                excepcion: '',
+                observaciones: '',
                 tipo: '',
                 numeroTrabajadores: '',
                 datosTrabajadores: [],
@@ -4270,6 +4307,7 @@ const CentrosEditar = forwardRef((props, ref) => {
         setHorarioIntervencionEdicion({
             tipo: '',
             variacion: '',
+            excepcion: '',
             tipoRegistro: 'comun',
             tipoRegistroTrabajador: [
                 {
@@ -5179,48 +5217,48 @@ const CentrosEditar = forwardRef((props, ref) => {
                             classes.fondoGrisClaro : classes.paper;
                 desactivadoDia = valuesFormEdicion.variacion_C2 === 3 ? true : false;
                 break;
-                case 'LIME':
-                    checkeado = stateSwitchTipoServicioFijoEdicion.ES;
-                    laLabelSw = 'SERVICIO DE LIMPIEZA ESPECIAL';
-                    laLabelIn = 'Precio LIME';
-                    elId = 'form-precio-hora_ES-edicion';
-                    elValue = valuesFormEdicion.precioHora_ES || '';
-                    elValueVariaciones = valuesFormEdicion.variacion_ES || '';
-                    elValueDia = valuesFormEdicion.diaVariacion_ES || '';
-                    elValueActivo = valuesFormEdicion.activo_ES || '';
-                    laLabelWi = 95;
-                    elPrecioHora = 'precioHora_ES';
-                    laVariacion = 'variacion_ES';
-                    elDia = 'diaVariacion_ES';
-                    elActivo = 'activo_ES';
-                    laClase =
-                        (valuesFormEdicion.activo_ES === 'no') ?
-                            classes.fondoInactivoServicioFijo :
-                            (valuesFormEdicion.precioHora_ES && valuesFormEdicion.variacion_ES) ?
-                                classes.fondoGrisClaro : classes.paper;
-                    desactivadoDia = valuesFormEdicion.variacion_ES === 3 ? true : false;
-                    break;
-                case 'LIMP':
-                    checkeado = stateSwitchTipoServicioFijoEdicion.PA;
-                    laLabelSw = 'SERVICIO DE LIMPIEZA DEL PARKING';
-                    laLabelIn = 'Precio LIMP';
-                    elId = 'form-precio-hora_PA-edicion';
-                    elValue = valuesFormEdicion.precioHora_PA || '';
-                    elValueVariaciones = valuesFormEdicion.variacion_PA || '';
-                    elValueDia = valuesFormEdicion.diaVariacion_PA || '';
-                    elValueActivo = valuesFormEdicion.activo_PA || '';
-                    laLabelWi = 95;
-                    elPrecioHora = 'precioHora_PA';
-                    laVariacion = 'variacion_PA';
-                    elDia = 'diaVariacion_PA';
-                    elActivo = 'activo_PA';
-                    laClase =
-                        (valuesFormEdicion.activo_PA === 'no') ?
-                            classes.fondoInactivoServicioFijo :
-                            (valuesFormEdicion.precioHora_PA && valuesFormEdicion.variacion_PA) ?
-                                classes.fondoGrisClaro : classes.paper;
-                    desactivadoDia = valuesFormEdicion.variacion_PA === 3 ? true : false;
-                    break;
+            case 'LIME':
+                checkeado = stateSwitchTipoServicioFijoEdicion.ES;
+                laLabelSw = 'SERVICIO DE LIMPIEZA ESPECIAL';
+                laLabelIn = 'Precio LIME';
+                elId = 'form-precio-hora_ES-edicion';
+                elValue = valuesFormEdicion.precioHora_ES || '';
+                elValueVariaciones = valuesFormEdicion.variacion_ES || '';
+                elValueDia = valuesFormEdicion.diaVariacion_ES || '';
+                elValueActivo = valuesFormEdicion.activo_ES || '';
+                laLabelWi = 95;
+                elPrecioHora = 'precioHora_ES';
+                laVariacion = 'variacion_ES';
+                elDia = 'diaVariacion_ES';
+                elActivo = 'activo_ES';
+                laClase =
+                    (valuesFormEdicion.activo_ES === 'no') ?
+                        classes.fondoInactivoServicioFijo :
+                        (valuesFormEdicion.precioHora_ES && valuesFormEdicion.variacion_ES) ?
+                            classes.fondoGrisClaro : classes.paper;
+                desactivadoDia = valuesFormEdicion.variacion_ES === 3 ? true : false;
+                break;
+            case 'LIMP':
+                checkeado = stateSwitchTipoServicioFijoEdicion.PA;
+                laLabelSw = 'SERVICIO DE LIMPIEZA DEL PARKING';
+                laLabelIn = 'Precio LIMP';
+                elId = 'form-precio-hora_PA-edicion';
+                elValue = valuesFormEdicion.precioHora_PA || '';
+                elValueVariaciones = valuesFormEdicion.variacion_PA || '';
+                elValueDia = valuesFormEdicion.diaVariacion_PA || '';
+                elValueActivo = valuesFormEdicion.activo_PA || '';
+                laLabelWi = 95;
+                elPrecioHora = 'precioHora_PA';
+                laVariacion = 'variacion_PA';
+                elDia = 'diaVariacion_PA';
+                elActivo = 'activo_PA';
+                laClase =
+                    (valuesFormEdicion.activo_PA === 'no') ?
+                        classes.fondoInactivoServicioFijo :
+                        (valuesFormEdicion.precioHora_PA && valuesFormEdicion.variacion_PA) ?
+                            classes.fondoGrisClaro : classes.paper;
+                desactivadoDia = valuesFormEdicion.variacion_PA === 3 ? true : false;
+                break;
             default:
         };
         return (
@@ -5234,7 +5272,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                 style={{ height: 80, paddingTop: 5, paddingBottom: 10, paddingRight: 10, paddingLeft: 10, marginBottom: 15 }}
                 key={'formServicio' + index}
             >
-                <Grid item item xs={4}>
+                <Grid item xs={4}>
                     <FormControlLabel
                         control={
                             <Switch
@@ -5360,6 +5398,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                     //registramos
                     const centroAGuardar = {
                         categoria: valuesFormEdicion.categoria,
+                        observaciones: valuesFormEdicion.observaciones ? valuesFormEdicion.observaciones : null,
                         horario: values.horario ? (values.horario) : null,
                         servicios_fijos: values.servicios ? (values.servicios) : null,
                         trabajadores: values.trabajadores ? (values.trabajadores) : null
@@ -5408,6 +5447,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                     //registramos
                     const centroAGuardar = {
                         categoria: valuesFormEdicion.categoria,
+                        observaciones: valuesFormEdicion.observaciones ? valuesFormEdicion.observaciones : null,
                         horario: values.horario ? (values.horario) : null,
                         servicios_fijos: values.servicios ? (values.servicios) : null,
                         trabajadores: values.trabajadores ? (values.trabajadores) : null
@@ -5712,6 +5752,8 @@ const CentrosEditar = forwardRef((props, ref) => {
         setValuesFormEdicion({
             categoria: cuadranteAGestionar.categoria,
             variacion: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.variacion : '',
+            excepcion: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.excepcion : '',
+            observaciones: cuadranteAGestionar.observaciones ? cuadranteAGestionar.observaciones : '',
             tipo: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.tipo : '',
             numeroTrabajadores: cuadranteAGestionar.trabajadores ? cuadranteAGestionar.trabajadores.cantidad : '',
             datosTrabajadores: arrayTr,
@@ -6120,6 +6162,7 @@ const CentrosEditar = forwardRef((props, ref) => {
             setHorarioIntervencionEdicion({
                 tipo: cuadranteAGestionar.horario.tipo,
                 variacion: cuadranteAGestionar.horario.variacion,
+                excepcion: cuadranteAGestionar.horario.excepcion ? cuadranteAGestionar.horario.excepcion : '',
                 tipoRegistro: cuadranteAGestionar.horario.tipoRegistro,
                 tipoRegistroTrabajador: arrayValoresHorario
             });
@@ -6215,6 +6258,7 @@ const CentrosEditar = forwardRef((props, ref) => {
             setHorarioIntervencionEdicion({
                 tipo: '',
                 variacion: '',
+                excepcion: '',
                 tipoRegistro: 'comun',
                 tipoRegistroTrabajador: [
                     {
@@ -6634,7 +6678,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         >
                                             <InputLabel>Teléfono 2</InputLabel>
                                             <OutlinedInput
-                                                className={classes.mb25}
+                                                className={classes.mb15}
                                                 fullWidth
                                                 id="form-telefono2-centro-edicion"
                                                 value={valuesFormEdicionGenerales.telefono2}
@@ -6653,9 +6697,10 @@ const CentrosEditar = forwardRef((props, ref) => {
                             <AppBar position="static" className={valuesFormEdicionGenerales.estado === 'baja' ? clsx(classes.fondoBaja) : clsx(classes.fondoAlta)}>
                                 <Tabs value={valueTabCentrosEdicion} onChange={handleChangeTabCentrosEdicion} className={classes.tabsStl}>
                                     <Tab label="Trabajadores" {...a11yProps(0)} style={{ paddingBottom: 10 }} />
-                                    <Tab label="Horario de intervención" {...a11yProps(1)} style={{ paddingBottom: 10 }} />
+                                    <Tab label="Horario" {...a11yProps(1)} style={{ paddingBottom: 10 }} />
                                     <Tab label="Servicios extra" {...a11yProps(2)} style={{ paddingBottom: 10 }} />
                                     <Tab label="Forma de pago" {...a11yProps(3)} style={{ paddingBottom: 10 }} />
+                                    <Tab label="Observaciones" {...a11yProps(4)} style={{ paddingBottom: 10 }} />
                                 </Tabs>
                             </AppBar>
                             <TabPanel value={valueTabCentrosEdicion} index={0} className={classes.scrollable} style={{ height: heightScrollable }}>
@@ -6738,7 +6783,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                             <InputLabel>Variaciones</InputLabel>
                                             <Select
                                                 fullWidth
-                                                className={classes.mb25}
+                                                className={classes.mb15}
                                                 id="form-variaciones-edicion"
                                                 label="Variaciones"
                                                 value={valuesFormEdicion.variacion}
@@ -6751,6 +6796,33 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                 </MenuItem>
                                                 {
                                                     variaciones.map((option) => (
+                                                        <MenuItem key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </MenuItem>
+                                                    ))
+                                                }
+                                            </Select>
+                                        </FormControl>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>Excepciones</InputLabel>
+                                            <Select
+                                                fullWidth
+                                                className={classes.mb25}
+                                                id="form-excepciones-edicion"
+                                                label="Excepciones"
+                                                value={valuesFormEdicion.excepcion}
+                                                onChange={handleChangeFormEdicion('excepcion')}
+                                                helpertext="Selecciona excepciones"
+                                            >
+                                                <MenuItem value=''>
+                                                    <em>No</em>
+                                                </MenuItem>
+                                                {
+                                                    excepciones.map((option) => (
                                                         <MenuItem key={option.value} value={option.value}>
                                                             {option.label}
                                                         </MenuItem>
@@ -7102,6 +7174,22 @@ const CentrosEditar = forwardRef((props, ref) => {
                                     </Box>
                                 </Grid>
                             </TabPanel>
+                            <TabPanel value={valueTabCentrosEdicion} index={4} className={classes.scrollable} style={{ height: heightScrollable }}>
+                                <Grid item lg={6} sm={6} xs={12}>
+                                    <TextField
+                                        label="Observaciones"
+                                        id="form-observaciones-edicion"
+                                        value={valuesFormEdicion.observaciones || ''}
+                                        className={clsx(classes.form, classes.mb25)}
+                                        fullWidth
+                                        placeholder={'Observaciones Cuadrante ' + cuadranteEnUsoEdicion}
+                                        multiline
+                                        rows={3}
+                                        variant="outlined"
+                                        onChange={handleChangeFormEdicion('observaciones')}
+                                    />
+                                </Grid>
+                            </TabPanel>
                         </div>
                     </Grid>
                 </Grid>
@@ -7117,7 +7205,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                 prTituloDialog={tituloDialog}
                 prDescripcionDialog={descripcionDialog}
             />
-            {/* {console.log(numeroCuadrantesEdicion)} */}
+            {/* {console.log(valuesFormEdicion)} */}
         </div >
     )
 })

@@ -1,4 +1,3 @@
-
 import Constantes from "../constantes";
 
 //constantes
@@ -7135,6 +7134,6 @@ export const gestionaColumnaServiciosFijosCambiosAccion = (servicios, casilla) =
                 arrayResultante.push(objetoResultante);
             };
         };
-    });
+    });   
     return arrayResultante
 };

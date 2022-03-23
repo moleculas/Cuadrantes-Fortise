@@ -402,7 +402,7 @@ const Nominas = (props) => {
             reseteaContenidoNominas();
             dispatch(vaciarDatosNominasAccion());
             setValueDatePickerNominas(newValue);
-            dispatch(setCalendarioAGestionarNominasAccion(dispatch(retornaAnoMesAccion(newValue))));
+            dispatch(setCalendarioAGestionarNominasAccion(retornaAnoMesAccion(newValue)));
             dispatch(cambioEstadoInicioNominasAccion(true));
         } else {
             if (!nominaNuevaRegistrada && !nominaSinDatosEstado) {
@@ -412,7 +412,7 @@ const Nominas = (props) => {
                     reseteaContenidoNominas();
                     dispatch(vaciarDatosNominasAccion());
                     setValueDatePickerNominas(newValue);
-                    dispatch(setCalendarioAGestionarNominasAccion(dispatch(retornaAnoMesAccion(newValue))));
+                    dispatch(setCalendarioAGestionarNominasAccion(retornaAnoMesAccion(newValue)));
                     dispatch(cambioEstadoInicioNominasAccion(true));
                 }
             }

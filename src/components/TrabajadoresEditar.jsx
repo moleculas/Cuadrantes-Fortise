@@ -303,7 +303,7 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
 
     const handleChangeDatePickerFinEdicion = (newValue) => {
         if (newValue) {
-            const elMes = dispatch(retornaAnoMesAccion(newValue));
+            const elMes = retornaAnoMesAccion(newValue);
             let inicioRango, finRango;
             switch (valuesFormEdicion.estado) {
                 case 'baja':

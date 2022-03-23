@@ -77,7 +77,8 @@ const dataInicial = {
     disableSelectCentros: true,
     preValueCalendarioAGestionarReseteo: null,
     venimosBorrarCuadrante: false,
-    primeraIntervencionRegistrada: false
+    primeraIntervencionRegistrada: false  
+    //esCambioFestivoMensualPactado: false
 };
 
 //types
@@ -122,6 +123,7 @@ const SET_ALERTA = 'SET_ALERTA';
 const SET_DISABLESELECTCENTROS = 'SET_DISABLESELECTCENTROS';
 const SET_PREVALUECALENDARIOAGESTIONARRESETEO = 'SET_PREVALUECALENDARIOAGESTIONARRESETEO';
 const SET_VENIMOSBORRARCUADRANTE = 'SET_VENIMOSBORRARCUADRANTE';
+//const SET_ESCAMBIOFESTIVOMENSUALPACTADO = 'SET_ESCAMBIOFESTIVOMENSUALPACTADO';
 
 //reducer
 export default function cuadrantesSettersReducer(state = dataInicial, action) {
@@ -207,13 +209,25 @@ export default function cuadrantesSettersReducer(state = dataInicial, action) {
         case SET_PREVALUECALENDARIOAGESTIONARRESETEO:
             return { ...state, preValueCalendarioAGestionarReseteo: action.payload.valor }
         case SET_VENIMOSBORRARCUADRANTE:
-            return { ...state, venimosBorrarCuadrante: action.payload.estado }       
+            return { ...state, venimosBorrarCuadrante: action.payload.estado }
+        // case SET_ESCAMBIOFESTIVOMENSUALPACTADO:
+        //     return { ...state, esCambioFestivoMensualPactado: action.payload.estado }
         default:
             return { ...state }
     }
 }
 
 //acciones
+
+// export const setEsCambioFestivoMensualPactadoAccion = (estado) => (dispatch, getState) => {
+//     dispatch({
+//         type: SET_ESCAMBIOFESTIVOMENSUALPACTADO,
+//         payload: {
+//             estado: estado
+//         }
+//     });
+// };
+
 export const setVenimosBorrarCuadranteAccion = (estado) => (dispatch, getState) => {
     dispatch({
         type: SET_VENIMOSBORRARCUADRANTE,
@@ -222,7 +236,6 @@ export const setVenimosBorrarCuadranteAccion = (estado) => (dispatch, getState) 
         }
     });
 };
-
 
 export const setPreValueCalendarioAGestionarReseteoAccion = (valor) => (dispatch, getState) => {
     dispatch({
@@ -605,12 +618,6 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
         }
     });
     dispatch({
-        type: SET_BUFFERDIASFESTIVOSCUADRANTE,
-        payload: {
-            array: []
-        }
-    });
-    dispatch({
         type: SET_ESINICIOTRA,
         payload: {
             estado: true
@@ -853,6 +860,12 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
         }
     });
     if (!excepciones) {
+        dispatch({
+            type: SET_BUFFERDIASFESTIVOSCUADRANTE,
+            payload: {
+                array: []
+            }
+        });
         dispatch({
             type: SET_VENIMOSDECAMBIOCUADRANTE,
             payload: {

@@ -692,6 +692,17 @@ const Configuracion = (props) => {
                                                             }
                                                         />
                                                     </ListItem >
+                                                    <ListItem>
+                                                        <ListItemText
+                                                            primary="V. 1.08 - 07/03/2022"
+                                                            secondary={
+                                                                <Fragment>
+                                                                <Typography component="span" variant="body2">1.- Añadido apartado Observaciones en fichas centros y funcionalidad para seleccionar excepciones en horarios especiales para centros.</Typography>
+                                                                <br />                                                      
+                                                                </Fragment>
+                                                            }
+                                                        />
+                                                    </ListItem >
                                                 </List>
                                             </Box>
                                         </Box>

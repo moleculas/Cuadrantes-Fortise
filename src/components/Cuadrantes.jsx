@@ -94,7 +94,6 @@ import { setCalendarioAGestionarAccion } from '../redux/cuadrantesDucks';
 import { venimosDeRegistradosAccion } from '../redux/pendientesDucks';
 import { gestionaMaxDateCalendarAccion } from '../redux/appDucks';
 import { setLosDiasDelMesAccion } from '../redux/cuadrantesDucks';
-import { setStateFestivoAccion } from '../redux/cuadrantesDucks';
 import { centroAGestionarInicioAccion } from '../redux/cuadrantesGestionDucks';
 import { gestionaCuadranteIndividualAccion } from '../redux/cuadrantesGestionDucks';
 import { setEstamosActualizandoCuadranteSinCargaAccion } from '../redux/cuadrantesSettersDucks';
@@ -114,6 +113,8 @@ import { reseteaContenidoCuadranteAccion } from '../redux/cuadrantesSettersDucks
 import { setDisableSelectCentrosAccion } from '../redux/cuadrantesSettersDucks';
 import { setPreValueCalendarioAGestionarReseteoAccion } from '../redux/cuadrantesSettersDucks';
 import { setVenimosBorrarCuadranteAccion } from '../redux/cuadrantesSettersDucks';
+import { setVenimosDeCambioCuadranteAccion } from '../redux/cuadrantesSettersDucks';
+import { traspasoBufferFestivosAccion } from '../redux/cuadrantesHandlersDucks';
 import {
     abrePopoverDiasAccion,
     abrePopoverServiciosFijosAccion,
@@ -129,7 +130,6 @@ import {
     handleChangeTimePickerFinCuadranteAccion,
     handleCloseMenuAccion,
     handleClickMenuAccion,
-    esFestivoFuncionAccion,
     handleChangeSelectCalendarioAccion,
     handleChangeSelectCategoriaAccion,
     handleClickOpenDialogCuadrantes4Accion,
@@ -161,7 +161,8 @@ import {
     handleRegistrarCambioEnCasillaServiciosFijosAccion,
     gestionItemPrevioEditandoConfiguracionAccion,
     handleRegistrarCambioEnCasillaConfiguracionAccion,
-    handleChangeTipoHorarioAccion
+    handleChangeTipoHorarioAccion,
+    configuraStateFestivoAccion
 } from '../redux/cuadrantesHandlersDucks';
 import {
     retornaInfoFabButtonAccion,
@@ -317,9 +318,13 @@ const Cuadrantes = (props) => {
     const anchorElServiciosFijos = useSelector(store => store.variablesCuadrantesPopovers.anchorElServiciosFijos);
     const anchorElConfiguracion = useSelector(store => store.variablesCuadrantesPopovers.anchorElConfiguracion);
     const anchorElGeneral = useSelector(store => store.variablesCuadrantesPopovers.anchorElGeneral);
+    const numeroCuadrantesCuadrantes = useSelector(store => store.variablesCuadrantesSetters.numeroCuadrantesCuadrantes);
+
     //para test
     const arrayDatosInforme = useSelector(store => store.variablesCuadrantesSetters.arrayDatosInforme);
     const itemPrevioEditando = useSelector(store => store.variablesCuadrantesSetters.itemPrevioEditando);
+    const bufferSwitchedDiasFestivosCuadranteDesactivados = useSelector(store => store.variablesCuadrantesSetters.bufferSwitchedDiasFestivosCuadranteDesactivados);
+    const bufferSwitchedDiasFestivosCuadrante = useSelector(store => store.variablesCuadrantesSetters.bufferSwitchedDiasFestivosCuadrante);
 
     //helpers
 
@@ -409,16 +414,8 @@ const Cuadrantes = (props) => {
 
     useEffect(() => {
         if (losDiasDelMes.length > 0) {
-            let object = {};
-            for (let i = 1; i <= losDiasDelMes.length; i++) {
-                if (dispatch(esFestivoFuncionAccion(i))) {
-                    object['estadoFestivoDia' + i] = true;
-                } else {
-                    object['estadoFestivoDia' + i] = false;
-                }
-            }
-            dispatch(setStateFestivoAccion(object))
-        }
+            dispatch(configuraStateFestivoAccion());
+        };
     }, [losDiasDelMes]);
 
     //secuencia cuadrante
@@ -543,6 +540,28 @@ const Cuadrantes = (props) => {
             dispatch(setDisableSelectCentrosAccion(false));
         };
     }, [categoriaPorCentro]);
+
+    useEffect(() => {
+        if (venimosDeCambioCuadrante) {
+            let existeCuadrante = false;
+            let existeCuadranteSF = false;
+            if (objetoCuadrante.datosCuadrante.datosCuadrante[cuadranteEnUsoCuadrantes - 1].tipoHorarioGeneral) {
+                existeCuadrante = true;
+            };
+            if (objetoCuadrante.datosServicios.datosServicios[cuadranteEnUsoCuadrantes - 1] && objetoCuadrante.datosServicios.datosServicios[cuadranteEnUsoCuadrantes - 1].length > 0) {
+                existeCuadranteSF = true;
+            };
+            if ((cuadrante.length > 0 && cuadranteServiciosFijos.length > 0 && existeCuadrante && existeCuadranteSF) ||
+                (cuadrante.length > 0 && !existeCuadranteSF) ||
+                (cuadranteServiciosFijos.length > 0 && !existeCuadrante)) {
+                dispatch(setVenimosDeCambioCuadranteAccion(false));
+                if (numeroCuadrantesCuadrantes.length > 1) {
+                    dispatch(configuraStateFestivoAccion());
+                    dispatch(traspasoBufferFestivosAccion(false));
+                };
+            };
+        };
+    }, [venimosDeCambioCuadrante, cuadrante, cuadranteServiciosFijos]);
 
     //secuencia alertas
 
@@ -1355,7 +1374,7 @@ const Cuadrantes = (props) => {
                                             style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", paddingTop: 4, cursor: 'pointer' }}
                                             onClick={(event) => dispatch(abrePopoverConfiguracionAccion(event, scrollable, classes))}
                                         >
-                                            <Tooltip title="Configuración general cuadrante" placement="right" arrow>
+                                            <Tooltip title="Ajustes cuadrante" placement="right" arrow>
                                                 <SettingsIcon style={{ fontSize: 30 }} />
                                             </Tooltip>
                                         </Box>
@@ -1864,13 +1883,13 @@ const Cuadrantes = (props) => {
             >
                 <Box
                     className={classes.tooltip}
-                    style={{ width: 300, marginLeft: 5 }}>
+                    style={{ width: 350, marginLeft: 5 }}>
                     <Box
                         m={0.5}
                         color="secondary.contrastText"
                         className={clsx(classes.fondoAlta, classes.boxStl2, classes.mb15)}
                     >
-                        Configuración general cuadrante
+                        Ajustes cuadrante
                     </Box>
                     <Box style={{ height: heightScrollable - 145, marginRight: -5, paddingRight: 10, paddingLeft: 5 }} className={classes.scrollable} >
                         <ConfiguracionCuadrante
@@ -1937,7 +1956,7 @@ const Cuadrantes = (props) => {
                 prTituloDialog={tituloDialogCuadrantes5}
                 prDescripcionDialog={descripcionDialogCuadrantes5}
             />
-            {console.log(objetoCuadrante)}
+            {console.log(bufferSwitchedDiasFestivosCuadrante)}
         </div >
     )
 }

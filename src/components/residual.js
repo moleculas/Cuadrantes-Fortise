@@ -11072,4 +11072,1667 @@ export const gestionarInformeAccion = (cuadrante, centro) => (dispatch, getState
                         return arrayResultante
                     };
 
-                      
+ cuadrante.forEach((columna, indexFor) => {
+                variableBuffer1 = registroBuffer[postRef][indexFor][0];
+                variableBuffer2 = registroBuffer[postRef][indexFor][1];
+                variableBuffer3 = registroBuffer[postRef][indexFor][2];
+                variableBuffer4 = registroBuffer[postRef][indexFor][3];             
+                if (columna.nombreTrabajador) {
+                    if (registroBuffer.activo) {
+                        columna[postRef].festivo = true;                       
+                        switch (columna.tipoHorario) {
+                            case 'rango':
+                                switch (diaSemana) {
+                                    case 'Lunes':
+                                        mySplitDia = postRef.split('Lunes');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = true;
+                                        objetoBuffer[postRef].push([variableBuffer1, variableBuffer2]);
+                                        columna[postRef].lunesInicioRango = null;
+                                        columna[postRef].lunesFinRango = null;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'lunesInicioRango');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Martes':
+                                        mySplitDia = postRef.split('Martes');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = true;
+                                        objetoBuffer[postRef].push([variableBuffer1, variableBuffer2]);
+                                        columna[postRef].martesInicioRango = null;
+                                        columna[postRef].martesFinRango = null;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'martesInicioRango');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Miércoles':
+                                        mySplitDia = postRef.split('Miércoles');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = true;
+                                        objetoBuffer[postRef].push([variableBuffer1, variableBuffer2]);
+                                        columna[postRef].miercolesInicioRango = null;
+                                        columna[postRef].miercolesFinRango = null;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'miercolesInicioRango');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Jueves':
+                                        mySplitDia = postRef.split('Jueves');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = true;
+                                        objetoBuffer[postRef].push([variableBuffer1, variableBuffer2]);
+                                        columna[postRef].juevesInicioRango = null;
+                                        columna[postRef].juevesFinRango = null;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'juevesInicioRango');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Viernes':
+                                        mySplitDia = postRef.split('Viernes');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = true;
+                                        objetoBuffer[postRef].push([variableBuffer1, variableBuffer2]);
+                                        columna[postRef].viernesInicioRango = null;
+                                        columna[postRef].viernesFinRango = null;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'viernesInicioRango');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Sábado':
+                                        mySplitDia = postRef.split('Sábado');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = true;
+                                        objetoBuffer[postRef].push([variableBuffer1, variableBuffer2]);
+                                        columna[postRef].sabadoInicioRango = null;
+                                        columna[postRef].sabadoFinRango = null;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'sabadoInicioRango');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Domingo':
+                                        mySplitDia = postRef.split('Domingo');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = true;
+                                        objetoBuffer[postRef].push([variableBuffer1, variableBuffer2]);
+                                        columna[postRef].domingoInicioRango = null;
+                                        columna[postRef].domingoFinRango = null;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'domingoInicioRango');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    default:
+                                }
+                                break;
+                            case 'rangoDescanso':
+                                switch (diaSemana) {
+                                    case 'Lunes':
+                                        mySplitDia = postRef.split('Lunes');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = true;
+                                        objetoBuffer[postRef].push([variableBuffer1, variableBuffer2, variableBuffer3, variableBuffer4]);
+                                        columna[postRef].lunesInicio1RangoDescanso = null;
+                                        columna[postRef].lunesFin1RangoDescanso = null;
+                                        columna[postRef].lunesInicio2RangoDescanso = null;
+                                        columna[postRef].lunesFin2RangoDescanso = null;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'lunesInicio1RangoDescanso');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Martes':
+                                        mySplitDia = postRef.split('Martes');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = true;
+                                        objetoBuffer[postRef].push([variableBuffer1, variableBuffer2, variableBuffer3, variableBuffer4]);
+                                        columna[postRef].martesInicio1RangoDescanso = null;
+                                        columna[postRef].martesFin1RangoDescanso = null;
+                                        columna[postRef].martesInicio2RangoDescanso = null;
+                                        columna[postRef].martesFin2RangoDescanso = null;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'martesInicio1RangoDescanso');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Miércoles':
+                                        mySplitDia = postRef.split('Miércoles');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = true;
+                                        objetoBuffer[postRef].push([variableBuffer1, variableBuffer2, variableBuffer3, variableBuffer4]);
+                                        columna[postRef].miercolesInicio1RangoDescanso = null;
+                                        columna[postRef].miercolesFin1RangoDescanso = null;
+                                        columna[postRef].miercolesInicio2RangoDescanso = null;
+                                        columna[postRef].miercolesFin2RangoDescanso = null;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'miercolesInicio1RangoDescanso');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Jueves':
+                                        mySplitDia = postRef.split('Jueves');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = true;
+                                        objetoBuffer[postRef].push([variableBuffer1, variableBuffer2, variableBuffer3, variableBuffer4]);
+                                        columna[postRef].juevesInicio1RangoDescanso = null;
+                                        columna[postRef].juevesFin1RangoDescanso = null;
+                                        columna[postRef].juevesInicio2RangoDescanso = null;
+                                        columna[postRef].juevesFin2RangoDescanso = null;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'juevesInicio1RangoDescanso');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Viernes':
+                                        mySplitDia = postRef.split('Viernes');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = true;
+                                        objetoBuffer[postRef].push([variableBuffer1, variableBuffer2, variableBuffer3, variableBuffer4]);
+                                        columna[postRef].viernesInicio1RangoDescanso = null;
+                                        columna[postRef].viernesFin1RangoDescanso = null;
+                                        columna[postRef].viernesInicio2RangoDescanso = null;
+                                        columna[postRef].viernesFin2RangoDescanso = null;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'viernesInicio1RangoDescanso');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Sábado':
+                                        mySplitDia = postRef.split('Sábado');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = true;
+                                        objetoBuffer[postRef].push([variableBuffer1, variableBuffer2, variableBuffer3, variableBuffer4]);
+                                        columna[postRef].sabadoInicio1RangoDescanso = null;
+                                        columna[postRef].sabadoFin1RangoDescanso = null;
+                                        columna[postRef].sabadoInicio2RangoDescanso = null;
+                                        columna[postRef].sabadoFin2RangoDescanso = null;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'sabadoInicio1RangoDescanso');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Domingo':
+                                        mySplitDia = postRef.split('Domingo');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = true;
+                                        objetoBuffer[postRef].push([variableBuffer1, variableBuffer2, variableBuffer3, variableBuffer4]);
+                                        columna[postRef].domingoInicio1RangoDescanso = null;
+                                        columna[postRef].domingoFin1RangoDescanso = null;
+                                        columna[postRef].domingoInicio2RangoDescanso = null;
+                                        columna[postRef].domingoFin2RangoDescanso = null;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'domingoInicio1RangoDescanso');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    default:
+                                }
+                                break;
+                            case 'cantidad':
+                                switch (diaSemana) {
+                                    case 'Lunes':
+                                        mySplitDia = postRef.split('Lunes');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = true;
+                                        objetoBuffer[postRef].push([variableBuffer1]);
+                                        columna[postRef].lunesCantidad = '';
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'lunesCantidad');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Martes':
+                                        mySplitDia = postRef.split('Martes');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = true;
+                                        objetoBuffer[postRef].push([variableBuffer1]);
+                                        columna[postRef].martesCantidad = '';
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'martesCantidad');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Miércoles':
+                                        mySplitDia = postRef.split('Miércoles');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = true;
+                                        objetoBuffer[postRef].push([variableBuffer1]);
+                                        columna[postRef].miercolesCantidad = '';
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'miercolesCantidad');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Jueves':
+                                        mySplitDia = postRef.split('Jueves');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = true;
+                                        objetoBuffer[postRef].push([variableBuffer1]);
+                                        columna[postRef].juevesCantidad = '';
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'juevesCantidad');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Viernes':
+                                        mySplitDia = postRef.split('Viernes');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = true;
+                                        objetoBuffer[postRef].push([variableBuffer1]);
+                                        columna[postRef].viernesCantidad = '';
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'viernesCantidad');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Sábado':
+                                        mySplitDia = postRef.split('Sábado');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = true;
+                                        objetoBuffer[postRef].push([variableBuffer1]);
+                                        columna[postRef].sabadoCantidad = '';
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'sabadoCantidad');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Domingo':
+                                        mySplitDia = postRef.split('Domingo');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = true;
+                                        objetoBuffer[postRef].push([variableBuffer1]);
+                                        columna[postRef].domingoCantidad = '';
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'domingoCantidad');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    default:
+                                }
+                                break;
+                            default:
+                        };
+                        objetoBuffer = { ...objetoBuffer, activo: true };
+                        if (arrayBuffer.length > 0) {
+                            arrayBuffer[cuadranteEnUsoCuadrantes - 1] = [...arrayBuffer[cuadranteEnUsoCuadrantes - 1]];
+                            let indiceObjeto = arrayBuffer[cuadranteEnUsoCuadrantes - 1].findIndex(dia => (Object.keys(dia)[0]) === postRef);
+                            if (indiceObjeto >= 0) {
+                                arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
+                            } else {
+                                arrayBuffer[cuadranteEnUsoCuadrantes - 1].push(objetoBuffer);
+                            };
+                        } else {
+                            arrayBuffer[cuadranteEnUsoCuadrantes - 1] = [];
+                            arrayBuffer[cuadranteEnUsoCuadrantes - 1].push(objetoBuffer);
+                        };
+                        dispatch(setBufferSwitchedDiasFestivosCuadranteAccion(arrayBuffer));
+                        arrayCuadrante[indexFor] = columna;
+                        dispatch(setCuadranteAccion(arrayCuadrante));
+                        dispatch(setStateFestivoAccion(objetoStateFestivos));
+                    } else {
+                        columna[postRef].festivo = false;                        
+                        indexABorrar = index;
+                        switch (columna.tipoHorario) {
+                            case 'rango':
+                                switch (diaSemana) {
+                                    case 'Lunes':
+                                        mySplitDia = postRef.split('Lunes');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = false;
+                                        columna[postRef].lunesInicioRango = variableBuffer1;
+                                        columna[postRef].lunesFinRango = variableBuffer2;
+                                        columna[postRef].tipoServicio =
+                                            columna[postRef].tipoServicio ?
+                                                columna[postRef].tipoServicio :
+                                                objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].lunesTipoServicio;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'lunesInicioRango');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Martes':
+                                        mySplitDia = postRef.split('Martes');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = false;
+                                        columna[postRef].martesInicioRango = variableBuffer1;
+                                        columna[postRef].martesFinRango = variableBuffer2;
+                                        columna[postRef].tipoServicio =
+                                            columna[postRef].tipoServicio ?
+                                                columna[postRef].tipoServicio :
+                                                objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].martesTipoServicio;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'martesInicioRango');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Miércoles':
+                                        mySplitDia = postRef.split('Miércoles');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = false;
+                                        columna[postRef].miercolesInicioRango = variableBuffer1;
+                                        columna[postRef].miercolesFinRango = variableBuffer2;
+                                        columna[postRef].tipoServicio =
+                                            columna[postRef].tipoServicio ?
+                                                columna[postRef].tipoServicio :
+                                                objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].miercolesTipoServicio;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'miercolesInicioRango');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Jueves':
+                                        mySplitDia = postRef.split('Jueves');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = false;
+                                        columna[postRef].juevesInicioRango = variableBuffer1;
+                                        columna[postRef].juevesFinRango = variableBuffer2;
+                                        columna[postRef].tipoServicio =
+                                            columna[postRef].tipoServicio ?
+                                                columna[postRef].tipoServicio :
+                                                objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].juevesTipoServicio;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'juevesInicioRango');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Viernes':
+                                        mySplitDia = postRef.split('Viernes');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = false;
+                                        columna[postRef].viernesInicioRango = variableBuffer1;
+                                        columna[postRef].viernesFinRango = variableBuffer2;
+                                        columna[postRef].tipoServicio =
+                                            columna[postRef].tipoServicio ?
+                                                columna[postRef].tipoServicio :
+                                                objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].viernesTipoServicio;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'viernesInicioRango');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Sábado':
+                                        mySplitDia = postRef.split('Sábado');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = false;
+                                        columna[postRef].sabadoInicioRango = variableBuffer1;
+                                        columna[postRef].sabadoFinRango = variableBuffer2;
+                                        columna[postRef].tipoServicio =
+                                            columna[postRef].tipoServicio ?
+                                                columna[postRef].tipoServicio :
+                                                objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].sabadoTipoServicio;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'sabadoInicioRango');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Domingo':
+                                        mySplitDia = postRef.split('Domingo');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = false;
+                                        columna[postRef].domingoInicioRango = variableBuffer1;
+                                        columna[postRef].domingoFinRango = variableBuffer2;
+                                        columna[postRef].tipoServicio =
+                                            columna[postRef].tipoServicio ?
+                                                columna[postRef].tipoServicio :
+                                                objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].domingoTipoServicio;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'domingoInicioRango');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    default:
+                                }
+                                break;
+                            case 'rangoDescanso':
+                                switch (diaSemana) {
+                                    case 'Lunes':
+                                        mySplitDia = postRef.split('Lunes');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = false;
+                                        columna[postRef].lunesInicio1RangoDescanso = variableBuffer1;
+                                        columna[postRef].lunesFin1RangoDescanso = variableBuffer2;
+                                        columna[postRef].lunesInicio2RangoDescanso = variableBuffer3;
+                                        columna[postRef].lunesFin2RangoDescanso = variableBuffer4;
+                                        columna[postRef].tipoServicio =
+                                            columna[postRef].tipoServicio ?
+                                                columna[postRef].tipoServicio :
+                                                objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].lunesTipoServicio;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'lunesInicio1RangoDescanso');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Martes':
+                                        mySplitDia = postRef.split('Martes');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = false;
+                                        columna[postRef].martesInicio1RangoDescanso = variableBuffer1;
+                                        columna[postRef].martesFin1RangoDescanso = variableBuffer2;
+                                        columna[postRef].martesInicio2RangoDescanso = variableBuffer3;
+                                        columna[postRef].martesFin2RangoDescanso = variableBuffer4;
+                                        columna[postRef].tipoServicio =
+                                            columna[postRef].tipoServicio ?
+                                                columna[postRef].tipoServicio :
+                                                objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].martesTipoServicio;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'martesInicio1RangoDescanso');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Miércoles':
+                                        mySplitDia = postRef.split('Miércoles');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = false;
+                                        columna[postRef].miercolesInicio1RangoDescanso = variableBuffer1;
+                                        columna[postRef].miercolesFin1RangoDescanso = variableBuffer2;
+                                        columna[postRef].miercolesInicio2RangoDescanso = variableBuffer3;
+                                        columna[postRef].miercolesFin2RangoDescanso = variableBuffer4;
+                                        columna[postRef].tipoServicio =
+                                            columna[postRef].tipoServicio ?
+                                                columna[postRef].tipoServicio :
+                                                objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].miercolesTipoServicio;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'miercolesInicio1RangoDescanso');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Jueves':
+                                        mySplitDia = postRef.split('Jueves');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = false;
+                                        columna[postRef].juevesInicio1RangoDescanso = variableBuffer1;
+                                        columna[postRef].juevesFin1RangoDescanso = variableBuffer2;
+                                        columna[postRef].juevesInicio2RangoDescanso = variableBuffer3;
+                                        columna[postRef].juevesFin2RangoDescanso = variableBuffer4;
+                                        columna[postRef].tipoServicio =
+                                            columna[postRef].tipoServicio ?
+                                                columna[postRef].tipoServicio :
+                                                objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].juevesTipoServicio;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'juevesInicio1RangoDescanso');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Viernes':
+                                        mySplitDia = postRef.split('Viernes');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = false;
+                                        columna[postRef].viernesInicio1RangoDescanso = variableBuffer1;
+                                        columna[postRef].viernesFin1RangoDescanso = variableBuffer2;
+                                        columna[postRef].viernesInicio2RangoDescanso = variableBuffer3;
+                                        columna[postRef].viernesFin2RangoDescanso = variableBuffer4;
+                                        columna[postRef].tipoServicio =
+                                            columna[postRef].tipoServicio ?
+                                                columna[postRef].tipoServicio :
+                                                objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].viernesTipoServicio;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'viernesInicio1RangoDescanso');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Sábado':
+                                        mySplitDia = postRef.split('Sábado');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = false;
+                                        columna[postRef].sabadoInicio1RangoDescanso = variableBuffer1;
+                                        columna[postRef].sabadoFin1RangoDescanso = variableBuffer2;
+                                        columna[postRef].sabadoInicio2RangoDescanso = variableBuffer3;
+                                        columna[postRef].sabadoFin2RangoDescanso = variableBuffer4;
+                                        columna[postRef].tipoServicio =
+                                            columna[postRef].tipoServicio ?
+                                                columna[postRef].tipoServicio :
+                                                objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].sabadoTipoServicio;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'sabadoInicio1RangoDescanso');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Domingo':
+                                        mySplitDia = postRef.split('Domingo');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = false;
+                                        columna[postRef].domingoInicio1RangoDescanso = variableBuffer1;
+                                        columna[postRef].domingoFin1RangoDescanso = variableBuffer2;
+                                        columna[postRef].domingoInicio2RangoDescanso = variableBuffer3;
+                                        columna[postRef].domingoFin2RangoDescanso = variableBuffer4;
+                                        columna[postRef].tipoServicio =
+                                            columna[postRef].tipoServicio ?
+                                                columna[postRef].tipoServicio :
+                                                objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].domingoTipoServicio;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'domingoInicio1RangoDescanso');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    default:
+                                }
+                                break;
+                            case 'cantidad':
+                                switch (diaSemana) {
+                                    case 'Lunes':
+                                        mySplitDia = postRef.split('Lunes');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = false;
+                                        columna[postRef].lunesCantidad = variableBuffer1;
+                                        columna[postRef].tipoServicio =
+                                            columna[postRef].tipoServicio ?
+                                                columna[postRef].tipoServicio :
+                                                objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].lunesTipoServicio;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'lunesCantidad');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Martes':
+                                        mySplitDia = postRef.split('Martes');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = false;
+                                        columna[postRef].martesCantidad = variableBuffer1;
+                                        columna[postRef].tipoServicio =
+                                            columna[postRef].tipoServicio ?
+                                                columna[postRef].tipoServicio :
+                                                objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].martesTipoServicio;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'martesCantidad');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Miércoles':
+                                        mySplitDia = postRef.split('Miércoles');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = false;
+                                        columna[postRef].miercolesCantidad = variableBuffer1;
+                                        columna[postRef].tipoServicio =
+                                            columna[postRef].tipoServicio ?
+                                                columna[postRef].tipoServicio :
+                                                objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].miercolesTipoServicio;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'miercolesCantidad');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Jueves':
+                                        mySplitDia = postRef.split('Jueves');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = false;
+                                        columna[postRef].juevesCantidad = variableBuffer1;
+                                        columna[postRef].tipoServicio =
+                                            columna[postRef].tipoServicio ?
+                                                columna[postRef].tipoServicio :
+                                                objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].juevesTipoServicio;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'juevesCantidad');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Viernes':
+                                        mySplitDia = postRef.split('Viernes');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = false;
+                                        columna[postRef].viernesCantidad = variableBuffer1;
+                                        columna[postRef].tipoServicio =
+                                            columna[postRef].tipoServicio ?
+                                                columna[postRef].tipoServicio :
+                                                objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].viernesTipoServicio;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'viernesCantidad');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Sábado':
+                                        mySplitDia = postRef.split('Sábado');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = false;
+                                        columna[postRef].sabadoCantidad = variableBuffer1;
+                                        columna[postRef].tipoServicio =
+                                            columna[postRef].tipoServicio ?
+                                                columna[postRef].tipoServicio :
+                                                objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].sabadoTipoServicio;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'sabadoCantidad');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    case 'Domingo':
+                                        mySplitDia = postRef.split('Domingo');
+                                        numeroDia = mySplitDia[1];
+                                        objetoStateFestivos['estadoFestivoDia' + numeroDia] = false;
+                                        columna[postRef].domingoCantidad = variableBuffer1;
+                                        columna[postRef].tipoServicio =
+                                            columna[postRef].tipoServicio ?
+                                                columna[postRef].tipoServicio :
+                                                objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].domingoTipoServicio;
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'domingoCantidad');
+                                        switch (festivoComputable.servicio) {
+                                            case 'LIM':
+                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIME':
+                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIMP':
+                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
+                                                break;
+                                            case 'NAVE2':
+                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
+                                                break;
+                                            case 'REFZ':
+                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM1':
+                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
+                                                break;
+                                            case 'LIM2':
+                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
+                                                break;
+                                            case 'FEST':
+                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
+                                                break;
+                                            default:
+                                        };
+                                        break;
+                                    default:
+                                }
+                                break;
+                            default:
+                        };                       
+                        objetoBuffer = { ...objetoBuffer, activo: false };
+                        arrayBuffer[cuadranteEnUsoCuadrantes - 1] = [...arrayBuffer[cuadranteEnUsoCuadrantes - 1]];
+                        objetoBuffer = arrayBuffer[cuadranteEnUsoCuadrantes - 1][indexABorrar];
+                        arrayBuffer[cuadranteEnUsoCuadrantes - 1][indexABorrar] = objetoBuffer;
+                        dispatch(setBufferSwitchedDiasFestivosCuadranteAccion(arrayBuffer));
+                        arrayCuadrante[indexFor] = columna;
+                        dispatch(setCuadranteAccion(arrayCuadrante));
+                        dispatch(setStateFestivoAccion(objetoStateFestivos));
+                    };
+                };
+            });
