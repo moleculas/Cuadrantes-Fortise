@@ -148,7 +148,8 @@ const Constantes = {
         { value: 'baja', label: 'Baja' },
         { value: 'vacaciones', label: 'Vacaciones' },
         { value: 'excedencia', label: 'Excedencia' },
-        { value: 'personales', label: 'Ausencia por motivos personales' }
+        { value: 'personales', label: 'Ausencia por motivos personales' },
+        { value: 'reserva', label: 'Reserva' }
     ],
     CALENDARIO_FESTIVOS: festivos,
     VARIACIONES_CUADRANTES: [

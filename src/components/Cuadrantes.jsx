@@ -327,6 +327,7 @@ const Cuadrantes = (props) => {
     const itemPrevioEditando = useSelector(store => store.variablesCuadrantesSetters.itemPrevioEditando);
     const bufferSwitchedDiasFestivosCuadranteDesactivados = useSelector(store => store.variablesCuadrantesSetters.bufferSwitchedDiasFestivosCuadranteDesactivados);
     const bufferSwitchedDiasFestivosCuadrante = useSelector(store => store.variablesCuadrantesSetters.bufferSwitchedDiasFestivosCuadrante);
+    const trabajadoresEnCuadrante = useSelector(store => store.variablesCuadrantesSetters.trabajadoresEnCuadrante);
 
     //helpers
 
@@ -429,10 +430,7 @@ const Cuadrantes = (props) => {
                 dispatch(setCalendarioAGestionarAccion(preValueCalendarioAGestionarReseteo));
                 dispatch(setPreValueCalendarioAGestionarReseteoAccion(null));
             };
-        };
-        if (controladorDeEstado === 'venimosDeRegistrar') {
-            dispatch(setControladorDeEstadoAccion('inicio'));
-        };
+        };        
         if (controladorDeEstado === 'venimosDeInforme') {
             dispatch(setControladorDeEstadoAccion('inicio'));
         };
@@ -464,8 +462,8 @@ const Cuadrantes = (props) => {
             dispatch(activarDesactivarCambioBotonResetearAccion(true));
         };
         if (cuadranteRegistrado === 'si') {
-            if (!estadoVenimosDeRegistrados && !venimosDeCambioCuadrante) {
-                dispatch(gestionaCuadranteIndividualAccion(cuadranteEnUsoCuadrantes, false));
+            if (!estadoVenimosDeRegistrados && !venimosDeCambioCuadrante) {                
+                // dispatch(gestionaCuadranteIndividualAccion(cuadranteEnUsoCuadrantes, false));
                 dispatch(cambioEstadoInicioCuadrantesAccion(false));
                 dispatch(activarDesactivarCambioBotonRegistrarAccion(false));
                 dispatch(registrarIntervencionCuadranteNuevoAccion(true));
@@ -1970,7 +1968,7 @@ const Cuadrantes = (props) => {
                 prTituloDialog={tituloDialogCuadrantes5}
                 prDescripcionDialog={descripcionDialogCuadrantes5}
             />
-            {/* {console.log(objetoCuadrante)} */}
+            {console.log(objetoCuadrante)}
         </div >
     )
 }

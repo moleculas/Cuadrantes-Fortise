@@ -324,6 +324,14 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                     break;
                 default:
             };
+            if (inicioRango === finRango) {
+                setAlert({
+                    mensaje: "La fecha de final no puede ser igual a la fecha de inicio.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return;
+            };
             const objetoBajasHistoricoMes = {
                 tipo: valuesFormEdicion.estado,
                 inicio: inicioRango,
@@ -470,7 +478,7 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                             return;
                         };
 
-                        if (valuesFormEdicion.estado !== 'alta') {
+                        if (valuesFormEdicion.estado === 'baja' || valuesFormEdicion.estado === 'vacaciones' || valuesFormEdicion.estado === 'excedencia' || valuesFormEdicion.estado === 'personales') {
                             if (!valueDatePickerInicioEdicion && !valueDatePickerFinEdicion) {
                                 setAlert({
                                     mensaje: "El rango de fechas del estado laboral está incompleto.",

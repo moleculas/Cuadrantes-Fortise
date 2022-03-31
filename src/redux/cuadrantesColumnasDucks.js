@@ -469,49 +469,56 @@ export const limpiarCuadranteAccion = (elCuadrante) => (dispatch, getState) => {
                     if (prop.includes('Lunes')) {
                         if (cuadranteColumna[prop].lunesInicioRango ||
                             cuadranteColumna[prop].baja ||
-                            cuadranteColumna[prop].festivo) {
+                            cuadranteColumna[prop].festivo ||
+                            cuadranteColumna[prop].observaciones) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
                     if (prop.includes('Martes')) {
                         if (cuadranteColumna[prop].martesInicioRango ||
                             cuadranteColumna[prop].baja ||
-                            cuadranteColumna[prop].festivo) {
+                            cuadranteColumna[prop].festivo ||
+                            cuadranteColumna[prop].observaciones) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
                     if (prop.includes('Miércoles')) {
                         if (cuadranteColumna[prop].miercolesInicioRango ||
                             cuadranteColumna[prop].baja ||
-                            cuadranteColumna[prop].festivo) {
+                            cuadranteColumna[prop].festivo ||
+                            cuadranteColumna[prop].observaciones) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
                     if (prop.includes('Jueves')) {
                         if (cuadranteColumna[prop].juevesInicioRango ||
                             cuadranteColumna[prop].baja ||
-                            cuadranteColumna[prop].festivo) {
+                            cuadranteColumna[prop].festivo ||
+                            cuadranteColumna[prop].observaciones) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
                     if (prop.includes('Viernes')) {
                         if (cuadranteColumna[prop].viernesInicioRango ||
                             cuadranteColumna[prop].baja ||
-                            cuadranteColumna[prop].festivo) {
+                            cuadranteColumna[prop].festivo ||
+                            cuadranteColumna[prop].observaciones) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
                     if (prop.includes('Sábado')) {
                         if (cuadranteColumna[prop].sabadoInicioRango ||
                             cuadranteColumna[prop].baja ||
-                            cuadranteColumna[prop].festivo) {
+                            cuadranteColumna[prop].festivo ||
+                            cuadranteColumna[prop].observaciones) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
                     if (prop.includes('Domingo')) {
                         if (cuadranteColumna[prop].domingoInicioRango ||
                             cuadranteColumna[prop].baja ||
-                            cuadranteColumna[prop].festivo) {
+                            cuadranteColumna[prop].festivo ||
+                            cuadranteColumna[prop].observaciones) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
@@ -522,49 +529,56 @@ export const limpiarCuadranteAccion = (elCuadrante) => (dispatch, getState) => {
                     if (prop.includes('Lunes')) {
                         if (cuadranteColumna[prop].lunesInicio1RangoDescanso ||
                             cuadranteColumna[prop].baja ||
-                            cuadranteColumna[prop].festivo) {
+                            cuadranteColumna[prop].festivo ||
+                            cuadranteColumna[prop].observaciones) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
                     if (prop.includes('Martes')) {
                         if (cuadranteColumna[prop].martesInicio1RangoDescanso ||
                             cuadranteColumna[prop].baja ||
-                            cuadranteColumna[prop].festivo) {
+                            cuadranteColumna[prop].festivo ||
+                            cuadranteColumna[prop].observaciones) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
                     if (prop.includes('Miércoles')) {
                         if (cuadranteColumna[prop].miercolesInicio1RangoDescanso ||
                             cuadranteColumna[prop].baja ||
-                            cuadranteColumna[prop].festivo) {
+                            cuadranteColumna[prop].festivo ||
+                            cuadranteColumna[prop].observaciones) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
                     if (prop.includes('Jueves')) {
                         if (cuadranteColumna[prop].juevesInicio1RangoDescanso ||
                             cuadranteColumna[prop].baja ||
-                            cuadranteColumna[prop].festivo) {
+                            cuadranteColumna[prop].festivo ||
+                            cuadranteColumna[prop].observaciones) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
                     if (prop.includes('Viernes')) {
                         if (cuadranteColumna[prop].viernesInicio1RangoDescanso ||
                             cuadranteColumna[prop].baja ||
-                            cuadranteColumna[prop].festivo) {
+                            cuadranteColumna[prop].festivo ||
+                            cuadranteColumna[prop].observaciones) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
                     if (prop.includes('Sábado')) {
                         if (cuadranteColumna[prop].sabadoInicio1RangoDescanso ||
                             cuadranteColumna[prop].baja ||
-                            cuadranteColumna[prop].festivo) {
+                            cuadranteColumna[prop].festivo ||
+                            cuadranteColumna[prop].observaciones) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
                     if (prop.includes('Domingo')) {
                         if (cuadranteColumna[prop].domingoInicio1RangoDescanso ||
                             cuadranteColumna[prop].baja ||
-                            cuadranteColumna[prop].festivo) {
+                            cuadranteColumna[prop].festivo ||
+                            cuadranteColumna[prop].observaciones) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
@@ -575,49 +589,56 @@ export const limpiarCuadranteAccion = (elCuadrante) => (dispatch, getState) => {
                     if (prop.includes('Lunes')) {
                         if (cuadranteColumna[prop].lunesCantidad ||
                             cuadranteColumna[prop].baja ||
-                            cuadranteColumna[prop].festivo) {
+                            cuadranteColumna[prop].festivo ||
+                            cuadranteColumna[prop].observaciones) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
                     if (prop.includes('Martes')) {
                         if (cuadranteColumna[prop].martesCantidad ||
                             cuadranteColumna[prop].baja ||
-                            cuadranteColumna[prop].festivo) {
+                            cuadranteColumna[prop].festivo ||
+                            cuadranteColumna[prop].observaciones) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
                     if (prop.includes('Miércoles')) {
                         if (cuadranteColumna[prop].miercolesCantidad ||
                             cuadranteColumna[prop].baja ||
-                            cuadranteColumna[prop].festivo) {
+                            cuadranteColumna[prop].festivo ||
+                            cuadranteColumna[prop].observaciones) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
                     if (prop.includes('Jueves')) {
                         if (cuadranteColumna[prop].juevesCantidad ||
                             cuadranteColumna[prop].baja ||
-                            cuadranteColumna[prop].festivo) {
+                            cuadranteColumna[prop].festivo ||
+                            cuadranteColumna[prop].observaciones) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
                     if (prop.includes('Viernes')) {
                         if (cuadranteColumna[prop].viernesCantidad ||
                             cuadranteColumna[prop].baja ||
-                            cuadranteColumna[prop].festivo) {
+                            cuadranteColumna[prop].festivo ||
+                            cuadranteColumna[prop].observaciones) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
                     if (prop.includes('Sábado')) {
                         if (cuadranteColumna[prop].sabadoCantidad ||
                             cuadranteColumna[prop].baja ||
-                            cuadranteColumna[prop].festivo) {
+                            cuadranteColumna[prop].festivo ||
+                            cuadranteColumna[prop].observaciones) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
                     if (prop.includes('Domingo')) {
                         if (cuadranteColumna[prop].domingoCantidad ||
                             cuadranteColumna[prop].baja ||
-                            cuadranteColumna[prop].festivo) {
+                            cuadranteColumna[prop].festivo ||
+                            cuadranteColumna[prop].observaciones) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
@@ -718,7 +739,7 @@ const retornaMinutosAccionEnCuadrantes = (primeraHora, segundaHora) => {
 };
 
 export const gestionarInformeAccion = () => (dispatch, getState) => {
-    const { cuadrante, objetoCuadrante } = getState().variablesCuadrantes;
+    const { cuadrante, objetoCuadrante, cuadranteRegistrado } = getState().variablesCuadrantes;
     const { cuadranteEnUsoCuadrantes } = getState().variablesCuadrantesSetters;
     let arrayResultante = [];
     let sumatorioHoras;
@@ -749,6 +770,24 @@ export const gestionarInformeAccion = () => (dispatch, getState) => {
     let totalHorasInicial_L2 = 0;
     let totalHorasInicial_F = 0;
     let totalHorasInicial = 0;
+    let totalHorasInicialTra_L = 0;
+    let totalHorasInicialTra_E = 0;
+    let totalHorasInicialTra_P = 0;
+    let totalHorasInicialTra_N = 0;
+    let totalHorasInicialTra_R = 0;
+    let totalHorasInicialTra_L1 = 0;
+    let totalHorasInicialTra_L2 = 0;
+    let totalHorasInicialTra_F = 0;
+    let totalHorasInicialTra = 0;
+    let totalHorasInicialSup_L = 0;
+    let totalHorasInicialSup_E = 0;
+    let totalHorasInicialSup_P = 0;
+    let totalHorasInicialSup_N = 0;
+    let totalHorasInicialSup_R = 0;
+    let totalHorasInicialSup_L1 = 0;
+    let totalHorasInicialSup_L2 = 0;
+    let totalHorasInicialSup_F = 0;
+    let totalHorasInicialSup = 0;
     let sumatorioHorasFestivasComputables_L = 0;
     let sumatorioHorasFestivasComputables_E = 0;
     let sumatorioHorasFestivasComputables_P = 0;
@@ -757,6 +796,22 @@ export const gestionarInformeAccion = () => (dispatch, getState) => {
     let sumatorioHorasFestivasComputables_L1 = 0;
     let sumatorioHorasFestivasComputables_L2 = 0;
     let sumatorioHorasFestivasComputables_F = 0;
+    let sumatorioHorasFestivasComputablesTra_L = 0;
+    let sumatorioHorasFestivasComputablesTra_E = 0;
+    let sumatorioHorasFestivasComputablesTra_P = 0;
+    let sumatorioHorasFestivasComputablesTra_N = 0;
+    let sumatorioHorasFestivasComputablesTra_R = 0;
+    let sumatorioHorasFestivasComputablesTra_L1 = 0;
+    let sumatorioHorasFestivasComputablesTra_L2 = 0;
+    let sumatorioHorasFestivasComputablesTra_F = 0;
+    let sumatorioHorasFestivasComputablesSup_L = 0;
+    let sumatorioHorasFestivasComputablesSup_E = 0;
+    let sumatorioHorasFestivasComputablesSup_P = 0;
+    let sumatorioHorasFestivasComputablesSup_N = 0;
+    let sumatorioHorasFestivasComputablesSup_R = 0;
+    let sumatorioHorasFestivasComputablesSup_L1 = 0;
+    let sumatorioHorasFestivasComputablesSup_L2 = 0;
+    let sumatorioHorasFestivasComputablesSup_F = 0;
     let sumatorioTotalHorasNormal_L = 0;
     let sumatorioTotalHorasNormal_E = 0;
     let sumatorioTotalHorasNormal_P = 0;
@@ -765,7 +820,25 @@ export const gestionarInformeAccion = () => (dispatch, getState) => {
     let sumatorioTotalHorasNormal_L1 = 0;
     let sumatorioTotalHorasNormal_L2 = 0;
     let sumatorioTotalHorasNormal_F = 0;
+    let sumatorioTotalHorasNormalTra_L = 0;
+    let sumatorioTotalHorasNormalTra_E = 0;
+    let sumatorioTotalHorasNormalTra_P = 0;
+    let sumatorioTotalHorasNormalTra_N = 0;
+    let sumatorioTotalHorasNormalTra_R = 0;
+    let sumatorioTotalHorasNormalTra_L1 = 0;
+    let sumatorioTotalHorasNormalTra_L2 = 0;
+    let sumatorioTotalHorasNormalTra_F = 0;
+    let sumatorioTotalHorasNormalSup_L = 0;
+    let sumatorioTotalHorasNormalSup_E = 0;
+    let sumatorioTotalHorasNormalSup_P = 0;
+    let sumatorioTotalHorasNormalSup_N = 0;
+    let sumatorioTotalHorasNormalSup_R = 0;
+    let sumatorioTotalHorasNormalSup_L1 = 0;
+    let sumatorioTotalHorasNormalSup_L2 = 0;
+    let sumatorioTotalHorasNormalSup_F = 0;
     let sumatorioHorasBajasComputables = 0;
+    let sumatorioHorasBajasComputablesTra = 0;
+    let sumatorioHorasBajasComputablesSup = 0;
     cuadrante.forEach((cuadranteColumna, index) => {
         switch (cuadranteColumna.tipoHorario) {
             case 'rango':
@@ -2718,31 +2791,94 @@ export const gestionarInformeAccion = () => (dispatch, getState) => {
                 break;
             default:
         };
-        sumatorioHorasFestivasComputables_L += cuadranteColumna.horasFestivasComputables_L;
-        sumatorioHorasFestivasComputables_E += cuadranteColumna.horasFestivasComputables_E;
-        sumatorioHorasFestivasComputables_P += cuadranteColumna.horasFestivasComputables_P;
-        sumatorioHorasFestivasComputables_N += cuadranteColumna.horasFestivasComputables_N;
-        sumatorioHorasFestivasComputables_R += cuadranteColumna.horasFestivasComputables_R;
-        sumatorioHorasFestivasComputables_L1 += cuadranteColumna.horasFestivasComputables_L1;
-        sumatorioHorasFestivasComputables_L2 += cuadranteColumna.horasFestivasComputables_L2;
-        sumatorioHorasFestivasComputables_F += cuadranteColumna.horasFestivasComputables_F;
-        sumatorioTotalHorasNormal_L += sumatorioHorasNormal_L;
-        sumatorioTotalHorasNormal_E += sumatorioHorasNormal_E;
-        sumatorioTotalHorasNormal_P += sumatorioHorasNormal_P;
-        sumatorioTotalHorasNormal_N += sumatorioHorasNormal_N;
-        sumatorioTotalHorasNormal_R += sumatorioHorasNormal_R;
-        sumatorioTotalHorasNormal_L1 += sumatorioHorasNormal_L1;
-        sumatorioTotalHorasNormal_L2 += sumatorioHorasNormal_L2;
-        sumatorioTotalHorasNormal_F += sumatorioHorasNormal_F;
-        sumatorioHorasBajasComputables += cuadranteColumna.horasBajasComputables;
+        if (cuadranteColumna.tipoTrabajador === 'trabajador') {
+            sumatorioHorasFestivasComputablesTra_L += cuadranteColumna.horasFestivasComputables_L;
+            sumatorioHorasFestivasComputablesTra_E += cuadranteColumna.horasFestivasComputables_E;
+            sumatorioHorasFestivasComputablesTra_P += cuadranteColumna.horasFestivasComputables_P;
+            sumatorioHorasFestivasComputablesTra_N += cuadranteColumna.horasFestivasComputables_N;
+            sumatorioHorasFestivasComputablesTra_R += cuadranteColumna.horasFestivasComputables_R;
+            sumatorioHorasFestivasComputablesTra_L1 += cuadranteColumna.horasFestivasComputables_L1;
+            sumatorioHorasFestivasComputablesTra_L2 += cuadranteColumna.horasFestivasComputables_L2;
+            sumatorioHorasFestivasComputablesTra_F += cuadranteColumna.horasFestivasComputables_F;
+            sumatorioTotalHorasNormalTra_L += sumatorioHorasNormal_L;
+            sumatorioTotalHorasNormalTra_E += sumatorioHorasNormal_E;
+            sumatorioTotalHorasNormalTra_P += sumatorioHorasNormal_P;
+            sumatorioTotalHorasNormalTra_N += sumatorioHorasNormal_N;
+            sumatorioTotalHorasNormalTra_R += sumatorioHorasNormal_R;
+            sumatorioTotalHorasNormalTra_L1 += sumatorioHorasNormal_L1;
+            sumatorioTotalHorasNormalTra_L2 += sumatorioHorasNormal_L2;
+            sumatorioTotalHorasNormalTra_F += sumatorioHorasNormal_F;
+            sumatorioHorasBajasComputablesTra += cuadranteColumna.horasBajasComputables;
+        } else {
+            sumatorioHorasFestivasComputablesSup_L += cuadranteColumna.horasFestivasComputables_L;
+            sumatorioHorasFestivasComputablesSup_E += cuadranteColumna.horasFestivasComputables_E;
+            sumatorioHorasFestivasComputablesSup_P += cuadranteColumna.horasFestivasComputables_P;
+            sumatorioHorasFestivasComputablesSup_N += cuadranteColumna.horasFestivasComputables_N;
+            sumatorioHorasFestivasComputablesSup_R += cuadranteColumna.horasFestivasComputables_R;
+            sumatorioHorasFestivasComputablesSup_L1 += cuadranteColumna.horasFestivasComputables_L1;
+            sumatorioHorasFestivasComputablesSup_L2 += cuadranteColumna.horasFestivasComputables_L2;
+            sumatorioHorasFestivasComputablesSup_F += cuadranteColumna.horasFestivasComputables_F;
+            sumatorioTotalHorasNormalSup_L += sumatorioHorasNormal_L;
+            sumatorioTotalHorasNormalSup_E += sumatorioHorasNormal_E;
+            sumatorioTotalHorasNormalSup_P += sumatorioHorasNormal_P;
+            sumatorioTotalHorasNormalSup_N += sumatorioHorasNormal_N;
+            sumatorioTotalHorasNormalSup_R += sumatorioHorasNormal_R;
+            sumatorioTotalHorasNormalSup_L1 += sumatorioHorasNormal_L1;
+            sumatorioTotalHorasNormalSup_L2 += sumatorioHorasNormal_L2;
+            sumatorioTotalHorasNormalSup_F += sumatorioHorasNormal_F;
+            sumatorioHorasBajasComputablesSup += cuadranteColumna.horasBajasComputables;
+        };
+        sumatorioHorasFestivasComputables_L = sumatorioHorasFestivasComputablesTra_L + sumatorioHorasFestivasComputablesSup_L;
+        sumatorioHorasFestivasComputables_E = sumatorioHorasFestivasComputablesTra_E + sumatorioHorasFestivasComputablesSup_E;
+        sumatorioHorasFestivasComputables_P = sumatorioHorasFestivasComputablesTra_P + sumatorioHorasFestivasComputablesSup_P;
+        sumatorioHorasFestivasComputables_N = sumatorioHorasFestivasComputablesTra_N + sumatorioHorasFestivasComputablesSup_N;
+        sumatorioHorasFestivasComputables_R = sumatorioHorasFestivasComputablesTra_R + sumatorioHorasFestivasComputablesSup_R;
+        sumatorioHorasFestivasComputables_L1 = sumatorioHorasFestivasComputablesTra_L1 + sumatorioHorasFestivasComputablesSup_L1;
+        sumatorioHorasFestivasComputables_L2 = sumatorioHorasFestivasComputablesTra_L2 + sumatorioHorasFestivasComputablesSup_L2;
+        sumatorioHorasFestivasComputables_F = sumatorioHorasFestivasComputablesTra_F + sumatorioHorasFestivasComputablesSup_F;
+        sumatorioTotalHorasNormal_L = sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L;
+        sumatorioTotalHorasNormal_E = sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E;
+        sumatorioTotalHorasNormal_P = sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P;
+        sumatorioTotalHorasNormal_N = sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N;
+        sumatorioTotalHorasNormal_R = sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R;
+        sumatorioTotalHorasNormal_L1 = sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1;
+        sumatorioTotalHorasNormal_L2 = sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2;
+        sumatorioTotalHorasNormal_F = sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F;
+        sumatorioHorasBajasComputables = sumatorioHorasBajasComputablesTra + sumatorioHorasBajasComputablesSup;
     });
     let objetoDatosInforme = {};
     let totalMensualPactado;
     let proporcion;
     let sumatorioHorasFestivasTotal;
     //gestion mensualPactado    
-    let cantidadMensualPactado = parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado);   
+    let cantidadMensualPactado = parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado);
     if (cantidadMensualPactado >= 0) {
+        let trabajadoresRecorridos = 0;
+        let resultadoIniciado;
+        for (let i = 0; i < cuadrante.length; i++) {
+            if (cuadrante[i].tipoTrabajador === 'trabajador') {
+                trabajadoresRecorridos += 1;
+            };
+        };
+        if (cuadranteRegistrado === 'no') {
+            if (trabajadoresRecorridos === objetoCuadrante.datosTrabajadoresIniciales.datosTrabajadoresIniciales[cuadranteEnUsoCuadrantes - 1].cantidad) {
+                resultadoIniciado = true;
+            } else {
+                resultadoIniciado = false;
+            };
+        } else {
+            let trabajadoresRecorridosRegistrados = 0;
+            for (let i = 0; i < objetoCuadrante.datosCuadrante.datosCuadrante[cuadranteEnUsoCuadrantes - 1].arrayCuadrante.length; i++) {
+                if (objetoCuadrante.datosCuadrante.datosCuadrante[cuadranteEnUsoCuadrantes - 1].arrayCuadrante[i].tipoTrabajador === 'trabajador') {
+                    trabajadoresRecorridosRegistrados += 1;
+                };
+            };
+            if (trabajadoresRecorridosRegistrados === trabajadoresRecorridos) {
+                resultadoIniciado = true;
+            } else {
+                resultadoIniciado = false;
+            };
+        };
         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].iniciado) {
             //caudrante iniciado
             //control de excepciones
@@ -2805,36 +2941,53 @@ export const gestionarInformeAccion = () => (dispatch, getState) => {
         } else {
             //caudrante no iniciado 
             //control de excepciones
+            totalHorasInicialTra_L = sumatorioTotalHorasNormalTra_L + sumatorioHorasFestivasComputablesTra_L;
+            totalHorasInicialTra_E = sumatorioTotalHorasNormalTra_E + sumatorioHorasFestivasComputablesTra_E;
+            totalHorasInicialTra_P = sumatorioTotalHorasNormalTra_P + sumatorioHorasFestivasComputablesTra_P;
+            totalHorasInicialTra_N = sumatorioTotalHorasNormalTra_N + sumatorioHorasFestivasComputablesTra_N;
+            totalHorasInicialTra_R = sumatorioTotalHorasNormalTra_R + sumatorioHorasFestivasComputablesTra_R;
+            totalHorasInicialTra_L1 = sumatorioTotalHorasNormalTra_L1 + sumatorioHorasFestivasComputablesTra_L1;
+            totalHorasInicialTra_L2 = sumatorioTotalHorasNormalTra_L2 + sumatorioHorasFestivasComputablesTra_L2;
+            totalHorasInicialTra_F = sumatorioTotalHorasNormalTra_F + sumatorioHorasFestivasComputablesTra_F;
+            totalHorasInicialTra =
+                totalHorasInicialTra_L +
+                totalHorasInicialTra_E +
+                totalHorasInicialTra_P +
+                totalHorasInicialTra_N +
+                totalHorasInicialTra_R +
+                totalHorasInicialTra_L1 +
+                totalHorasInicialTra_L2 +
+                totalHorasInicialTra_F;
+            totalHorasInicialSup_L = sumatorioTotalHorasNormalSup_L + sumatorioHorasFestivasComputablesSup_L;
+            totalHorasInicialSup_E = sumatorioTotalHorasNormalSup_E + sumatorioHorasFestivasComputablesSup_E;
+            totalHorasInicialSup_P = sumatorioTotalHorasNormalSup_P + sumatorioHorasFestivasComputablesSup_P;
+            totalHorasInicialSup_N = sumatorioTotalHorasNormalSup_N + sumatorioHorasFestivasComputablesSup_N;
+            totalHorasInicialSup_R = sumatorioTotalHorasNormalSup_R + sumatorioHorasFestivasComputablesSup_R;
+            totalHorasInicialSup_L1 = sumatorioTotalHorasNormalSup_L1 + sumatorioHorasFestivasComputablesSup_L1;
+            totalHorasInicialSup_L2 = sumatorioTotalHorasNormalSup_L2 + sumatorioHorasFestivasComputablesSup_L2;
+            totalHorasInicialSup_F = sumatorioTotalHorasNormalSup_F + sumatorioHorasFestivasComputablesSup_F;
+            totalHorasInicialSup =
+                totalHorasInicialSup_L +
+                totalHorasInicialSup_E +
+                totalHorasInicialSup_P +
+                totalHorasInicialSup_N +
+                totalHorasInicialSup_R +
+                totalHorasInicialSup_L1 +
+                totalHorasInicialSup_L2 +
+                totalHorasInicialSup_F;
+            totalHorasInicial_L = totalHorasInicialTra_L + totalHorasInicialSup_L;
+            totalHorasInicial_E = totalHorasInicialTra_E + totalHorasInicialSup_E;
+            totalHorasInicial_P = totalHorasInicialTra_P + totalHorasInicialSup_P;
+            totalHorasInicial_N = totalHorasInicialTra_N + totalHorasInicialSup_N;
+            totalHorasInicial_R = totalHorasInicialTra_R + totalHorasInicialSup_R;
+            totalHorasInicial_L1 = totalHorasInicialTra_L1 + totalHorasInicialSup_L1;
+            totalHorasInicial_L2 = totalHorasInicialTra_L2 + totalHorasInicialSup_L2;
+            totalHorasInicial_F = totalHorasInicialTra_F + totalHorasInicialSup_F;
+            totalHorasInicial = totalHorasInicialTra + totalHorasInicialSup;
+            proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial / (totalHorasInicialTra + (sumatorioHorasBajasComputablesTra - (totalHorasInicialSup + sumatorioHorasBajasComputablesSup)));
+            totalMensualPactado = totalHorasInicialTra * proporcion;
             switch (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].excepcion) {
-                case 1:
-                    totalHorasInicial_L = sumatorioTotalHorasNormal_L + sumatorioHorasFestivasComputables_L;
-                    totalHorasInicial_E = sumatorioTotalHorasNormal_E + sumatorioHorasFestivasComputables_E;
-                    totalHorasInicial_P = sumatorioTotalHorasNormal_P + sumatorioHorasFestivasComputables_P;
-                    totalHorasInicial_N = sumatorioTotalHorasNormal_N + sumatorioHorasFestivasComputables_N;
-                    totalHorasInicial_R = sumatorioTotalHorasNormal_R + sumatorioHorasFestivasComputables_R;
-                    totalHorasInicial_L1 = sumatorioTotalHorasNormal_L1 + sumatorioHorasFestivasComputables_L1;
-                    totalHorasInicial_L2 = sumatorioTotalHorasNormal_L2 + sumatorioHorasFestivasComputables_L2;
-                    totalHorasInicial_F = sumatorioTotalHorasNormal_F + sumatorioHorasFestivasComputables_F;
-                    totalHorasInicial =
-                        totalHorasInicial_L +
-                        totalHorasInicial_E +
-                        totalHorasInicial_P +
-                        totalHorasInicial_N +
-                        totalHorasInicial_R +
-                        totalHorasInicial_L1 +
-                        totalHorasInicial_L2 +
-                        totalHorasInicial_F;
-                    sumatorioHorasFestivasTotal =
-                        sumatorioHorasFestivasComputables_L +
-                        sumatorioHorasFestivasComputables_E +
-                        sumatorioHorasFestivasComputables_P +
-                        sumatorioHorasFestivasComputables_N +
-                        sumatorioHorasFestivasComputables_R +
-                        sumatorioHorasFestivasComputables_L1 +
-                        sumatorioHorasFestivasComputables_L2 +
-                        sumatorioHorasFestivasComputables_F;
-                    proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado / (totalHorasInicial + sumatorioHorasBajasComputables);
-                    totalMensualPactado = (totalHorasInicial * proporcion) - (sumatorioHorasFestivasTotal * proporcion);
+                case 1:                   
                     if (sumatorioHorasFestivasComputables_L > 0) {
                         objetoDatosInforme['horasFestivasComputables_L'] = sumatorioHorasFestivasComputables_L;
                     };
@@ -2867,7 +3020,7 @@ export const gestionarInformeAccion = () => (dispatch, getState) => {
                     objetoDatosInforme = {
                         ...objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1],
                         mensualPactado: totalMensualPactado,
-                        iniciado: true,
+                        iniciado: resultadoIniciado,
                         totalHorasInicial_L: totalHorasInicial_L > 0 ? totalHorasInicial_L : null,
                         totalHorasInicial_E: totalHorasInicial_E > 0 ? totalHorasInicial_E : null,
                         totalHorasInicial_P: totalHorasInicial_P > 0 ? totalHorasInicial_P : null,
@@ -2880,26 +3033,7 @@ export const gestionarInformeAccion = () => (dispatch, getState) => {
                         proporcion: proporcion,
                     };
                     break;
-                case '':
-                    totalHorasInicial_L = sumatorioTotalHorasNormal_L + sumatorioHorasFestivasComputables_L;
-                    totalHorasInicial_E = sumatorioTotalHorasNormal_E + sumatorioHorasFestivasComputables_E;
-                    totalHorasInicial_P = sumatorioTotalHorasNormal_P + sumatorioHorasFestivasComputables_P;
-                    totalHorasInicial_N = sumatorioTotalHorasNormal_N + sumatorioHorasFestivasComputables_N;
-                    totalHorasInicial_R = sumatorioTotalHorasNormal_R + sumatorioHorasFestivasComputables_R;
-                    totalHorasInicial_L1 = sumatorioTotalHorasNormal_L1 + sumatorioHorasFestivasComputables_L1;
-                    totalHorasInicial_L2 = sumatorioTotalHorasNormal_L2 + sumatorioHorasFestivasComputables_L2;
-                    totalHorasInicial_F = sumatorioTotalHorasNormal_F + sumatorioHorasFestivasComputables_F;
-                    totalHorasInicial =
-                        totalHorasInicial_L +
-                        totalHorasInicial_E +
-                        totalHorasInicial_P +
-                        totalHorasInicial_N +
-                        totalHorasInicial_R +
-                        totalHorasInicial_L1 +
-                        totalHorasInicial_L2 +
-                        totalHorasInicial_F;
-                    proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado / (totalHorasInicial + sumatorioHorasBajasComputables);
-                    totalMensualPactado = totalHorasInicial * proporcion;
+                case '':                   
                     if (sumatorioHorasFestivasComputables_L > 0) {
                         objetoDatosInforme['horasFestivasComputables_L'] = sumatorioHorasFestivasComputables_L;
                     };
@@ -2932,7 +3066,7 @@ export const gestionarInformeAccion = () => (dispatch, getState) => {
                     objetoDatosInforme = {
                         ...objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1],
                         mensualPactado: totalMensualPactado,
-                        iniciado: true,
+                        iniciado: resultadoIniciado,
                         totalHorasInicial_L: totalHorasInicial_L > 0 ? totalHorasInicial_L : null,
                         totalHorasInicial_E: totalHorasInicial_E > 0 ? totalHorasInicial_E : null,
                         totalHorasInicial_P: totalHorasInicial_P > 0 ? totalHorasInicial_P : null,
@@ -2963,20 +3097,42 @@ export const gestionarInformeAccion = () => (dispatch, getState) => {
     return arrayResultante;
 };
 
-const retornaTipoBajaPorHistorico = (dia, historico) => {
+function calculoDiasTotalesPorMes(month, year) {
+    return new Date(year, month, 0).getDate();
+};
+
+const retornaTipoBajaPorHistorico = (dia, historico) => (dispatch, getState) => {
+    const { calendarioAGestionar } = getState().variablesCuadrantes;
+    let myArrSplitCalendario = calendarioAGestionar.split("-");
+    const mesCalendario = parseInt(myArrSplitCalendario[1]);
+    const anyoCalendario = parseInt(myArrSplitCalendario[0]);
     let elRetorno;
     historico.forEach((registro, index) => {
         let inicioSplitted = registro.baja[0].inicio.split("-");
-        let diaInicio = parseInt(inicioSplitted[2]);
         let finSplitted = registro.baja[0].fin.split("-");
-        let diaFin = parseInt(finSplitted[2]);
+        let mesInicio = parseInt(inicioSplitted[1]);
+        let mesFin = parseInt(finSplitted[1]);
+        let diaInicio;
+        let diaFin;
+        if (mesInicio < mesCalendario && mesFin === mesCalendario) {
+            diaInicio = 1;
+            diaFin = parseInt(finSplitted[2]);
+        };
+        if (mesInicio === mesCalendario && mesFin === mesCalendario) {
+            diaInicio = parseInt(inicioSplitted[2]);
+            diaFin = parseInt(finSplitted[2]);
+        };
+        if (mesInicio === mesCalendario && mesFin > mesCalendario) {
+            diaInicio = parseInt(inicioSplitted[2]);
+            diaFin = calculoDiasTotalesPorMes(mesCalendario, anyoCalendario);
+        };
         const rangoHistorico = [];
-        for (let i = diaInicio; i < diaFin; i++) {
+        for (let i = diaInicio; i <= diaFin; i++) {
             rangoHistorico.push(i)
         };
         if (rangoHistorico.includes(dia)) {
             elRetorno = registro.baja[0].tipo;
-        }
+        };
     });
     return elRetorno;
 };
@@ -3506,7 +3662,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
         };
         if (trabajador.historicoBajas) {
             trabajador.historicoBajas.meses.forEach((registro, index) => {
-                if (registro.mes === calendarioAGestionar) {
+                if (registro.mes >= calendarioAGestionar) {
                     arrayRegistrosHistorico.push(registro);
                     columnaAnadir['hayBaja'] = true;
                 } else {
@@ -3604,7 +3760,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     lunesFinRango: null,
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -3794,7 +3950,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     martesFinRango: null,
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -3984,7 +4140,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     miercolesFinRango: null,
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -4174,7 +4330,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     juevesFinRango: null,
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -4364,7 +4520,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     viernesFinRango: null,
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -4554,7 +4710,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     sabadoFinRango: null,
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -4744,7 +4900,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     domingoFinRango: null,
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -4946,7 +5102,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     lunesFin2RangoDescanso: null,
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -5154,7 +5310,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     martesFin2RangoDescanso: null,
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -5362,7 +5518,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     miercolesFin2RangoDescanso: null,
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -5570,7 +5726,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     juevesFin2RangoDescanso: null,
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -5778,7 +5934,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     viernesFin2RangoDescanso: null,
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -5986,7 +6142,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     sabadoFin2RangoDescanso: null,
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -6194,7 +6350,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     domingoFin2RangoDescanso: null,
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -6399,7 +6555,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     lunesCantidad: '',
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -6580,7 +6736,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     martesCantidad: '',
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -6761,7 +6917,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     miercolesCantidad: '',
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -6942,7 +7098,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     juevesCantidad: '',
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -7123,7 +7279,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     viernesCantidad: '',
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -7304,7 +7460,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     sabadoCantidad: '',
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -7485,7 +7641,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     domingoCantidad: '',
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -7670,7 +7826,6 @@ export const gestionaColumnaCuadranteAccion = (trabajador, tipoTrabajador, esRev
         posicionTrabajadorPrevioACambiar,
         posicionSuplentePrevioACambiar
     } = getState().variablesCuadrantesSetters;
-
     let posicionTrabajador;
     if (objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistro === 'individual') {
         if (tipoTrabajador === 'trabajador') {

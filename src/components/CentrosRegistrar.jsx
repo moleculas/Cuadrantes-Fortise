@@ -1039,6 +1039,17 @@ const CentrosRegistrar = forwardRef((props, ref) => {
 
     const handleChangeFormRegistroSelectsTrabajadores = (tipo, index) => (e) => {
         let encontrado = false;
+        if (e.target.value) {
+            let trabajadorSeleccionado = listadoTrabajadores.find(trabajador => trabajador.id === e.target.value);
+            if (trabajadorSeleccionado.estado === 'reserva') {
+                setAlert({
+                    mensaje: "El trabajador está en Reserva, selecciona otro o cambia sus estado.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return;
+            };
+        };
         trabajadoresRegistro.trabajadores.map((trabajador, index) => {
             if ((trabajador['trabajador_' + (index + 1)] === e.target.value || trabajador['suplente_' + (index + 1)] === e.target.value) && e.target.value) {
                 setAlert({

@@ -107,6 +107,8 @@ const Menu = (props) => {
             dispatch(setCategoriaAccion(''));
             dispatch(setAnchorElMenuAccion(null));
             dispatch(forzarRecargaGraficosCuadrantesAccion(true));
+            dispatch(vaciarDatosCentrosAccion());
+            dispatch(vaciarDatosTrabajadoresAccion());
         };
     };
 

@@ -126,7 +126,7 @@ export const retornaInfoFabButtonAccion = () => (dispatch, getState) => {
             sumatorioHoras_L2 += (dato.totalHorasNormal_L2 + dato.totalHorasExtra_L2);
             sumatorioHoras_F += (dato.totalHorasNormal_F + dato.totalHorasExtra_F);
             sumatorioTotal += dato.totalHoras;
-        });
+        });        
         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 1) {
             return cuadranteMultiple + 'Horas: ' + parseFloat(sumatorioTotal).toFixed(2) + ' - Total: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado + sumatorioServiciosFijos).toFixed(2) + ' €';
         };
