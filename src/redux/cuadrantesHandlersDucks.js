@@ -69,6 +69,7 @@ import { setStateSwitchTipoServicioFijoCuadranteAccion } from './cuadrantesServi
 import { setCambiadaConfiguracionGeneralAccion } from './cuadrantesSettersDucks';
 import { setEstamosActualizandoCuadranteSinCargaAccion } from './cuadrantesSettersDucks';
 import { gestionaDiasFestivosOBajas } from './cuadrantesColumnasDucks';
+import { handleClosePopoverGeneralAccion } from './cuadrantesPopoversDucks';
 
 //constantes
 const arrayFestivos = Constantes.CALENDARIO_FESTIVOS;
@@ -583,7 +584,7 @@ const cambiarEstadoBufferSwitchedDiasFestivos = (estado, postRef, arrayBuffer, e
     let objetoBuffer = {};
     let indiceObjeto;
     arrayBuffer.forEach((cuadrante, index) => {
-        if (cuadrante.length === 0) {           
+        if (cuadrante.length === 0) {
             objetoBuffer = { ...elObjetoBuffer };
             objetoBuffer.activo = estado;
             objetoBuffer.anadido = true;
@@ -609,7 +610,7 @@ const cambiarEstadoBufferSwitchedDiasFestivos = (estado, postRef, arrayBuffer, e
     return arrayBuffer;
 };
 
-export const traspasoBufferFestivosAccion = (esInicio) => (dispatch, getState) => {   
+export const traspasoBufferFestivosAccion = (esInicio) => (dispatch, getState) => {
     const { cuadrante, stateFestivo, objetoCuadrante } = getState().variablesCuadrantes;
     const { cuadranteEnUsoCuadrantes, bufferSwitchedDiasFestivosCuadrante } = getState().variablesCuadrantesSetters;
     const { objetoCentro } = getState().variablesCentros;
@@ -646,7 +647,7 @@ export const traspasoBufferFestivosAccion = (esInicio) => (dispatch, getState) =
         } else {
             esPrimeraVez ? indiceArray = 0 : indiceArray = cuadranteEnUsoCuadrantes - 1;
         };
-        arrayInicial[indiceArray].forEach((registroBuffer, index) => {           
+        arrayInicial[indiceArray].forEach((registroBuffer, index) => {
             postRef = Object.keys(registroBuffer)[0];
             objetoBuffer = {};
             objetoBuffer[postRef] = [];
@@ -685,7 +686,7 @@ export const traspasoBufferFestivosAccion = (esInicio) => (dispatch, getState) =
                 mySplitDia = postRef.split('Domingo');
                 numeroDia = mySplitDia[1];
             };
-            if (cuadrante.length > 0) {                
+            if (cuadrante.length > 0) {
                 let elHorarioCuadrante = objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1];
                 let tipoRegistro = elHorarioCuadrante.tipoRegistro;
                 let festivoComputable;
@@ -3492,7 +3493,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                 } else {
                     arrayBuffer[cuadranteEnUsoCuadrantes - 1].push(objetoBuffer);
                 };
-            } else {               
+            } else {
                 numeroCuadrantesCuadrantes.forEach((cuadrante, index) => {
                     if (index === cuadranteEnUsoCuadrantes - 1) {
                         arrayBuffer[index] = [];
@@ -4269,7 +4270,7 @@ export const gestionItemPrevioEditandoAccion = (tipo, valores) => (dispatch) => 
     }
 };
 
-export const handleRegistrarCambioEnCasillaAccion = (id, index, tipo) => (dispatch, getState) => {
+export const handleRegistrarCambioEnCasillaAccion = (id, index, tipo, scrollable, boxes, classes) => (dispatch, getState) => {
     const { itemPrevioEditando } = getState().variablesCuadrantesSetters;
     const { cuadrante, cuadranteRegistrado } = getState().variablesCuadrantes;
     const idSplitted = id.split("-");
@@ -5222,6 +5223,7 @@ export const handleRegistrarCambioEnCasillaAccion = (id, index, tipo) => (dispat
     };
     dispatch(registrarIntervencionAccion(false));
     dispatch(cambiarEstadoCuadranteEnUsoRevisadoAccion(false));
+    dispatch(handleClosePopoverGeneralAccion(scrollable, boxes, classes))
 };
 
 export const gestionItemPrevioEditandoServiciosFijosAccion = (valores) => (dispatch) => {
@@ -5947,7 +5949,7 @@ export const handleChangeTipoHorarioAccion = (index, event) => (dispatch, getSta
 
 export const handleLimpiezaHorarioAccion = (index) => (dispatch, getState) => {
     const { cuadranteRegistrado, cuadrante } = getState().variablesCuadrantes;
-    const { trabajadoresEnCuadrante, suplentesEnCuadrante } = getState().variablesCuadrantesSetters;   
+    const { trabajadoresEnCuadrante, suplentesEnCuadrante } = getState().variablesCuadrantesSetters;
     if (cuadrante[index].tipoTrabajador === 'trabajador') {
         dispatch(setEsInicioTraAccion(false));
         dispatch(setEsCambioTraAccion(true));

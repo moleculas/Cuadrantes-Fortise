@@ -412,7 +412,7 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
                                 dispatch(obtenerSuplenteAccion('trabajadores', trabajadorIterado.idTrabajador));
                             }, 250);
                         };
-                    }, index * 500);
+                    }, index * 1000);
             });
         };
     };
@@ -557,121 +557,121 @@ const procesarDatosCuadrantePromesa = (index, noHayRegistro) => (dispatch, getSt
         arrayTrabajadoresInicialesCuadrante = [...objetoCuadrante.datosTrabajadoresIniciales.datosTrabajadoresIniciales];
     };
     cuadranteServiciosFijos.forEach((servicio) => {
-        if (servicio.tipoServiciofijo === 'TOL' && servicio.activo_TO === 'si') {
+        if (servicio.tipoServiciofijo === 'TOL') {
             sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
             delete servicio.estados;
             arrayFinalServiciosFijos.push({ ...servicio });
             hayServiciosFijos = true;
         };
-        if (servicio.tipoServiciofijo === 'CRIS' && servicio.activo_CR === 'si') {
+        if (servicio.tipoServiciofijo === 'CRIS') {
             sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
             delete servicio.estados;
             arrayFinalServiciosFijos.push({ ...servicio });
             hayServiciosFijos = true;
         };
-        if (servicio.tipoServiciofijo === 'CRISE' && servicio.activo_CE === 'si') {
+        if (servicio.tipoServiciofijo === 'CRISE') {
             sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
             delete servicio.estados;
             arrayFinalServiciosFijos.push({ ...servicio });
             hayServiciosFijos = true;
         };
-        if (servicio.tipoServiciofijo === 'CRISI' && servicio.activo_CI === 'si') {
+        if (servicio.tipoServiciofijo === 'CRISI') {
             sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
             delete servicio.estados;
             arrayFinalServiciosFijos.push({ ...servicio });
             hayServiciosFijos = true;
         };
-        if (servicio.tipoServiciofijo === 'MOQ' && servicio.activo_MO === 'si') {
+        if (servicio.tipoServiciofijo === 'MOQ') {
             sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
             delete servicio.estados;
             arrayFinalServiciosFijos.push({ ...servicio });
             hayServiciosFijos = true;
         };
-        if (servicio.tipoServiciofijo === 'OF' && servicio.activo_OF === 'si') {
+        if (servicio.tipoServiciofijo === 'OF') {
             sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
             delete servicio.estados;
             arrayFinalServiciosFijos.push({ ...servicio });
             hayServiciosFijos = true;
         };
-        if (servicio.tipoServiciofijo === 'ALMC' && servicio.activo_AL === 'si') {
+        if (servicio.tipoServiciofijo === 'ALMC') {
             sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
             delete servicio.estados;
             arrayFinalServiciosFijos.push({ ...servicio });
             hayServiciosFijos = true;
         };
-        if (servicio.tipoServiciofijo === 'LAB' && servicio.activo_LA === 'si') {
+        if (servicio.tipoServiciofijo === 'LAB') {
             sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
             delete servicio.estados;
             arrayFinalServiciosFijos.push({ ...servicio });
             hayServiciosFijos = true;
         };
-        if (servicio.tipoServiciofijo === 'TELÑ' && servicio.activo_TE === 'si') {
+        if (servicio.tipoServiciofijo === 'TELÑ') {
             sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
             delete servicio.estados;
             arrayFinalServiciosFijos.push({ ...servicio });
             hayServiciosFijos = true;
         };
-        if (servicio.tipoServiciofijo === 'FCH.IN' && servicio.activo_FI === 'si') {
+        if (servicio.tipoServiciofijo === 'FCH.IN') {
             sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
             delete servicio.estados;
             arrayFinalServiciosFijos.push({ ...servicio });
             hayServiciosFijos = true;
         };
-        if (servicio.tipoServiciofijo === 'FCH.EX' && servicio.activo_FE === 'si') {
+        if (servicio.tipoServiciofijo === 'FCH.EX') {
             sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
             delete servicio.estados;
             arrayFinalServiciosFijos.push({ ...servicio });
             hayServiciosFijos = true;
         };
-        if (servicio.tipoServiciofijo === 'ABRLL' && servicio.activo_AB === 'si') {
+        if (servicio.tipoServiciofijo === 'ABRLL') {
             sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
             delete servicio.estados;
             arrayFinalServiciosFijos.push({ ...servicio });
             hayServiciosFijos = true;
         };
-        if (servicio.tipoServiciofijo === 'MANT' && servicio.activo_MA === 'si') {
+        if (servicio.tipoServiciofijo === 'MANT') {
             sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
             delete servicio.estados;
             arrayFinalServiciosFijos.push({ ...servicio });
             hayServiciosFijos = true;
         };
-        if (servicio.tipoServiciofijo === 'PORT' && servicio.activo_PO === 'si') {
+        if (servicio.tipoServiciofijo === 'PORT') {
             sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
             delete servicio.estados;
             arrayFinalServiciosFijos.push({ ...servicio });
             hayServiciosFijos = true;
         };
-        if (servicio.tipoServiciofijo === 'BACT' && servicio.activo_BA === 'si') {
+        if (servicio.tipoServiciofijo === 'BACT') {
             sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
             delete servicio.estados;
             arrayFinalServiciosFijos.push({ ...servicio });
             hayServiciosFijos = true;
         };
-        if (servicio.tipoServiciofijo === 'FEST' && servicio.activo_FT === 'si') {
+        if (servicio.tipoServiciofijo === 'FEST') {
             sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
             delete servicio.estados;
             arrayFinalServiciosFijos.push({ ...servicio });
             hayServiciosFijos = true;
         };
-        if (servicio.tipoServiciofijo === 'CRTRIM' && servicio.activo_C3 === 'si') {
+        if (servicio.tipoServiciofijo === 'CRTRIM') {
             sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
             delete servicio.estados;
             arrayFinalServiciosFijos.push({ ...servicio });
             hayServiciosFijos = true;
         };
-        if (servicio.tipoServiciofijo === 'CRBIM' && servicio.activo_C2 === 'si') {
+        if (servicio.tipoServiciofijo === 'CRBIM') {
             sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
             delete servicio.estados;
             arrayFinalServiciosFijos.push({ ...servicio });
             hayServiciosFijos = true;
         };
-        if (servicio.tipoServiciofijo === 'LIME' && servicio.activo_ES === 'si') {
+        if (servicio.tipoServiciofijo === 'LIME') {
             sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
             delete servicio.estados;
             arrayFinalServiciosFijos.push({ ...servicio });
             hayServiciosFijos = true;
         };
-        if (servicio.tipoServiciofijo === 'LIMP' && servicio.activo_PA === 'si') {
+        if (servicio.tipoServiciofijo === 'LIMP') {
             sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
             delete servicio.estados;
             arrayFinalServiciosFijos.push({ ...servicio });
@@ -687,9 +687,10 @@ const procesarDatosCuadrantePromesa = (index, noHayRegistro) => (dispatch, getSt
         // }));
         // return;
     };
-    //revisamos que no haya columnas vacías
+    //revisamos que no haya columnas vacías (modificador, si tiene nombre pero está a 0 de horas lo dejamos)
     for (let i = cuadrante.length - 1; i >= 0; --i) {
-        if (!cuadrante[i].nombreTrabajador || arrayDatosInforme[i].totalHoras === 0) {
+        //if (!cuadrante[i].nombreTrabajador || arrayDatosInforme[i].totalHoras === 0) {
+        if (!cuadrante[i].nombreTrabajador) {
             cuadrante.splice(i, 1);
             arrayDatosInforme.splice(i, 1);
             if (cuadranteRegistrado === 'no') {
@@ -825,13 +826,12 @@ const procesarDatosCuadrantePromesa = (index, noHayRegistro) => (dispatch, getSt
             total: elTotalAAFacturarTotal += sumatorioServiciosFijos
         };
         elObjetoDatosInforme = {
-            iniciado: objetoCuadrante.datosInforme.datosInforme[index].iniciado,
+            iniciado: objetoCuadrante.datosInforme.datosInforme[index].mensualPactado ? false : true,
             computo: objetoCuadrante.datosInforme.datosInforme[index].computo,
             excepcion: objetoCuadrante.datosInforme.datosInforme[index].excepcion,
             tipoRegistro: objetoCuadrante.datosInforme.datosInforme[index].tipoRegistro,
             totalHorasInicial: objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial,
             proporcion: objetoCuadrante.datosInforme.datosInforme[index].proporcion ? objetoCuadrante.datosInforme.datosInforme[index].proporcion : null
-
             //arrayTrabajadores: arrayDatosInforme,
         };
         if (objetoCuadrante.datosInforme.datosInforme[index].mensualPactado) {
@@ -1726,9 +1726,9 @@ export const gestionTrabajadorAccion = () => (dispatch, getState) => {
                 dispatch(setTrabajadoresEnCuadranteAccion(arrayTr));
             };
             dispatch(setCuadranteAccion(arrayCuadrante));
-        } else {
-            let estaEnElArrayTrabajadores = trabajadoresEnCuadrante.some(trabajador => trabajador['id'] === objetoTrabajador.id);
-            if (!estaEnElArrayTrabajadores) {
+        } else { 
+            let estaEnElArrayTrabajadores = trabajadoresEnCuadrante.some(trabajador => trabajador['id'] === objetoTrabajador.id);          
+            if (!estaEnElArrayTrabajadores) {                
                 arrayTr.push(objetoTrabajador);
                 dispatch(setTrabajadoresEnCuadranteAccion(arrayTr));
             };
@@ -1739,19 +1739,10 @@ export const gestionTrabajadorAccion = () => (dispatch, getState) => {
         if (objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistro === 'individual') {
             objetoTrabajador['laPosicionDelTrabajador'] = posicionTrabajadorPrevioACambiar;
         };
-        let repetidoTrabajador, repetidoSuplente;
-        repetidoTrabajador = trabajadoresEnCuadrante.find(trabajador => trabajador.id === objetoTrabajador.id);
-        repetidoSuplente = suplentesEnCuadrante.find(suplente => suplente.id === objetoTrabajador.id);
         if (objetoTrabajador.estado !== 'alta') {
             dispatch(setAlertaAccion({
                 abierto: true,
                 mensaje: "Este trabajador se encuentra de baja o está en reserva, selecciona otro.",
-                tipo: 'error'
-            }));
-        } else if ((repetidoTrabajador || repetidoSuplente) && !esUnaActualizacionTrabajador) {
-            dispatch(setAlertaAccion({
-                abierto: true,
-                mensaje: "Este trabajador ya se encuentra en el cuadrante, selecciona otro.",
                 tipo: 'error'
             }));
         } else {
@@ -1779,6 +1770,16 @@ export const gestionTrabajadorAccion = () => (dispatch, getState) => {
             dispatch(setEsCambioTraAccion(false));
             dispatch(setColumnaIndiceAGestionarAccion(null));
         };
+        // let repetidoTrabajador, repetidoSuplente;
+        // repetidoTrabajador = trabajadoresEnCuadrante.find(trabajador => trabajador.id === objetoTrabajador.id);
+        // repetidoSuplente = suplentesEnCuadrante.find(suplente => suplente.id === objetoTrabajador.id);
+        // else if ((repetidoTrabajador || repetidoSuplente) && !esUnaActualizacionTrabajador) {
+        //     dispatch(setAlertaAccion({
+        //         abierto: true,
+        //         mensaje: "Este trabajador ya se encuentra en el cuadrante, selecciona otro.",
+        //         tipo: 'error'
+        //     }));
+        // }
         if (esUnaActualizacionTrabajador) {
             dispatch(setAlertaAccion({
                 abierto: true,
@@ -1835,19 +1836,10 @@ export const gestionSuplenteAccion = () => (dispatch, getState) => {
         if (objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistro === 'individual') {
             objetoSuplente['laPosicionDelTrabajador'] = posicionSuplentePrevioACambiar;
         };
-        let repetidoTrabajador, repetidoSuplente;
-        repetidoSuplente = suplentesEnCuadrante.find(suplente => suplente.id === objetoSuplente.id);
-        repetidoTrabajador = trabajadoresEnCuadrante.find(trabajador => trabajador.id === objetoSuplente.id);
         if (objetoSuplente.estado !== 'alta') {
             dispatch(setAlertaAccion({
                 abierto: true,
                 mensaje: "Este trabajador se encuentra de baja, selecciona otro.",
-                tipo: 'error'
-            }));
-        } else if ((repetidoTrabajador || repetidoSuplente) && !esUnaActualizacionTrabajador) {
-            dispatch(setAlertaAccion({
-                abierto: true,
-                mensaje: "Este trabajador ya se encuentra en el cuadrante, selecciona otro.",
                 tipo: 'error'
             }));
         } else {
@@ -1875,6 +1867,16 @@ export const gestionSuplenteAccion = () => (dispatch, getState) => {
             dispatch(setEsCambioSupAccion(false));
             dispatch(setColumnaIndiceAGestionarAccion(null));
         };
+        // let repetidoTrabajador, repetidoSuplente;
+        // repetidoSuplente = suplentesEnCuadrante.find(suplente => suplente.id === objetoSuplente.id);
+        // repetidoTrabajador = trabajadoresEnCuadrante.find(trabajador => trabajador.id === objetoSuplente.id);
+        // else if ((repetidoTrabajador || repetidoSuplente) && !esUnaActualizacionTrabajador) {
+        //     dispatch(setAlertaAccion({
+        //         abierto: true,
+        //         mensaje: "Este trabajador ya se encuentra en el cuadrante, selecciona otro.",
+        //         tipo: 'error'
+        //     }));
+        // }
         if (esUnaActualizacionTrabajador) {
             dispatch(setAlertaAccion({
                 abierto: true,

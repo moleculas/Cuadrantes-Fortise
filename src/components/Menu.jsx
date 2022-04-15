@@ -48,6 +48,7 @@ import { setDisableSelectCentrosAccion } from '../redux/cuadrantesSettersDucks';
 import { setCategoriaAccion } from '../redux/cuadrantesDucks';
 import { setAnchorElMenuAccion } from '../redux/cuadrantesSettersDucks';
 import { forzarRecargaGraficosCuadrantesAccion } from '../redux/graficosDucks';
+import { setValueDatePickerAccion } from '../redux/cuadrantesSettersDucks';
 
 const Menu = (props) => {
 
@@ -109,6 +110,7 @@ const Menu = (props) => {
             dispatch(forzarRecargaGraficosCuadrantesAccion(true));
             dispatch(vaciarDatosCentrosAccion());
             dispatch(vaciarDatosTrabajadoresAccion());
+            dispatch(setValueDatePickerAccion(new Date(retornaAnoMesAccion())));
         };
     };
 

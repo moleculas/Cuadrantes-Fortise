@@ -430,7 +430,7 @@ const Cuadrantes = (props) => {
                 dispatch(setCalendarioAGestionarAccion(preValueCalendarioAGestionarReseteo));
                 dispatch(setPreValueCalendarioAGestionarReseteoAccion(null));
             };
-        };        
+        };
         if (controladorDeEstado === 'venimosDeInforme') {
             dispatch(setControladorDeEstadoAccion('inicio'));
         };
@@ -462,7 +462,7 @@ const Cuadrantes = (props) => {
             dispatch(activarDesactivarCambioBotonResetearAccion(true));
         };
         if (cuadranteRegistrado === 'si') {
-            if (!estadoVenimosDeRegistrados && !venimosDeCambioCuadrante) {                
+            if (!estadoVenimosDeRegistrados && !venimosDeCambioCuadrante) {
                 // dispatch(gestionaCuadranteIndividualAccion(cuadranteEnUsoCuadrantes, false));
                 dispatch(cambioEstadoInicioCuadrantesAccion(false));
                 dispatch(activarDesactivarCambioBotonRegistrarAccion(false));
@@ -1769,7 +1769,7 @@ const Cuadrantes = (props) => {
                                             prHandleChangeTimePickerFinCuadrante={(id, index, horaPareja, hora) => dispatch(handleChangeTimePickerFinCuadranteAccion(id, index, horaPareja, hora))}
                                             prHandleChangeObservaciones={(index, event) => dispatch(handleChangeObservacionesAccion(index, event))}
                                             prGestionItemPrevioEditando={(tipo, valores) => dispatch(gestionItemPrevioEditandoAccion(tipo, valores))}
-                                            prHandleRegistrarCambioEnCasilla={(id, index, tipo) => dispatch(handleRegistrarCambioEnCasillaAccion(id, index, tipo))}
+                                            prHandleRegistrarCambioEnCasilla={(id, index, tipo) => dispatch(handleRegistrarCambioEnCasillaAccion(id, index, tipo, scrollable, boxes, classes))}
                                             prHandleChangeTipoServicio={(index, event) => dispatch(handleChangeTipoServicioAccion(index, event))}
                                             prValueTipoServicio={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].tipoServicio : ''}
                                         />
@@ -1789,7 +1789,7 @@ const Cuadrantes = (props) => {
                                             prHandleChangeSelectCantidad={(index, event) => dispatch(handleChangeSelectCantidadAccion(index, event))}
                                             prHandleChangeObservaciones={(index, event) => dispatch(handleChangeObservacionesAccion(index, event))}
                                             prGestionItemPrevioEditando={(tipo, valores) => dispatch(gestionItemPrevioEditandoAccion(tipo, valores))}
-                                            prHandleRegistrarCambioEnCasilla={(id, index, tipo) => dispatch(handleRegistrarCambioEnCasillaAccion(id, index, tipo))}
+                                            prHandleRegistrarCambioEnCasilla={(id, index, tipo) => dispatch(handleRegistrarCambioEnCasillaAccion(id, index, tipo, scrollable, boxes, classes))}
                                             prHandleChangeTipoServicio={(index, event) => dispatch(handleChangeTipoServicioAccion(index, event))}
                                             prValueTipoServicio={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].tipoServicio : ''}
                                         />
@@ -1816,7 +1816,7 @@ const Cuadrantes = (props) => {
                                             prHandleChangeTimePickerFinCuadrante={(id, index, horaPareja, hora) => dispatch(handleChangeTimePickerFinCuadranteAccion(id, index, horaPareja, hora))}
                                             prHandleChangeObservaciones={(index, event) => dispatch(handleChangeObservacionesAccion(index, event))}
                                             prGestionItemPrevioEditando={(tipo, valores) => dispatch(gestionItemPrevioEditandoAccion(tipo, valores))}
-                                            prHandleRegistrarCambioEnCasilla={(id, index, tipo) => dispatch(handleRegistrarCambioEnCasillaAccion(id, index, tipo))}
+                                            prHandleRegistrarCambioEnCasilla={(id, index, tipo) => dispatch(handleRegistrarCambioEnCasillaAccion(id, index, tipo, scrollable, boxes, classes))}
                                             prHandleChangeTipoServicio={(index, event) => dispatch(handleChangeTipoServicioAccion(index, event))}
                                             prValueTipoServicio={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].tipoServicio : ''}
                                         />
@@ -1968,7 +1968,7 @@ const Cuadrantes = (props) => {
                 prTituloDialog={tituloDialogCuadrantes5}
                 prDescripcionDialog={descripcionDialogCuadrantes5}
             />
-            {console.log(objetoCuadrante)}
+            {/* {console.log(trabajadoresEnCuadrante)} */}
         </div >
     )
 }

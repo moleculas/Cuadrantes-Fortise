@@ -2809,7 +2809,8 @@ export const gestionarInformeAccion = () => (dispatch, getState) => {
             sumatorioTotalHorasNormalTra_L2 += sumatorioHorasNormal_L2;
             sumatorioTotalHorasNormalTra_F += sumatorioHorasNormal_F;
             sumatorioHorasBajasComputablesTra += cuadranteColumna.horasBajasComputables;
-        } else {
+        };
+        if (cuadranteColumna.tipoTrabajador === 'suplente') {
             sumatorioHorasFestivasComputablesSup_L += cuadranteColumna.horasFestivasComputables_L;
             sumatorioHorasFestivasComputablesSup_E += cuadranteColumna.horasFestivasComputables_E;
             sumatorioHorasFestivasComputablesSup_P += cuadranteColumna.horasFestivasComputables_P;
@@ -2855,82 +2856,110 @@ export const gestionarInformeAccion = () => (dispatch, getState) => {
     if (cantidadMensualPactado >= 0) {
         let trabajadoresRecorridos = 0;
         let resultadoIniciado;
+        let trabajadoresEstimados;
+        if (cuadranteRegistrado === 'no') {
+            trabajadoresEstimados = objetoCuadrante.datosTrabajadoresIniciales.datosTrabajadoresIniciales[cuadranteEnUsoCuadrantes - 1].cantidad;
+        } else {
+            trabajadoresEstimados = objetoCuadrante.datosCuadrante.datosCuadrante[cuadranteEnUsoCuadrantes - 1].arrayCuadrante.length;
+        };
         for (let i = 0; i < cuadrante.length; i++) {
             if (cuadrante[i].tipoTrabajador === 'trabajador') {
+                if (cuadranteRegistrado === 'no' && cuadrante[i].hayBaja && objetoCuadrante.datosTrabajadoresIniciales.datosTrabajadoresIniciales[cuadranteEnUsoCuadrantes - 1].trabajadores[i]['suplente_' + (i + 1)]) {
+                    trabajadoresEstimados += 1;
+                };
+                trabajadoresRecorridos += 1;
+            };
+            if (cuadrante[i].tipoTrabajador === 'suplente') {
                 trabajadoresRecorridos += 1;
             };
         };
-        if (cuadranteRegistrado === 'no') {
-            if (trabajadoresRecorridos === objetoCuadrante.datosTrabajadoresIniciales.datosTrabajadoresIniciales[cuadranteEnUsoCuadrantes - 1].cantidad) {
-                resultadoIniciado = true;
-            } else {
-                resultadoIniciado = false;
-            };
+        if (trabajadoresRecorridos === trabajadoresEstimados) {
+            resultadoIniciado = true;
         } else {
-            let trabajadoresRecorridosRegistrados = 0;
-            for (let i = 0; i < objetoCuadrante.datosCuadrante.datosCuadrante[cuadranteEnUsoCuadrantes - 1].arrayCuadrante.length; i++) {
-                if (objetoCuadrante.datosCuadrante.datosCuadrante[cuadranteEnUsoCuadrantes - 1].arrayCuadrante[i].tipoTrabajador === 'trabajador') {
-                    trabajadoresRecorridosRegistrados += 1;
-                };
-            };
-            if (trabajadoresRecorridosRegistrados === trabajadoresRecorridos) {
-                resultadoIniciado = true;
-            } else {
-                resultadoIniciado = false;
-            };
+            resultadoIniciado = false;
         };
+        // if (cuadranteRegistrado === 'no') {
+        //     trabajadoresEstimados = objetoCuadrante.datosTrabajadoresIniciales.datosTrabajadoresIniciales[cuadranteEnUsoCuadrantes - 1].cantidad;
+        //     for (let i = 0; i < cuadrante.length; i++) {
+        //         if (cuadrante[i].tipoTrabajador === 'trabajador') {
+        //             if (cuadrante[i].hayBaja && objetoCuadrante.datosTrabajadoresIniciales.datosTrabajadoresIniciales[cuadranteEnUsoCuadrantes - 1].trabajadores[i]['suplente_' + (i + 1)]) {
+        //                 trabajadoresEstimados += 1;
+        //             };
+        //             trabajadoresRecorridos += 1;
+        //         };
+        //         if (cuadrante[i].tipoTrabajador === 'suplente') {
+        //             trabajadoresRecorridos += 1;
+        //         };
+        //     };
+        //     if (trabajadoresRecorridos === trabajadoresEstimados) {
+        //         resultadoIniciado = true;
+        //     } else {
+        //         resultadoIniciado = false;
+        //     };
+        // } else {
+        //     let trabajadoresRecorridosRegistrados = 0;
+        //     for (let i = 0; i < objetoCuadrante.datosCuadrante.datosCuadrante[cuadranteEnUsoCuadrantes - 1].arrayCuadrante.length; i++) {
+        //         trabajadoresRecorridosRegistrados += 1;
+        //     };
+        //     if (trabajadoresRecorridosRegistrados === trabajadoresRecorridos) {
+        //         resultadoIniciado = true;
+        //     } else {
+        //         resultadoIniciado = false;
+        //     };
+        // };
         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].iniciado) {
             //caudrante iniciado
             //control de excepciones
+            let totalHorasIniciado;
             switch (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].excepcion) {
                 case 1:
-                    sumatorioHorasFestivasTotal =
-                        sumatorioHorasFestivasComputables_L +
-                        sumatorioHorasFestivasComputables_E +
-                        sumatorioHorasFestivasComputables_P +
-                        sumatorioHorasFestivasComputables_N +
-                        sumatorioHorasFestivasComputables_R +
-                        sumatorioHorasFestivasComputables_L1 +
-                        sumatorioHorasFestivasComputables_L2 +
-                        sumatorioHorasFestivasComputables_F;
-                    totalMensualPactado =
-                        ((sumatorioTotalHorasNormal_L + sumatorioHorasFestivasComputables_L +
-                            sumatorioTotalHorasNormal_E + sumatorioHorasFestivasComputables_E +
-                            sumatorioTotalHorasNormal_P + sumatorioHorasFestivasComputables_P +
-                            sumatorioTotalHorasNormal_N + sumatorioHorasFestivasComputables_N +
-                            sumatorioTotalHorasNormal_R + sumatorioHorasFestivasComputables_R +
-                            sumatorioTotalHorasNormal_L1 + sumatorioHorasFestivasComputables_L1 +
-                            sumatorioTotalHorasNormal_L2 + sumatorioHorasFestivasComputables_L2 +
-                            sumatorioTotalHorasNormal_F + sumatorioHorasFestivasComputables_F +
-                            sumatorioHorasBajasComputables) *
-                            (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion)) -
-                        (sumatorioHorasFestivasTotal * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion);
-                    objetoDatosInforme = {
-                        ...objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1],
-                        mensualPactado: totalMensualPactado
-                    };
+                    // sumatorioHorasFestivasTotal =
+                    //     sumatorioHorasFestivasComputables_L +
+                    //     sumatorioHorasFestivasComputables_E +
+                    //     sumatorioHorasFestivasComputables_P +
+                    //     sumatorioHorasFestivasComputables_N +
+                    //     sumatorioHorasFestivasComputables_R +
+                    //     sumatorioHorasFestivasComputables_L1 +
+                    //     sumatorioHorasFestivasComputables_L2 +
+                    //     sumatorioHorasFestivasComputables_F;
+                    // totalMensualPactado =
+                    //     ((sumatorioTotalHorasNormal_L + sumatorioHorasFestivasComputables_L +
+                    //         sumatorioTotalHorasNormal_E + sumatorioHorasFestivasComputables_E +
+                    //         sumatorioTotalHorasNormal_P + sumatorioHorasFestivasComputables_P +
+                    //         sumatorioTotalHorasNormal_N + sumatorioHorasFestivasComputables_N +
+                    //         sumatorioTotalHorasNormal_R + sumatorioHorasFestivasComputables_R +
+                    //         sumatorioTotalHorasNormal_L1 + sumatorioHorasFestivasComputables_L1 +
+                    //         sumatorioTotalHorasNormal_L2 + sumatorioHorasFestivasComputables_L2 +
+                    //         sumatorioTotalHorasNormal_F + sumatorioHorasFestivasComputables_F +
+                    //         sumatorioHorasBajasComputables) *
+                    //         (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion)) -
+                    //     (sumatorioHorasFestivasTotal * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion);
+                    // objetoDatosInforme = {
+                    //     ...objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1],
+                    //     mensualPactado: totalMensualPactado
+                    // };
+                    totalHorasIniciado =
+                        sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L +
+                        sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E +
+                        sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P +
+                        sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N +
+                        sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R +
+                        sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1 +
+                        sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2 +
+                        sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F;
+                    totalMensualPactado = totalHorasIniciado * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion;
                     break;
                 case '':
-                    sumatorioHorasFestivasTotal =
-                        sumatorioHorasFestivasComputables_L +
-                        sumatorioHorasFestivasComputables_E +
-                        sumatorioHorasFestivasComputables_P +
-                        sumatorioHorasFestivasComputables_N +
-                        sumatorioHorasFestivasComputables_R +
-                        sumatorioHorasFestivasComputables_L1 +
-                        sumatorioHorasFestivasComputables_L2 +
-                        sumatorioHorasFestivasComputables_F;
-                    totalMensualPactado =
-                        ((sumatorioTotalHorasNormal_L + sumatorioHorasFestivasComputables_L +
-                            sumatorioTotalHorasNormal_E + sumatorioHorasFestivasComputables_E +
-                            sumatorioTotalHorasNormal_P + sumatorioHorasFestivasComputables_P +
-                            sumatorioTotalHorasNormal_N + sumatorioHorasFestivasComputables_N +
-                            sumatorioTotalHorasNormal_R + sumatorioHorasFestivasComputables_R +
-                            sumatorioTotalHorasNormal_L1 + sumatorioHorasFestivasComputables_L1 +
-                            sumatorioTotalHorasNormal_L2 + sumatorioHorasFestivasComputables_L2 +
-                            sumatorioTotalHorasNormal_F + sumatorioHorasFestivasComputables_F +
-                            sumatorioHorasBajasComputables) *
-                            objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion);
+                    totalHorasIniciado =
+                        sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L +
+                        sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E +
+                        sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P +
+                        sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N +
+                        sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R +
+                        sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1 +
+                        sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2 +
+                        sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F;
+                    totalMensualPactado = totalHorasIniciado * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion;
                     objetoDatosInforme = {
                         ...objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1],
                         mensualPactado: totalMensualPactado
@@ -2940,7 +2969,7 @@ export const gestionarInformeAccion = () => (dispatch, getState) => {
             };
         } else {
             //caudrante no iniciado 
-            //control de excepciones
+            //control de excepciones       
             totalHorasInicialTra_L = sumatorioTotalHorasNormalTra_L + sumatorioHorasFestivasComputablesTra_L;
             totalHorasInicialTra_E = sumatorioTotalHorasNormalTra_E + sumatorioHorasFestivasComputablesTra_E;
             totalHorasInicialTra_P = sumatorioTotalHorasNormalTra_P + sumatorioHorasFestivasComputablesTra_P;
@@ -2984,10 +3013,14 @@ export const gestionarInformeAccion = () => (dispatch, getState) => {
             totalHorasInicial_L2 = totalHorasInicialTra_L2 + totalHorasInicialSup_L2;
             totalHorasInicial_F = totalHorasInicialTra_F + totalHorasInicialSup_F;
             totalHorasInicial = totalHorasInicialTra + totalHorasInicialSup;
-            proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial / (totalHorasInicialTra + (sumatorioHorasBajasComputablesTra - (totalHorasInicialSup + sumatorioHorasBajasComputablesSup)));
-            totalMensualPactado = totalHorasInicialTra * proporcion;
+            if (cuadranteRegistrado === 'no') {
+                proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial / ((totalHorasInicialTra + sumatorioHorasBajasComputablesTra));
+            } else {
+                proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion;
+            };            
+            totalMensualPactado = totalHorasInicial * proporcion;         
             switch (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].excepcion) {
-                case 1:                   
+                case 1:
                     if (sumatorioHorasFestivasComputables_L > 0) {
                         objetoDatosInforme['horasFestivasComputables_L'] = sumatorioHorasFestivasComputables_L;
                     };
@@ -3033,7 +3066,7 @@ export const gestionarInformeAccion = () => (dispatch, getState) => {
                         proporcion: proporcion,
                     };
                     break;
-                case '':                   
+                case '':
                     if (sumatorioHorasFestivasComputables_L > 0) {
                         objetoDatosInforme['horasFestivasComputables_L'] = sumatorioHorasFestivasComputables_L;
                     };
@@ -3186,6 +3219,7 @@ const periodoBajaTrabajadorAccion = (calendarioAGestionar, inicioBaja, finBaja, 
 export const gestionaDiasFestivosOBajas = (
     elHorarioCuadrante,
     tipoRegistro,
+    cantidadTrabajadoresCentro,
     tipoHorario,
     posicionTrabajador,
     item
@@ -3196,7 +3230,11 @@ export const gestionaDiasFestivosOBajas = (
     if (tipoRegistro === 'comun') {
         posicionArray = 0;
     } else {
-        posicionArray = posicionTrabajador - 1;
+        if (posicionTrabajador > cantidadTrabajadoresCentro) {
+            posicionArray = 0;
+        } else {
+            posicionArray = posicionTrabajador - 1;
+        };
     };
     if (elHorarioCuadrante.tipoRegistroTrabajador[posicionArray][item]) {
         let rango1, rango2;
@@ -3472,8 +3510,8 @@ const gestionaDatosHorarioItem = (
                 return null;
             }
         } else {
-            if (elHorarioCuadrante.tipoRegistroTrabajador[0][item]) {
-                return elHorarioCuadrante.tipoRegistroTrabajador[0][item];
+            if (elHorarioCuadrante.tipoRegistroTrabajador[posicionTrabajador][item]) {
+                return elHorarioCuadrante.tipoRegistroTrabajador[posicionTrabajador][item];
             } else {
                 if (comillas) {
                     return '';
@@ -3719,7 +3757,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'lunesInicioRango');
+                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesInicioRango');
                             if (festivoComputable.cantidad > 0) {
                                 switch (festivoComputable.servicio) {
                                     case 'LIM':
@@ -3767,7 +3805,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'lunesInicioRango');
+                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesInicioRango');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
                         } else {
@@ -3909,7 +3947,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'martesInicioRango');
+                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesInicioRango');
                             if (festivoComputable.cantidad > 0) {
                                 switch (festivoComputable.servicio) {
                                     case 'LIM':
@@ -3957,7 +3995,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'martesInicioRango');
+                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesInicioRango');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
                         } else {
@@ -4099,7 +4137,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'miercolesInicioRango');
+                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesInicioRango');
                             if (festivoComputable.cantidad > 0) {
                                 switch (festivoComputable.servicio) {
                                     case 'LIM':
@@ -4147,7 +4185,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'miercolesInicioRango');
+                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesInicioRango');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
                         } else {
@@ -4289,7 +4327,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'juevesInicioRango');
+                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesInicioRango');
                             if (festivoComputable.cantidad > 0) {
                                 switch (festivoComputable.servicio) {
                                     case 'LIM':
@@ -4337,7 +4375,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'juevesInicioRango');
+                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesInicioRango');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
                         } else {
@@ -4479,7 +4517,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'viernesInicioRango');
+                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesInicioRango');
                             if (festivoComputable.cantidad > 0) {
                                 switch (festivoComputable.servicio) {
                                     case 'LIM':
@@ -4527,7 +4565,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'viernesInicioRango');
+                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesInicioRango');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
                         } else {
@@ -4669,7 +4707,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'sabadoInicioRango');
+                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoInicioRango');
                             if (festivoComputable.cantidad > 0) {
                                 switch (festivoComputable.servicio) {
                                     case 'LIM':
@@ -4717,7 +4755,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'sabadoInicioRango');
+                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoInicioRango');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
                         } else {
@@ -4859,7 +4897,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'domingoInicioRango');
+                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoInicioRango');
                             if (festivoComputable.cantidad > 0) {
                                 switch (festivoComputable.servicio) {
                                     case 'LIM':
@@ -4907,7 +4945,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'domingoInicioRango');
+                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoInicioRango');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
                         } else {
@@ -5059,7 +5097,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'lunesInicio1RangoDescanso');
+                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesInicio1RangoDescanso');
                             if (festivoComputable.cantidad > 0) {
                                 switch (festivoComputable.servicio) {
                                     case 'LIM':
@@ -5109,7 +5147,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'lunesInicio1RangoDescanso');
+                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesInicio1RangoDescanso');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
                         } else {
@@ -5267,7 +5305,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'martesInicio1RangoDescanso');
+                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesInicio1RangoDescanso');
                             if (festivoComputable.cantidad > 0) {
                                 switch (festivoComputable.servicio) {
                                     case 'LIM':
@@ -5317,7 +5355,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'martesInicio1RangoDescanso');
+                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesInicio1RangoDescanso');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
                         } else {
@@ -5475,7 +5513,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'miercolesInicio1RangoDescanso');
+                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesInicio1RangoDescanso');
                             if (festivoComputable.cantidad > 0) {
                                 switch (festivoComputable.servicio) {
                                     case 'LIM':
@@ -5525,7 +5563,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'miercolesInicio1RangoDescanso');
+                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesInicio1RangoDescanso');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
                         } else {
@@ -5683,7 +5721,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'juevesInicio1RangoDescanso');
+                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesInicio1RangoDescanso');
                             if (festivoComputable.cantidad > 0) {
                                 switch (festivoComputable.servicio) {
                                     case 'LIM':
@@ -5733,7 +5771,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'juevesInicio1RangoDescanso');
+                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesInicio1RangoDescanso');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
                         } else {
@@ -5891,7 +5929,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'viernesInicio1RangoDescanso');
+                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesInicio1RangoDescanso');
                             if (festivoComputable.cantidad > 0) {
                                 switch (festivoComputable.servicio) {
                                     case 'LIM':
@@ -5941,7 +5979,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'viernesInicio1RangoDescanso');
+                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesInicio1RangoDescanso');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
                         } else {
@@ -6099,7 +6137,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'sabadoInicio1RangoDescanso');
+                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoInicio1RangoDescanso');
                             if (festivoComputable.cantidad > 0) {
                                 switch (festivoComputable.servicio) {
                                     case 'LIM':
@@ -6149,7 +6187,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'sabadoInicio1RangoDescanso');
+                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoInicio1RangoDescanso');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
                         } else {
@@ -6307,7 +6345,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'domingoInicio1RangoDescanso');
+                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoInicio1RangoDescanso');
                             if (festivoComputable.cantidad > 0) {
                                 switch (festivoComputable.servicio) {
                                     case 'LIM':
@@ -6357,7 +6395,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'domingoInicio1RangoDescanso');
+                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoInicio1RangoDescanso');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
                         } else {
@@ -6515,7 +6553,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'lunesCantidad');
+                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesCantidad');
                             if (festivoComputable.cantidad > 0) {
                                 switch (festivoComputable.servicio) {
                                     case 'LIM':
@@ -6562,7 +6600,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'lunesCantidad');
+                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesCantidad');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
                         } else {
@@ -6696,7 +6734,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'martesCantidad');
+                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesCantidad');
                             if (festivoComputable.cantidad > 0) {
                                 switch (festivoComputable.servicio) {
                                     case 'LIM':
@@ -6743,7 +6781,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'martesCantidad');
+                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesCantidad');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
                         } else {
@@ -6877,7 +6915,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'miercolesCantidad');
+                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesCantidad');
                             if (festivoComputable.cantidad > 0) {
                                 switch (festivoComputable.servicio) {
                                     case 'LIM':
@@ -6924,7 +6962,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'miercolesCantidad');
+                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesCantidad');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
                         } else {
@@ -7058,7 +7096,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'juevesCantidad');
+                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesCantidad');
                             if (festivoComputable.cantidad > 0) {
                                 switch (festivoComputable.servicio) {
                                     case 'LIM':
@@ -7105,7 +7143,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'juevesCantidad');
+                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesCantidad');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
                         } else {
@@ -7239,7 +7277,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'viernesCantidad');
+                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesCantidad');
                             if (festivoComputable.cantidad > 0) {
                                 switch (festivoComputable.servicio) {
                                     case 'LIM':
@@ -7286,7 +7324,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'viernesCantidad');
+                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesCantidad');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
                         } else {
@@ -7420,7 +7458,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'sabadoCantidad');
+                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoCantidad');
                             if (festivoComputable.cantidad > 0) {
                                 switch (festivoComputable.servicio) {
                                     case 'LIM':
@@ -7467,7 +7505,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'sabadoCantidad');
+                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoCantidad');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
                         } else {
@@ -7601,7 +7639,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'domingoCantidad');
+                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoCantidad');
                             if (festivoComputable.cantidad > 0) {
                                 switch (festivoComputable.servicio) {
                                     case 'LIM':
@@ -7648,7 +7686,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, tipoHorario, posicionTrabajador, 'domingoCantidad');
+                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoCantidad');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
                         } else {
@@ -7848,10 +7886,13 @@ export const gestionaColumnaCuadranteAccion = (trabajador, tipoTrabajador, esRev
                 if (esAnadirColumna) {
                     posicionTrabajador = columna;
                 } else {
-                    posicionTrabajador = trabajador.laPosicionDelTrabajador;
+                    //posicionTrabajador = trabajador.laPosicionDelTrabajador;
+                    posicionTrabajador = cuadrante.length;
                 }
             }
         };
+    } else {
+        posicionTrabajador = 0;
     };
     let posicionAnterior;
     let esInicio = false;
@@ -7974,7 +8015,7 @@ export const gestionaColumnaCuadranteAccion = (trabajador, tipoTrabajador, esRev
             const arrayCuadrante = [...cuadrante];
             arrayCuadrante[columna] = columnaAnadir;
             dispatch(setCuadranteAccion(arrayCuadrante));
-        }
+        };
     };
 };
 
