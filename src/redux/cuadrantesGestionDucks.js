@@ -1418,6 +1418,35 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
         objetoTotales['PAH'] = 1;
         objetoTotales['PAPr'] = 1;
     };
+    totalFacturado_M ? totalFacturado_M = totalFacturado_M : totalFacturado_M = 0;
+    totalFacturado_L ? totalFacturado_L = totalFacturado_L : totalFacturado_L = 0;
+    totalFacturado_E ? totalFacturado_E = totalFacturado_E : totalFacturado_E = 0;
+    totalFacturado_P ? totalFacturado_P = totalFacturado_P : totalFacturado_P = 0;
+    totalFacturado_N ? totalFacturado_N = totalFacturado_N : totalFacturado_N = 0;
+    totalFacturado_R ? totalFacturado_R = totalFacturado_R : totalFacturado_R = 0;
+    totalFacturado_L1 ? totalFacturado_L1 = totalFacturado_L1 : totalFacturado_L1 = 0;
+    totalFacturado_L2 ? totalFacturado_L2 = totalFacturado_L2 : totalFacturado_L2 = 0;
+    totalFacturado_F ? totalFacturado_F = totalFacturado_F : totalFacturado_F = 0;
+    totalFacturado_TO ? totalFacturado_TO = totalFacturado_TO : totalFacturado_TO = 0;
+    totalFacturado_CR ? totalFacturado_CR = totalFacturado_CR : totalFacturado_CR = 0;
+    totalFacturado_CE ? totalFacturado_CE = totalFacturado_CE : totalFacturado_CE = 0;
+    totalFacturado_CI ? totalFacturado_CI = totalFacturado_CI : totalFacturado_CI = 0;
+    totalFacturado_MO ? totalFacturado_MO = totalFacturado_MO : totalFacturado_MO = 0;
+    totalFacturado_OF ? totalFacturado_OF = totalFacturado_OF : totalFacturado_OF = 0;
+    totalFacturado_AL ? totalFacturado_AL = totalFacturado_AL : totalFacturado_AL = 0;
+    totalFacturado_LA ? totalFacturado_LA = totalFacturado_LA : totalFacturado_LA = 0;
+    totalFacturado_TE ? totalFacturado_TE = totalFacturado_TE : totalFacturado_TE = 0;
+    totalFacturado_FI ? totalFacturado_FI = totalFacturado_FI : totalFacturado_FI = 0;
+    totalFacturado_FE ? totalFacturado_FE = totalFacturado_FE : totalFacturado_FE = 0;
+    totalFacturado_AB ? totalFacturado_AB = totalFacturado_AB : totalFacturado_AB = 0;
+    totalFacturado_MA ? totalFacturado_MA = totalFacturado_MA : totalFacturado_MA = 0;
+    totalFacturado_PO ? totalFacturado_PO = totalFacturado_PO : totalFacturado_PO = 0;
+    totalFacturado_BA ? totalFacturado_BA = totalFacturado_BA : totalFacturado_BA = 0;
+    totalFacturado_FT ? totalFacturado_FT = totalFacturado_FT : totalFacturado_FT = 0;
+    totalFacturado_C3 ? totalFacturado_C3 = totalFacturado_C3 : totalFacturado_C3 = 0;
+    totalFacturado_C2 ? totalFacturado_C2 = totalFacturado_C2 : totalFacturado_C2 = 0;
+    totalFacturado_ES ? totalFacturado_ES = totalFacturado_ES : totalFacturado_ES = 0;
+    totalFacturado_PA ? totalFacturado_PA = totalFacturado_PA : totalFacturado_PA = 0;
     objetoTotales['total'] =
         totalFacturado_M +
         totalFacturado_L +
@@ -1726,9 +1755,9 @@ export const gestionTrabajadorAccion = () => (dispatch, getState) => {
                 dispatch(setTrabajadoresEnCuadranteAccion(arrayTr));
             };
             dispatch(setCuadranteAccion(arrayCuadrante));
-        } else { 
-            let estaEnElArrayTrabajadores = trabajadoresEnCuadrante.some(trabajador => trabajador['id'] === objetoTrabajador.id);          
-            if (!estaEnElArrayTrabajadores) {                
+        } else {
+            let estaEnElArrayTrabajadores = trabajadoresEnCuadrante.some(trabajador => trabajador['id'] === objetoTrabajador.id);
+            if (!estaEnElArrayTrabajadores) {
                 arrayTr.push(objetoTrabajador);
                 dispatch(setTrabajadoresEnCuadranteAccion(arrayTr));
             };
@@ -1886,7 +1915,6 @@ export const gestionSuplenteAccion = () => (dispatch, getState) => {
             dispatch(setEsUnaActualizacionTrabajadorAccion(false));
         };
     }
-
 };
 
 

@@ -3134,7 +3134,7 @@ function calculoDiasTotalesPorMes(month, year) {
     return new Date(year, month, 0).getDate();
 };
 
-const retornaTipoBajaPorHistorico = (dia, historico) => (dispatch, getState) => {
+const retornaTipoBajaPorHistorico = (dia, historico) => (dispatch, getState) => {    
     const { calendarioAGestionar } = getState().variablesCuadrantes;
     let myArrSplitCalendario = calendarioAGestionar.split("-");
     const mesCalendario = parseInt(myArrSplitCalendario[1]);
@@ -3145,24 +3145,22 @@ const retornaTipoBajaPorHistorico = (dia, historico) => (dispatch, getState) => 
         let finSplitted = registro.baja[0].fin.split("-");
         let mesInicio = parseInt(inicioSplitted[1]);
         let mesFin = parseInt(finSplitted[1]);
+        let anyoInicio=parseInt(inicioSplitted[0]);
+        let anyoFin=parseInt(finSplitted[0]);
         let diaInicio;
         let diaFin;
-        if (mesInicio < mesCalendario && mesFin === mesCalendario) {
+        diaInicio = parseInt(inicioSplitted[2]);
+        diaFin = parseInt(finSplitted[2]);
+        if (anyoInicio < anyoCalendario || mesInicio < mesCalendario) {
             diaInicio = 1;
-            diaFin = parseInt(finSplitted[2]);
         };
-        if (mesInicio === mesCalendario && mesFin === mesCalendario) {
-            diaInicio = parseInt(inicioSplitted[2]);
-            diaFin = parseInt(finSplitted[2]);
-        };
-        if (mesInicio === mesCalendario && mesFin > mesCalendario) {
-            diaInicio = parseInt(inicioSplitted[2]);
+        if (anyoFin > anyoCalendario || mesFin > mesCalendario) {
             diaFin = calculoDiasTotalesPorMes(mesCalendario, anyoCalendario);
-        };
+        }; 
         const rangoHistorico = [];
         for (let i = diaInicio; i <= diaFin; i++) {
             rangoHistorico.push(i)
-        };
+        };        
         if (rangoHistorico.includes(dia)) {
             elRetorno = registro.baja[0].tipo;
         };
@@ -3188,9 +3186,9 @@ const periodoBajaTrabajadorAccion = (calendarioAGestionar, inicioBaja, finBaja, 
         anyoFinB = anyoCalendario;
         mesFinB = mesCalendario;
         diaFinB = parseInt(diasMes);
-    }
+    };
     let empezamosPor;
-    let acabamosPor;
+    let acabamosPor;    
     if (anyoInicioB < anyoCalendario || mesInicioB < mesCalendario) {
         empezamosPor = 1;
     };

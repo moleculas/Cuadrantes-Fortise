@@ -55,7 +55,8 @@ const devuelveFestivos = () => {
     if (dia === 25 && mes === 4 && d === 28 && e === 6 && a > 10) {
         dia = 18;
     };
-    const laFecha = mes + '-' + dia + '-' + any;
+    //const laFecha = mes + '-' + dia + '-' + any; //només vàlid a chrome
+    const laFecha = any + '/' + mes + '/' + dia + ' 00:00:00'; //vàlid chrome + firefox
     const domingoPascua1 = new Date(laFecha);
     const viernesSanto = new Date(domingoPascua1.setDate(domingoPascua1.getDate() - 2));
     const domingoPascua2 = new Date(laFecha);

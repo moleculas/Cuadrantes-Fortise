@@ -95,6 +95,7 @@ import { setCalendarioAGestionarAccion } from '../redux/cuadrantesDucks';
 import { venimosDeRegistradosAccion } from '../redux/pendientesDucks';
 import { gestionaMaxDateCalendarAccion } from '../redux/appDucks';
 import { setLosDiasDelMesAccion } from '../redux/cuadrantesDucks';
+import { setStateFestivoAccion } from '../redux/cuadrantesDucks';
 import { centroAGestionarInicioAccion } from '../redux/cuadrantesGestionDucks';
 import { gestionaCuadranteIndividualAccion } from '../redux/cuadrantesGestionDucks';
 import { setEstamosActualizandoCuadranteSinCargaAccion } from '../redux/cuadrantesSettersDucks';
@@ -164,7 +165,8 @@ import {
     handleRegistrarCambioEnCasillaConfiguracionAccion,
     handleChangeTipoHorarioAccion,
     configuraStateFestivoAccion,
-    handleLimpiezaHorarioAccion
+    handleLimpiezaHorarioAccion,
+    esFestivoFuncionAccion
 } from '../redux/cuadrantesHandlersDucks';
 import {
     retornaInfoFabButtonAccion,
@@ -401,25 +403,26 @@ const Cuadrantes = (props) => {
     }, [dispatch]);
 
     //secuencia gestión meses
-
+   
     useEffect(() => {
         const diasMes = dispatch(diasEnElMesAccion(calendarioAGestionar));
         let myArrSplit = calendarioAGestionar.split("-");
         const anyoAGest = myArrSplit[0];
         const mesAGest = myArrSplit[1];
         let array = [];
+        let object={};
         for (let i = 0; i < diasMes; i++) {
             const dateStr = mesAGest + '-' + (i + 1) + '-' + anyoAGest;
             array.push([[i + 1], [dispatch(diaDeLaSemanaAccion(dateStr))]]);
+            if (dispatch(esFestivoFuncionAccion(i))) {
+                object['estadoFestivoDia' + i] = true;
+            } else {
+                object['estadoFestivoDia' + i] = false;
+            };
         };
+        dispatch(setStateFestivoAccion(object));
         dispatch(setLosDiasDelMesAccion(array));
     }, [calendarioAGestionar]);
-
-    useEffect(() => {
-        if (losDiasDelMes.length > 0) {
-            dispatch(configuraStateFestivoAccion());
-        };
-    }, [losDiasDelMes]);
 
     //secuencia cuadrante
 
@@ -749,7 +752,7 @@ const Cuadrantes = (props) => {
                 <Box
                     m={0.3}
                     p={1.5}
-                    className={clsx(classes.inicio, classes.blanc, classes.mb_5, dia[1][0] === 'Domingo' || stateFestivo['estadoFestivoDia' + (index + 1)] ? classes.diaFestivo : classes.diaLaboral)}
+                    className={clsx(classes.inicio, classes.blanc, classes.mb_5, dia[1][0] === 'Sábado' || dia[1][0] === 'Domingo' || stateFestivo['estadoFestivoDia' + (index + 1)] ? classes.diaFestivo : classes.diaLaboral)}
                     onClick={(event) => dispatch(abrePopoverDiasAccion(postRef, index, dia[1][0], event, scrollable, classesDisp))}
                 >
                     <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{dia[1][0] + ', ' + dia[0][0]}</Typography>
@@ -1110,6 +1113,248 @@ const Cuadrantes = (props) => {
         }
     };
 
+    const retornaCuadranteCompleto = () => {
+        return (
+            <Grid
+                className={clsx(classes.scrollable, classes.scrollableScroll)}
+                ref={scrollable}
+                style={{ height: heightScrollable }}
+            >
+                <Box
+                    p={0}
+                    mt={0}
+                >
+                    <Grid
+                        container
+                        direction="row"
+                        justifycontent="flex-start"
+                        alignItems="flex-start"
+                        style={{ position: 'fixed', zIndex: 3, marginTop: -45 }}
+                    >
+                        <Box
+                            p={1.5}
+                            mx={0.3}
+                            className={clsx(classes.cabecera, classes.inicio)}
+                            color="secondary.contrastText"
+                            style={{ minHeight: 38, maxHeight: 38, padding: 9, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
+                        >
+                            <Typography variant="body2">Cuadrante</Typography>
+                            <Avatar
+                                className={clsx(classes.small4, classes.suplente)}
+                            >
+                                <Typography variant='body2' color="initial">{cuadranteEnUsoCuadrantes}</Typography>
+                            </Avatar>
+                        </Box>
+                        {visibleCuadranteServiciosFijos ? (
+                            cuadranteServiciosFijos.length > 0 ? (
+                                cuadranteServiciosFijos.map((servicio, index) => (
+                                    retornaHeaderServiciosFijosAccion(servicio, index, dimensionsColumnaServiciosFijos.width)
+                                ))
+                            ) : null
+                        ) : null}
+                        {visibleCuadrante ? (
+                            cuadrante.length > 0 ? (
+                                <Fragment>
+                                    {cuadrante.map((columnaCabecera, index) => (
+                                        <Box
+                                            key={`box_header_` + (index + 1)}
+                                            mx={0.3}
+                                        >
+                                            <Accordion
+                                                expanded={expandedAccordion === 'panel_' + (index + 1)}
+                                                className={gestionaClassesColoresTrabajadoresAccion(columnaCabecera.tipoTrabajador)}
+                                                style={{ width: dimensionsColumna.width }}
+                                                onChange={(e, expandedAccordion) => { dispatch(handleCambioAccordionHeaderAccion(expandedAccordion, 'panel_' + (index + 1), index, scrollable, classesDisp)) }}
+                                            >
+                                                <AccordionSummary
+                                                    expandIcon={<ExpandMoreIcon className={classes.blanc} />}
+                                                >
+                                                    <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{columnaCabecera.nombreTrabajador}</Typography>
+                                                </AccordionSummary>
+                                                <AccordionDetails>
+                                                    <Grid container className={classes.mt5}>
+                                                        <Grid
+                                                            container
+                                                            direction="column"
+                                                            justifycontent="flex-start"
+                                                            alignItems="flex-start"
+                                                        >
+                                                            <Box
+                                                                style={{ width: '100%', display: 'flex' }}
+                                                                className={estadoFlex === 'fila' ? classes.flexRow : classes.flexColumn}
+                                                            >
+                                                                <Grid item xs={false}>
+                                                                </Grid>
+                                                                <Grid item xs={12}>
+                                                                    <Box
+                                                                        display="flex"
+                                                                        alignItems="center"
+                                                                        justifyContent="flex-end"
+                                                                    >
+                                                                        <Tooltip title={columnaCabecera.nombreTrabajador ? "Añadir suplente" : ""} placement="top-end" arrow>
+                                                                            <div>
+                                                                                <IconButton
+                                                                                    className={clsx(classes.btnAddSuplente, classes.blanc, classes.mb10)}
+                                                                                    onClick={() => dispatch(handleClickAddColumnaAccion('suplente', index, scrollable, classesDisp))}
+                                                                                    disabled={columnaCabecera.nombreTrabajador ? false : true}
+                                                                                >
+                                                                                    <PersonAddIcon style={{ fontSize: 18 }} />
+                                                                                </IconButton>
+                                                                            </div>
+                                                                        </Tooltip>
+                                                                        <Tooltip title={columnaCabecera.nombreTrabajador ? "Limpiar horario columna" : ""} placement="top-end" arrow>
+                                                                            <div>
+                                                                                <IconButton
+                                                                                    className={clsx(classes.btnLimpieza, classes.blanc, classes.mb10)}
+                                                                                    size="small"
+                                                                                    onClick={() => dispatch(handleLimpiezaHorarioAccion(index))}
+                                                                                    disabled={columnaCabecera.nombreTrabajador ? false : true}
+                                                                                >
+                                                                                    <RemoveCircleOutlineIcon />
+                                                                                </IconButton>
+                                                                            </div>
+                                                                        </Tooltip>
+                                                                        <Tooltip title={columnaCabecera.nombreTrabajador ? "Actualizar trabajador" : ""} placement="top-end" arrow>
+                                                                            <div>
+                                                                                <IconButton
+                                                                                    className={clsx(classes.btnVariacion, classes.blanc, classes.mb10)}
+                                                                                    size="small"
+                                                                                    onClick={() => dispatch(handleActualizarTrabajadoresAccion(index, columnaCabecera.tipoTrabajador, columnaCabecera.idTrabajador))}
+                                                                                    disabled={columnaCabecera.nombreTrabajador ? false : true}
+                                                                                >
+                                                                                    <CachedIcon />
+                                                                                </IconButton>
+                                                                            </div>
+                                                                        </Tooltip>
+                                                                        <Tooltip title="Eliminar trabajador" placement="top-end" arrow>
+                                                                            <IconButton
+                                                                                className={clsx(classes.btnError, classes.mb10)}
+                                                                                size="small"
+                                                                                onClick={() => dispatch(eliminarColumnaAccion(index, columnaCabecera.idTrabajador, scrollable, classesDisp))}
+                                                                            >
+                                                                                <DeleteIcon />
+                                                                            </IconButton>
+                                                                        </Tooltip>
+                                                                    </Box>
+                                                                </Grid>
+                                                            </Box>
+                                                            <FormControl
+                                                                variant="outlined"
+                                                                fullWidth
+                                                                className={classes.mt15}
+                                                                size="small"
+                                                            >
+                                                                <InputLabel>{(columnaCabecera.tipoTrabajador === 'trabajador' || !columnaCabecera.tipoTrabajador) ? 'Trabajador' : 'Suplente'}</InputLabel>
+                                                                <Select
+                                                                    id={`form-trabajador-` + (index + 1)}
+                                                                    value={columnaCabecera.idTrabajador < 1000 ? columnaCabecera.idTrabajador : ''}
+                                                                    onChange={(event) => dispatch(handleChangeFormTrabajadoresAccion(index, columnaCabecera.tipoTrabajador, event))}
+                                                                    onOpen={() => dispatch(setValorPrevioAccordionAbiertoAccion(columnaCabecera.idTrabajador))}
+                                                                    input={
+                                                                        <OutlinedInput
+                                                                            labelWidth={80}
+                                                                        />
+                                                                    }
+                                                                >
+                                                                    {listadoTrabajadores.map((option) => (
+                                                                        <MenuItem key={option.id} value={option.id}>
+                                                                            {option.nombre}
+                                                                        </MenuItem>
+                                                                    ))}
+                                                                </Select>
+                                                            </FormControl>
+                                                            <FormControl
+                                                                variant="outlined"
+                                                                fullWidth
+                                                                className={classes.mt15}
+                                                                size="small"
+                                                            >
+                                                                <InputLabel>Modo entrada datos</InputLabel>
+                                                                <Select
+                                                                    id="form-tipo-cuadrantes"
+                                                                    label="Modo entrada datos"
+                                                                    value={columnaCabecera.tipoHorario || ''}
+                                                                    onChange={(event) => dispatch(handleChangeTipoHorarioAccion(index, event))}
+                                                                    helpertext="Selecciona Modo entrada datos"
+                                                                    disabled={columnaCabecera.nombreTrabajador ? false : true}
+                                                                >
+                                                                    {tipos.map((option) => (
+                                                                        <MenuItem key={option.value} value={option.value}>
+                                                                            {option.label}
+                                                                        </MenuItem>
+                                                                    ))}
+                                                                </Select>
+                                                            </FormControl>
+                                                        </Grid>
+                                                    </Grid>
+                                                </AccordionDetails>
+                                            </Accordion>
+                                        </Box>
+                                    ))}
+                                    <Box
+                                        m={0.3}
+                                    >
+                                        <Tooltip title="Añadir trabajador" placement="right" arrow>
+                                            <IconButton
+                                                className={clsx(classes.btnAddTrabajador, classes.blanc)}
+                                                onClick={() => dispatch(handleClickAddColumnaAccion('trabajador', null, scrollable, classesDisp))}
+                                            >
+                                                <PersonAddIcon style={{ fontSize: 18 }} />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Box>
+                                </Fragment>
+                            ) : null
+                        ) : null}
+                    </Grid>
+                    <Grid container
+                        style={{ marginTop: 45 }}
+                    >
+                        <Box>
+                            {losDiasDelMes.map((dia, index) => (
+                                retornaCasillasDias(dia, index)
+                            ))}
+                        </Box>
+                        {visibleCuadranteServiciosFijos ? (
+                            cuadranteServiciosFijos.length > 0 ? (
+                                cuadranteServiciosFijos.map((servicio, indexColSF) => (
+                                    <Box key={'box' + indexColSF}>
+                                        {losDiasDelMes.map((dia, indexDia) => (
+                                            retornaCasillasServiciosFijos(dia, indexDia, servicio, indexColSF)
+                                        ))}
+                                    </Box>
+                                ))
+                            ) : null
+                        ) : null}
+                        {visibleCuadrante ? (
+                            cuadrante.length > 0 ? (
+                                cuadrante.map((columna, indexColumna) => (
+                                    <Box
+                                        key={'Box_' + indexColumna}
+                                    >
+                                        {losDiasDelMes.map((dia, indexDia) => (
+                                            retornaCasillasGeneral(dia, indexDia, columna, indexColumna)
+                                        ))}
+                                    </Box>
+                                ))
+                            ) : null
+                        ) : null}
+                    </Grid>
+                </Box>
+                <Tooltip title="Informe Cuadrante" placement="left" arrow>
+                    <Fab
+                        variant="extended"
+                        className={classes.fab}
+                        onClick={() => dispatch(handleClickOpenDialogCuadrantes4Accion())}
+                    >
+                        <Typography variant="body2" className={classes.typoFab}>{dispatch(retornaInfoFabButtonAccion())}</Typography>
+                        <AssessmentIcon />
+                    </Fab>
+                </Tooltip>
+            </Grid>
+        )
+    };
+
     return (
         <div>
             <Backdrop className={classes.loading} open={openLoading}>
@@ -1438,243 +1683,7 @@ const Cuadrantes = (props) => {
                             ) : null}
                             <Grid item xs>
                                 {cuadrante.length > 0 || cuadranteVacio ? (
-                                    <Grid
-                                        className={clsx(classes.scrollable, classes.scrollableScroll)}
-                                        ref={scrollable}
-                                        style={{ height: heightScrollable }}
-                                    >
-                                        <Box
-                                            p={0}
-                                            mt={0}
-                                        >
-                                            <Grid
-                                                container
-                                                direction="row"
-                                                justifycontent="flex-start"
-                                                alignItems="flex-start"
-                                                style={{ position: 'fixed', zIndex: 3, marginTop: -45 }}
-                                            >
-                                                <Box
-                                                    p={1.5}
-                                                    mx={0.3}
-                                                    className={clsx(classes.cabecera, classes.inicio)}
-                                                    color="secondary.contrastText"
-                                                    style={{ minHeight: 38, maxHeight: 38, padding: 9, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
-                                                >
-                                                    <Typography variant="body2">Cuadrante</Typography>
-                                                    <Avatar
-                                                        className={clsx(classes.small4, classes.suplente)}
-                                                    >
-                                                        <Typography variant='body2' color="initial">{cuadranteEnUsoCuadrantes}</Typography>
-                                                    </Avatar>
-                                                </Box>
-                                                {visibleCuadranteServiciosFijos ? (
-                                                    cuadranteServiciosFijos.length > 0 ? (
-                                                        cuadranteServiciosFijos.map((servicio, index) => (
-                                                            retornaHeaderServiciosFijosAccion(servicio, index, dimensionsColumnaServiciosFijos.width)
-                                                        ))
-                                                    ) : null
-                                                ) : null}
-                                                {visibleCuadrante ? (
-                                                    cuadrante.length > 0 ? (
-                                                        <Fragment>
-                                                            {cuadrante.map((columnaCabecera, index) => (
-                                                                <Box
-                                                                    key={`box_header_` + (index + 1)}
-                                                                    mx={0.3}
-                                                                >
-                                                                    <Accordion
-                                                                        expanded={expandedAccordion === 'panel_' + (index + 1)}
-                                                                        className={gestionaClassesColoresTrabajadoresAccion(columnaCabecera.tipoTrabajador)}
-                                                                        style={{ width: dimensionsColumna.width }}
-                                                                        onChange={(e, expandedAccordion) => { dispatch(handleCambioAccordionHeaderAccion(expandedAccordion, 'panel_' + (index + 1), index, scrollable, classesDisp)) }}
-                                                                    >
-                                                                        <AccordionSummary
-                                                                            expandIcon={<ExpandMoreIcon className={classes.blanc} />}
-                                                                        >
-                                                                            <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{columnaCabecera.nombreTrabajador}</Typography>
-                                                                        </AccordionSummary>
-                                                                        <AccordionDetails>
-                                                                            <Grid container className={classes.mt5}>
-                                                                                <Grid
-                                                                                    container
-                                                                                    direction="column"
-                                                                                    justifycontent="flex-start"
-                                                                                    alignItems="flex-start"
-                                                                                >
-                                                                                    <Box
-                                                                                        style={{ width: '100%', display: 'flex' }}
-                                                                                        className={estadoFlex === 'fila' ? classes.flexRow : classes.flexColumn}
-                                                                                    >
-                                                                                        <Grid item xs={false}>
-                                                                                        </Grid>
-                                                                                        <Grid item xs={12}>
-                                                                                            <Box
-                                                                                                display="flex"
-                                                                                                alignItems="center"
-                                                                                                justifyContent="flex-end"
-                                                                                            >
-                                                                                                <Tooltip title={columnaCabecera.nombreTrabajador ? "Añadir suplente" : ""} placement="top-end" arrow>
-                                                                                                    <div>
-                                                                                                        <IconButton
-                                                                                                            className={clsx(classes.btnAddSuplente, classes.blanc, classes.mb10)}
-                                                                                                            onClick={() => dispatch(handleClickAddColumnaAccion('suplente', index, scrollable, classesDisp))}
-                                                                                                            disabled={columnaCabecera.nombreTrabajador ? false : true}
-                                                                                                        >
-                                                                                                            <PersonAddIcon style={{ fontSize: 18 }} />
-                                                                                                        </IconButton>
-                                                                                                    </div>
-                                                                                                </Tooltip>
-                                                                                                <Tooltip title={columnaCabecera.nombreTrabajador ? "Limpiar horario columna" : ""} placement="top-end" arrow>
-                                                                                                    <div>
-                                                                                                        <IconButton
-                                                                                                            className={clsx(classes.btnLimpieza, classes.blanc, classes.mb10)}
-                                                                                                            size="small"
-                                                                                                            onClick={() => dispatch(handleLimpiezaHorarioAccion(index))}
-                                                                                                            disabled={columnaCabecera.nombreTrabajador ? false : true}
-                                                                                                        >
-                                                                                                            <RemoveCircleOutlineIcon />
-                                                                                                        </IconButton>
-                                                                                                    </div>
-                                                                                                </Tooltip>
-                                                                                                <Tooltip title={columnaCabecera.nombreTrabajador ? "Actualizar trabajador" : ""} placement="top-end" arrow>
-                                                                                                    <div>
-                                                                                                        <IconButton
-                                                                                                            className={clsx(classes.btnVariacion, classes.blanc, classes.mb10)}
-                                                                                                            size="small"
-                                                                                                            onClick={() => dispatch(handleActualizarTrabajadoresAccion(index, columnaCabecera.tipoTrabajador, columnaCabecera.idTrabajador))}
-                                                                                                            disabled={columnaCabecera.nombreTrabajador ? false : true}
-                                                                                                        >
-                                                                                                            <CachedIcon />
-                                                                                                        </IconButton>
-                                                                                                    </div>
-                                                                                                </Tooltip>
-                                                                                                <Tooltip title="Eliminar trabajador" placement="top-end" arrow>
-                                                                                                    <IconButton
-                                                                                                        className={clsx(classes.btnError, classes.mb10)}
-                                                                                                        size="small"
-                                                                                                        onClick={() => dispatch(eliminarColumnaAccion(index, columnaCabecera.idTrabajador, scrollable, classesDisp))}
-                                                                                                    >
-                                                                                                        <DeleteIcon />
-                                                                                                    </IconButton>
-                                                                                                </Tooltip>
-                                                                                            </Box>
-                                                                                        </Grid>
-                                                                                    </Box>
-                                                                                    <FormControl
-                                                                                        variant="outlined"
-                                                                                        fullWidth
-                                                                                        className={classes.mt15}
-                                                                                        size="small"
-                                                                                    >
-                                                                                        <InputLabel>{(columnaCabecera.tipoTrabajador === 'trabajador' || !columnaCabecera.tipoTrabajador) ? 'Trabajador' : 'Suplente'}</InputLabel>
-                                                                                        <Select
-                                                                                            id={`form-trabajador-` + (index + 1)}
-                                                                                            value={columnaCabecera.idTrabajador < 1000 ? columnaCabecera.idTrabajador : ''}
-                                                                                            onChange={(event) => dispatch(handleChangeFormTrabajadoresAccion(index, columnaCabecera.tipoTrabajador, event))}
-                                                                                            onOpen={() => dispatch(setValorPrevioAccordionAbiertoAccion(columnaCabecera.idTrabajador))}
-                                                                                            input={
-                                                                                                <OutlinedInput
-                                                                                                    labelWidth={80}
-                                                                                                />
-                                                                                            }
-                                                                                        >
-                                                                                            {listadoTrabajadores.map((option) => (
-                                                                                                <MenuItem key={option.id} value={option.id}>
-                                                                                                    {option.nombre}
-                                                                                                </MenuItem>
-                                                                                            ))}
-                                                                                        </Select>
-                                                                                    </FormControl>
-                                                                                    <FormControl
-                                                                                        variant="outlined"
-                                                                                        fullWidth
-                                                                                        className={classes.mt15}
-                                                                                        size="small"
-                                                                                    >
-                                                                                        <InputLabel>Modo entrada datos</InputLabel>
-                                                                                        <Select
-                                                                                            id="form-tipo-cuadrantes"
-                                                                                            label="Modo entrada datos"
-                                                                                            value={columnaCabecera.tipoHorario || ''}
-                                                                                            onChange={(event) => dispatch(handleChangeTipoHorarioAccion(index, event))}
-                                                                                            helpertext="Selecciona Modo entrada datos"
-                                                                                            disabled={columnaCabecera.nombreTrabajador ? false : true}
-                                                                                        >
-                                                                                            {tipos.map((option) => (
-                                                                                                <MenuItem key={option.value} value={option.value}>
-                                                                                                    {option.label}
-                                                                                                </MenuItem>
-                                                                                            ))}
-                                                                                        </Select>
-                                                                                    </FormControl>
-                                                                                </Grid>
-                                                                            </Grid>
-                                                                        </AccordionDetails>
-                                                                    </Accordion>
-                                                                </Box>
-                                                            ))}
-                                                            <Box
-                                                                m={0.3}
-                                                            >
-                                                                <Tooltip title="Añadir trabajador" placement="right" arrow>
-                                                                    <IconButton
-                                                                        className={clsx(classes.btnAddTrabajador, classes.blanc)}
-                                                                        onClick={() => dispatch(handleClickAddColumnaAccion('trabajador', null, scrollable, classesDisp))}
-                                                                    >
-                                                                        <PersonAddIcon style={{ fontSize: 18 }} />
-                                                                    </IconButton>
-                                                                </Tooltip>
-                                                            </Box>
-                                                        </Fragment>
-                                                    ) : null
-                                                ) : null}
-                                            </Grid>
-                                            <Grid container
-                                                style={{ marginTop: 45 }}
-                                            >
-                                                <Box>
-                                                    {losDiasDelMes.map((dia, index) => (
-                                                        retornaCasillasDias(dia, index)
-                                                    ))}
-                                                </Box>
-                                                {visibleCuadranteServiciosFijos ? (
-                                                    cuadranteServiciosFijos.length > 0 ? (
-                                                        cuadranteServiciosFijos.map((servicio, indexColSF) => (
-                                                            <Box key={'box' + indexColSF}>
-                                                                {losDiasDelMes.map((dia, indexDia) => (
-                                                                    retornaCasillasServiciosFijos(dia, indexDia, servicio, indexColSF)
-                                                                ))}
-                                                            </Box>
-                                                        ))
-                                                    ) : null
-                                                ) : null}
-                                                {visibleCuadrante ? (
-                                                    cuadrante.length > 0 ? (
-                                                        cuadrante.map((columna, indexColumna) => (
-                                                            <Box
-                                                                key={'Box_' + indexColumna}
-                                                            >
-                                                                {losDiasDelMes.map((dia, indexDia) => (
-                                                                    retornaCasillasGeneral(dia, indexDia, columna, indexColumna)
-                                                                ))}
-                                                            </Box>
-                                                        ))
-                                                    ) : null
-                                                ) : null}
-                                            </Grid>
-                                        </Box>
-                                        <Tooltip title="Informe Cuadrante" placement="left" arrow>
-                                            <Fab
-                                                variant="extended"
-                                                className={classes.fab}
-                                                onClick={() => dispatch(handleClickOpenDialogCuadrantes4Accion())}
-                                            >
-                                                <Typography variant="body2" className={classes.typoFab}>{dispatch(retornaInfoFabButtonAccion())}</Typography>
-                                                <AssessmentIcon />
-                                            </Fab>
-                                        </Tooltip>
-                                    </Grid>
+                                   retornaCuadranteCompleto()
                                 ) : (
                                     <Grid
                                         spacing={1}
@@ -1968,7 +1977,7 @@ const Cuadrantes = (props) => {
                 prTituloDialog={tituloDialogCuadrantes5}
                 prDescripcionDialog={descripcionDialogCuadrantes5}
             />
-            {/* {console.log(trabajadoresEnCuadrante)} */}
+            {/* {console.log(stateFestivo)} */}
         </div >
     )
 }

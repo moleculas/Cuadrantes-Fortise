@@ -253,7 +253,7 @@ export const handleCloseMenuAccion = () => (dispatch) => {
     dispatch(setNumeroFactusolAccion(null));
 };
 
-const esFestivoFuncionAccion = (elDia) => (dispatch, getState) => {
+export const esFestivoFuncionAccion = (elDia) => (dispatch, getState) => {
     const { calendarioAGestionar } = getState().variablesCuadrantes;
     const { monthNum } = dispatch(retornaAnoMesCuadranteAccion(calendarioAGestionar));
     const diaFecha = elDia + '-' + monthNum;
