@@ -183,9 +183,11 @@ const PendientesRegistrados = (props) => {
 
     const selectAllChecked = () => {
         let object = {};
-        for (let i = 0; i < cuadrantesRegistradosArray.length; i++) {
-            object['checked-' + cuadrantesRegistradosArray[i]['id']] = true;
-        }
+        for (let i = 0; i < cuadrantesRegistradosArray.length; i++) {           
+            if (cuadrantesRegistradosArray[i].total.tocaFacturar.valor === 'si') {
+                object['checked-' + cuadrantesRegistradosArray[i]['id']] = true;
+            };
+        };
         setChecked(object);
         setMarcarTodosVisible(false);
     };
@@ -265,7 +267,7 @@ const PendientesRegistrados = (props) => {
                 key={'listaCuadrantes' + index}
             >
                 <ListItem
-                    className={classes.casilla}
+                    className={cuadrante.total.tocaFacturar.valor === 'no' ? classes.casillaBajasInicio : classes.casilla}
                     style={{ display: 'flex', alignItems: 'flex-start' }}
                 >
                     <Checkbox
@@ -274,9 +276,42 @@ const PendientesRegistrados = (props) => {
                         name={'checked-' + cuadrante.id}
                         onChange={handleChangeChecked}
                         style={{ marginTop: -3 }}
+                        disabled={cuadrante.total.tocaFacturar.valor === 'no' ? true : false}
                     />
                     <ListItemText
-                        primary={nombreCentro} secondary={'Actualizado el ' + cuadrante.actualizacion}
+                        primary={nombreCentro}
+                        secondary={
+                            cuadrante.total.tocaFacturar.valor === 'si' ? (
+                                <Fragment>
+                                    <Typography
+                                        component="span"
+                                        variant="body2"
+                                    >
+                                        Actualizado el {cuadrante.actualizacion}
+                                    </Typography>
+                                </Fragment>
+                            ) : (
+                                <Fragment>
+                                    <Typography
+                                        component="span"
+                                        variant="body2"
+                                    >
+                                        Actualizado el {cuadrante.actualizacion}
+                                    </Typography>
+                                    <br />
+                                    <Typography
+                                        component="span"
+                                        variant="body2"
+                                    >
+                                        No se factura: {
+                                          cuadrante.total.tocaFacturar.razon === 'a0' ? 'Cuadrante a 0 €.' : 
+                                          cuadrante.total.tocaFacturar.razon === 'temp' ? 'No toca por temporización.' :
+                                          'Gestión especial de horas.'
+                                        }
+                                    </Typography>
+                                </Fragment>
+                            )
+                        }
                         onClick={() => handleCuadrantesRegistrados(parseInt(nombreSplitted[2]))}
                     />
                     <ListItemSecondaryAction>

@@ -112,6 +112,7 @@ export const retornaInfoFabButtonAccion = () => (dispatch, getState) => {
     let sumatorioHoras_L2 = 0;
     let sumatorioHoras_F = 0;
     let sumatorioTotal = 0;
+    let stringBloqueado = '';
     cuadranteServiciosFijos.forEach((servicio, index) => {
         sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
     });
@@ -126,9 +127,12 @@ export const retornaInfoFabButtonAccion = () => (dispatch, getState) => {
             sumatorioHoras_L2 += (dato.totalHorasNormal_L2 + dato.totalHorasExtra_L2);
             sumatorioHoras_F += (dato.totalHorasNormal_F + dato.totalHorasExtra_F);
             sumatorioTotal += dato.totalHoras;
-        });        
+        });
         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 1) {
-            return cuadranteMultiple + 'Horas: ' + parseFloat(sumatorioTotal).toFixed(2) + ' - Total: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado + sumatorioServiciosFijos).toFixed(2) + ' €';
+            if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1] && objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].bloqueado === 'si') {
+                stringBloqueado = ' (bloqueado)'
+            };
+            return cuadranteMultiple + 'Horas: ' + parseFloat(sumatorioTotal).toFixed(2) + ' - Total' + stringBloqueado + ': ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado + sumatorioServiciosFijos).toFixed(2) + ' €';
         };
         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 2) {
             return cuadranteMultiple + 'Horas: ' + parseFloat(sumatorioTotal).toFixed(2) + ' - Total: ' +
@@ -144,7 +148,10 @@ export const retornaInfoFabButtonAccion = () => (dispatch, getState) => {
         };
         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 3) {
             if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado) {
-                return cuadranteMultiple + 'Horas: ' + parseFloat(sumatorioTotal).toFixed(2) + ' - Total: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado + sumatorioServiciosFijos).toFixed(2) + ' €'
+                if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1] && objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].bloqueado === 'si') {
+                    stringBloqueado = ' (bloqueado)'
+                };
+                return cuadranteMultiple + 'Horas: ' + parseFloat(sumatorioTotal).toFixed(2) + ' - Total' + stringBloqueado + ': ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado + sumatorioServiciosFijos).toFixed(2) + ' €'
             } else {
                 return cuadranteMultiple + 'Horas: ' + parseFloat(sumatorioTotal).toFixed(2) + ' - Total: ' +
                     parseFloat((objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L * sumatorioHoras_L) +
@@ -180,6 +187,7 @@ export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
     let sumatorioHoras_L2 = 0;
     let sumatorioHoras_F = 0;
     let sumatorioTotal = 0;
+    let stringBloqueado = '';
     const arrayInforme = [];
     arrayInforme.push(['Mes: ' + calendarioAGestionar, 'normal']);
     arrayInforme.push(['Centro: ' + objetoCentro.nombre, 'normal']);
@@ -703,7 +711,10 @@ export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
     };
     sumatorioTotal += sumatorioServiciosFijos;
     arrayInforme.push(['divider', 'normal']);
-    arrayInforme.push(['Total General a facturar: ' + parseFloat(sumatorioTotal).toFixed(2) + ' €', 'normal']);
+    if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1] && objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].bloqueado === 'si') {
+        stringBloqueado = ' (bloqueado)'
+    };
+    arrayInforme.push(['Total General a facturar' + stringBloqueado + ': ' + parseFloat(sumatorioTotal).toFixed(2) + ' €', 'normal']);
     arrayInforme.push(['Forma de pago: ' + dispatch(retornaFormaPagoAccion(objetoCentro.formaPago)), 'normal']);
     if (objetoCentro.diaPago) {
         arrayInforme.push(['Día de pago: ' + objetoCentro.diaPago, 'normal']);
@@ -712,9 +723,36 @@ export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
     dispatch(setArrayInformeLineasAccion(arrayInforme));
 };
 
-export const handleClickFacturarCuadranteAccion = () => (dispatch) => {
-    dispatch(procesarDatosCuadranteAccion('informe'));
-    dispatch(handleCloseMenuAccion());
+export const handleClickFacturarCuadranteAccion = () => (dispatch, getState) => {
+    const { objetoCuadrante } = getState().variablesCuadrantes;   
+    if (objetoCuadrante.datosInforme.tocaFacturar.valor === 'si') {
+        dispatch(procesarDatosCuadranteAccion('informe'));
+        dispatch(handleCloseMenuAccion());
+    };
+    if (objetoCuadrante.datosInforme.tocaFacturar.valor === 'no' && objetoCuadrante.datosInforme.tocaFacturar.razon === 'temp') {
+        dispatch(setAlertaAccion({
+            abierto: true,
+            mensaje: "No se puede procesar factura cuadrante porque por temporalización de pago no toca facturar.",
+            tipo: 'error'
+        }));
+        return
+    };
+    if (objetoCuadrante.datosInforme.tocaFacturar.valor === 'no' && objetoCuadrante.datosInforme.tocaFacturar.razon === 'gest') {
+        dispatch(setAlertaAccion({
+            abierto: true,
+            mensaje: "No se puede procesar factura cuadrante con Gestión especial horas.",
+            tipo: 'error'
+        }));
+        return
+    };
+    if (objetoCuadrante.datosInforme.tocaFacturar.valor === 'no' && objetoCuadrante.datosInforme.tocaFacturar.razon === 'a0') {
+        dispatch(setAlertaAccion({
+            abierto: true,
+            mensaje: "No se puede procesar factura cuadrante a 0 €.",
+            tipo: 'error'
+        }));
+        return
+    };
 };
 
 export const handleClickFacturacionMenuAccion = () => (dispatch, getState) => {

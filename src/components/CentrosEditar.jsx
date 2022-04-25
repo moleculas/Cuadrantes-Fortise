@@ -7176,7 +7176,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                             <InputLabel>Temporización</InputLabel>
                                             <Select
                                                 fullWidth
-                                                className={classes.mb15}
+                                                className={classes.mb20}
                                                 id="form-tempPago-edicion"
                                                 label="Temporización"
                                                 value={valuesFormEdicionGenerales.tempPago || ''}
@@ -7193,19 +7193,20 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                 }
                                             </Select>
                                         </FormControl>
-                                        <FormControlLabel
-                                            style={{ marginLeft: 0, marginTop: 5 }}
-                                            control={
-                                                <Checkbox
-                                                    checked={valuesFormEdicionGenerales.activoNumCuenta || false}
-                                                    onChange={handleChangeFormEdicionGenerales('activoNumCuenta')}
-                                                    name="checkedNumCuenta-edicion"
-                                                    color="primary"
-                                                    disabled={disabledItem}
-                                                />
-                                            }
-                                            label={<Typography className={classes.colorText} style={{ fontSize: '0.9rem' }}>Activar línea número de cuenta en Factura Factusol.</Typography>}
-                                        />
+                                        <Box className={classes.boxChekin}>
+                                            <FormControlLabel                                              
+                                                control={
+                                                    <Checkbox
+                                                        checked={valuesFormEdicionGenerales.activoNumCuenta || false}
+                                                        onChange={handleChangeFormEdicionGenerales('activoNumCuenta')}
+                                                        name="checkedNumCuenta-edicion"
+                                                        color="secondary"
+                                                        disabled={disabledItem}
+                                                    />
+                                                }
+                                                label={<Typography className={classes.colorText} style={{ fontSize: '0.9rem' }}>Activar línea número de cuenta en Factura Factusol.</Typography>}
+                                            />
+                                        </Box>
                                     </Box>
                                 </Grid>
                             </TabPanel>

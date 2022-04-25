@@ -48,6 +48,7 @@ const dataInicial = {
     itemEditandoConfiguracion: {
         tipoHorario: '',
         computo: '',
+        bloqueado: '',
         mensualPactado: '',
         precioHora_L: '',
         precioHora_E: '',

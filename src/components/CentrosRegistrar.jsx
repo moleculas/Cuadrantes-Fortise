@@ -7044,18 +7044,19 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                 }
                                             </Select>
                                         </FormControl>
-                                        <FormControlLabel
-                                            style={{ marginLeft: 0, marginTop: 5 }}
-                                            control={
-                                                <Checkbox
-                                                    checked={valuesFormRegistroGenerales.activoNumCuenta || false}
-                                                    onChange={handleChangeFormRegistroGenerales('activoNumCuenta')}
-                                                    name="checkedNumCuenta-registro"
-                                                    color="primary"
-                                                />
-                                            }
-                                            label={<Typography className={classes.colorText} style={{ fontSize: '0.9rem' }}>Activar línea número de cuenta en Factura Factusol.</Typography>}
-                                        />
+                                        <Box className={classes.boxChekin}>
+                                            <FormControlLabel
+                                                control={
+                                                    <Checkbox
+                                                        checked={valuesFormRegistroGenerales.activoNumCuenta || false}
+                                                        onChange={handleChangeFormRegistroGenerales('activoNumCuenta')}
+                                                        name="checkedNumCuenta-registro"
+                                                        color="secondary"
+                                                    />
+                                                }
+                                                label={<Typography className={classes.colorText} style={{ fontSize: '0.9rem' }}>Activar línea número de cuenta en Factura Factusol.</Typography>}
+                                            />
+                                        </Box>
                                     </Box>
                                 </Grid>
                             </TabPanel>

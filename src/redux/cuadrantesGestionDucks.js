@@ -55,6 +55,39 @@ export default function cuadrantesGestionReducer(state = dataInicial, action) {
 }
 
 //acciones
+const calculaTocaFacturacionAccion = () => (dispatch, getState) => {
+    const { calendarioAGestionar } = getState().variablesCuadrantes;
+    const { objetoCentro } = getState().variablesCentros;
+    let myArrSplit = calendarioAGestionar.split("-");
+    const mes = parseInt(myArrSplit[1]);
+    let objetoRetornoCalculo = {};
+    if (objetoCentro.tempPago === 'bimensual' && (mes === 1 || mes === 3 || mes === 5 || mes === 7 || mes === 9 || mes === 11)) {
+        objetoRetornoCalculo = {
+            valor: 'no',
+            razon: 'temp'
+        };
+        return objetoRetornoCalculo
+    } else if (objetoCentro.tempPago === 'trimestral' && (mes === 1 || mes === 2 || mes === 4 || mes === 5 || mes === 7 || mes === 8 || mes === 10 || mes === 11)) {
+        objetoRetornoCalculo = {
+            valor: 'no',
+            razon: 'temp'
+        };
+        return objetoRetornoCalculo
+    } else if (objetoCentro.horario.horario[0] && objetoCentro.horario.horario[0].computo === 3) {
+        objetoRetornoCalculo = {
+            valor: 'no',
+            razon: 'gest'
+        };
+        return objetoRetornoCalculo
+    } else {
+        objetoRetornoCalculo = {
+            valor: 'si',
+            razon: ''
+        };
+        return objetoRetornoCalculo
+    };
+};
+
 export const calculaNumeroCuadrantesAccion = (total) => (dispatch, getState) => {
     let arrayAAnadir = [];
     for (let i = 0; i < total; i++) {
@@ -64,18 +97,23 @@ export const calculaNumeroCuadrantesAccion = (total) => (dispatch, getState) => 
 };
 
 const gestionaFestivosInicio = (arrayFestivos) => (dispatch, getState) => {
-    const { objetoCuadrante, stateFestivo } = getState().variablesCuadrantes;
+    const { objetoCuadrante, losDiasDelMes } = getState().variablesCuadrantes;
     const { bufferSwitchedDiasFestivosCuadrante } = getState().variablesCuadrantesSetters;
     if (objetoCuadrante.datosBuffer.datosBuffer.length > 0 && bufferSwitchedDiasFestivosCuadrante.length === 0) {
         dispatch(traspasoBufferFestivosAccion(true));
     } else if (objetoCuadrante.datosBuffer.datosBuffer.length === 0 && bufferSwitchedDiasFestivosCuadrante.length === 0) {
-        if (arrayFestivos && arrayFestivos.length > 0) {
-            let object = { ...stateFestivo };
+        let object = {};
+        if (losDiasDelMes.length > 0) {                
+            for (let i = 1; i <= losDiasDelMes.length; i++) {
+                object['estadoFestivoDia' + i] = false;
+            };
+        }; 
+        if (arrayFestivos && arrayFestivos.length > 0) {                      
             arrayFestivos.forEach((festivo, index) => {
                 object['estadoFestivoDia' + festivo[1]] = true;
-            });
-            dispatch(setStateFestivoAccion(object));
+            });            
         };
+        dispatch(setStateFestivoAccion(object));
     };
 };
 
@@ -370,9 +408,9 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
                         if (trabajadorIterado['suplente_' + (index + 1)]) {
                             setTimeout(() => {
                                 dispatch(obtenerSuplenteAccion('trabajadores', trabajadorIterado['suplente_' + (index + 1)]));
-                            }, 250);
+                            }, 500);
                         };
-                    }, index * 500);
+                    }, index * 1000);
             });
         };
     };
@@ -429,7 +467,8 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
             tipoHorario: objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].tipoHorarioGeneral,
             computo: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].computo,
             excepcion: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].excepcion ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].excepcion : '',
-            mensualPactado: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].mensualPactado ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].mensualPactado : '',
+            bloqueado: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].bloqueado ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].bloqueado : 'no',
+            mensualPactado: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].mensualPactado >= 0 ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].mensualPactado : '',
             mensualPactadoInicial: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].mensualPactadoInicial ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].mensualPactadoInicial : '',
             precioHora_L: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_L ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_L : '',
             precioHora_E: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_E ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_E : '',
@@ -449,13 +488,14 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
     if (cuadranteRegistrado === 'si') {
         if (objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].arrayCuadrante.length > 0) {
             const { arrayResultante, arrayFestivos } = dispatch(completarCuadranteAccion(objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].arrayCuadrante));
-            dispatch(setCuadranteAccion(arrayResultante));
+            dispatch(setCuadranteAccion(arrayResultante));           
             dispatch(gestionaFestivosInicio(arrayFestivos));
             let objetoDatosInforme = {
                 computo: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].computo,
                 excepcion: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].excepcion ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].excepcion : '',
+                bloqueado: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].bloqueado,
                 tipoRegistro: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].tipoRegistro,
-                mensualPactado: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].mensualPactado ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].mensualPactado : null,
+                mensualPactado: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].mensualPactado >= 0 ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].mensualPactado : null,
                 mensualPactadoInicial: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].mensualPactadoInicial ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].mensualPactadoInicial : '',
                 precioHora_L: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_L ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_L : null,
                 precioHora_E: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_E ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_E : null,
@@ -826,15 +866,16 @@ const procesarDatosCuadrantePromesa = (index, noHayRegistro) => (dispatch, getSt
             total: elTotalAAFacturarTotal += sumatorioServiciosFijos
         };
         elObjetoDatosInforme = {
-            iniciado: objetoCuadrante.datosInforme.datosInforme[index].mensualPactado ? false : true,
+            iniciado: objetoCuadrante.datosInforme.datosInforme[index].mensualPactadoInicial ? false : true,
             computo: objetoCuadrante.datosInforme.datosInforme[index].computo,
             excepcion: objetoCuadrante.datosInforme.datosInforme[index].excepcion,
+            bloqueado: objetoCuadrante.datosInforme.datosInforme[index].bloqueado,
             tipoRegistro: objetoCuadrante.datosInforme.datosInforme[index].tipoRegistro,
             totalHorasInicial: objetoCuadrante.datosInforme.datosInforme[index].totalHorasInicial,
             proporcion: objetoCuadrante.datosInforme.datosInforme[index].proporcion ? objetoCuadrante.datosInforme.datosInforme[index].proporcion : null
             //arrayTrabajadores: arrayDatosInforme,
         };
-        if (objetoCuadrante.datosInforme.datosInforme[index].mensualPactado) {
+        if (objetoCuadrante.datosInforme.datosInforme[index].mensualPactadoInicial) {
             elObjetoDatosInforme['mensualPactado'] = parseFloat(objetoCuadrante.datosInforme.datosInforme[index].mensualPactado);
             elObjetoDatosInforme['mensualPactadoInicial'] = parseFloat(objetoCuadrante.datosInforme.datosInforme[index].mensualPactadoInicial);
             elObjetoDatosInforme['totalFacturado_M'] = parseFloat(elTotalAAFacturar_M);
@@ -1117,7 +1158,7 @@ export const procesarDatosCuadranteAccion = (source) => (dispatch, getState) => 
     };
 };
 
-const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
+const calculoTotales = (servicios, informes, horas, source) => (dispatch, getState) => {
     const { objetoCuadrante } = getState().variablesCuadrantes;
     let totalFacturado_M = 0;
     let totalFacturado_L = 0;
@@ -1156,6 +1197,7 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
     let totalHoras_L1 = 0;
     let totalHoras_L2 = 0;
     let totalHoras_F = 0;
+    let objetoTotales;
     servicios.forEach((servicioTot) => {
         if (servicioTot) {
             servicioTot.forEach((servicio) => {
@@ -1263,160 +1305,167 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
             };
         };
     });
-    const objetoTotales = {
-        nombreCentro: objetoCuadrante.datosCuadrante.nombreCentro,
-        codigo: objetoCuadrante.datosCuadrante.codigo,
-        domicilio: objetoCuadrante.datosCuadrante.domicilio,
-        codigoPostal: objetoCuadrante.datosCuadrante.codigoPostal,
-        poblacion: objetoCuadrante.datosCuadrante.poblacion,
-        provincia: objetoCuadrante.datosCuadrante.provincia,
-        nif: objetoCuadrante.datosCuadrante.nif,
-        formaPago: objetoCuadrante.datosCuadrante.formaPago
-    };
-    if (totalFacturado_M) {
-        objetoTotales['MT'] = totalFacturado_M;
-        objetoTotales['MH'] = 1;
-        objetoTotales['MPr'] = 1;
-    };
-    if (totalFacturado_L) {
-        objetoTotales['LT'] = totalFacturado_L;
-        objetoTotales['LH'] = totalHoras_L;
-        objetoTotales['LPr'] = 1;
-    };
-    if (totalFacturado_E) {
-        objetoTotales['ET'] = totalFacturado_E;
-        objetoTotales['EH'] = totalHoras_E;
-        objetoTotales['EPr'] = 1;
-    };
-    if (totalFacturado_P) {
-        objetoTotales['PT'] = totalFacturado_P;
-        objetoTotales['PH'] = totalHoras_P;
-        objetoTotales['PPr'] = 1;
-    };
-    if (totalFacturado_N) {
-        objetoTotales['NT'] = totalFacturado_N;
-        objetoTotales['NH'] = totalHoras_N;
-        objetoTotales['NPr'] = 1;
-    };
-    if (totalFacturado_N) {
-        objetoTotales['RT'] = totalFacturado_R;
-        objetoTotales['RH'] = totalHoras_R;
-        objetoTotales['RPr'] = 1;
-    };
-    if (totalFacturado_L1) {
-        objetoTotales['L1T'] = totalFacturado_L1;
-        objetoTotales['L1H'] = totalHoras_L1;
-        objetoTotales['L1Pr'] = 1;
-    };
-    if (totalFacturado_L2) {
-        objetoTotales['L2T'] = totalFacturado_L2;
-        objetoTotales['L2H'] = totalHoras_L2;
-        objetoTotales['L2Pr'] = 1;
-    };
-    if (totalFacturado_F) {
-        objetoTotales['FT'] = totalFacturado_F;
-        objetoTotales['FH'] = totalHoras_F;
-        objetoTotales['FPr'] = 1;
-    };
-    if (totalFacturado_TO) {
-        objetoTotales['TOT'] = totalFacturado_TO;
-        objetoTotales['TOH'] = 1;
-        objetoTotales['TOPr'] = 1;
-    };
-    if (totalFacturado_CR) {
-        objetoTotales['CRT'] = totalFacturado_CR;
-        objetoTotales['CRH'] = 1;
-        objetoTotales['CRPr'] = 1;
-    };
-    if (totalFacturado_CE) {
-        objetoTotales['CET'] = totalFacturado_CE;
-        objetoTotales['CEH'] = 1;
-        objetoTotales['CEPr'] = 1;
-    };
-    if (totalFacturado_CI) {
-        objetoTotales['CIT'] = totalFacturado_CI;
-        objetoTotales['CIH'] = 1;
-        objetoTotales['CIPr'] = 1;
-    };
-    if (totalFacturado_MO) {
-        objetoTotales['MOT'] = totalFacturado_MO;
-        objetoTotales['MOH'] = 1;
-        objetoTotales['MOPr'] = 1;
-    };
-    if (totalFacturado_OF) {
-        objetoTotales['OFT'] = totalFacturado_OF;
-        objetoTotales['OFH'] = 1;
-        objetoTotales['OFPr'] = 1;
-    };
-    if (totalFacturado_AL) {
-        objetoTotales['ALT'] = totalFacturado_AL;
-        objetoTotales['ALH'] = 1;
-        objetoTotales['ALPr'] = 1;
-    };
-    if (totalFacturado_LA) {
-        objetoTotales['LAT'] = totalFacturado_LA;
-        objetoTotales['LAH'] = 1;
-        objetoTotales['LAPr'] = 1;
-    };
-    if (totalFacturado_TE) {
-        objetoTotales['TET'] = totalFacturado_TE;
-        objetoTotales['TEH'] = 1;
-        objetoTotales['TEPr'] = 1;
-    };
-    if (totalFacturado_FI) {
-        objetoTotales['FIT'] = totalFacturado_FI;
-        objetoTotales['FIH'] = 1;
-        objetoTotales['FIPr'] = 1;
-    };
-    if (totalFacturado_FE) {
-        objetoTotales['FET'] = totalFacturado_FE;
-        objetoTotales['FEH'] = 1;
-        objetoTotales['FEPr'] = 1;
-    };
-    if (totalFacturado_AB) {
-        objetoTotales['ABT'] = totalFacturado_AB;
-        objetoTotales['ABH'] = 1;
-        objetoTotales['ABPr'] = 1;
-    };
-    if (totalFacturado_MA) {
-        objetoTotales['MAT'] = totalFacturado_MA;
-        objetoTotales['MAH'] = 1;
-        objetoTotales['MAPr'] = 1;
-    };
-    if (totalFacturado_PO) {
-        objetoTotales['POT'] = totalFacturado_PO;
-        objetoTotales['POH'] = 1;
-        objetoTotales['POPr'] = 1;
-    };
-    if (totalFacturado_BA) {
-        objetoTotales['BAT'] = totalFacturado_BA;
-        objetoTotales['BAH'] = 1;
-        objetoTotales['BAPr'] = 1;
-    };
-    if (totalFacturado_FT) {
-        objetoTotales['FTT'] = totalFacturado_FT;
-        objetoTotales['FTH'] = 1;
-        objetoTotales['FTPr'] = 1;
-    };
-    if (totalFacturado_C3) {
-        objetoTotales['C3T'] = totalFacturado_C3;
-        objetoTotales['C3H'] = 1;
-        objetoTotales['C3Pr'] = 1;
-    };
-    if (totalFacturado_C2) {
-        objetoTotales['C2T'] = totalFacturado_C2;
-        objetoTotales['C2H'] = 1;
-        objetoTotales['C2Pr'] = 1;
-    };
-    if (totalFacturado_ES) {
-        objetoTotales['EST'] = totalFacturado_ES;
-        objetoTotales['ESH'] = 1;
-        objetoTotales['ESPr'] = 1;
-    };
-    if (totalFacturado_PA) {
-        objetoTotales['PAT'] = totalFacturado_PA;
-        objetoTotales['PAH'] = 1;
-        objetoTotales['PAPr'] = 1;
+    if (source === 'informe') {
+        objetoTotales = {
+            nombreCentro: objetoCuadrante.datosCuadrante.nombreCentro,
+            codigo: objetoCuadrante.datosCuadrante.codigo,
+            domicilio: objetoCuadrante.datosCuadrante.domicilio,
+            codigoPostal: objetoCuadrante.datosCuadrante.codigoPostal,
+            poblacion: objetoCuadrante.datosCuadrante.poblacion,
+            provincia: objetoCuadrante.datosCuadrante.provincia,
+            nif: objetoCuadrante.datosCuadrante.nif,
+            formaPago: objetoCuadrante.datosCuadrante.formaPago,
+            tocaFacturar: objetoCuadrante.datosInforme.tocaFacturar
+        };
+        if (totalFacturado_M) {
+            objetoTotales['MT'] = totalFacturado_M;
+            objetoTotales['MH'] = 1;
+            objetoTotales['MPr'] = 1;
+        };
+        if (totalFacturado_L) {
+            objetoTotales['LT'] = totalFacturado_L;
+            objetoTotales['LH'] = totalHoras_L;
+            objetoTotales['LPr'] = 1;
+        };
+        if (totalFacturado_E) {
+            objetoTotales['ET'] = totalFacturado_E;
+            objetoTotales['EH'] = totalHoras_E;
+            objetoTotales['EPr'] = 1;
+        };
+        if (totalFacturado_P) {
+            objetoTotales['PT'] = totalFacturado_P;
+            objetoTotales['PH'] = totalHoras_P;
+            objetoTotales['PPr'] = 1;
+        };
+        if (totalFacturado_N) {
+            objetoTotales['NT'] = totalFacturado_N;
+            objetoTotales['NH'] = totalHoras_N;
+            objetoTotales['NPr'] = 1;
+        };
+        if (totalFacturado_R) {
+            objetoTotales['RT'] = totalFacturado_R;
+            objetoTotales['RH'] = totalHoras_R;
+            objetoTotales['RPr'] = 1;
+        };
+        if (totalFacturado_L1) {
+            objetoTotales['L1T'] = totalFacturado_L1;
+            objetoTotales['L1H'] = totalHoras_L1;
+            objetoTotales['L1Pr'] = 1;
+        };
+        if (totalFacturado_L2) {
+            objetoTotales['L2T'] = totalFacturado_L2;
+            objetoTotales['L2H'] = totalHoras_L2;
+            objetoTotales['L2Pr'] = 1;
+        };
+        if (totalFacturado_F) {
+            objetoTotales['FT'] = totalFacturado_F;
+            objetoTotales['FH'] = totalHoras_F;
+            objetoTotales['FPr'] = 1;
+        };
+        if (totalFacturado_TO) {
+            objetoTotales['TOT'] = totalFacturado_TO;
+            objetoTotales['TOH'] = 1;
+            objetoTotales['TOPr'] = 1;
+        };
+        if (totalFacturado_CR) {
+            objetoTotales['CRT'] = totalFacturado_CR;
+            objetoTotales['CRH'] = 1;
+            objetoTotales['CRPr'] = 1;
+        };
+        if (totalFacturado_CE) {
+            objetoTotales['CET'] = totalFacturado_CE;
+            objetoTotales['CEH'] = 1;
+            objetoTotales['CEPr'] = 1;
+        };
+        if (totalFacturado_CI) {
+            objetoTotales['CIT'] = totalFacturado_CI;
+            objetoTotales['CIH'] = 1;
+            objetoTotales['CIPr'] = 1;
+        };
+        if (totalFacturado_MO) {
+            objetoTotales['MOT'] = totalFacturado_MO;
+            objetoTotales['MOH'] = 1;
+            objetoTotales['MOPr'] = 1;
+        };
+        if (totalFacturado_OF) {
+            objetoTotales['OFT'] = totalFacturado_OF;
+            objetoTotales['OFH'] = 1;
+            objetoTotales['OFPr'] = 1;
+        };
+        if (totalFacturado_AL) {
+            objetoTotales['ALT'] = totalFacturado_AL;
+            objetoTotales['ALH'] = 1;
+            objetoTotales['ALPr'] = 1;
+        };
+        if (totalFacturado_LA) {
+            objetoTotales['LAT'] = totalFacturado_LA;
+            objetoTotales['LAH'] = 1;
+            objetoTotales['LAPr'] = 1;
+        };
+        if (totalFacturado_TE) {
+            objetoTotales['TET'] = totalFacturado_TE;
+            objetoTotales['TEH'] = 1;
+            objetoTotales['TEPr'] = 1;
+        };
+        if (totalFacturado_FI) {
+            objetoTotales['FIT'] = totalFacturado_FI;
+            objetoTotales['FIH'] = 1;
+            objetoTotales['FIPr'] = 1;
+        };
+        if (totalFacturado_FE) {
+            objetoTotales['FET'] = totalFacturado_FE;
+            objetoTotales['FEH'] = 1;
+            objetoTotales['FEPr'] = 1;
+        };
+        if (totalFacturado_AB) {
+            objetoTotales['ABT'] = totalFacturado_AB;
+            objetoTotales['ABH'] = 1;
+            objetoTotales['ABPr'] = 1;
+        };
+        if (totalFacturado_MA) {
+            objetoTotales['MAT'] = totalFacturado_MA;
+            objetoTotales['MAH'] = 1;
+            objetoTotales['MAPr'] = 1;
+        };
+        if (totalFacturado_PO) {
+            objetoTotales['POT'] = totalFacturado_PO;
+            objetoTotales['POH'] = 1;
+            objetoTotales['POPr'] = 1;
+        };
+        if (totalFacturado_BA) {
+            objetoTotales['BAT'] = totalFacturado_BA;
+            objetoTotales['BAH'] = 1;
+            objetoTotales['BAPr'] = 1;
+        };
+        if (totalFacturado_FT) {
+            objetoTotales['FTT'] = totalFacturado_FT;
+            objetoTotales['FTH'] = 1;
+            objetoTotales['FTPr'] = 1;
+        };
+        if (totalFacturado_C3) {
+            objetoTotales['C3T'] = totalFacturado_C3;
+            objetoTotales['C3H'] = 1;
+            objetoTotales['C3Pr'] = 1;
+        };
+        if (totalFacturado_C2) {
+            objetoTotales['C2T'] = totalFacturado_C2;
+            objetoTotales['C2H'] = 1;
+            objetoTotales['C2Pr'] = 1;
+        };
+        if (totalFacturado_ES) {
+            objetoTotales['EST'] = totalFacturado_ES;
+            objetoTotales['ESH'] = 1;
+            objetoTotales['ESPr'] = 1;
+        };
+        if (totalFacturado_PA) {
+            objetoTotales['PAT'] = totalFacturado_PA;
+            objetoTotales['PAH'] = 1;
+            objetoTotales['PAPr'] = 1;
+        };
+    } else {
+        objetoTotales = {
+            tocaFacturar: objetoCuadrante.datosInforme.tocaFacturar
+        };
     };
     totalFacturado_M ? totalFacturado_M = totalFacturado_M : totalFacturado_M = 0;
     totalFacturado_L ? totalFacturado_L = totalFacturado_L : totalFacturado_L = 0;
@@ -1492,6 +1541,7 @@ const finalizaRegistroCuadrante = (
 ) => (dispatch, getState) => {
     const { objetoCuadrante, cuadranteRegistrado } = getState().variablesCuadrantes;
     const { cuadranteEnUsoCuadrantes, bufferSwitchedDiasFestivosCuadrante } = getState().variablesCuadrantesSetters;
+
     //revisamos que no falten festivos por gestionar
     if (bufferSwitchedDiasFestivosCuadrante.length > 0) {
         let arrayFaltantesFestivos = [];
@@ -1514,17 +1564,6 @@ const finalizaRegistroCuadrante = (
             return;
         };
     };
-    const losDatosInformeLimpiado = {
-        ...losDatosInforme,
-        datosInforme: []
-    };
-    losDatosInforme.datosInforme.forEach((informeIterado) => {
-        if (informeIterado) {
-            losDatosInformeLimpiado.datosInforme.push(dispatch(limpiarCuadranteInformeAccion(informeIterado)));
-        } else {
-            losDatosInformeLimpiado.datosInforme.push(null);
-        };
-    });
     let elArrayDatosCuadranteLimpiado = [];
     losDatosCuadrante.datosCuadrante.forEach((cuadranteIterado) => {
         elArrayDatosCuadranteLimpiado.push({
@@ -1536,12 +1575,55 @@ const finalizaRegistroCuadrante = (
         ...losDatosCuadrante,
         datosCuadrante: elArrayDatosCuadranteLimpiado
     };
-    let losDatosTotales;
-    if (source === 'informe' || objetoCuadrante.estado === 'facturado') {
-        losDatosTotales = dispatch(calculoTotales(losDatosServiciosFijos.datosServicios, losDatosInforme.datosInforme, losDatosHoras.horas));
+    let losDatosTotales = dispatch(calculoTotales(losDatosServiciosFijos.datosServicios, losDatosInforme.datosInforme, losDatosHoras.horas, source));
+    if (parseFloat(losDatosTotales.total) === 0) {
+        losDatosInforme = {
+            ...losDatosInforme,
+            tocaFacturar: {
+                valor: 'no',
+                razon: 'a0'
+            }
+        };
+        losDatosTotales = {
+            ...losDatosTotales,
+            tocaFacturar: {
+                valor: 'no',
+                razon: 'a0'
+            }
+        };
     } else {
-        losDatosTotales = null;
+        if (losDatosInforme.tocaFacturar.valor === 'no' && losDatosInforme.tocaFacturar.razon === 'a0') {
+            losDatosInforme = {
+                ...losDatosInforme,
+                tocaFacturar: {
+                    valor: 'si',
+                    razon: ''
+                }
+            };
+            losDatosTotales = {
+                ...losDatosTotales,
+                tocaFacturar: {
+                    valor: 'si',
+                    razon: ''
+                }
+            };
+        } else {
+            losDatosInforme = {
+                ...losDatosInforme
+            };
+        };
     };
+    const losDatosInformeLimpiado = {
+        ...losDatosInforme,
+        datosInforme: []
+    };
+    losDatosInforme.datosInforme.forEach((informeIterado) => {
+        if (informeIterado) {
+            losDatosInformeLimpiado.datosInforme.push(dispatch(limpiarCuadranteInformeAccion(informeIterado)));
+        } else {
+            losDatosInformeLimpiado.datosInforme.push(null);
+        };
+    });
     const cuadranteAGuardar = {
         id: objetoCuadrante.id,
         nombre: objetoCuadrante.nombre,
@@ -1551,35 +1633,9 @@ const finalizaRegistroCuadrante = (
         datos_informe: JSON.stringify(losDatosInformeLimpiado),
         datos_buffer: losDatosBuffer ? JSON.stringify(losDatosBuffer) : null,
         estado: source === 'informe' ? 'facturado' : objetoCuadrante.estado,
-        total: source === 'informe' ? JSON.stringify(losDatosTotales) : objetoCuadrante.estado === 'facturado' ? JSON.stringify(losDatosTotales) : null,
+        total: JSON.stringify(losDatosTotales),
         horas: JSON.stringify(losDatosHoras)
     };
-    if (cuadranteRegistrado === 'no') {
-        dispatch(registrarCuadranteAccion('cuadrantes', cuadranteAGuardar.id, cuadranteAGuardar));
-        dispatch(cambiarACuadranteRegistradoAccion());
-        dispatch(activarDesactivarCambioBotonActualizarAccion(true));
-        //dispatch(setControladorDeEstadoAccion('venimosDeRegistrar'));
-        //dispatch(setEstamosActualizandoCuadranteSinCargaAccion(true));
-        dispatch(registrarIntervencionAccion(false));
-        dispatch(setCuadranteEnUsoCuadrantesAccion(cuadranteEnUsoCuadrantes));
-        dispatch(reseteaContenidoCentroAccion(true));
-        dispatch(gestionaCuadranteIndividualAccion(cuadranteEnUsoCuadrantes, true));
-        dispatch(obtenerCategoriaPorCentroAccion('centros', objetoCuadrante.datosCuadrante.centro, cuadranteEnUsoCuadrantes - 1));
-    };
-    if (cuadranteRegistrado === 'si') {
-        if (source === 'informe') {
-            dispatch(setControladorDeEstadoAccion('venimosDeInforme'));
-        };
-        dispatch(actualizarCuadranteAccion('cuadrantes', cuadranteAGuardar.id, cuadranteAGuardar));
-        dispatch(activarDesactivarCambioBotonActualizarAccion(true));
-        //dispatch(setEstamosActualizandoCuadranteSinCargaAccion(true));
-        dispatch(registrarIntervencionAccion(false));
-        dispatch(setCuadranteEnUsoCuadrantesAccion(cuadranteEnUsoCuadrantes));
-        dispatch(reseteaContenidoCentroAccion(true));
-        dispatch(gestionaCuadranteIndividualAccion(cuadranteEnUsoCuadrantes, true));
-        dispatch(obtenerCategoriaPorCentroAccion('centros', objetoCuadrante.datosCuadrante.centro, cuadranteEnUsoCuadrantes - 1));
-    };
-    dispatch(registrarIntervencionAccion(true));
     if (source !== 'informe') {
         dispatch(actualizarObjetoCuadranteAccion({
             ...objetoCuadrante,
@@ -1603,7 +1659,30 @@ const finalizaRegistroCuadrante = (
             estado: 'facturado',
             total: losDatosTotales
         }));
-    }
+    };
+    if (cuadranteRegistrado === 'no') {
+        dispatch(registrarCuadranteAccion('cuadrantes', cuadranteAGuardar.id, cuadranteAGuardar));
+        dispatch(cambiarACuadranteRegistradoAccion());
+        dispatch(activarDesactivarCambioBotonActualizarAccion(true));
+        //dispatch(registrarIntervencionAccion(false));
+        dispatch(setCuadranteEnUsoCuadrantesAccion(cuadranteEnUsoCuadrantes));
+        dispatch(reseteaContenidoCentroAccion(true));
+        dispatch(gestionaCuadranteIndividualAccion(cuadranteEnUsoCuadrantes, true));
+        dispatch(obtenerCategoriaPorCentroAccion('centros', objetoCuadrante.datosCuadrante.centro, cuadranteEnUsoCuadrantes - 1));
+    };
+    if (cuadranteRegistrado === 'si') {
+        if (source === 'informe') {
+            dispatch(setControladorDeEstadoAccion('venimosDeInforme'));
+        };
+        dispatch(actualizarCuadranteAccion('cuadrantes', cuadranteAGuardar.id, cuadranteAGuardar));
+        dispatch(activarDesactivarCambioBotonActualizarAccion(true));
+        //dispatch(registrarIntervencionAccion(false));
+        dispatch(setCuadranteEnUsoCuadrantesAccion(cuadranteEnUsoCuadrantes));
+        dispatch(reseteaContenidoCentroAccion(true));
+        dispatch(gestionaCuadranteIndividualAccion(cuadranteEnUsoCuadrantes, true));
+        dispatch(obtenerCategoriaPorCentroAccion('centros', objetoCuadrante.datosCuadrante.centro, cuadranteEnUsoCuadrantes - 1));
+    };
+    dispatch(registrarIntervencionAccion(true));
 };
 
 export const centroAGestionarInicioAccion = () => (dispatch, getState) => {
@@ -1634,6 +1713,7 @@ export const centroAGestionarInicioAccion = () => (dispatch, getState) => {
                         tipoRegistro: objetoCentro.horario.horario[i].tipoRegistro,
                         computo: objetoCentro.horario.horario[i].computo,
                         excepcion: objetoCentro.horario.horario[i].excepcion ? objetoCentro.horario.horario[i].excepcion : '',
+                        bloqueado: 'no',
                         mensualPactado: objetoCentro.horario.horario[i].mensualPactado ? objetoCentro.horario.horario[i].mensualPactado : null,
                         mensualPactadoInicial: objetoCentro.horario.horario[i].mensualPactado ? objetoCentro.horario.horario[i].mensualPactado : null,
                         precioHora_L: objetoCentro.horario.horario[i].precioHora_L ? objetoCentro.horario.horario[i].precioHora_L : null,
@@ -1707,6 +1787,7 @@ export const centroAGestionarInicioAccion = () => (dispatch, getState) => {
                 },
                 datosInforme: {
                     objeto: 'informe',
+                    tocaFacturar: dispatch(calculaTocaFacturacionAccion()),
                     datosInforme: arrayInforme
                 },
                 datosTrabajadoresIniciales: {
@@ -1841,7 +1922,7 @@ export const gestionSuplenteAccion = () => (dispatch, getState) => {
     if (esInicioSup) {
         arraySu = [...suplentesEnCuadrante];
         if (objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistro === 'individual') {
-            objetoSuplente['laPosicionDelTrabajador'] = arraySu.length + 1;
+            objetoSuplente['laPosicionDelTrabajador'] = trabajadoresEnCuadrante.length;
         }
         if (cuadranteRegistrado === 'no') {
             const arrayCuadrante = [...cuadrante];

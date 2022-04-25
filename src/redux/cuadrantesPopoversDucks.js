@@ -26,7 +26,8 @@ const dataInicial = {
     anchorElDias: null,
     anchorElServiciosFijos: null,
     anchorElConfiguracion: null,
-    anchorElGeneral: null
+    anchorElGeneral: null,
+    anchorElSF: null
 };
 
 //types
@@ -36,6 +37,7 @@ const SET_ANCHORELDIAS = 'SET_ANCHORELDIAS';
 const SET_ANCHORELSERVICIOSFIJOS = 'SET_ANCHORELSERVICIOSFIJOS';
 const SET_ANCHORELCONFIGURACION = 'SET_ANCHORELCONFIGURACION';
 const SET_ANCHORELGENERAL = 'SET_ANCHORELGENERAL';
+const SET_ANCHORELSF = 'SET_ANCHORELSF';
 
 //reducer
 export default function cuadrantesPopoversReducer(state = dataInicial, action) {
@@ -52,6 +54,8 @@ export default function cuadrantesPopoversReducer(state = dataInicial, action) {
             return { ...state, anchorElConfiguracion: action.payload.estado }
         case SET_ANCHORELGENERAL:
             return { ...state, anchorElGeneral: action.payload.estado }
+        case SET_ANCHORELSF:
+            return { ...state, anchorElSF: action.payload.estado }
         default:
             return { ...state }
     }

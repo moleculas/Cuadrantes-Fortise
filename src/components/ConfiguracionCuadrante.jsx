@@ -14,6 +14,8 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import TextField from '@material-ui/core/TextField';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 //importaciones acciones
 import { retornaFormaPagoAccion } from '../redux/cuadrantesDucks';
@@ -34,6 +36,7 @@ const ConfiguracionCuadrante = (props) => {
         tipoHorario: props.prItemEditandoConfiguracion.tipoHorario || '',
         computo: props.prItemEditandoConfiguracion.computo || '',
         excepcion: props.prItemEditandoConfiguracion.excepcion || '',
+        bloqueado: props.prItemEditandoConfiguracion.bloqueado || '',
         mensualPactado: props.prItemEditandoConfiguracion.mensualPactado || '',
         precioHora_L: props.prItemEditandoConfiguracion.precioHora_L || '',
         precioHora_E: props.prItemEditandoConfiguracion.precioHora_E || '',
@@ -195,22 +198,37 @@ const ConfiguracionCuadrante = (props) => {
                             </Select>
                         </FormControl>
                         {props.prItemEditandoConfiguracion.computo === 1 || props.prItemEditandoConfiguracion.computo === 3 ? (
-                            <FormControl
-                                variant="outlined"
-                                className={classes.form}
-                                size="small"
-                            >
-                                <InputLabel>Mensual pactado</InputLabel>
-                                <OutlinedInput
-                                    className={classes.mb15}
-                                    fullWidth
-                                    id="form-mensual-pactado-cuadrante"
-                                    value={props.prItemEditandoConfiguracion.mensualPactado || ''}
-                                    onChange={handleChangeFormConfiguracionCuadrante('mensualPactado')}
-                                    labelWidth={130}
-                                    startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                                />
-                            </FormControl>
+                            <Fragment>
+                                <FormControl
+                                    variant="outlined"
+                                    className={classes.form}
+                                    size="small"
+                                >
+                                    <InputLabel>Mensual pactado</InputLabel>
+                                    <OutlinedInput
+                                        className={classes.mb20}
+                                        fullWidth
+                                        id="form-mensual-pactado-cuadrante"
+                                        value={props.prItemEditandoConfiguracion.mensualPactado || ''}
+                                        onChange={handleChangeFormConfiguracionCuadrante('mensualPactado')}
+                                        labelWidth={130}
+                                        startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                    />
+                                </FormControl>
+                                <Box className={classes.boxChekin}>
+                                    <FormControlLabel                                      
+                                        control={
+                                            <Checkbox
+                                                checked={props.prItemEditandoConfiguracion.bloqueado === 'si' ? true : false}
+                                                onChange={handleChangeFormConfiguracionCuadrante('bloqueado')}
+                                                name="checkedBloqueado"
+                                                color="secondary"
+                                            />
+                                        }
+                                        label={<Typography className={classes.colorText} style={{ fontSize: '0.9rem' }}>Bloquear cálculo cómputo Mensual Pactado.</Typography>}
+                                    />
+                                </Box>
+                            </Fragment>
                         ) : null}
                         {props.prItemEditandoConfiguracion.computo === 2 || props.prItemEditandoConfiguracion.computo === 3 ? (
                             <Fragment>

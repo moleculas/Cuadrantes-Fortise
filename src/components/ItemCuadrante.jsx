@@ -162,14 +162,14 @@ const ItemCuadrante = (props) => {
 
     return (
         <div>
-            <Box
+            {/* <Box
                 display="flex"
                 alignItems="center"
                 justifyContent="flex-end"
                 className={classes.mt_25}
             >
                 {retornaBotonVariaciones()}
-            </Box>
+            </Box> */}
             {props.prTipo === 'rango' ? (
                 <Box style={{ display: 'flex', flexDirection: 'row', justifycontent: 'flex-start', alignItems: 'flex-start' }}>
                     <Grid item xs={6}>

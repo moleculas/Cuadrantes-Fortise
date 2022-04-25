@@ -70,6 +70,9 @@ import { setCambiadaConfiguracionGeneralAccion } from './cuadrantesSettersDucks'
 import { setEstamosActualizandoCuadranteSinCargaAccion } from './cuadrantesSettersDucks';
 import { gestionaDiasFestivosOBajas } from './cuadrantesColumnasDucks';
 import { handleClosePopoverGeneralAccion } from './cuadrantesPopoversDucks';
+import { handleClosePopoverDiasAccion } from '../redux/cuadrantesPopoversDucks';
+import { handleClosePopoverServiciosFijosAccion } from '../redux/cuadrantesPopoversDucks';
+import { handleClosePopoverConfiguracionAccion } from '../redux/cuadrantesPopoversDucks';
 
 //constantes
 const arrayFestivos = Constantes.CALENDARIO_FESTIVOS;
@@ -318,6 +321,7 @@ export const handleChangeSelectCentroAccion = (event) => (dispatch, getState) =>
         dispatch(vaciarDatosCuadrantesAccion());
         dispatch(obtenerCuadranteAccion('cuadrantes', nombreCuadrante));
         dispatch(obtenerCategoriaPorCentroAccion('centros', event.target.value, 0));
+        dispatch(configuraStateFestivoAccion());
     } else {
         if (!estadoIntervencionCuadranteNuevoRegistrada) {
             dispatch(handleClickOpenDialogCuadrantes2Accion());
@@ -333,6 +337,7 @@ export const handleChangeSelectCentroAccion = (event) => (dispatch, getState) =>
                 const nombreCuadrante = calendarioAGestionar + '-' + event.target.value;
                 dispatch(obtenerCuadranteAccion('cuadrantes', nombreCuadrante));
                 dispatch(obtenerCategoriaPorCentroAccion('centros', event.target.value, 0));
+                dispatch(configuraStateFestivoAccion());
             }
         }
     }
@@ -689,6 +694,7 @@ export const traspasoBufferFestivosAccion = (esInicio) => (dispatch, getState) =
             if (cuadrante.length > 0) {
                 let elHorarioCuadrante = objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1];
                 let tipoRegistro = elHorarioCuadrante.tipoRegistro;
+                let cantidadTrabajadoresCentro = elHorarioCuadrante.tipoRegistroTrabajador.length;
                 let festivoComputable;
                 cuadrante.forEach((columna, indexFor) => {
                     if (!registroBuffer.anadido) {
@@ -725,7 +731,7 @@ export const traspasoBufferFestivosAccion = (esInicio) => (dispatch, getState) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].lunesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].lunesTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'lunesInicioRango');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor, 'lunesInicioRango');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -777,7 +783,7 @@ export const traspasoBufferFestivosAccion = (esInicio) => (dispatch, getState) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].martesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].martesTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'martesInicioRango');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor, 'martesInicioRango');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -829,7 +835,7 @@ export const traspasoBufferFestivosAccion = (esInicio) => (dispatch, getState) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].miercolesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].miercolesTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'miercolesInicioRango');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor, 'miercolesInicioRango');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -881,7 +887,7 @@ export const traspasoBufferFestivosAccion = (esInicio) => (dispatch, getState) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].juevesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].juevesTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'juevesInicioRango');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor, 'juevesInicioRango');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -933,7 +939,7 @@ export const traspasoBufferFestivosAccion = (esInicio) => (dispatch, getState) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].viernesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].viernesTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'viernesInicioRango');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor, 'viernesInicioRango');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -985,7 +991,7 @@ export const traspasoBufferFestivosAccion = (esInicio) => (dispatch, getState) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].sabadoTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].sabadoTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'sabadoInicioRango');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor, 'sabadoInicioRango');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -1037,7 +1043,7 @@ export const traspasoBufferFestivosAccion = (esInicio) => (dispatch, getState) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].domingoTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].domingoTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'domingoInicioRango');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor, 'domingoInicioRango');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -1100,7 +1106,7 @@ export const traspasoBufferFestivosAccion = (esInicio) => (dispatch, getState) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].lunesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].lunesTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'lunesInicio1RangoDescanso');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor, 'lunesInicio1RangoDescanso');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -1158,7 +1164,7 @@ export const traspasoBufferFestivosAccion = (esInicio) => (dispatch, getState) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].martesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].martesTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'martesInicio1RangoDescanso');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor, 'martesInicio1RangoDescanso');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -1216,7 +1222,7 @@ export const traspasoBufferFestivosAccion = (esInicio) => (dispatch, getState) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].miercolesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].miercolesTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'miercolesInicio1RangoDescanso');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor, 'miercolesInicio1RangoDescanso');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -1274,7 +1280,7 @@ export const traspasoBufferFestivosAccion = (esInicio) => (dispatch, getState) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].juevesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].juevesTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'juevesInicio1RangoDescanso');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor, 'juevesInicio1RangoDescanso');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -1332,7 +1338,7 @@ export const traspasoBufferFestivosAccion = (esInicio) => (dispatch, getState) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].viernesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].viernesTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'viernesInicio1RangoDescanso');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor, 'viernesInicio1RangoDescanso');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -1390,7 +1396,7 @@ export const traspasoBufferFestivosAccion = (esInicio) => (dispatch, getState) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].sabadoTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].sabadoTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'sabadoInicio1RangoDescanso');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor, 'sabadoInicio1RangoDescanso');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -1448,7 +1454,7 @@ export const traspasoBufferFestivosAccion = (esInicio) => (dispatch, getState) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].domingoTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].domingoTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'domingoInicio1RangoDescanso');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor, 'domingoInicio1RangoDescanso');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -1502,7 +1508,7 @@ export const traspasoBufferFestivosAccion = (esInicio) => (dispatch, getState) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].lunesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].lunesTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'lunesCantidad');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor, 'lunesCantidad');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -1551,7 +1557,7 @@ export const traspasoBufferFestivosAccion = (esInicio) => (dispatch, getState) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].martesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].martesTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'martesCantidad');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor, 'martesCantidad');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -1600,7 +1606,7 @@ export const traspasoBufferFestivosAccion = (esInicio) => (dispatch, getState) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].miercolesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].miercolesTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'miercolesCantidad');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor, 'miercolesCantidad');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -1649,7 +1655,7 @@ export const traspasoBufferFestivosAccion = (esInicio) => (dispatch, getState) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].juevesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].juevesTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'juevesCantidad');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor, 'juevesCantidad');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -1698,7 +1704,7 @@ export const traspasoBufferFestivosAccion = (esInicio) => (dispatch, getState) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].viernesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].viernesTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'viernesCantidad');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor, 'viernesCantidad');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -1747,7 +1753,7 @@ export const traspasoBufferFestivosAccion = (esInicio) => (dispatch, getState) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].sabadoTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].sabadoTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'sabadoCantidad');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor, 'sabadoCantidad');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -1796,7 +1802,7 @@ export const traspasoBufferFestivosAccion = (esInicio) => (dispatch, getState) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].domingoTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].domingoTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'domingoCantidad');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor, 'domingoCantidad');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -1889,7 +1895,7 @@ export const traspasoBufferFestivosAccion = (esInicio) => (dispatch, getState) =
     };
 };
 
-export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) => (dispatch, getState) => {
+export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, scrollable, classesDisp) => (dispatch, getState) => {
     const { cuadrante, stateFestivo, cuadranteRegistrado } = getState().variablesCuadrantes;
     const { bufferSwitchedDiasFestivosCuadrante, cuadranteEnUsoCuadrantes, numeroCuadrantesCuadrantes } = getState().variablesCuadrantesSetters;
     const { cuadranteServiciosFijos } = getState().variablesCuadrantesServiciosFijos;
@@ -1906,6 +1912,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
         let indexABorrar = -1;
         let elHorarioCuadrante = objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1];
         let tipoRegistro = elHorarioCuadrante.tipoRegistro;
+        let cantidadTrabajadoresCentro = elHorarioCuadrante.tipoRegistroTrabajador.length;
         let festivoComputable;
         let variableBuffer1, variableBuffer2, variableBuffer3, variableBuffer4;
         cuadrante.forEach((columna, indexFor) => {
@@ -1919,7 +1926,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                     objetoBuffer[postRef].push([columna[postRef].lunesInicioRango, columna[postRef].lunesFinRango]);
                                     columna[postRef].lunesInicioRango = null;
                                     columna[postRef].lunesFinRango = null;
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'lunesInicioRango');
+                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'lunesInicioRango');
                                     switch (festivoComputable.servicio) {
                                         case 'LIM':
                                             columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -1952,7 +1959,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                     objetoBuffer[postRef].push([columna[postRef].martesInicioRango, columna[postRef].martesFinRango]);
                                     columna[postRef].martesInicioRango = null;
                                     columna[postRef].martesFinRango = null;
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'martesInicioRango');
+                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'martesInicioRango');
                                     switch (festivoComputable.servicio) {
                                         case 'LIM':
                                             columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -1985,7 +1992,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                     objetoBuffer[postRef].push([columna[postRef].miercolesInicioRango, columna[postRef].miercolesFinRango]);
                                     columna[postRef].miercolesInicioRango = null;
                                     columna[postRef].miercolesFinRango = null;
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'miercolesInicioRango');
+                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'miercolesInicioRango');
                                     switch (festivoComputable.servicio) {
                                         case 'LIM':
                                             columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -2018,7 +2025,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                     objetoBuffer[postRef].push([columna[postRef].juevesInicioRango, columna[postRef].juevesFinRango]);
                                     columna[postRef].juevesInicioRango = null;
                                     columna[postRef].juevesFinRango = null;
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'juevesInicioRango');
+                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'juevesInicioRango');
                                     switch (festivoComputable.servicio) {
                                         case 'LIM':
                                             columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -2051,7 +2058,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                     objetoBuffer[postRef].push([columna[postRef].viernesInicioRango, columna[postRef].viernesFinRango]);
                                     columna[postRef].viernesInicioRango = null;
                                     columna[postRef].viernesFinRango = null;
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'viernesInicioRango');
+                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'viernesInicioRango');
                                     switch (festivoComputable.servicio) {
                                         case 'LIM':
                                             columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -2084,7 +2091,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                     objetoBuffer[postRef].push([columna[postRef].sabadoInicioRango, columna[postRef].sabadoFinRango]);
                                     columna[postRef].sabadoInicioRango = null;
                                     columna[postRef].sabadoFinRango = null;
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'sabadoInicioRango');
+                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'sabadoInicioRango');
                                     switch (festivoComputable.servicio) {
                                         case 'LIM':
                                             columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -2117,7 +2124,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                     objetoBuffer[postRef].push([columna[postRef].domingoInicioRango, columna[postRef].domingoFinRango]);
                                     columna[postRef].domingoInicioRango = null;
                                     columna[postRef].domingoFinRango = null;
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'domingoInicioRango');
+                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'domingoInicioRango');
                                     switch (festivoComputable.servicio) {
                                         case 'LIM':
                                             columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -2157,7 +2164,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                     columna[postRef].lunesFin1RangoDescanso = null;
                                     columna[postRef].lunesInicio2RangoDescanso = null;
                                     columna[postRef].lunesFin2RangoDescanso = null;
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'lunesInicio1RangoDescanso');
+                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'lunesInicio1RangoDescanso');
                                     switch (festivoComputable.servicio) {
                                         case 'LIM':
                                             columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -2192,7 +2199,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                     columna[postRef].martesFin1RangoDescanso = null;
                                     columna[postRef].martesInicio2RangoDescanso = null;
                                     columna[postRef].martesFin2RangoDescanso = null;
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'martesInicio1RangoDescanso');
+                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'martesInicio1RangoDescanso');
                                     switch (festivoComputable.servicio) {
                                         case 'LIM':
                                             columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -2227,7 +2234,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                     columna[postRef].miercolesFin1RangoDescanso = null;
                                     columna[postRef].miercolesInicio2RangoDescanso = null;
                                     columna[postRef].miercolesFin2RangoDescanso = null;
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'miercolesInicio1RangoDescanso');
+                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'miercolesInicio1RangoDescanso');
                                     switch (festivoComputable.servicio) {
                                         case 'LIM':
                                             columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -2262,7 +2269,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                     columna[postRef].juevesFin1RangoDescanso = null;
                                     columna[postRef].juevesInicio2RangoDescanso = null;
                                     columna[postRef].juevesFin2RangoDescanso = null;
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'juevesInicio1RangoDescanso');
+                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'juevesInicio1RangoDescanso');
                                     switch (festivoComputable.servicio) {
                                         case 'LIM':
                                             columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -2297,7 +2304,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                     columna[postRef].viernesFin1RangoDescanso = null;
                                     columna[postRef].viernesInicio2RangoDescanso = null;
                                     columna[postRef].viernesFin2RangoDescanso = null;
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'viernesInicio1RangoDescanso');
+                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'viernesInicio1RangoDescanso');
                                     switch (festivoComputable.servicio) {
                                         case 'LIM':
                                             columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -2332,7 +2339,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                     columna[postRef].sabadoFin1RangoDescanso = null;
                                     columna[postRef].sabadoInicio2RangoDescanso = null;
                                     columna[postRef].sabadoFin2RangoDescanso = null;
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'sabadoInicio1RangoDescanso');
+                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'sabadoInicio1RangoDescanso');
                                     switch (festivoComputable.servicio) {
                                         case 'LIM':
                                             columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -2367,7 +2374,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                     columna[postRef].domingoFin1RangoDescanso = null;
                                     columna[postRef].domingoInicio2RangoDescanso = null;
                                     columna[postRef].domingoFin2RangoDescanso = null;
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'domingoInicio1RangoDescanso');
+                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'domingoInicio1RangoDescanso');
                                     switch (festivoComputable.servicio) {
                                         case 'LIM':
                                             columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -2404,7 +2411,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                 case 'Lunes':
                                     objetoBuffer[postRef].push([columna[postRef].lunesCantidad]);
                                     columna[postRef].lunesCantidad = '';
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'lunesCantidad');
+                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'lunesCantidad');
                                     switch (festivoComputable.servicio) {
                                         case 'LIM':
                                             columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -2436,7 +2443,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                 case 'Martes':
                                     objetoBuffer[postRef].push([columna[postRef].martesCantidad]);
                                     columna[postRef].martesCantidad = '';
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'martesCantidad');
+                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'martesCantidad');
                                     switch (festivoComputable.servicio) {
                                         case 'LIM':
                                             columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -2468,7 +2475,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                 case 'Miércoles':
                                     objetoBuffer[postRef].push([columna[postRef].miercolesCantidad]);
                                     columna[postRef].miercolesCantidad = '';
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'miercolesCantidad');
+                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'miercolesCantidad');
                                     switch (festivoComputable.servicio) {
                                         case 'LIM':
                                             columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -2500,7 +2507,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                 case 'Jueves':
                                     objetoBuffer[postRef].push([columna[postRef].juevesCantidad]);
                                     columna[postRef].juevesCantidad = '';
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'juevesCantidad');
+                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'juevesCantidad');
                                     switch (festivoComputable.servicio) {
                                         case 'LIM':
                                             columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -2532,7 +2539,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                 case 'Viernes':
                                     objetoBuffer[postRef].push([columna[postRef].viernesCantidad]);
                                     columna[postRef].viernesCantidad = '';
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'viernesCantidad');
+                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'viernesCantidad');
                                     switch (festivoComputable.servicio) {
                                         case 'LIM':
                                             columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -2564,7 +2571,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                 case 'Sábado':
                                     objetoBuffer[postRef].push([columna[postRef].sabadoCantidad]);
                                     columna[postRef].sabadoCantidad = '';
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'sabadoCantidad');
+                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'sabadoCantidad');
                                     switch (festivoComputable.servicio) {
                                         case 'LIM':
                                             columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -2596,7 +2603,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                 case 'Domingo':
                                     objetoBuffer[postRef].push([columna[postRef].domingoCantidad]);
                                     columna[postRef].domingoCantidad = '';
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'domingoCantidad');
+                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'domingoCantidad');
                                     switch (festivoComputable.servicio) {
                                         case 'LIM':
                                             columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
@@ -2672,7 +2679,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].lunesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].lunesTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'lunesInicioRango');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'lunesInicioRango');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
@@ -2709,7 +2716,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].martesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].martesTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'martesInicioRango');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'martesInicioRango');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
@@ -2746,7 +2753,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].miercolesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].miercolesTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'miercolesInicioRango');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'miercolesInicioRango');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
@@ -2783,7 +2790,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].juevesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].juevesTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'juevesInicioRango');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'juevesInicioRango');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
@@ -2820,7 +2827,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].viernesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].viernesTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'viernesInicioRango');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'viernesInicioRango');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
@@ -2857,7 +2864,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].sabadoTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].sabadoTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'sabadoInicioRango');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'sabadoInicioRango');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
@@ -2894,7 +2901,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].domingoTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].domingoTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'domingoInicioRango');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'domingoInicioRango');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
@@ -2938,7 +2945,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].lunesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].lunesTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'lunesInicio1RangoDescanso');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'lunesInicio1RangoDescanso');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
@@ -2977,7 +2984,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].martesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].martesTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'martesInicio1RangoDescanso');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'martesInicio1RangoDescanso');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
@@ -3016,7 +3023,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].miercolesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].miercolesTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'miercolesInicio1RangoDescanso');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'miercolesInicio1RangoDescanso');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
@@ -3055,7 +3062,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].juevesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].juevesTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'juevesInicio1RangoDescanso');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'juevesInicio1RangoDescanso');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
@@ -3094,7 +3101,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].viernesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].viernesTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'viernesInicio1RangoDescanso');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'viernesInicio1RangoDescanso');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
@@ -3133,7 +3140,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].sabadoTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].sabadoTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'sabadoInicio1RangoDescanso');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'sabadoInicio1RangoDescanso');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
@@ -3172,7 +3179,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].domingoTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].domingoTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'domingoInicio1RangoDescanso');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'domingoInicio1RangoDescanso');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
@@ -3213,7 +3220,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].lunesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].lunesTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'lunesCantidad');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'lunesCantidad');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
@@ -3249,7 +3256,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].martesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].martesTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'martesCantidad');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'martesCantidad');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
@@ -3285,7 +3292,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].miercolesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].miercolesTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'miercolesCantidad');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'miercolesCantidad');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
@@ -3321,7 +3328,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].juevesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].juevesTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'juevesCantidad');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'juevesCantidad');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
@@ -3357,7 +3364,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].viernesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].viernesTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'viernesCantidad');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'viernesCantidad');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
@@ -3393,7 +3400,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].sabadoTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].sabadoTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'sabadoCantidad');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'sabadoCantidad');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
@@ -3429,7 +3436,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                                                 columna[postRef].tipoServicio :
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].domingoTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].domingoTipoServicio : '';
-                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, columna.tipoHorario, indexFor, 'domingoCantidad');
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'domingoCantidad');
                                         switch (festivoComputable.servicio) {
                                             case 'LIM':
                                                 columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
@@ -3504,17 +3511,17 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
                 });
             };
         } else {
-            let indexABorrarSF;
             if (bufferSwitchedDiasFestivosCuadrante.length > 0) {
+                let indexABorrarSF;
                 bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1].forEach((registroBuffer, index) => {
                     if (Object.keys(registroBuffer)[0] === postRef && registroBuffer.activo) {
                         indexABorrarSF = index;
                     }
                 });
+                arrayBuffer[cuadranteEnUsoCuadrantes - 1] = [...bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1]];
+                objetoBuffer = arrayBuffer[cuadranteEnUsoCuadrantes - 1][indexABorrarSF];
+                arrayBuffer[cuadranteEnUsoCuadrantes - 1][indexABorrarSF] = objetoBuffer;
             };
-            arrayBuffer[cuadranteEnUsoCuadrantes - 1] = [...bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1]];
-            objetoBuffer = arrayBuffer[cuadranteEnUsoCuadrantes - 1][indexABorrarSF];
-            arrayBuffer[cuadranteEnUsoCuadrantes - 1][indexABorrarSF] = objetoBuffer;
         };
     };
     arrayBuffer = cambiarEstadoBufferSwitchedDiasFestivos(event.target.checked, postRef, arrayBuffer, objetoBuffer);
@@ -3524,9 +3531,10 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event) =
     };
     dispatch(registrarIntervencionAccion(false));
     dispatch(cambiarEstadoCuadranteEnUsoRevisadoAccion(false));
+    dispatch(handleClosePopoverDiasAccion(scrollable, classesDisp));
 };
 
-export const handleChangeSFCasillasAccion = (postRef, indice, tipo, event) => (dispatch, getState) => {
+export const handleChangeSFCasillasAccion = (postRef, indice, tipo, event, popupState) => (dispatch, getState) => {
     const { cuadranteRegistrado } = getState().variablesCuadrantes;
     const { cuadranteServiciosFijos } = getState().variablesCuadrantesServiciosFijos;
     let casilla = {
@@ -3541,6 +3549,7 @@ export const handleChangeSFCasillasAccion = (postRef, indice, tipo, event) => (d
     };
     dispatch(registrarIntervencionAccion(false));
     dispatch(cambiarEstadoCuadranteEnUsoRevisadoAccion(false));
+    popupState.close();
 };
 
 export const handleChangeFormTrabajadoresAccion = (index, tipoTrabajador, event) => (dispatch, getState) => {
@@ -3564,7 +3573,6 @@ export const handleChangeFormTrabajadoresAccion = (index, tipoTrabajador, event)
                     const posicionSuplentePrevioAnteriorIndex = suplentesEnCuadrante.indexOf(suplentesEnCuadrante.find(suplente => suplente.id === idTrabajadorAnterior));
                     const posicionSuplentePrevioAnterior = suplentesEnCuadrante[posicionSuplentePrevioAnteriorIndex].laPosicionDelTrabajador;
                     dispatch(setPosicionTrabajadorPrevioACambiarAccion(posicionSuplentePrevioAnterior + 1));
-
                 };
             };
         };
@@ -3998,6 +4006,18 @@ export const handleChangeFormConfiguracionCuadranteAccion = (prop, event) => (di
         dispatch(setItemEditandoConfiguracionAccion({
             ...itemEditandoConfiguracion,
             [prop]: event.target.value
+        }));
+    };
+    if (prop === "bloqueado") {
+        let resultadoChecked;
+        if (event.target.checked) {
+            resultadoChecked = 'si';
+        } else {
+            resultadoChecked = 'no';
+        };
+        dispatch(setItemEditandoConfiguracionAccion({
+            ...itemEditandoConfiguracion,
+            [prop]: resultadoChecked
         }));
     };
     if (prop === "mensualPactado" ||
@@ -5233,7 +5253,7 @@ export const gestionItemPrevioEditandoServiciosFijosAccion = (valores) => (dispa
     }));
 };
 
-export const handleRegistrarCambioEnCasillaServiciosFijosAccion = () => (dispatch, getState) => {
+export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, classes) => (dispatch, getState) => {
     const { itemEditandoServiciosFijos, cuadranteServiciosFijos } = getState().variablesCuadrantesServiciosFijos;
     const { cuadranteRegistrado } = getState().variablesCuadrantes;
     if ((itemEditandoServiciosFijos.switch.TO && (!itemEditandoServiciosFijos.servicios.variacion_TO || !itemEditandoServiciosFijos.servicios.precioHora_TO)) ||
@@ -5805,13 +5825,14 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = () => (dispatc
     };
     dispatch(registrarIntervencionAccion(false));
     dispatch(cambiarEstadoCuadranteEnUsoRevisadoAccion(false));
+    dispatch(handleClosePopoverServiciosFijosAccion(scrollable, classes));
 };
 
 export const gestionItemPrevioEditandoConfiguracionAccion = (valores) => (dispatch) => {
     dispatch(setItemPrevioEditandoConfiguracionAccion(valores));
 };
 
-export const handleRegistrarCambioEnCasillaConfiguracionAccion = () => (dispatch, getState) => {
+export const handleRegistrarCambioEnCasillaConfiguracionAccion = (scrollable, classes) => (dispatch, getState) => {
     const { itemEditandoConfiguracion, cuadranteEnUsoCuadrantes, cuadranteVacio } = getState().variablesCuadrantesSetters;
     const { cuadranteRegistrado, objetoCuadrante } = getState().variablesCuadrantes;
     const { objetoCentro } = getState().variablesCentros;
@@ -5882,6 +5903,7 @@ export const handleRegistrarCambioEnCasillaConfiguracionAccion = () => (dispatch
         ...elArrayDatosInforme[cuadranteEnUsoCuadrantes - 1],
         computo: parseFloat(itemEditandoConfiguracion.computo),
         excepcion: itemEditandoConfiguracion.excepcion ? itemEditandoConfiguracion.excepcion : '',
+        bloqueado: itemEditandoConfiguracion.bloqueado,
         mensualPactado: itemEditandoConfiguracion.mensualPactado ? parseFloat(itemEditandoConfiguracion.mensualPactado) : null,
         precioHora_L: itemEditandoConfiguracion.precioHora_L ? parseFloat(itemEditandoConfiguracion.precioHora_L) : null,
         precioHora_E: itemEditandoConfiguracion.precioHora_E ? parseFloat(itemEditandoConfiguracion.precioHora_E) : null,
@@ -5921,6 +5943,7 @@ export const handleRegistrarCambioEnCasillaConfiguracionAccion = () => (dispatch
     };
     dispatch(registrarIntervencionAccion(false));
     dispatch(cambiarEstadoCuadranteEnUsoRevisadoAccion(false));
+    dispatch(handleClosePopoverConfiguracionAccion(scrollable, classes));
 };
 
 export const handleChangeTipoHorarioAccion = (index, event) => (dispatch, getState) => {

@@ -95,7 +95,6 @@ import { setCalendarioAGestionarAccion } from '../redux/cuadrantesDucks';
 import { venimosDeRegistradosAccion } from '../redux/pendientesDucks';
 import { gestionaMaxDateCalendarAccion } from '../redux/appDucks';
 import { setLosDiasDelMesAccion } from '../redux/cuadrantesDucks';
-import { setStateFestivoAccion } from '../redux/cuadrantesDucks';
 import { centroAGestionarInicioAccion } from '../redux/cuadrantesGestionDucks';
 import { gestionaCuadranteIndividualAccion } from '../redux/cuadrantesGestionDucks';
 import { setEstamosActualizandoCuadranteSinCargaAccion } from '../redux/cuadrantesSettersDucks';
@@ -165,8 +164,7 @@ import {
     handleRegistrarCambioEnCasillaConfiguracionAccion,
     handleChangeTipoHorarioAccion,
     configuraStateFestivoAccion,
-    handleLimpiezaHorarioAccion,
-    esFestivoFuncionAccion
+    handleLimpiezaHorarioAccion
 } from '../redux/cuadrantesHandlersDucks';
 import {
     retornaInfoFabButtonAccion,
@@ -330,6 +328,7 @@ const Cuadrantes = (props) => {
     const bufferSwitchedDiasFestivosCuadranteDesactivados = useSelector(store => store.variablesCuadrantesSetters.bufferSwitchedDiasFestivosCuadranteDesactivados);
     const bufferSwitchedDiasFestivosCuadrante = useSelector(store => store.variablesCuadrantesSetters.bufferSwitchedDiasFestivosCuadrante);
     const trabajadoresEnCuadrante = useSelector(store => store.variablesCuadrantesSetters.trabajadoresEnCuadrante);
+    const suplentesEnCuadrante = useSelector(store => store.variablesCuadrantesSetters.suplentesEnCuadrante);
 
     //helpers
 
@@ -403,26 +402,25 @@ const Cuadrantes = (props) => {
     }, [dispatch]);
 
     //secuencia gestión meses
-   
+
     useEffect(() => {
         const diasMes = dispatch(diasEnElMesAccion(calendarioAGestionar));
         let myArrSplit = calendarioAGestionar.split("-");
         const anyoAGest = myArrSplit[0];
         const mesAGest = myArrSplit[1];
         let array = [];
-        let object={};
         for (let i = 0; i < diasMes; i++) {
             const dateStr = mesAGest + '-' + (i + 1) + '-' + anyoAGest;
             array.push([[i + 1], [dispatch(diaDeLaSemanaAccion(dateStr))]]);
-            if (dispatch(esFestivoFuncionAccion(i))) {
-                object['estadoFestivoDia' + i] = true;
-            } else {
-                object['estadoFestivoDia' + i] = false;
-            };
         };
-        dispatch(setStateFestivoAccion(object));
         dispatch(setLosDiasDelMesAccion(array));
     }, [calendarioAGestionar]);
+
+    useEffect(() => {
+        if (losDiasDelMes.length > 0) {
+            dispatch(configuraStateFestivoAccion());
+        };
+    }, [losDiasDelMes]);
 
     //secuencia cuadrante
 
@@ -438,10 +436,10 @@ const Cuadrantes = (props) => {
             dispatch(setControladorDeEstadoAccion('inicio'));
         };
         if (objetoCuadrante.datosCuadrante.centro) {
-            if (!venimosBorrarCuadrante) {
+            if (!venimosBorrarCuadrante) {               
                 if (!estamosActualizandoCuadranteSinCarga) {
                     dispatch(gestionaCuadranteIndividualAccion(cuadranteEnUsoCuadrantes, false));
-                } else {
+                } else {         
                     dispatch(setEstamosActualizandoCuadranteSinCargaAccion(false));
                 };
             } else {
@@ -902,7 +900,7 @@ const Cuadrantes = (props) => {
                     alignItems="flex-start"
                     key={'Columna_sf' + (indexDia)}
                 >
-                    <PopupState variant="popover" >
+                    <PopupState variant="popover">
                         {(popupState) => (
                             <div>
                                 < Box
@@ -935,7 +933,7 @@ const Cuadrantes = (props) => {
                                             <Grid item>
                                                 <Switch
                                                     checked={cuadranteServiciosFijos[indice]['estados']['estadoCasillaDia' + (indexDia + 1)] || false}
-                                                    onChange={(event) => dispatch(handleChangeSFCasillasAccion(postRef, indice, tipo, event)) || null}
+                                                    onChange={(event) => dispatch(handleChangeSFCasillasAccion(postRef, indice, tipo, event, popupState)) || null}
                                                 />
                                             </Grid>
                                             <Grid item><Typography variant="body2" color="textPrimary">Ina./Act.</Typography></Grid>
@@ -1344,7 +1342,7 @@ const Cuadrantes = (props) => {
                 <Tooltip title="Informe Cuadrante" placement="left" arrow>
                     <Fab
                         variant="extended"
-                        className={classes.fab}
+                        className={objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1] && objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].bloqueado === 'si' ? classes.fabBloqueado : classes.fab}
                         onClick={() => dispatch(handleClickOpenDialogCuadrantes4Accion())}
                     >
                         <Typography variant="body2" className={classes.typoFab}>{dispatch(retornaInfoFabButtonAccion())}</Typography>
@@ -1384,17 +1382,19 @@ const Cuadrantes = (props) => {
                                 }}
                                 variant="dot"
                             >
-                                <Chip style={{ padding: 5 }} icon={<AssignmentIcon />} label={`Gestión de cuadrantes ` + (
-                                    centroAGestionar.nombre ?
-                                        ' - Centro: ' + centroAGestionar.nombre + (
-                                            firmaActualizacion && intervencionRegistrada && objetoCuadrante.estado === 'registrado' ?
-                                                ' - Estado: Actualizado el ' + firmaActualizacion :
-                                                firmaActualizacion && intervencionRegistrada && objetoCuadrante.estado === 'facturado' ?
-                                                    ' - Estado: Facturado el ' + firmaActualizacion :
-                                                    firmaActualizacion && !intervencionRegistrada ?
-                                                        ' - Estado: Pendiente de actualizar' :
-                                                        ' - Estado: Pendiente de registrar') :
-                                        '')} />
+                                <Chip
+                                    className={objetoCuadrante.datosInforme.tocaFacturar.valor === 'no' ? classes.noFacturacion : null}
+                                    style={{ padding: 5 }} icon={<AssignmentIcon />} label={`Gestión de cuadrantes ` + (
+                                        centroAGestionar.nombre ?
+                                            ' - Centro: ' + centroAGestionar.nombre + (
+                                                firmaActualizacion && intervencionRegistrada && objetoCuadrante.estado === 'registrado' ?
+                                                    ' - Estado: Actualizado el ' + firmaActualizacion :
+                                                    firmaActualizacion && intervencionRegistrada && objetoCuadrante.estado === 'facturado' ?
+                                                        ' - Estado: Facturado el ' + firmaActualizacion :
+                                                        firmaActualizacion && !intervencionRegistrada ?
+                                                            ' - Estado: Pendiente de actualizar' :
+                                                            ' - Estado: Pendiente de registrar') :
+                                            '')} />
                             </Badge>
                         </Grid>
                         <Grid item xs={3}>
@@ -1683,7 +1683,7 @@ const Cuadrantes = (props) => {
                             ) : null}
                             <Grid item xs>
                                 {cuadrante.length > 0 || cuadranteVacio ? (
-                                   retornaCuadranteCompleto()
+                                    retornaCuadranteCompleto()
                                 ) : (
                                     <Grid
                                         spacing={1}
@@ -1729,7 +1729,7 @@ const Cuadrantes = (props) => {
                         <Grid item>
                             <Switch
                                 checked={stateFestivo['estadoFestivoDia' + (variablesPopoverDias.index + 1)] || false}
-                                onChange={(event) => dispatch(handleChangeFestivoDiaAccion(variablesPopoverDias.postRef, variablesPopoverDias.index + 1, variablesPopoverDias.dia, event))}
+                                onChange={(event) => dispatch(handleChangeFestivoDiaAccion(variablesPopoverDias.postRef, variablesPopoverDias.index + 1, variablesPopoverDias.dia, event, scrollable, classesDisp))}
                                 name={"estadoFestivoDia" + (variablesPopoverDias.index + 1)}
                             />
                         </Grid>
@@ -1879,7 +1879,7 @@ const Cuadrantes = (props) => {
                             size="small"
                             color="secondary"
                             startIcon={<SaveIcon />}
-                            onClick={() => dispatch(handleRegistrarCambioEnCasillaServiciosFijosAccion())}
+                            onClick={() => dispatch(handleRegistrarCambioEnCasillaServiciosFijosAccion(scrollable, classes))}
                         >
                             Registrar cambio
                         </Button>
@@ -1931,7 +1931,7 @@ const Cuadrantes = (props) => {
                             size="small"
                             color="secondary"
                             startIcon={<SaveIcon />}
-                            onClick={() => dispatch(handleRegistrarCambioEnCasillaConfiguracionAccion())}
+                            onClick={() => dispatch(handleRegistrarCambioEnCasillaConfiguracionAccion(scrollable, classes))}
                         >
                             Registrar cambio
                         </Button>
@@ -1977,7 +1977,7 @@ const Cuadrantes = (props) => {
                 prTituloDialog={tituloDialogCuadrantes5}
                 prDescripcionDialog={descripcionDialogCuadrantes5}
             />
-            {/* {console.log(stateFestivo)} */}
+            {/* {console.log(objetoCuadrante)} */}
         </div >
     )
 }

@@ -69,7 +69,7 @@ export const obtenerCuadrantesPendientesAccion = (objeto, mes, arrayCentros) => 
             let apiUrl = rutaApi + "obtener_pendientes.php";
             const res = await axios.post(apiUrl, formData, {
                 headers: {
-                    "Content-Type": "multipart/form-data"             
+                    "Content-Type": "multipart/form-data"
                 }
             });
             if (res.data === false) {
@@ -113,7 +113,7 @@ export const obtenerCuadrantesRegistradosFacturadosAccion = (objeto, mes, arrayC
                 }
             });
             if (res.data.estado === 'registrado') {
-                contadorRegistrados++;
+                contadorRegistrados++;               
                 dispatch({
                     type: OBTENER_CUADRANTE_REGISTRADO,
                     payload: {
@@ -122,8 +122,8 @@ export const obtenerCuadrantesRegistradosFacturadosAccion = (objeto, mes, arrayC
                             nombre: res.data.nombre,
                             actualizacion: res.data.actualizacion,
                             estado: res.data.estado,
-                            total: res.data.total,
-                            horas: JSON.parse(res.data.horas)
+                            total: JSON.parse(res.data.total),
+                            //horas: JSON.parse(res.data.horas),                            
                         },
                         contador: contadorRegistrados
                     }

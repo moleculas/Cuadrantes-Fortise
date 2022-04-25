@@ -434,7 +434,16 @@ const Clases = makeStyles((theme) => ({
     fab: {
         position: 'absolute',
         bottom: theme.spacing(4),
+        right: theme.spacing(8)
+    },
+    fabBloqueado: {
+        position: 'absolute',
+        bottom: theme.spacing(4),
         right: theme.spacing(8),
+        backgroundColor: `${red[100]} !important`,
+    },
+    noFacturacion: {
+        backgroundColor: `${red[100]} !important`,
     },
     fabPendientes: {
         position: 'absolute',
@@ -672,7 +681,20 @@ const Clases = makeStyles((theme) => ({
         backgroundColor: theme.palette.background.paper,
         color: 'red',
         marginLeft: 10
-    }    
+    },
+    boxChekin:{
+        borderRadius: 4, 
+        paddingTop: 3,  
+        paddingBottom: 3, 
+        paddingLeft: 15, 
+        marginLeft: 3,
+        marginRight: 3,
+        border: '1px solid', 
+        borderColor: 'rgba(0, 0, 0, 0.25)',
+        "&:hover": {
+            borderColor: 'rgba(0, 0, 0, 1)',
+        },
+    }
 }), { index: 1 });
 
 export default Clases;

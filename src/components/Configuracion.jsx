@@ -729,6 +729,19 @@ const Configuracion = (props) => {
                                                             }
                                                         />
                                                     </ListItem >
+                                                    <ListItem>
+                                                        <ListItemText
+                                                            primary="V. 1.11 - 24/04/2022"
+                                                            secondary={
+                                                                <Fragment>
+                                                                    <Typography component="span" variant="body2">1.- Implementada funcionalidad para bloquear cálculo cómputo Mensual Pactado cuadrantes en ficha cuadrantes.</Typography>
+                                                                    <br />
+                                                                    <Typography component="span" variant="body2">2.- Configurada opción para control de temporización de pago en cuadrantes.</Typography>
+                                                                    <br />
+                                                                </Fragment>
+                                                            }
+                                                        />
+                                                    </ListItem >
                                                 </List>
                                             </Box>
                                         </Box>

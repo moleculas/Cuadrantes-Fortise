@@ -84,13 +84,15 @@ export const obtenerCuadrantesPorAnyoAccion = (objeto) => (dispatch, getState) =
             let array = [];
             let sumatorio = 0;
             let elObjetoTotal;
+            let elEstado;
             arrayCuadrantes.forEach((mes, index) => {
                 if (mes.length > 0) {
                     mes.forEach((mesInt, index) => {
+                        elEstado = mesInt.estado;
                         elObjetoTotal = JSON.parse(mesInt.total);
-                        if (mesInt.total) {
+                        if (elObjetoTotal.tocaFacturar.valor === 'si' && elEstado === 'facturado') {
                             sumatorio += parseFloat(elObjetoTotal.total);
-                        }
+                        };
                     });
                     array.push({
                         name: meses[index].substr(0, 3) + '.',
