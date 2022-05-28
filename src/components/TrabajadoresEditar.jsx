@@ -41,7 +41,6 @@ import Clases from "../clases";
 import { obtenerTrabajadoresAccion } from '../redux/trabajadoresDucks';
 import { obtenerTrabajadorAccion } from '../redux/trabajadoresDucks';
 import { actualizarTrabajadorAccion } from '../redux/trabajadoresDucks';
-import { actualizarCentroAccion } from '../redux/centrosDucks';
 import { activarDesactivarAccion } from '../redux/appDucks';
 import { registrarIntervencionAccion } from '../redux/appDucks';
 import { onEstemAccion } from '../redux/appDucks';
@@ -52,7 +51,7 @@ import { obtenerCentroVinculadoAccion } from '../redux/trabajadoresDucks';
 import { retornaAnoMesDiaAccion } from '../redux/appDucks';
 import { activarDesactivarActualizarTrabajadorAccion } from '../redux/trabajadoresDucks';
 import { retornaAnoMesAccion } from '../redux/appDucks';
-//import { vaciarDatosTrabajadoresAccion } from '../redux/trabajadoresDucks';
+import { retornaFechaEnBaseAAnoMesDiaAccion } from '../redux/appDucks';
 
 const estados = Constantes.ESTADO_LABORAL_TRABAJADOR;
 
@@ -97,14 +96,22 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
     const [valueDatePickerInicioEdicion, setValueDatePickerInicioEdicion] = useState(null);
     const [valueDatePickerFinEdicion, setValueDatePickerFinEdicion] = useState(null);
     const [datosEstadoEdicion, setDatosEstadoEdicion] = useState({
-        inicioBaja: null,
-        finBaja: null,
+        inicioBajaIT: null,
+        finBajaIT: null,
+        inicioBajaACCTE: null,
+        finBajaACCTE: null,
+        inicioBajaCIA: null,
+        finBajaCIA: null,
         inicioVacaciones: null,
         finVacaciones: null,
         inicioExcedencia: null,
         finExcedencia: null,
         inicioPersonales: null,
-        finPersonales: null
+        finPersonales: null,
+        inicioPermiso: null,
+        finPermiso: null,
+        inicioAusencia: null,
+        finAusencia: null
     });
     const [historicoBajasEdicion, setHistoricoBajasEdicion] = useState(null);
     const [losCentrosVinculadosTrabajador, setLosCentrosVinculadosTrabajador] = useState([]);
@@ -172,19 +179,35 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
             categoria: 1,
         });
         setDatosEstadoEdicion({
-            inicioBaja: trabajadorAEditar.datosEstado.inicioBaja,
-            finBaja: trabajadorAEditar.datosEstado.finBaja,
-            inicioVacaciones: trabajadorAEditar.datosEstado.inicioVacaciones,
-            finVacaciones: trabajadorAEditar.datosEstado.finVacaciones,
-            inicioExcedencia: trabajadorAEditar.datosEstado.inicioExcedencia,
-            finExcedencia: trabajadorAEditar.datosEstado.finExcedencia,
-            inicioPersonales: trabajadorAEditar.datosEstado.inicioPersonales,
-            finPersonales: trabajadorAEditar.datosEstado.finPersonales
+            inicioBajaIT: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.inicioBajaIT ? trabajadorAEditar.datosEstado.inicioBajaIT : null,
+            finBajaIT: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.finBajaIT ? trabajadorAEditar.datosEstado.finBajaIT : null,
+            inicioBajaACCTE: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.inicioBajaACCTE ? trabajadorAEditar.datosEstado.inicioBajaACCTE : null,
+            finBajaACCTE: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.finBajaACCTE ? trabajadorAEditar.datosEstado.finBajaACCTE : null,
+            inicioBajaCIA: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.inicioBajaCIA1 ? trabajadorAEditar.datosEstado.inicioBajaCIA1 : null,
+            finBajaCIA: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.finBajaCIA2 ? trabajadorAEditar.datosEstado.finBajaCIA2 : null,
+            inicioVacaciones: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.inicioVacaciones ? trabajadorAEditar.datosEstado.inicioVacaciones : null,
+            finVacaciones: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.finVacaciones ? trabajadorAEditar.datosEstado.finVacaciones : null,
+            inicioExcedencia: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.inicioExcedencia ? trabajadorAEditar.datosEstado.inicioExcedencia : null,
+            finExcedencia: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.finExcedencia ? trabajadorAEditar.datosEstado.finExcedencia : null,
+            inicioPersonales: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.inicioPersonales ? trabajadorAEditar.datosEstado.inicioPersonales : null,
+            finPersonales: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.finPersonales ? trabajadorAEditar.datosEstado.finPersonales : null,
+            inicioPermiso: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.inicioPermiso ? trabajadorAEditar.datosEstado.inicioPermiso : null,
+            finPermiso: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.finPermiso ? trabajadorAEditar.datosEstado.finPermiso : null,
+            inicioAusencia: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.inicioAusencia ? trabajadorAEditar.datosEstado.inicioAusencia : null,
+            finAusencia: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.finAusencia ? trabajadorAEditar.datosEstado.finAusencia : null
         });
         switch (trabajadorAEditar.estado) {
-            case 'baja':
-                setValueDatePickerInicioEdicion(trabajadorAEditar.datosEstado.inicioBaja);
-                setValueDatePickerFinEdicion(trabajadorAEditar.datosEstado.finBaja);
+            case 'bajaIT':
+                setValueDatePickerInicioEdicion(trabajadorAEditar.datosEstado.inicioBajaIT);
+                setValueDatePickerFinEdicion(trabajadorAEditar.datosEstado.finBajaIT);
+                break;
+            case 'bajaACCTE':
+                setValueDatePickerInicioEdicion(trabajadorAEditar.datosEstado.inicioBajaACCTE);
+                setValueDatePickerFinEdicion(trabajadorAEditar.datosEstado.finBajaACCTE);
+                break;
+            case 'bajaCIA':
+                setValueDatePickerInicioEdicion(trabajadorAEditar.datosEstado.inicioBajaCIA);
+                setValueDatePickerFinEdicion(trabajadorAEditar.datosEstado.finBajaCIA);
                 break;
             case 'vacaciones':
                 setValueDatePickerInicioEdicion(trabajadorAEditar.datosEstado.inicioVacaciones);
@@ -197,6 +220,14 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
             case 'personales':
                 setValueDatePickerInicioEdicion(trabajadorAEditar.datosEstado.inicioPersonales);
                 setValueDatePickerFinEdicion(trabajadorAEditar.datosEstado.finPersonales);
+                break;
+            case 'permisoRET':
+                setValueDatePickerInicioEdicion(trabajadorAEditar.datosEstado.inicioPermiso);
+                setValueDatePickerFinEdicion(trabajadorAEditar.datosEstado.finPermiso);
+                break;
+            case 'ausenciaINJ':
+                setValueDatePickerInicioEdicion(trabajadorAEditar.datosEstado.inicioAusencia);
+                setValueDatePickerFinEdicion(trabajadorAEditar.datosEstado.finAusencia);
                 break;
             default:
         };
@@ -252,14 +283,22 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
         if (prop === "estado") {
             setValuesFormEdicion({ ...valuesFormEdicion, [prop]: e.target.value });
             setDatosEstadoEdicion({
-                inicioBaja: null,
-                finBaja: null,
+                inicioBajaIT: null,
+                finBajaIT: null,
+                inicioBajaACCTE: null,
+                finBajaACCTE: null,
+                inicioBajaCIA: null,
+                finBajaCIA: null,
                 inicioVacaciones: null,
                 finVacaciones: null,
                 inicioExcedencia: null,
                 finExcedencia: null,
                 inicioPersonales: null,
-                finPersonales: null
+                finPersonales: null,
+                inicioPermiso: null,
+                finPermiso: null,
+                inicioAusencia: null,
+                finAusencia: null
             });
             setValueDatePickerInicioEdicion(null);
             setValueDatePickerFinEdicion(null);
@@ -273,18 +312,16 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
     };
 
     const handleChangeDatePickerInicioEdicion = (newValue) => {
-        if (valueDatePickerFinEdicion && valueDatePickerFinEdicion < newValue) {
-            setAlert({
-                mensaje: "La fecha de final no puede ser inferior a la fecha de inicio.",
-                tipo: 'error'
-            })
-            setOpenSnack(true);
-            return;
-        }
         setValueDatePickerInicioEdicion(newValue);
         switch (valuesFormEdicion.estado) {
-            case 'baja':
-                setDatosEstadoEdicion({ ...datosEstadoEdicion, inicioBaja: dispatch(retornaAnoMesDiaAccion(newValue)) });
+            case 'bajaIT':
+                setDatosEstadoEdicion({ ...datosEstadoEdicion, inicioBajaIT: dispatch(retornaAnoMesDiaAccion(newValue)) });
+                break;
+            case 'bajaACCTE':
+                setDatosEstadoEdicion({ ...datosEstadoEdicion, inicioBajaACCTE: dispatch(retornaAnoMesDiaAccion(newValue)) });
+                break;
+            case 'bajaCIA':
+                setDatosEstadoEdicion({ ...datosEstadoEdicion, inicioBajaCIA: dispatch(retornaAnoMesDiaAccion(newValue)) });
                 break;
             case 'vacaciones':
                 setDatosEstadoEdicion({ ...datosEstadoEdicion, inicioVacaciones: dispatch(retornaAnoMesDiaAccion(newValue)) });
@@ -294,6 +331,12 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                 break;
             case 'personales':
                 setDatosEstadoEdicion({ ...datosEstadoEdicion, inicioPersonales: dispatch(retornaAnoMesDiaAccion(newValue)) });
+                break;
+            case 'permisoRET':
+                setDatosEstadoEdicion({ ...datosEstadoEdicion, inicioPermiso: dispatch(retornaAnoMesDiaAccion(newValue)) });
+                break;
+            case 'ausenciaINJ':
+                setDatosEstadoEdicion({ ...datosEstadoEdicion, inicioAusencia: dispatch(retornaAnoMesDiaAccion(newValue)) });
                 break;
             default:
         };
@@ -306,8 +349,16 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
             const elMes = retornaAnoMesAccion(newValue);
             let inicioRango, finRango;
             switch (valuesFormEdicion.estado) {
-                case 'baja':
-                    inicioRango = datosEstadoEdicion.inicioBaja;
+                case 'bajaIT':
+                    inicioRango = datosEstadoEdicion.inicioBajaIT;
+                    finRango = dispatch(retornaAnoMesDiaAccion(newValue));
+                    break;
+                case 'bajaACCTE':
+                    inicioRango = datosEstadoEdicion.inicioBajaACCTE;
+                    finRango = dispatch(retornaAnoMesDiaAccion(newValue));
+                    break;
+                case 'bajaCIA':
+                    inicioRango = datosEstadoEdicion.inicioBajaCIA;
                     finRango = dispatch(retornaAnoMesDiaAccion(newValue));
                     break;
                 case 'vacaciones':
@@ -322,11 +373,22 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                     inicioRango = datosEstadoEdicion.inicioPersonales;
                     finRango = dispatch(retornaAnoMesDiaAccion(newValue));
                     break;
+                case 'permisoRET':
+                    inicioRango = datosEstadoEdicion.inicioPermiso;
+                    finRango = dispatch(retornaAnoMesDiaAccion(newValue));
+                    break;
+                case 'ausenciaINJ':
+                    inicioRango = datosEstadoEdicion.inicioAusencia;
+                    finRango = dispatch(retornaAnoMesDiaAccion(newValue));
+                    break;
                 default:
             };
-            if (inicioRango === finRango) {
+            const myFechaInicioRango = dispatch(retornaFechaEnBaseAAnoMesDiaAccion(inicioRango));
+            const myFechaFinRango = dispatch(retornaFechaEnBaseAAnoMesDiaAccion(finRango));
+            myFechaFinRango.setDate(myFechaFinRango.getDate() + 1);
+            if (myFechaInicioRango >= myFechaFinRango) {
                 setAlert({
-                    mensaje: "La fecha de final no puede ser igual a la fecha de inicio.",
+                    mensaje: "La fecha de final no puede ser anterior a la fecha de inicio.",
                     tipo: 'error'
                 })
                 setOpenSnack(true);
@@ -334,8 +396,8 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
             };
             const objetoBajasHistoricoMes = {
                 tipo: valuesFormEdicion.estado,
-                inicio: inicioRango,
-                fin: finRango
+                inicio: dispatch(retornaAnoMesDiaAccion(myFechaInicioRango)),
+                fin: dispatch(retornaAnoMesDiaAccion(myFechaFinRango))
             };
             let arrayObjetoHistoricoMeses;
             if (historicoBajasEdicion) {
@@ -355,19 +417,25 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                 objeto: 'historico',
                 meses: arrayObjetoHistoricoMeses
             };
-
             setHistoricoBajasEdicion(obJetoHistorico);
-
             setValuesFormEdicion({ ...valuesFormEdicion, estado: 'alta' });
             setDatosEstadoEdicion({
-                inicioBaja: null,
-                finBaja: null,
+                inicioBajaIT: null,
+                finBajaIT: null,
+                inicioBajaACCTE: null,
+                finBajaACCTE: null,
+                inicioBajaCIA: null,
+                finBajaCIA: null,
                 inicioVacaciones: null,
                 finVacaciones: null,
                 inicioExcedencia: null,
                 finExcedencia: null,
                 inicioPersonales: null,
-                finPersonales: null
+                finPersonales: null,
+                inicioPermiso: null,
+                finPermiso: null,
+                inicioAusencia: null,
+                finAusencia: null
             });
             setValueDatePickerInicioEdicion(null);
             setValueDatePickerFinEdicion(null);
@@ -375,8 +443,14 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
         } else {
             setValueDatePickerFinEdicion(newValue);
             switch (valuesFormEdicion.estado) {
-                case 'baja':
-                    setDatosEstadoEdicion({ ...datosEstadoEdicion, finBaja: null });
+                case 'bajaIT':
+                    setDatosEstadoEdicion({ ...datosEstadoEdicion, finBajaIT: null });
+                    break;
+                case 'bajaACCTE':
+                    setDatosEstadoEdicion({ ...datosEstadoEdicion, finBajaACCTE: null });
+                    break;
+                case 'bajaCIA':
+                    setDatosEstadoEdicion({ ...datosEstadoEdicion, finBajaCIA: null });
                     break;
                 case 'vacaciones':
                     setDatosEstadoEdicion({ ...datosEstadoEdicion, finVacaciones: null });
@@ -386,6 +460,12 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                     break;
                 case 'personales':
                     setDatosEstadoEdicion({ ...datosEstadoEdicion, finPersonales: null });
+                    break;
+                case 'permisoRET':
+                    setDatosEstadoEdicion({ ...datosEstadoEdicion, finPermiso: null });
+                    break;
+                case 'ausenciaINJ':
+                    setDatosEstadoEdicion({ ...datosEstadoEdicion, finAusencia: null });
                     break;
                 default:
             };
@@ -403,57 +483,39 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
 
     const handleCloseDialogBotones = (respuesta) => {
         if (respuesta === "acuerdo") {
-            dispatch(eliminarTrabajadorAccion('trabajadores', valuesFormEdicion.id));
             //setTimeout(function(){ window.location.reload(); }, 1500);
             dispatch(activarDesactivarAccion(true));
             actualizarCentroPorEliminacionTrabajador();
-            reseteaContenidoEdicion();
         }
         dispatch(cierraObjetoDialogAccion());
     };
 
     const actualizarCentroPorEliminacionTrabajador = () => {
+        let pasaTrabajador = true;
+        let pasaSuplente = true;
         if (losCentrosVinculadosTrabajador.length > 0) {
-            losCentrosVinculadosTrabajador.forEach((option1, index) => {
-                const centroVinculadoTrabajadorId = option1.id;
-                const centroVinculadoTrabajadorTrabajadores = JSON.parse(option1.trabajadores);
-                centroVinculadoTrabajadorTrabajadores.trabajadores.forEach((option2, index) => {
-                    Object.entries(option2).forEach(([key, val]) => {
-                        if (key === 'trabajador_' + (index + 1)) {
-                            if (val === valuesFormEdicion.id) {
-                                option2[key] = null;
-                            }
-                        }
-                    });
-                });
-                //registramos
-                const centroAGuardar = {
-                    id: centroVinculadoTrabajadorId,
-                    trabajadores: JSON.stringify(centroVinculadoTrabajadorTrabajadores)
-                };
-                dispatch(actualizarCentroAccion('centros', centroAGuardar.id, centroAGuardar));
-            })
+            pasaTrabajador = false;
         };
         if (losCentrosVinculadosSuplente.length > 0) {
-            losCentrosVinculadosSuplente.forEach((option1, index) => {
-                const centroVinculadoSuplenteId = option1.id;
-                const centroVinculadoSuplenteTrabajadores = JSON.parse(option1.trabajadores);
-                centroVinculadoSuplenteTrabajadores.trabajadores.forEach((option2, index) => {
-                    Object.entries(option2).forEach(([key, val]) => {
-                        if (key === 'suplente_' + (index + 1)) {
-                            if (val === valuesFormEdicion.id) {
-                                option2[key] = null;
-                            }
-                        }
-                    });
-                });
-                //registramos
-                const centroAGuardar = {
-                    id: centroVinculadoSuplenteId,
-                    trabajadores: JSON.stringify(centroVinculadoSuplenteTrabajadores)
-                };
-                dispatch(actualizarCentroAccion('centros', centroAGuardar.id, centroAGuardar));
+            pasaSuplente = false;
+        };
+        if (pasaTrabajador === false && pasaSuplente === true) {
+            setAlert({
+                mensaje: "El trabajador está vinculado como trabajador en uno (o más) centros. Modifica el centro antes de eliminar al trabajador.",
+                tipo: 'error'
             })
+            setOpenSnack(true);
+            return;
+        } else if (pasaTrabajador === true && pasaSuplente === false) {
+            setAlert({
+                mensaje: "El trabajador está vinculado como suplente en uno (o más) centros. Modifica el centro antes de eliminar al trabajador.",
+                tipo: 'error'
+            })
+            setOpenSnack(true);
+            return;
+        } else {
+            dispatch(eliminarTrabajadorAccion('trabajadores', valuesFormEdicion.id));
+            reseteaContenidoEdicion();
         };
     };
 
@@ -488,7 +550,65 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                                 return;
                             }
                         };
-
+                        let losDatosEstadoRevisado = {};
+                        let hayDatosEstado = false;
+                        if (datosEstadoEdicion.inicioBajaIT) {
+                            hayDatosEstado = true;
+                            losDatosEstadoRevisado = {
+                                inicioBajaIT: datosEstadoEdicion.inicioBajaIT,
+                                finBajaIT: datosEstadoEdicion.finBajaIT
+                            };
+                        };
+                        if (datosEstadoEdicion.inicioBajaACCTE) {
+                            hayDatosEstado = true;
+                            losDatosEstadoRevisado = {
+                                inicioBajaACCTE: datosEstadoEdicion.inicioBajaACCTE,
+                                finBajaACCTE: datosEstadoEdicion.finBajaACCTE
+                            };
+                        };
+                        if (datosEstadoEdicion.inicioBajaCIA) {
+                            hayDatosEstado = true;    
+                             
+                            losDatosEstadoRevisado = {
+                                inicioBajaCIA: datosEstadoEdicion.inicioBajaCIA,                                
+                                finBajaCIA: datosEstadoEdicion.finBajaCIA
+                            };
+                        };
+                        if (datosEstadoEdicion.inicioVacaciones) {
+                            hayDatosEstado = true;
+                            losDatosEstadoRevisado = {
+                                inicioVacaciones: datosEstadoEdicion.inicioVacaciones,
+                                finVacaciones: datosEstadoEdicion.finVacaciones
+                            };
+                        };
+                        if (datosEstadoEdicion.inicioExcedencia) {
+                            hayDatosEstado = true;
+                            losDatosEstadoRevisado = {
+                                inicioExcedencia: datosEstadoEdicion.inicioExcedencia,
+                                finExcedencia: datosEstadoEdicion.finExcedencia
+                            };
+                        };
+                        if (datosEstadoEdicion.inicioPersonales) {
+                            hayDatosEstado = true;
+                            losDatosEstadoRevisado = {
+                                inicioPersonales: datosEstadoEdicion.inicioPersonales,
+                                finPersonales: datosEstadoEdicion.finPersonales
+                            };
+                        };
+                        if (datosEstadoEdicion.inicioPermiso) {
+                            hayDatosEstado = true;
+                            losDatosEstadoRevisado = {
+                                inicioPermiso: datosEstadoEdicion.inicioPermiso,
+                                finPermiso: datosEstadoEdicion.finPermiso
+                            };
+                        };
+                        if (datosEstadoEdicion.inicioAusencia) {
+                            hayDatosEstado = true;
+                            losDatosEstadoRevisado = {
+                                inicioAusencia: datosEstadoEdicion.inicioAusencia,
+                                finAusencia: datosEstadoEdicion.finAusencia
+                            };
+                        };
                         //registramos
                         const trabajadorAGuardar = {
                             id: valuesFormEdicion.id,
@@ -498,7 +618,7 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                             seg_social: valuesFormEdicion.segSocial,
                             telefono: valuesFormEdicion.telefono,
                             estado: valuesFormEdicion.estado,
-                            datos_estado: JSON.stringify(datosEstadoEdicion),
+                            datos_estado: hayDatosEstado ? JSON.stringify(losDatosEstadoRevisado) : null,
                             historico_bajas: historicoBajasEdicion ? (JSON.stringify(historicoBajasEdicion)) : null
                         };
                         dispatch(actualizarTrabajadorAccion('trabajadores', trabajadorAGuardar.id, trabajadorAGuardar));
@@ -531,14 +651,22 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
         setValueDatePickerInicioEdicion(null);
         setValueDatePickerFinEdicion(null);
         setDatosEstadoEdicion({
-            inicioBaja: null,
-            finBaja: null,
+            inicioBajaIT: null,
+            finBajaIT: null,
+            inicioBajaACCTE: null,
+            finBajaACCTE: null,
+            inicioBajaCIA: null,
+            finBajaCIA: null,
             inicioVacaciones: null,
             finVacaciones: null,
             inicioExcedencia: null,
             finExcedencia: null,
             inicioPersonales: null,
-            finPersonales: null
+            finPersonales: null,
+            inicioPermiso: null,
+            finPermiso: null,
+            inicioAusencia: null,
+            finAusencia: null
         });
         setHistoricoBajasEdicion(null);
     };
@@ -585,22 +713,89 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
 
     const retornaLineaHistoricoBajas = (linea, mes, index) => {
         let cabeceraTexto, rangoTexto;
+        let options = { year: 'numeric', month: 'long', day: 'numeric' };
+        const myFechaInicioRango = dispatch(retornaFechaEnBaseAAnoMesDiaAccion(linea.inicio));
+        const textoInicioRango = myFechaInicioRango.toLocaleDateString("es-ES", options);
+        const myFechaFinRango = dispatch(retornaFechaEnBaseAAnoMesDiaAccion(linea.fin));
+        let myFechaFinRangoFinal = new Date(myFechaFinRango).getTime();
+        let dia = 1 * 24 * 60 * 60;
+        let fechaResultado = new Date(myFechaFinRangoFinal - dia);
+        const textoFinRango = fechaResultado.toLocaleDateString("es-ES", options);
         switch (linea.tipo) {
-            case 'baja':
-                cabeceraTexto = "Baja por enfermedad del: ";
+            case 'bajaIT':
+                if (textoInicioRango === textoFinRango) {
+                    cabeceraTexto = "Baja IT el: ";
+                    rangoTexto = textoInicioRango;
+                } else {
+                    cabeceraTexto = "Baja IT del: ";
+                    rangoTexto = textoInicioRango + " al " + textoFinRango;
+                };
+                break;
+            case 'bajaACCTE':
+                if (textoInicioRango === textoFinRango) {
+                    cabeceraTexto = "Baja ACCTE el: ";
+                    rangoTexto = textoInicioRango;
+                } else {
+                    cabeceraTexto = "Baja ACCTE del: ";
+                    rangoTexto = textoInicioRango + " al " + textoFinRango;
+                };
+                break;
+            case 'bajaCIA':
+                if (textoInicioRango === textoFinRango) {
+                    cabeceraTexto = "Baja CIA el: ";
+                    rangoTexto = textoInicioRango;
+                } else {
+                    cabeceraTexto = "Baja CIA del: ";
+                    rangoTexto = textoInicioRango + " al " + textoFinRango;
+                };
                 break;
             case 'vacaciones':
-                cabeceraTexto = "Vacaciones del: ";
+                if (textoInicioRango === textoFinRango) {
+                    cabeceraTexto = "Vacaciones el: ";
+                    rangoTexto = textoInicioRango;
+                } else {
+                    cabeceraTexto = "Vacaciones del: ";
+                    rangoTexto = textoInicioRango + " al " + textoFinRango;
+                };
                 break;
             case 'excedencia':
-                cabeceraTexto = "Excedencia del: ";
+                if (textoInicioRango === textoFinRango) {
+                    cabeceraTexto = "Excedencia el: ";
+                    rangoTexto = textoInicioRango;
+                } else {
+                    cabeceraTexto = "Excedencia del: ";
+                    rangoTexto = textoInicioRango + " al " + textoFinRango;
+                };
                 break;
             case 'personales':
-                cabeceraTexto = "Baja por motivos personales del: ";
+                if (textoInicioRango === textoFinRango) {
+                    cabeceraTexto = "Baja por motivos personales el: ";
+                    rangoTexto = textoInicioRango;
+                } else {
+                    cabeceraTexto = "Baja por motivos personales del: ";
+                    rangoTexto = textoInicioRango + " al " + textoFinRango;
+                };
+                break;
+            case 'permisoRET':
+                if (textoInicioRango === textoFinRango) {
+                    cabeceraTexto = "Permiso retribuido el: ";
+                    rangoTexto = textoInicioRango;
+                } else {
+                    cabeceraTexto = "Permiso retribuido del: ";
+                    rangoTexto = textoInicioRango + " al " + textoFinRango;
+                };
+                break;
+            case 'ausenciaINJ':
+                if (textoInicioRango === textoFinRango) {
+                    cabeceraTexto = "Ausencia injustificada el: ";
+                    rangoTexto = textoInicioRango;
+                } else {
+                    cabeceraTexto = "Ausencia injustificada del: ";
+                    rangoTexto = textoInicioRango + " al " + textoFinRango;
+                };
                 break;
             default:
         };
-        rangoTexto = linea.inicio + " al " + linea.fin;
         return (
             <ListItem
                 key={'listabajas' + index}>
@@ -775,7 +970,7 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                             </Select>
                         </FormControl>
                         <Box px={0.5}>
-                            {(valuesFormEdicion.estado === 'baja' || valuesFormEdicion.estado === 'excedencia' || valuesFormEdicion.estado === 'vacaciones' || valuesFormEdicion.estado === 'personales') ? (
+                            {(valuesFormEdicion.estado === 'bajaIT' || valuesFormEdicion.estado === 'bajaACCTE' || valuesFormEdicion.estado === 'bajaCIA' || valuesFormEdicion.estado === 'excedencia' || valuesFormEdicion.estado === 'vacaciones' || valuesFormEdicion.estado === 'personales' || valuesFormEdicion.estado === 'permisoRET' || valuesFormEdicion.estado === 'ausenciaINJ') ? (
                                 <Fragment>
                                     <MuiPickersUtilsProvider locale={es} utils={DateFnsUtils}>
                                         <KeyboardDatePicker
@@ -805,6 +1000,7 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                                             cancelLabel="Cancelar"
                                             clearLabel="Borrar"
                                             value={valueDatePickerFinEdicion}
+                                            disabled={valueDatePickerInicioEdicion ? false : true}
                                             onChange={(newValue) => {
                                                 handleChangeDatePickerFinEdicion(newValue);
                                             }}
@@ -888,7 +1084,7 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                 prTituloDialog={tituloDialog}
                 prDescripcionDialog={descripcionDialog}
             />
-            {/* {console.log(props.prVenimosTrabajadorBaja)} */}
+            {/* {console.log(datosEstadoEdicion)} */}
         </div>
     )
 })

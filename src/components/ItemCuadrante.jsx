@@ -4,7 +4,7 @@ import Constantes from "../constantes";
 import DateFnsUtils from '@date-io/date-fns';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
-import { MuiPickersUtilsProvider, TimePicker } from '@material-ui/pickers';
+import { MuiPickersUtilsProvider, KeyboardTimePicker } from '@material-ui/pickers';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -18,6 +18,8 @@ import Tooltip from '@material-ui/core/Tooltip';
 import clsx from 'clsx';
 import IconButton from '@material-ui/core/IconButton';
 import OutlinedInput from "@material-ui/core/OutlinedInput";
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 
 //estilos
 import Clases from "../clases";
@@ -46,6 +48,17 @@ const ItemCuadrante = (props) => {
         tipoVariacion: props.prTipoVariacion || '',
         tipoServicio: props.prValueTipoServicio || '',
     });
+
+    //mediaQueries
+
+    const esDesktop = useMediaQuery(theme => theme.breakpoints.up('desktop'));
+    const alturaCasilla = () => {
+        if (esDesktop) {
+            return 38;
+        } else {
+            return 48;
+        };
+    };
 
     //useEffect
 
@@ -81,6 +94,9 @@ const ItemCuadrante = (props) => {
     };
     const handleChangeTipoServicio = (index) => (e) => {
         props.prHandleChangeTipoServicio(index, e);
+    };
+    const handleResetearCasilla = (id, index, tipo) => {
+        props.prHandleResetearCasilla(id, index, tipo);
     };
 
     //retorno componentes
@@ -135,12 +151,12 @@ const ItemCuadrante = (props) => {
                 className={classes.formTipo2}
                 size="small"
             >
-                <InputLabel>Tipo Servicio</InputLabel>
+                <InputLabel>{esDesktop ? 'Tipo Servicio' : 'Servicio'}</InputLabel>
                 <Select
                     fullWidth
                     id="form-tipo-servicio-cuadrante"
                     name={props.prTipo === 'rango' ? ('tipoServicioSelect-' + props.prIdInicio) : props.prTipo === 'rangoDescanso' ? ('tipoServicioSelect-' + props.prIdInicio1) : ('tipoServicioSelect-' + props.prIdCantidad)}
-                    label="Tipo servicio"
+                    label={esDesktop ? 'Tipo Servicio' : 'Servicio'}
                     value={props.prValueTipoServicio}
                     onChange={handleChangeTipoServicio(props.prIndex)}
                     helpertext="Selecciona tipo de servicio"
@@ -160,45 +176,106 @@ const ItemCuadrante = (props) => {
         )
     };
 
+    const retornaActivoBotonResetear = (origen) => {
+        if (props.prTipo === 'rango') {
+            if (props.prValueTimePickerInicio || props.prObservaciones) {
+                if (origen === 'boton') {
+                    return false
+                } else {
+                    return 'Resetear casilla'
+                };
+
+            } else {
+                if (origen === 'boton') {
+                    return true
+                } else {
+                    return ''
+                };
+            }
+        };
+        if (props.prTipo === 'rangoDescanso') {
+            if (props.prValueTimePickerInicio1 || props.prObservaciones) {
+                if (origen === 'boton') {
+                    return false
+                } else {
+                    return 'Resetear casilla'
+                };
+
+            } else {
+                if (origen === 'boton') {
+                    return true
+                } else {
+                    return ''
+                };
+            }
+        };
+        if (props.prTipo === 'cantidad') {
+            if (props.prValueCantidadHoras || props.prObservaciones) {
+                if (origen === 'boton') {
+                    return false
+                } else {
+                    return 'Resetear casilla'
+                };
+
+            } else {
+                if (origen === 'boton') {
+                    return true
+                } else {
+                    return ''
+                };
+            }
+        }
+    };
+
     return (
         <div>
-            {/* <Box
+            <Box
                 display="flex"
                 alignItems="center"
                 justifyContent="flex-end"
                 className={classes.mt_25}
             >
-                {retornaBotonVariaciones()}
-            </Box> */}
+                {/* {retornaBotonVariaciones()} */}
+                <Tooltip title={retornaActivoBotonResetear('text')} placement="left" arrow>
+                    <span>
+                        <IconButton
+                            className={clsx(classes.btnLimpieza, classes.blanc, classes.mb10)}
+                            size="small"
+                            disabled={retornaActivoBotonResetear('boton')}
+                            onClick={() => props.prTipo === 'rango' ? (handleResetearCasilla(props.prIdInicio, props.prIndex, props.prTipo)) : props.prTipo === 'rangoDescanso' ? (handleResetearCasilla(props.prIdInicio1, props.prIndex, props.prTipo)) : (handleResetearCasilla(props.prIdCantidad, props.prIndex, props.prTipo))}                    >
+                            <RemoveCircleOutlineIcon />
+                        </IconButton>
+                    </span>
+                </Tooltip>
+            </Box>
             {props.prTipo === 'rango' ? (
-                <Box style={{ display: 'flex', flexDirection: 'row', justifycontent: 'flex-start', alignItems: 'flex-start' }}>
-                    <Grid item xs={6}>
+                <Box style={esDesktop ? { display: 'flex', flexDirection: 'row', justifycontent: 'flex-start', alignItems: 'flex-start' } : { display: 'flex', flexDirection: 'column', justifycontent: 'flex-start', alignItems: 'flex-start' }}>
+                    <Grid item xs={esDesktop ? 6 : 12}>
                         <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                            <TimePicker
+                            <KeyboardTimePicker
+                                className="calendarioOculto"
                                 size="small"
                                 inputVariant="outlined"
-                                clearable={true}
-                                cancelLabel="Cancelar"
-                                clearLabel="Borrar"
                                 fullWidth
-                                label="Hora inicio"
+                                style={!esDesktop ? { minWidth: props.prDimensionsColumna - 33 } : null}
+                                label={esDesktop ? 'Hora inicio' : 'Inicio'}
                                 ampm={false}
                                 id={props.prIdInicio}
                                 value={props.prValueTimePickerInicio}
                                 onChange={handleChangeTimePickerInicioCuadrante(props.prIdInicio, props.prIndex, props.prValueTimePickerFin)}
+
                             />
                         </MuiPickersUtilsProvider>
                     </Grid>
-                    <Grid item xs={6} style={{ marginLeft: 10 }}>
+                    <Grid item xs={esDesktop ? 6 : 12} style={esDesktop ? { marginLeft: 10 } : { marginTop: 15 }}>
                         <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                            <TimePicker
+                            <KeyboardTimePicker
+                                className="calendarioOculto"
                                 size="small"
                                 inputVariant="outlined"
-                                clearable={true}
-                                cancelLabel="Cancelar"
-                                clearLabel="Borrar"
                                 fullWidth
-                                label="Hora fin"
+                                style={!esDesktop ? { minWidth: props.prDimensionsColumna - 33 } : null}
+                                label={esDesktop ? 'Hora fin' : 'Fin'}
                                 ampm={false}
                                 id={props.prIdFin}
                                 value={props.prValueTimePickerFin}
@@ -215,11 +292,11 @@ const ItemCuadrante = (props) => {
                             className={classes.formTipo2}
                             size="small"
                         >
-                            <InputLabel>Cantidad horas</InputLabel>
+                            <InputLabel>{esDesktop ? 'Cantidad horas' : 'Horas'}</InputLabel>
                             <Select
                                 fullWidth
                                 name={props.prIdCantidad}
-                                label="Cantidad horas"
+                                label={esDesktop ? 'Cantidad horas' : 'Horas'}
                                 id={props.prIdCantidad}
                                 value={props.prValueCantidadHoras}
                                 onChange={handleChangeSelectCantidad(props.prIndex)}
@@ -241,17 +318,16 @@ const ItemCuadrante = (props) => {
                 </Fragment>
             ) : props.prTipo === "rangoDescanso" ? (
                 <Fragment>
-                    <Box style={{ display: 'flex', flexDirection: 'row', justifycontent: 'flex-start', alignItems: 'flex-start' }}>
-                        <Grid item xs={6}>
+                    <Box style={esDesktop ? { display: 'flex', flexDirection: 'row', justifycontent: 'flex-start', alignItems: 'flex-start' } : { display: 'flex', flexDirection: 'column', justifycontent: 'flex-start', alignItems: 'flex-start' }}>
+                        <Grid item xs={esDesktop ? 6 : 12}>
                             <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                                <TimePicker
+                                <KeyboardTimePicker
+                                    className="calendarioOculto"
                                     size="small"
                                     inputVariant="outlined"
-                                    clearable={true}
-                                    cancelLabel="Cancelar"
-                                    clearLabel="Borrar"
                                     fullWidth
-                                    label="Hora inicio"
+                                    style={!esDesktop ? { minWidth: props.prDimensionsColumna - 33 } : null}
+                                    label={esDesktop ? 'Hora inicio' : 'Inicio'}
                                     ampm={false}
                                     id={props.prIdInicio1}
                                     value={props.prValueTimePickerInicio1}
@@ -259,16 +335,15 @@ const ItemCuadrante = (props) => {
                                 />
                             </MuiPickersUtilsProvider>
                         </Grid>
-                        <Grid item xs={6} style={{ marginLeft: 10 }}>
+                        <Grid item xs={esDesktop ? 6 : 12} style={esDesktop ? { marginLeft: 10 } : { marginTop: 15 }}>
                             <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                                <TimePicker
+                                <KeyboardTimePicker
+                                    className="calendarioOculto"
                                     size="small"
                                     inputVariant="outlined"
-                                    clearable={true}
-                                    cancelLabel="Cancelar"
-                                    clearLabel="Borrar"
                                     fullWidth
-                                    label="Hora fin"
+                                    style={!esDesktop ? { minWidth: props.prDimensionsColumna - 33 } : null}
+                                    label={esDesktop ? 'Hora fin' : 'Fin'}
                                     ampm={false}
                                     id={props.prIdFin1}
                                     value={props.prValueTimePickerFin1}
@@ -276,17 +351,16 @@ const ItemCuadrante = (props) => {
                             </MuiPickersUtilsProvider>
                         </Grid>
                     </Box>
-                    <Box className={classes.mt15} style={{ display: 'flex', flexDirection: 'row', justifycontent: 'flex-start', alignItems: 'flex-start' }}>
-                        <Grid item xs={6}>
+                    <Box className={classes.mt15} style={esDesktop ? { display: 'flex', flexDirection: 'row', justifycontent: 'flex-start', alignItems: 'flex-start' } : { display: 'flex', flexDirection: 'column', justifycontent: 'flex-start', alignItems: 'flex-start' }}>
+                        <Grid item xs={esDesktop ? 6 : 12}>
                             <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                                <TimePicker
+                                <KeyboardTimePicker
+                                    className="calendarioOculto"
                                     size="small"
                                     inputVariant="outlined"
-                                    clearable={true}
-                                    cancelLabel="Cancelar"
-                                    clearLabel="Borrar"
                                     fullWidth
-                                    label="Hora inicio"
+                                    style={!esDesktop ? { minWidth: props.prDimensionsColumna - 33 } : null}
+                                    label={esDesktop ? 'Hora inicio' : 'Inicio'}
                                     ampm={false}
                                     id={props.prIdInicio2}
                                     value={props.prValueTimePickerInicio2}
@@ -294,16 +368,15 @@ const ItemCuadrante = (props) => {
                                 />
                             </MuiPickersUtilsProvider>
                         </Grid>
-                        <Grid item xs={6} style={{ marginLeft: 10 }}>
+                        <Grid item xs={esDesktop ? 6 : 12} style={esDesktop ? { marginLeft: 10 } : { marginTop: 15 }}>
                             <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                                <TimePicker
+                                <KeyboardTimePicker
+                                    className="calendarioOculto"
                                     size="small"
                                     inputVariant="outlined"
-                                    clearable={true}
-                                    cancelLabel="Cancelar"
-                                    clearLabel="Borrar"
                                     fullWidth
-                                    label="Hora fin"
+                                    style={!esDesktop ? { minWidth: props.prDimensionsColumna - 33 } : null}
+                                    label={esDesktop ? 'Hora fin' : 'Fin'}
                                     ampm={false}
                                     id={props.prIdFin2}
                                     value={props.prValueTimePickerFin2}
@@ -319,11 +392,11 @@ const ItemCuadrante = (props) => {
             </Box>
             <Box className={classes.mt15}>
                 <TextField
-                    label="Observaciones"
+                    label={esDesktop ? 'Observaciones' : 'Observac.'}
                     id={props.prTipo === 'rango' ? ('observaciones-' + props.prIdInicio) : props.prTipo === 'rangoDescanso' ? ('observaciones-' + props.prIdInicio1) : ('observaciones-' + props.prIdCantidad)}
                     value={props.prObservaciones}
                     fullWidth
-                    placeholder="Observaciones"
+                    placeholder={esDesktop ? 'Observaciones' : 'Observac.'}
                     multiline
                     variant="outlined"
                     onChange={handleChangeObservaciones(props.prIndex)}
@@ -369,7 +442,7 @@ const ItemCuadrante = (props) => {
                 startIcon={<SaveIcon />}
                 onClick={() => props.prTipo === 'rango' ? (handleRegistrarCambioEnCasilla(props.prIdInicio, props.prIndex, props.prTipo)) : props.prTipo === 'rangoDescanso' ? (handleRegistrarCambioEnCasilla(props.prIdInicio1, props.prIndex, props.prTipo)) : (handleRegistrarCambioEnCasilla(props.prIdCantidad, props.prIndex, props.prTipo))}
             >
-                Registrar cambio
+                {esDesktop ? 'Registrar cambio' : 'Registrar'}
             </Button>
         </div>
     )

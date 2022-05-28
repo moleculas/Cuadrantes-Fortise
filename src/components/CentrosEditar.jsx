@@ -476,7 +476,8 @@ const CentrosEditar = forwardRef((props, ref) => {
         formaPago: '',
         tempPago: '',
         diaPago: '',
-        activoNumCuenta: false
+        activoNumCuenta: false,
+        gestionEspSF: false
     });
 
     //useEffect
@@ -575,7 +576,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                 formaPago: centroAEditar.formaPago || '',
                 tempPago: centroAEditar.tempPago || '',
                 diaPago: centroAEditar.diaPago ? centroAEditar.diaPago : '',
-                activoNumCuenta: centroAEditar.activoNumCuenta === 'si' ? true : false
+                activoNumCuenta: centroAEditar.activoNumCuenta === 'si' ? true : false,
+                gestionEspSF: centroAEditar.serviciosFijos.gestionEspSF || false
             });
         };
     }, [centroAEditar]);
@@ -1121,6 +1123,12 @@ const CentrosEditar = forwardRef((props, ref) => {
             dispatch(activarDesactivarActualizarCentroAccion(false));
             return;
         };
+        if (prop === "gestionEspSF") {
+            setValuesFormEdicionGenerales({ ...valuesFormEdicionGenerales, [prop]: e.target.checked });
+            dispatch(registrarIntervencionAccion(false));
+            dispatch(activarDesactivarActualizarCentroAccion(false));
+            return;
+        };
         setValuesFormEdicionGenerales({ ...valuesFormEdicionGenerales, [prop]: e.target.value });
         dispatch(registrarIntervencionAccion(false));
         dispatch(activarDesactivarActualizarCentroAccion(false));
@@ -1132,7 +1140,7 @@ const CentrosEditar = forwardRef((props, ref) => {
             let trabajadorSeleccionado = listadoTrabajadores.find(trabajador => trabajador.id === e.target.value);
             if (trabajadorSeleccionado.estado === 'reserva') {
                 setAlert({
-                    mensaje: "El trabajador está en Reserva, selecciona otro o cambia sus estado.",
+                    mensaje: "El trabajador está en Reserva, selecciona otro o cambia su estado.",
                     tipo: 'error'
                 })
                 setOpenSnack(true);
@@ -3843,6 +3851,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         };
                                         objServiciosFijos = {
                                             objeto: 'serviciosFijos',
+                                            gestionEspSF: valuesFormEdicionGenerales.gestionEspSF,
                                             serviciosFijos: []
                                         };
                                         objTrabajadores = {
@@ -3936,6 +3945,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         };
                                         objServiciosFijos = {
                                             objeto: 'serviciosFijos',
+                                            gestionEspSF: valuesFormEdicionGenerales.gestionEspSF,
                                             serviciosFijos: []
                                         };
                                         objTrabajadores = {
@@ -4131,7 +4141,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                 formaPago: '',
                 tempPago: '',
                 diaPago: '',
-                activoNumCuenta: false
+                activoNumCuenta: false,
+                gestionEspSF: false,
             });
             setNumeroCuadrantesEdicion([{ value: 1, cuadrante: null, guardado: false }]);
             setCuadranteEnUsoEdicion(1);
@@ -4864,13 +4875,13 @@ const CentrosEditar = forwardRef((props, ref) => {
             case 'TOL':
                 checkeado = stateSwitchTipoServicioFijoEdicion.TO;
                 laLabelSw = 'SERVICIO DE LIMPIEZA DE TOLDOS';
-                laLabelIn = 'Precio TOL';
+                laLabelIn = 'TOL';
                 elId = 'form-precio-hora_TO-edicion';
                 elValue = valuesFormEdicion.precioHora_TO || '';
                 elValueVariaciones = valuesFormEdicion.variacion_TO || '';
                 elValueDia = valuesFormEdicion.diaVariacion_TO || '';
                 elValueActivo = valuesFormEdicion.activo_TO || '';
-                laLabelWi = 90;
+                laLabelWi = 30;
                 elPrecioHora = 'precioHora_TO';
                 laVariacion = 'variacion_TO';
                 elDia = 'diaVariacion_TO';
@@ -4885,13 +4896,13 @@ const CentrosEditar = forwardRef((props, ref) => {
             case 'CRIS':
                 checkeado = stateSwitchTipoServicioFijoEdicion.CR;
                 laLabelSw = 'SERVICIO DE LIMPIEZA DE CRISTALES';
-                laLabelIn = 'Precio CRIS';
+                laLabelIn = 'CRIS';
                 elId = 'form-precio-hora_CR-edicion';
                 elValue = valuesFormEdicion.precioHora_CR || '';
                 elValueVariaciones = valuesFormEdicion.variacion_CR || '';
                 elValueDia = valuesFormEdicion.diaVariacion_CR || '';
                 elValueActivo = valuesFormEdicion.activo_CR || '';
-                laLabelWi = 100;
+                laLabelWi = 40;
                 elPrecioHora = 'precioHora_CR';
                 laVariacion = 'variacion_CR';
                 elDia = 'diaVariacion_CR';
@@ -4906,13 +4917,13 @@ const CentrosEditar = forwardRef((props, ref) => {
             case 'CRISE':
                 checkeado = stateSwitchTipoServicioFijoEdicion.CE;
                 laLabelSw = 'LIMPIEZA CRISTALES EXTERIORES';
-                laLabelIn = 'Precio CRISE';
+                laLabelIn = 'CRISE';
                 elId = 'form-precio-hora_CE-edicion';
                 elValue = valuesFormEdicion.precioHora_CE || '';
                 elValueVariaciones = valuesFormEdicion.variacion_CE || '';
                 elValueDia = valuesFormEdicion.diaVariacion_CE || '';
                 elValueActivo = valuesFormEdicion.activo_CE || '';
-                laLabelWi = 110;
+                laLabelWi = 50;
                 elPrecioHora = 'precioHora_CE';
                 laVariacion = 'variacion_CE';
                 elDia = 'diaVariacion_CE';
@@ -4927,13 +4938,13 @@ const CentrosEditar = forwardRef((props, ref) => {
             case 'CRISI':
                 checkeado = stateSwitchTipoServicioFijoEdicion.CI;
                 laLabelSw = 'LIMPIEZA CRISTALES INTERIORES';
-                laLabelIn = 'Precio CRISI';
+                laLabelIn = 'CRISI';
                 elId = 'form-precio-hora_CI-edicion';
                 elValue = valuesFormEdicion.precioHora_CI || '';
                 elValueVariaciones = valuesFormEdicion.variacion_CI || '';
                 elValueDia = valuesFormEdicion.diaVariacion_CI || '';
                 elValueActivo = valuesFormEdicion.activo_CI || '';
-                laLabelWi = 105;
+                laLabelWi = 45;
                 elPrecioHora = 'precioHora_CI';
                 laVariacion = 'variacion_CI';
                 elDia = 'diaVariacion_CI';
@@ -4948,13 +4959,13 @@ const CentrosEditar = forwardRef((props, ref) => {
             case 'MOQ':
                 checkeado = stateSwitchTipoServicioFijoEdicion.MO;
                 laLabelSw = 'SERVICIO DE LIMPIEZA MOQUETA';
-                laLabelIn = 'Precio MOQ';
+                laLabelIn = 'MOQ';
                 elId = 'form-precio-hora_MO-edicion';
                 elValue = valuesFormEdicion.precioHora_MO || '';
                 elValueVariaciones = valuesFormEdicion.variacion_MO || '';
                 elValueDia = valuesFormEdicion.diaVariacion_MO || '';
                 elValueActivo = valuesFormEdicion.activo_MO || '';
-                laLabelWi = 95;
+                laLabelWi = 35;
                 elPrecioHora = 'precioHora_MO';
                 laVariacion = 'variacion_MO';
                 elDia = 'diaVariacion_MO';
@@ -4969,13 +4980,13 @@ const CentrosEditar = forwardRef((props, ref) => {
             case 'OF':
                 checkeado = stateSwitchTipoServicioFijoEdicion.OF;
                 laLabelSw = 'SERVICIO DE LIMPIEZA OFICINAS';
-                laLabelIn = 'Precio OF';
+                laLabelIn = 'OF';
                 elId = 'form-precio-hora_OF-edicion';
                 elValue = valuesFormEdicion.precioHora_OF || '';
                 elValueVariaciones = valuesFormEdicion.variacion_OF || '';
                 elValueDia = valuesFormEdicion.diaVariacion_OF || '';
                 elValueActivo = valuesFormEdicion.activo_OF || '';
-                laLabelWi = 80;
+                laLabelWi = 20;
                 elPrecioHora = 'precioHora_OF';
                 laVariacion = 'variacion_OF';
                 elDia = 'diaVariacion_OF';
@@ -4990,13 +5001,13 @@ const CentrosEditar = forwardRef((props, ref) => {
             case 'ALMC':
                 checkeado = stateSwitchTipoServicioFijoEdicion.AL;
                 laLabelSw = 'SERVICIO DE LIMPIEZA ALMACENES';
-                laLabelIn = 'Precio ALMC';
+                laLabelIn = 'ALMC';
                 elId = 'form-precio-hora_AL-edicion';
                 elValue = valuesFormEdicion.precioHora_AL || '';
                 elValueVariaciones = valuesFormEdicion.variacion_AL || '';
                 elValueDia = valuesFormEdicion.diaVariacion_AL || '';
                 elValueActivo = valuesFormEdicion.activo_AL || '';
-                laLabelWi = 100;
+                laLabelWi = 45;
                 elPrecioHora = 'precioHora_AL';
                 laVariacion = 'variacion_AL';
                 elDia = 'diaVariacion_AL';
@@ -5011,13 +5022,13 @@ const CentrosEditar = forwardRef((props, ref) => {
             case 'LAB':
                 checkeado = stateSwitchTipoServicioFijoEdicion.LA;
                 laLabelSw = 'SERVICIO DE LIMPIEZA LABORATORIO';
-                laLabelIn = 'Precio LAB';
+                laLabelIn = 'LAB';
                 elId = 'form-precio-hora_LA-edicion';
                 elValue = valuesFormEdicion.precioHora_LA || '';
                 elValueVariaciones = valuesFormEdicion.variacion_LA || '';
                 elValueDia = valuesFormEdicion.diaVariacion_LA || '';
                 elValueActivo = valuesFormEdicion.activo_LA || '';
-                laLabelWi = 90;
+                laLabelWi = 30;
                 elPrecioHora = 'precioHora_LA';
                 laVariacion = 'variacion_LA';
                 elDia = 'diaVariacion_LA';
@@ -5032,13 +5043,13 @@ const CentrosEditar = forwardRef((props, ref) => {
             case 'TELÑ':
                 checkeado = stateSwitchTipoServicioFijoEdicion.TE;
                 laLabelSw = 'SERVICIO DE LIMPIEZA TELARAÑAS';
-                laLabelIn = 'Precio TELÑ';
+                laLabelIn = 'TELÑ';
                 elId = 'form-precio-hora_TE-edicion';
                 elValue = valuesFormEdicion.precioHora_TE || '';
                 elValueVariaciones = valuesFormEdicion.variacion_TE || '';
                 elValueDia = valuesFormEdicion.diaVariacion_TE || '';
                 elValueActivo = valuesFormEdicion.activo_TE || '';
-                laLabelWi = 100;
+                laLabelWi = 40;
                 elPrecioHora = 'precioHora_TE';
                 laVariacion = 'variacion_TE';
                 elDia = 'diaVariacion_TE';
@@ -5053,13 +5064,13 @@ const CentrosEditar = forwardRef((props, ref) => {
             case 'FCH.IN':
                 checkeado = stateSwitchTipoServicioFijoEdicion.FI;
                 laLabelSw = 'SERVICIO DE LIMPIEZA FACHADA INTERIOR';
-                laLabelIn = 'Precio FCH.IN';
+                laLabelIn = 'FCH.IN';
                 elId = 'form-precio-hora_FI-edicion';
                 elValue = valuesFormEdicion.precioHora_FI || '';
                 elValueVariaciones = valuesFormEdicion.variacion_FI || '';
                 elValueDia = valuesFormEdicion.diaVariacion_FI || '';
                 elValueActivo = valuesFormEdicion.activo_FI || '';
-                laLabelWi = 120;
+                laLabelWi = 60;
                 elPrecioHora = 'precioHora_FI';
                 laVariacion = 'variacion_FI';
                 elDia = 'diaVariacion_FI';
@@ -5074,13 +5085,13 @@ const CentrosEditar = forwardRef((props, ref) => {
             case 'FCH.EX':
                 checkeado = stateSwitchTipoServicioFijoEdicion.FE;
                 laLabelSw = 'SERVICIO DE LIMPIEZA FACHADA EXTERIOR';
-                laLabelIn = 'Precio FCH.EX';
+                laLabelIn = 'FCH.EX';
                 elId = 'form-precio-hora_FE-edicion';
                 elValue = valuesFormEdicion.precioHora_FE || '';
                 elValueVariaciones = valuesFormEdicion.variacion_FE || '';
                 elValueDia = valuesFormEdicion.diaVariacion_FE || '';
                 elValueActivo = valuesFormEdicion.activo_FE || '';
-                laLabelWi = 120;
+                laLabelWi = 60;
                 elPrecioHora = 'precioHora_FE';
                 laVariacion = 'variacion_FE';
                 elDia = 'diaVariacion_FE';
@@ -5095,13 +5106,13 @@ const CentrosEditar = forwardRef((props, ref) => {
             case 'ABRLL':
                 checkeado = stateSwitchTipoServicioFijoEdicion.AB;
                 laLabelSw = 'SERVICIO DE LIMPIEZA ABRILLANTADO';
-                laLabelIn = 'Precio ABRLL';
+                laLabelIn = 'ABRLL';
                 elId = 'form-precio-hora_AB-edicion';
                 elValue = valuesFormEdicion.precioHora_AB || '';
                 elValueVariaciones = valuesFormEdicion.variacion_AB || '';
                 elValueDia = valuesFormEdicion.diaVariacion_AB || '';
                 elValueActivo = valuesFormEdicion.activo_AB || '';
-                laLabelWi = 110;
+                laLabelWi = 50;
                 elPrecioHora = 'precioHora_AB';
                 laVariacion = 'variacion_AB';
                 elDia = 'diaVariacion_AB';
@@ -5116,13 +5127,13 @@ const CentrosEditar = forwardRef((props, ref) => {
             case 'MANT':
                 checkeado = stateSwitchTipoServicioFijoEdicion.MA;
                 laLabelSw = 'SERVICIO DE MANTENIMIENTO MÁQUINA';
-                laLabelIn = 'Precio MANT';
+                laLabelIn = 'MANT';
                 elId = 'form-precio-hora_MA-edicion';
                 elValue = valuesFormEdicion.precioHora_MA || '';
                 elValueVariaciones = valuesFormEdicion.variacion_MA || '';
                 elValueDia = valuesFormEdicion.diaVariacion_MA || '';
                 elValueActivo = valuesFormEdicion.activo_MA || '';
-                laLabelWi = 105;
+                laLabelWi = 45;
                 elPrecioHora = 'precioHora_MA';
                 laVariacion = 'variacion_MA';
                 elDia = 'diaVariacion_MA';
@@ -5137,13 +5148,13 @@ const CentrosEditar = forwardRef((props, ref) => {
             case 'PORT':
                 checkeado = stateSwitchTipoServicioFijoEdicion.PO;
                 laLabelSw = 'SERVICIO DE LIMPIEZA PORTERÍA';
-                laLabelIn = 'Precio PORT';
+                laLabelIn = 'PORT';
                 elId = 'form-precio-hora_PO-edicion';
                 elValue = valuesFormEdicion.precioHora_PO || '';
                 elValueVariaciones = valuesFormEdicion.variacion_PO || '';
                 elValueDia = valuesFormEdicion.diaVariacion_PO || '';
                 elValueActivo = valuesFormEdicion.activo_PO || '';
-                laLabelWi = 100;
+                laLabelWi = 40;
                 elPrecioHora = 'precioHora_PO';
                 laVariacion = 'variacion_PO';
                 elDia = 'diaVariacion_PO';
@@ -5158,13 +5169,13 @@ const CentrosEditar = forwardRef((props, ref) => {
             case 'BACT':
                 checkeado = stateSwitchTipoServicioFijoEdicion.BA;
                 laLabelSw = 'BOT. NOUBACT';
-                laLabelIn = 'Precio BACT';
+                laLabelIn = 'BACT';
                 elId = 'form-precio-hora_BA-edicion';
                 elValue = valuesFormEdicion.precioHora_BA || '';
                 elValueVariaciones = valuesFormEdicion.variacion_BA || '';
                 elValueDia = valuesFormEdicion.diaVariacion_BA || '';
                 elValueActivo = valuesFormEdicion.activo_BA || '';
-                laLabelWi = 100;
+                laLabelWi = 40;
                 elPrecioHora = 'precioHora_BA';
                 laVariacion = 'variacion_BA';
                 elDia = 'diaVariacion_BA';
@@ -5179,13 +5190,13 @@ const CentrosEditar = forwardRef((props, ref) => {
             case 'FEST':
                 checkeado = stateSwitchTipoServicioFijoEdicion.FT;
                 laLabelSw = 'SERVICIO DE LIMPIEZA DÍA FESTIVO';
-                laLabelIn = 'Precio FEST';
+                laLabelIn = 'FEST';
                 elId = 'form-precio-hora_FT-edicion';
                 elValue = valuesFormEdicion.precioHora_FT || '';
                 elValueVariaciones = valuesFormEdicion.variacion_FT || '';
                 elValueDia = valuesFormEdicion.diaVariacion_FT || '';
                 elValueActivo = valuesFormEdicion.activo_FT || '';
-                laLabelWi = 100;
+                laLabelWi = 40;
                 elPrecioHora = 'precioHora_FT';
                 laVariacion = 'variacion_FT';
                 elDia = 'diaVariacion_FT';
@@ -5200,13 +5211,13 @@ const CentrosEditar = forwardRef((props, ref) => {
             case 'CRTRIM':
                 checkeado = stateSwitchTipoServicioFijoEdicion.C3;
                 laLabelSw = 'LIMPIEZA DE CRISTALES TRIMESTRAL';
-                laLabelIn = 'Precio CRTRIM';
+                laLabelIn = 'CRTRIM';
                 elId = 'form-precio-hora_C3-edicion';
                 elValue = valuesFormEdicion.precioHora_C3 || '';
                 elValueVariaciones = valuesFormEdicion.variacion_C3 || '';
                 elValueDia = valuesFormEdicion.diaVariacion_C3 || '';
                 elValueActivo = valuesFormEdicion.activo_C3 || '';
-                laLabelWi = 120;
+                laLabelWi = 60;
                 elPrecioHora = 'precioHora_C3';
                 laVariacion = 'variacion_C3';
                 elDia = 'diaVariacion_C3';
@@ -5221,13 +5232,13 @@ const CentrosEditar = forwardRef((props, ref) => {
             case 'CRBIM':
                 checkeado = stateSwitchTipoServicioFijoEdicion.C2;
                 laLabelSw = 'LIMPIEZA DE CRISTALES BIMENSUAL';
-                laLabelIn = 'Precio CRBIM';
+                laLabelIn = 'PCRBIM';
                 elId = 'form-precio-hora_C2-edicion';
                 elValue = valuesFormEdicion.precioHora_C2 || '';
                 elValueVariaciones = valuesFormEdicion.variacion_C2 || '';
                 elValueDia = valuesFormEdicion.diaVariacion_C2 || '';
                 elValueActivo = valuesFormEdicion.activo_C2 || '';
-                laLabelWi = 120;
+                laLabelWi = 60;
                 elPrecioHora = 'precioHora_C2';
                 laVariacion = 'variacion_C2';
                 elDia = 'diaVariacion_C2';
@@ -5242,13 +5253,13 @@ const CentrosEditar = forwardRef((props, ref) => {
             case 'LIME':
                 checkeado = stateSwitchTipoServicioFijoEdicion.ES;
                 laLabelSw = 'SERVICIO DE LIMPIEZA ESPECIAL';
-                laLabelIn = 'Precio LIME';
+                laLabelIn = 'LIME';
                 elId = 'form-precio-hora_ES-edicion';
                 elValue = valuesFormEdicion.precioHora_ES || '';
                 elValueVariaciones = valuesFormEdicion.variacion_ES || '';
                 elValueDia = valuesFormEdicion.diaVariacion_ES || '';
                 elValueActivo = valuesFormEdicion.activo_ES || '';
-                laLabelWi = 95;
+                laLabelWi = 40;
                 elPrecioHora = 'precioHora_ES';
                 laVariacion = 'variacion_ES';
                 elDia = 'diaVariacion_ES';
@@ -5263,13 +5274,13 @@ const CentrosEditar = forwardRef((props, ref) => {
             case 'LIMP':
                 checkeado = stateSwitchTipoServicioFijoEdicion.PA;
                 laLabelSw = 'SERVICIO DE LIMPIEZA DEL PARKING';
-                laLabelIn = 'Precio LIMP';
+                laLabelIn = 'LIMP';
                 elId = 'form-precio-hora_PA-edicion';
                 elValue = valuesFormEdicion.precioHora_PA || '';
                 elValueVariaciones = valuesFormEdicion.variacion_PA || '';
                 elValueDia = valuesFormEdicion.diaVariacion_PA || '';
                 elValueActivo = valuesFormEdicion.activo_PA || '';
-                laLabelWi = 95;
+                laLabelWi = 40;
                 elPrecioHora = 'precioHora_PA';
                 laVariacion = 'variacion_PA';
                 elDia = 'diaVariacion_PA';
@@ -6839,6 +6850,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                 value={valuesFormEdicion.excepcion}
                                                 onChange={handleChangeFormEdicion('excepcion')}
                                                 helpertext="Selecciona excepciones"
+                                                disabled={disabledItem}
                                             >
                                                 <MenuItem value=''>
                                                     <em>No</em>
@@ -7110,6 +7122,23 @@ const CentrosEditar = forwardRef((props, ref) => {
                                             ))
                                         }
                                     </Box>
+                                    <Box
+                                        style={{ marginLeft: 10, marginTop: 10, marginBottom: 20 }}
+                                        className={disabledItem ? classes.boxChekinSinHover : classes.boxChekin}
+                                    >
+                                        <FormControlLabel
+                                            control={
+                                                <Checkbox
+                                                    checked={valuesFormEdicionGenerales.gestionEspSF || false}
+                                                    onChange={handleChangeFormEdicionGenerales('gestionEspSF')}
+                                                    name="checkedGestEsp-edicion"
+                                                    color="secondary"
+                                                    disabled={disabledItem}
+                                                />
+                                            }
+                                            label={<Typography className={classes.colorText} style={{ fontSize: '0.9rem' }}>Gestión especial horas para Servicios Extra.</Typography>}
+                                        />
+                                    </Box>
                                 </Grid>
                             </TabPanel>
                             <TabPanel value={valueTabCentrosEdicion} index={3} className={classes.scrollable} style={{ height: heightScrollable }}>
@@ -7193,8 +7222,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                 }
                                             </Select>
                                         </FormControl>
-                                        <Box className={classes.boxChekin}>
-                                            <FormControlLabel                                              
+                                        <Box className={disabledItem ? classes.boxChekinSinHover : classes.boxChekin}>
+                                            <FormControlLabel
                                                 control={
                                                     <Checkbox
                                                         checked={valuesFormEdicionGenerales.activoNumCuenta || false}
@@ -7223,6 +7252,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         rows={3}
                                         variant="outlined"
                                         onChange={handleChangeFormEdicion('observaciones')}
+                                        disabled={disabledItem}
                                     />
                                 </Grid>
                             </TabPanel>

@@ -39,10 +39,10 @@ const Pendientes = (props) => {
 
     const handleCuadrantesPendientes = (centro) => {
         dispatch(setCentroAccion(centro));
-        dispatch(obtenerCentroAccion('centros', centro));
+        //dispatch(obtenerCentroAccion('centros', centro));
         dispatch(cambioEstadoInicioCuadrantesAccion(false));
         dispatch(activarDesactivarCambioBotonRegistrarAccion(false));
-        dispatch(registrarIntervencionCuadranteNuevoAccion(false));
+        //dispatch(registrarIntervencionCuadranteNuevoAccion(false));
         dispatch(cambiarACuadranteNoRegistradoAccion());
         dispatch(venimosDePendientesAccion(true));
     };

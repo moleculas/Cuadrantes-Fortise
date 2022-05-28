@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useDispatch, useSelector } from 'react-redux';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -89,7 +89,7 @@ const GraficoCuadrantes = (props) => {
                         <CircularProgress />
                     </Box>
                 ) : (
-                    <LineChart
+                    <BarChart
                         width={props.prWidthContenedores}
                         height={props.prHeightContenedores}
                         data={cuadrantesPorAnyoGraficos}
@@ -105,9 +105,9 @@ const GraficoCuadrantes = (props) => {
                         <YAxis style={{ fontSize: '0.7rem' }} />
                         <Tooltip />
                         {/* <Legend /> */}
-                        <Line type="monotone" dataKey="Ingresos" stroke="#00bcd4" activeDot={{ r: 4 }} />
-                        <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-                    </LineChart>
+                        <Bar type="monotone" dataKey="IngresosA" stackId="a" fill="#00bcd4" />
+                        <Bar type="monotone" dataKey="IngresosB" stackId="a" fill="#8884d8" />                       
+                    </BarChart>
                 )}
                 <Snackbar open={openSnack} autoHideDuration={12000} onClose={handleCloseSnack}>
                     <Alert severity={alert.tipo} onClose={handleCloseSnack}>

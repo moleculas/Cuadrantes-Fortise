@@ -7,7 +7,6 @@ import { setOpenFacturacionAccion } from './cuadrantesSettersDucks';
 import { setOpenFacturacionInteriorAccion } from './cuadrantesSettersDucks';
 import { setNumeroFactusolAccion } from './cuadrantesSettersDucks';
 import { isNumeric } from './appDucks';
-import { generarArchivosXLSAccion } from './appDucks';
 import { setAlertaAccion } from './cuadrantesSettersDucks';
 
 //constantes
@@ -95,7 +94,8 @@ const calculoDiferenciaMensualPactado = (objetoSumatorio, index, excepcion) => (
 };
 
 export const retornaInfoFabButtonAccion = () => (dispatch, getState) => {
-    const { objetoCuadrante } = getState().variablesCuadrantes;
+    const { objetoCuadrante, totalesPeriodicos } = getState().variablesCuadrantes;
+    const { objetoCentro } = getState().variablesCentros;
     const { numeroCuadrantesCuadrantes, cuadranteEnUsoCuadrantes, arrayDatosInforme, cuadranteVacio } = getState().variablesCuadrantesSetters;
     const { cuadranteServiciosFijos } = getState().variablesCuadrantesServiciosFijos;
     let cuadranteMultiple = "";
@@ -113,9 +113,13 @@ export const retornaInfoFabButtonAccion = () => (dispatch, getState) => {
     let sumatorioHoras_F = 0;
     let sumatorioTotal = 0;
     let stringBloqueado = '';
+    let stringPeriodico = '';
     cuadranteServiciosFijos.forEach((servicio, index) => {
         sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
     });
+    if ((objetoCentro.tempPago === 'bimensual' || objetoCentro.tempPago === 'trimestral') && objetoCuadrante.datosInforme.tocaFacturar.valor === 'si') {
+        stringPeriodico = ' + (' + parseFloat(totalesPeriodicos.total).toFixed(2) + ' €)';
+    };
     if (arrayDatosInforme.length > 0) {
         arrayDatosInforme.forEach((dato, index) => {
             sumatorioHoras_L += (dato.totalHorasNormal_L + dato.totalHorasExtra_L);
@@ -132,7 +136,7 @@ export const retornaInfoFabButtonAccion = () => (dispatch, getState) => {
             if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1] && objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].bloqueado === 'si') {
                 stringBloqueado = ' (bloqueado)'
             };
-            return cuadranteMultiple + 'Horas: ' + parseFloat(sumatorioTotal).toFixed(2) + ' - Total' + stringBloqueado + ': ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado + sumatorioServiciosFijos).toFixed(2) + ' €';
+            return cuadranteMultiple + 'Horas: ' + parseFloat(sumatorioTotal).toFixed(2) + ' - Total' + stringBloqueado + ': ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado + sumatorioServiciosFijos).toFixed(2) + ' €' + stringPeriodico;
         };
         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 2) {
             return cuadranteMultiple + 'Horas: ' + parseFloat(sumatorioTotal).toFixed(2) + ' - Total: ' +
@@ -144,14 +148,14 @@ export const retornaInfoFabButtonAccion = () => (dispatch, getState) => {
                     (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L1 * sumatorioHoras_L1) +
                     (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L2 * sumatorioHoras_L2) +
                     (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F * sumatorioHoras_F) +
-                    sumatorioServiciosFijos).toFixed(2) + ' €'
+                    sumatorioServiciosFijos).toFixed(2) + ' €' + stringPeriodico;
         };
         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 3) {
             if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado) {
                 if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1] && objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].bloqueado === 'si') {
                     stringBloqueado = ' (bloqueado)'
                 };
-                return cuadranteMultiple + 'Horas: ' + parseFloat(sumatorioTotal).toFixed(2) + ' - Total' + stringBloqueado + ': ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado + sumatorioServiciosFijos).toFixed(2) + ' €'
+                return cuadranteMultiple + 'Horas: ' + parseFloat(sumatorioTotal).toFixed(2) + ' - Total' + stringBloqueado + ': ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado + sumatorioServiciosFijos).toFixed(2) + ' €' + stringPeriodico;
             } else {
                 return cuadranteMultiple + 'Horas: ' + parseFloat(sumatorioTotal).toFixed(2) + ' - Total: ' +
                     parseFloat((objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L * sumatorioHoras_L) +
@@ -162,17 +166,17 @@ export const retornaInfoFabButtonAccion = () => (dispatch, getState) => {
                         (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L1 * sumatorioHoras_L1) +
                         (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L2 * sumatorioHoras_L2) +
                         (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F * sumatorioHoras_F) +
-                        sumatorioServiciosFijos).toFixed(2) + ' €'
+                        sumatorioServiciosFijos).toFixed(2) + ' €' + stringPeriodico;
             };
         };
     }
     if (cuadranteVacio) {
-        return cuadranteMultiple + 'Horas: 0 - Total: ' + parseFloat(sumatorioServiciosFijos).toFixed(2) + ' €'
+        return cuadranteMultiple + 'Horas: 0 - Total: ' + parseFloat(sumatorioServiciosFijos).toFixed(2) + ' €' + stringPeriodico;
     };
 };
 
 export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
-    const { objetoCuadrante, calendarioAGestionar } = getState().variablesCuadrantes;
+    const { objetoCuadrante, calendarioAGestionar, totalesPeriodicos } = getState().variablesCuadrantes;
     const { numeroCuadrantesCuadrantes, cuadranteEnUsoCuadrantes, arrayDatosInforme, firmaActualizacion } = getState().variablesCuadrantesSetters;
     const { cuadranteServiciosFijos } = getState().variablesCuadrantesServiciosFijos;
     const { objetoCentro } = getState().variablesCentros;
@@ -188,6 +192,7 @@ export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
     let sumatorioHoras_F = 0;
     let sumatorioTotal = 0;
     let stringBloqueado = '';
+    let stringPeriodico = '';
     const arrayInforme = [];
     arrayInforme.push(['Mes: ' + calendarioAGestionar, 'normal']);
     arrayInforme.push(['Centro: ' + objetoCentro.nombre, 'normal']);
@@ -714,7 +719,15 @@ export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
     if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1] && objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].bloqueado === 'si') {
         stringBloqueado = ' (bloqueado)'
     };
-    arrayInforme.push(['Total General a facturar' + stringBloqueado + ': ' + parseFloat(sumatorioTotal).toFixed(2) + ' €', 'normal']);
+    if ((objetoCentro.tempPago === 'bimensual' || objetoCentro.tempPago === 'trimestral') && objetoCuadrante.datosInforme.tocaFacturar.valor === 'si') {
+        stringPeriodico = ' + (' + parseFloat(totalesPeriodicos.total).toFixed(2) + ' € de cuadrantes anteriores)';
+    };
+    arrayInforme.push(['Total General a facturar' + stringBloqueado + ': ' + parseFloat(sumatorioTotal).toFixed(2) + ' €' + stringPeriodico, 'normal']);
+    if ((objetoCentro.tempPago === 'bimensual' || objetoCentro.tempPago === 'trimestral') && objetoCuadrante.datosInforme.tocaFacturar.valor === 'si') {
+        if (totalesPeriodicos.noExisteCuadrante) {
+            arrayInforme.push(['Falta algún cuadrante de la secuencia periódica por registrar.', 'error']);
+        };
+    };
     arrayInforme.push(['Forma de pago: ' + dispatch(retornaFormaPagoAccion(objetoCentro.formaPago)), 'normal']);
     if (objetoCentro.diaPago) {
         arrayInforme.push(['Día de pago: ' + objetoCentro.diaPago, 'normal']);
@@ -723,11 +736,25 @@ export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
     dispatch(setArrayInformeLineasAccion(arrayInforme));
 };
 
+export const handleClickFacturarReciboCuadranteAccion = () => (dispatch, getState) => {
+    dispatch(procesarDatosCuadranteAccion('informe'));
+    dispatch(handleCloseMenuAccion());
+};
+
 export const handleClickFacturarCuadranteAccion = () => (dispatch, getState) => {
-    const { objetoCuadrante } = getState().variablesCuadrantes;   
+    const { objetoCuadrante, totalesPeriodicos } = getState().variablesCuadrantes;
     if (objetoCuadrante.datosInforme.tocaFacturar.valor === 'si') {
-        dispatch(procesarDatosCuadranteAccion('informe'));
-        dispatch(handleCloseMenuAccion());
+        if (totalesPeriodicos.noExisteCuadrante) {
+            dispatch(setAlertaAccion({
+                abierto: true,
+                mensaje: "No es posible facturar porque falta algún cuadrante del período por registrar.",
+                tipo: 'error'
+            }));
+            return
+        } else {
+            dispatch(procesarDatosCuadranteAccion('informe'));
+            dispatch(handleCloseMenuAccion());
+        };
     };
     if (objetoCuadrante.datosInforme.tocaFacturar.valor === 'no' && objetoCuadrante.datosInforme.tocaFacturar.razon === 'temp') {
         dispatch(setAlertaAccion({
@@ -770,20 +797,3 @@ export const handleChangeFormNumumeroFactusolAccion = (event) => (dispatch) => {
         dispatch(setNumeroFactusolAccion(event.target.value));
     };
 };
-
-export const handleGenerarArchivosAccion = () => (dispatch, getState) => {
-    const { numeroFactusol } = getState().variablesCuadrantesSetters;
-    const { objetoCuadrante } = getState().variablesCuadrantes;
-    if (numeroFactusol) {
-        dispatch(generarArchivosXLSAccion(numeroFactusol, objetoCuadrante.datosCuadrante.centro, objetoCuadrante.total));
-        dispatch(handleCloseMenuAccion());
-    } else {
-        dispatch(setAlertaAccion({
-            abierto: true,
-            mensaje: "Debes introducir el último número de factura emitida en FACTUSOL para generar los archivos.",
-            tipo: 'error'
-        }));
-        return;
-    };
-};
-

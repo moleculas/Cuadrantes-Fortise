@@ -175,7 +175,7 @@ export const handleClosePopoverConfiguracionAccion = (scrollable, classes) => (d
 };
 
 export const abrePopoverGeneralAccion = (postRef, indexDia, dia, columna, ref, indexColumna, event, scrollable, boxes, classes) => (dispatch, getState) => {
-    const { cuadrante } = getState().variablesCuadrantes;
+    const { cuadrante } = getState().variablesCuadrantes;   
     let arrayCuadrante = [...cuadrante];
     if (arrayCuadrante[indexColumna][postRef].visibleVariaciones && !arrayCuadrante[indexColumna][postRef].tipoVariacion) {
         arrayCuadrante[indexColumna][postRef].visibleVariaciones = false;

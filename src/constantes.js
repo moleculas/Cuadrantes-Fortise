@@ -137,6 +137,10 @@ const Constantes = {
     EXCEPCIONES_CENTROS: [
         { value: 1, label: 'Festivos restan cómputo horas' }
     ],
+    TIPO_FESTIVO: [
+        { value: 1, label: 'Normal' },
+        { value: 2, label: 'Cierre centro' }
+    ],
     TRABAJADORES_ASIGNADOS_CENTRO: [
         { value: 1, label: '1' },
         { value: 2, label: '2' },
@@ -146,11 +150,15 @@ const Constantes = {
     ],
     ESTADO_LABORAL_TRABAJADOR: [
         { value: 'alta', label: 'Alta' },
-        { value: 'baja', label: 'Baja' },
-        { value: 'vacaciones', label: 'Vacaciones' },
-        { value: 'excedencia', label: 'Excedencia' },
+        { value: 'ausenciaINJ', label: 'Ausencia injustificada' },
         { value: 'personales', label: 'Ausencia por motivos personales' },
-        { value: 'reserva', label: 'Reserva' }
+        { value: 'bajaACCTE', label: 'Baja ACCTE' },
+        { value: 'bajaCIA', label: 'Baja CIA' },
+        { value: 'bajaIT', label: 'Baja IT' },
+        { value: 'excedencia', label: 'Excedencia' },
+        { value: 'permisoRET', label: 'Permiso retribuido' },
+        { value: 'reserva', label: 'Reserva' },
+        { value: 'vacaciones', label: 'Vacaciones' }
     ],
     CALENDARIO_FESTIVOS: festivos,
     VARIACIONES_CUADRANTES: [

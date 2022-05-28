@@ -38,7 +38,15 @@ import { setEsUnaActualizacionTrabajadorAccion } from './cuadrantesSettersDucks'
 import { gestionaColumnaCuadranteAccion } from './cuadrantesColumnasDucks';
 import { setAlertaAccion } from './cuadrantesSettersDucks';
 import { setEstamosActualizandoCuadranteSinCargaAccion } from './cuadrantesSettersDucks';
-import { traspasoBufferFestivosAccion } from './cuadrantesHandlersDucks';
+import { setBufferSwitchedDiasFestivosCuadranteAccion } from './cuadrantesSettersDucks';
+import { configuraStateFestivoAccion } from './cuadrantesHandlersDucks';
+import { setCuadranteBloqueadoAccion } from './cuadrantesSettersDucks';
+import { obtenerCuadrantesPeriodicosAccion } from './cuadrantesDucks';
+import { obtenerNumeroRecibosAccion } from './appDucks';
+import { actualizarNumeroRecibosAccion } from './appDucks';
+import { generarArchivosXLSAccion } from './appDucks';
+import { retornaTextoConceptoServicio } from './appDucks';
+import { stringify } from 'zipson';
 
 //constantes
 const dataInicial = {
@@ -55,6 +63,181 @@ export default function cuadrantesGestionReducer(state = dataInicial, action) {
 }
 
 //acciones
+
+const numeroALetras = (function () {
+    function Unidades(num) {
+        switch (num) {
+            case 1:
+                return 'UN';
+            case 2:
+                return 'DOS';
+            case 3:
+                return 'TRES';
+            case 4:
+                return 'CUATRO';
+            case 5:
+                return 'CINCO';
+            case 6:
+                return 'SEIS';
+            case 7:
+                return 'SIETE';
+            case 8:
+                return 'OCHO';
+            case 9:
+                return 'NUEVE';
+        }
+        return '';
+    } //Unidades()
+    function Decenas(num) {
+        let decena = Math.floor(num / 10);
+        let unidad = num - (decena * 10);
+        switch (decena) {
+            case 1:
+                switch (unidad) {
+                    case 0:
+                        return 'DIEZ';
+                    case 1:
+                        return 'ONCE';
+                    case 2:
+                        return 'DOCE';
+                    case 3:
+                        return 'TRECE';
+                    case 4:
+                        return 'CATORCE';
+                    case 5:
+                        return 'QUINCE';
+                    default:
+                        return 'DIECI' + Unidades(unidad);
+                }
+            case 2:
+                switch (unidad) {
+                    case 0:
+                        return 'VEINTE';
+                    default:
+                        return 'VEINTI' + Unidades(unidad);
+                }
+            case 3:
+                return DecenasY('TREINTA', unidad);
+            case 4:
+                return DecenasY('CUARENTA', unidad);
+            case 5:
+                return DecenasY('CINCUENTA', unidad);
+            case 6:
+                return DecenasY('SESENTA', unidad);
+            case 7:
+                return DecenasY('SETENTA', unidad);
+            case 8:
+                return DecenasY('OCHENTA', unidad);
+            case 9:
+                return DecenasY('NOVENTA', unidad);
+            case 0:
+                return Unidades(unidad);
+        }
+    } //Unidades()
+    function DecenasY(strSin, numUnidades) {
+        if (numUnidades > 0)
+            return strSin + ' Y ' + Unidades(numUnidades)
+        return strSin;
+    } //DecenasY()
+    function Centenas(num) {
+        let centenas = Math.floor(num / 100);
+        let decenas = num - (centenas * 100);
+        switch (centenas) {
+            case 1:
+                if (decenas > 0)
+                    return 'CIENTO ' + Decenas(decenas);
+                return 'CIEN';
+            case 2:
+                return 'DOSCIENTOS ' + Decenas(decenas);
+            case 3:
+                return 'TRESCIENTOS ' + Decenas(decenas);
+            case 4:
+                return 'CUATROCIENTOS ' + Decenas(decenas);
+            case 5:
+                return 'QUINIENTOS ' + Decenas(decenas);
+            case 6:
+                return 'SEISCIENTOS ' + Decenas(decenas);
+            case 7:
+                return 'SETECIENTOS ' + Decenas(decenas);
+            case 8:
+                return 'OCHOCIENTOS ' + Decenas(decenas);
+            case 9:
+                return 'NOVECIENTOS ' + Decenas(decenas);
+        }
+        return Decenas(decenas);
+    } //Centenas()
+    function Seccion(num, divisor, strSingular, strPlural) {
+        let cientos = Math.floor(num / divisor)
+        let resto = num - (cientos * divisor)
+        let letras = '';
+        if (cientos > 0)
+            if (cientos > 1)
+                letras = Centenas(cientos) + ' ' + strPlural;
+            else
+                letras = strSingular;
+        if (resto > 0)
+            letras += '';
+        return letras;
+    } //Seccion()
+    function Miles(num) {
+        let divisor = 1000;
+        let cientos = Math.floor(num / divisor)
+        let resto = num - (cientos * divisor)
+        let strMiles = Seccion(num, divisor, 'UN MIL', 'MIL');
+        let strCentenas = Centenas(resto);
+        if (strMiles == '')
+            return strCentenas;
+        return strMiles + ' ' + strCentenas;
+    } //Miles()
+    function Millones(num) {
+        let divisor = 1000000;
+        let cientos = Math.floor(num / divisor)
+        let resto = num - (cientos * divisor)
+        let strMillones = Seccion(num, divisor, 'UN MILLON DE', 'MILLONES DE');
+        let strMiles = Miles(resto);
+        if (strMillones == '')
+            return strMiles;
+        return strMillones + ' ' + strMiles;
+    } //Millones()
+    return function NumeroALetras(num, currency) {
+        currency = currency || {};
+        let data = {
+            numero: num,
+            enteros: Math.floor(num),
+            centavos: (((Math.round(num * 100)) - (Math.floor(num) * 100))),
+            letrasCentavos: '',
+            letrasMonedaPlural: currency.plural || 'EUROS',
+            letrasMonedaSingular: currency.singular || 'EURO',
+            letrasMonedaCentavoPlural: currency.centPlural || 'CÉNTIMOS',
+            letrasMonedaCentavoSingular: currency.centSingular || 'CÉNTIMO'
+        };
+        if (data.centavos > 0) {
+            data.letrasCentavos = 'CON ' + (function () {
+                if (data.centavos == 1)
+                    return Millones(data.centavos) + ' ' + data.letrasMonedaCentavoSingular;
+                else
+                    return Millones(data.centavos) + ' ' + data.letrasMonedaCentavoPlural;
+            })();
+        };
+        if (data.enteros == 0)
+            return 'CERO ' + data.letrasMonedaPlural + ' ' + data.letrasCentavos;
+        if (data.enteros == 1)
+            return Millones(data.enteros) + ' ' + data.letrasMonedaSingular + ' ' + data.letrasCentavos;
+        else
+            return Millones(data.enteros) + ' ' + data.letrasMonedaPlural + ' ' + data.letrasCentavos;
+    };
+})();
+
+const obtenerDatosGestionEspecialAccion = () => (dispatch, getState) => {
+    const { objetoCentro } = getState().variablesCentros;
+    const { objetoCuadrante } = getState().variablesCuadrantes;
+    if (objetoCuadrante.total && objetoCuadrante.total.procesado && !objetoCuadrante.total.procesado.numR) {
+        if ((objetoCentro.horario.horario[0] && objetoCentro.horario.horario[0].computo === 3) || objetoCentro.serviciosFijos.gestionEspSF) {
+            dispatch(obtenerNumeroRecibosAccion('configuracion'));
+        };
+    };
+};
+
 const calculaTocaFacturacionAccion = () => (dispatch, getState) => {
     const { calendarioAGestionar } = getState().variablesCuadrantes;
     const { objetoCentro } = getState().variablesCentros;
@@ -67,25 +250,49 @@ const calculaTocaFacturacionAccion = () => (dispatch, getState) => {
             razon: 'temp'
         };
         return objetoRetornoCalculo
-    } else if (objetoCentro.tempPago === 'trimestral' && (mes === 1 || mes === 2 || mes === 4 || mes === 5 || mes === 7 || mes === 8 || mes === 10 || mes === 11)) {
+    };
+    if (objetoCentro.tempPago === 'bimensual' && (mes === 2 || mes === 4 || mes === 6 || mes === 8 || mes === 10 || mes === 12)) {
+        objetoRetornoCalculo = {
+            valor: 'si',
+            razon: ''
+        };
+        dispatch(obtenerCuadrantesPeriodicosAccion('cuadrantes', calendarioAGestionar, 'bimensual', objetoCentro.id));
+        return objetoRetornoCalculo
+    };
+    if (objetoCentro.tempPago === 'trimestral' && (mes === 1 || mes === 2 || mes === 4 || mes === 5 || mes === 7 || mes === 8 || mes === 10 || mes === 11)) {
         objetoRetornoCalculo = {
             valor: 'no',
             razon: 'temp'
         };
         return objetoRetornoCalculo
-    } else if (objetoCentro.horario.horario[0] && objetoCentro.horario.horario[0].computo === 3) {
+    };
+    if (objetoCentro.tempPago === 'trimestral' && (mes === 3 || mes === 6 || mes === 9 || mes === 12)) {
+        objetoRetornoCalculo = {
+            valor: 'si',
+            razon: ''
+        };
+        dispatch(obtenerCuadrantesPeriodicosAccion('cuadrantes', calendarioAGestionar, 'trimestral', objetoCentro.id));
+        return objetoRetornoCalculo
+    };
+    if (objetoCentro.horario.horario[0] && objetoCentro.horario.horario[0].computo === 3) {
         objetoRetornoCalculo = {
             valor: 'no',
             razon: 'gest'
         };
         return objetoRetornoCalculo
-    } else {
+    };
+    if (objetoCentro.serviciosFijos.gestionEspSF) {
         objetoRetornoCalculo = {
-            valor: 'si',
-            razon: ''
+            valor: 'no',
+            razon: 'gest'
         };
         return objetoRetornoCalculo
     };
+    objetoRetornoCalculo = {
+        valor: 'si',
+        razon: ''
+    };
+    return objetoRetornoCalculo
 };
 
 export const calculaNumeroCuadrantesAccion = (total) => (dispatch, getState) => {
@@ -96,30 +303,179 @@ export const calculaNumeroCuadrantesAccion = (total) => (dispatch, getState) => 
     dispatch(setNumeroCuadrantesCuadrantesAccion(arrayAAnadir));
 };
 
-const gestionaFestivosInicio = (arrayFestivos) => (dispatch, getState) => {
-    const { objetoCuadrante, losDiasDelMes } = getState().variablesCuadrantes;
-    const { bufferSwitchedDiasFestivosCuadrante } = getState().variablesCuadrantesSetters;
-    if (objetoCuadrante.datosBuffer.datosBuffer.length > 0 && bufferSwitchedDiasFestivosCuadrante.length === 0) {
-        dispatch(traspasoBufferFestivosAccion(true));
-    } else if (objetoCuadrante.datosBuffer.datosBuffer.length === 0 && bufferSwitchedDiasFestivosCuadrante.length === 0) {
-        let object = {};
-        if (losDiasDelMes.length > 0) {                
-            for (let i = 1; i <= losDiasDelMes.length; i++) {
-                object['estadoFestivoDia' + i] = false;
-            };
-        }; 
-        if (arrayFestivos && arrayFestivos.length > 0) {                      
-            arrayFestivos.forEach((festivo, index) => {
-                object['estadoFestivoDia' + festivo[1]] = true;
-            });            
+export const gestionaFestivosInicio = () => (dispatch, getState) => {
+    const { objetoCuadrante, losDiasDelMes, cuadranteRegistrado } = getState().variablesCuadrantes;
+    const { bufferSwitchedDiasFestivosCuadrante, numeroCuadrantesCuadrantes, cuadranteEnUsoCuadrantes } = getState().variablesCuadrantesSetters;
+    let postRef;
+    let mySplitDia;
+    let object = {};
+    if (losDiasDelMes.length > 0) {
+        for (let i = 1; i <= losDiasDelMes.length; i++) {
+            object['estadoFestivoDia' + i] = false;
+            object['tipoFestivoDia' + i] = 1;
         };
-        dispatch(setStateFestivoAccion(object));
+    };
+    if (cuadranteRegistrado === 'si') {
+        if (!numeroCuadrantesCuadrantes[cuadranteEnUsoCuadrantes - 1].revisado) {
+            if (objetoCuadrante.datosBuffer.datosBuffer && objetoCuadrante.datosBuffer.datosBuffer.length > 0) {
+                if (bufferSwitchedDiasFestivosCuadrante.length === 0) {
+                    dispatch(setBufferSwitchedDiasFestivosCuadranteAccion(objetoCuadrante.datosBuffer.datosBuffer));
+                    objetoCuadrante.datosBuffer.datosBuffer[cuadranteEnUsoCuadrantes - 1].forEach((festivo, index) => {
+                        postRef = Object.keys(festivo)[0];
+                        if (postRef.includes('Lunes')) {
+                            mySplitDia = postRef.split('Lunes');
+                        };
+                        if (postRef.includes('Martes')) {
+                            mySplitDia = postRef.split('Martes');
+                        };
+                        if (postRef.includes('Miércoles')) {
+                            mySplitDia = postRef.split('Miércoles');
+                        };
+                        if (postRef.includes('Jueves')) {
+                            mySplitDia = postRef.split('Jueves');
+                        };
+                        if (postRef.includes('Viernes')) {
+                            mySplitDia = postRef.split('Viernes');
+                        };
+                        if (postRef.includes('Sábado')) {
+                            mySplitDia = postRef.split('Sábado');
+                        };
+                        if (postRef.includes('Domingo')) {
+                            mySplitDia = postRef.split('Domingo');
+                        };
+                        if (festivo.activo) {
+                            object['estadoFestivoDia' + mySplitDia[1]] = true;
+                            if (festivo.tipo === 1) {
+                                object['tipoFestivoDia' + mySplitDia[1]] = 1;
+                            } else {
+                                object['tipoFestivoDia' + mySplitDia[1]] = 2;
+                            };
+                        };
+                    });
+                    dispatch(setStateFestivoAccion(object));
+                } else {
+                    bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1].forEach((festivo, index) => {
+                        postRef = Object.keys(festivo)[0];
+                        if (postRef.includes('Lunes')) {
+                            mySplitDia = postRef.split('Lunes');
+                        };
+                        if (postRef.includes('Martes')) {
+                            mySplitDia = postRef.split('Martes');
+                        };
+                        if (postRef.includes('Miércoles')) {
+                            mySplitDia = postRef.split('Miércoles');
+                        };
+                        if (postRef.includes('Jueves')) {
+                            mySplitDia = postRef.split('Jueves');
+                        };
+                        if (postRef.includes('Viernes')) {
+                            mySplitDia = postRef.split('Viernes');
+                        };
+                        if (postRef.includes('Sábado')) {
+                            mySplitDia = postRef.split('Sábado');
+                        };
+                        if (postRef.includes('Domingo')) {
+                            mySplitDia = postRef.split('Domingo');
+                        };
+                        if (festivo.activo) {
+                            object['estadoFestivoDia' + mySplitDia[1]] = true;
+                            if (festivo.tipo === 1) {
+                                object['tipoFestivoDia' + mySplitDia[1]] = 1;
+                            } else {
+                                object['tipoFestivoDia' + mySplitDia[1]] = 2;
+                            };
+                        };
+                    });
+                    dispatch(setStateFestivoAccion(object));
+                };
+            } else {
+                dispatch(configuraStateFestivoAccion());
+            };
+        } else {
+            if (bufferSwitchedDiasFestivosCuadrante.length > 0) {
+                bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1].forEach((festivo, index) => {
+                    postRef = Object.keys(festivo)[0];
+                    if (postRef.includes('Lunes')) {
+                        mySplitDia = postRef.split('Lunes');
+                    };
+                    if (postRef.includes('Martes')) {
+                        mySplitDia = postRef.split('Martes');
+                    };
+                    if (postRef.includes('Miércoles')) {
+                        mySplitDia = postRef.split('Miércoles');
+                    };
+                    if (postRef.includes('Jueves')) {
+                        mySplitDia = postRef.split('Jueves');
+                    };
+                    if (postRef.includes('Viernes')) {
+                        mySplitDia = postRef.split('Viernes');
+                    };
+                    if (postRef.includes('Sábado')) {
+                        mySplitDia = postRef.split('Sábado');
+                    };
+                    if (postRef.includes('Domingo')) {
+                        mySplitDia = postRef.split('Domingo');
+                    };
+                    if (festivo.activo) {
+                        object['estadoFestivoDia' + mySplitDia[1]] = true;
+                        if (festivo.tipo === 1) {
+                            object['tipoFestivoDia' + mySplitDia[1]] = 1;
+                        } else {
+                            object['tipoFestivoDia' + mySplitDia[1]] = 2;
+                        };
+                    };
+                });
+                dispatch(setStateFestivoAccion(object));
+            } else {
+                dispatch(configuraStateFestivoAccion());
+            };
+        };
+    };
+    if (cuadranteRegistrado === 'no') {
+        if (bufferSwitchedDiasFestivosCuadrante.length === 0) {
+            dispatch(configuraStateFestivoAccion());
+        } else {
+            bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1].forEach((festivo, index) => {
+                postRef = Object.keys(festivo)[0];
+                if (postRef.includes('Lunes')) {
+                    mySplitDia = postRef.split('Lunes');
+                };
+                if (postRef.includes('Martes')) {
+                    mySplitDia = postRef.split('Martes');
+                };
+                if (postRef.includes('Miércoles')) {
+                    mySplitDia = postRef.split('Miércoles');
+                };
+                if (postRef.includes('Jueves')) {
+                    mySplitDia = postRef.split('Jueves');
+                };
+                if (postRef.includes('Viernes')) {
+                    mySplitDia = postRef.split('Viernes');
+                };
+                if (postRef.includes('Sábado')) {
+                    mySplitDia = postRef.split('Sábado');
+                };
+                if (postRef.includes('Domingo')) {
+                    mySplitDia = postRef.split('Domingo');
+                };
+                if (festivo.activo) {
+                    object['estadoFestivoDia' + mySplitDia[1]] = true;
+                    if (festivo.tipo === 1) {
+                        object['tipoFestivoDia' + mySplitDia[1]] = 1;
+                    } else {
+                        object['tipoFestivoDia' + mySplitDia[1]] = 2;
+                    };
+                };
+            });
+            dispatch(setStateFestivoAccion(object));
+        };
     };
 };
 
 export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (dispatch, getState) => {
     const { objetoCuadrante, cuadranteRegistrado } = getState().variablesCuadrantes;
-    //const { venimosDeCambioCuadrante } = getState().variablesCuadrantesSetters;
+    const { numeroCuadrantesCuadrantes } = getState().variablesCuadrantesSetters;
+    const { objetoCentro } = getState().variablesCentros;
     if (!cambio) {
         dispatch(calculaNumeroCuadrantesAccion(objetoCuadrante.datosCuadrante.datosCuadrante.length));
     };
@@ -376,27 +732,8 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
         });
         dispatch(setCuadranteServiciosFijosAccion(dispatch(gestionaColumnaServiciosFijosInicioAccion(objetoCuadrante.datosServicios.datosServicios[numeroCuadrante - 1]))));
     };
-    if (cuadranteRegistrado === 'no') {
+    if (cuadranteRegistrado === 'no' && !numeroCuadrantesCuadrantes[numeroCuadrante - 1].revisado) {
         if (objetoCuadrante.datosTrabajadoresIniciales.datosTrabajadoresIniciales[numeroCuadrante - 1]) {
-            // if (objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].arrayCuadrante.length === 0) {
-            //     objetoCuadrante.datosTrabajadoresIniciales.datosTrabajadoresIniciales[numeroCuadrante - 1].trabajadores.forEach((trabajadorIterado, index) => {
-            //         setTimeout(
-            //             function () {
-            //                 if (trabajadorIterado['trabajador_' + (index + 1)]) {
-            //                     setTimeout(() => {
-            //                         dispatch(obtenerTrabajadorAccion('trabajadores', trabajadorIterado['trabajador_' + (index + 1)]));
-            //                     }, 1);
-            //                 };
-            //                 if (trabajadorIterado['suplente_' + (index + 1)]) {
-            //                     setTimeout(() => {
-            //                         dispatch(obtenerSuplenteAccion('trabajadores', trabajadorIterado['suplente_' + (index + 1)]));
-            //                     }, 250);
-            //                 };
-            //             }, index * 500);
-            //     });
-            // } else {               
-            //     dispatch(setCuadranteAccion(objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].arrayCuadrante));
-            // };
             objetoCuadrante.datosTrabajadoresIniciales.datosTrabajadoresIniciales[numeroCuadrante - 1].trabajadores.forEach((trabajadorIterado, index) => {
                 setTimeout(
                     function () {
@@ -415,27 +752,6 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
         };
     };
     if (cuadranteRegistrado === 'si') {
-        // if (!venimosDeCambioCuadrante) {
-        //     if (objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].arrayCuadrante.length > 0) {
-        //         objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].arrayCuadrante.forEach((trabajadorIterado, index) => {
-        //             setTimeout(
-        //                 function () {
-        //                     if (trabajadorIterado.tipoTrabajador === 'trabajador') {
-        //                         setTimeout(() => {
-        //                             dispatch(obtenerTrabajadorAccion('trabajadores', trabajadorIterado.idTrabajador));
-        //                         }, 1);
-        //                     };
-        //                     if (trabajadorIterado.tipoTrabajador === 'suplente') {
-        //                         setTimeout(() => {
-        //                             dispatch(obtenerSuplenteAccion('trabajadores', trabajadorIterado.idTrabajador));
-        //                         }, 250);
-        //                     };
-        //                 }, index * 500);
-        //         });
-        //     };
-        // } else {
-        //     dispatch(setCuadranteAccion(objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].arrayCuadrante));
-        // };
         if (objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].arrayCuadrante.length > 0) {
             objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].arrayCuadrante.forEach((trabajadorIterado, index) => {
                 setTimeout(
@@ -448,7 +764,7 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
                         if (trabajadorIterado.tipoTrabajador === 'suplente') {
                             setTimeout(() => {
                                 dispatch(obtenerSuplenteAccion('trabajadores', trabajadorIterado.idTrabajador));
-                            }, 250);
+                            }, 500);
                         };
                     }, index * 1000);
             });
@@ -462,6 +778,16 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
     }));
     let objetoDatosCuadrante = {};
     if (objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1] && objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].tipoHorarioGeneral) {
+        if (objetoCentro.nombre !== '') {
+            if (!objetoCentro.horario.horario[numeroCuadrante - 1]) {
+                dispatch(setAlertaAccion({
+                    abierto: true,
+                    mensaje: "Cuadrante bloqueado. Se ha cambiado la configuración del Centro después de registrar el cuadrante. No pueden efectuarse cambios.",
+                    tipo: 'warning'
+                }));
+                dispatch(setCuadranteBloqueadoAccion(true));
+            };
+        };
         objetoDatosCuadrante = {
             ...objetoDatosCuadrante,
             tipoHorario: objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].tipoHorarioGeneral,
@@ -477,19 +803,25 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
             precioHora_R: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_R ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_R : '',
             precioHora_L1: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_L1 ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_L1 : '',
             precioHora_L2: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_L2 ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_L2 : '',
-            precioHora_F: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_F ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_F : '',
+            precioHora_F: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_F ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_F : ''
         };
     };
     objetoDatosCuadrante = {
         ...objetoDatosCuadrante,
-        observaciones: objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].observaciones ? objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].observaciones : ''
+        observaciones: objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].observaciones ? objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].observaciones : '',
+        festivos: {
+            inicio: null,
+            fin: null,
+            tipo: '',
+        }
     };
     dispatch(setItemEditandoConfiguracionAccion(objetoDatosCuadrante));
-    if (cuadranteRegistrado === 'si') {
+    if (cuadranteRegistrado === 'si' || (cuadranteRegistrado === 'no' && numeroCuadrantesCuadrantes[numeroCuadrante - 1].revisado)) {
+        let losDatosInforme;
         if (objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].arrayCuadrante.length > 0) {
-            const { arrayResultante, arrayFestivos } = dispatch(completarCuadranteAccion(objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].arrayCuadrante));
-            dispatch(setCuadranteAccion(arrayResultante));           
-            dispatch(gestionaFestivosInicio(arrayFestivos));
+            const arrayResultante = dispatch(completarCuadranteAccion(objetoCuadrante.datosCuadrante.datosCuadrante[numeroCuadrante - 1].arrayCuadrante));
+            dispatch(setCuadranteAccion(arrayResultante));
+            dispatch(gestionaFestivosInicio());
             let objetoDatosInforme = {
                 computo: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].computo,
                 excepcion: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].excepcion ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].excepcion : '',
@@ -528,24 +860,63 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
             };
             let elArrayDatosInforme = [...objetoCuadrante.datosInforme.datosInforme];
             elArrayDatosInforme[numeroCuadrante - 1] = objetoDatosInforme;
-            const losDatosInforme = {
+            losDatosInforme = {
                 ...objetoCuadrante.datosInforme,
                 datosInforme: elArrayDatosInforme
             };
-            dispatch(setEstamosActualizandoCuadranteSinCargaAccion(true));
-            dispatch(actualizarObjetoCuadranteAccion({
-                ...objetoCuadrante,
-                datosInforme: losDatosInforme
-            }));
+            if (cuadranteRegistrado === 'si') {
+                if (objetoCuadrante.total.totalesPeriodicos) {
+                    dispatch(revisionCuadrantesPeriodicos(losDatosInforme));
+                } else {
+                    dispatch(setEstamosActualizandoCuadranteSinCargaAccion(true));
+                    dispatch(actualizarObjetoCuadranteAccion({
+                        ...objetoCuadrante,
+                        datosInforme: losDatosInforme
+                    }));
+                };
+                if (objetoCentro.nombre !== '') {
+                    dispatch(obtenerDatosGestionEspecialAccion());
+                };
+            } else {
+                dispatch(setEstamosActualizandoCuadranteSinCargaAccion(true));
+                dispatch(actualizarObjetoCuadranteAccion({
+                    ...objetoCuadrante,
+                    datosInforme: losDatosInforme
+                }));
+            };
         } else {
-            dispatch(gestionaFestivosInicio(null));
+            if (cuadranteRegistrado === 'si') {
+                if (objetoCuadrante.total.totalesPeriodicos) {
+                    losDatosInforme = { ...objetoCuadrante.datosInforme };
+                    dispatch(revisionCuadrantesPeriodicos(losDatosInforme));
+                } else {
+                    dispatch(gestionaFestivosInicio());
+                };
+            } else {
+                dispatch(gestionaFestivosInicio());
+            };
         };
     };
 };
 
+const revisionCuadrantesPeriodicos = (datosInforme) => (dispatch, getState) => {
+    const { objetoCuadrante } = getState().variablesCuadrantes;
+    let losDatosInformeFuncion = {
+        ...datosInforme,
+        tocaFacturar: dispatch(calculaTocaFacturacionAccion())
+    };
+    dispatch(activarDesactivarCambioBotonActualizarAccion(false));
+    dispatch(registrarIntervencionAccion(false));
+    dispatch(cambiarEstadoCuadranteEnUsoRevisadoAccion(false));
+    dispatch(setEstamosActualizandoCuadranteSinCargaAccion(true));
+    dispatch(actualizarObjetoCuadranteAccion({
+        ...objetoCuadrante,
+        datosInforme: losDatosInformeFuncion
+    }));
+};
+
 export const cambiarEstadoCuadranteEnUsoRevisadoAccion = (estado) => (dispatch, getState) => {
     const { numeroCuadrantesCuadrantes, cuadranteEnUsoCuadrantes } = getState().variablesCuadrantesSetters;
-
     let arrayNumeroCuadrantes = [...numeroCuadrantesCuadrantes];
     arrayNumeroCuadrantes = arrayNumeroCuadrantes.map(cuadrante => (cuadrante.value === cuadranteEnUsoCuadrantes ? { ...cuadrante, revisado: estado } : cuadrante));
     dispatch(setNumeroCuadrantesCuadrantesAccion(arrayNumeroCuadrantes));
@@ -773,27 +1144,43 @@ const procesarDatosCuadrantePromesa = (index, noHayRegistro) => (dispatch, getSt
         if (objetoCuadrante.datosInforme.datosInforme[index].computo === 2) {
             if (sumatorioHoras_L) {
                 elTotalAAFacturar_L = parseFloat(objetoCuadrante.datosInforme.datosInforme[index].precioHora_L * sumatorioHoras_L);
+            } else {
+                elTotalAAFacturar_L = 0
             };
             if (sumatorioHoras_E) {
                 elTotalAAFacturar_E = parseFloat(objetoCuadrante.datosInforme.datosInforme[index].precioHora_E * sumatorioHoras_E);
+            } else {
+                elTotalAAFacturar_E = 0
             };
             if (sumatorioHoras_P) {
                 elTotalAAFacturar_P = parseFloat(objetoCuadrante.datosInforme.datosInforme[index].precioHora_P * sumatorioHoras_P);
+            } else {
+                elTotalAAFacturar_P = 0
             };
             if (sumatorioHoras_N) {
                 elTotalAAFacturar_N = parseFloat(objetoCuadrante.datosInforme.datosInforme[index].precioHora_N * sumatorioHoras_N);
+            } else {
+                elTotalAAFacturar_N = 0
             };
             if (sumatorioHoras_R) {
                 elTotalAAFacturar_R = parseFloat(objetoCuadrante.datosInforme.datosInforme[index].precioHora_R * sumatorioHoras_R);
+            } else {
+                elTotalAAFacturar_R = 0
             };
             if (sumatorioHoras_L1) {
                 elTotalAAFacturar_L1 = parseFloat(objetoCuadrante.datosInforme.datosInforme[index].precioHora_L1 * sumatorioHoras_L1);
+            } else {
+                elTotalAAFacturar_L1 = 0
             };
             if (sumatorioHoras_L2) {
                 elTotalAAFacturar_L2 = parseFloat(objetoCuadrante.datosInforme.datosInforme[index].precioHora_L2 * sumatorioHoras_L2);
+            } else {
+                elTotalAAFacturar_L2 = 0
             };
             if (sumatorioHoras_F) {
                 elTotalAAFacturar_F = parseFloat(objetoCuadrante.datosInforme.datosInforme[index].precioHora_F * sumatorioHoras_F);
+            } else {
+                elTotalAAFacturar_F = 0
             };
             elTotalAAFacturarTotal = parseFloat((objetoCuadrante.datosInforme.datosInforme[index].precioHora_L * sumatorioHoras_L) +
                 (objetoCuadrante.datosInforme.datosInforme[index].precioHora_E * sumatorioHoras_E) +
@@ -1043,7 +1430,6 @@ export const procesarCambioCuadranteAccion = (target) => (dispatch, getState) =>
     dispatch(setCuadranteEnUsoCuadrantesAccion(target));
     dispatch(gestionaCuadranteIndividualAccion(target, true));
     dispatch(obtenerCategoriaPorCentroAccion('centros', objetoCuadrante.datosCuadrante.centro, target - 1));
-    dispatch(setStateFestivoAccion({}));
 };
 
 export const procesarDatosCuadranteAccion = (source) => (dispatch, getState) => {
@@ -1159,7 +1545,8 @@ export const procesarDatosCuadranteAccion = (source) => (dispatch, getState) => 
 };
 
 const calculoTotales = (servicios, informes, horas, source) => (dispatch, getState) => {
-    const { objetoCuadrante } = getState().variablesCuadrantes;
+    const { objetoCuadrante, totalesPeriodicos } = getState().variablesCuadrantes;
+    const { objetoCentro } = getState().variablesCentros;
     let totalFacturado_M = 0;
     let totalFacturado_L = 0;
     let totalFacturado_E = 0;
@@ -1197,6 +1584,14 @@ const calculoTotales = (servicios, informes, horas, source) => (dispatch, getSta
     let totalHoras_L1 = 0;
     let totalHoras_L2 = 0;
     let totalHoras_F = 0;
+    let precio_L = 0;
+    let precio_E = 0;
+    let precio_P = 0;
+    let precio_N = 0;
+    let precio_R = 0;
+    let precio_L1 = 0;
+    let precio_L2 = 0;
+    let precio_F = 0;
     let objetoTotales;
     servicios.forEach((servicioTot) => {
         if (servicioTot) {
@@ -1270,38 +1665,70 @@ const calculoTotales = (servicios, informes, horas, source) => (dispatch, getSta
         if (informe) {
             if (informe.mensualPactado) {
                 totalFacturado_M += informe.mensualPactado;
+                if (horas[index]['L']) {
+                    totalHoras_L += horas[index]['L'];
+                };
+                if (horas[index]['E']) {
+                    totalHoras_E += horas[index]['E'];
+                };
+                if (horas[index]['P']) {
+                    totalHoras_P += horas[index]['P'];
+                };
+                if (horas[index]['N']) {
+                    totalHoras_N += horas[index]['N'];
+                };
+                if (horas[index]['R']) {
+                    totalHoras_R += horas[index]['R'];
+                };
+                if (horas[index]['L1']) {
+                    totalHoras_L1 += horas[index]['L1'];
+                };
+                if (horas[index]['L2']) {
+                    totalHoras_L2 += horas[index]['L2'];
+                };
+                if (horas[index]['F']) {
+                    totalHoras_F += horas[index]['F'];
+                };
             };
             if (informe.precioHora_L) {
                 totalFacturado_L += informe.totalFacturado_L;
                 totalHoras_L += horas[index]['L'];
+                precio_L = informe.precioHora_L;
             };
             if (informe.precioHora_E) {
                 totalFacturado_E += informe.totalFacturado_E;
                 totalHoras_E += horas[index]['E'];
+                precio_E = informe.precioHora_E;
             };
             if (informe.precioHora_P) {
                 totalFacturado_P += informe.totalFacturado_P;
                 totalHoras_P += horas[index]['P'];
+                precio_P = informe.precioHora_P;
             };
             if (informe.precioHora_N) {
                 totalFacturado_N += informe.totalFacturado_N;
                 totalHoras_N += horas[index]['N'];
+                precio_N = informe.precioHora_N;
             };
             if (informe.precioHora_R) {
                 totalFacturado_R += informe.totalFacturado_R;
                 totalHoras_R += horas[index]['R'];
+                precio_R = informe.precioHora_R;
             };
             if (informe.precioHora_L1) {
                 totalFacturado_L1 += informe.totalFacturado_L1;
                 totalHoras_L1 += horas[index]['L1'];
+                precio_L1 = informe.precioHora_L1;
             };
             if (informe.precioHora_L2) {
                 totalFacturado_L2 += informe.totalFacturado_L2;
                 totalHoras_L2 += horas[index]['L2'];
+                precio_L2 = informe.precioHora_L2;
             };
             if (informe.precioHora_F) {
                 totalFacturado_F += informe.totalFacturado_F;
                 totalHoras_F += horas[index]['F'];
+                precio_F = informe.precioHora_F;
             };
         };
     });
@@ -1319,148 +1746,133 @@ const calculoTotales = (servicios, informes, horas, source) => (dispatch, getSta
         };
         if (totalFacturado_M) {
             objetoTotales['MT'] = totalFacturado_M;
-            objetoTotales['MH'] = 1;
-            objetoTotales['MPr'] = 1;
+            if (totalHoras_L) {
+                objetoTotales['LH'] = totalHoras_L;
+            };
+            if (totalHoras_E) {
+                objetoTotales['EH'] = totalHoras_E;
+            };
+            if (totalHoras_P) {
+                objetoTotales['PH'] = totalHoras_P;
+            };
+            if (totalHoras_N) {
+                objetoTotales['NH'] = totalHoras_N;
+            };
+            if (totalHoras_R) {
+                objetoTotales['RH'] = totalHoras_R;
+            };
+            if (totalHoras_L1) {
+                objetoTotales['L1H'] = totalHoras_L1;
+            };
+            if (totalHoras_L2) {
+                objetoTotales['L2H'] = totalHoras_L2;
+            };
+            if (totalHoras_F) {
+                objetoTotales['FH'] = totalHoras_F;
+            };
         };
         if (totalFacturado_L) {
             objetoTotales['LT'] = totalFacturado_L;
             objetoTotales['LH'] = totalHoras_L;
-            objetoTotales['LPr'] = 1;
+            objetoTotales['LPr'] = precio_L;
         };
         if (totalFacturado_E) {
             objetoTotales['ET'] = totalFacturado_E;
             objetoTotales['EH'] = totalHoras_E;
-            objetoTotales['EPr'] = 1;
+            objetoTotales['EPr'] = precio_E;
         };
         if (totalFacturado_P) {
             objetoTotales['PT'] = totalFacturado_P;
             objetoTotales['PH'] = totalHoras_P;
-            objetoTotales['PPr'] = 1;
+            objetoTotales['PPr'] = precio_P;
         };
         if (totalFacturado_N) {
             objetoTotales['NT'] = totalFacturado_N;
             objetoTotales['NH'] = totalHoras_N;
-            objetoTotales['NPr'] = 1;
+            objetoTotales['NPr'] = precio_N;
         };
         if (totalFacturado_R) {
             objetoTotales['RT'] = totalFacturado_R;
             objetoTotales['RH'] = totalHoras_R;
-            objetoTotales['RPr'] = 1;
+            objetoTotales['RPr'] = precio_R;
         };
         if (totalFacturado_L1) {
             objetoTotales['L1T'] = totalFacturado_L1;
             objetoTotales['L1H'] = totalHoras_L1;
-            objetoTotales['L1Pr'] = 1;
+            objetoTotales['L1Pr'] = precio_L1;
         };
         if (totalFacturado_L2) {
             objetoTotales['L2T'] = totalFacturado_L2;
             objetoTotales['L2H'] = totalHoras_L2;
-            objetoTotales['L2Pr'] = 1;
+            objetoTotales['L2Pr'] = precio_L2;
         };
         if (totalFacturado_F) {
             objetoTotales['FT'] = totalFacturado_F;
             objetoTotales['FH'] = totalHoras_F;
-            objetoTotales['FPr'] = 1;
+            objetoTotales['FPr'] = precio_F;
         };
         if (totalFacturado_TO) {
             objetoTotales['TOT'] = totalFacturado_TO;
-            objetoTotales['TOH'] = 1;
-            objetoTotales['TOPr'] = 1;
         };
         if (totalFacturado_CR) {
             objetoTotales['CRT'] = totalFacturado_CR;
-            objetoTotales['CRH'] = 1;
-            objetoTotales['CRPr'] = 1;
         };
         if (totalFacturado_CE) {
             objetoTotales['CET'] = totalFacturado_CE;
-            objetoTotales['CEH'] = 1;
-            objetoTotales['CEPr'] = 1;
         };
         if (totalFacturado_CI) {
             objetoTotales['CIT'] = totalFacturado_CI;
-            objetoTotales['CIH'] = 1;
-            objetoTotales['CIPr'] = 1;
         };
         if (totalFacturado_MO) {
             objetoTotales['MOT'] = totalFacturado_MO;
-            objetoTotales['MOH'] = 1;
-            objetoTotales['MOPr'] = 1;
         };
         if (totalFacturado_OF) {
             objetoTotales['OFT'] = totalFacturado_OF;
-            objetoTotales['OFH'] = 1;
-            objetoTotales['OFPr'] = 1;
         };
         if (totalFacturado_AL) {
             objetoTotales['ALT'] = totalFacturado_AL;
-            objetoTotales['ALH'] = 1;
-            objetoTotales['ALPr'] = 1;
         };
         if (totalFacturado_LA) {
             objetoTotales['LAT'] = totalFacturado_LA;
-            objetoTotales['LAH'] = 1;
-            objetoTotales['LAPr'] = 1;
         };
         if (totalFacturado_TE) {
             objetoTotales['TET'] = totalFacturado_TE;
-            objetoTotales['TEH'] = 1;
-            objetoTotales['TEPr'] = 1;
         };
         if (totalFacturado_FI) {
             objetoTotales['FIT'] = totalFacturado_FI;
-            objetoTotales['FIH'] = 1;
-            objetoTotales['FIPr'] = 1;
         };
         if (totalFacturado_FE) {
             objetoTotales['FET'] = totalFacturado_FE;
-            objetoTotales['FEH'] = 1;
-            objetoTotales['FEPr'] = 1;
         };
         if (totalFacturado_AB) {
             objetoTotales['ABT'] = totalFacturado_AB;
-            objetoTotales['ABH'] = 1;
-            objetoTotales['ABPr'] = 1;
         };
         if (totalFacturado_MA) {
             objetoTotales['MAT'] = totalFacturado_MA;
-            objetoTotales['MAH'] = 1;
-            objetoTotales['MAPr'] = 1;
         };
         if (totalFacturado_PO) {
             objetoTotales['POT'] = totalFacturado_PO;
-            objetoTotales['POH'] = 1;
-            objetoTotales['POPr'] = 1;
         };
         if (totalFacturado_BA) {
             objetoTotales['BAT'] = totalFacturado_BA;
-            objetoTotales['BAH'] = 1;
-            objetoTotales['BAPr'] = 1;
         };
         if (totalFacturado_FT) {
             objetoTotales['FTT'] = totalFacturado_FT;
-            objetoTotales['FTH'] = 1;
-            objetoTotales['FTPr'] = 1;
         };
         if (totalFacturado_C3) {
             objetoTotales['C3T'] = totalFacturado_C3;
-            objetoTotales['C3H'] = 1;
-            objetoTotales['C3Pr'] = 1;
         };
         if (totalFacturado_C2) {
             objetoTotales['C2T'] = totalFacturado_C2;
-            objetoTotales['C2H'] = 1;
-            objetoTotales['C2Pr'] = 1;
         };
         if (totalFacturado_ES) {
             objetoTotales['EST'] = totalFacturado_ES;
-            objetoTotales['ESH'] = 1;
-            objetoTotales['ESPr'] = 1;
         };
         if (totalFacturado_PA) {
             objetoTotales['PAT'] = totalFacturado_PA;
-            objetoTotales['PAH'] = 1;
-            objetoTotales['PAPr'] = 1;
+        };
+        if (objetoCentro.activoNumCuenta === 'si') {
+            objetoTotales['NUMCT'] = 1;
         };
     } else {
         objetoTotales = {
@@ -1526,6 +1938,19 @@ const calculoTotales = (servicios, informes, horas, source) => (dispatch, getSta
         totalFacturado_C2 +
         totalFacturado_ES +
         totalFacturado_PA;
+    objetoTotales['procesado'] = {
+        valor: 'no',
+        numR: null,
+        numF: null
+    };
+    if ((objetoCentro.tempPago === 'bimensual' || objetoCentro.tempPago === 'trimestral') && objetoCuadrante.datosInforme.tocaFacturar.valor === 'si') {
+        if (totalesPeriodicos.noExisteCuadrante) {
+            objetoTotales['totalesPeriodicos'] = totalesPeriodicos;
+        } else {
+            objetoTotales['total'] = parseFloat(objetoTotales['total']) + parseFloat(totalesPeriodicos.total);
+            objetoTotales['totalesPeriodicos'] = totalesPeriodicos;
+        };
+    };
     return objetoTotales
 };
 
@@ -1541,29 +1966,29 @@ const finalizaRegistroCuadrante = (
 ) => (dispatch, getState) => {
     const { objetoCuadrante, cuadranteRegistrado } = getState().variablesCuadrantes;
     const { cuadranteEnUsoCuadrantes, bufferSwitchedDiasFestivosCuadrante } = getState().variablesCuadrantesSetters;
-
+    const { numeroRecibos } = getState().variablesApp;
     //revisamos que no falten festivos por gestionar
-    if (bufferSwitchedDiasFestivosCuadrante.length > 0) {
-        let arrayFaltantesFestivos = [];
-        bufferSwitchedDiasFestivosCuadrante.forEach((registroBuffer, index) => {
-            if (registroBuffer[0].anadido) {
-                arrayFaltantesFestivos.push(index + 1);
-            };
-        });
-        if (arrayFaltantesFestivos.length > 0) {
-            let arrayFaltantesFestivosString = arrayFaltantesFestivos.toString();
-            dispatch(setAlertaAccion({
-                abierto: true,
-                mensaje: "Revisa de nuevo los cuadrantes " + arrayFaltantesFestivosString + " antes de registrar para actualizar los cambios en festivos.",
-                tipo: 'error'
-            }));
-            dispatch(setCuadranteEnUsoCuadrantesAccion(cuadranteEnUsoCuadrantes));
-            dispatch(reseteaContenidoCentroAccion(true));
-            dispatch(gestionaCuadranteIndividualAccion(cuadranteEnUsoCuadrantes, true));
-            dispatch(obtenerCategoriaPorCentroAccion('centros', objetoCuadrante.datosCuadrante.centro, cuadranteEnUsoCuadrantes - 1));
-            return;
-        };
-    };
+    // if (bufferSwitchedDiasFestivosCuadrante.length > 0) {
+    //     let arrayFaltantesFestivos = [];
+    //     bufferSwitchedDiasFestivosCuadrante.forEach((registroBuffer, index) => {
+    //         if (registroBuffer[0].anadido) {
+    //             arrayFaltantesFestivos.push(index + 1);
+    //         };
+    //     });
+    //     if (arrayFaltantesFestivos.length > 0) {
+    //         let arrayFaltantesFestivosString = arrayFaltantesFestivos.toString();
+    //         dispatch(setAlertaAccion({
+    //             abierto: true,
+    //             mensaje: "Revisa de nuevo los cuadrantes " + arrayFaltantesFestivosString + " antes de registrar para actualizar los cambios en festivos.",
+    //             tipo: 'error'
+    //         }));
+    //         dispatch(setCuadranteEnUsoCuadrantesAccion(cuadranteEnUsoCuadrantes));
+    //         dispatch(reseteaContenidoCentroAccion(true));
+    //         dispatch(gestionaCuadranteIndividualAccion(cuadranteEnUsoCuadrantes, true));
+    //         dispatch(obtenerCategoriaPorCentroAccion('centros', objetoCuadrante.datosCuadrante.centro, cuadranteEnUsoCuadrantes - 1));
+    //         return;
+    //     };
+    // };
     let elArrayDatosCuadranteLimpiado = [];
     losDatosCuadrante.datosCuadrante.forEach((cuadranteIterado) => {
         elArrayDatosCuadranteLimpiado.push({
@@ -1607,10 +2032,25 @@ const finalizaRegistroCuadrante = (
                     razon: ''
                 }
             };
-        } else {
-            losDatosInforme = {
-                ...losDatosInforme
-            };
+        };
+    };
+    losDatosInforme = {
+        ...losDatosInforme,
+        datosGestionEsp: null
+    };
+    if (losDatosInforme.tocaFacturar.valor === 'no' && losDatosInforme.tocaFacturar.razon === 'gest' && source === 'informe') {
+        losDatosInforme = {
+            ...losDatosInforme,
+            datosGestionEsp: {
+                numeroRecibos: numeroRecibos,
+                totalLetra: numeroALetras(parseFloat(losDatosTotales.total).toFixed(2)),
+                centro: objetoCuadrante.datosCuadrante.nombreCentro,
+                concepto: dispatch(retornaTextoConceptoServicio(losDatosTotales, null, null)),
+                total: parseFloat(losDatosTotales.total).toFixed(2)
+            }
+        };
+        if (!objetoCuadrante.datosInforme.datosGestionEsp) {
+            dispatch(actualizarNumeroRecibosAccion('configuracion', parseInt(numeroRecibos) + 1));
         };
     };
     const losDatosInformeLimpiado = {
@@ -1624,17 +2064,18 @@ const finalizaRegistroCuadrante = (
             losDatosInformeLimpiado.datosInforme.push(null);
         };
     });
+    const options = { fullPrecisionFloats: true };
     const cuadranteAGuardar = {
         id: objetoCuadrante.id,
         nombre: objetoCuadrante.nombre,
         actualizacion: laFirmaActualizacion,
-        datos_cuadrante: JSON.stringify(losDatosCuadranteLimpiado),
-        datos_servicios: JSON.stringify(losDatosServiciosFijos),
-        datos_informe: JSON.stringify(losDatosInformeLimpiado),
-        datos_buffer: losDatosBuffer ? JSON.stringify(losDatosBuffer) : null,
+        datos_cuadrante: stringify(losDatosCuadranteLimpiado, options),
+        datos_servicios: stringify(losDatosServiciosFijos, options),
+        datos_informe: stringify(losDatosInformeLimpiado, options),
+        datos_buffer: losDatosBuffer ? stringify(losDatosBuffer, options) : null,
         estado: source === 'informe' ? 'facturado' : objetoCuadrante.estado,
-        total: JSON.stringify(losDatosTotales),
-        horas: JSON.stringify(losDatosHoras)
+        total: stringify(losDatosTotales, options),
+        horas: stringify(losDatosHoras, options)
     };
     if (source !== 'informe') {
         dispatch(actualizarObjetoCuadranteAccion({
@@ -1685,13 +2126,77 @@ const finalizaRegistroCuadrante = (
     dispatch(registrarIntervencionAccion(true));
 };
 
+export const gestionarReciboCuadranteAccion = () => (dispatch, getState) => {
+    const { objetoCuadrante } = getState().variablesCuadrantes;
+    const { cuadranteEnUsoCuadrantes } = getState().variablesCuadrantesSetters;
+    const { usuarioActivo } = getState().variablesUsuario;
+    //firmamos
+    let fechaHoy = new Date().toLocaleString() + '';
+    let laFirmaActualizacion = fechaHoy + ' por ' + usuarioActivo.nombre.charAt(0).toUpperCase() + usuarioActivo.nombre.slice(1);
+    dispatch(setFirmaActualizacionAccion(laFirmaActualizacion));
+    if (objetoCuadrante.total.procesado.valor === 'no') {
+        let objetoTotales = {
+            ...objetoCuadrante.total,
+            procesado: {
+                valor: 'si',
+                numR: objetoCuadrante.datosInforme.datosGestionEsp.numeroRecibos,
+                numF: null
+            }
+        };
+        const options = { fullPrecisionFloats: true };
+        const cuadranteAGuardar = {
+            id: objetoCuadrante.id,
+            nombre: objetoCuadrante.nombre,
+            actualizacion: laFirmaActualizacion,
+            datos_cuadrante: stringify(objetoCuadrante.datosCuadrante, options),
+            datos_servicios: stringify(objetoCuadrante.datosServicios, options),
+            datos_informe: stringify(objetoCuadrante.datosInforme, options),
+            datos_buffer: objetoCuadrante.datosBuffer ? stringify(objetoCuadrante.datosBuffer, options) : null,
+            estado: 'facturado',
+            total: stringify(objetoTotales, options),
+            horas: stringify(objetoCuadrante.horas, options)
+        };
+        dispatch(actualizarObjetoCuadranteAccion({
+            ...objetoCuadrante,
+            total: objetoTotales
+        }));
+        dispatch(setControladorDeEstadoAccion('venimosDeInforme'));
+        dispatch(actualizarCuadranteAccion('cuadrantes', cuadranteAGuardar.id, cuadranteAGuardar));
+        dispatch(activarDesactivarCambioBotonActualizarAccion(true));
+        //dispatch(registrarIntervencionAccion(false));
+        dispatch(setCuadranteEnUsoCuadrantesAccion(cuadranteEnUsoCuadrantes));
+        dispatch(reseteaContenidoCentroAccion(true));
+        dispatch(gestionaCuadranteIndividualAccion(cuadranteEnUsoCuadrantes, true));
+        dispatch(obtenerCategoriaPorCentroAccion('centros', objetoCuadrante.datosCuadrante.centro, cuadranteEnUsoCuadrantes - 1));
+        dispatch(registrarIntervencionAccion(true));
+    };
+};
+
+export const handleGenerarArchivosAccion = () => (dispatch, getState) => {
+    const { numeroFactusol } = getState().variablesCuadrantesSetters;
+    const { objetoCuadrante } = getState().variablesCuadrantes;
+    if (numeroFactusol) {
+        dispatch(generarArchivosXLSAccion(numeroFactusol, objetoCuadrante.datosCuadrante.centro, objetoCuadrante.total));
+        dispatch(handleCloseMenuAccion());
+    } else {
+        dispatch(setAlertaAccion({
+            abierto: true,
+            mensaje: "Debes introducir el último número de factura emitida en FACTUSOL para generar los archivos.",
+            tipo: 'error'
+        }));
+        return;
+    };
+};
+
 export const centroAGestionarInicioAccion = () => (dispatch, getState) => {
     const { objetoCentro } = getState().variablesCentros;
     const { cuadranteRegistrado, objetoCuadrante, calendarioAGestionar } = getState().variablesCuadrantes;
+    const { numeroRecibos } = getState().variablesApp;
     dispatch(setOpenLoadingAccion(true));
     if (objetoCentro.nombre !== '') {
         if (cuadranteRegistrado === 'no') {
             dispatch(calculaNumeroCuadrantesAccion(objetoCentro.categoria.categoria.length));
+            dispatch(obtenerDatosGestionEspecialAccion());
             //registramos objeto cuadrante completo
             let hayHorario, hayServiciosFijos, hayTrabajadores;
             let arrayHorario = [];
@@ -1759,11 +2264,34 @@ export const centroAGestionarInicioAccion = () => (dispatch, getState) => {
                     arrayServiciosFijos.push([])
                 };
                 if (hayTrabajadores) {
-                    arrayTrabajadores.push(objetoCentro.trabajadores.trabajadores[i]);
+                    let elArrayTrabajadores = [];
+                    let elObjetoTrabajadores = {};
+                    objetoCentro.trabajadores.trabajadores[i].trabajadores.forEach((trabajadorIterado, index) => {
+                        if (trabajadorIterado['suplente_' + (index + 1)] === '') {
+                            elObjetoTrabajadores = {
+                                ['trabajador_' + (index + 1)]: trabajadorIterado['trabajador_' + (index + 1)],
+                                ['suplente_' + (index + 1)]: 999
+                            };
+                        }else{
+                            elObjetoTrabajadores = trabajadorIterado;
+                        };
+                        elArrayTrabajadores.push(elObjetoTrabajadores);
+                    });
+                    //arrayTrabajadores.push(objetoCentro.trabajadores.trabajadores[i]);
+                    arrayTrabajadores.push({cantidad: objetoCentro.trabajadores.trabajadores[i].cantidad, trabajadores: elArrayTrabajadores});
                 } else {
                     arrayTrabajadores.push(null);
                 };
                 arrayHoras.push(null);
+            };
+            let objetoRetornoDatosGestionEspecial;
+            if (numeroRecibos) {
+                objetoRetornoDatosGestionEspecial = {
+                    numeroRecibos: numeroRecibos,
+                    cantidadTexto: ''
+                };
+            } else {
+                objetoRetornoDatosGestionEspecial = null;
             };
             dispatch(actualizarObjetoCuadranteAccion({
                 ...objetoCuadrante,
@@ -1805,7 +2333,6 @@ export const centroAGestionarInicioAccion = () => (dispatch, getState) => {
 };
 
 export const gestionTrabajadorAccion = () => (dispatch, getState) => {
-    const { objetoCentro } = getState().variablesCentros;
     const { cuadranteRegistrado, objetoCuadrante, cuadrante } = getState().variablesCuadrantes;
     const {
         trabajadoresEnCuadrante,
@@ -1824,18 +2351,18 @@ export const gestionTrabajadorAccion = () => (dispatch, getState) => {
     let arrayTr = [];
     if (esInicioTra) {
         arrayTr = [...trabajadoresEnCuadrante];
-        if (objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistro === 'individual') {
+        if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].tipoRegistro === 'individual') {
             objetoTrabajador['laPosicionDelTrabajador'] = arrayTr.length + 1;
         };
         if (cuadranteRegistrado === 'no') {
             const arrayCuadrante = [...cuadrante];
-            const laColumnaAnadir = dispatch(gestionaColumnaCuadranteAccion(objetoTrabajador, 'trabajador', false, null, false, false, objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipo));
+            const laColumnaAnadir = dispatch(gestionaColumnaCuadranteAccion(objetoTrabajador, 'trabajador', false, null, false, false, objetoCuadrante.datosCuadrante.datosCuadrante[cuadranteEnUsoCuadrantes - 1].tipoHorarioGeneral, esUnaActualizacionTrabajador));
             if (laColumnaAnadir) {
                 arrayCuadrante.push(laColumnaAnadir);
                 arrayTr.push(objetoTrabajador);
                 dispatch(setTrabajadoresEnCuadranteAccion(arrayTr));
+                dispatch(setCuadranteAccion(arrayCuadrante));
             };
-            dispatch(setCuadranteAccion(arrayCuadrante));
         } else {
             let estaEnElArrayTrabajadores = trabajadoresEnCuadrante.some(trabajador => trabajador['id'] === objetoTrabajador.id);
             if (!estaEnElArrayTrabajadores) {
@@ -1846,10 +2373,10 @@ export const gestionTrabajadorAccion = () => (dispatch, getState) => {
     }
     if (esCambioTra) {
         arrayTr = [...trabajadoresEnCuadrante];
-        if (objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistro === 'individual') {
+        if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].tipoRegistro === 'individual') {
             objetoTrabajador['laPosicionDelTrabajador'] = posicionTrabajadorPrevioACambiar;
         };
-        if (objetoTrabajador.estado !== 'alta') {
+        if (objetoTrabajador.estado !== 'alta' && !esUnaActualizacionTrabajador) {
             dispatch(setAlertaAccion({
                 abierto: true,
                 mensaje: "Este trabajador se encuentra de baja o está en reserva, selecciona otro.",
@@ -1862,13 +2389,13 @@ export const gestionTrabajadorAccion = () => (dispatch, getState) => {
             };
             if (!cuadranteVacio) {
                 if (!cambiadaConfiguracionGeneral) {
-                    dispatch(gestionaColumnaCuadranteAccion(objetoTrabajador, 'trabajador', true, columnaIndiceAGestionar, false, false, objetoCuadrante.datosCuadrante.datosCuadrante[cuadranteEnUsoCuadrantes - 1].tipoHorarioGeneral));
+                    dispatch(gestionaColumnaCuadranteAccion(objetoTrabajador, 'trabajador', true, columnaIndiceAGestionar, false, false, objetoCuadrante.datosCuadrante.datosCuadrante[cuadranteEnUsoCuadrantes - 1].tipoHorarioGeneral, esUnaActualizacionTrabajador));
                 } else {
-                    dispatch(gestionaColumnaCuadranteAccion(objetoTrabajador, 'trabajador', true, columnaIndiceAGestionar, false, true, objetoCuadrante.datosCuadrante.datosCuadrante[cuadranteEnUsoCuadrantes - 1].tipoHorarioGeneral));
+                    dispatch(gestionaColumnaCuadranteAccion(objetoTrabajador, 'trabajador', true, columnaIndiceAGestionar, false, true, objetoCuadrante.datosCuadrante.datosCuadrante[cuadranteEnUsoCuadrantes - 1].tipoHorarioGeneral, esUnaActualizacionTrabajador));
                 };
             } else {
                 dispatch(setCuadranteVacioAccion(false));
-                dispatch(gestionaColumnaCuadranteAccion(objetoTrabajador, 'trabajador', true, columnaIndiceAGestionar, false, true, objetoCuadrante.datosCuadrante.datosCuadrante[cuadranteEnUsoCuadrantes - 1].tipoHorarioGeneral));
+                dispatch(gestionaColumnaCuadranteAccion(objetoTrabajador, 'trabajador', true, columnaIndiceAGestionar, false, true, objetoCuadrante.datosCuadrante.datosCuadrante[cuadranteEnUsoCuadrantes - 1].tipoHorarioGeneral, esUnaActualizacionTrabajador));
             };
             if (!esUnaActualizacionTrabajador) {
                 Array.prototype.insert = function (index, item) {
@@ -1902,7 +2429,6 @@ export const gestionTrabajadorAccion = () => (dispatch, getState) => {
 };
 
 export const gestionSuplenteAccion = () => (dispatch, getState) => {
-    const { objetoCentro } = getState().variablesCentros;
     const { cuadranteRegistrado, objetoCuadrante, cuadrante } = getState().variablesCuadrantes;
     const {
         trabajadoresEnCuadrante,
@@ -1921,18 +2447,18 @@ export const gestionSuplenteAccion = () => (dispatch, getState) => {
     let arraySu = [];
     if (esInicioSup) {
         arraySu = [...suplentesEnCuadrante];
-        if (objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistro === 'individual') {
+        if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].tipoRegistro === 'individual') {
             objetoSuplente['laPosicionDelTrabajador'] = trabajadoresEnCuadrante.length;
         }
         if (cuadranteRegistrado === 'no') {
             const arrayCuadrante = [...cuadrante];
-            const laColumnaAnadir = dispatch(gestionaColumnaCuadranteAccion(objetoSuplente, 'suplente', false, null, false, false, objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipo));
+            const laColumnaAnadir = dispatch(gestionaColumnaCuadranteAccion(objetoSuplente, 'suplente', false, null, false, false, objetoCuadrante.datosCuadrante.datosCuadrante[cuadranteEnUsoCuadrantes - 1].tipoHorarioGeneral, esUnaActualizacionTrabajador));
             if (laColumnaAnadir) {
                 arrayCuadrante.push(laColumnaAnadir);
                 arraySu.push(objetoSuplente);
                 dispatch(setSuplentesEnCuadranteAccion(arraySu));
+                dispatch(setCuadranteAccion(arrayCuadrante));
             };
-            dispatch(setCuadranteAccion(arrayCuadrante));
         } else {
             let estaEnElArraySuplentes = suplentesEnCuadrante.some(suplente => suplente['id'] === objetoSuplente.id);
             if (!estaEnElArraySuplentes) {
@@ -1943,10 +2469,10 @@ export const gestionSuplenteAccion = () => (dispatch, getState) => {
     };
     if (esCambioSup) {
         arraySu = [...suplentesEnCuadrante];
-        if (objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistro === 'individual') {
+        if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].tipoRegistro === 'individual') {
             objetoSuplente['laPosicionDelTrabajador'] = posicionSuplentePrevioACambiar;
         };
-        if (objetoSuplente.estado !== 'alta') {
+        if (objetoSuplente.estado !== 'alta' && !esUnaActualizacionTrabajador) {
             dispatch(setAlertaAccion({
                 abierto: true,
                 mensaje: "Este trabajador se encuentra de baja, selecciona otro.",
@@ -1959,13 +2485,13 @@ export const gestionSuplenteAccion = () => (dispatch, getState) => {
             };
             if (!cuadranteVacio) {
                 if (!cambiadaConfiguracionGeneral) {
-                    dispatch(gestionaColumnaCuadranteAccion(objetoSuplente, 'suplente', true, columnaIndiceAGestionar, false, false, objetoCuadrante.datosCuadrante.datosCuadrante[cuadranteEnUsoCuadrantes - 1].tipoHorarioGeneral));
+                    dispatch(gestionaColumnaCuadranteAccion(objetoSuplente, 'suplente', true, columnaIndiceAGestionar, false, false, objetoCuadrante.datosCuadrante.datosCuadrante[cuadranteEnUsoCuadrantes - 1].tipoHorarioGeneral, esUnaActualizacionTrabajador));
                 } else {
-                    dispatch(gestionaColumnaCuadranteAccion(objetoSuplente, 'suplente', true, columnaIndiceAGestionar, false, true, objetoCuadrante.datosCuadrante.datosCuadrante[cuadranteEnUsoCuadrantes - 1].tipoHorarioGeneral));
+                    dispatch(gestionaColumnaCuadranteAccion(objetoSuplente, 'suplente', true, columnaIndiceAGestionar, false, true, objetoCuadrante.datosCuadrante.datosCuadrante[cuadranteEnUsoCuadrantes - 1].tipoHorarioGeneral, esUnaActualizacionTrabajador));
                 };
             } else {
                 dispatch(setCuadranteVacioAccion(false));
-                dispatch(gestionaColumnaCuadranteAccion(objetoSuplente, 'suplente', true, columnaIndiceAGestionar, false, true, objetoCuadrante.datosCuadrante.datosCuadrante[cuadranteEnUsoCuadrantes - 1].tipoHorarioGeneral));
+                dispatch(gestionaColumnaCuadranteAccion(objetoSuplente, 'suplente', true, columnaIndiceAGestionar, false, true, objetoCuadrante.datosCuadrante.datosCuadrante[cuadranteEnUsoCuadrantes - 1].tipoHorarioGeneral, esUnaActualizacionTrabajador));
             };
             if (!esUnaActualizacionTrabajador) {
                 Array.prototype.insert = function (index, item) {

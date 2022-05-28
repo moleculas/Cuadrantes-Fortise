@@ -1,5 +1,5 @@
 import { makeStyles } from "@material-ui/core";
-import { amber, blueGrey, green, lime, indigo, red, grey, blue, yellow, teal } from '@material-ui/core/colors';
+import { amber, blueGrey, green, lime, indigo, red, grey, blue, yellow, teal, brown } from '@material-ui/core/colors';
 
 const Clases = makeStyles((theme) => ({
     //loading
@@ -63,6 +63,14 @@ const Clases = makeStyles((theme) => ({
         },
         marginLeft: 5
     },
+    btnBajas: {
+        backgroundColor: `${amber[300]} !important`,
+        color: '#78909c',
+        "&:hover": {
+            backgroundColor: `${amber[300]} !important`,
+        },
+        marginLeft: 5
+    },
     btnLimpieza: {
         backgroundColor: theme.palette.secondary.light,
         color: theme.palette.error.contrastText,
@@ -123,15 +131,16 @@ const Clases = makeStyles((theme) => ({
     diaLaboral: {
         backgroundColor: theme.palette.secondary.light,
         cursor: 'pointer',
-        minHeight: 38,
-        maxHeight: 38,
         padding: 9
     },
     diaFestivo: {
         backgroundColor: theme.palette.secondary.dark,
         cursor: 'pointer',
-        minHeight: 38,
-        maxHeight: 38,
+        padding: 9
+    },
+    diaFestivoCierre: {
+        backgroundColor: `${brown[500]} !important`,
+        cursor: 'pointer',
         padding: 9
     },
     cabecera: {
@@ -143,21 +152,20 @@ const Clases = makeStyles((theme) => ({
     casillaLaboral: {
         backgroundColor: `${blueGrey[50]} !important`,
         cursor: 'pointer',
-        minHeight: 38,
-        maxHeight: 38,
+        padding: 9
+    },
+    casillaSuplenteVacio: {
+        backgroundColor: `${red[50]} !important`,
+        cursor: 'pointer',
         padding: 9
     },
     casillaVaciaSF: {
         backgroundColor: `${teal[50]} !important`,
-        minHeight: 38,
-        maxHeight: 38,
         padding: 9,
         cursor: 'pointer',
     },
     casillaSF: {
         backgroundColor: `${teal[100]} !important`,
-        minHeight: 38,
-        maxHeight: 38,
         padding: 9,
         cursor: 'pointer',
     },
@@ -165,37 +173,47 @@ const Clases = makeStyles((theme) => ({
         backgroundColor: `${lime[100]} !important`,
         color: `${lime[900]} !important`,
         cursor: 'pointer',
-        minHeight: 38,
-        maxHeight: 38,
         padding: 9,
     },
     casillaFestivo: {
         backgroundColor: `${amber[50]} !important`,
-        color: '#b4af9f',
+        color: '#78909c',
         cursor: 'default',
-        minHeight: 38,
-        maxHeight: 38,
+        pointerEvents: 'none',
+        padding: 9
+    },
+    casillaFestivoCierre: {
+        backgroundColor: `${brown[50]} !important`,
+        color: '#78909c',
+        cursor: 'default',
         pointerEvents: 'none',
         padding: 9
     },
     casillaBaja: {
         backgroundColor: `${amber[300]} !important`,
-        color: '#b4af9f',
+        color: '#78909c',
         cursor: 'default',
-        minHeight: 38,
-        maxHeight: 38,
+        pointerEvents: 'none',
+        padding: 9
+    },
+    casillaBajaCIA: {
+        backgroundColor: `${amber[900]} !important`,
+        color: '#ffffff',
+        cursor: 'default',
         pointerEvents: 'none',
         padding: 9
     },
     casillaDisabled: {
         backgroundColor: `${blueGrey[50]} !important`,
         pointerEvents: 'none',
-        minHeight: 38,
-        maxHeight: 38,
         padding: 9
     },
     suplente: {
         backgroundColor: `${blueGrey[200]} !important`,
+        color: 'white',
+    },
+    suplenteVacio: {
+        backgroundColor: `${red[100]} !important`,
         color: 'white',
     },
     trabajador: {
@@ -264,6 +282,10 @@ const Clases = makeStyles((theme) => ({
     },
     mr10: {
         marginRight: 10,
+    },
+    px5: {
+        paddingLeft: 5,
+        paddingRight: 5
     },
     btnAddTrabajador: {
         backgroundColor: theme.palette.secondary.main,
@@ -434,13 +456,21 @@ const Clases = makeStyles((theme) => ({
     fab: {
         position: 'absolute',
         bottom: theme.spacing(4),
-        right: theme.spacing(8)
+        right: theme.spacing(8),
+        cursor: 'grab',
+        "&:active": {
+            cursor: 'grabbing',
+        },
     },
     fabBloqueado: {
         position: 'absolute',
         bottom: theme.spacing(4),
         right: theme.spacing(8),
         backgroundColor: `${red[100]} !important`,
+        cursor: 'grab',
+        "&:active": {
+            cursor: 'grabbing',
+        },
     },
     noFacturacion: {
         backgroundColor: `${red[100]} !important`,
@@ -515,6 +545,20 @@ const Clases = makeStyles((theme) => ({
         justifyContent: "center",
         "&:hover": {
             backgroundColor: `${red[100]} !important`,
+        },
+    },
+    casillaProcesados: {
+        cursor: 'pointer',
+        backgroundColor: `${green[50]} !important`,
+        marginBottom: 5,
+        marginRight: 10,
+        paddingRight: 10,
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        "&:hover": {
+            backgroundColor: `${green[100]} !important`,
         },
     },
     red: {
@@ -682,18 +726,34 @@ const Clases = makeStyles((theme) => ({
         color: 'red',
         marginLeft: 10
     },
-    boxChekin:{
-        borderRadius: 4, 
-        paddingTop: 3,  
-        paddingBottom: 3, 
-        paddingLeft: 15, 
+    boxChekin: {
+        borderRadius: 4,
+        paddingTop: 3,
+        paddingBottom: 3,
+        paddingLeft: 15,
         marginLeft: 3,
         marginRight: 3,
-        border: '1px solid', 
+        border: '1px solid',
         borderColor: 'rgba(0, 0, 0, 0.25)',
         "&:hover": {
             borderColor: 'rgba(0, 0, 0, 1)',
         },
+    },
+    boxChekinSinHover: {
+        borderRadius: 4,
+        paddingTop: 3,
+        paddingBottom: 3,
+        paddingLeft: 15,
+        marginLeft: 3,
+        marginRight: 3,
+        border: '1px solid',
+        borderColor: 'rgba(0, 0, 0, 0.25)'
+    },
+    enA: {            
+        backgroundColor: '#00bcd4',
+    },
+    enB: {          
+        backgroundColor: '#8884d8',
     }
 }), { index: 1 });
 

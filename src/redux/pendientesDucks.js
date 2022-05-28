@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Constantes from "../constantes";
+import { parse } from 'zipson';
 
 //constantes
 const rutaApi = Constantes.RUTA_API;
@@ -48,14 +49,14 @@ export default function pendientesReducer(state = dataInicial, action) {
             return { ...state, loadingPendientes: false }
         case VENIMOS_DE_REGISTRADOS:
             return { ...state, estadoVenimosDeRegistrados: action.payload.estado }
-        default:
+               default:
             return { ...state }
     }
 }
 
 //acciones
 
-export const obtenerCuadrantesPendientesAccion = (objeto, mes, arrayCentros) => (dispatch, getState) => {
+export const obtenerCuadrantesPendientesAccion = (objeto, mes, arrayCentros) => (dispatch, getState) => {   
     dispatch({
         type: LOADING_PENDIENTES
     });
@@ -113,7 +114,7 @@ export const obtenerCuadrantesRegistradosFacturadosAccion = (objeto, mes, arrayC
                 }
             });
             if (res.data.estado === 'registrado') {
-                contadorRegistrados++;               
+                contadorRegistrados++;
                 dispatch({
                     type: OBTENER_CUADRANTE_REGISTRADO,
                     payload: {
@@ -122,8 +123,7 @@ export const obtenerCuadrantesRegistradosFacturadosAccion = (objeto, mes, arrayC
                             nombre: res.data.nombre,
                             actualizacion: res.data.actualizacion,
                             estado: res.data.estado,
-                            total: JSON.parse(res.data.total),
-                            //horas: JSON.parse(res.data.horas),                            
+                            total: parse(res.data.total)                            
                         },
                         contador: contadorRegistrados
                     }
@@ -139,15 +139,14 @@ export const obtenerCuadrantesRegistradosFacturadosAccion = (objeto, mes, arrayC
                             nombre: res.data.nombre,
                             actualizacion: res.data.actualizacion,
                             estado: res.data.estado,
-                            total: res.data.total,
-                            horas: JSON.parse(res.data.horas)
+                            total: parse(res.data.total)                         
                         },
                         contador: contadorFacturados
                     }
                 })
             }
         });
-    } catch (error) {
+    } catch (error) {      
         dispatch({
             type: ERROR_DE_CARGA_CUADRANTES_PENDIENTES
         });

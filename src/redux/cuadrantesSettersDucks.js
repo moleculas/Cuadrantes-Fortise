@@ -10,12 +10,13 @@ import { setItemEditandoServiciosFijosAccion } from './cuadrantesServiciosFijosD
 import { setStateFestivoAccion } from './cuadrantesDucks';
 import { vaciarDatosCuadranteRegistradoAccion } from './cuadrantesDucks';
 import { activarDesactivarCambioBotonRegistrarAccion } from './cuadrantesDucks';
-import { registrarIntervencionCuadranteNuevoAccion } from './cuadrantesDucks';
 import { activarDesactivarCambioAccion } from './cuadrantesDucks';
+import { reseteaTotalesPeriodicosAccion } from './cuadrantesDucks';
 import { activarDesactivarCambioBotonActualizarAccion } from './cuadrantesDucks';
 import { setCuadranteServiciosFijosAccion } from './cuadrantesServiciosFijosDucks';
 import { vaciarDatosCentroAccion } from './centrosDucks';
 import { vaciarDatosTrabajadorAccion } from './trabajadoresDucks';
+import { resetarNumeroRecibosAccion } from './appDucks';
 
 //constantes
 const dataInicial = {
@@ -48,8 +49,10 @@ const dataInicial = {
     itemEditandoConfiguracion: {
         tipoHorario: '',
         computo: '',
+        excepcion: '',
         bloqueado: '',
         mensualPactado: '',
+        mensualPactadoInicial: '',
         precioHora_L: '',
         precioHora_E: '',
         precioHora_P: '',
@@ -58,7 +61,12 @@ const dataInicial = {
         precioHora_L1: '',
         precioHora_L2: '',
         precioHora_F: '',
-        observaciones: ''
+        observaciones: '',
+        festivos: {
+            inicio: null,
+            fin: null,
+            tipo: '',
+        }
     },
     cambiadaConfiguracionGeneral: false,
     visibleCuadrante: true,
@@ -78,8 +86,13 @@ const dataInicial = {
     disableSelectCentros: true,
     preValueCalendarioAGestionarReseteo: null,
     venimosBorrarCuadrante: false,
-    primeraIntervencionRegistrada: false  
-    //esCambioFestivoMensualPactado: false
+    primeraIntervencionRegistrada: false,
+    cuadranteBloqueado: false,
+    disableCargando: false,
+    cambioSF: false,
+    yaNoEsInicio: false,
+    venimosDeCambioCentroSelect: false,
+    primerDiaEstadoBajaCIA: null
 };
 
 //types
@@ -124,7 +137,12 @@ const SET_ALERTA = 'SET_ALERTA';
 const SET_DISABLESELECTCENTROS = 'SET_DISABLESELECTCENTROS';
 const SET_PREVALUECALENDARIOAGESTIONARRESETEO = 'SET_PREVALUECALENDARIOAGESTIONARRESETEO';
 const SET_VENIMOSBORRARCUADRANTE = 'SET_VENIMOSBORRARCUADRANTE';
-//const SET_ESCAMBIOFESTIVOMENSUALPACTADO = 'SET_ESCAMBIOFESTIVOMENSUALPACTADO';
+const SET_CUADRANTEBLOQUEADO = 'SET_CUADRANTEBLOQUEADO';
+const SET_DISABLECARGANDO = ' SET_DISABLECARGANDO';
+const SET_CAMBIOSF = 'SET_CAMBIOSF';
+const SET_YANOESINICIO = 'SET_YANOESINICIO';
+const SET_VENIMOSDECAMBIOCENTROSELECT = 'SET_VENIMOSDECAMBIOCENTROSELECT';
+const SET_PRIMERDIAESTADOBAJACIA = 'SET_PRIMERDIAESTADOBAJACIA';
 
 //reducer
 export default function cuadrantesSettersReducer(state = dataInicial, action) {
@@ -211,8 +229,18 @@ export default function cuadrantesSettersReducer(state = dataInicial, action) {
             return { ...state, preValueCalendarioAGestionarReseteo: action.payload.valor }
         case SET_VENIMOSBORRARCUADRANTE:
             return { ...state, venimosBorrarCuadrante: action.payload.estado }
-        // case SET_ESCAMBIOFESTIVOMENSUALPACTADO:
-        //     return { ...state, esCambioFestivoMensualPactado: action.payload.estado }
+        case SET_CUADRANTEBLOQUEADO:
+            return { ...state, cuadranteBloqueado: action.payload.estado }
+        case SET_DISABLECARGANDO:
+            return { ...state, disableCargando: action.payload.estado }
+        case SET_CAMBIOSF:
+            return { ...state, cambioSF: action.payload.estado }
+        case SET_YANOESINICIO:
+            return { ...state, yaNoEsInicio: action.payload.estado }
+        case SET_VENIMOSDECAMBIOCENTROSELECT:
+            return { ...state, venimosDeCambioCentroSelect: action.payload.estado }
+        case SET_PRIMERDIAESTADOBAJACIA:
+            return { ...state, primerDiaEstadoBajaCIA: action.payload.valor }
         default:
             return { ...state }
     }
@@ -220,14 +248,59 @@ export default function cuadrantesSettersReducer(state = dataInicial, action) {
 
 //acciones
 
-// export const setEsCambioFestivoMensualPactadoAccion = (estado) => (dispatch, getState) => {
-//     dispatch({
-//         type: SET_ESCAMBIOFESTIVOMENSUALPACTADO,
-//         payload: {
-//             estado: estado
-//         }
-//     });
-// };
+export const setPrimerDiaEstadoBajaCIA = (valor) => (dispatch, getState) => {
+    dispatch({
+        type: SET_PRIMERDIAESTADOBAJACIA,
+        payload: {
+            valor: valor
+        }
+    });
+};
+
+export const setVenimosDeCambioCentroSelectAccion = (estado) => (dispatch, getState) => {
+    dispatch({
+        type: SET_VENIMOSDECAMBIOCENTROSELECT,
+        payload: {
+            estado: estado
+        }
+    });
+};
+
+export const setYaNoEsInicioAccion = (estado) => (dispatch, getState) => {
+    dispatch({
+        type: SET_YANOESINICIO,
+        payload: {
+            estado: estado
+        }
+    });
+};
+
+export const setCambioSFAccion = (estado) => (dispatch, getState) => {
+    dispatch({
+        type: SET_CAMBIOSF,
+        payload: {
+            estado: estado
+        }
+    });
+};
+
+export const setDisableCargandoAccion = (estado) => (dispatch, getState) => {
+    dispatch({
+        type: SET_DISABLECARGANDO,
+        payload: {
+            estado: estado
+        }
+    });
+};
+
+export const setCuadranteBloqueadoAccion = (estado) => (dispatch, getState) => {
+    dispatch({
+        type: SET_CUADRANTEBLOQUEADO,
+        payload: {
+            estado: estado
+        }
+    });
+};
 
 export const setVenimosBorrarCuadranteAccion = (estado) => (dispatch, getState) => {
     dispatch({
@@ -860,7 +933,20 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
             }
         }
     });
+    dispatch({
+        type: SET_YANOESINICIO,
+        payload: {
+            estado: false
+        }
+    });
     if (!excepciones) {
+        //cambio cuadrante total
+        dispatch({
+            type: SET_CUADRANTEBLOQUEADO,
+            payload: {
+                valor: false
+            }
+        });
         dispatch({
             type: SET_BUFFERDIASFESTIVOSCUADRANTE,
             payload: {
@@ -873,12 +959,14 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
                 estado: false
             }
         });
+        dispatch(reseteaTotalesPeriodicosAccion());
         dispatch(setStateFestivoAccion({}));
         dispatch(vaciarDatosCuadranteRegistradoAccion());
         dispatch(activarDesactivarCambioBotonRegistrarAccion(true));
-        dispatch(registrarIntervencionCuadranteNuevoAccion(true));
+        //dispatch(registrarIntervencionCuadranteNuevoAccion(true));
         dispatch(activarDesactivarCambioAccion(true));
         dispatch(activarDesactivarCambioBotonActualizarAccion(true));
+        dispatch(resetarNumeroRecibosAccion());
         dispatch({
             type: SET_NUMEROCUADRANTESCUADRANTES,
             payload: {

@@ -5,5 +5,13 @@
 }
 
 .MuiCollapse-container {
-    transition-duration:0s!important
+    transition-duration:0s !important
+}
+
+.calendarioOculto .MuiIconButton-root {
+   display: none !important
+}
+
+.calendarioOculto .MuiFormHelperText-root.Mui-error {
+    display: none !important
 }

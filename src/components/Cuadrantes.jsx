@@ -13,7 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import 'date-fns';
 import { es } from "date-fns/locale";
 import DateFnsUtils from '@date-io/date-fns';
-import { MuiPickersUtilsProvider, KeyboardDatePicker, } from '@material-ui/pickers';
+import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import InputLabel from '@material-ui/core/InputLabel';
 import OutlinedInput from "@material-ui/core/OutlinedInput";
 import FormControl from '@material-ui/core/FormControl';
@@ -58,6 +58,8 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import SettingsIcon from '@material-ui/icons/Settings';
 import PopupState, { bindTrigger, bindPopover } from 'material-ui-popup-state';
 import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import Draggable from 'react-draggable';
 
 //carga componentes
 import ItemCuadrante from './ItemCuadrante';
@@ -70,52 +72,65 @@ import ObjetosGestionCuadrantes from './ObjetosGestionCuadrantes';
 //helpers
 import HelpersLayoutCuadrantes from './HelpersLayoutCuadrantes';
 
+//pdf
+import { pdf } from "@react-pdf/renderer";
+import ReciboPDF from "./ReciboPDF";
+
 //estilos
 import Clases from "../clases";
 
 //importaciones acciones
 import { obtenerCentrosPorCategoriaAccion } from '../redux/centrosDucks';
+import { obtenerCentroAccion } from '../redux/centrosDucks';
+import { obtenerCategoriaPorCentroAccion } from '../redux/centrosDucks';
 import { retornaAnoMesAccion } from '../redux/appDucks';
 import { diasEnElMesAccion } from '../redux/appDucks';
 import { diaDeLaSemanaAccion } from '../redux/appDucks';
-import { obtenerCentroAccion } from '../redux/centrosDucks';
-import { cambioEstadoInicioCuadrantesAccion } from '../redux/cuadrantesDucks';
-import { obtenerTrabajadoresAccion } from '../redux/trabajadoresDucks';
 import { onEstemAccion } from '../redux/appDucks';
-import { activarDesactivarCambioBotonRegistrarAccion } from '../redux/cuadrantesDucks';
-import { activarDesactivarCambioBotonResetearAccion } from '../redux/cuadrantesDucks';
-import { obtenerCuadranteAccion } from '../redux/cuadrantesDucks';
-import { registrarIntervencionCuadranteNuevoAccion } from '../redux/cuadrantesDucks';
-import { forzarRecargaGraficosCuadrantesAccion } from '../redux/graficosDucks';
-import { actualizarObjetoCuadranteAccion } from '../redux/cuadrantesDucks';
-import { venimosDePendientesAccion } from '../redux/pendientesDucks';
-import { setCategoriaAccion } from '../redux/cuadrantesDucks';
-import { obtenerCategoriaPorCentroAccion } from '../redux/centrosDucks';
-import { setCalendarioAGestionarAccion } from '../redux/cuadrantesDucks';
-import { venimosDeRegistradosAccion } from '../redux/pendientesDucks';
 import { gestionaMaxDateCalendarAccion } from '../redux/appDucks';
-import { setLosDiasDelMesAccion } from '../redux/cuadrantesDucks';
-import { centroAGestionarInicioAccion } from '../redux/cuadrantesGestionDucks';
-import { gestionaCuadranteIndividualAccion } from '../redux/cuadrantesGestionDucks';
-import { setEstamosActualizandoCuadranteSinCargaAccion } from '../redux/cuadrantesSettersDucks';
-import { setArrayDatosInformeAccion } from '../redux/cuadrantesSettersDucks';
-import { setValorPrevioAccordionAbiertoAccion } from '../redux/cuadrantesSettersDucks';
-import { setEstadoFlexAccion } from '../redux/cuadrantesSettersDucks';
-import { setControladorDeEstadoAccion } from '../redux/cuadrantesSettersDucks';
-import { setVisibleCuadranteAccion } from '../redux/cuadrantesSettersDucks';
-import { setVisibleCuadranteServiciosFijosAccion } from '../redux/cuadrantesSettersDucks';
-import { procesarDatosCuadranteAccion } from '../redux/cuadrantesGestionDucks';
+import { obtenerTrabajadoresAccion } from '../redux/trabajadoresDucks';
+import {
+    cambioEstadoInicioCuadrantesAccion,
+    activarDesactivarCambioBotonRegistrarAccion,
+    activarDesactivarCambioBotonResetearAccion,
+    obtenerCuadranteAccion,
+    actualizarObjetoCuadranteAccion,
+    setCalendarioAGestionarAccion,
+    setLosDiasDelMesAccion,
+    setCategoriaAccion
+} from '../redux/cuadrantesDucks';
+import { forzarRecargaGraficosCuadrantesAccion } from '../redux/graficosDucks';
 import { gestionarInformeAccion } from '../redux/cuadrantesColumnasDucks';
-import { setOpenLoadingAccion } from '../redux/cuadrantesSettersDucks';
-import { gestionTrabajadorAccion } from '../redux/cuadrantesGestionDucks';
-import { gestionSuplenteAccion } from '../redux/cuadrantesGestionDucks';
-import { setAlertaAccion } from '../redux/cuadrantesSettersDucks';
-import { reseteaContenidoCuadranteAccion } from '../redux/cuadrantesSettersDucks';
-import { setDisableSelectCentrosAccion } from '../redux/cuadrantesSettersDucks';
-import { setPreValueCalendarioAGestionarReseteoAccion } from '../redux/cuadrantesSettersDucks';
-import { setVenimosBorrarCuadranteAccion } from '../redux/cuadrantesSettersDucks';
-import { setVenimosDeCambioCuadranteAccion } from '../redux/cuadrantesSettersDucks';
-import { traspasoBufferFestivosAccion } from '../redux/cuadrantesHandlersDucks';
+import { venimosDePendientesAccion } from '../redux/pendientesDucks';
+import { venimosDeRegistradosAccion } from '../redux/pendientesDucks';
+import {
+    handleGenerarArchivosAccion,
+    centroAGestionarInicioAccion,
+    gestionaCuadranteIndividualAccion,
+    procesarDatosCuadranteAccion,
+    gestionTrabajadorAccion,
+    gestionSuplenteAccion,
+    gestionarReciboCuadranteAccion
+} from '../redux/cuadrantesGestionDucks';
+import {
+    setVenimosDeCambioCuadranteAccion,
+    setEstamosActualizandoCuadranteSinCargaAccion,
+    setArrayDatosInformeAccion,
+    setValorPrevioAccordionAbiertoAccion,
+    setEstadoFlexAccion,
+    setControladorDeEstadoAccion,
+    setVisibleCuadranteAccion,
+    setVisibleCuadranteServiciosFijosAccion,
+    setOpenLoadingAccion,
+    setAlertaAccion,
+    reseteaContenidoCuadranteAccion,
+    setDisableSelectCentrosAccion,
+    setPreValueCalendarioAGestionarReseteoAccion,
+    setVenimosBorrarCuadranteAccion,
+    setDisableCargandoAccion,
+    setCambioSFAccion,
+    setVenimosDeCambioCentroSelectAccion
+} from '../redux/cuadrantesSettersDucks';
 import {
     abrePopoverDiasAccion,
     abrePopoverServiciosFijosAccion,
@@ -164,7 +179,8 @@ import {
     handleRegistrarCambioEnCasillaConfiguracionAccion,
     handleChangeTipoHorarioAccion,
     configuraStateFestivoAccion,
-    handleLimpiezaHorarioAccion
+    handleLimpiezaHorarioAccion,
+    handleResetearCasillaAccion
 } from '../redux/cuadrantesHandlersDucks';
 import {
     retornaInfoFabButtonAccion,
@@ -173,11 +189,12 @@ import {
     handleClickFacturacionMenuAccion,
     handleClickFacturacionInteriorMenuAccion,
     handleChangeFormNumumeroFactusolAccion,
-    handleGenerarArchivosAccion
+    handleClickFacturarReciboCuadranteAccion
 } from '../redux/cuadrantesFacturacionDucks';
 
 const categorias = Constantes.CATEGORIAS_CENTROS;
 const tipos = Constantes.MODO_ENTRADA_HORARIOS;
+const tipoFestivo = Constantes.TIPO_FESTIVO;
 
 const getHeightScrollable = () => (window.innerHeight - 217) || (document.documentElement.clientHeight - 217) || (document.body.clientHeight - 217);
 
@@ -186,7 +203,7 @@ const Accordion = withStyles({
     root: {
         boxShadow: 'none',
         borderRadius: '0px !important',
-    }
+    },
 })(MuiAccordion);
 const AccordionDetails = withStyles((theme) => ({
     root: {
@@ -196,13 +213,29 @@ const AccordionDetails = withStyles((theme) => ({
         borderRight: '1px solid rgba(0, 0, 0, 0.12);',
     },
 }))(MuiAccordionDetails);
-const AccordionSummary = withStyles({
+const AccordionSummary1 = withStyles({
+    content: {
+        alignItems: 'center',
+    },
     root: {
         minHeight: 38,
         maxHeight: 38,
         '&.Mui-expanded': {
             minHeight: 38,
             maxHeight: 38,
+        }
+    }
+})(MuiAccordionSummary);
+const AccordionSummary2 = withStyles({
+    content: {
+        alignItems: 'center',
+    },
+    root: {
+        minHeight: 48,
+        maxHeight: 48,
+        '&.Mui-expanded': {
+            minHeight: 48,
+            maxHeight: 48,
         }
     }
 })(MuiAccordionSummary);
@@ -250,17 +283,17 @@ const Cuadrantes = (props) => {
 
     const classes = Clases();
     const dispatch = useDispatch();
+    const objetoCentro = useSelector(store => store.variablesCentros.objetoCentro);
+    const objetoCuadrante = useSelector(store => store.variablesCuadrantes.objetoCuadrante);
     const cuadranteServiciosFijos = useSelector(store => store.variablesCuadrantesServiciosFijos.cuadranteServiciosFijos);
     const centrosPorCategoria = useSelector(store => store.variablesCentros.arrayCentrosPorCategoria);
     const logged = useSelector(store => store.variablesUsuario.activo);
     const openLoadingCentros = useSelector(store => store.variablesCentros.loadingCentros);
     const openLoadingTrabajadores = useSelector(store => store.variablesTrabajadores.loadingTrabajadores);
     const openLoadingCuadrantes = useSelector(store => store.variablesCuadrantes.loadingCuadrantes);
-    const centroAGestionar = useSelector(store => store.variablesCentros.objetoCentro);
     const trabajadorAGestionar = useSelector(store => store.variablesTrabajadores.objetoTrabajador);
     const suplenteAGestionar = useSelector(store => store.variablesTrabajadores.objetoSuplente);
     const listadoTrabajadores = useSelector(store => store.variablesTrabajadores.arrayTrabajadores);
-    const objetoCuadrante = useSelector(store => store.variablesCuadrantes.objetoCuadrante);
     const esInicioCuadrantes = useSelector(store => store.variablesCuadrantes.esInicioCuadrantes);
     const disabledItemBotonRegistrar = useSelector(store => store.variablesCuadrantes.estadoActivadoDesactivadoBotonRegistrar);
     const disabledItemBotonActualizar = useSelector(store => store.variablesCuadrantes.estadoActivadoDesactivadoBotonActualizar);
@@ -321,6 +354,11 @@ const Cuadrantes = (props) => {
     const anchorElConfiguracion = useSelector(store => store.variablesCuadrantesPopovers.anchorElConfiguracion);
     const anchorElGeneral = useSelector(store => store.variablesCuadrantesPopovers.anchorElGeneral);
     const numeroCuadrantesCuadrantes = useSelector(store => store.variablesCuadrantesSetters.numeroCuadrantesCuadrantes);
+    const cuadranteBloqueado = useSelector(store => store.variablesCuadrantesSetters.cuadranteBloqueado);
+    const disableCargando = useSelector(store => store.variablesCuadrantesSetters.disableCargando);
+    const cambioSF = useSelector(store => store.variablesCuadrantesSetters.cambioSF);
+    const yaNoEsInicio = useSelector(store => store.variablesCuadrantesSetters.yaNoEsInicio);
+    const venimosDeCambioCentroSelect = useSelector(store => store.variablesCuadrantesSetters.venimosDeCambioCentroSelect);
 
     //para test
     const arrayDatosInforme = useSelector(store => store.variablesCuadrantesSetters.arrayDatosInforme);
@@ -329,6 +367,7 @@ const Cuadrantes = (props) => {
     const bufferSwitchedDiasFestivosCuadrante = useSelector(store => store.variablesCuadrantesSetters.bufferSwitchedDiasFestivosCuadrante);
     const trabajadoresEnCuadrante = useSelector(store => store.variablesCuadrantesSetters.trabajadoresEnCuadrante);
     const suplentesEnCuadrante = useSelector(store => store.variablesCuadrantesSetters.suplentesEnCuadrante);
+    const primerDiaEstadoBajaCIA = useSelector(store => store.variablesCuadrantesSetters.primerDiaEstadoBajaCIA);
 
     //helpers
 
@@ -343,7 +382,10 @@ const Cuadrantes = (props) => {
         gestionaValoresCasillasAccion,
         retornaHeaderServiciosFijosAccion,
         retornoServiciosFijosEnLayoutAccion,
-        retornaServiciosFijosEnLayoutAvatarsAccion
+        retornaServiciosFijosEnLayoutAvatarsAccion,
+        retornaLabelChipAccion,
+        retornaColorChipAccion,
+        retornaAvatarChipAccion
     } = HelpersLayoutCuadrantes();
 
     //refs
@@ -366,6 +408,18 @@ const Cuadrantes = (props) => {
         openAccordion: classes.openAccordion,
         editando: classes.editando
     });
+    const [isDragging, setIsDragging] = useState(false);
+
+    //mediaQueries
+
+    const esDesktop = useMediaQuery(theme => theme.breakpoints.up('desktop'));
+    const alturaCasilla = () => {
+        if (esDesktop) {
+            return 38;
+        } else {
+            return 48;
+        };
+    };
 
     //useEffect
 
@@ -380,6 +434,7 @@ const Cuadrantes = (props) => {
     useEffect(() => {
         document.body.classList.add(classes.sinScroll);
         dispatch(reseteaContenidoCuadranteAccion());
+        dispatch(setDisableCargandoAccion(true));
     }, []);
 
     useEffect(() => {
@@ -416,12 +471,6 @@ const Cuadrantes = (props) => {
         dispatch(setLosDiasDelMesAccion(array));
     }, [calendarioAGestionar]);
 
-    useEffect(() => {
-        if (losDiasDelMes.length > 0) {
-            dispatch(configuraStateFestivoAccion());
-        };
-    }, [losDiasDelMes]);
-
     //secuencia cuadrante
 
     useEffect(() => {
@@ -436,16 +485,17 @@ const Cuadrantes = (props) => {
             dispatch(setControladorDeEstadoAccion('inicio'));
         };
         if (objetoCuadrante.datosCuadrante.centro) {
-            if (!venimosBorrarCuadrante) {               
+            if (!venimosBorrarCuadrante) {
                 if (!estamosActualizandoCuadranteSinCarga) {
                     dispatch(gestionaCuadranteIndividualAccion(cuadranteEnUsoCuadrantes, false));
-                } else {         
+                } else {
                     dispatch(setEstamosActualizandoCuadranteSinCargaAccion(false));
                 };
             } else {
                 dispatch(setVenimosBorrarCuadranteAccion(false));
             };
         };
+        dispatch(setDisableCargandoAccion(false));
     }, [objetoCuadrante]);
 
     useEffect(() => {
@@ -455,11 +505,11 @@ const Cuadrantes = (props) => {
     useEffect(() => {
         if (cuadranteRegistrado === 'no') {
             if (!estadoVenimosDePendientes && !venimosDeCambioCuadrante) {
-                dispatch(obtenerCentroAccion('centros', centro));
                 dispatch(cambioEstadoInicioCuadrantesAccion(false));
                 dispatch(activarDesactivarCambioBotonRegistrarAccion(false));
-                dispatch(registrarIntervencionCuadranteNuevoAccion(false));
+                //dispatch(registrarIntervencionCuadranteNuevoAccion(false));
             };
+            dispatch(obtenerCentroAccion('centros', centro));
             dispatch(activarDesactivarCambioBotonResetearAccion(true));
         };
         if (cuadranteRegistrado === 'si') {
@@ -467,7 +517,7 @@ const Cuadrantes = (props) => {
                 // dispatch(gestionaCuadranteIndividualAccion(cuadranteEnUsoCuadrantes, false));
                 dispatch(cambioEstadoInicioCuadrantesAccion(false));
                 dispatch(activarDesactivarCambioBotonRegistrarAccion(false));
-                dispatch(registrarIntervencionCuadranteNuevoAccion(true));
+                //dispatch(registrarIntervencionCuadranteNuevoAccion(true));
             };
             dispatch(obtenerCentroAccion('centros', objetoCuadrante.datosCuadrante.centro));
             dispatch(activarDesactivarCambioBotonResetearAccion(false));
@@ -475,55 +525,83 @@ const Cuadrantes = (props) => {
     }, [cuadranteRegistrado]);
 
     useEffect(() => {
-        const fetchData = () => {
-            dispatch(setOpenLoadingAccion(true));
-            if (centroAGestionar.nombre !== '') {
-                dispatch(centroAGestionarInicioAccion());
+        let abortController = new AbortController();
+        dispatch(setOpenLoadingAccion(true));
+        if (objetoCentro.nombre !== '') {
+            dispatch(centroAGestionarInicioAccion());
+            if (venimosDeCambioCentroSelect) {
+                if (centro) {
+                    const nombreCuadrante = calendarioAGestionar + '-' + centro;
+                    dispatch(obtenerCuadranteAccion('cuadrantes', nombreCuadrante));
+                };
+                dispatch(setVenimosDeCambioCentroSelectAccion(false));
             };
-            dispatch(setOpenLoadingAccion(false));
+        };
+        dispatch(setOpenLoadingAccion(false));
+        return () => {
+            abortController.abort();
         }
-        fetchData();
-    }, [centroAGestionar]);
+    }, [objetoCentro]);
 
     useEffect(() => {
+        let abortController = new AbortController();
         if (trabajadorAGestionar.nombre !== '') {
             dispatch(gestionTrabajadorAccion());
         };
+        return () => {
+            abortController.abort();
+        }
     }, [trabajadorAGestionar]);
 
     useEffect(() => {
+        let abortController = new AbortController();
         if (suplenteAGestionar.nombre !== '') {
             dispatch(gestionSuplenteAccion());
         };
+        return () => {
+            abortController.abort();
+        }
     }, [suplenteAGestionar]);
 
     useEffect(() => {
+        let abortController = new AbortController();
         if (cuadrante.length > 0) {
-            dispatch(setArrayDatosInformeAccion(dispatch(gestionarInformeAccion())));
-            // if (estamosActualizandoCuadrante.estado) {
-            //     handleActualizarTrabajadoresGeneral();
-            // };
+            dispatch(setArrayDatosInformeAccion(dispatch(gestionarInformeAccion(false))));
         };
+        return () => {
+            abortController.abort();
+        }
     }, [cuadrante]);
 
     useEffect(() => {
-        if (cuadrante.length > 0 || cuadranteServiciosFijos.length > 0) {
+        if (cuadrante.length > 0 || cuadranteServiciosFijos.length > 0 || cambioSF) {
             redimensionarEspacio();
+            if (cambioSF) {
+                dispatch(setCambioSFAccion(false));
+            };
+            if (cuadranteRegistrado === 'no' && !numeroCuadrantesCuadrantes[cuadranteEnUsoCuadrantes - 1].revisado && !yaNoEsInicio && !cambioSF) {
+                dispatch(configuraStateFestivoAccion());
+            };
         };
-    }, [cuadrante.length, cuadranteServiciosFijos.length, visibleCuadranteServiciosFijos, visibleCuadrante]);
+    }, [cuadrante.length, cuadranteServiciosFijos.length, visibleCuadranteServiciosFijos, visibleCuadrante, cambioSF]);
 
     //secuencia venimos de pendientes o registrados
 
     useEffect(() => {
+        let abortController = new AbortController();
         if (estadoVenimosDePendientes) {
             if (centro) {
                 dispatch(obtenerCategoriaPorCentroAccion('centros', centro, 0));
             };
             dispatch(venimosDePendientesAccion(false));
+        };
+        return () => {
+            abortController.abort();
         }
     }, [estadoVenimosDePendientes]);
 
     useEffect(() => {
+        let abortController = new AbortController();
         if (estadoVenimosDeRegistrados) {
             if (centro) {
                 dispatch(obtenerCategoriaPorCentroAccion('centros', centro, 0));
@@ -531,15 +609,22 @@ const Cuadrantes = (props) => {
                 dispatch(obtenerCuadranteAccion('cuadrantes', nombreCuadrante));
             };
             dispatch(venimosDeRegistradosAccion(false));
+        };
+        return () => {
+            abortController.abort();
         }
     }, [estadoVenimosDeRegistrados]);
 
     useEffect(() => {
+        let abortController = new AbortController();
         if (categoriaPorCentro) {
             dispatch(setCategoriaAccion(categoriaPorCentro));
             dispatch(obtenerCentrosPorCategoriaAccion('centros', categoriaPorCentro));
             dispatch(setDisableSelectCentrosAccion(false));
         };
+        return () => {
+            abortController.abort();
+        }
     }, [categoriaPorCentro]);
 
     useEffect(() => {
@@ -556,10 +641,6 @@ const Cuadrantes = (props) => {
                 (cuadrante.length > 0 && !existeCuadranteSF) ||
                 (cuadranteServiciosFijos.length > 0 && !existeCuadrante)) {
                 dispatch(setVenimosDeCambioCuadranteAccion(false));
-                if (numeroCuadrantesCuadrantes.length > 1) {
-                    dispatch(configuraStateFestivoAccion());
-                    dispatch(traspasoBufferFestivosAccion(false));
-                };
             };
         };
     }, [venimosDeCambioCuadrante, cuadrante, cuadranteServiciosFijos]);
@@ -635,8 +716,13 @@ const Cuadrantes = (props) => {
     }, [openLoadingCentros, openLoadingTrabajadores, openLoadingCuadrantes]);
 
     useEffect(() => {
-        if (openDialog8)
+        let abortController = new AbortController();
+        if (openDialog8) {
             dispatch(generaInformacionCuadrantesAccion());
+        };
+        return () => {
+            abortController.abort();
+        }
     }, [openDialog8]);
 
     //funciones   
@@ -667,7 +753,7 @@ const Cuadrantes = (props) => {
         if ((dimCuadrante + dimServiciosAnadir) > ampleAGestionar) {
             setDimensionsColumna({ width: ((ampleAGestionar / (serviciosActivos + cuadrantesActivos)) - 5) });
             setDimensionsColumnaServiciosFijos({ width: ((ampleAGestionar / (serviciosActivos + cuadrantesActivos)) - 5) });
-            if (ampleAGestionar / cuadrante.length < 225) {
+            if (ampleAGestionar / (serviciosActivos + cuadrantesActivos) < 175) {
                 dispatch(setEstadoFlexAccion('columna'));
             } else {
                 dispatch(setEstadoFlexAccion('fila'));
@@ -685,6 +771,20 @@ const Cuadrantes = (props) => {
                     setDimensionsColumnaServiciosFijos({ width: 165 });
                 };
             };
+        };
+    };
+
+    const gestionarReciboPDF = async () => {
+        const element = <ReciboPDF objetoReciboPDF={objetoCuadrante.datosInforme.datosGestionEsp} />;
+        const myPdf = pdf([]);
+        myPdf.updateContainer(element);
+        const blob = await myPdf.toBlob();
+        if (blob) {
+            let file = new File([blob], 'Recibo-' + objetoCuadrante.nombre + '.pdf', { type: 'application/pdf' });
+            const fileURL = URL.createObjectURL(file);
+            const pdfWindow = window.open();
+            pdfWindow.location.href = fileURL;
+            dispatch(gestionarReciboCuadranteAccion());
         };
     };
 
@@ -735,7 +835,15 @@ const Cuadrantes = (props) => {
     const tituloDialogCuadrantes4 = 'Informe Cuadrante de Servicio';
     const descripcionDialogCuadrantes4 = retornaInformacionCuadrantes();
     const tituloDialogCuadrantes5 = "¿Estás seguro que quieres borrar el Cuadrante en uso?";
-    const descripcionDialogCuadrantes5 = "Estás tratando de borrar el cuadrante nº " + cuadranteEnUsoCuadrantes + " de la serie del Centro " + centroAGestionar.nombre + ". Si estás conforme pulsa 'De acuerdo', de lo contrario pulsa 'No'.";
+    const descripcionDialogCuadrantes5 = "Estás tratando de borrar el cuadrante nº " + cuadranteEnUsoCuadrantes + " de la serie del Centro " + objetoCentro.nombre + ". Si estás conforme pulsa 'De acuerdo', de lo contrario pulsa 'No'.";
+
+    const retornaColorDiaFestivo = (dia) => {
+        if (stateFestivo['tipoFestivoDia' + dia] === 1) {
+            return classes.diaFestivo
+        } else {
+            return classes.diaFestivoCierre
+        };
+    };
 
     const retornaCasillasDias = (dia, index) => {
         let postRef = dia[1][0] + dia[0][0];
@@ -750,7 +858,8 @@ const Cuadrantes = (props) => {
                 <Box
                     m={0.3}
                     p={1.5}
-                    className={clsx(classes.inicio, classes.blanc, classes.mb_5, dia[1][0] === 'Sábado' || dia[1][0] === 'Domingo' || stateFestivo['estadoFestivoDia' + (index + 1)] ? classes.diaFestivo : classes.diaLaboral)}
+                    className={clsx(classes.inicio, classes.blanc, classes.mb_5, dia[1][0] === 'Sábado' || dia[1][0] === 'Domingo' || stateFestivo['estadoFestivoDia' + (index + 1)] ? retornaColorDiaFestivo(dia[0][0]) : classes.diaLaboral)}
+                    style={{ minHeight: alturaCasilla(), maxHeight: alturaCasilla(), display: 'flex', alignItems: 'center' }}
                     onClick={(event) => dispatch(abrePopoverDiasAccion(postRef, index, dia[1][0], event, scrollable, classesDisp))}
                 >
                     <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{dia[1][0] + ', ' + dia[0][0]}</Typography>
@@ -773,8 +882,8 @@ const Cuadrantes = (props) => {
                     m={0.3}
                     p={1.5}
                     ref={ref => { boxes.current[indexColumna] = ref }}
-                    className={gestionaClassesColoresGeneralAccion(indexDia + 1, columna[postRef].baja, columna[postRef].modificado, columna.nombreTrabajador) || null}
-                    style={{ width: dimensionsColumna.width, display: 'flex', flexDirection: 'row', justifycontent: 'space-between', alignItems: 'center' }}
+                    className={gestionaClassesColoresGeneralAccion(indexDia + 1, columna[postRef].baja, columna[postRef].modificado, columna.nombreTrabajador, columna[postRef].tipoBaja) || null}
+                    style={{ width: dimensionsColumna.width, minHeight: alturaCasilla(), maxHeight: alturaCasilla(), display: 'flex', flexDirection: 'row', justifycontent: 'space-between', alignItems: 'center' }}
                     onClick={(event) => dispatch(abrePopoverGeneralAccion(postRef, indexDia, dia[1][0], columna, indexColumna, indexColumna, event, scrollable, boxes, classes))}
                 >
                     <Grid item xs={10}>
@@ -907,7 +1016,7 @@ const Cuadrantes = (props) => {
                                     m={0.3}
                                     p={1.5}
                                     className={gestionaClassesColoresServiciosFijosAccion(indexDia + 1, hayServicio) || null}
-                                    style={{ width: dimensionsColumnaServiciosFijos.width }}
+                                    style={{ width: dimensionsColumnaServiciosFijos.width, minHeight: alturaCasilla(), maxHeight: alturaCasilla(), }}
                                     {...bindTrigger(popupState)}
                                 >
                                     <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{gestionaTextoCasillasServiciosFijosAccion(indexDia + 1, precio)}</Typography>
@@ -1035,34 +1144,65 @@ const Cuadrantes = (props) => {
         if (cuadranteServiciosFijos.length > 0 && cuadrante.length > 0 && visibleCuadrante) {
             if (cuadranteServiciosFijos.length === 1) {
                 if (
-                    cuadranteServiciosFijos[0].activo_TO === 'no' ||
-                    cuadranteServiciosFijos[0].activo_CR === 'no' ||
-                    cuadranteServiciosFijos[0].activo_CE === 'no' ||
-                    cuadranteServiciosFijos[0].activo_CI === 'no' ||
-                    cuadranteServiciosFijos[0].activo_MO === 'no' ||
-                    cuadranteServiciosFijos[0].activo_OF === 'no' ||
-                    cuadranteServiciosFijos[0].activo_AL === 'no' ||
-                    cuadranteServiciosFijos[0].activo_LA === 'no' ||
-                    cuadranteServiciosFijos[0].activo_TE === 'no' ||
-                    cuadranteServiciosFijos[0].activo_FI === 'no' ||
-                    cuadranteServiciosFijos[0].activo_FE === 'no' ||
-                    cuadranteServiciosFijos[0].activo_AB === 'no' ||
-                    cuadranteServiciosFijos[0].activo_MA === 'no' ||
-                    cuadranteServiciosFijos[0].activo_PO === 'no' ||
-                    cuadranteServiciosFijos[0].activo_BA === 'no' ||
-                    cuadranteServiciosFijos[0].activo_FT === 'no' ||
-                    cuadranteServiciosFijos[0].activo_C3 === 'no' ||
-                    cuadranteServiciosFijos[0].activo_C2 === 'no' ||
-                    cuadranteServiciosFijos[0].activo_ES === 'no' ||
-                    cuadranteServiciosFijos[0].activo_PA === 'no'
+                    cuadranteServiciosFijos[0].activo_TO === 'si' ||
+                    cuadranteServiciosFijos[0].activo_CR === 'si' ||
+                    cuadranteServiciosFijos[0].activo_CE === 'si' ||
+                    cuadranteServiciosFijos[0].activo_CI === 'si' ||
+                    cuadranteServiciosFijos[0].activo_MO === 'si' ||
+                    cuadranteServiciosFijos[0].activo_OF === 'si' ||
+                    cuadranteServiciosFijos[0].activo_AL === 'si' ||
+                    cuadranteServiciosFijos[0].activo_LA === 'si' ||
+                    cuadranteServiciosFijos[0].activo_TE === 'si' ||
+                    cuadranteServiciosFijos[0].activo_FI === 'si' ||
+                    cuadranteServiciosFijos[0].activo_FE === 'si' ||
+                    cuadranteServiciosFijos[0].activo_AB === 'si' ||
+                    cuadranteServiciosFijos[0].activo_MA === 'si' ||
+                    cuadranteServiciosFijos[0].activo_PO === 'si' ||
+                    cuadranteServiciosFijos[0].activo_BA === 'si' ||
+                    cuadranteServiciosFijos[0].activo_FT === 'si' ||
+                    cuadranteServiciosFijos[0].activo_C3 === 'si' ||
+                    cuadranteServiciosFijos[0].activo_C2 === 'si' ||
+                    cuadranteServiciosFijos[0].activo_ES === 'si' ||
+                    cuadranteServiciosFijos[0].activo_PA === 'si'
                 ) {
-                    mostramos = false;
-                } else {
                     mostramos = true;
+                } else {
+                    mostramos = false;
                 }
             } else {
                 if (cuadranteServiciosFijos.length > 1) {
-                    mostramos = true;
+                    let contadorServiciosActivos = 0;
+                    for (let i = 0; i < cuadranteServiciosFijos.length; i++) {
+                        if (
+                            cuadranteServiciosFijos[i].activo_TO === 'si' ||
+                            cuadranteServiciosFijos[i].activo_CR === 'si' ||
+                            cuadranteServiciosFijos[i].activo_CE === 'si' ||
+                            cuadranteServiciosFijos[i].activo_CI === 'si' ||
+                            cuadranteServiciosFijos[i].activo_MO === 'si' ||
+                            cuadranteServiciosFijos[i].activo_OF === 'si' ||
+                            cuadranteServiciosFijos[i].activo_AL === 'si' ||
+                            cuadranteServiciosFijos[i].activo_LA === 'si' ||
+                            cuadranteServiciosFijos[i].activo_TE === 'si' ||
+                            cuadranteServiciosFijos[i].activo_FI === 'si' ||
+                            cuadranteServiciosFijos[i].activo_FE === 'si' ||
+                            cuadranteServiciosFijos[i].activo_AB === 'si' ||
+                            cuadranteServiciosFijos[i].activo_MA === 'si' ||
+                            cuadranteServiciosFijos[i].activo_PO === 'si' ||
+                            cuadranteServiciosFijos[i].activo_BA === 'si' ||
+                            cuadranteServiciosFijos[i].activo_FT === 'si' ||
+                            cuadranteServiciosFijos[i].activo_C3 === 'si' ||
+                            cuadranteServiciosFijos[i].activo_C2 === 'si' ||
+                            cuadranteServiciosFijos[i].activo_ES === 'si' ||
+                            cuadranteServiciosFijos[i].activo_PA === 'si'
+                        ) {
+                            contadorServiciosActivos += 1;
+                        };
+                    }
+                    if (contadorServiciosActivos >= 1) {
+                        mostramos = true;
+                    } else {
+                        mostramos = false;
+                    };
                 }
             }
         } else {
@@ -1111,6 +1251,64 @@ const Cuadrantes = (props) => {
         }
     };
 
+    const retornaBotoneraAcco1 = (index, columnaCabecera) => {
+        return (
+            <Fragment>
+                <Tooltip title={columnaCabecera.nombreTrabajador ? "Añadir suplente" : ""} placement="top-end" arrow>
+                    <div>
+                        <IconButton
+                            className={clsx(classes.btnAddSuplente, classes.blanc, classes.mb10)}
+                            onClick={() => dispatch(handleClickAddColumnaAccion('suplente', index, scrollable, classesDisp))}
+                            disabled={columnaCabecera.nombreTrabajador ? false : true}
+                        >
+                            <PersonAddIcon style={{ fontSize: 18 }} />
+                        </IconButton>
+                    </div>
+                </Tooltip>
+                <Tooltip title={columnaCabecera.nombreTrabajador ? "Limpiar horario columna" : ""} placement="top-end" arrow>
+                    <div>
+                        <IconButton
+                            className={clsx(classes.btnLimpieza, classes.blanc, classes.mb10)}
+                            size="small"
+                            onClick={() => dispatch(handleLimpiezaHorarioAccion(index))}
+                            disabled={columnaCabecera.nombreTrabajador ? false : true}
+                        >
+                            <RemoveCircleOutlineIcon />
+                        </IconButton>
+                    </div>
+                </Tooltip>
+            </Fragment>
+        )
+    };
+
+    const retornaBotoneraAcco2 = (index, columnaCabecera) => {
+        return (
+            <Fragment>
+                <Tooltip title={columnaCabecera.nombreTrabajador ? "Actualizar trabajador" : ""} placement="top-end" arrow>
+                    <div>
+                        <IconButton
+                            className={clsx(classes.btnBajas, classes.mb10)}
+                            size="small"
+                            onClick={() => dispatch(handleActualizarTrabajadoresAccion(index, columnaCabecera.tipoTrabajador, columnaCabecera.idTrabajador))}
+                            disabled={columnaCabecera.nombreTrabajador ? false : true}
+                        >
+                            <CachedIcon />
+                        </IconButton>
+                    </div>
+                </Tooltip>
+                <Tooltip title="Eliminar trabajador" placement="top-end" arrow>
+                    <IconButton
+                        className={clsx(classes.btnError, classes.mb10)}
+                        size="small"
+                        onClick={() => dispatch(eliminarColumnaAccion(index, columnaCabecera.idTrabajador, scrollable, classesDisp))}
+                    >
+                        <DeleteIcon />
+                    </IconButton>
+                </Tooltip>
+            </Fragment>
+        )
+    };
+
     const retornaCuadranteCompleto = () => {
         return (
             <Grid
@@ -1134,7 +1332,7 @@ const Cuadrantes = (props) => {
                             mx={0.3}
                             className={clsx(classes.cabecera, classes.inicio)}
                             color="secondary.contrastText"
-                            style={{ minHeight: 38, maxHeight: 38, padding: 9, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
+                            style={{ minHeight: alturaCasilla(), maxHeight: alturaCasilla(), padding: 9, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
                         >
                             <Typography variant="body2">Cuadrante</Typography>
                             <Avatar
@@ -1146,7 +1344,7 @@ const Cuadrantes = (props) => {
                         {visibleCuadranteServiciosFijos ? (
                             cuadranteServiciosFijos.length > 0 ? (
                                 cuadranteServiciosFijos.map((servicio, index) => (
-                                    retornaHeaderServiciosFijosAccion(servicio, index, dimensionsColumnaServiciosFijos.width)
+                                    retornaHeaderServiciosFijosAccion(servicio, index, dimensionsColumnaServiciosFijos.width, alturaCasilla())
                                 ))
                             ) : null
                         ) : null}
@@ -1160,17 +1358,28 @@ const Cuadrantes = (props) => {
                                         >
                                             <Accordion
                                                 expanded={expandedAccordion === 'panel_' + (index + 1)}
-                                                className={gestionaClassesColoresTrabajadoresAccion(columnaCabecera.tipoTrabajador)}
-                                                style={{ width: dimensionsColumna.width }}
+                                                className={gestionaClassesColoresTrabajadoresAccion(columnaCabecera.tipoTrabajador, columnaCabecera.idTrabajador)}
+                                                style={{ width: dimensionsColumna.width, minHeight: alturaCasilla(), maxHeight: alturaCasilla() }}
                                                 onChange={(e, expandedAccordion) => { dispatch(handleCambioAccordionHeaderAccion(expandedAccordion, 'panel_' + (index + 1), index, scrollable, classesDisp)) }}
                                             >
-                                                <AccordionSummary
-                                                    expandIcon={<ExpandMoreIcon className={classes.blanc} />}
-                                                >
-                                                    <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{columnaCabecera.nombreTrabajador}</Typography>
-                                                </AccordionSummary>
-                                                <AccordionDetails>
-                                                    <Grid container className={classes.mt5}>
+                                                {esDesktop ? (
+                                                    <AccordionSummary1
+                                                        expandIcon={<ExpandMoreIcon className={classes.blanc} />}
+                                                    >
+                                                        <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{columnaCabecera.nombreTrabajador !== 'Suplente' ? columnaCabecera.nombreTrabajador : ''}</Typography>
+                                                    </AccordionSummary1>
+                                                ) : (
+                                                    <AccordionSummary2
+                                                        expandIcon={<ExpandMoreIcon className={classes.blanc} />}
+                                                    >
+                                                        <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{columnaCabecera.nombreTrabajador !== 'Suplente' ? columnaCabecera.nombreTrabajador : ''}</Typography>
+                                                    </AccordionSummary2>
+                                                )}
+                                                <AccordionDetails
+                                                    style={{ marginTop: 1 }}>
+                                                    <Grid container
+                                                        className={classes.mt5}
+                                                    >
                                                         <Grid
                                                             container
                                                             direction="column"
@@ -1181,60 +1390,41 @@ const Cuadrantes = (props) => {
                                                                 style={{ width: '100%', display: 'flex' }}
                                                                 className={estadoFlex === 'fila' ? classes.flexRow : classes.flexColumn}
                                                             >
-                                                                <Grid item xs={false}>
-                                                                </Grid>
-                                                                <Grid item xs={12}>
-                                                                    <Box
-                                                                        display="flex"
-                                                                        alignItems="center"
-                                                                        justifyContent="flex-end"
-                                                                    >
-                                                                        <Tooltip title={columnaCabecera.nombreTrabajador ? "Añadir suplente" : ""} placement="top-end" arrow>
-                                                                            <div>
-                                                                                <IconButton
-                                                                                    className={clsx(classes.btnAddSuplente, classes.blanc, classes.mb10)}
-                                                                                    onClick={() => dispatch(handleClickAddColumnaAccion('suplente', index, scrollable, classesDisp))}
-                                                                                    disabled={columnaCabecera.nombreTrabajador ? false : true}
-                                                                                >
-                                                                                    <PersonAddIcon style={{ fontSize: 18 }} />
-                                                                                </IconButton>
-                                                                            </div>
-                                                                        </Tooltip>
-                                                                        <Tooltip title={columnaCabecera.nombreTrabajador ? "Limpiar horario columna" : ""} placement="top-end" arrow>
-                                                                            <div>
-                                                                                <IconButton
-                                                                                    className={clsx(classes.btnLimpieza, classes.blanc, classes.mb10)}
-                                                                                    size="small"
-                                                                                    onClick={() => dispatch(handleLimpiezaHorarioAccion(index))}
-                                                                                    disabled={columnaCabecera.nombreTrabajador ? false : true}
-                                                                                >
-                                                                                    <RemoveCircleOutlineIcon />
-                                                                                </IconButton>
-                                                                            </div>
-                                                                        </Tooltip>
-                                                                        <Tooltip title={columnaCabecera.nombreTrabajador ? "Actualizar trabajador" : ""} placement="top-end" arrow>
-                                                                            <div>
-                                                                                <IconButton
-                                                                                    className={clsx(classes.btnVariacion, classes.blanc, classes.mb10)}
-                                                                                    size="small"
-                                                                                    onClick={() => dispatch(handleActualizarTrabajadoresAccion(index, columnaCabecera.tipoTrabajador, columnaCabecera.idTrabajador))}
-                                                                                    disabled={columnaCabecera.nombreTrabajador ? false : true}
-                                                                                >
-                                                                                    <CachedIcon />
-                                                                                </IconButton>
-                                                                            </div>
-                                                                        </Tooltip>
-                                                                        <Tooltip title="Eliminar trabajador" placement="top-end" arrow>
-                                                                            <IconButton
-                                                                                className={clsx(classes.btnError, classes.mb10)}
-                                                                                size="small"
-                                                                                onClick={() => dispatch(eliminarColumnaAccion(index, columnaCabecera.idTrabajador, scrollable, classesDisp))}
+                                                                {estadoFlex === 'fila' ? (
+                                                                    <Fragment>
+                                                                        <Grid item xs={12}>
+                                                                            <Box
+                                                                                display="flex"
+                                                                                alignItems="center"
+                                                                                justifyContent="flex-end"
                                                                             >
-                                                                                <DeleteIcon />
-                                                                            </IconButton>
-                                                                        </Tooltip>
-                                                                    </Box>
-                                                                </Grid>
+                                                                                {retornaBotoneraAcco1(index, columnaCabecera)}
+                                                                                {retornaBotoneraAcco2(index, columnaCabecera)}
+                                                                            </Box>
+                                                                        </Grid>
+                                                                    </Fragment>
+                                                                ) : (
+                                                                    <Fragment>
+                                                                        <Grid item xs={12}>
+                                                                            <Box
+                                                                                display="flex"
+                                                                                alignItems="center"
+                                                                                justifyContent="flex-end"
+                                                                            >
+                                                                                {retornaBotoneraAcco1(index, columnaCabecera)}
+                                                                            </Box>
+                                                                        </Grid>
+                                                                        <Grid item xs={12}>
+                                                                            <Box
+                                                                                display="flex"
+                                                                                alignItems="center"
+                                                                                justifyContent="flex-end"
+                                                                            >
+                                                                                {retornaBotoneraAcco2(index, columnaCabecera)}
+                                                                            </Box>
+                                                                        </Grid>
+                                                                    </Fragment>
+                                                                )}
                                                             </Box>
                                                             <FormControl
                                                                 variant="outlined"
@@ -1242,15 +1432,15 @@ const Cuadrantes = (props) => {
                                                                 className={classes.mt15}
                                                                 size="small"
                                                             >
-                                                                <InputLabel>{(columnaCabecera.tipoTrabajador === 'trabajador' || !columnaCabecera.tipoTrabajador) ? 'Trabajador' : 'Suplente'}</InputLabel>
+                                                                <InputLabel>{esDesktop ? ((columnaCabecera.tipoTrabajador === 'trabajador' || !columnaCabecera.tipoTrabajador) ? 'Trabajador' : 'Suplente') : ((columnaCabecera.tipoTrabajador === 'trabajador' || !columnaCabecera.tipoTrabajador) ? 'Trab' : 'Supl')}</InputLabel>
                                                                 <Select
                                                                     id={`form-trabajador-` + (index + 1)}
-                                                                    value={columnaCabecera.idTrabajador < 1000 ? columnaCabecera.idTrabajador : ''}
+                                                                    value={columnaCabecera.idTrabajador < 999 ? columnaCabecera.idTrabajador : ''}
                                                                     onChange={(event) => dispatch(handleChangeFormTrabajadoresAccion(index, columnaCabecera.tipoTrabajador, event))}
                                                                     onOpen={() => dispatch(setValorPrevioAccordionAbiertoAccion(columnaCabecera.idTrabajador))}
                                                                     input={
                                                                         <OutlinedInput
-                                                                            labelWidth={80}
+                                                                            labelWidth={esDesktop ? 80 : 35}
                                                                         />
                                                                     }
                                                                 >
@@ -1267,10 +1457,10 @@ const Cuadrantes = (props) => {
                                                                 className={classes.mt15}
                                                                 size="small"
                                                             >
-                                                                <InputLabel>Modo entrada datos</InputLabel>
+                                                                <InputLabel>{esDesktop ? 'Modo entrada datos' : 'Datos'}</InputLabel>
                                                                 <Select
                                                                     id="form-tipo-cuadrantes"
-                                                                    label="Modo entrada datos"
+                                                                    label={esDesktop ? 'Modo entrada datos' : 'Datos'}
                                                                     value={columnaCabecera.tipoHorario || ''}
                                                                     onChange={(event) => dispatch(handleChangeTipoHorarioAccion(index, event))}
                                                                     helpertext="Selecciona Modo entrada datos"
@@ -1308,7 +1498,9 @@ const Cuadrantes = (props) => {
                     <Grid container
                         style={{ marginTop: 45 }}
                     >
-                        <Box>
+                        <Box
+                            style={!esDesktop ? { marginTop: 10 } : null}
+                        >
                             {losDiasDelMes.map((dia, index) => (
                                 retornaCasillasDias(dia, index)
                             ))}
@@ -1316,7 +1508,10 @@ const Cuadrantes = (props) => {
                         {visibleCuadranteServiciosFijos ? (
                             cuadranteServiciosFijos.length > 0 ? (
                                 cuadranteServiciosFijos.map((servicio, indexColSF) => (
-                                    <Box key={'box' + indexColSF}>
+                                    <Box
+                                        key={'box' + indexColSF}
+                                        style={!esDesktop ? { marginTop: 10 } : null}
+                                    >
                                         {losDiasDelMes.map((dia, indexDia) => (
                                             retornaCasillasServiciosFijos(dia, indexDia, servicio, indexColSF)
                                         ))}
@@ -1329,6 +1524,7 @@ const Cuadrantes = (props) => {
                                 cuadrante.map((columna, indexColumna) => (
                                     <Box
                                         key={'Box_' + indexColumna}
+                                        style={!esDesktop ? { marginTop: 10 } : null}
                                     >
                                         {losDiasDelMes.map((dia, indexDia) => (
                                             retornaCasillasGeneral(dia, indexDia, columna, indexColumna)
@@ -1338,18 +1534,26 @@ const Cuadrantes = (props) => {
                             ) : null
                         ) : null}
                     </Grid>
-                </Box>
-                <Tooltip title="Informe Cuadrante" placement="left" arrow>
-                    <Fab
-                        variant="extended"
-                        className={objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1] && objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].bloqueado === 'si' ? classes.fabBloqueado : classes.fab}
-                        onClick={() => dispatch(handleClickOpenDialogCuadrantes4Accion())}
-                    >
-                        <Typography variant="body2" className={classes.typoFab}>{dispatch(retornaInfoFabButtonAccion())}</Typography>
-                        <AssessmentIcon />
-                    </Fab>
-                </Tooltip>
-            </Grid>
+                </Box >
+                <Draggable
+                    axis="x"
+                    bounds={{ right: 0 }}
+                    onDrag={() => setIsDragging(true)}
+                    onStop={() => setTimeout(() => { setIsDragging(false) }, 500)}
+                >
+                    <Tooltip title="Informe Cuadrante" placement="left" arrow>
+                        <Fab
+                            variant="extended"
+                            className={objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1] && objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].bloqueado === 'si' ? classes.fabBloqueado : classes.fab}
+                            onClick={() => !isDragging ? dispatch(handleClickOpenDialogCuadrantes4Accion()) : null}
+                        >
+                            <Typography variant="body2" className={classes.typoFab}>{dispatch(retornaInfoFabButtonAccion())}</Typography>
+                            <AssessmentIcon />
+                        </Fab>
+                    </Tooltip>
+                </Draggable>
+
+            </Grid >
         )
     };
 
@@ -1366,13 +1570,13 @@ const Cuadrantes = (props) => {
                                 overlap="circle"
                                 classes={{
                                     badge:
-                                        firmaActualizacion && centroAGestionar.nombre && intervencionRegistrada && objetoCuadrante.estado === 'facturado' ?
+                                        firmaActualizacion && objetoCentro.nombre && intervencionRegistrada && objetoCuadrante.estado === 'facturado' ?
                                             classes.badgeVerd :
-                                            firmaActualizacion && centroAGestionar.nombre && intervencionRegistrada && objetoCuadrante.estado === 'registrado' ?
+                                            firmaActualizacion && objetoCentro.nombre && intervencionRegistrada && objetoCuadrante.estado === 'registrado' ?
                                                 classes.badgeTaronja :
-                                                firmaActualizacion && centroAGestionar.nombre && !intervencionRegistrada ?
+                                                firmaActualizacion && objetoCentro.nombre && !intervencionRegistrada ?
                                                     classes.badgeVermell :
-                                                    !firmaActualizacion && centroAGestionar.nombre ?
+                                                    !firmaActualizacion && objetoCentro.nombre ?
                                                         classes.badgeVermell :
                                                         classes.displayNone
                                 }}
@@ -1383,18 +1587,11 @@ const Cuadrantes = (props) => {
                                 variant="dot"
                             >
                                 <Chip
-                                    className={objetoCuadrante.datosInforme.tocaFacturar.valor === 'no' ? classes.noFacturacion : null}
-                                    style={{ padding: 5 }} icon={<AssignmentIcon />} label={`Gestión de cuadrantes ` + (
-                                        centroAGestionar.nombre ?
-                                            ' - Centro: ' + centroAGestionar.nombre + (
-                                                firmaActualizacion && intervencionRegistrada && objetoCuadrante.estado === 'registrado' ?
-                                                    ' - Estado: Actualizado el ' + firmaActualizacion :
-                                                    firmaActualizacion && intervencionRegistrada && objetoCuadrante.estado === 'facturado' ?
-                                                        ' - Estado: Facturado el ' + firmaActualizacion :
-                                                        firmaActualizacion && !intervencionRegistrada ?
-                                                            ' - Estado: Pendiente de actualizar' :
-                                                            ' - Estado: Pendiente de registrar') :
-                                            '')} />
+                                    className={retornaColorChipAccion()}
+                                    style={{ padding: 5 }}
+                                    avatar={retornaAvatarChipAccion()}
+                                    icon={!objetoCentro.nombre ? <AssignmentIcon /> : null}
+                                    label={retornaLabelChipAccion()} />
                             </Badge>
                         </Grid>
                         <Grid item xs={3}>
@@ -1428,7 +1625,7 @@ const Cuadrantes = (props) => {
                                         </MenuItem>
                                         <MenuItem
                                             onClick={() => dispatch(procesarDatosCuadranteAccion('normal'))}
-                                            disabled={cuadranteRegistrado === 'si' ? disabledItemBotonActualizar : disabledItemBotonRegistrar}
+                                            disabled={(cuadranteBloqueado || objetoCuadrante.estado === 'facturado') ? true : cuadranteRegistrado === 'si' ? disabledItemBotonActualizar : disabledItemBotonRegistrar}
                                         >
                                             <ListItemIcon>
                                                 {cuadranteRegistrado === 'si' ? <SystemUpdateAltIcon fontSize="small" /> : <SaveIcon fontSize="small" />}
@@ -1437,7 +1634,7 @@ const Cuadrantes = (props) => {
                                         </MenuItem>
                                         <MenuItem
                                             onClick={() => dispatch(handleClickFacturacionMenuAccion())}
-                                            disabled={cuadranteRegistrado === 'no' ? true : false}
+                                            disabled={(cuadranteRegistrado === 'no' || (objetoCuadrante.estado === 'registrado' && !disabledItemBotonActualizar)) ? true : false}
                                         >
                                             <ListItemIcon>
                                                 <DescriptionIcon fontSize="small" />
@@ -1446,48 +1643,70 @@ const Cuadrantes = (props) => {
                                             {openFacturacion ? <ExpandLess /> : <ExpandMore />}
                                         </MenuItem>
                                         <Collapse in={openFacturacion} timeout="auto" unmountOnExit>
-                                            <MenuItem
-                                                className={classes.nested}
-                                                onClick={() => dispatch(handleClickFacturarCuadranteAccion())}
-                                            >
-                                                <ListItemText primary="Registrar factura" />
-                                            </MenuItem>
+                                            {((objetoCentro.nombre !== '' && objetoCentro.horario.horario[0] && objetoCentro.horario.horario[0].computo === 3) || (objetoCentro.nombre !== '' && objetoCentro.serviciosFijos.gestionEspSF)) ? (
+                                                <MenuItem
+                                                    className={classes.nested}
+                                                    onClick={() => dispatch(handleClickFacturarReciboCuadranteAccion())}
+                                                    disabled={objetoCuadrante.estado === 'facturado' && disabledItemBotonActualizar ? true : false}
+                                                >
+                                                    <ListItemText primary="Registrar Recibo" />
+                                                </MenuItem>
+                                            ) : (
+                                                <MenuItem
+                                                    className={classes.nested}
+                                                    onClick={() => dispatch(handleClickFacturarCuadranteAccion())}
+                                                    disabled={objetoCuadrante.estado === 'facturado' && disabledItemBotonActualizar ? true : false}
+                                                >
+                                                    <ListItemText primary="Registrar Factura" />
+                                                </MenuItem>
+                                            )}
                                             <MenuItem
                                                 className={classes.nested}
                                                 onClick={() => dispatch(handleClickFacturacionInteriorMenuAccion())}
-                                                disabled={objetoCuadrante.estado === 'facturado' ? false : true}
+                                                disabled={objetoCuadrante.estado === 'facturado' && disabledItemBotonActualizar ? false : true}
                                             >
-                                                <ListItemText primary="Generar archivos" />
+                                                <ListItemText primary={((objetoCentro.nombre !== '' && objetoCentro.horario.horario[0] && objetoCentro.horario.horario[0].computo === 3) || (objetoCentro.nombre !== '' && objetoCentro.serviciosFijos.gestionEspSF)) ? "Generar Recibo" : "Generar Archivos"} />
                                                 {openFacturacionInterior ? <ExpandLess /> : <ExpandMore />}
                                             </MenuItem>
                                             <Collapse in={openFacturacionInterior} timeout="auto" unmountOnExit>
-                                                <MenuItem
-                                                    className={classes.nested}
-                                                >
-                                                    <FormControl
-                                                        size="small"
-                                                        style={{ marginRight: 15, width: 90, marginBottom: 5, }}
+                                                {((objetoCentro.nombre !== '' && objetoCentro.horario.horario[0] && objetoCentro.horario.horario[0].computo === 3) || (objetoCentro.nombre !== '' && objetoCentro.serviciosFijos.gestionEspSF)) ? (
+                                                    objetoCuadrante.estado === 'facturado' ? (
+                                                        <MenuItem
+                                                            className={classes.nested}
+                                                            onClick={() => gestionarReciboPDF()}
+                                                        >
+                                                            <ListItemText primary="Emitir recibo" />
+                                                        </MenuItem>
+                                                    ) : null
+                                                ) : (
+                                                    <MenuItem
+                                                        className={classes.nested}
                                                     >
-                                                        <Tooltip title="Último nº de factura emitida en FACTUSOL" placement="left" arrow>
-                                                            <TextField
-                                                                id="form-numero-factusol-cuadrantes"
-                                                                value={numeroFactusol || ''}
-                                                                onChange={(event) => dispatch(handleChangeFormNumumeroFactusolAccion(event))}
-                                                                InputProps={{
-                                                                    startAdornment: (
-                                                                        <InputAdornment position="start">
-                                                                            <EditIcon className={classes.colorText} />
-                                                                        </InputAdornment>
-                                                                    ),
-                                                                }}
-                                                            />
-                                                        </Tooltip>
-                                                    </FormControl>
-                                                    <ListItemText
-                                                        onClick={() => dispatch(handleGenerarArchivosAccion())}
-                                                        primary="Procesar"
-                                                    />
-                                                </MenuItem>
+                                                        <FormControl
+                                                            size="small"
+                                                            style={{ marginRight: 15, width: 90, marginBottom: 5, }}
+                                                        >
+                                                            <Tooltip title="Último nº de factura emitida en FACTUSOL" placement="left" arrow>
+                                                                <TextField
+                                                                    id="form-numero-factusol-cuadrantes"
+                                                                    value={numeroFactusol || ''}
+                                                                    onChange={(event) => dispatch(handleChangeFormNumumeroFactusolAccion(event))}
+                                                                    InputProps={{
+                                                                        startAdornment: (
+                                                                            <InputAdornment position="start">
+                                                                                <EditIcon className={classes.colorText} />
+                                                                            </InputAdornment>
+                                                                        ),
+                                                                    }}
+                                                                />
+                                                            </Tooltip>
+                                                        </FormControl>
+                                                        <ListItemText
+                                                            onClick={() => dispatch(handleGenerarArchivosAccion())}
+                                                            primary="Procesar"
+                                                        />
+                                                    </MenuItem>
+                                                )}
                                             </Collapse>
                                             {/* <MenuItem disabled={true} className={classes.nested}>                                                   
                                                     <ListItemText secondary="Imprimir factura" />
@@ -1523,8 +1742,9 @@ const Cuadrantes = (props) => {
                                         format="MM/yyyy"
                                         label="Mes a gestionar"
                                         minDate={new Date('2021-1')}
-                                        maxDate={new Date(dispatch(gestionaMaxDateCalendarAccion(3)))}
+                                        maxDate={new Date(dispatch(gestionaMaxDateCalendarAccion(5)))}
                                         value={valueDatePicker}
+                                        disabled={disableCargando}
                                         onChange={(newValue) => {
                                             dispatch(handleChangeSelectCalendarioAccion(newValue));
                                         }}
@@ -1549,6 +1769,7 @@ const Cuadrantes = (props) => {
                                                 labelWidth={130}
                                             />
                                         }
+                                        disabled={disableCargando}
                                     >
                                         {categorias.map((option) => (
                                             <MenuItem key={option.value} value={option.value}>
@@ -1564,7 +1785,7 @@ const Cuadrantes = (props) => {
                                 <FormControl
                                     variant="outlined"
                                     fullWidth
-                                    disabled={disableSelectCentros}
+                                    disabled={!disableCargando ? disableSelectCentros : disableCargando}
                                     size="small"
                                 >
                                     <InputLabel>Centro</InputLabel>
@@ -1612,7 +1833,7 @@ const Cuadrantes = (props) => {
                             {cuadrante.length > 0 || cuadranteVacio ? (
                                 <Box>
                                     <Grid item
-                                        style={{ width: 40, marginRight: 4, height: 38 }}
+                                        style={{ width: 40, marginRight: 4, height: alturaCasilla() }}
                                         className={classes.trabajador}
                                     >
                                         <Box
@@ -1652,7 +1873,7 @@ const Cuadrantes = (props) => {
                                         </Box>
                                     </Grid>
                                     <Grid item
-                                        style={{ width: 40, marginRight: 4, marginTop: 6, paddingTop: 5, height: heightScrollable - 47 - 128 }}
+                                        style={esDesktop ? { width: 40, marginRight: 4, marginTop: 6, paddingTop: 5, height: heightScrollable - 47 - 128 } : { width: 40, marginRight: 4, marginTop: 6, paddingTop: 5, height: heightScrollable - 47 - 128 - 10 }}
                                         className={retornoServiciosFijosEnLayoutAccion('grid', losServiciosFijos)}
                                     >
                                         <Box style={{ padding: 4 }}>
@@ -1728,12 +1949,35 @@ const Cuadrantes = (props) => {
                     <Grid component="label" container alignItems="center" spacing={1}>
                         <Grid item>
                             <Switch
+                                id="check-valorFestivo"
                                 checked={stateFestivo['estadoFestivoDia' + (variablesPopoverDias.index + 1)] || false}
-                                onChange={(event) => dispatch(handleChangeFestivoDiaAccion(variablesPopoverDias.postRef, variablesPopoverDias.index + 1, variablesPopoverDias.dia, event, scrollable, classesDisp))}
-                                name={"estadoFestivoDia" + (variablesPopoverDias.index + 1)}
+                                onChange={(event) => dispatch(handleChangeFestivoDiaAccion(variablesPopoverDias.postRef, variablesPopoverDias.index + 1, variablesPopoverDias.dia, event, 1, false))}
                             />
                         </Grid>
                         <Grid item><Typography variant="body2" color="textPrimary">Lab./Fes.</Typography></Grid>
+                        {stateFestivo['estadoFestivoDia' + (variablesPopoverDias.index + 1)] ? (
+                            <FormControl
+                                variant="outlined"
+                                fullWidth
+                                className={clsx(classes.mt5, classes.px5)}
+                                size="small"
+                            >
+                                <InputLabel>Tipo festivo</InputLabel>
+                                <Select
+                                    id="form-tipoFestivo"
+                                    label="Tipo festivo"
+                                    value={stateFestivo['tipoFestivoDia' + (variablesPopoverDias.index + 1)] || ''}
+                                    onChange={(event) => dispatch(handleChangeFestivoDiaAccion(variablesPopoverDias.postRef, variablesPopoverDias.index + 1, variablesPopoverDias.dia, event, null, false))}
+                                    helpertext="Selecciona Tipo Festivo"
+                                >
+                                    {tipoFestivo.map((option) => (
+                                        <MenuItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        ) : null}
                     </Grid>
                 </Box>
             </Popover>
@@ -1779,8 +2023,10 @@ const Cuadrantes = (props) => {
                                             prHandleChangeObservaciones={(index, event) => dispatch(handleChangeObservacionesAccion(index, event))}
                                             prGestionItemPrevioEditando={(tipo, valores) => dispatch(gestionItemPrevioEditandoAccion(tipo, valores))}
                                             prHandleRegistrarCambioEnCasilla={(id, index, tipo) => dispatch(handleRegistrarCambioEnCasillaAccion(id, index, tipo, scrollable, boxes, classes))}
+                                            prHandleResetearCasilla={(id, index, tipo) => dispatch(handleResetearCasillaAccion(id, index, tipo, scrollable, boxes, classes))}
                                             prHandleChangeTipoServicio={(index, event) => dispatch(handleChangeTipoServicioAccion(index, event))}
                                             prValueTipoServicio={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].tipoServicio : ''}
+                                            prDimensionsColumna={dimensionsColumna.width}
                                         />
                                     </Fragment>
                                 ) : variablesPopoverGeneral.columna.tipoHorario === 'cantidad' ? (
@@ -1799,8 +2045,10 @@ const Cuadrantes = (props) => {
                                             prHandleChangeObservaciones={(index, event) => dispatch(handleChangeObservacionesAccion(index, event))}
                                             prGestionItemPrevioEditando={(tipo, valores) => dispatch(gestionItemPrevioEditandoAccion(tipo, valores))}
                                             prHandleRegistrarCambioEnCasilla={(id, index, tipo) => dispatch(handleRegistrarCambioEnCasillaAccion(id, index, tipo, scrollable, boxes, classes))}
+                                            prHandleResetearCasilla={(id, index, tipo) => dispatch(handleResetearCasillaAccion(id, index, tipo, scrollable, boxes, classes))}
                                             prHandleChangeTipoServicio={(index, event) => dispatch(handleChangeTipoServicioAccion(index, event))}
                                             prValueTipoServicio={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].tipoServicio : ''}
+                                            prDimensionsColumna={dimensionsColumna.width}
                                         />
                                     </Fragment>
                                 ) : variablesPopoverGeneral.columna.tipoHorario === 'rangoDescanso' ? (
@@ -1826,8 +2074,10 @@ const Cuadrantes = (props) => {
                                             prHandleChangeObservaciones={(index, event) => dispatch(handleChangeObservacionesAccion(index, event))}
                                             prGestionItemPrevioEditando={(tipo, valores) => dispatch(gestionItemPrevioEditandoAccion(tipo, valores))}
                                             prHandleRegistrarCambioEnCasilla={(id, index, tipo) => dispatch(handleRegistrarCambioEnCasillaAccion(id, index, tipo, scrollable, boxes, classes))}
+                                            prHandleResetearCasilla={(id, index, tipo) => dispatch(handleResetearCasillaAccion(id, index, tipo, scrollable, boxes, classes))}
                                             prHandleChangeTipoServicio={(index, event) => dispatch(handleChangeTipoServicioAccion(index, event))}
                                             prValueTipoServicio={(variablesPopoverGeneral.postRef && variablesPopoverGeneral.columna) ? variablesPopoverGeneral.columna[variablesPopoverGeneral.postRef].tipoServicio : ''}
+                                            prDimensionsColumna={dimensionsColumna.width}
                                         />
                                     </Fragment>
                                 ) : null
@@ -1914,7 +2164,7 @@ const Cuadrantes = (props) => {
                     </Box>
                     <Box style={{ height: heightScrollable - 145, marginRight: -5, paddingRight: 10, paddingLeft: 5 }} className={classes.scrollable} >
                         <ConfiguracionCuadrante
-                            prCentro={centroAGestionar}
+                            prCentro={objetoCentro}
                             prItemEditandoConfiguracion={itemEditandoConfiguracion}
                             prHandleChangeFormConfiguracionCuadrante={(prop, event) => dispatch(handleChangeFormConfiguracionCuadranteAccion(prop, event))}
                             prGestionItemPrevioEditandoConfiguracion={(valores) => dispatch(gestionItemPrevioEditandoConfiguracionAccion(valores))}
@@ -1944,6 +2194,7 @@ const Cuadrantes = (props) => {
                 </Alert>
             </Snackbar>
             <DialogComponente
+                //resetear cuadrante
                 prIsOpen={openDialog4}
                 prHandleCloseDialogBotones={(respuesta) => dispatch(handleCloseDialogBotonesCuadrantes1Accion(respuesta))}
                 prTituloDialog={tituloDialogCuadrantes1}
@@ -1957,6 +2208,7 @@ const Cuadrantes = (props) => {
                 prNoTieneBotones={true}
             />
             <DialogComponente
+                //cambio pantalla sin guardar
                 prIsOpen={openDialog7}
                 prHandleCloseDialogBotones={(respuesta) => dispatch(handleCloseDialogBotonesCuadrantes3Accion(respuesta))}
                 prTituloDialog={tituloDialogCuadrantes3}
@@ -1972,12 +2224,13 @@ const Cuadrantes = (props) => {
                 prMaxWidth={true}
             />
             <DialogComponente
+                //eliminar cuadrante (múltiple)
                 prIsOpen={openDialog12}
                 prHandleCloseDialogBotones={(respuesta) => dispatch(handleCloseDialogBotonesCuadrantes5Accion(respuesta))}
                 prTituloDialog={tituloDialogCuadrantes5}
                 prDescripcionDialog={descripcionDialogCuadrantes5}
             />
-            {/* {console.log(objetoCuadrante)} */}
+            {/* {console.log(isDragging)} */}
         </div >
     )
 }

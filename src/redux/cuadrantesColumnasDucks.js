@@ -8,6 +8,8 @@ import { setAlertaAccion } from './cuadrantesSettersDucks';
 import { actualizarObjetoCuadranteAccion } from './cuadrantesDucks';
 import { setEstamosActualizandoCuadranteSinCargaAccion } from './cuadrantesSettersDucks';
 import { setBufferSwitchedDiasFestivosCuadranteAccion } from './cuadrantesSettersDucks';
+import { setYaNoEsInicioAccion } from './cuadrantesSettersDucks';
+import { setPrimerDiaEstadoBajaCIA } from './cuadrantesSettersDucks';
 
 //constantes
 const dataInicial = {
@@ -24,10 +26,10 @@ export default function cuadrantesColumnasReducer(state = dataInicial, action) {
 }
 
 //acciones
-export const completarCuadranteAccion = (cuadrante) => (dispatch, getState) => {  
+
+export const completarCuadranteAccion = (cuadrante) => (dispatch, getState) => {
     const { losDiasDelMes } = getState().variablesCuadrantes;
     let arrayResultante = [];
-    let arrayFestivos = [];
     cuadrante.forEach((cuadranteColumna, index) => {
         let objetoResultante = {};
         objetoResultante.nombreTrabajador = cuadranteColumna.nombreTrabajador;
@@ -86,9 +88,6 @@ export const completarCuadranteAccion = (cuadrante) => (dispatch, getState) => {
                     let hasKey = (dia[1][0] + dia[0][0]) in cuadranteColumna;
                     if (hasKey) {
                         objetoResultante[dia[1][0] + dia[0][0]] = cuadranteColumna[dia[1][0] + dia[0][0]];
-                        if (cuadranteColumna[dia[1][0] + dia[0][0]].festivo) {
-                            arrayFestivos.push([dia[1][0], dia[0][0]]);
-                        };
                     } else {
                         if (dia[1][0] === 'Lunes') {
                             objetoResultante[dia[1][0] + dia[0][0]] = {
@@ -196,9 +195,6 @@ export const completarCuadranteAccion = (cuadrante) => (dispatch, getState) => {
                     let hasKey = (dia[1][0] + dia[0][0]) in cuadranteColumna;
                     if (hasKey) {
                         objetoResultante[dia[1][0] + dia[0][0]] = cuadranteColumna[dia[1][0] + dia[0][0]];
-                        if (cuadranteColumna[dia[1][0] + dia[0][0]].festivo) {
-                            arrayFestivos.push([dia[1][0], dia[0][0]]);
-                        };
                     } else {
                         if (dia[1][0] === 'Lunes') {
                             objetoResultante[dia[1][0] + dia[0][0]] = {
@@ -320,9 +316,6 @@ export const completarCuadranteAccion = (cuadrante) => (dispatch, getState) => {
                     let hasKey = (dia[1][0] + dia[0][0]) in cuadranteColumna;
                     if (hasKey) {
                         objetoResultante[dia[1][0] + dia[0][0]] = cuadranteColumna[dia[1][0] + dia[0][0]];
-                        if (cuadranteColumna[dia[1][0] + dia[0][0]].festivo) {
-                            arrayFestivos.push([dia[1][0], dia[0][0]]);
-                        };
                     } else {
                         if (dia[1][0] === 'Lunes') {
                             objetoResultante[dia[1][0] + dia[0][0]] = {
@@ -421,10 +414,7 @@ export const completarCuadranteAccion = (cuadrante) => (dispatch, getState) => {
         };
         arrayResultante.push(objetoResultante);
     });
-    return {
-        arrayResultante,
-        arrayFestivos
-    };
+    return arrayResultante
 };
 
 export const limpiarCuadranteAccion = (elCuadrante) => (dispatch, getState) => {
@@ -707,7 +697,7 @@ export const limpiarCuadranteInformeAccion = (informe) => (dispatch) => {
     };
     if (informe.precioHora_R) {
         elObjetoDatosInforme['precioHora_R'] = parseFloat(informe.precioHora_R);
-        elObjetoDatosInforme['totalFacturado_R'] = parseFloat(informe.totalFacturado_R);
+        elObjetoDatosInforme['totalFacturado_R'] = elObjetoDatosInforme['totalFacturado_R'] ? parseFloat(informe.totalFacturado_R) : null;
     };
     if (informe.precioHora_L1) {
         elObjetoDatosInforme['precioHora_L1'] = parseFloat(informe.precioHora_L1);
@@ -739,9 +729,10 @@ const retornaMinutosAccionEnCuadrantes = (primeraHora, segundaHora) => {
     }
 };
 
-export const gestionarInformeAccion = () => (dispatch, getState) => {
+export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
     const { cuadrante, objetoCuadrante, cuadranteRegistrado } = getState().variablesCuadrantes;
     const { cuadranteEnUsoCuadrantes } = getState().variablesCuadrantesSetters;
+    const { objetoCentro } = getState().variablesCentros;
     let arrayResultante = [];
     let sumatorioHoras;
     let sumatorioHorasNormal_L;
@@ -2817,10 +2808,15 @@ export const gestionarInformeAccion = () => (dispatch, getState) => {
     let objetoDatosInforme = {};
     let totalMensualPactado;
     let proporcion;
-    let proporcionInicial;
     //gestion mensualPactado    
     let cantidadMensualPactado = parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado);
     if (cantidadMensualPactado >= 0) {
+        let cambiosEnConfiguracion = false;
+        if (objetoCentro.nombre !== '') {
+            if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial && !objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1]) {
+                cambiosEnConfiguracion = true;
+            };
+        };
         let resultadoIniciado;
         if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].iniciado) {
             let trabajadoresRecorridos = 0;
@@ -2830,15 +2826,19 @@ export const gestionarInformeAccion = () => (dispatch, getState) => {
             } else {
                 trabajadoresEstimados = objetoCuadrante.datosCuadrante.datosCuadrante[cuadranteEnUsoCuadrantes - 1].arrayCuadrante.length;
             };
+            let sumatorioSuplentesCalculo = 0;
+            let diferenciaSuplentesCalculo;
             for (let i = 0; i < cuadrante.length; i++) {
                 if (cuadrante[i].tipoTrabajador === 'trabajador') {
-                    if (cuadranteRegistrado === 'no' && cuadrante[i].hayBaja && objetoCuadrante.datosTrabajadoresIniciales.datosTrabajadoresIniciales[cuadranteEnUsoCuadrantes - 1].trabajadores[i]['suplente_' + (i + 1)]) {
+                    diferenciaSuplentesCalculo = i - sumatorioSuplentesCalculo;
+                    if (cuadranteRegistrado === 'no' && cuadrante[i].hayBaja && objetoCuadrante.datosTrabajadoresIniciales.datosTrabajadoresIniciales[cuadranteEnUsoCuadrantes - 1].trabajadores[diferenciaSuplentesCalculo]['suplente_' + (diferenciaSuplentesCalculo + 1)]) {
                         trabajadoresEstimados += 1;
                     };
                     trabajadoresRecorridos += 1;
                 };
                 if (cuadrante[i].tipoTrabajador === 'suplente') {
                     trabajadoresRecorridos += 1;
+                    sumatorioSuplentesCalculo += 1;
                 };
             };
             if (trabajadoresRecorridos === trabajadoresEstimados) {
@@ -2849,50 +2849,7 @@ export const gestionarInformeAccion = () => (dispatch, getState) => {
         } else {
             resultadoIniciado = true;
         };
-        if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].iniciado) {
-            //caudrante iniciado
-            //control de excepciones
-            let totalHorasIniciado;
-            switch (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].excepcion) {
-                case 1:
-                    if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].bloqueado === 'no') {                      
-                        totalHorasIniciado =
-                            sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L +
-                            sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E +
-                            sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P +
-                            sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N +
-                            sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R +
-                            sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1 +
-                            sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2 +
-                            sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F;
-                        totalMensualPactado = totalHorasIniciado * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion;
-                    } else {
-                        totalMensualPactado = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial;
-                    };
-                    break;
-                case '':
-                    if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].bloqueado === 'no') {
-                        totalHorasIniciado =
-                            sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L +
-                            sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E +
-                            sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P +
-                            sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N +
-                            sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R +
-                            sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1 +
-                            sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2 +
-                            sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F;
-                        totalMensualPactado = totalHorasIniciado * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion;
-                    } else {
-                        totalMensualPactado = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial;
-                    };
-                    break;
-                default:
-            };
-            objetoDatosInforme = {
-                ...objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1],
-                mensualPactado: totalMensualPactado
-            };
-        } else {
+        if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].iniciado || cambioConf) {
             //caudrante no iniciado 
             //control de excepciones                
             switch (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].excepcion) {
@@ -2939,23 +2896,23 @@ export const gestionarInformeAccion = () => (dispatch, getState) => {
                     totalHorasInicial_L1 = totalHorasInicialTra_L1 + totalHorasInicialSup_L1;
                     totalHorasInicial_L2 = totalHorasInicialTra_L2 + totalHorasInicialSup_L2;
                     totalHorasInicial_F = totalHorasInicialTra_F + totalHorasInicialSup_F;
-                    totalHorasInicial = totalHorasInicialTra + totalHorasInicialSup;                   
+                    totalHorasInicial = totalHorasInicialTra + totalHorasInicialSup;
                     if (cuadranteRegistrado === 'no') {
-                        proporcionInicial = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial / (totalHorasInicialTra + sumatorioHorasBajasComputablesTra);
-                        proporcion = (proporcionInicial * (totalHorasInicial -
-                            (sumatorioHorasFestivasComputablesTra_L +
-                                sumatorioHorasFestivasComputablesTra_E
-                                + sumatorioHorasFestivasComputablesTra_P
-                                + sumatorioHorasFestivasComputablesTra_N
-                                + sumatorioHorasFestivasComputablesTra_R
-                                + sumatorioHorasFestivasComputablesTra_L1
-                                + sumatorioHorasFestivasComputablesTra_L2
-                                + sumatorioHorasFestivasComputablesTra_F))) / totalHorasInicial;
+                        proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial / (totalHorasInicialTra + sumatorioHorasBajasComputablesTra);
                         totalMensualPactado = (totalHorasInicialTra + totalHorasInicialSup) * proporcion;
                     } else {
                         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].bloqueado === 'no') {
                             proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion;
-                            totalMensualPactado = (totalHorasInicialTra + totalHorasInicialSup) * proporcion;
+                            totalMensualPactado = ((totalHorasInicialTra + totalHorasInicialSup) - (
+                                sumatorioHorasFestivasComputablesTra_L +
+                                sumatorioHorasFestivasComputablesTra_E +
+                                sumatorioHorasFestivasComputablesTra_P +
+                                sumatorioHorasFestivasComputablesTra_N +
+                                sumatorioHorasFestivasComputablesTra_R +
+                                sumatorioHorasFestivasComputablesTra_L1 +
+                                sumatorioHorasFestivasComputablesTra_L2 +
+                                sumatorioHorasFestivasComputablesTra_F
+                            )) * proporcion;
                         } else {
                             proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion;
                             totalMensualPactado = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial;
@@ -2965,15 +2922,15 @@ export const gestionarInformeAccion = () => (dispatch, getState) => {
                         ...objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1],
                         mensualPactado: totalMensualPactado,
                         iniciado: resultadoIniciado,
-                        totalHorasInicial_L: totalHorasInicial_L > 0 ? totalHorasInicial_L : null,
-                        totalHorasInicial_E: totalHorasInicial_E > 0 ? totalHorasInicial_E : null,
-                        totalHorasInicial_P: totalHorasInicial_P > 0 ? totalHorasInicial_P : null,
-                        totalHorasInicial_N: totalHorasInicial_N > 0 ? totalHorasInicial_N : null,
-                        totalHorasInicial_R: totalHorasInicial_R > 0 ? totalHorasInicial_R : null,
-                        totalHorasInicial_L1: totalHorasInicial_L1 > 0 ? totalHorasInicial_L1 : null,
-                        totalHorasInicial_L2: totalHorasInicial_L2 > 0 ? totalHorasInicial_L2 : null,
-                        totalHorasInicial_F: totalHorasInicial_F > 0 ? totalHorasInicial_F : null,
-                        totalHorasInicial: totalHorasInicial,
+                        totalHorasInicial_L: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_L : totalHorasInicial_L > 0 ? (totalHorasInicial_L) : null,
+                        totalHorasInicial_E: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_E : totalHorasInicial_E > 0 ? (totalHorasInicial_E) : null,
+                        totalHorasInicial_P: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_P : totalHorasInicial_P > 0 ? (totalHorasInicial_P) : null,
+                        totalHorasInicial_N: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_N : totalHorasInicial_N > 0 ? (totalHorasInicial_N) : null,
+                        totalHorasInicial_R: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_R : totalHorasInicial_R > 0 ? (totalHorasInicial_R) : null,
+                        totalHorasInicial_L1: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_L1 : totalHorasInicial_L1 > 0 ? (totalHorasInicial_L1) : null,
+                        totalHorasInicial_L2: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_L2 : totalHorasInicial_L2 > 0 ? (totalHorasInicial_L2) : null,
+                        totalHorasInicial_F: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_F : totalHorasInicial_F > 0 ? (totalHorasInicial_F) : null,
+                        totalHorasInicial: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial : totalHorasInicial,
                         proporcion: proporcion,
                     };
                     break;
@@ -3037,28 +2994,63 @@ export const gestionarInformeAccion = () => (dispatch, getState) => {
                         ...objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1],
                         mensualPactado: totalMensualPactado,
                         iniciado: resultadoIniciado,
-                        totalHorasInicial_L: totalHorasInicial_L > 0 ? (totalHorasInicial_L - sumatorioHorasFestivasComputablesSup_L) : null,
-                        totalHorasInicial_E: totalHorasInicial_E > 0 ? (totalHorasInicial_E - sumatorioHorasFestivasComputablesSup_E) : null,
-                        totalHorasInicial_P: totalHorasInicial_P > 0 ? (totalHorasInicial_P - sumatorioHorasFestivasComputablesSup_P) : null,
-                        totalHorasInicial_N: totalHorasInicial_N > 0 ? (totalHorasInicial_N - sumatorioHorasFestivasComputablesSup_N) : null,
-                        totalHorasInicial_R: totalHorasInicial_R > 0 ? (totalHorasInicial_R - sumatorioHorasFestivasComputablesSup_R) : null,
-                        totalHorasInicial_L1: totalHorasInicial_L1 > 0 ? (totalHorasInicial_L1 - sumatorioHorasFestivasComputablesSup_L1) : null,
-                        totalHorasInicial_L2: totalHorasInicial_L2 > 0 ? (totalHorasInicial_L2 - sumatorioHorasFestivasComputablesSup_L2) : null,
-                        totalHorasInicial_F: totalHorasInicial_F > 0 ? (totalHorasInicial_F - sumatorioHorasFestivasComputablesSup_F) : null,
-                        totalHorasInicial: totalHorasInicial - (
-                            sumatorioHorasFestivasComputablesSup_L +
-                            sumatorioHorasFestivasComputablesSup_E +
-                            sumatorioHorasFestivasComputablesSup_P +
-                            sumatorioHorasFestivasComputablesSup_N +
-                            sumatorioHorasFestivasComputablesSup_R +
-                            sumatorioHorasFestivasComputablesSup_L1 +
-                            sumatorioHorasFestivasComputablesSup_L2 +
-                            sumatorioHorasFestivasComputablesSup_F
-                        ),
+                        totalHorasInicial_L: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_L : totalHorasInicial_L > 0 ? (totalHorasInicial_L) : null,
+                        totalHorasInicial_E: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_E : totalHorasInicial_E > 0 ? (totalHorasInicial_E) : null,
+                        totalHorasInicial_P: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_P : totalHorasInicial_P > 0 ? (totalHorasInicial_P) : null,
+                        totalHorasInicial_N: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_N : totalHorasInicial_N > 0 ? (totalHorasInicial_N) : null,
+                        totalHorasInicial_R: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_R : totalHorasInicial_R > 0 ? (totalHorasInicial_R) : null,
+                        totalHorasInicial_L1: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_L1 : totalHorasInicial_L1 > 0 ? (totalHorasInicial_L1) : null,
+                        totalHorasInicial_L2: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_L2 : totalHorasInicial_L2 > 0 ? (totalHorasInicial_L2) : null,
+                        totalHorasInicial_F: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_F : totalHorasInicial_F > 0 ? (totalHorasInicial_F) : null,
+                        totalHorasInicial: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial : totalHorasInicial,
                         proporcion: proporcion,
                     };
                     break;
                 default:
+            };
+        };
+        if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].iniciado && !cambioConf) {
+            //caudrante iniciado
+            //control de excepciones
+            let totalHorasIniciado;
+            switch (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].excepcion) {
+                case 1:
+                    if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].bloqueado === 'no') {
+                        totalHorasIniciado =
+                            sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L +
+                            sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E +
+                            sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P +
+                            sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N +
+                            sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R +
+                            sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1 +
+                            sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2 +
+                            sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F;
+                        totalMensualPactado = totalHorasIniciado * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion;
+                    } else {
+                        totalMensualPactado = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial;
+                    };
+                    break;
+                case '':
+                    if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].bloqueado === 'no') {
+                        totalHorasIniciado =
+                            sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L +
+                            sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E +
+                            sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P +
+                            sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N +
+                            sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R +
+                            sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1 +
+                            sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2 +
+                            sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F;
+                        totalMensualPactado = totalHorasIniciado * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion;
+                    } else {
+                        totalMensualPactado = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial;
+                    };
+                    break;
+                default:
+            };
+            objetoDatosInforme = {
+                ...objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1],
+                mensualPactado: totalMensualPactado
             };
         };
         let elArrayDatosInforme = [...objetoCuadrante.datosInforme.datosInforme];
@@ -3080,12 +3072,14 @@ function calculoDiasTotalesPorMes(month, year) {
     return new Date(year, month, 0).getDate();
 };
 
-const retornaTipoBajaPorHistorico = (dia, historico) => (dispatch, getState) => {
+const retornaTipoBajaPorHistorico = (dia, historico, elEstado) => (dispatch, getState) => {
     const { calendarioAGestionar } = getState().variablesCuadrantes;
+    const { primerDiaEstadoBajaCIA } = getState().variablesCuadrantesSetters;
     let myArrSplitCalendario = calendarioAGestionar.split("-");
     const mesCalendario = parseInt(myArrSplitCalendario[1]);
     const anyoCalendario = parseInt(myArrSplitCalendario[0]);
-    let elRetorno;
+    let elRetorno = '';
+    const rangoHistorico = [];
     historico.forEach((registro, index) => {
         let inicioSplitted = registro.baja[0].inicio.split("-");
         let finSplitted = registro.baja[0].fin.split("-");
@@ -3103,15 +3097,42 @@ const retornaTipoBajaPorHistorico = (dia, historico) => (dispatch, getState) => 
         if (anyoFin > anyoCalendario || mesFin > mesCalendario) {
             diaFin = calculoDiasTotalesPorMes(mesCalendario, anyoCalendario);
         };
-        const rangoHistorico = [];
-        for (let i = diaInicio; i <= diaFin; i++) {
-            rangoHistorico.push(i)
-        };
-        if (rangoHistorico.includes(dia)) {
-            elRetorno = registro.baja[0].tipo;
+        for (let i = diaInicio; i < diaFin; i++) {
+            rangoHistorico.push([i, registro.baja[0].tipo]);
         };
     });
-    return elRetorno;
+    elRetorno = elEstado;
+    rangoHistorico.forEach((elDia, index) => {
+        if (elDia[0] === dia) {
+            elRetorno = elDia[1];
+        };
+    });
+    if (elEstado === 'bajaCIA') {
+        if (elRetorno === elEstado) {
+            if (!primerDiaEstadoBajaCIA) {
+                dispatch(setPrimerDiaEstadoBajaCIA(dia));
+            } else {
+                elRetorno = 'bajaCIA2';
+            };
+        };
+    };
+    return elRetorno
+};
+
+const retornaTipoBajaSinHistorico = (dia, elEstado) => (dispatch, getState) => {
+    const { primerDiaEstadoBajaCIA } = getState().variablesCuadrantesSetters;
+    let elRetorno = '';
+    if (elEstado === 'bajaCIA') {
+        if (!primerDiaEstadoBajaCIA) {
+            elRetorno = elEstado;
+            dispatch(setPrimerDiaEstadoBajaCIA(dia));
+        } else {
+            elRetorno = 'bajaCIA2';
+        };
+    } else {
+        elRetorno = elEstado;
+    };
+    return elRetorno
 };
 
 const periodoBajaTrabajadorAccion = (calendarioAGestionar, inicioBaja, finBaja, diasMes) => {
@@ -3575,10 +3596,11 @@ const gestionaColumnaCuadranteInteriorAccion = (
     esInicio,
     posicionTrabajador,
     esLimpieza,
-    tipoHorario
+    tipoHorario,
+    esActualizacion
 ) => (dispatch, getState) => {
     const { cuadrante, calendarioAGestionar, losDiasDelMes, stateFestivo } = getState().variablesCuadrantes;
-    const { bufferSwitchedDiasFestivosCuadrante, cuadranteEnUsoCuadrantes } = getState().variablesCuadrantesSetters;
+    const { bufferSwitchedDiasFestivosCuadrante, cuadranteEnUsoCuadrantes, yaNoEsInicio } = getState().variablesCuadrantesSetters;
     let columnaAnadir;
     let numeroSemana;
     let arrayBaja1 = [];
@@ -3601,7 +3623,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
     let objetoBuffer = {};
     let elDia;
     let indiceObjeto;
-    let arrayBuffer = [];
+    let posicionACambiar;
+    let arrayBuffer = [...bufferSwitchedDiasFestivosCuadrante];
     if (bufferSwitchedDiasFestivosCuadrante.length > 0 && !esInicio) {
         arrayBuffer[cuadranteEnUsoCuadrantes - 1] = [...bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1]];
     };
@@ -3624,8 +3647,14 @@ const gestionaColumnaCuadranteInteriorAccion = (
         hayTrabajador = true;
         if (trabajador.estado !== 'alta') {
             switch (trabajador.estado) {
-                case 'baja':
-                    arrayBaja1 = periodoBajaTrabajadorAccion(calendarioAGestionar, trabajador.datosEstado.inicioBaja, trabajador.datosEstado.finBaja, losDiasDelMes.length);
+                case 'bajaIT':
+                    arrayBaja1 = periodoBajaTrabajadorAccion(calendarioAGestionar, trabajador.datosEstado.inicioBajaIT, trabajador.datosEstado.finBajaIT, losDiasDelMes.length);
+                    break;
+                case 'bajaACCTE':
+                    arrayBaja1 = periodoBajaTrabajadorAccion(calendarioAGestionar, trabajador.datosEstado.inicioBajaACCTE, trabajador.datosEstado.finBajaACCTE, losDiasDelMes.length);
+                    break;
+                case 'bajaCIA':
+                    arrayBaja1 = periodoBajaTrabajadorAccion(calendarioAGestionar, trabajador.datosEstado.inicioBajaCIA, trabajador.datosEstado.finBajaCIA, losDiasDelMes.length);
                     break;
                 case 'vacaciones':
                     arrayBaja1 = periodoBajaTrabajadorAccion(calendarioAGestionar, trabajador.datosEstado.inicioVacaciones, trabajador.datosEstado.finVacaciones, losDiasDelMes.length);
@@ -3636,20 +3665,43 @@ const gestionaColumnaCuadranteInteriorAccion = (
                 case 'personales':
                     arrayBaja1 = periodoBajaTrabajadorAccion(calendarioAGestionar, trabajador.datosEstado.inicioPersonales, trabajador.datosEstado.finPersonales, losDiasDelMes.length);
                     break;
+                case 'permisoRET':
+                    arrayBaja1 = periodoBajaTrabajadorAccion(calendarioAGestionar, trabajador.datosEstado.inicioPermiso, trabajador.datosEstado.finPermiso, losDiasDelMes.length);
+                    break;
+                case 'ausenciaINJ':
+                    arrayBaja1 = periodoBajaTrabajadorAccion(calendarioAGestionar, trabajador.datosEstado.inicioAusencia, trabajador.datosEstado.finAusencia, losDiasDelMes.length);
+                    break;
                 default:
-            }
+            };
             columnaAnadir['hayBaja'] = true;
         } else {
             columnaAnadir['hayBaja'] = false;
         };
         if (trabajador.historicoBajas) {
             trabajador.historicoBajas.meses.forEach((registro, index) => {
-                if (registro.mes >= calendarioAGestionar) {
+                const registroInicioSplitted = registro.baja[0].inicio.split("-");
+                const elMesInicio = registroInicioSplitted[0] + '-' + registroInicioSplitted[1];
+                const registroFinSplitted = registro.baja[0].fin.split("-");
+                const elMesFin = registroFinSplitted[0] + '-' + registroFinSplitted[1];
+                if ((elMesFin === calendarioAGestionar) && (elMesInicio !== calendarioAGestionar)) {
                     arrayRegistrosHistorico.push(registro);
                     columnaAnadir['hayBaja'] = true;
-                } else {
-                    columnaAnadir['hayBaja'] = false;
-                }
+                };
+                if ((elMesFin !== calendarioAGestionar) && (elMesInicio === calendarioAGestionar)) {
+                    arrayRegistrosHistorico.push(registro);
+                    columnaAnadir['hayBaja'] = true;
+                };
+                if ((elMesFin === calendarioAGestionar) && (elMesInicio === calendarioAGestionar)) {
+                    arrayRegistrosHistorico.push(registro);
+                    columnaAnadir['hayBaja'] = true;
+                };
+                // if ((elMesFin !== calendarioAGestionar) && (elMesFin !== calendarioAGestionar)) {
+                //     if (trabajador.estado !== 'alta') {
+                //         columnaAnadir['hayBaja'] = true;
+                //     } else {
+                //         columnaAnadir['hayBaja'] = false;
+                //     };
+                // };
             });
             arrayRegistrosHistorico.forEach((registro, index) => {
                 const arrayBajaTraspaso = periodoBajaTrabajadorAccion(calendarioAGestionar, registro.baja[0].inicio, registro.baja[0].fin, losDiasDelMes.length);
@@ -3693,11 +3745,17 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 indiceObjeto = arrayBuffer[cuadranteEnUsoCuadrantes - 1].findIndex(dia => (Object.keys(dia)[0]) === elDia);
                                 if (indiceObjeto >= 0) {
                                     objetoBuffer[dia[1][0] + dia[0][0]] = [...arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto][elDia]];
-                                    objetoBuffer[dia[1][0] + dia[0][0]][cuadrante.length - 1] = [
+                                    if (objetoBuffer[dia[1][0] + dia[0][0]][0][0] === 'SF') {
+                                        posicionACambiar = cuadrante.length;
+                                    } else {
+                                        posicionACambiar = cuadrante.length - 1;
+                                    };
+                                    objetoBuffer[dia[1][0] + dia[0][0]][posicionACambiar] = [
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicioRango'),
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFinRango')
                                     ];
                                     objetoBuffer['activo'] = true;
+                                    objetoBuffer['tipo'] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto]['tipo'];
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
@@ -3742,7 +3800,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     lunesFinRango: null,
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado)),
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -3752,6 +3810,180 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesInicioRango');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
+                        } else {
+                            if (esActualizacion) {
+                                if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                    columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                                } else {
+                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                        if (dia[1][0] === 'Lunes') {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                lunesInicioRango: null,
+                                                lunesFinRango: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    } else {
+                                        if (dia[1][0] === 'Lunes') {
+                                            if ((tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                                cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].lunesInicioRango) ||
+                                                (tipoTrabajador === 'suplente' &&
+                                                    cuadrante[posicionAnterior] &&
+                                                    cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                    !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    lunesInicioRango: null,
+                                                    lunesFinRango: null,
+                                                    tipoServicio: '',
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            } else {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    lunesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicioRango'),
+                                                    lunesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFinRango'),
+                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            }
+                                        }
+                                    };
+                                };
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Lunes') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            lunesInicioRango: null,
+                                            lunesFinRango: null,
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Lunes') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].lunesInicioRango) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                lunesInicioRango: null,
+                                                lunesFinRango: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                lunesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicioRango'),
+                                                lunesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFinRango'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
+                        }
+                    } else {
+                        if (esActualizacion) {
+                            if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Lunes') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            lunesInicioRango: null,
+                                            lunesFinRango: null,
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Lunes') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].lunesInicioRango) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                lunesInicioRango: null,
+                                                lunesFinRango: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                lunesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicioRango'),
+                                                lunesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFinRango'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
                         } else {
                             if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Lunes') {
@@ -3806,60 +4038,6 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     }
                                 }
                             };
-                        }
-                    } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
-                            if (dia[1][0] === 'Lunes') {
-                                columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                    lunesInicioRango: null,
-                                    lunesFinRango: null,
-                                    tipoServicio: '',
-                                    baja: false,
-                                    tipoBaja: null,
-                                    festivo: false,
-                                    observaciones: '',
-                                    modificado: false,
-                                    visibleVariaciones: false,
-                                    tipoVariacion: ''
-                                };
-                            }
-                        } else {
-                            if (dia[1][0] === 'Lunes') {
-                                if ((tipoTrabajador === 'suplente' &&
-                                    cuadrante[posicionAnterior] &&
-                                    cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
-                                    cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].lunesInicioRango) ||
-                                    (tipoTrabajador === 'suplente' &&
-                                        cuadrante[posicionAnterior] &&
-                                        cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
-                                        !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        lunesInicioRango: null,
-                                        lunesFinRango: null,
-                                        tipoServicio: '',
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                } else {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        lunesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicioRango'),
-                                        lunesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFinRango'),
-                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                }
-                            }
                         };
                     }
                 }//final secuencia
@@ -3883,11 +4061,17 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 indiceObjeto = arrayBuffer[cuadranteEnUsoCuadrantes - 1].findIndex(dia => (Object.keys(dia)[0]) === elDia);
                                 if (indiceObjeto >= 0) {
                                     objetoBuffer[dia[1][0] + dia[0][0]] = [...arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto][elDia]];
-                                    objetoBuffer[dia[1][0] + dia[0][0]][cuadrante.length - 1] = [
+                                    if (objetoBuffer[dia[1][0] + dia[0][0]][0][0] === 'SF') {
+                                        posicionACambiar = cuadrante.length;
+                                    } else {
+                                        posicionACambiar = cuadrante.length - 1;
+                                    };
+                                    objetoBuffer[dia[1][0] + dia[0][0]][posicionACambiar] = [
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicioRango'),
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFinRango')
                                     ];
                                     objetoBuffer['activo'] = true;
+                                    objetoBuffer['tipo'] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto]['tipo'];
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
@@ -3932,7 +4116,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     martesFinRango: null,
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado)),
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -3942,6 +4126,180 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesInicioRango');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
+                        } else {
+                            if (esActualizacion) {
+                                if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                    columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                                } else {
+                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                        if (dia[1][0] === 'Martes') {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                martesInicioRango: null,
+                                                martesFinRango: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    } else {
+                                        if (dia[1][0] === 'Martes') {
+                                            if ((tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                                cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].martesInicioRango) ||
+                                                (tipoTrabajador === 'suplente' &&
+                                                    cuadrante[posicionAnterior] &&
+                                                    cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                    !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    martesInicioRango: null,
+                                                    martesFinRango: null,
+                                                    tipoServicio: '',
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            } else {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    martesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicioRango'),
+                                                    martesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFinRango'),
+                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            }
+                                        }
+                                    };
+                                };
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Martes') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            martesInicioRango: null,
+                                            martesFinRango: null,
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Martes') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].martesInicioRango) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                martesInicioRango: null,
+                                                martesFinRango: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                martesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicioRango'),
+                                                martesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFinRango'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
+                        }
+                    } else {
+                        if (esActualizacion) {
+                            if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Martes') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            martesInicioRango: null,
+                                            martesFinRango: null,
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Martes') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].martesInicioRango) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                martesInicioRango: null,
+                                                martesFinRango: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                martesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicioRango'),
+                                                martesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFinRango'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
                         } else {
                             if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Martes') {
@@ -3996,60 +4354,6 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     }
                                 }
                             };
-                        }
-                    } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
-                            if (dia[1][0] === 'Martes') {
-                                columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                    martesInicioRango: null,
-                                    martesFinRango: null,
-                                    tipoServicio: '',
-                                    baja: false,
-                                    tipoBaja: null,
-                                    festivo: false,
-                                    observaciones: '',
-                                    modificado: false,
-                                    visibleVariaciones: false,
-                                    tipoVariacion: ''
-                                };
-                            }
-                        } else {
-                            if (dia[1][0] === 'Martes') {
-                                if ((tipoTrabajador === 'suplente' &&
-                                    cuadrante[posicionAnterior] &&
-                                    cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
-                                    cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].martesInicioRango) ||
-                                    (tipoTrabajador === 'suplente' &&
-                                        cuadrante[posicionAnterior] &&
-                                        cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
-                                        !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        martesInicioRango: null,
-                                        martesFinRango: null,
-                                        tipoServicio: '',
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                } else {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        martesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicioRango'),
-                                        martesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFinRango'),
-                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                }
-                            }
                         };
                     }
                 }//final secuencia
@@ -4073,11 +4377,17 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 indiceObjeto = arrayBuffer[cuadranteEnUsoCuadrantes - 1].findIndex(dia => (Object.keys(dia)[0]) === elDia);
                                 if (indiceObjeto >= 0) {
                                     objetoBuffer[dia[1][0] + dia[0][0]] = [...arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto][elDia]];
-                                    objetoBuffer[dia[1][0] + dia[0][0]][cuadrante.length - 1] = [
+                                    if (objetoBuffer[dia[1][0] + dia[0][0]][0][0] === 'SF') {
+                                        posicionACambiar = cuadrante.length;
+                                    } else {
+                                        posicionACambiar = cuadrante.length - 1;
+                                    };
+                                    objetoBuffer[dia[1][0] + dia[0][0]][posicionACambiar] = [
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicioRango'),
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFinRango')
                                     ];
                                     objetoBuffer['activo'] = true;
+                                    objetoBuffer['tipo'] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto]['tipo'];
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
@@ -4122,7 +4432,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     miercolesFinRango: null,
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado)),
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -4132,6 +4442,180 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesInicioRango');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
+                        } else {
+                            if (esActualizacion) {
+                                if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                    columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                                } else {
+                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                        if (dia[1][0] === 'Miércoles') {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                miercolesInicioRango: null,
+                                                miercolesFinRango: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    } else {
+                                        if (dia[1][0] === 'Miércoles') {
+                                            if ((tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                                cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].miercolesInicioRango) ||
+                                                (tipoTrabajador === 'suplente' &&
+                                                    cuadrante[posicionAnterior] &&
+                                                    cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                    !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    miercolesInicioRango: null,
+                                                    miercolesFinRango: null,
+                                                    tipoServicio: '',
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            } else {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    miercolesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicioRango'),
+                                                    miercolesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFinRango'),
+                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            }
+                                        }
+                                    };
+                                };
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Miércoles') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            miercolesInicioRango: null,
+                                            miercolesFinRango: null,
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Miércoles') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].miercolesInicioRango) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                miercolesInicioRango: null,
+                                                miercolesFinRango: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                miercolesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicioRango'),
+                                                miercolesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFinRango'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
+                        }
+                    } else {
+                        if (esActualizacion) {
+                            if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Miércoles') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            miercolesInicioRango: null,
+                                            miercolesFinRango: null,
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Miércoles') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].miercolesInicioRango) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                miercolesInicioRango: null,
+                                                miercolesFinRango: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                miercolesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicioRango'),
+                                                miercolesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFinRango'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
                         } else {
                             if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Miércoles') {
@@ -4186,60 +4670,6 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     }
                                 }
                             };
-                        }
-                    } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
-                            if (dia[1][0] === 'Miércoles') {
-                                columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                    miercolesInicioRango: null,
-                                    miercolesFinRango: null,
-                                    tipoServicio: '',
-                                    baja: false,
-                                    tipoBaja: null,
-                                    festivo: false,
-                                    observaciones: '',
-                                    modificado: false,
-                                    visibleVariaciones: false,
-                                    tipoVariacion: ''
-                                };
-                            }
-                        } else {
-                            if (dia[1][0] === 'Miércoles') {
-                                if ((tipoTrabajador === 'suplente' &&
-                                    cuadrante[posicionAnterior] &&
-                                    cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
-                                    cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].miercolesInicioRango) ||
-                                    (tipoTrabajador === 'suplente' &&
-                                        cuadrante[posicionAnterior] &&
-                                        cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
-                                        !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        miercolesInicioRango: null,
-                                        miercolesFinRango: null,
-                                        tipoServicio: '',
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                } else {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        miercolesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicioRango'),
-                                        miercolesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFinRango'),
-                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                }
-                            }
                         };
                     }
                 }//final secuencia
@@ -4263,11 +4693,17 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 indiceObjeto = arrayBuffer[cuadranteEnUsoCuadrantes - 1].findIndex(dia => (Object.keys(dia)[0]) === elDia);
                                 if (indiceObjeto >= 0) {
                                     objetoBuffer[dia[1][0] + dia[0][0]] = [...arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto][elDia]];
-                                    objetoBuffer[dia[1][0] + dia[0][0]][cuadrante.length - 1] = [
+                                    if (objetoBuffer[dia[1][0] + dia[0][0]][0][0] === 'SF') {
+                                        posicionACambiar = cuadrante.length;
+                                    } else {
+                                        posicionACambiar = cuadrante.length - 1;
+                                    };
+                                    objetoBuffer[dia[1][0] + dia[0][0]][posicionACambiar] = [
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicioRango'),
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFinRango')
                                     ];
                                     objetoBuffer['activo'] = true;
+                                    objetoBuffer['tipo'] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto]['tipo'];
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
@@ -4312,7 +4748,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     juevesFinRango: null,
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado)),
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -4322,6 +4758,180 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesInicioRango');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
+                        } else {
+                            if (esActualizacion) {
+                                if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                    columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                                } else {
+                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                        if (dia[1][0] === 'Jueves') {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                juevesInicioRango: null,
+                                                juevesFinRango: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    } else {
+                                        if (dia[1][0] === 'Jueves') {
+                                            if ((tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                                cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].juevesInicioRango) ||
+                                                (tipoTrabajador === 'suplente' &&
+                                                    cuadrante[posicionAnterior] &&
+                                                    cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                    !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    juevesInicioRango: null,
+                                                    juevesFinRango: null,
+                                                    tipoServicio: '',
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            } else {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    juevesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicioRango'),
+                                                    juevesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFinRango'),
+                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            }
+                                        }
+                                    };
+                                };
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Jueves') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            juevesInicioRango: null,
+                                            juevesFinRango: null,
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Jueves') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].juevesInicioRango) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                juevesInicioRango: null,
+                                                juevesFinRango: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                juevesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicioRango'),
+                                                juevesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFinRango'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
+                        }
+                    } else {
+                        if (esActualizacion) {
+                            if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Jueves') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            juevesInicioRango: null,
+                                            juevesFinRango: null,
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Jueves') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].juevesInicioRango) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                juevesInicioRango: null,
+                                                juevesFinRango: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                juevesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicioRango'),
+                                                juevesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFinRango'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
                         } else {
                             if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Jueves') {
@@ -4376,60 +4986,6 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     }
                                 }
                             };
-                        }
-                    } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
-                            if (dia[1][0] === 'Jueves') {
-                                columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                    juevesInicioRango: null,
-                                    juevesFinRango: null,
-                                    tipoServicio: '',
-                                    baja: false,
-                                    tipoBaja: null,
-                                    festivo: false,
-                                    observaciones: '',
-                                    modificado: false,
-                                    visibleVariaciones: false,
-                                    tipoVariacion: ''
-                                };
-                            }
-                        } else {
-                            if (dia[1][0] === 'Jueves') {
-                                if ((tipoTrabajador === 'suplente' &&
-                                    cuadrante[posicionAnterior] &&
-                                    cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
-                                    cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].juevesInicioRango) ||
-                                    (tipoTrabajador === 'suplente' &&
-                                        cuadrante[posicionAnterior] &&
-                                        cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
-                                        !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        juevesInicioRango: null,
-                                        juevesFinRango: null,
-                                        tipoServicio: '',
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                } else {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        juevesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicioRango'),
-                                        juevesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFinRango'),
-                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                }
-                            }
                         };
                     }
                 }//final secuencia
@@ -4453,11 +5009,17 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 indiceObjeto = arrayBuffer[cuadranteEnUsoCuadrantes - 1].findIndex(dia => (Object.keys(dia)[0]) === elDia);
                                 if (indiceObjeto >= 0) {
                                     objetoBuffer[dia[1][0] + dia[0][0]] = [...arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto][elDia]];
-                                    objetoBuffer[dia[1][0] + dia[0][0]][cuadrante.length - 1] = [
+                                    if (objetoBuffer[dia[1][0] + dia[0][0]][0][0] === 'SF') {
+                                        posicionACambiar = cuadrante.length;
+                                    } else {
+                                        posicionACambiar = cuadrante.length - 1;
+                                    };
+                                    objetoBuffer[dia[1][0] + dia[0][0]][posicionACambiar] = [
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicioRango'),
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFinRango')
                                     ];
                                     objetoBuffer['activo'] = true;
+                                    objetoBuffer['tipo'] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto]['tipo'];
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
@@ -4502,7 +5064,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     viernesFinRango: null,
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado)),
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -4512,6 +5074,180 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesInicioRango');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
+                        } else {
+                            if (esActualizacion) {
+                                if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                    columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                                } else {
+                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                        if (dia[1][0] === 'Viernes') {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                viernesInicioRango: null,
+                                                viernesFinRango: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    } else {
+                                        if (dia[1][0] === 'Viernes') {
+                                            if ((tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                                cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].viernesInicioRango) ||
+                                                (tipoTrabajador === 'suplente' &&
+                                                    cuadrante[posicionAnterior] &&
+                                                    cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                    !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    viernesInicioRango: null,
+                                                    viernesFinRango: null,
+                                                    tipoServicio: '',
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            } else {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    viernesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicioRango'),
+                                                    viernesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFinRango'),
+                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            }
+                                        }
+                                    };
+                                };
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Viernes') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            viernesInicioRango: null,
+                                            viernesFinRango: null,
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Viernes') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].viernesInicioRango) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                viernesInicioRango: null,
+                                                viernesFinRango: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                viernesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicioRango'),
+                                                viernesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFinRango'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
+                        }
+                    } else {
+                        if (esActualizacion) {
+                            if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Viernes') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            viernesInicioRango: null,
+                                            viernesFinRango: null,
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Viernes') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].viernesInicioRango) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                viernesInicioRango: null,
+                                                viernesFinRango: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                viernesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicioRango'),
+                                                viernesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFinRango'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
                         } else {
                             if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Viernes') {
@@ -4566,60 +5302,6 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     }
                                 }
                             };
-                        }
-                    } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
-                            if (dia[1][0] === 'Viernes') {
-                                columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                    viernesInicioRango: null,
-                                    viernesFinRango: null,
-                                    tipoServicio: '',
-                                    baja: false,
-                                    tipoBaja: null,
-                                    festivo: false,
-                                    observaciones: '',
-                                    modificado: false,
-                                    visibleVariaciones: false,
-                                    tipoVariacion: ''
-                                };
-                            }
-                        } else {
-                            if (dia[1][0] === 'Viernes') {
-                                if ((tipoTrabajador === 'suplente' &&
-                                    cuadrante[posicionAnterior] &&
-                                    cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
-                                    cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].viernesInicioRango) ||
-                                    (tipoTrabajador === 'suplente' &&
-                                        cuadrante[posicionAnterior] &&
-                                        cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
-                                        !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        viernesInicioRango: null,
-                                        viernesFinRango: null,
-                                        tipoServicio: '',
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                } else {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        viernesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicioRango'),
-                                        viernesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFinRango'),
-                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                }
-                            }
                         };
                     }
                 }//final secuencia
@@ -4643,11 +5325,17 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 indiceObjeto = arrayBuffer[cuadranteEnUsoCuadrantes - 1].findIndex(dia => (Object.keys(dia)[0]) === elDia);
                                 if (indiceObjeto >= 0) {
                                     objetoBuffer[dia[1][0] + dia[0][0]] = [...arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto][elDia]];
-                                    objetoBuffer[dia[1][0] + dia[0][0]][cuadrante.length - 1] = [
+                                    if (objetoBuffer[dia[1][0] + dia[0][0]][0][0] === 'SF') {
+                                        posicionACambiar = cuadrante.length;
+                                    } else {
+                                        posicionACambiar = cuadrante.length - 1;
+                                    };
+                                    objetoBuffer[dia[1][0] + dia[0][0]][posicionACambiar] = [
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicioRango'),
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFinRango')
                                     ];
                                     objetoBuffer['activo'] = true;
+                                    objetoBuffer['tipo'] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto]['tipo'];
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
@@ -4692,7 +5380,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     sabadoFinRango: null,
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado)),
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -4702,6 +5390,180 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoInicioRango');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
+                        } else {
+                            if (esActualizacion) {
+                                if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                    columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                                } else {
+                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                        if (dia[1][0] === 'Sábado') {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                sabadoInicioRango: null,
+                                                sabadoFinRango: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    } else {
+                                        if (dia[1][0] === 'Sábado') {
+                                            if ((tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                                cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].sabadoInicioRango) ||
+                                                (tipoTrabajador === 'suplente' &&
+                                                    cuadrante[posicionAnterior] &&
+                                                    cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                    !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    sabadoInicioRango: null,
+                                                    sabadoFinRango: null,
+                                                    tipoServicio: '',
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            } else {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    sabadoInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicioRango'),
+                                                    sabadoFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFinRango'),
+                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            }
+                                        }
+                                    };
+                                };
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Sábado') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            sabadoInicioRango: null,
+                                            sabadoFinRango: null,
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Sábado') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].sabadoInicioRango) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                sabadoInicioRango: null,
+                                                sabadoFinRango: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                sabadoInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicioRango'),
+                                                sabadoFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFinRango'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
+                        }
+                    } else {
+                        if (esActualizacion) {
+                            if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Sábado') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            sabadoInicioRango: null,
+                                            sabadoFinRango: null,
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Sábado') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].sabadoInicioRango) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                sabadoInicioRango: null,
+                                                sabadoFinRango: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                sabadoInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicioRango'),
+                                                sabadoFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFinRango'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
                         } else {
                             if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Sábado') {
@@ -4756,60 +5618,6 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     }
                                 }
                             };
-                        }
-                    } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
-                            if (dia[1][0] === 'Sábado') {
-                                columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                    sabadoInicioRango: null,
-                                    sabadoFinRango: null,
-                                    tipoServicio: '',
-                                    baja: false,
-                                    tipoBaja: null,
-                                    festivo: false,
-                                    observaciones: '',
-                                    modificado: false,
-                                    visibleVariaciones: false,
-                                    tipoVariacion: ''
-                                };
-                            }
-                        } else {
-                            if (dia[1][0] === 'Sábado') {
-                                if ((tipoTrabajador === 'suplente' &&
-                                    cuadrante[posicionAnterior] &&
-                                    cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
-                                    cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].sabadoInicioRango) ||
-                                    (tipoTrabajador === 'suplente' &&
-                                        cuadrante[posicionAnterior] &&
-                                        cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
-                                        !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        sabadoInicioRango: null,
-                                        sabadoFinRango: null,
-                                        tipoServicio: '',
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                } else {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        sabadoInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicioRango'),
-                                        sabadoFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFinRango'),
-                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                }
-                            }
                         };
                     }
                 }//final secuencia
@@ -4833,11 +5641,17 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 indiceObjeto = arrayBuffer[cuadranteEnUsoCuadrantes - 1].findIndex(dia => (Object.keys(dia)[0]) === elDia);
                                 if (indiceObjeto >= 0) {
                                     objetoBuffer[dia[1][0] + dia[0][0]] = [...arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto][elDia]];
-                                    objetoBuffer[dia[1][0] + dia[0][0]][cuadrante.length - 1] = [
+                                    if (objetoBuffer[dia[1][0] + dia[0][0]][0][0] === 'SF') {
+                                        posicionACambiar = cuadrante.length;
+                                    } else {
+                                        posicionACambiar = cuadrante.length - 1;
+                                    };
+                                    objetoBuffer[dia[1][0] + dia[0][0]][posicionACambiar] = [
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicioRango'),
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFinRango')
                                     ];
                                     objetoBuffer['activo'] = true;
+                                    objetoBuffer['tipo'] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto]['tipo'];
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
@@ -4882,7 +5696,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     domingoFinRango: null,
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado)),
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -4892,6 +5706,180 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoInicioRango');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
+                        } else {
+                            if (esActualizacion) {
+                                if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                    columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                                } else {
+                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                        if (dia[1][0] === 'Domingo') {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                domingoInicioRango: null,
+                                                domingoFinRango: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    } else {
+                                        if (dia[1][0] === 'Domingo') {
+                                            if ((tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                                cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].domingoInicioRango) ||
+                                                (tipoTrabajador === 'suplente' &&
+                                                    cuadrante[posicionAnterior] &&
+                                                    cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                    !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    domingoInicioRango: null,
+                                                    domingoFinRango: null,
+                                                    tipoServicio: '',
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            } else {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    domingoInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicioRango'),
+                                                    domingoFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFinRango'),
+                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            }
+                                        }
+                                    };
+                                };
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Domingo') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            domingoInicioRango: null,
+                                            domingoFinRango: null,
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Domingo') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].domingoInicioRango) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                domingoInicioRango: null,
+                                                domingoFinRango: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                domingoInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicioRango'),
+                                                domingoFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFinRango'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
+                        }
+                    } else {
+                        if (esActualizacion) {
+                            if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Domingo') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            domingoInicioRango: null,
+                                            domingoFinRango: null,
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Domingo') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].domingoInicioRango) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                domingoInicioRango: null,
+                                                domingoFinRango: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                domingoInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicioRango'),
+                                                domingoFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFinRango'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
                         } else {
                             if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Domingo') {
@@ -4946,60 +5934,6 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     }
                                 }
                             };
-                        }
-                    } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
-                            if (dia[1][0] === 'Domingo') {
-                                columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                    domingoInicioRango: null,
-                                    domingoFinRango: null,
-                                    tipoServicio: '',
-                                    baja: false,
-                                    tipoBaja: null,
-                                    festivo: false,
-                                    observaciones: '',
-                                    modificado: false,
-                                    visibleVariaciones: false,
-                                    tipoVariacion: ''
-                                };
-                            }
-                        } else {
-                            if (dia[1][0] === 'Domingo') {
-                                if ((tipoTrabajador === 'suplente' &&
-                                    cuadrante[posicionAnterior] &&
-                                    cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
-                                    cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].domingoInicioRango) ||
-                                    (tipoTrabajador === 'suplente' &&
-                                        cuadrante[posicionAnterior] &&
-                                        cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
-                                        !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        domingoInicioRango: null,
-                                        domingoFinRango: null,
-                                        tipoServicio: '',
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                } else {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        domingoInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicioRango'),
-                                        domingoFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFinRango'),
-                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                }
-                            }
                         };
                     }
                 }//final secuencia
@@ -5031,13 +5965,19 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 indiceObjeto = arrayBuffer[cuadranteEnUsoCuadrantes - 1].findIndex(dia => (Object.keys(dia)[0]) === elDia);
                                 if (indiceObjeto >= 0) {
                                     objetoBuffer[dia[1][0] + dia[0][0]] = [...arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto][elDia]];
-                                    objetoBuffer[dia[1][0] + dia[0][0]][cuadrante.length - 1] = [
+                                    if (objetoBuffer[dia[1][0] + dia[0][0]][0][0] === 'SF') {
+                                        posicionACambiar = cuadrante.length;
+                                    } else {
+                                        posicionACambiar = cuadrante.length - 1;
+                                    };
+                                    objetoBuffer[dia[1][0] + dia[0][0]][posicionACambiar] = [
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicio1RangoDescanso'),
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFin1RangoDescanso'),
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicio2RangoDescanso'),
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFin2RangoDescanso')
                                     ];
                                     objetoBuffer['activo'] = true;
+                                    objetoBuffer['tipo'] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto]['tipo'];
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
@@ -5084,7 +6024,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     lunesFin2RangoDescanso: null,
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado)),
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -5094,6 +6034,198 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesInicio1RangoDescanso');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
+                        } else {
+                            if (esActualizacion) {
+                                if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                    columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                                } else {
+                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                        if (dia[1][0] === 'Lunes') {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                lunesInicio1RangoDescanso: null,
+                                                lunesFin1RangoDescanso: null,
+                                                lunesInicio2RangoDescanso: null,
+                                                lunesFin2RangoDescanso: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    } else {
+                                        if (dia[1][0] === 'Lunes') {
+                                            if ((tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                                cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].lunesInicio1RangoDescanso) ||
+                                                (tipoTrabajador === 'suplente' &&
+                                                    cuadrante[posicionAnterior] &&
+                                                    cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                    !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    lunesInicio1RangoDescanso: null,
+                                                    lunesFin1RangoDescanso: null,
+                                                    lunesInicio2RangoDescanso: null,
+                                                    lunesFin2RangoDescanso: null,
+                                                    tipoServicio: '',
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            } else {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    lunesInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicio1RangoDescanso'),
+                                                    lunesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFin1RangoDescanso'),
+                                                    lunesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicio2RangoDescanso'),
+                                                    lunesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFin2RangoDescanso'),
+                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            }
+                                        }
+                                    };
+                                };
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Lunes') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            lunesInicio1RangoDescanso: null,
+                                            lunesFin1RangoDescanso: null,
+                                            lunesInicio2RangoDescanso: null,
+                                            lunesFin2RangoDescanso: null,
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Lunes') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].lunesInicio1RangoDescanso) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                lunesInicio1RangoDescanso: null,
+                                                lunesFin1RangoDescanso: null,
+                                                lunesInicio2RangoDescanso: null,
+                                                lunesFin2RangoDescanso: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                lunesInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicio1RangoDescanso'),
+                                                lunesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFin1RangoDescanso'),
+                                                lunesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicio2RangoDescanso'),
+                                                lunesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFin2RangoDescanso'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
+                        }
+                    } else {
+                        if (esActualizacion) {
+                            if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Lunes') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            lunesInicio1RangoDescanso: null,
+                                            lunesFin1RangoDescanso: null,
+                                            lunesInicio2RangoDescanso: null,
+                                            lunesFin2RangoDescanso: null,
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Lunes') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].lunesInicio1RangoDescanso) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                lunesInicio1RangoDescanso: null,
+                                                lunesFin1RangoDescanso: null,
+                                                lunesInicio2RangoDescanso: null,
+                                                lunesFin2RangoDescanso: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                lunesInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicio1RangoDescanso'),
+                                                lunesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFin1RangoDescanso'),
+                                                lunesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicio2RangoDescanso'),
+                                                lunesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFin2RangoDescanso'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
                         } else {
                             if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Lunes') {
@@ -5154,66 +6286,6 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     }
                                 }
                             };
-                        }
-                    } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
-                            if (dia[1][0] === 'Lunes') {
-                                columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                    lunesInicio1RangoDescanso: null,
-                                    lunesFin1RangoDescanso: null,
-                                    lunesInicio2RangoDescanso: null,
-                                    lunesFin2RangoDescanso: null,
-                                    tipoServicio: '',
-                                    baja: false,
-                                    tipoBaja: null,
-                                    festivo: false,
-                                    observaciones: '',
-                                    modificado: false,
-                                    visibleVariaciones: false,
-                                    tipoVariacion: ''
-                                };
-                            }
-                        } else {
-                            if (dia[1][0] === 'Lunes') {
-                                if ((tipoTrabajador === 'suplente' &&
-                                    cuadrante[posicionAnterior] &&
-                                    cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
-                                    cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].lunesInicio1RangoDescanso) ||
-                                    (tipoTrabajador === 'suplente' &&
-                                        cuadrante[posicionAnterior] &&
-                                        cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
-                                        !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        lunesInicio1RangoDescanso: null,
-                                        lunesFin1RangoDescanso: null,
-                                        lunesInicio2RangoDescanso: null,
-                                        lunesFin2RangoDescanso: null,
-                                        tipoServicio: '',
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                } else {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        lunesInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicio1RangoDescanso'),
-                                        lunesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFin1RangoDescanso'),
-                                        lunesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicio2RangoDescanso'),
-                                        lunesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFin2RangoDescanso'),
-                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                }
-                            }
                         };
                     }
                 }//final secuencia    
@@ -5239,13 +6311,19 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 indiceObjeto = arrayBuffer[cuadranteEnUsoCuadrantes - 1].findIndex(dia => (Object.keys(dia)[0]) === elDia);
                                 if (indiceObjeto >= 0) {
                                     objetoBuffer[dia[1][0] + dia[0][0]] = [...arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto][elDia]];
-                                    objetoBuffer[dia[1][0] + dia[0][0]][cuadrante.length - 1] = [
+                                    if (objetoBuffer[dia[1][0] + dia[0][0]][0][0] === 'SF') {
+                                        posicionACambiar = cuadrante.length;
+                                    } else {
+                                        posicionACambiar = cuadrante.length - 1;
+                                    };
+                                    objetoBuffer[dia[1][0] + dia[0][0]][posicionACambiar] = [
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicio1RangoDescanso'),
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFin1RangoDescanso'),
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicio2RangoDescanso'),
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFin2RangoDescanso')
                                     ];
                                     objetoBuffer['activo'] = true;
+                                    objetoBuffer['tipo'] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto]['tipo'];
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
@@ -5292,7 +6370,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     martesFin2RangoDescanso: null,
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado)),
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -5302,6 +6380,198 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesInicio1RangoDescanso');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
+                        } else {
+                            if (esActualizacion) {
+                                if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                    columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                                } else {
+                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                        if (dia[1][0] === 'Martes') {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                martesInicio1RangoDescanso: null,
+                                                martesFin1RangoDescanso: null,
+                                                martesInicio2RangoDescanso: null,
+                                                martesFin2RangoDescanso: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    } else {
+                                        if (dia[1][0] === 'Martes') {
+                                            if ((tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                                cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].martesInicio1RangoDescanso) ||
+                                                (tipoTrabajador === 'suplente' &&
+                                                    cuadrante[posicionAnterior] &&
+                                                    cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                    !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    martesInicio1RangoDescanso: null,
+                                                    martesFin1RangoDescanso: null,
+                                                    martesInicio2RangoDescanso: null,
+                                                    martesFin2RangoDescanso: null,
+                                                    tipoServicio: '',
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            } else {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    martesInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicio1RangoDescanso'),
+                                                    martesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFin1RangoDescanso'),
+                                                    martesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicio2RangoDescanso'),
+                                                    martesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFin2RangoDescanso'),
+                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            }
+                                        }
+                                    };
+                                };
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Martes') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            martesInicio1RangoDescanso: null,
+                                            martesFin1RangoDescanso: null,
+                                            martesInicio2RangoDescanso: null,
+                                            martesFin2RangoDescanso: null,
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Martes') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].martesInicio1RangoDescanso) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                martesInicio1RangoDescanso: null,
+                                                martesFin1RangoDescanso: null,
+                                                martesInicio2RangoDescanso: null,
+                                                martesFin2RangoDescanso: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                martesInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicio1RangoDescanso'),
+                                                martesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFin1RangoDescanso'),
+                                                martesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicio2RangoDescanso'),
+                                                martesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFin2RangoDescanso'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
+                        }
+                    } else {
+                        if (esActualizacion) {
+                            if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Martes') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            martesInicio1RangoDescanso: null,
+                                            martesFin1RangoDescanso: null,
+                                            martesInicio2RangoDescanso: null,
+                                            martesFin2RangoDescanso: null,
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Martes') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].martesInicio1RangoDescanso) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                martesInicio1RangoDescanso: null,
+                                                martesFin1RangoDescanso: null,
+                                                martesInicio2RangoDescanso: null,
+                                                martesFin2RangoDescanso: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                martesInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicio1RangoDescanso'),
+                                                martesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFin1RangoDescanso'),
+                                                martesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicio2RangoDescanso'),
+                                                martesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFin2RangoDescanso'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
                         } else {
                             if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Martes') {
@@ -5362,66 +6632,6 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     }
                                 }
                             };
-                        }
-                    } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
-                            if (dia[1][0] === 'Martes') {
-                                columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                    martesInicio1RangoDescanso: null,
-                                    martesFin1RangoDescanso: null,
-                                    martesInicio2RangoDescanso: null,
-                                    martesFin2RangoDescanso: null,
-                                    tipoServicio: '',
-                                    baja: false,
-                                    tipoBaja: null,
-                                    festivo: false,
-                                    observaciones: '',
-                                    modificado: false,
-                                    visibleVariaciones: false,
-                                    tipoVariacion: ''
-                                };
-                            }
-                        } else {
-                            if (dia[1][0] === 'Martes') {
-                                if ((tipoTrabajador === 'suplente' &&
-                                    cuadrante[posicionAnterior] &&
-                                    cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
-                                    cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].martesInicio1RangoDescanso) ||
-                                    (tipoTrabajador === 'suplente' &&
-                                        cuadrante[posicionAnterior] &&
-                                        cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
-                                        !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        martesInicio1RangoDescanso: null,
-                                        martesFin1RangoDescanso: null,
-                                        martesInicio2RangoDescanso: null,
-                                        martesFin2RangoDescanso: null,
-                                        tipoServicio: '',
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                } else {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        martesInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicio1RangoDescanso'),
-                                        martesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFin1RangoDescanso'),
-                                        martesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicio2RangoDescanso'),
-                                        martesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFin2RangoDescanso'),
-                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                }
-                            }
                         };
                     }
                 }//final secuencia
@@ -5447,13 +6657,19 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 indiceObjeto = arrayBuffer[cuadranteEnUsoCuadrantes - 1].findIndex(dia => (Object.keys(dia)[0]) === elDia);
                                 if (indiceObjeto >= 0) {
                                     objetoBuffer[dia[1][0] + dia[0][0]] = [...arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto][elDia]];
-                                    objetoBuffer[dia[1][0] + dia[0][0]][cuadrante.length - 1] = [
+                                    if (objetoBuffer[dia[1][0] + dia[0][0]][0][0] === 'SF') {
+                                        posicionACambiar = cuadrante.length;
+                                    } else {
+                                        posicionACambiar = cuadrante.length - 1;
+                                    };
+                                    objetoBuffer[dia[1][0] + dia[0][0]][posicionACambiar] = [
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicio1RangoDescanso'),
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFin1RangoDescanso'),
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicio2RangoDescanso'),
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFin2RangoDescanso')
                                     ];
                                     objetoBuffer['activo'] = true;
+                                    objetoBuffer['tipo'] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto]['tipo'];
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
@@ -5500,7 +6716,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     miercolesFin2RangoDescanso: null,
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado)),
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -5510,6 +6726,198 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesInicio1RangoDescanso');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
+                        } else {
+                            if (esActualizacion) {
+                                if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                    columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                                } else {
+                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                        if (dia[1][0] === 'Miércoles') {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                miercolesInicio1RangoDescanso: null,
+                                                miercolesFin1RangoDescanso: null,
+                                                miercolesInicio2RangoDescanso: null,
+                                                miercolesFin2RangoDescanso: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    } else {
+                                        if (dia[1][0] === 'Miércoles') {
+                                            if ((tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                                cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].miercolesInicio1RangoDescanso) ||
+                                                (tipoTrabajador === 'suplente' &&
+                                                    cuadrante[posicionAnterior] &&
+                                                    cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                    !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    miercolesInicio1RangoDescanso: null,
+                                                    miercolesFin1RangoDescanso: null,
+                                                    miercolesInicio2RangoDescanso: null,
+                                                    miercolesFin2RangoDescanso: null,
+                                                    tipoServicio: '',
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            } else {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    miercolesInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicio1RangoDescanso'),
+                                                    miercolesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFin1RangoDescanso'),
+                                                    miercolesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicio2RangoDescanso'),
+                                                    miercolesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFin2RangoDescanso'),
+                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            }
+                                        }
+                                    };
+                                };
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Miércoles') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            miercolesInicio1RangoDescanso: null,
+                                            miercolesFin1RangoDescanso: null,
+                                            miercolesInicio2RangoDescanso: null,
+                                            miercolesFin2RangoDescanso: null,
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Miércoles') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].miercolesInicio1RangoDescanso) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                miercolesInicio1RangoDescanso: null,
+                                                miercolesFin1RangoDescanso: null,
+                                                miercolesInicio2RangoDescanso: null,
+                                                miercolesFin2RangoDescanso: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                miercolesInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicio1RangoDescanso'),
+                                                miercolesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFin1RangoDescanso'),
+                                                miercolesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicio2RangoDescanso'),
+                                                miercolesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFin2RangoDescanso'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
+                        }
+                    } else {
+                        if (esActualizacion) {
+                            if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Miércoles') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            miercolesInicio1RangoDescanso: null,
+                                            miercolesFin1RangoDescanso: null,
+                                            miercolesInicio2RangoDescanso: null,
+                                            miercolesFin2RangoDescanso: null,
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Miércoles') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].miercolesInicio1RangoDescanso) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                miercolesInicio1RangoDescanso: null,
+                                                miercolesFin1RangoDescanso: null,
+                                                miercolesInicio2RangoDescanso: null,
+                                                miercolesFin2RangoDescanso: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                miercolesInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicio1RangoDescanso'),
+                                                miercolesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFin1RangoDescanso'),
+                                                miercolesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicio2RangoDescanso'),
+                                                miercolesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFin2RangoDescanso'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
                         } else {
                             if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Miércoles') {
@@ -5570,66 +6978,6 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     }
                                 }
                             };
-                        }
-                    } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
-                            if (dia[1][0] === 'Miércoles') {
-                                columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                    miercolesInicio1RangoDescanso: null,
-                                    miercolesFin1RangoDescanso: null,
-                                    miercolesInicio2RangoDescanso: null,
-                                    miercolesFin2RangoDescanso: null,
-                                    tipoServicio: '',
-                                    baja: false,
-                                    tipoBaja: null,
-                                    festivo: false,
-                                    observaciones: '',
-                                    modificado: false,
-                                    visibleVariaciones: false,
-                                    tipoVariacion: ''
-                                };
-                            }
-                        } else {
-                            if (dia[1][0] === 'Miércoles') {
-                                if ((tipoTrabajador === 'suplente' &&
-                                    cuadrante[posicionAnterior] &&
-                                    cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
-                                    cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].miercolesInicio1RangoDescanso) ||
-                                    (tipoTrabajador === 'suplente' &&
-                                        cuadrante[posicionAnterior] &&
-                                        cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
-                                        !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        miercolesInicio1RangoDescanso: null,
-                                        miercolesFin1RangoDescanso: null,
-                                        miercolesInicio2RangoDescanso: null,
-                                        miercolesFin2RangoDescanso: null,
-                                        tipoServicio: '',
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                } else {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        miercolesInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicio1RangoDescanso'),
-                                        miercolesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFin1RangoDescanso'),
-                                        miercolesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicio2RangoDescanso'),
-                                        miercolesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFin2RangoDescanso'),
-                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                }
-                            }
                         };
                     }
                 }//final secuencia
@@ -5655,13 +7003,19 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 indiceObjeto = arrayBuffer[cuadranteEnUsoCuadrantes - 1].findIndex(dia => (Object.keys(dia)[0]) === elDia);
                                 if (indiceObjeto >= 0) {
                                     objetoBuffer[dia[1][0] + dia[0][0]] = [...arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto][elDia]];
-                                    objetoBuffer[dia[1][0] + dia[0][0]][cuadrante.length - 1] = [
+                                    if (objetoBuffer[dia[1][0] + dia[0][0]][0][0] === 'SF') {
+                                        posicionACambiar = cuadrante.length;
+                                    } else {
+                                        posicionACambiar = cuadrante.length - 1;
+                                    };
+                                    objetoBuffer[dia[1][0] + dia[0][0]][posicionACambiar] = [
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicio1RangoDescanso'),
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFin1RangoDescanso'),
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicio2RangoDescanso'),
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFin2RangoDescanso')
                                     ];
                                     objetoBuffer['activo'] = true;
+                                    objetoBuffer['tipo'] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto]['tipo'];
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
@@ -5708,7 +7062,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     juevesFin2RangoDescanso: null,
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado)),
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -5718,6 +7072,198 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesInicio1RangoDescanso');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
+                        } else {
+                            if (esActualizacion) {
+                                if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                    columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                                } else {
+                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                        if (dia[1][0] === 'Jueves') {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                juevesInicio1RangoDescanso: null,
+                                                juevesFin1RangoDescanso: null,
+                                                juevesInicio2RangoDescanso: null,
+                                                juevesFin2RangoDescanso: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    } else {
+                                        if (dia[1][0] === 'Jueves') {
+                                            if ((tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                                cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].juevesInicio1RangoDescanso) ||
+                                                (tipoTrabajador === 'suplente' &&
+                                                    cuadrante[posicionAnterior] &&
+                                                    cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                    !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    juevesInicio1RangoDescanso: null,
+                                                    juevesFin1RangoDescanso: null,
+                                                    juevesInicio2RangoDescanso: null,
+                                                    juevesFin2RangoDescanso: null,
+                                                    tipoServicio: '',
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            } else {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    juevesInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicio1RangoDescanso'),
+                                                    juevesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFin1RangoDescanso'),
+                                                    juevesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicio2RangoDescanso'),
+                                                    juevesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFin2RangoDescanso'),
+                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            }
+                                        }
+                                    };
+                                };
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Jueves') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            juevesInicio1RangoDescanso: null,
+                                            juevesFin1RangoDescanso: null,
+                                            juevesInicio2RangoDescanso: null,
+                                            juevesFin2RangoDescanso: null,
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Jueves') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].juevesInicio1RangoDescanso) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                juevesInicio1RangoDescanso: null,
+                                                juevesFin1RangoDescanso: null,
+                                                juevesInicio2RangoDescanso: null,
+                                                juevesFin2RangoDescanso: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                juevesInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicio1RangoDescanso'),
+                                                juevesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFin1RangoDescanso'),
+                                                juevesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicio2RangoDescanso'),
+                                                juevesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFin2RangoDescanso'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
+                        }
+                    } else {
+                        if (esActualizacion) {
+                            if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Jueves') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            juevesInicio1RangoDescanso: null,
+                                            juevesFin1RangoDescanso: null,
+                                            juevesInicio2RangoDescanso: null,
+                                            juevesFin2RangoDescanso: null,
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Jueves') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].juevesInicio1RangoDescanso) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                juevesInicio1RangoDescanso: null,
+                                                juevesFin1RangoDescanso: null,
+                                                juevesInicio2RangoDescanso: null,
+                                                juevesFin2RangoDescanso: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                juevesInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicio1RangoDescanso'),
+                                                juevesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFin1RangoDescanso'),
+                                                juevesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicio2RangoDescanso'),
+                                                juevesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFin2RangoDescanso'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
                         } else {
                             if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Jueves') {
@@ -5778,66 +7324,6 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     }
                                 }
                             };
-                        }
-                    } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
-                            if (dia[1][0] === 'Jueves') {
-                                columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                    juevesInicio1RangoDescanso: null,
-                                    juevesFin1RangoDescanso: null,
-                                    juevesInicio2RangoDescanso: null,
-                                    juevesFin2RangoDescanso: null,
-                                    tipoServicio: '',
-                                    baja: false,
-                                    tipoBaja: null,
-                                    festivo: false,
-                                    observaciones: '',
-                                    modificado: false,
-                                    visibleVariaciones: false,
-                                    tipoVariacion: ''
-                                };
-                            }
-                        } else {
-                            if (dia[1][0] === 'Jueves') {
-                                if ((tipoTrabajador === 'suplente' &&
-                                    cuadrante[posicionAnterior] &&
-                                    cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
-                                    cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].juevesInicio1RangoDescanso) ||
-                                    (tipoTrabajador === 'suplente' &&
-                                        cuadrante[posicionAnterior] &&
-                                        cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
-                                        !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        juevesInicio1RangoDescanso: null,
-                                        juevesFin1RangoDescanso: null,
-                                        juevesInicio2RangoDescanso: null,
-                                        juevesFin2RangoDescanso: null,
-                                        tipoServicio: '',
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                } else {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        juevesInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicio1RangoDescanso'),
-                                        juevesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFin1RangoDescanso'),
-                                        juevesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicio2RangoDescanso'),
-                                        juevesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFin2RangoDescanso'),
-                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                }
-                            }
                         };
                     }
                 }//final secuencia
@@ -5863,13 +7349,19 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 indiceObjeto = arrayBuffer[cuadranteEnUsoCuadrantes - 1].findIndex(dia => (Object.keys(dia)[0]) === elDia);
                                 if (indiceObjeto >= 0) {
                                     objetoBuffer[dia[1][0] + dia[0][0]] = [...arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto][elDia]];
-                                    objetoBuffer[dia[1][0] + dia[0][0]][cuadrante.length - 1] = [
+                                    if (objetoBuffer[dia[1][0] + dia[0][0]][0][0] === 'SF') {
+                                        posicionACambiar = cuadrante.length;
+                                    } else {
+                                        posicionACambiar = cuadrante.length - 1;
+                                    };
+                                    objetoBuffer[dia[1][0] + dia[0][0]][posicionACambiar] = [
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicio1RangoDescanso'),
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFin1RangoDescanso'),
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicio2RangoDescanso'),
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFin2RangoDescanso')
                                     ];
                                     objetoBuffer['activo'] = true;
+                                    objetoBuffer['tipo'] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto]['tipo'];
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
@@ -5916,7 +7408,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     viernesFin2RangoDescanso: null,
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado)),
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -5926,6 +7418,198 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesInicio1RangoDescanso');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
+                        } else {
+                            if (esActualizacion) {
+                                if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                    columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                                } else {
+                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                        if (dia[1][0] === 'Viernes') {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                viernesInicio1RangoDescanso: null,
+                                                viernesFin1RangoDescanso: null,
+                                                viernesInicio2RangoDescanso: null,
+                                                viernesFin2RangoDescanso: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    } else {
+                                        if (dia[1][0] === 'Viernes') {
+                                            if ((tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                                cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].viernesInicio1RangoDescanso) ||
+                                                (tipoTrabajador === 'suplente' &&
+                                                    cuadrante[posicionAnterior] &&
+                                                    cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                    !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    viernesInicio1RangoDescanso: null,
+                                                    viernesFin1RangoDescanso: null,
+                                                    viernesInicio2RangoDescanso: null,
+                                                    viernesFin2RangoDescanso: null,
+                                                    tipoServicio: '',
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            } else {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    viernesInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicio1RangoDescanso'),
+                                                    viernesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFin1RangoDescanso'),
+                                                    viernesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicio2RangoDescanso'),
+                                                    viernesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFin2RangoDescanso'),
+                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            }
+                                        }
+                                    };
+                                };
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Viernes') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            viernesInicio1RangoDescanso: null,
+                                            viernesFin1RangoDescanso: null,
+                                            viernesInicio2RangoDescanso: null,
+                                            viernesFin2RangoDescanso: null,
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Viernes') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].viernesInicio1RangoDescanso) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                viernesInicio1RangoDescanso: null,
+                                                viernesFin1RangoDescanso: null,
+                                                viernesInicio2RangoDescanso: null,
+                                                viernesFin2RangoDescanso: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                viernesInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicio1RangoDescanso'),
+                                                viernesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFin1RangoDescanso'),
+                                                viernesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicio2RangoDescanso'),
+                                                viernesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFin2RangoDescanso'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
+                        }
+                    } else {
+                        if (esActualizacion) {
+                            if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Viernes') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            viernesInicio1RangoDescanso: null,
+                                            viernesFin1RangoDescanso: null,
+                                            viernesInicio2RangoDescanso: null,
+                                            viernesFin2RangoDescanso: null,
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Viernes') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].viernesInicio1RangoDescanso) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                viernesInicio1RangoDescanso: null,
+                                                viernesFin1RangoDescanso: null,
+                                                viernesInicio2RangoDescanso: null,
+                                                viernesFin2RangoDescanso: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                viernesInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicio1RangoDescanso'),
+                                                viernesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFin1RangoDescanso'),
+                                                viernesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicio2RangoDescanso'),
+                                                viernesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFin2RangoDescanso'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
                         } else {
                             if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Viernes') {
@@ -5986,66 +7670,6 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     }
                                 }
                             };
-                        }
-                    } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
-                            if (dia[1][0] === 'Viernes') {
-                                columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                    viernesInicio1RangoDescanso: null,
-                                    viernesFin1RangoDescanso: null,
-                                    viernesInicio2RangoDescanso: null,
-                                    viernesFin2RangoDescanso: null,
-                                    tipoServicio: '',
-                                    baja: false,
-                                    tipoBaja: null,
-                                    festivo: false,
-                                    observaciones: '',
-                                    modificado: false,
-                                    visibleVariaciones: false,
-                                    tipoVariacion: ''
-                                };
-                            }
-                        } else {
-                            if (dia[1][0] === 'Viernes') {
-                                if ((tipoTrabajador === 'suplente' &&
-                                    cuadrante[posicionAnterior] &&
-                                    cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
-                                    cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].viernesInicio1RangoDescanso) ||
-                                    (tipoTrabajador === 'suplente' &&
-                                        cuadrante[posicionAnterior] &&
-                                        cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
-                                        !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        viernesInicio1RangoDescanso: null,
-                                        viernesFin1RangoDescanso: null,
-                                        viernesInicio2RangoDescanso: null,
-                                        viernesFin2RangoDescanso: null,
-                                        tipoServicio: '',
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                } else {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        viernesInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicio1RangoDescanso'),
-                                        viernesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFin1RangoDescanso'),
-                                        viernesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicio2RangoDescanso'),
-                                        viernesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFin2RangoDescanso'),
-                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                }
-                            }
                         };
                     }
                 }//final secuencia
@@ -6071,13 +7695,19 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 indiceObjeto = arrayBuffer[cuadranteEnUsoCuadrantes - 1].findIndex(dia => (Object.keys(dia)[0]) === elDia);
                                 if (indiceObjeto >= 0) {
                                     objetoBuffer[dia[1][0] + dia[0][0]] = [...arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto][elDia]];
-                                    objetoBuffer[dia[1][0] + dia[0][0]][cuadrante.length - 1] = [
+                                    if (objetoBuffer[dia[1][0] + dia[0][0]][0][0] === 'SF') {
+                                        posicionACambiar = cuadrante.length;
+                                    } else {
+                                        posicionACambiar = cuadrante.length - 1;
+                                    };
+                                    objetoBuffer[dia[1][0] + dia[0][0]][posicionACambiar] = [
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicio1RangoDescanso'),
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFin1RangoDescanso'),
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicio2RangoDescanso'),
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFin2RangoDescanso')
                                     ];
                                     objetoBuffer['activo'] = true;
+                                    objetoBuffer['tipo'] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto]['tipo'];
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
@@ -6124,7 +7754,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     sabadoFin2RangoDescanso: null,
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado)),
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -6134,6 +7764,198 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoInicio1RangoDescanso');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
+                        } else {
+                            if (esActualizacion) {
+                                if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                    columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                                } else {
+                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                        if (dia[1][0] === 'Sábado') {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                sabadoInicio1RangoDescanso: null,
+                                                sabadoFin1RangoDescanso: null,
+                                                sabadoInicio2RangoDescanso: null,
+                                                sabadoFin2RangoDescanso: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    } else {
+                                        if (dia[1][0] === 'Sábado') {
+                                            if ((tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                                cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].sabadoInicio1RangoDescanso) ||
+                                                (tipoTrabajador === 'suplente' &&
+                                                    cuadrante[posicionAnterior] &&
+                                                    cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                    !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    sabadoInicio1RangoDescanso: null,
+                                                    sabadoFin1RangoDescanso: null,
+                                                    sabadoInicio2RangoDescanso: null,
+                                                    sabadoFin2RangoDescanso: null,
+                                                    tipoServicio: '',
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            } else {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    sabadoInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicio1RangoDescanso'),
+                                                    sabadoFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFin1RangoDescanso'),
+                                                    sabadoInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicio2RangoDescanso'),
+                                                    sabadoFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFin2RangoDescanso'),
+                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            }
+                                        }
+                                    };
+                                };
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Sábado') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            sabadoInicio1RangoDescanso: null,
+                                            sabadoFin1RangoDescanso: null,
+                                            sabadoInicio2RangoDescanso: null,
+                                            sabadoFin2RangoDescanso: null,
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Sábado') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].sabadoInicio1RangoDescanso) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                sabadoInicio1RangoDescanso: null,
+                                                sabadoFin1RangoDescanso: null,
+                                                sabadoInicio2RangoDescanso: null,
+                                                sabadoFin2RangoDescanso: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                sabadoInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicio1RangoDescanso'),
+                                                sabadoFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFin1RangoDescanso'),
+                                                sabadoInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicio2RangoDescanso'),
+                                                sabadoFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFin2RangoDescanso'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
+                        }
+                    } else {
+                        if (esActualizacion) {
+                            if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Sábado') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            sabadoInicio1RangoDescanso: null,
+                                            sabadoFin1RangoDescanso: null,
+                                            sabadoInicio2RangoDescanso: null,
+                                            sabadoFin2RangoDescanso: null,
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Sábado') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].sabadoInicio1RangoDescanso) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                sabadoInicio1RangoDescanso: null,
+                                                sabadoFin1RangoDescanso: null,
+                                                sabadoInicio2RangoDescanso: null,
+                                                sabadoFin2RangoDescanso: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                sabadoInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicio1RangoDescanso'),
+                                                sabadoFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFin1RangoDescanso'),
+                                                sabadoInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicio2RangoDescanso'),
+                                                sabadoFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFin2RangoDescanso'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
                         } else {
                             if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Sábado') {
@@ -6194,66 +8016,6 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     }
                                 }
                             };
-                        }
-                    } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
-                            if (dia[1][0] === 'Sábado') {
-                                columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                    sabadoInicio1RangoDescanso: null,
-                                    sabadoFin1RangoDescanso: null,
-                                    sabadoInicio2RangoDescanso: null,
-                                    sabadoFin2RangoDescanso: null,
-                                    tipoServicio: '',
-                                    baja: false,
-                                    tipoBaja: null,
-                                    festivo: false,
-                                    observaciones: '',
-                                    modificado: false,
-                                    visibleVariaciones: false,
-                                    tipoVariacion: ''
-                                };
-                            }
-                        } else {
-                            if (dia[1][0] === 'Sábado') {
-                                if ((tipoTrabajador === 'suplente' &&
-                                    cuadrante[posicionAnterior] &&
-                                    cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
-                                    cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].sabadoInicio1RangoDescanso) ||
-                                    (tipoTrabajador === 'suplente' &&
-                                        cuadrante[posicionAnterior] &&
-                                        cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
-                                        !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        sabadoInicio1RangoDescanso: null,
-                                        sabadoFin1RangoDescanso: null,
-                                        sabadoInicio2RangoDescanso: null,
-                                        sabadoFin2RangoDescanso: null,
-                                        tipoServicio: '',
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                } else {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        sabadoInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicio1RangoDescanso'),
-                                        sabadoFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFin1RangoDescanso'),
-                                        sabadoInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicio2RangoDescanso'),
-                                        sabadoFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFin2RangoDescanso'),
-                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                }
-                            }
                         };
                     }
                 }//final secuencia
@@ -6279,13 +8041,19 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 indiceObjeto = arrayBuffer[cuadranteEnUsoCuadrantes - 1].findIndex(dia => (Object.keys(dia)[0]) === elDia);
                                 if (indiceObjeto >= 0) {
                                     objetoBuffer[dia[1][0] + dia[0][0]] = [...arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto][elDia]];
-                                    objetoBuffer[dia[1][0] + dia[0][0]][cuadrante.length - 1] = [
+                                    if (objetoBuffer[dia[1][0] + dia[0][0]][0][0] === 'SF') {
+                                        posicionACambiar = cuadrante.length;
+                                    } else {
+                                        posicionACambiar = cuadrante.length - 1;
+                                    };
+                                    objetoBuffer[dia[1][0] + dia[0][0]][posicionACambiar] = [
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicio1RangoDescanso'),
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFin1RangoDescanso'),
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicio2RangoDescanso'),
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFin2RangoDescanso')
                                     ];
                                     objetoBuffer['activo'] = true;
+                                    objetoBuffer['tipo'] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto]['tipo'];
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
@@ -6332,7 +8100,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     domingoFin2RangoDescanso: null,
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado)),
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -6342,6 +8110,198 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoInicio1RangoDescanso');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
+                        } else {
+                            if (esActualizacion) {
+                                if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                    columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                                } else {
+                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                        if (dia[1][0] === 'Domingo') {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                domingoInicio1RangoDescanso: null,
+                                                domingoFin1RangoDescanso: null,
+                                                domingoInicio2RangoDescanso: null,
+                                                domingoFin2RangoDescanso: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    } else {
+                                        if (dia[1][0] === 'Domingo') {
+                                            if ((tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                                cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].domingoInicio1RangoDescanso) ||
+                                                (tipoTrabajador === 'suplente' &&
+                                                    cuadrante[posicionAnterior] &&
+                                                    cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                    !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    domingoInicio1RangoDescanso: null,
+                                                    domingoFin1RangoDescanso: null,
+                                                    domingoInicio2RangoDescanso: null,
+                                                    domingoFin2RangoDescanso: null,
+                                                    tipoServicio: '',
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            } else {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    domingoInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicio1RangoDescanso'),
+                                                    domingoFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFin1RangoDescanso'),
+                                                    domingoInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicio2RangoDescanso'),
+                                                    domingoFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFin2RangoDescanso'),
+                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            }
+                                        }
+                                    };
+                                };
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Domingo') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            domingoInicio1RangoDescanso: null,
+                                            domingoFin1RangoDescanso: null,
+                                            domingoInicio2RangoDescanso: null,
+                                            domingoFin2RangoDescanso: null,
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Domingo') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].domingoInicio1RangoDescanso) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                domingoInicio1RangoDescanso: null,
+                                                domingoFin1RangoDescanso: null,
+                                                domingoInicio2RangoDescanso: null,
+                                                domingoFin2RangoDescanso: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                domingoInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicio1RangoDescanso'),
+                                                domingoFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFin1RangoDescanso'),
+                                                domingoInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicio2RangoDescanso'),
+                                                domingoFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFin2RangoDescanso'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
+                        }
+                    } else {
+                        if (esActualizacion) {
+                            if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Domingo') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            domingoInicio1RangoDescanso: null,
+                                            domingoFin1RangoDescanso: null,
+                                            domingoInicio2RangoDescanso: null,
+                                            domingoFin2RangoDescanso: null,
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Domingo') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].domingoInicio1RangoDescanso) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                domingoInicio1RangoDescanso: null,
+                                                domingoFin1RangoDescanso: null,
+                                                domingoInicio2RangoDescanso: null,
+                                                domingoFin2RangoDescanso: null,
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                domingoInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicio1RangoDescanso'),
+                                                domingoFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFin1RangoDescanso'),
+                                                domingoInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicio2RangoDescanso'),
+                                                domingoFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFin2RangoDescanso'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
                         } else {
                             if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Domingo') {
@@ -6402,66 +8362,6 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     }
                                 }
                             };
-                        }
-                    } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
-                            if (dia[1][0] === 'Domingo') {
-                                columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                    domingoInicio1RangoDescanso: null,
-                                    domingoFin1RangoDescanso: null,
-                                    domingoInicio2RangoDescanso: null,
-                                    domingoFin2RangoDescanso: null,
-                                    tipoServicio: '',
-                                    baja: false,
-                                    tipoBaja: null,
-                                    festivo: false,
-                                    observaciones: '',
-                                    modificado: false,
-                                    visibleVariaciones: false,
-                                    tipoVariacion: ''
-                                };
-                            }
-                        } else {
-                            if (dia[1][0] === 'Domingo') {
-                                if ((tipoTrabajador === 'suplente' &&
-                                    cuadrante[posicionAnterior] &&
-                                    cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
-                                    cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].domingoInicio1RangoDescanso) ||
-                                    (tipoTrabajador === 'suplente' &&
-                                        cuadrante[posicionAnterior] &&
-                                        cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
-                                        !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        domingoInicio1RangoDescanso: null,
-                                        domingoFin1RangoDescanso: null,
-                                        domingoInicio2RangoDescanso: null,
-                                        domingoFin2RangoDescanso: null,
-                                        tipoServicio: '',
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                } else {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        domingoInicio1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicio1RangoDescanso'),
-                                        domingoFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFin1RangoDescanso'),
-                                        domingoInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicio2RangoDescanso'),
-                                        domingoFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFin2RangoDescanso'),
-                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                }
-                            }
                         };
                     }
                 }//final secuencia
@@ -6490,10 +8390,16 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 indiceObjeto = arrayBuffer[cuadranteEnUsoCuadrantes - 1].findIndex(dia => (Object.keys(dia)[0]) === elDia);
                                 if (indiceObjeto >= 0) {
                                     objetoBuffer[dia[1][0] + dia[0][0]] = [...arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto][elDia]];
-                                    objetoBuffer[dia[1][0] + dia[0][0]][cuadrante.length - 1] = [
+                                    if (objetoBuffer[dia[1][0] + dia[0][0]][0][0] === 'SF') {
+                                        posicionACambiar = cuadrante.length;
+                                    } else {
+                                        posicionACambiar = cuadrante.length - 1;
+                                    };
+                                    objetoBuffer[dia[1][0] + dia[0][0]][posicionACambiar] = [
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesCantidad')
                                     ];
                                     objetoBuffer['activo'] = true;
+                                    objetoBuffer['tipo'] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto]['tipo'];
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
@@ -6537,7 +8443,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     lunesCantidad: '',
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado)),
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -6547,6 +8453,171 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesCantidad');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
+                        } else {
+                            if (esActualizacion) {
+                                if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                    columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                                } else {
+                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                        if (dia[1][0] === 'Lunes') {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                lunesCantidad: '',
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    } else {
+                                        if (dia[1][0] === 'Lunes') {
+                                            if ((tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                                cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].lunesCantidad) ||
+                                                (tipoTrabajador === 'suplente' &&
+                                                    cuadrante[posicionAnterior] &&
+                                                    cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                    !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    lunesCantidad: '',
+                                                    tipoServicio: '',
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            } else {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    lunesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesCantidad'),
+                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            }
+                                        }
+                                    };
+                                };
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Lunes') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            lunesCantidad: '',
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Lunes') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].lunesCantidad) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                lunesCantidad: '',
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                lunesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesCantidad'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
+                        }
+                    } else {
+                        if (esActualizacion) {
+                            if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Lunes') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            lunesCantidad: '',
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Lunes') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].lunesCantidad) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                lunesCantidad: '',
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                lunesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesCantidad'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
                         } else {
                             if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Lunes') {
@@ -6598,57 +8669,6 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     }
                                 }
                             };
-                        }
-                    } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
-                            if (dia[1][0] === 'Lunes') {
-                                columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                    lunesCantidad: '',
-                                    tipoServicio: '',
-                                    baja: false,
-                                    tipoBaja: null,
-                                    festivo: false,
-                                    observaciones: '',
-                                    modificado: false,
-                                    visibleVariaciones: false,
-                                    tipoVariacion: ''
-                                };
-                            }
-                        } else {
-                            if (dia[1][0] === 'Lunes') {
-                                if ((tipoTrabajador === 'suplente' &&
-                                    cuadrante[posicionAnterior] &&
-                                    cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
-                                    cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].lunesCantidad) ||
-                                    (tipoTrabajador === 'suplente' &&
-                                        cuadrante[posicionAnterior] &&
-                                        cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
-                                        !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        lunesCantidad: '',
-                                        tipoServicio: '',
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                } else {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        lunesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesCantidad'),
-                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                }
-                            }
                         };
                     }
                 }//final secuencia
@@ -6671,10 +8691,16 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 indiceObjeto = arrayBuffer[cuadranteEnUsoCuadrantes - 1].findIndex(dia => (Object.keys(dia)[0]) === elDia);
                                 if (indiceObjeto >= 0) {
                                     objetoBuffer[dia[1][0] + dia[0][0]] = [...arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto][elDia]];
-                                    objetoBuffer[dia[1][0] + dia[0][0]][cuadrante.length - 1] = [
+                                    if (objetoBuffer[dia[1][0] + dia[0][0]][0][0] === 'SF') {
+                                        posicionACambiar = cuadrante.length;
+                                    } else {
+                                        posicionACambiar = cuadrante.length - 1;
+                                    };
+                                    objetoBuffer[dia[1][0] + dia[0][0]][posicionACambiar] = [
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesCantidad')
                                     ];
                                     objetoBuffer['activo'] = true;
+                                    objetoBuffer['tipo'] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto]['tipo'];
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
@@ -6718,7 +8744,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     martesCantidad: '',
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado)),
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -6728,6 +8754,171 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesCantidad');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
+                        } else {
+                            if (esActualizacion) {
+                                if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                    columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                                } else {
+                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                        if (dia[1][0] === 'Martes') {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                martesCantidad: '',
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    } else {
+                                        if (dia[1][0] === 'Martes') {
+                                            if ((tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                                cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].martesCantidad) ||
+                                                (tipoTrabajador === 'suplente' &&
+                                                    cuadrante[posicionAnterior] &&
+                                                    cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                    !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    martesCantidad: '',
+                                                    tipoServicio: '',
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            } else {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    martesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesCantidad'),
+                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            }
+                                        }
+                                    };
+                                };
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Martes') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            martesCantidad: '',
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Martes') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].martesCantidad) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                martesCantidad: '',
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                martesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesCantidad'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
+                        }
+                    } else {
+                        if (esActualizacion) {
+                            if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Martes') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            martesCantidad: '',
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Martes') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].martesCantidad) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                martesCantidad: '',
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                martesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesCantidad'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
                         } else {
                             if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Martes') {
@@ -6779,57 +8970,6 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     }
                                 }
                             };
-                        }
-                    } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
-                            if (dia[1][0] === 'Martes') {
-                                columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                    martesCantidad: '',
-                                    tipoServicio: '',
-                                    baja: false,
-                                    tipoBaja: null,
-                                    festivo: false,
-                                    observaciones: '',
-                                    modificado: false,
-                                    visibleVariaciones: false,
-                                    tipoVariacion: ''
-                                };
-                            }
-                        } else {
-                            if (dia[1][0] === 'Martes') {
-                                if ((tipoTrabajador === 'suplente' &&
-                                    cuadrante[posicionAnterior] &&
-                                    cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
-                                    cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].martesCantidad) ||
-                                    (tipoTrabajador === 'suplente' &&
-                                        cuadrante[posicionAnterior] &&
-                                        cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
-                                        !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        martesCantidad: '',
-                                        tipoServicio: '',
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                } else {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        martesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesCantidad'),
-                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                }
-                            }
                         };
                     }
                 }//final secuencia
@@ -6852,10 +8992,16 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 indiceObjeto = arrayBuffer[cuadranteEnUsoCuadrantes - 1].findIndex(dia => (Object.keys(dia)[0]) === elDia);
                                 if (indiceObjeto >= 0) {
                                     objetoBuffer[dia[1][0] + dia[0][0]] = [...arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto][elDia]];
-                                    objetoBuffer[dia[1][0] + dia[0][0]][cuadrante.length - 1] = [
+                                    if (objetoBuffer[dia[1][0] + dia[0][0]][0][0] === 'SF') {
+                                        posicionACambiar = cuadrante.length;
+                                    } else {
+                                        posicionACambiar = cuadrante.length - 1;
+                                    };
+                                    objetoBuffer[dia[1][0] + dia[0][0]][posicionACambiar] = [
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesCantidad')
                                     ];
                                     objetoBuffer['activo'] = true;
+                                    objetoBuffer['tipo'] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto]['tipo'];
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
@@ -6899,7 +9045,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     miercolesCantidad: '',
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado)),
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -6909,6 +9055,171 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesCantidad');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
+                        } else {
+                            if (esActualizacion) {
+                                if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                    columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                                } else {
+                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                        if (dia[1][0] === 'Miércoles') {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                miercolesCantidad: '',
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    } else {
+                                        if (dia[1][0] === 'Miércoles') {
+                                            if ((tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                                cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].miercolesCantidad) ||
+                                                (tipoTrabajador === 'suplente' &&
+                                                    cuadrante[posicionAnterior] &&
+                                                    cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                    !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    miercolesCantidad: '',
+                                                    tipoServicio: '',
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            } else {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    miercolesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesCantidad'),
+                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            }
+                                        }
+                                    };
+                                };
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Miércoles') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            miercolesCantidad: '',
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Miércoles') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].miercolesCantidad) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                miercolesCantidad: '',
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                miercolesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesCantidad'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
+                        }
+                    } else {
+                        if (esActualizacion) {
+                            if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Miércoles') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            miercolesCantidad: '',
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Miércoles') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].miercolesCantidad) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                miercolesCantidad: '',
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                miercolesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesCantidad'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
                         } else {
                             if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Miércoles') {
@@ -6960,57 +9271,6 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     }
                                 }
                             };
-                        }
-                    } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
-                            if (dia[1][0] === 'Miércoles') {
-                                columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                    miercolesCantidad: '',
-                                    tipoServicio: '',
-                                    baja: false,
-                                    tipoBaja: null,
-                                    festivo: false,
-                                    observaciones: '',
-                                    modificado: false,
-                                    visibleVariaciones: false,
-                                    tipoVariacion: ''
-                                };
-                            }
-                        } else {
-                            if (dia[1][0] === 'Miércoles') {
-                                if ((tipoTrabajador === 'suplente' &&
-                                    cuadrante[posicionAnterior] &&
-                                    cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
-                                    cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].miercolesCantidad) ||
-                                    (tipoTrabajador === 'suplente' &&
-                                        cuadrante[posicionAnterior] &&
-                                        cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
-                                        !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        miercolesCantidad: '',
-                                        tipoServicio: '',
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                } else {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        miercolesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesCantidad'),
-                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                }
-                            }
                         };
                     }
                 }//final secuencia
@@ -7033,10 +9293,16 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 indiceObjeto = arrayBuffer[cuadranteEnUsoCuadrantes - 1].findIndex(dia => (Object.keys(dia)[0]) === elDia);
                                 if (indiceObjeto >= 0) {
                                     objetoBuffer[dia[1][0] + dia[0][0]] = [...arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto][elDia]];
-                                    objetoBuffer[dia[1][0] + dia[0][0]][cuadrante.length - 1] = [
+                                    if (objetoBuffer[dia[1][0] + dia[0][0]][0][0] === 'SF') {
+                                        posicionACambiar = cuadrante.length;
+                                    } else {
+                                        posicionACambiar = cuadrante.length - 1;
+                                    };
+                                    objetoBuffer[dia[1][0] + dia[0][0]][posicionACambiar] = [
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesCantidad')
                                     ];
                                     objetoBuffer['activo'] = true;
+                                    objetoBuffer['tipo'] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto]['tipo'];
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
@@ -7080,7 +9346,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     juevesCantidad: '',
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado)),
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -7090,6 +9356,171 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesCantidad');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
+                        } else {
+                            if (esActualizacion) {
+                                if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                    columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                                } else {
+                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                        if (dia[1][0] === 'Jueves') {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                juevesCantidad: '',
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    } else {
+                                        if (dia[1][0] === 'Jueves') {
+                                            if ((tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                                cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].juevesCantidad) ||
+                                                (tipoTrabajador === 'suplente' &&
+                                                    cuadrante[posicionAnterior] &&
+                                                    cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                    !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    juevesCantidad: '',
+                                                    tipoServicio: '',
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            } else {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    juevesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesCantidad'),
+                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            }
+                                        }
+                                    };
+                                };
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Jueves') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            juevesCantidad: '',
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Jueves') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].juevesCantidad) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                juevesCantidad: '',
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                juevesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesCantidad'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
+                        }
+                    } else {
+                        if (esActualizacion) {
+                            if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Jueves') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            juevesCantidad: '',
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Jueves') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].juevesCantidad) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                juevesCantidad: '',
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                juevesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesCantidad'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
                         } else {
                             if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Jueves') {
@@ -7141,57 +9572,6 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     }
                                 }
                             };
-                        }
-                    } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
-                            if (dia[1][0] === 'Jueves') {
-                                columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                    juevesCantidad: '',
-                                    tipoServicio: '',
-                                    baja: false,
-                                    tipoBaja: null,
-                                    festivo: false,
-                                    observaciones: '',
-                                    modificado: false,
-                                    visibleVariaciones: false,
-                                    tipoVariacion: ''
-                                };
-                            }
-                        } else {
-                            if (dia[1][0] === 'Jueves') {
-                                if ((tipoTrabajador === 'suplente' &&
-                                    cuadrante[posicionAnterior] &&
-                                    cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
-                                    cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].juevesCantidad) ||
-                                    (tipoTrabajador === 'suplente' &&
-                                        cuadrante[posicionAnterior] &&
-                                        cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
-                                        !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        juevesCantidad: '',
-                                        tipoServicio: '',
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                } else {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        juevesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesCantidad'),
-                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                }
-                            }
                         };
                     }
                 }//final secuencia
@@ -7214,10 +9594,16 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 indiceObjeto = arrayBuffer[cuadranteEnUsoCuadrantes - 1].findIndex(dia => (Object.keys(dia)[0]) === elDia);
                                 if (indiceObjeto >= 0) {
                                     objetoBuffer[dia[1][0] + dia[0][0]] = [...arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto][elDia]];
-                                    objetoBuffer[dia[1][0] + dia[0][0]][cuadrante.length - 1] = [
+                                    if (objetoBuffer[dia[1][0] + dia[0][0]][0][0] === 'SF') {
+                                        posicionACambiar = cuadrante.length;
+                                    } else {
+                                        posicionACambiar = cuadrante.length - 1;
+                                    };
+                                    objetoBuffer[dia[1][0] + dia[0][0]][posicionACambiar] = [
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesCantidad')
                                     ];
                                     objetoBuffer['activo'] = true;
+                                    objetoBuffer['tipo'] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto]['tipo'];
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
@@ -7261,7 +9647,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     viernesCantidad: '',
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado)),
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -7271,6 +9657,171 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesCantidad');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
+                        } else {
+                            if (esActualizacion) {
+                                if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                    columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                                } else {
+                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                        if (dia[1][0] === 'Viernes') {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                viernesCantidad: '',
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    } else {
+                                        if (dia[1][0] === 'Viernes') {
+                                            if ((tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                                cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].viernesCantidad) ||
+                                                (tipoTrabajador === 'suplente' &&
+                                                    cuadrante[posicionAnterior] &&
+                                                    cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                    !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    viernesCantidad: '',
+                                                    tipoServicio: '',
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            } else {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    viernesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesCantidad'),
+                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            }
+                                        }
+                                    };
+                                };
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Viernes') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            viernesCantidad: '',
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Viernes') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].viernesCantidad) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                viernesCantidad: '',
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                viernesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesCantidad'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
+                        }
+                    } else {
+                        if (esActualizacion) {
+                            if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Viernes') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            viernesCantidad: '',
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Viernes') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].viernesCantidad) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                viernesCantidad: '',
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                viernesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesCantidad'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
                         } else {
                             if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Viernes') {
@@ -7322,57 +9873,6 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     }
                                 }
                             };
-                        }
-                    } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
-                            if (dia[1][0] === 'Viernes') {
-                                columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                    viernesCantidad: '',
-                                    tipoServicio: '',
-                                    baja: false,
-                                    tipoBaja: null,
-                                    festivo: false,
-                                    observaciones: '',
-                                    modificado: false,
-                                    visibleVariaciones: false,
-                                    tipoVariacion: ''
-                                };
-                            }
-                        } else {
-                            if (dia[1][0] === 'Viernes') {
-                                if ((tipoTrabajador === 'suplente' &&
-                                    cuadrante[posicionAnterior] &&
-                                    cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
-                                    cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].viernesCantidad) ||
-                                    (tipoTrabajador === 'suplente' &&
-                                        cuadrante[posicionAnterior] &&
-                                        cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
-                                        !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        viernesCantidad: '',
-                                        tipoServicio: '',
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                } else {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        viernesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesCantidad'),
-                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                }
-                            }
                         };
                     }
                 }//final secuencia
@@ -7395,10 +9895,16 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 indiceObjeto = arrayBuffer[cuadranteEnUsoCuadrantes - 1].findIndex(dia => (Object.keys(dia)[0]) === elDia);
                                 if (indiceObjeto >= 0) {
                                     objetoBuffer[dia[1][0] + dia[0][0]] = [...arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto][elDia]];
-                                    objetoBuffer[dia[1][0] + dia[0][0]][cuadrante.length - 1] = [
+                                    if (objetoBuffer[dia[1][0] + dia[0][0]][0][0] === 'SF') {
+                                        posicionACambiar = cuadrante.length;
+                                    } else {
+                                        posicionACambiar = cuadrante.length - 1;
+                                    };
+                                    objetoBuffer[dia[1][0] + dia[0][0]][posicionACambiar] = [
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoCantidad')
                                     ];
                                     objetoBuffer['activo'] = true;
+                                    objetoBuffer['tipo'] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto]['tipo'];
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
@@ -7442,7 +9948,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     sabadoCantidad: '',
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado)),
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -7452,6 +9958,171 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoCantidad');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
+                        } else {
+                            if (esActualizacion) {
+                                if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                    columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                                } else {
+                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                        if (dia[1][0] === 'Sábado') {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                sabadoCantidad: '',
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    } else {
+                                        if (dia[1][0] === 'Sábado') {
+                                            if ((tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                                cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].sabadoCantidad) ||
+                                                (tipoTrabajador === 'suplente' &&
+                                                    cuadrante[posicionAnterior] &&
+                                                    cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                    !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    sabadoCantidad: '',
+                                                    tipoServicio: '',
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            } else {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    sabadoCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoCantidad'),
+                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            }
+                                        }
+                                    };
+                                };
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Sábado') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            sabadoCantidad: '',
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Sábado') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].sabadoCantidad) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                sabadoCantidad: '',
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                sabadoCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoCantidad'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
+                        }
+                    } else {
+                        if (esActualizacion) {
+                            if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Sábado') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            sabadoCantidad: '',
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Sábado') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].sabadoCantidad) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                sabadoCantidad: '',
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                sabadoCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoCantidad'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
                         } else {
                             if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Sábado') {
@@ -7503,57 +10174,6 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     }
                                 }
                             };
-                        }
-                    } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
-                            if (dia[1][0] === 'Sábado') {
-                                columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                    sabadoCantidad: '',
-                                    tipoServicio: '',
-                                    baja: false,
-                                    tipoBaja: null,
-                                    festivo: false,
-                                    observaciones: '',
-                                    modificado: false,
-                                    visibleVariaciones: false,
-                                    tipoVariacion: ''
-                                };
-                            }
-                        } else {
-                            if (dia[1][0] === 'Sábado') {
-                                if ((tipoTrabajador === 'suplente' &&
-                                    cuadrante[posicionAnterior] &&
-                                    cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
-                                    cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].sabadoCantidad) ||
-                                    (tipoTrabajador === 'suplente' &&
-                                        cuadrante[posicionAnterior] &&
-                                        cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
-                                        !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        sabadoCantidad: '',
-                                        tipoServicio: '',
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                } else {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        sabadoCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoCantidad'),
-                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                }
-                            }
                         };
                     }
                 }//final secuencia
@@ -7576,10 +10196,16 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 indiceObjeto = arrayBuffer[cuadranteEnUsoCuadrantes - 1].findIndex(dia => (Object.keys(dia)[0]) === elDia);
                                 if (indiceObjeto >= 0) {
                                     objetoBuffer[dia[1][0] + dia[0][0]] = [...arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto][elDia]];
-                                    objetoBuffer[dia[1][0] + dia[0][0]][cuadrante.length - 1] = [
+                                    if (objetoBuffer[dia[1][0] + dia[0][0]][0][0] === 'SF') {
+                                        posicionACambiar = cuadrante.length;
+                                    } else {
+                                        posicionACambiar = cuadrante.length - 1;
+                                    };
+                                    objetoBuffer[dia[1][0] + dia[0][0]][posicionACambiar] = [
                                         gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoCantidad')
                                     ];
                                     objetoBuffer['activo'] = true;
+                                    objetoBuffer['tipo'] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto]['tipo'];
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
@@ -7623,7 +10249,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     domingoCantidad: '',
                                     tipoServicio: '',
                                     baja: true,
-                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico)) : trabajador.estado,
+                                    tipoBaja: arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado)),
                                     festivo: false,
                                     observaciones: '',
                                     modificado: false,
@@ -7633,6 +10259,171 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoCantidad');
                                 contadorHorasBajasComputables += bajaComputable.cantidad;
                             }
+                        } else {
+                            if (esActualizacion) {
+                                if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                    columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                                } else {
+                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                        if (dia[1][0] === 'Domingo') {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                domingoCantidad: '',
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    } else {
+                                        if (dia[1][0] === 'Domingo') {
+                                            if ((tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                                cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].domingoCantidad) ||
+                                                (tipoTrabajador === 'suplente' &&
+                                                    cuadrante[posicionAnterior] &&
+                                                    cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                    !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    domingoCantidad: '',
+                                                    tipoServicio: '',
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            } else {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                    domingoCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoCantidad'),
+                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
+                                                    baja: false,
+                                                    tipoBaja: null,
+                                                    festivo: false,
+                                                    observaciones: '',
+                                                    modificado: false,
+                                                    visibleVariaciones: false,
+                                                    tipoVariacion: ''
+                                                };
+                                            }
+                                        }
+                                    };
+                                };
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Domingo') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            domingoCantidad: '',
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Domingo') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].domingoCantidad) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                domingoCantidad: '',
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                domingoCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoCantidad'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
+                        }
+                    } else {
+                        if (esActualizacion) {
+                            if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                            } else {
+                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (dia[1][0] === 'Domingo') {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                            domingoCantidad: '',
+                                            tipoServicio: '',
+                                            baja: false,
+                                            tipoBaja: null,
+                                            festivo: false,
+                                            observaciones: '',
+                                            modificado: false,
+                                            visibleVariaciones: false,
+                                            tipoVariacion: ''
+                                        };
+                                    }
+                                } else {
+                                    if (dia[1][0] === 'Domingo') {
+                                        if ((tipoTrabajador === 'suplente' &&
+                                            cuadrante[posicionAnterior] &&
+                                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].domingoCantidad) ||
+                                            (tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                domingoCantidad: '',
+                                                tipoServicio: '',
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = {
+                                                domingoCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoCantidad'),
+                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
+                                                baja: false,
+                                                tipoBaja: null,
+                                                festivo: false,
+                                                observaciones: '',
+                                                modificado: false,
+                                                visibleVariaciones: false,
+                                                tipoVariacion: ''
+                                            };
+                                        }
+                                    }
+                                };
+                            };
                         } else {
                             if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Domingo') {
@@ -7684,57 +10475,6 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     }
                                 }
                             };
-                        }
-                    } else {
-                        if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
-                            if (dia[1][0] === 'Domingo') {
-                                columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                    domingoCantidad: '',
-                                    tipoServicio: '',
-                                    baja: false,
-                                    tipoBaja: null,
-                                    festivo: false,
-                                    observaciones: '',
-                                    modificado: false,
-                                    visibleVariaciones: false,
-                                    tipoVariacion: ''
-                                };
-                            }
-                        } else {
-                            if (dia[1][0] === 'Domingo') {
-                                if ((tipoTrabajador === 'suplente' &&
-                                    cuadrante[posicionAnterior] &&
-                                    cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
-                                    cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].domingoCantidad) ||
-                                    (tipoTrabajador === 'suplente' &&
-                                        cuadrante[posicionAnterior] &&
-                                        cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
-                                        !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        domingoCantidad: '',
-                                        tipoServicio: '',
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                } else {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = {
-                                        domingoCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoCantidad'),
-                                        tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
-                                        baja: false,
-                                        tipoBaja: null,
-                                        festivo: false,
-                                        observaciones: '',
-                                        modificado: false,
-                                        visibleVariaciones: false,
-                                        tipoVariacion: ''
-                                    };
-                                }
-                            }
                         };
                     }
                 }//final secuencia
@@ -7791,6 +10531,14 @@ const gestionaColumnaCuadranteInteriorAccion = (
         if (hayTrabajador && !esInicio) {
             dispatch(setBufferSwitchedDiasFestivosCuadranteAccion(arrayBuffer));
         };
+        if (!esInicio) {
+            if (!yaNoEsInicio) {
+                dispatch(setYaNoEsInicioAccion(true));
+            };
+        };
+    };
+    if (trabajador && trabajador.estado === 'bajaCIA') {
+        dispatch(setPrimerDiaEstadoBajaCIA(null));
     };
     return {
         columnaAnadir,
@@ -7798,9 +10546,9 @@ const gestionaColumnaCuadranteInteriorAccion = (
     };
 };
 
-export const gestionaColumnaCuadranteAccion = (trabajador, tipoTrabajador, esRevision, columna, esAnadirColumna, esLimpieza, tipoHorario) => (dispatch, getState) => {
+export const gestionaColumnaCuadranteAccion = (trabajador, tipoTrabajador, esRevision, columna, esAnadirColumna, esLimpieza, tipoHorario, esActualizacion) => (dispatch, getState) => {
     const { objetoCentro } = getState().variablesCentros;
-    const { cuadrante } = getState().variablesCuadrantes;
+    const { cuadrante, objetoCuadrante } = getState().variablesCuadrantes;
     const {
         trabajadoresEnCuadrante,
         suplentesEnCuadrante,
@@ -7808,8 +10556,18 @@ export const gestionaColumnaCuadranteAccion = (trabajador, tipoTrabajador, esRev
         posicionTrabajadorPrevioACambiar,
         posicionSuplentePrevioACambiar
     } = getState().variablesCuadrantesSetters;
+    let posicionAnterior;
+    let esInicio = false;
+    if (!esRevision && !esAnadirColumna) {
+        posicionAnterior = cuadrante.length - 1;
+        esInicio = true;
+    } else if (esRevision && esAnadirColumna) {
+        posicionAnterior = columna;
+    } else {
+        posicionAnterior = columna - 1;
+    };
     let posicionTrabajador;
-    if (objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistro === 'individual') {
+    if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].tipoRegistro === 'individual') {
         if (tipoTrabajador === 'trabajador') {
             if (posicionTrabajadorPrevioACambiar) {
                 posicionTrabajador = posicionTrabajadorPrevioACambiar;
@@ -7830,23 +10588,16 @@ export const gestionaColumnaCuadranteAccion = (trabajador, tipoTrabajador, esRev
                 if (esAnadirColumna) {
                     posicionTrabajador = columna;
                 } else {
-                    //posicionTrabajador = trabajador.laPosicionDelTrabajador;
-                    posicionTrabajador = cuadrante.length;
+                    if (esInicio) {
+                        posicionTrabajador = trabajador.laPosicionDelTrabajador;
+                    } else {
+                        posicionTrabajador = cuadrante.length;
+                    };
                 }
             }
         };
     } else {
         posicionTrabajador = 0;
-    };
-    let posicionAnterior;
-    let esInicio = false;
-    if (!esRevision && !esAnadirColumna) {
-        posicionAnterior = cuadrante.length - 1;
-        esInicio = true;
-    } else if (esRevision && esAnadirColumna) {
-        posicionAnterior = columna;
-    } else {
-        posicionAnterior = columna - 1;
     };
     if (cuadrante.length > 0) {
         if (cuadrante[posicionAnterior]) {
@@ -7869,6 +10620,19 @@ export const gestionaColumnaCuadranteAccion = (trabajador, tipoTrabajador, esRev
                 return;
             };
         };
+        if (cuadrante[posicionAnterior]) {
+            if (esInicio && (cuadrante[posicionAnterior].idTrabajador === trabajador.id)) {
+                return;
+            };
+        };
+    };
+    if (!objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1]) {
+        dispatch(setAlertaAccion({
+            abierto: true,
+            mensaje: "Cuadrante bloqueado. Se ha cambiado la configuración del Centro después de registrar el cuadrante. No pueden efectuarse cambios.",
+            tipo: 'warning'
+        }));
+        return;
     };
     let elHorarioCuadrante = objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1];
     const { columnaAnadir, hayTrabajador } = dispatch(gestionaColumnaCuadranteInteriorAccion(
@@ -7881,13 +10645,14 @@ export const gestionaColumnaCuadranteAccion = (trabajador, tipoTrabajador, esRev
         esInicio,
         posicionTrabajador,
         esLimpieza,
-        tipoHorario
+        tipoHorario,
+        esActualizacion
     ));
     if (!hayTrabajador && tipoTrabajador === 'trabajador') {
         const arrayCuadrante = [...cuadrante];
         let arrayTr = [...trabajadoresEnCuadrante];
         let randomNumber = (Math.floor(Math.random() * 100)) + 1000;
-        if (objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistro === 'individual') {
+        if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].tipoRegistro === 'individual') {
             const idTrabajadorAnterior = arrayCuadrante[arrayCuadrante.length - 1].idTrabajador;
             const estadoTrabajadorAnterior = arrayCuadrante[arrayCuadrante.length - 1].tipoTrabajador;
             let laPosicion;
@@ -7920,7 +10685,7 @@ export const gestionaColumnaCuadranteAccion = (trabajador, tipoTrabajador, esRev
         const arrayCuadrante = [...cuadrante];
         let arraySu = [...suplentesEnCuadrante];
         let randomNumber = (Math.floor(Math.random() * 100)) + 1000;
-        if (objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistro === 'individual') {
+        if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].tipoRegistro === 'individual') {
             const idTrabajadorAnterior = arrayCuadrante[arrayCuadrante.length - 1].idTrabajador;
             const estadoTrabajadorAnterior = arrayCuadrante[arrayCuadrante.length - 1].tipoTrabajador;
             let laPosicion;

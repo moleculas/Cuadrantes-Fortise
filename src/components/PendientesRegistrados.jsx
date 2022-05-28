@@ -101,6 +101,7 @@ const PendientesRegistrados = (props) => {
     });
     const [numeroFactusolPendientes, setNumeroFactusolPendientes] = useState(null);
     const [arrayCuadrantesDefsParaCheck, setArrayCuadrantesDefsParaCheck] = useState([]);
+    const [arrayCuadrantesModificadosRegistrados, setArrayCuadrantesModificadosRegistrados] = useState([]);
 
     //useEffect
 
@@ -121,7 +122,22 @@ const PendientesRegistrados = (props) => {
     useEffect(() => {
         if (cuadrantesRegistradosArray.length > 0) {
             selectNoneChecked();
-        }
+            let cuadrantes = [];
+            let nombreSplitted;
+            cuadrantesRegistradosArray.forEach((cuadrante, index) => {
+                let objeto = {};
+                nombreSplitted = cuadrante.nombre.split("-");
+                const nombreCentro = dispatch(obtenerObjetoPorIdAccion(listadoCentros, parseInt(nombreSplitted[2])));
+                objeto = {
+                    ...cuadrante,
+                    ['nombreCentro']: nombreCentro,
+                    idCentro: nombreSplitted[2]
+                };
+                cuadrantes.push(objeto);
+            });
+            cuadrantes.sort((a, b) => a.nombreCentro.localeCompare(b.nombreCentro));
+            setArrayCuadrantesModificadosRegistrados(cuadrantes);
+        };
     }, [cuadrantesRegistradosArray]);
 
     useEffect(() => {
@@ -151,7 +167,7 @@ const PendientesRegistrados = (props) => {
         dispatch(obtenerCentroAccion('centros', centro));
         dispatch(cambioEstadoInicioCuadrantesAccion(false));
         dispatch(activarDesactivarCambioBotonRegistrarAccion(false));
-        dispatch(registrarIntervencionCuadranteNuevoAccion(true));
+        //dispatch(registrarIntervencionCuadranteNuevoAccion(true));
         dispatch(venimosDeRegistradosAccion(true));
     };
 
@@ -183,9 +199,15 @@ const PendientesRegistrados = (props) => {
 
     const selectAllChecked = () => {
         let object = {};
-        for (let i = 0; i < cuadrantesRegistradosArray.length; i++) {           
+        for (let i = 0; i < cuadrantesRegistradosArray.length; i++) {
             if (cuadrantesRegistradosArray[i].total.tocaFacturar.valor === 'si') {
-                object['checked-' + cuadrantesRegistradosArray[i]['id']] = true;
+                if (!cuadrantesRegistradosArray[i].total.totalesPeriodicos) {
+                    object['checked-' + cuadrantesRegistradosArray[i]['id']] = true;
+                } else {
+                    if (!cuadrantesRegistradosArray[i].total.totalesPeriodicos.noExisteCuadrante) {
+                        object['checked-' + cuadrantesRegistradosArray[i]['id']] = true;
+                    };
+                };
             };
         };
         setChecked(object);
@@ -256,18 +278,31 @@ const PendientesRegistrados = (props) => {
         };
     };
 
+    const retornaDisabledCheched = (total) => {
+        if (total.tocaFacturar.valor === 'si') {
+            if (!total.totalesPeriodicos) {
+                return false
+            } else {
+                if (!total.totalesPeriodicos.noExisteCuadrante) {
+                    return false
+                } else {
+                    return true
+                };
+            };
+        } else {
+            return true
+        };
+    };
+
     //retorno componentes
 
     const retornaCuadranteRegistrado = (cuadrante, index) => {
-        let nombreSplitted;
-        nombreSplitted = cuadrante.nombre.split("-");
-        const nombreCentro = dispatch(obtenerObjetoPorIdAccion(listadoCentros, parseInt(nombreSplitted[2])));
         return (
             <Box
                 key={'listaCuadrantes' + index}
             >
                 <ListItem
-                    className={cuadrante.total.tocaFacturar.valor === 'no' ? classes.casillaBajasInicio : classes.casilla}
+                    className={cuadrante.total.tocaFacturar.valor === 'no' && cuadrante.total.tocaFacturar.razon !== 'gest' ? classes.casillaBajasInicio : classes.casilla}
                     style={{ display: 'flex', alignItems: 'flex-start' }}
                 >
                     <Checkbox
@@ -276,10 +311,10 @@ const PendientesRegistrados = (props) => {
                         name={'checked-' + cuadrante.id}
                         onChange={handleChangeChecked}
                         style={{ marginTop: -3 }}
-                        disabled={cuadrante.total.tocaFacturar.valor === 'no' ? true : false}
+                        disabled={retornaDisabledCheched(cuadrante.total)}
                     />
                     <ListItemText
-                        primary={nombreCentro}
+                        primary={cuadrante.nombreCentro}
                         secondary={
                             cuadrante.total.tocaFacturar.valor === 'si' ? (
                                 <Fragment>
@@ -303,16 +338,16 @@ const PendientesRegistrados = (props) => {
                                         component="span"
                                         variant="body2"
                                     >
-                                        No se factura: {
-                                          cuadrante.total.tocaFacturar.razon === 'a0' ? 'Cuadrante a 0 €.' : 
-                                          cuadrante.total.tocaFacturar.razon === 'temp' ? 'No toca por temporización.' :
-                                          'Gestión especial de horas.'
+                                        No se emite factura: {
+                                            cuadrante.total.tocaFacturar.razon === 'a0' ? 'Cuadrante a 0 €.' :
+                                                cuadrante.total.tocaFacturar.razon === 'temp' ? 'No toca por temporización.' :
+                                                    'Gestión especial de horas.'
                                         }
                                     </Typography>
                                 </Fragment>
                             )
                         }
-                        onClick={() => handleCuadrantesRegistrados(parseInt(nombreSplitted[2]))}
+                        onClick={() => handleCuadrantesRegistrados(parseInt(cuadrante.idCentro))}
                     />
                     <ListItemSecondaryAction>
                         <ExitToAppIcon
@@ -428,7 +463,7 @@ const PendientesRegistrados = (props) => {
                         >
                             <List dense={true}
                                 style={{ padding: 15 }}>
-                                {cuadrantesRegistradosArray.map((cuadrante, index) => (
+                                {arrayCuadrantesModificadosRegistrados.map((cuadrante, index) => (
                                     retornaCuadranteRegistrado(cuadrante, index)
                                 ))}
                             </List>
@@ -441,7 +476,7 @@ const PendientesRegistrados = (props) => {
                     {alert.mensaje}
                 </Alert>
             </Snackbar>
-            {/* {console.log(laDataFAC.length)} */}
+            {/* {console.log(cuadrantesRegistradosArray)} */}
         </div>
     )
 }

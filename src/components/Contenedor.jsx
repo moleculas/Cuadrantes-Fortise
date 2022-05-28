@@ -20,6 +20,19 @@ import Nominas from './Nominas';
 import Configuracion from './Configuracion';
 import Centros from './Centros';
 
+//error boundary
+//import { ErrorBoundary } from 'react-error-boundary'
+
+function MyFallbackComponent({ error, resetErrorBoundary }) {
+    return (
+        <div role="alert">
+            <p>Something went wrong:</p>
+            <pre>{error.message}</pre>
+            <button onClick={alert('jal')}>Try again</button>
+        </div>
+    )
+}
+
 const subProduccio = Constantes.SUBDIRECTORI_PRODUCCIO;
 const estilos = makeStyles(theme => ({
     root: {
@@ -83,7 +96,15 @@ const Contenedor = () => {
                                 <Login />
                             </Route>
                             <Route path="/cuadrantes" >
-                                <Cuadrantes />
+                                {/* <ErrorBoundary
+                                    FallbackComponent={MyFallbackComponent}
+                                    onError={(error, errorInfo) => console.log({ error, errorInfo })}
+                                    onReset={() => {
+                                        // reset the state of your app
+                                    }}
+                                > */}
+                                    <Cuadrantes />
+                                {/* </ErrorBoundary> */}
                             </Route>
                             <Route path="/trabajadores/:id/:nombre" exact>
                                 <Trabajadores />

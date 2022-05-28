@@ -36,6 +36,7 @@ const dataInicial = {
         },
         serviciosFijos: {
             objeto: 'serviciosFijos',
+            gestionEspSF: false,
             serviciosFijos: []
         },
         trabajadores: {
@@ -109,7 +110,7 @@ export default function centrosReducer(state = dataInicial, action) {
         case VACIAR_DATOS_CENTRO:
             return { ...state, objetoCentro: action.payload, categoriaPorCentro: '' }
         case CAMBIAR_ESTADO_YA_ESTA_REGISTRADO_CENTRO:
-            return { ...state, estadoYaEstaRegistradoRegistroCentro: action.payload.estado }         
+            return { ...state, estadoYaEstaRegistradoRegistroCentro: action.payload.estado }
         default:
             return { ...state }
     }
@@ -138,7 +139,7 @@ export const obtenerCentrosPorCategoriaAccion = (objeto, categoria) => async (di
             if (hayCategoria) {
                 arrayRespuesta.push(centro);
             };
-        });       
+        });
         arrayRespuesta.sort((a, b) => a.nombre.localeCompare(b.nombre));
         dispatch({
             type: OBTENER_CENTROS_POR_CATEGORIA_EXITO,
@@ -147,7 +148,7 @@ export const obtenerCentrosPorCategoriaAccion = (objeto, categoria) => async (di
                 errorDeCargaCentros: false
             }
         })
-    } catch (error) {      
+    } catch (error) {
         dispatch({
             type: ERROR_DE_CARGA_CENTROS
         })
@@ -157,7 +158,7 @@ export const obtenerCentrosPorCategoriaAccion = (objeto, categoria) => async (di
 export const obtenerCentrosAccion = (objeto, filtrados) => async (dispatch, getState) => {
     dispatch({
         type: LOADING_CENTROS
-    });
+    });   
     try {
         const formData = new FormData();
         formData.append("objeto", objeto);
@@ -245,6 +246,7 @@ export const vaciarDatosCentroAccion = () => (dispatch, getState) => {
             },
             serviciosFijos: {
                 objeto: 'serviciosFijos',
+                gestionEspSF: false,
                 servicio: [
                     { tipoServiciofijo: 'TOL', precioHora_TO: null },
                     { tipoServiciofijo: 'CRIS', precioHora_CR: null },
@@ -276,7 +278,7 @@ export const vaciarDatosCentroAccion = () => (dispatch, getState) => {
     });
 }
 
-export const obtenerCentroAccion = (objeto, id) => async (dispatch, getState) => {    
+export const obtenerCentroAccion = (objeto, id) => async (dispatch, getState) => {
     dispatch({
         type: LOADING_CENTROS
     });
@@ -317,14 +319,14 @@ export const obtenerCentroAccion = (objeto, id) => async (dispatch, getState) =>
                 observaciones: JSON.parse(res.data.observaciones),
             }
         });
-    } catch (error) {        
+    } catch (error) {
         dispatch({
             type: ERROR_DE_CARGA_CENTROS
         })
     }
 }
 
-export const obtenerCategoriaPorCentroAccion = (objeto, id, numeroCuadrante) => async (dispatch, getState) => {  
+export const obtenerCategoriaPorCentroAccion = (objeto, id, numeroCuadrante) => async (dispatch, getState) => {
     dispatch({
         type: LOADING_CENTROS
     });

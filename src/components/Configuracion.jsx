@@ -29,6 +29,7 @@ import OutlinedInput from '@material-ui/core/OutlinedInput';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import TextField from '@material-ui/core/TextField';
 import clsx from 'clsx';
+import { stringify, parse } from 'zipson';
 
 //carga componentes
 import DialogComponente from './DialogComponente';
@@ -44,6 +45,7 @@ import { abreObjetoDialogAccion } from '../redux/appDucks';
 import { cierraObjetoDialogAccion } from '../redux/appDucks';
 import { obtenerConfiguracionAccion } from '../redux/appDucks';
 import { actualizarConfiguracionAccion } from '../redux/appDucks';
+import { setAnchorElMenuAccion } from '../redux/cuadrantesSettersDucks';
 
 const getHeightScrollable = () => (window.innerHeight - 200) || (document.documentElement.clientHeight - 200) || (document.body.clientHeight - 200);
 
@@ -111,8 +113,10 @@ const Configuracion = (props) => {
     const openDialog1 = useSelector(store => store.variablesApp.openDialog[0]);
     const openLoadingConfiguracion = useSelector(store => store.variablesApp.loadingApp);
     const objetoConfiguracion = useSelector(store => store.variablesApp.objetoConfiguracion);
+    const numeroRecibos = useSelector(store => store.variablesApp.numeroRecibos);
     const errorDeCargaConfiguracion = useSelector(store => store.variablesApp.errorDeCargaConfiguracion);
     const exitoActualizacionConfiguracion = useSelector(store => store.variablesApp.exitoActualizacionConfiguracion);
+    const usuarioActivo = useSelector(store => store.variablesUsuario.usuarioActivo);
 
     //states
 
@@ -135,6 +139,13 @@ const Configuracion = (props) => {
             digitosControl: '',
             numeroCuenta: ''
         },
+        numeroRecibos: null
+    });
+    const [valuesHerramientasParseador, setValuesHerramientasParseador] = useState({
+        parsePorParsear: {},
+        parseParseado: {},
+        stringPorParsear: {},
+        stringParseado: {},
     });
     const [openLoading, setOpenLoading] = useState(false);
 
@@ -208,6 +219,7 @@ const Configuracion = (props) => {
                     digitosControl: objetoConfiguracion.cuenta1.digitosControl,
                     numeroCuenta: objetoConfiguracion.cuenta1.numeroCuenta
                 },
+                numeroRecibos: numeroRecibos
             })
         }
     }, [objetoConfiguracion]);
@@ -272,8 +284,30 @@ const Configuracion = (props) => {
             };
             setValuesFormConfiguracion({ ...valuesFormConfiguracion, cuenta1: objetoCuenta });
         };
+        if (prop === "numeroRecibos") {
+            if (IsNumeric(e.target.value)) {
+                setValuesFormConfiguracion({ ...valuesFormConfiguracion, [prop]: e.target.value });
+            };
+        }
         dispatch(activarDesactivarAccion(false));
         dispatch(registrarIntervencionAccion(false));
+    };
+
+    const handleChangeHerramientasParseador = (prop) => (e) => {
+        setValuesHerramientasParseador({ ...valuesHerramientasParseador, [prop]: e.target.value });
+    };
+
+    const procesarParseado = (prop) => {
+        const options = { fullPrecisionFloats: true };
+        let respuesta;
+        if (prop === 'parseParseado') {
+            let myobj1 = JSON.parse(valuesHerramientasParseador.parsePorParsear);
+            respuesta = stringify(myobj1, options);
+        } else {
+            let myobj2 = valuesHerramientasParseador.stringPorParsear;            
+            respuesta = JSON.stringify(parse(myobj2));
+        };
+        setValuesHerramientasParseador({ ...valuesHerramientasParseador, [prop]: respuesta });
     };
 
     //dialog
@@ -301,7 +335,8 @@ const Configuracion = (props) => {
             valuesFormConfiguracion.mensajeMailCentros === '' ||
             valuesFormConfiguracion.cuenta1.iban === '' ||
             valuesFormConfiguracion.cuenta1.bic === '' ||
-            valuesFormConfiguracion.cuenta1.nombreBanco === '') {
+            valuesFormConfiguracion.cuenta1.nombreBanco === '' ||
+            !valuesFormConfiguracion.numeroRecibos) {
             setAlert({
                 mensaje: "Faltan datos por completar. Revisa el formulario.",
                 tipo: 'error'
@@ -317,14 +352,29 @@ const Configuracion = (props) => {
             setOpenSnack(true);
             return;
         };
-
+        const objetoConfiguracion = {
+            precioHoraNormal: valuesFormConfiguracion.precioHoraNormal,
+            precioHoraExtra: valuesFormConfiguracion.precioHoraExtra,
+            mensajeMailCentros: valuesFormConfiguracion.mensajeMailCentros,
+            cuenta1: {
+                iban: valuesFormConfiguracion.cuenta1.iban,
+                bic: valuesFormConfiguracion.cuenta1.bic,
+                nombreBanco: valuesFormConfiguracion.cuenta1.nombreBanco,
+                entidad: valuesFormConfiguracion.cuenta1.entidad,
+                oficina: valuesFormConfiguracion.cuenta1.oficina,
+                digitosControl: valuesFormConfiguracion.cuenta1.digitosControl,
+                numeroCuenta: valuesFormConfiguracion.cuenta1.numeroCuenta
+            }
+        }
         //actualizamos
         const configuracionAGuardar = {
-            datos_configuracion: JSON.stringify(valuesFormConfiguracion)
+            datos_configuracion: JSON.stringify(objetoConfiguracion),
+            numero_recibos: parseInt(valuesFormConfiguracion.numeroRecibos)
         };
         dispatch(actualizarConfiguracionAccion('configuracion', 1, configuracionAGuardar));
         dispatch(registrarIntervencionAccion(true));
         dispatch(activarDesactivarAccion(true));
+        dispatch(setAnchorElMenuAccion(null));
     };
 
     return (
@@ -379,8 +429,8 @@ const Configuracion = (props) => {
                         <div className={classes.root2} >
                             <AppBar position="static">
                                 <Tabs value={valueTab} onChange={handleChangeTab} className={classes.tabsStl}>
-                                    <Tooltip title="Modificar los precios/hora establecidos" placement="top-end" arrow>
-                                        <Tab label="Precios" {...a11yProps(0)} style={{ paddingBottom: 10 }} />
+                                    <Tooltip title="Modificar varios parámetros establecidos" placement="top-end" arrow>
+                                        <Tab label="Varios" {...a11yProps(0)} style={{ paddingBottom: 10 }} />
                                     </Tooltip>
                                     <Tooltip title="Modificar mensajes predeterminados en mails" placement="top-end" arrow>
                                         <Tab label="Plantillas mails" {...a11yProps(1)} style={{ paddingBottom: 10 }} />
@@ -391,6 +441,11 @@ const Configuracion = (props) => {
                                     <Tooltip title="Informe cambios en versiones" placement="top-end" arrow>
                                         <Tab label="Control de versiones" {...a11yProps(3)} style={{ paddingBottom: 10 }} />
                                     </Tooltip>
+                                    {usuarioActivo.nombre === 'admin' ? (
+                                        <Tooltip title="Herramientas desarrollo" placement="top-end" arrow>
+                                            <Tab label="Herramientas" {...a11yProps(4)} style={{ paddingBottom: 10 }} />
+                                        </Tooltip>
+                                    ) : null}
                                 </Tabs>
                             </AppBar>
                             <TabPanel value={valueTab} index={0} className={classes.scrollable} style={{ height: heightScrollable }}>
@@ -434,13 +489,36 @@ const Configuracion = (props) => {
                                             >
                                                 <InputLabel>Precio hora extra</InputLabel>
                                                 <OutlinedInput
-                                                    className={classes.mb15}
+                                                    className={classes.mb25}
                                                     fullWidth
                                                     id="form-configuracion-hora-normal"
                                                     value={valuesFormConfiguracion.precioHoraExtra || ''}
                                                     onChange={handleChangeFormConfiguracion('precioHoraExtra')}
                                                     labelWidth={130}
                                                     startAdornment={<InputAdornment position="start">€</InputAdornment>}
+                                                />
+                                            </FormControl>
+                                            <Box
+                                                m={0.5}
+                                                bgcolor="secondary.light"
+                                                color="secondary.contrastText"
+                                                className={clsx(classes.boxStl2, classes.mb20)}
+                                            >
+                                                Configuración numeración recibos
+                                            </Box>
+                                            <FormControl
+                                                variant="outlined"
+                                                className={classes.form}
+                                                size="small"
+                                            >
+                                                <InputLabel>Último número recibos</InputLabel>
+                                                <OutlinedInput
+                                                    className={classes.mb25}
+                                                    fullWidth
+                                                    id="form-configuracion-hora-normal"
+                                                    value={valuesFormConfiguracion.numeroRecibos || ''}
+                                                    onChange={handleChangeFormConfiguracion('numeroRecibos')}
+                                                    labelWidth={175}
                                                 />
                                             </FormControl>
                                         </Box>
@@ -463,7 +541,7 @@ const Configuracion = (props) => {
                                                 color="secondary.contrastText"
                                                 className={clsx(classes.boxStl2, classes.mb20)}
                                             >
-                                                Configuración mensajes predeterminados mails
+                                                Configuración mensajes predeterminados
                                             </Box>
                                             <Box
                                                 m={0.5}
@@ -742,9 +820,150 @@ const Configuracion = (props) => {
                                                             }
                                                         />
                                                     </ListItem >
+                                                    <ListItem>
+                                                        <ListItemText
+                                                            primary="V. 1.12 - 04/05/2022"
+                                                            secondary={
+                                                                <Fragment>
+                                                                    <Typography component="span" variant="body2">1.- Cambios en la gestión de históricos de bajas en fichas trabajadores. Día inicio y día fin incluidos en rango de baja.</Typography>
+                                                                    <br />
+                                                                </Fragment>
+                                                            }
+                                                        />
+                                                    </ListItem >
+                                                    <ListItem>
+                                                        <ListItemText
+                                                            primary="V. 1.12+1 - 21/05/2022"
+                                                            secondary={
+                                                                <Fragment>
+                                                                    <Typography component="span" variant="body2">1.- Implementada funcionalidad para generar períodos de festivos para gestión de vacaciones en ficha cuadrantes.</Typography>
+                                                                    <br />
+                                                                    <Typography component="span" variant="body2">2.- Implementada funcionalidad para resetear valores de casillas en ficha cuadrantes.</Typography>
+                                                                    <br />
+                                                                    <Typography component="span" variant="body2">3.- Añadidos estados BAJA IT, BAJA ACCTE, BAJA CIA a objeto trabajador.</Typography>
+                                                                    <br />
+                                                                </Fragment>
+                                                            }
+                                                        />
+                                                    </ListItem >
                                                 </List>
                                             </Box>
                                         </Box>
+                                    </Grid>
+                                </Grid>
+                            </TabPanel>
+                            <TabPanel value={valueTab} index={4} className={classes.scrollable} style={{ height: heightScrollable }}>
+                                <Grid
+                                    container
+                                    direction="row"
+                                    justifycontent="flex-start"
+                                    alignItems="flex-start"
+                                    spacing={2}
+                                >
+                                    <Grid item lg={10} sm={10} xs={12}>
+                                        <Box
+                                            m={0.5}
+                                            bgcolor="secondary.light"
+                                            color="secondary.contrastText"
+                                            className={clsx(classes.boxStl2, classes.mb20)}
+                                        >
+                                            JSON parse and stringify with compression
+                                        </Box>
+                                        <Grid
+                                            container
+                                            direction="row"
+                                            justifycontent="flex-start"
+                                            alignItems="flex-start"
+                                            spacing={1}
+                                        >
+                                            <Grid item lg={6} sm={6} xs={12}>
+                                                <Box>
+                                                    <Box
+                                                        m={0.5}
+                                                        className={clsx(classes.mb25, classes.tituloSecundario)}
+                                                    >
+                                                        Parse
+                                                    </Box>
+                                                    <TextField
+                                                        className={clsx(classes.form, classes.mb20)}
+                                                        label="JSON a parsear"
+                                                        id="form-configuracion-JSON-parsear"
+                                                        value={valuesHerramientasParseador.parsePorParsear}
+                                                        fullWidth
+                                                        placeholder="JSON a parsear"
+                                                        multiline
+                                                        rows={10}
+                                                        variant="outlined"
+                                                        onChange={handleChangeHerramientasParseador('parsePorParsear')}
+                                                    />
+                                                    <TextField
+                                                        className={classes.form}
+                                                        label="JSON parseado"
+                                                        id="form-configuracion-JSON-parseado"
+                                                        value={valuesHerramientasParseador.parseParseado}
+                                                        fullWidth
+                                                        placeholder="JSON parseado"
+                                                        multiline
+                                                        rows={10}
+                                                        variant="outlined"
+                                                        disabled={true}
+                                                    />
+                                                    <Button
+                                                        className={classes.mt15}
+                                                        fullWidth
+                                                        variant="contained"
+                                                        size="small"
+                                                        color="secondary"
+                                                        onClick={() => procesarParseado('parseParseado')}
+                                                    >
+                                                        Parse
+                                                    </Button>
+                                                </Box>
+                                            </Grid><Grid item lg={6} sm={6} xs={12}>
+                                                <Box>
+                                                    <Box
+                                                        m={0.5}
+                                                        className={clsx(classes.mb25, classes.tituloSecundario)}
+                                                    >
+                                                        Stringify
+                                                    </Box>
+                                                    <TextField
+                                                        className={clsx(classes.form, classes.mb20)}
+                                                        label="String a parsear"
+                                                        id="form-configuracion-JSON-parsear"
+                                                        value={valuesHerramientasParseador.stringPorParsear}
+                                                        fullWidth
+                                                        placeholder="String a parsear"
+                                                        multiline
+                                                        rows={10}
+                                                        variant="outlined"
+                                                        onChange={handleChangeHerramientasParseador('stringPorParsear')}
+                                                    />
+                                                    <TextField
+                                                        className={classes.form}
+                                                        label="String parseado"
+                                                        id="form-configuracion-JSON-parseado"
+                                                        value={valuesHerramientasParseador.stringParseado}
+                                                        fullWidth
+                                                        placeholder="String parseado"
+                                                        multiline
+                                                        rows={10}
+                                                        variant="outlined"
+                                                        disabled={true}
+                                                    />
+                                                    <Button
+                                                        className={classes.mt15}
+                                                        fullWidth
+                                                        variant="contained"
+                                                        size="small"
+                                                        color="secondary"
+                                                        onClick={() => procesarParseado('stringParseado')}
+                                                    >
+                                                        Stringify
+                                                    </Button>
+                                                </Box>
+                                            </Grid>
+                                        </Grid>
                                     </Grid>
                                 </Grid>
                             </TabPanel>

@@ -31,6 +31,7 @@ import { obtenerCuadrantesRegistradosFacturadosAccion } from '../redux/pendiente
 import { vaciarDatosPendientesAccion } from '../redux/pendientesDucks';
 import { finalizarArchivosXLSLoteAccion } from '../redux/appDucks';
 import { forzarRecargaGraficosCuadrantesAccion } from '../redux/graficosDucks';
+import { setDisableCargandoAccion } from '../redux/cuadrantesSettersDucks';
 
 const getHeightContenedoresPeq = () => ((window.innerHeight / 2) - 162) || ((document.documentElement.clientHeight / 2) - 162) || ((document.body.clientHeight / 2) - 162);
 const getHeightContenedoresGra = () => ((window.innerHeight) - 264) || ((document.documentElement.clientHeight) - 264) || ((document.body.clientHeight) - 264);
@@ -142,10 +143,11 @@ const PantallaCuadrantes = () => {
     }, [errorDeCargaCentros, errorDeCargaCuadrantes]);
 
     useEffect(() => {
-        if ((numeroCuadrantesPendientes + numeroCuadrantesRegistrados + numeroCuadrantesFacturados) < listadoCentros.length) {
-            setOpenLoading(true)
+        if ((numeroCuadrantesPendientes + numeroCuadrantesRegistrados + numeroCuadrantesFacturados) < listadoCentros.length) {           
+            setOpenLoading(true);
         } else {
-            setOpenLoading(false)
+            setOpenLoading(false);
+            dispatch(setDisableCargandoAccion(false));
         };
     }, [numeroCuadrantesPendientes, numeroCuadrantesRegistrados, numeroCuadrantesFacturados]);
 

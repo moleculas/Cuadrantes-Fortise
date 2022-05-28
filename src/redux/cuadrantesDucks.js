@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Constantes from "../constantes";
+import { parse } from 'zipson';
 
 //constantes
 const rutaApi = Constantes.RUTA_API;
@@ -56,6 +57,10 @@ const dataInicial = {
     stateFestivo: {},
     losDiasDelMes: [],
     cuadrante: [],
+    totalesPeriodicos: {
+        total: null,
+        noExisteCuadrante: false
+    }
 };
 
 //types
@@ -84,6 +89,8 @@ const ACTUALIZAR_OBJETO_CUADRANTE = 'ACTUALIZAR_OBJETO_CUADRANTE';
 const SET_LOS_DIAS_DE_MES = 'SET_LOS_DIAS_DE_MES';
 const SET_STATE_FESTIVO = 'SET_STATE_FESTIVO';
 const SET_CUADRANTE = 'SET_CUADRANTE';
+const SET_TOTALESPERIODICOS = 'SET_TOTALESPERIODICOS';
+const RESETEA_TOTALESPERIODICOS = 'RESETEA_TOTALESPERIODICOS';
 
 //reducer
 export default function cuadrantesReducer(state = dataInicial, action) {
@@ -138,6 +145,10 @@ export default function cuadrantesReducer(state = dataInicial, action) {
             return { ...state, stateFestivo: action.payload.objeto }
         case SET_CUADRANTE:
             return { ...state, cuadrante: action.payload.array }
+        case SET_TOTALESPERIODICOS:
+            return { ...state, totalesPeriodicos: { total: ((state.noExisteCuadrante || action.payload.noExisteCuadrante) ? 0 : state.totalesPeriodicos.total += action.payload.totales), noExisteCuadrante: action.payload.noExisteCuadrante } }
+        case RESETEA_TOTALESPERIODICOS:
+            return { ...state, totalesPeriodicos: action.payload.objeto }
         default:
             return { ...state }
     }
@@ -323,7 +334,7 @@ export const cambioEstadoInicioCuadrantesAccion = (estado) => (dispatch, getStat
     });
 }
 
-export const obtenerCuadranteAccion = (objeto, id) => async (dispatch, getState) => {
+export const obtenerCuadranteAccion = (objeto, id) => async (dispatch, getState) => {   
     dispatch({
         type: LOADING_CUADRANTES
     });
@@ -348,21 +359,21 @@ export const obtenerCuadranteAccion = (objeto, id) => async (dispatch, getState)
                     id: res.data.id,
                     nombre: res.data.nombre,
                     actualizacion: res.data.actualizacion,
-                    datosCuadrante: JSON.parse(res.data.datos_cuadrante),
-                    datosServicios: res.data.datos_servicios ? JSON.parse(res.data.datos_servicios) : dataInicial.objetoCuadrante.datosServicios,
-                    datosInforme: res.data.datos_informe ? JSON.parse(res.data.datos_informe) : dataInicial.objetoCuadrante.datosInforme,
-                    datosBuffer: res.data.datos_buffer ? JSON.parse(res.data.datos_buffer) : dataInicial.objetoCuadrante.datosBuffer,
+                    datosCuadrante: parse(res.data.datos_cuadrante),
+                    datosServicios: res.data.datos_servicios ? parse(res.data.datos_servicios) : dataInicial.objetoCuadrante.datosServicios,
+                    datosInforme: res.data.datos_informe ? parse(res.data.datos_informe) : dataInicial.objetoCuadrante.datosInforme,
+                    datosBuffer: res.data.datos_buffer ? parse(res.data.datos_buffer) : dataInicial.objetoCuadrante.datosBuffer,
                     estado: res.data.estado,
-                    total: res.data.total ? JSON.parse(res.data.total) : dataInicial.objetoCuadrante.total,
-                    horas: res.data.horas ? JSON.parse(res.data.horas) : dataInicial.objetoCuadrante.horas
+                    total: res.data.total ? parse(res.data.total) : dataInicial.objetoCuadrante.total,
+                    horas: res.data.horas ? parse(res.data.horas) : dataInicial.objetoCuadrante.horas
                 }
             });
         };
     } catch (error) {
         dispatch({
             type: ERROR_DE_CARGA_CUADRANTES
-        })
-    }
+        });
+    };
 }
 
 export const actualizarCuadranteAccion = (objeto, id, datos) => async (dispatch, getState) => {
@@ -434,7 +445,7 @@ export const resetearCuadranteAccion = (objeto, id) => async (dispatch, getState
         const formData = new FormData();
         formData.append("objeto", objeto);
         formData.append("id", id);
-        let apiUrl = rutaApi + "eliminar.php";
+        let apiUrl = rutaApi + "eliminar_cuadrante.php";
         await axios.post(apiUrl, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
@@ -451,4 +462,68 @@ export const resetearCuadranteAccion = (objeto, id) => async (dispatch, getState
             type: ERROR_DE_CARGA_CUADRANTES
         })
     }
+}
+
+export const obtenerCuadrantesPeriodicosAccion = (objeto, calendarioAGestionar, periodo, idCentro) => (dispatch, getState) => {
+    dispatch({
+        type: LOADING_CUADRANTES
+    });
+    const arrayNombresCuadrantes = [];
+    let myArrSplit = calendarioAGestionar.split("-");
+    const mes = parseInt(myArrSplit[1]);
+    const anyo = parseInt(myArrSplit[0]);
+    let variableMeses;
+    if (periodo === 'bimensual') {
+        variableMeses = mes - 1;
+        arrayNombresCuadrantes.push(anyo + '-' + variableMeses + '-' + idCentro);
+    };
+    if (periodo === 'trimestral') {
+        for (let i = 1; i <= 2; i++) {
+            variableMeses = mes - i;
+            arrayNombresCuadrantes.push(anyo + '-' + variableMeses + '-' + idCentro)
+        };
+    };
+    try {
+        let totalObjeto = {};
+        arrayNombresCuadrantes.forEach(async (cuadrante, index) => {
+            let noExisteCuadrante = false;
+            const formData = new FormData();
+            formData.append("objeto", objeto);
+            formData.append("nombre", cuadrante);
+            let apiUrl = rutaApi + "obtener_periodicos.php";
+            const res = await axios.post(apiUrl, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            });
+            if (res.data === false) {
+                noExisteCuadrante = true;
+            } else {
+                totalObjeto = parse(res.data.total);
+            };
+            dispatch({
+                type: SET_TOTALESPERIODICOS,
+                payload: {
+                    totales: parseFloat(totalObjeto.total),
+                    noExisteCuadrante: noExisteCuadrante
+                }
+            })
+        });
+    } catch (error) {
+        dispatch({
+            type: ERROR_DE_CARGA_CUADRANTES
+        })
+    }
+}
+
+export const reseteaTotalesPeriodicosAccion = () => (dispatch, getState) => {
+    dispatch({
+        type: RESETEA_TOTALESPERIODICOS,
+        payload: {
+            objeto: {
+                total: null,
+                noExisteCuadrante: false
+            }
+        }
+    });
 }

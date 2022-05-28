@@ -16,9 +16,13 @@ import Box from '@material-ui/core/Box';
 import TextField from '@material-ui/core/TextField';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import DateFnsUtils from '@date-io/date-fns';
+import { es } from "date-fns/locale";
+import { MuiPickersUtilsProvider, KeyboardDatePicker, } from '@material-ui/pickers';
 
 //importaciones acciones
 import { retornaFormaPagoAccion } from '../redux/cuadrantesDucks';
+import { gestionaRangoFechasVacacionesAccion } from '../redux/appDucks';
 
 //estilos
 import Clases from "../clases";
@@ -26,6 +30,7 @@ import Clases from "../clases";
 const tipos = Constantes.MODO_ENTRADA_HORARIOS;
 const computoHoras = Constantes.COMPUTO_HORAS;
 const excepciones = Constantes.EXCEPCIONES_CENTROS;
+const tipoFestivo = Constantes.TIPO_FESTIVO;
 
 const ConfiguracionCuadrante = (props) => {
 
@@ -38,6 +43,7 @@ const ConfiguracionCuadrante = (props) => {
         excepcion: props.prItemEditandoConfiguracion.excepcion || '',
         bloqueado: props.prItemEditandoConfiguracion.bloqueado || '',
         mensualPactado: props.prItemEditandoConfiguracion.mensualPactado || '',
+        mensualPactadoInicial: props.prItemEditandoConfiguracion.mensualPactadoInicial || '',
         precioHora_L: props.prItemEditandoConfiguracion.precioHora_L || '',
         precioHora_E: props.prItemEditandoConfiguracion.precioHora_E || '',
         precioHora_P: props.prItemEditandoConfiguracion.precioHora_P || '',
@@ -46,13 +52,31 @@ const ConfiguracionCuadrante = (props) => {
         precioHora_L1: props.prItemEditandoConfiguracion.precioHora_L1 || '',
         precioHora_L2: props.prItemEditandoConfiguracion.precioHora_L2 || '',
         precioHora_F: props.prItemEditandoConfiguracion.precioHora_F || '',
-        observaciones: props.prItemEditandoConfiguracion.observaciones || ''
+        observaciones: props.prItemEditandoConfiguracion.observaciones || '',
+        festivos: {
+            inicio: props.prItemEditandoConfiguracion.festivos.inicio || null,
+            fin: props.prItemEditandoConfiguracion.festivos.fin || null,
+            tipo: props.prItemEditandoConfiguracion.festivos.tipo || ''
+        }
     });
+    const [esMensualPactadoGEH, setEsMensualPactadoGEH] = useState(false);
 
     //useEffect
 
     useEffect(() => {
         gestionItemPrevioEditandoConfiguracion(valoresPreviosConfiguracion);
+        if (props.prItemEditandoConfiguracion.computo === 3 && (
+            !props.prItemEditandoConfiguracion.precioHora_L &&
+            !props.prItemEditandoConfiguracion.precioHora_E &&
+            !props.prItemEditandoConfiguracion.precioHora_P &&
+            !props.prItemEditandoConfiguracion.precioHora_N &&
+            !props.prItemEditandoConfiguracion.precioHora_R &&
+            !props.prItemEditandoConfiguracion.precioHora_L1 &&
+            !props.prItemEditandoConfiguracion.precioHora_L2 &&
+            !props.prItemEditandoConfiguracion.precioHora_F
+        )) {
+            setEsMensualPactadoGEH(true)
+        };
     }, []);
 
     //funciones
@@ -63,6 +87,9 @@ const ConfiguracionCuadrante = (props) => {
 
     const handleChangeFormConfiguracionCuadrante = (prop) => (e) => {
         props.prHandleChangeFormConfiguracionCuadrante(prop, e);
+    };
+    const handleChangeTimePickerFestivos = (prop) => (fecha) => {
+        props.prHandleChangeTimePickerFestivos(prop, fecha);
     };
 
     return (
@@ -105,7 +132,7 @@ const ConfiguracionCuadrante = (props) => {
                     </ListItem >
                 </List>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} className={classes.mb20}>
                 <Box className={classes.mb15}>
                     <TextField
                         label="Observaciones"
@@ -197,7 +224,7 @@ const ConfiguracionCuadrante = (props) => {
                                 }
                             </Select>
                         </FormControl>
-                        {props.prItemEditandoConfiguracion.computo === 1 || props.prItemEditandoConfiguracion.computo === 3 ? (
+                        {props.prItemEditandoConfiguracion.computo === 1 || (props.prItemEditandoConfiguracion.computo === 3 && esMensualPactadoGEH) ? (
                             <Fragment>
                                 <FormControl
                                     variant="outlined"
@@ -209,14 +236,14 @@ const ConfiguracionCuadrante = (props) => {
                                         className={classes.mb20}
                                         fullWidth
                                         id="form-mensual-pactado-cuadrante"
-                                        value={props.prItemEditandoConfiguracion.mensualPactado || ''}
-                                        onChange={handleChangeFormConfiguracionCuadrante('mensualPactado')}
+                                        value={props.prItemEditandoConfiguracion.mensualPactadoInicial || ''}
+                                        onChange={handleChangeFormConfiguracionCuadrante('mensualPactadoInicial')}
                                         labelWidth={130}
                                         startAdornment={<InputAdornment position="start">€</InputAdornment>}
                                     />
                                 </FormControl>
                                 <Box className={classes.boxChekin}>
-                                    <FormControlLabel                                      
+                                    <FormControlLabel
                                         control={
                                             <Checkbox
                                                 checked={props.prItemEditandoConfiguracion.bloqueado === 'si' ? true : false}
@@ -230,7 +257,7 @@ const ConfiguracionCuadrante = (props) => {
                                 </Box>
                             </Fragment>
                         ) : null}
-                        {props.prItemEditandoConfiguracion.computo === 2 || props.prItemEditandoConfiguracion.computo === 3 ? (
+                        {props.prItemEditandoConfiguracion.computo === 2 || (props.prItemEditandoConfiguracion.computo === 3 && !esMensualPactadoGEH) ? (
                             <Fragment>
                                 <FormControl
                                     variant="outlined"
@@ -389,7 +416,76 @@ const ConfiguracionCuadrante = (props) => {
                     </Fragment>
                 ) : null}
             </Grid>
-            {/* {console.log(props.prCentro.computo)} */}
+            <Grid item xs={12}>
+                <List dense={true} className={classes.mb20}>
+                    <ListItem
+                        className={classes.listConfig}
+                    >
+                        <ListItemText
+                            primary="Gestión de festivos"
+                        />
+                    </ListItem >
+                </List>
+                <MuiPickersUtilsProvider locale={es} utils={DateFnsUtils}>
+                    <KeyboardDatePicker
+                        inputVariant="outlined"
+                        className={classes.mb20}
+                        fullWidth
+                        format="dd/MM"
+                        label="Inicio período"
+                        minDate={new Date(dispatch(gestionaRangoFechasVacacionesAccion('inicio')))}
+                        maxDate={new Date(dispatch(gestionaRangoFechasVacacionesAccion('fin')))}
+                        clearable={true}
+                        cancelLabel="Cancelar"
+                        clearLabel="Borrar"
+                        value={props.prItemEditandoConfiguracion.festivos.inicio}
+                        onChange={handleChangeFormConfiguracionCuadrante('festivosInicio')}
+                        size="small"
+                    />
+                </MuiPickersUtilsProvider>
+                <MuiPickersUtilsProvider locale={es} utils={DateFnsUtils}>
+                    <KeyboardDatePicker
+                        inputVariant="outlined"
+                        className={classes.mb20}
+                        fullWidth
+                        format="dd/MM"
+                        label="Fin período"
+                        minDate={new Date(dispatch(gestionaRangoFechasVacacionesAccion('inicio')))}
+                        maxDate={new Date(dispatch(gestionaRangoFechasVacacionesAccion('fin')))}
+                        clearable={true}
+                        cancelLabel="Cancelar"
+                        clearLabel="Borrar"
+                        value={props.prItemEditandoConfiguracion.festivos.fin}
+                        onChange={handleChangeFormConfiguracionCuadrante('festivosFin')}
+                        size="small"
+                    />
+                </MuiPickersUtilsProvider>
+                <FormControl
+                    variant="outlined"
+                    fullWidth
+                    size="small"
+                    className={classes.mb20}
+                >
+                    <InputLabel>Tipo festivo</InputLabel>
+                    <Select
+                        id="form-tipoFestivo-configuracion"
+                        label="Tipo festivo"
+                        value={props.prItemEditandoConfiguracion.festivos.tipo}
+                        onChange={handleChangeFormConfiguracionCuadrante('festivosTipo')}
+                        helpertext="Selecciona Tipo Festivo"
+                    >
+                        <MenuItem value=''>
+                            <em>No</em>
+                        </MenuItem>
+                        {tipoFestivo.map((option) => (
+                            <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            </Grid>
+            {/* {console.log(esMensualPactadoGEH)} */}
         </div>
     )
 }

@@ -4,7 +4,7 @@ import { Typography } from "@material-ui/core";
 import Constantes from "../constantes";
 import DateFnsUtils from '@date-io/date-fns';
 import Grid from '@material-ui/core/Grid';
-import { MuiPickersUtilsProvider, TimePicker, } from '@material-ui/pickers';
+import { MuiPickersUtilsProvider, KeyboardTimePicker } from '@material-ui/pickers';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import FormControl from '@material-ui/core/FormControl';
@@ -125,11 +125,9 @@ const ItemListTime = (props) => {
                             </Grid>
                             <Grid item xs={4}>
                                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                                    <TimePicker
-                                        inputVariant="outlined"
-                                        clearable={true}
-                                        cancelLabel="Cancelar"
-                                        clearLabel="Borrar"
+                                    <KeyboardTimePicker
+                                        className="calendarioOculto"
+                                        inputVariant="outlined"                                       
                                         fullWidth
                                         label="Hora inicio"
                                         ampm={false}
@@ -142,11 +140,9 @@ const ItemListTime = (props) => {
                             </Grid>
                             <Grid item xs={4} style={{ marginLeft: 10 }}>
                                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                                    <TimePicker
+                                    <KeyboardTimePicker
+                                        className="calendarioOculto"
                                         inputVariant="outlined"
-                                        clearable={true}
-                                        cancelLabel="Cancelar"
-                                        clearLabel="Borrar"
                                         fullWidth
                                         label="Hora fin"
                                         ampm={false}
@@ -229,11 +225,9 @@ const ItemListTime = (props) => {
                             </Grid>
                             <Grid item style={{ width: '21%' }}>
                                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                                    <TimePicker
+                                    <KeyboardTimePicker
+                                        className="calendarioOculto"
                                         inputVariant="outlined"
-                                        clearable={true}
-                                        cancelLabel="Cancelar"
-                                        clearLabel="Borrar"
                                         fullWidth
                                         label="Hora inicio"
                                         ampm={false}
@@ -246,11 +240,9 @@ const ItemListTime = (props) => {
                             </Grid>
                             <Grid item style={{ marginLeft: 5, width: '21%' }}>
                                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                                    <TimePicker
+                                    <KeyboardTimePicker
+                                        className="calendarioOculto"
                                         inputVariant="outlined"
-                                        clearable={true}
-                                        cancelLabel="Cancelar"
-                                        clearLabel="Borrar"
                                         fullWidth
                                         label="Hora fin"
                                         ampm={false}
@@ -264,11 +256,9 @@ const ItemListTime = (props) => {
                             <Typography style={{ marginLeft: 5 }}>-</Typography>
                             <Grid style={{ marginLeft: 5, width: '21%' }}>
                                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                                    <TimePicker
+                                    <KeyboardTimePicker
+                                        className="calendarioOculto"
                                         inputVariant="outlined"
-                                        clearable={true}
-                                        cancelLabel="Cancelar"
-                                        clearLabel="Borrar"
                                         fullWidth
                                         label="Hora inicio"
                                         ampm={false}
@@ -281,11 +271,9 @@ const ItemListTime = (props) => {
                             </Grid>
                             <Grid item style={{ marginLeft: 5, width: '21%' }}>
                                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                                    <TimePicker
+                                    <KeyboardTimePicker
+                                        className="calendarioOculto"
                                         inputVariant="outlined"
-                                        clearable={true}
-                                        cancelLabel="Cancelar"
-                                        clearLabel="Borrar"
                                         fullWidth
                                         label="Hora fin"
                                         ampm={false}

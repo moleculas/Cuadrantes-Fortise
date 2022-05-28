@@ -59,13 +59,13 @@ const GraficoCuadrantes = (props) => {
     }, [forzarRecargaGraficosCuadrantes]);
 
     useEffect(() => {
-        if (cuadrantesPorAnyoGraficos.length ===12 && nominasPorAnyoGraficos.length ===12) {
+        if (cuadrantesPorAnyoGraficos.length === 12 && nominasPorAnyoGraficos.length === 12) {
             let array = [];
-            let objeto;            
-            for (let i = 0; i < 12; i++) {               
+            let objeto;
+            for (let i = 0; i < 12; i++) {          
                 objeto = {
                     name: cuadrantesPorAnyoGraficos[i].name,
-                    Ingresos: cuadrantesPorAnyoGraficos[i].Ingresos,
+                    Ingresos: cuadrantesPorAnyoGraficos[i].IngresosA || cuadrantesPorAnyoGraficos[i].IngresosB ? parseFloat(cuadrantesPorAnyoGraficos[i].IngresosA) + parseFloat(cuadrantesPorAnyoGraficos[i].IngresosB) : 0,
                     Gastos: nominasPorAnyoGraficos[i].Gastos
                 }
                 array.push(objeto);

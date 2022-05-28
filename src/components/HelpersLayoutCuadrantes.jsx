@@ -45,10 +45,18 @@ const HelpersLayoutCuadrantes = () => {
     const classes = Clases();
     const dispatch = useDispatch();
     const stateFestivo = useSelector(store => store.variablesCuadrantes.stateFestivo);
+    const firmaActualizacion = useSelector(store => store.variablesCuadrantesSetters.firmaActualizacion);
+    const objetoCentro = useSelector(store => store.variablesCentros.objetoCentro);
+    const objetoCuadrante = useSelector(store => store.variablesCuadrantes.objetoCuadrante);
+    const intervencionRegistrada = useSelector(store => store.variablesApp.estadoIntervencionRegistrada);
 
     const gestionaTextoCasillasServiciosFijosAccion = (indexDia, precio) => {
         if (stateFestivo['estadoFestivoDia' + (indexDia)]) {
-            return 'Día festivo';
+            if (stateFestivo['tipoFestivoDia' + (indexDia)] === 1) {
+                return 'Día festivo'
+            } else {
+                return 'Cierre centro'
+            };
         } else {
             if (precio) {
                 return precio + ' €';
@@ -59,20 +67,32 @@ const HelpersLayoutCuadrantes = () => {
     };
 
     const gestionaTextoCasillasAccion = (indexDia, dia, columna, diaSemana) => {
-        if (columna[dia].baja) {
+        if (stateFestivo['estadoFestivoDia' + (indexDia)]) {
+            if (stateFestivo['tipoFestivoDia' + (indexDia)] === 1) {
+                return 'Día festivo'
+            } else {
+                return 'Cierre centro'
+            };
+        } else if (columna[dia].baja) {
             switch (columna[dia].tipoBaja) {
-                case 'baja':
-                    return 'Trabajador de baja';
+                case 'bajaIT':
+                    return 'Baja IT'
+                case 'bajaACCTE':
+                    return 'Baja ACCTE'
+                case 'bajaCIA':
+                    return 'Baja CIA'
                 case 'vacaciones':
-                    return 'Trabajador de vacaciones';
+                    return 'Vacaciones'
                 case 'excedencia':
-                    return 'Trabajador en excedencia';
+                    return 'Excedencia'
                 case 'personales':
-                    return 'Ausencia motivos personales';
+                    return 'Motivos personales'
+                case 'permisoRET':
+                    return 'Permiso RET'
+                case 'ausenciaINJ':
+                    return 'Ausencia INJ'
                 default:
-            }
-        } else if (stateFestivo['estadoFestivoDia' + (indexDia)]) {
-            return 'Día festivo'
+            };
         } else {
             switch (columna.tipoHorario) {
                 case 'rango':
@@ -260,32 +280,48 @@ const HelpersLayoutCuadrantes = () => {
                     break;
                 default:
             }
-        }
+        };
     };
 
-    const gestionaClassesColoresGeneralAccion = (dia, trabajadorDiaDeBaja, modificado, nombreTrabajador) => {
-        if (trabajadorDiaDeBaja) {
-            return classes.casillaBaja;
-        } else {
-            if (stateFestivo['estadoFestivoDia' + (dia)]) {
+    const gestionaClassesColoresGeneralAccion = (dia, trabajadorDiaDeBaja, modificado, nombreTrabajador, tipoBaja) => {
+        if (stateFestivo['estadoFestivoDia' + (dia)]) {
+            if (stateFestivo['tipoFestivoDia' + (dia)] === 1) {
                 return classes.casillaFestivo;
             } else {
-                if (modificado) {
-                    return classes.casillaModificado;
-                } else {
-                    if (nombreTrabajador) {
-                        return classes.casillaLaboral;
-                    } else {
-                        return classes.casillaDisabled;
-                    }
-                }
+                return classes.casillaFestivoCierre;
             };
-        }
+        };
+        if (trabajadorDiaDeBaja) {
+            if (tipoBaja === 'bajaCIA2') {
+                return classes.casillaDisabled;
+            } else if (tipoBaja === 'bajaCIA') {
+                return classes.casillaBajaCIA;
+            } else {
+                return classes.casillaBaja;
+            };
+        };
+        if (modificado) {
+            return classes.casillaModificado;
+        } else {
+            if (nombreTrabajador) {
+                if (nombreTrabajador === 'Suplente') {
+                    return classes.casillaSuplenteVacio;
+                } else {
+                    return classes.casillaLaboral;
+                };
+            } else {
+                return classes.casillaDisabled;
+            };
+        };
     };
 
     const gestionaClassesColoresServiciosFijosAccion = (dia, hayServicio) => {
         if (stateFestivo['estadoFestivoDia' + (dia)]) {
-            return classes.casillaFestivo;
+            if (stateFestivo['tipoFestivoDia' + (dia)] === 1) {
+                return classes.casillaFestivo;
+            } else {
+                return classes.casillaFestivoCierre;
+            };
         } else {
             if (hayServicio) {
                 return classes.casillaSF;
@@ -295,11 +331,15 @@ const HelpersLayoutCuadrantes = () => {
         }
     };
 
-    const gestionaClassesColoresTrabajadoresAccion = (trabajadorTipo) => {
+    const gestionaClassesColoresTrabajadoresAccion = (trabajadorTipo, trabajadorId) => {
         if (trabajadorTipo === 'trabajador' || !trabajadorTipo) {
             return classes.trabajador;
         } else {
-            return classes.suplente;
+            if (trabajadorId === 999) {
+                return classes.suplenteVacio
+            } else {
+                return classes.suplente
+            };
         }
     };
 
@@ -782,7 +822,7 @@ const HelpersLayoutCuadrantes = () => {
         };
     };
 
-    const retornaHeaderServiciosFijosAccion = (servicio, index, ancho) => {
+    const retornaHeaderServiciosFijosAccion = (servicio, index, ancho, alto) => {
         if (servicio.activo_TO === 'si' ||
             servicio.activo_CR === 'si' ||
             servicio.activo_CE === 'si' ||
@@ -810,7 +850,7 @@ const HelpersLayoutCuadrantes = () => {
                     key={'cabeceraServicios' + index}
                     className={clsx(classes.cabeceraServicios, classes.inicio)}
                     color="secondary.contrastText"
-                    style={{ minHeight: 38, maxHeight: 38, padding: 9, width: ancho }}
+                    style={{ minHeight: alto, maxHeight: alto, paddingLeft: 9, width: ancho, display: 'flex', alignItems: 'center' }}
                 >
                     <Typography variant="body2">{gestionaCabeceraServiciosFijos(servicio.tipoServiciofijo)}</Typography>
                 </Box>
@@ -1034,6 +1074,97 @@ const HelpersLayoutCuadrantes = () => {
         )
     };
 
+    const retornaLabelChipAccion = () => {
+        let estado = '';
+        if (objetoCentro.nombre) {
+            if (!firmaActualizacion) {
+                estado = ' - Estado: Pendiente de Registrar Cuadrante';
+            };
+            if (firmaActualizacion &&
+                !intervencionRegistrada &&
+                objetoCuadrante.estado === 'registrado') {
+                estado = ' - Estado: Pendiente de Actualizar Cuadrante';
+            };
+            if (firmaActualizacion &&
+                intervencionRegistrada &&
+                objetoCuadrante.estado === 'registrado') {
+                estado = ' - Estado: Registrado el ' + firmaActualizacion;
+            };
+            if (firmaActualizacion &&
+                !intervencionRegistrada &&
+                objetoCuadrante.estado === 'facturado' &&
+                objetoCuadrante.total &&
+                (objetoCuadrante.total.procesado.valor === 'no' || objetoCuadrante.total.procesado.valor === 'si')) {
+                if (objetoCuadrante.total.tocaFacturar.valor === 'si') {
+                    estado = ' - Estado: Pendiente de Registrar Factura';
+                } else {
+                    estado = ' - Estado: Pendiente de Registrar Recibo';
+                };
+            };
+            if (firmaActualizacion &&
+                intervencionRegistrada &&
+                objetoCuadrante.estado === 'facturado' &&
+                objetoCuadrante.total &&
+                objetoCuadrante.total.procesado.valor === 'no') {
+                estado = ' - Estado: Facturado el ' + firmaActualizacion;
+            };
+            if (firmaActualizacion &&
+                intervencionRegistrada &&
+                objetoCuadrante.estado === 'facturado' &&
+                objetoCuadrante.total &&
+                objetoCuadrante.total.procesado.valor === 'si') {
+                estado = ' - Estado: Emitido el ' + firmaActualizacion;
+            };
+            return 'Centro: ' + objetoCentro.nombre + estado
+        } else {
+            return 'Gestión de cuadrantes'
+        };
+    };
+
+    const retornaColorChipAccion = () => {
+        let color;
+        if (objetoCuadrante.estado === 'facturado' &&
+            objetoCuadrante.total &&
+            objetoCuadrante.total.procesado.valor === 'si') {
+            if (intervencionRegistrada) {
+                color = classes.conServicios;
+            };
+        };
+        if (objetoCuadrante.estado === 'registrado' &&
+            objetoCuadrante.datosInforme.tocaFacturar.valor === 'no' && objetoCuadrante.datosInforme.tocaFacturar.razon !== 'gest') {
+            color = classes.noFacturacion;
+        };
+        if (color) {
+            return color
+        } else {
+            return null
+        };
+    };
+
+    const retornaAvatarChipAccion = () => {
+        if (objetoCentro.nombre) {
+            if ((objetoCentro.nombre !== '' && objetoCentro.horario.horario[0] && objetoCentro.horario.horario[0].computo === 3) || (objetoCentro.nombre !== '' && objetoCentro.serviciosFijos.gestionEspSF)) {
+                return (
+                    <Avatar
+                        className={classes.enB}
+                    >
+                        <Typography style={{ color: '#ffffff' }}>B</Typography>
+                    </Avatar>
+                )
+            } else {
+                return (
+                    <Avatar
+                        className={classes.enA}
+                    >
+                        <Typography style={{ color: '#ffffff' }}>A</Typography>
+                    </Avatar>
+                )
+            };
+        } else {
+            return null
+        };
+    };
+
     return {
         gestionaTextoCasillasServiciosFijosAccion,
         gestionaTextoCasillasAccion,
@@ -1045,7 +1176,10 @@ const HelpersLayoutCuadrantes = () => {
         gestionaValoresCasillasAccion,
         retornaHeaderServiciosFijosAccion,
         retornoServiciosFijosEnLayoutAccion,
-        retornaServiciosFijosEnLayoutAvatarsAccion
+        retornaServiciosFijosEnLayoutAvatarsAccion,
+        retornaLabelChipAccion,
+        retornaColorChipAccion,
+        retornaAvatarChipAccion
     }
 }
 

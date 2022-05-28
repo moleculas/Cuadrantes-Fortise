@@ -463,7 +463,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
         formaPago: '',
         tempPago: '',
         diaPago: '',
-        activoNumCuenta: false
+        activoNumCuenta: false,
+        gestionEspSF: false
     });
 
     //useEffect
@@ -1032,6 +1033,12 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             dispatch(activarDesactivarRegistrarCentroAccion(false));
             return;
         };
+        if (prop === "gestionEspSF") {
+            setValuesFormRegistroGenerales({ ...valuesFormRegistroGenerales, [prop]: e.target.checked });
+            dispatch(registrarIntervencionAccion(false));
+            dispatch(activarDesactivarRegistrarCentroAccion(false));
+            return;
+        };
         setValuesFormRegistroGenerales({ ...valuesFormRegistroGenerales, [prop]: e.target.value });
         dispatch(registrarIntervencionAccion(false));
         dispatch(activarDesactivarRegistrarCentroAccion(false));
@@ -1043,7 +1050,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             let trabajadorSeleccionado = listadoTrabajadores.find(trabajador => trabajador.id === e.target.value);
             if (trabajadorSeleccionado.estado === 'reserva') {
                 setAlert({
-                    mensaje: "El trabajador está en Reserva, selecciona otro o cambia sus estado.",
+                    mensaje: "El trabajador está en Reserva, selecciona otro o cambia su estado.",
                     tipo: 'error'
                 })
                 setOpenSnack(true);
@@ -3740,6 +3747,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         };
                                         objServiciosFijos = {
                                             objeto: 'serviciosFijos',
+                                            gestionEspSF: valuesFormRegistroGenerales.gestionEspSF,
                                             serviciosFijos: []
                                         };
                                         objTrabajadores = {
@@ -3835,6 +3843,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         };
                                         objServiciosFijos = {
                                             objeto: 'serviciosFijos',
+                                            gestionEspSF: valuesFormRegistroGenerales.gestionEspSF,
                                             serviciosFijos: []
                                         };
                                         objTrabajadores = {
@@ -4030,7 +4039,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 formaPago: '',
                 tempPago: '',
                 diaPago: '',
-                activoNumCuenta: false
+                activoNumCuenta: false,
+                gestionEspSF: false,
             });
             setNumeroCuadrantesRegistro([{ value: 1, cuadrante: null, guardado: false }]);
             setCuadranteEnUsoRegistro(1);
@@ -4762,13 +4772,13 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             case 'TOL':
                 checkeado = stateSwitchTipoServicioFijoRegistro.TO;
                 laLabelSw = 'SERVICIO DE LIMPIEZA DE TOLDOS';
-                laLabelIn = 'Precio TOL';
+                laLabelIn = 'TOL';
                 elId = 'form-precio-hora_TO-registro';
                 elValue = valuesFormRegistro.precioHora_TO || '';
                 elValueVariaciones = valuesFormRegistro.variacion_TO || '';
                 elValueDia = valuesFormRegistro.diaVariacion_TO || '';
                 elValueActivo = valuesFormRegistro.activo_TO || '';
-                laLabelWi = 90;
+                laLabelWi = 30;
                 elPrecioHora = 'precioHora_TO';
                 laVariacion = 'variacion_TO';
                 elDia = 'diaVariacion_TO';
@@ -4783,13 +4793,13 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             case 'CRIS':
                 checkeado = stateSwitchTipoServicioFijoRegistro.CR;
                 laLabelSw = 'SERVICIO DE LIMPIEZA DE CRISTALES';
-                laLabelIn = 'Precio CRIS';
+                laLabelIn = 'CRIS';
                 elId = 'form-precio-hora_CR-registro';
                 elValue = valuesFormRegistro.precioHora_CR || '';
                 elValueVariaciones = valuesFormRegistro.variacion_CR || '';
                 elValueDia = valuesFormRegistro.diaVariacion_CR || '';
                 elValueActivo = valuesFormRegistro.activo_CR || '';
-                laLabelWi = 100;
+                laLabelWi = 40;
                 elPrecioHora = 'precioHora_CR';
                 laVariacion = 'variacion_CR';
                 elDia = 'diaVariacion_CR';
@@ -4804,13 +4814,13 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             case 'CRISE':
                 checkeado = stateSwitchTipoServicioFijoRegistro.CE;
                 laLabelSw = 'LIMPIEZA CRISTALES EXTERIORES';
-                laLabelIn = 'Precio CRISE';
+                laLabelIn = 'CRISE';
                 elId = 'form-precio-hora_CE-registro';
                 elValue = valuesFormRegistro.precioHora_CE || '';
                 elValueVariaciones = valuesFormRegistro.variacion_CE || '';
                 elValueDia = valuesFormRegistro.diaVariacion_CE || '';
                 elValueActivo = valuesFormRegistro.activo_CE || '';
-                laLabelWi = 110;
+                laLabelWi = 50;
                 elPrecioHora = 'precioHora_CE';
                 laVariacion = 'variacion_CE';
                 elDia = 'diaVariacion_CE';
@@ -4825,13 +4835,13 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             case 'CRISI':
                 checkeado = stateSwitchTipoServicioFijoRegistro.CI;
                 laLabelSw = 'LIMPIEZA CRISTALES INTERIORES';
-                laLabelIn = 'Precio CRISI';
+                laLabelIn = 'CRISI';
                 elId = 'form-precio-hora_CI-registro';
                 elValue = valuesFormRegistro.precioHora_CI || '';
                 elValueVariaciones = valuesFormRegistro.variacion_CI || '';
                 elValueDia = valuesFormRegistro.diaVariacion_CI || '';
                 elValueActivo = valuesFormRegistro.activo_CI || '';
-                laLabelWi = 105;
+                laLabelWi = 45;
                 elPrecioHora = 'precioHora_CI';
                 laVariacion = 'variacion_CI';
                 elDia = 'diaVariacion_CI';
@@ -4846,13 +4856,13 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             case 'MOQ':
                 checkeado = stateSwitchTipoServicioFijoRegistro.MO;
                 laLabelSw = 'SERVICIO DE LIMPIEZA MOQUETA';
-                laLabelIn = 'Precio MOQ';
+                laLabelIn = 'MOQ';
                 elId = 'form-precio-hora_MO-registro';
                 elValue = valuesFormRegistro.precioHora_MO || '';
                 elValueVariaciones = valuesFormRegistro.variacion_MO || '';
                 elValueDia = valuesFormRegistro.diaVariacion_MO || '';
                 elValueActivo = valuesFormRegistro.activo_MO || '';
-                laLabelWi = 95;
+                laLabelWi = 35;
                 elPrecioHora = 'precioHora_MO';
                 laVariacion = 'variacion_MO';
                 elDia = 'diaVariacion_MO';
@@ -4867,13 +4877,13 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             case 'OF':
                 checkeado = stateSwitchTipoServicioFijoRegistro.OF;
                 laLabelSw = 'SERVICIO DE LIMPIEZA OFICINAS';
-                laLabelIn = 'Precio OF';
+                laLabelIn = 'OF';
                 elId = 'form-precio-hora_OF-registro';
                 elValue = valuesFormRegistro.precioHora_OF || '';
                 elValueVariaciones = valuesFormRegistro.variacion_OF || '';
                 elValueDia = valuesFormRegistro.diaVariacion_OF || '';
                 elValueActivo = valuesFormRegistro.activo_OF || '';
-                laLabelWi = 80;
+                laLabelWi = 20;
                 elPrecioHora = 'precioHora_OF';
                 laVariacion = 'variacion_OF';
                 elDia = 'diaVariacion_OF';
@@ -4888,13 +4898,13 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             case 'ALMC':
                 checkeado = stateSwitchTipoServicioFijoRegistro.AL;
                 laLabelSw = 'SERVICIO DE LIMPIEZA ALMACENES';
-                laLabelIn = 'Precio ALMC';
+                laLabelIn = 'ALMC';
                 elId = 'form-precio-hora_AL-registro';
                 elValue = valuesFormRegistro.precioHora_AL || '';
                 elValueVariaciones = valuesFormRegistro.variacion_AL || '';
                 elValueDia = valuesFormRegistro.diaVariacion_AL || '';
                 elValueActivo = valuesFormRegistro.activo_AL || '';
-                laLabelWi = 100;
+                laLabelWi = 45;
                 elPrecioHora = 'precioHora_AL';
                 laVariacion = 'variacion_AL';
                 elDia = 'diaVariacion_AL';
@@ -4909,13 +4919,13 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             case 'LAB':
                 checkeado = stateSwitchTipoServicioFijoRegistro.LA;
                 laLabelSw = 'SERVICIO DE LIMPIEZA LABORATORIO';
-                laLabelIn = 'Precio LAB';
+                laLabelIn = 'LAB';
                 elId = 'form-precio-hora_LA-registro';
                 elValue = valuesFormRegistro.precioHora_LA || '';
                 elValueVariaciones = valuesFormRegistro.variacion_LA || '';
                 elValueDia = valuesFormRegistro.diaVariacion_LA || '';
                 elValueActivo = valuesFormRegistro.activo_LA || '';
-                laLabelWi = 90;
+                laLabelWi = 30;
                 elPrecioHora = 'precioHora_LA';
                 laVariacion = 'variacion_LA';
                 elDia = 'diaVariacion_LA';
@@ -4930,13 +4940,13 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             case 'TELÑ':
                 checkeado = stateSwitchTipoServicioFijoRegistro.TE;
                 laLabelSw = 'SERVICIO DE LIMPIEZA TELARAÑAS';
-                laLabelIn = 'Precio TELÑ';
+                laLabelIn = 'TELÑ';
                 elId = 'form-precio-hora_TE-registro';
                 elValue = valuesFormRegistro.precioHora_TE || '';
                 elValueVariaciones = valuesFormRegistro.variacion_TE || '';
                 elValueDia = valuesFormRegistro.diaVariacion_TE || '';
                 elValueActivo = valuesFormRegistro.activo_TE || '';
-                laLabelWi = 100;
+                laLabelWi = 40;
                 elPrecioHora = 'precioHora_TE';
                 laVariacion = 'variacion_TE';
                 elDia = 'diaVariacion_TE';
@@ -4951,13 +4961,13 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             case 'FCH.IN':
                 checkeado = stateSwitchTipoServicioFijoRegistro.FI;
                 laLabelSw = 'SERVICIO DE LIMPIEZA FACHADA INTERIOR';
-                laLabelIn = 'Precio FCH.IN';
+                laLabelIn = 'FCH.IN';
                 elId = 'form-precio-hora_FI-registro';
                 elValue = valuesFormRegistro.precioHora_FI || '';
                 elValueVariaciones = valuesFormRegistro.variacion_FI || '';
                 elValueDia = valuesFormRegistro.diaVariacion_FI || '';
                 elValueActivo = valuesFormRegistro.activo_FI || '';
-                laLabelWi = 120;
+                laLabelWi = 60;
                 elPrecioHora = 'precioHora_FI';
                 laVariacion = 'variacion_FI';
                 elDia = 'diaVariacion_FI';
@@ -4972,13 +4982,13 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             case 'FCH.EX':
                 checkeado = stateSwitchTipoServicioFijoRegistro.FE;
                 laLabelSw = 'SERVICIO DE LIMPIEZA FACHADA EXTERIOR';
-                laLabelIn = 'Precio FCH.EX';
+                laLabelIn = 'FCH.EX';
                 elId = 'form-precio-hora_FE-registro';
                 elValue = valuesFormRegistro.precioHora_FE || '';
                 elValueVariaciones = valuesFormRegistro.variacion_FE || '';
                 elValueDia = valuesFormRegistro.diaVariacion_FE || '';
                 elValueActivo = valuesFormRegistro.activo_FE || '';
-                laLabelWi = 120;
+                laLabelWi = 60;
                 elPrecioHora = 'precioHora_FE';
                 laVariacion = 'variacion_FE';
                 elDia = 'diaVariacion_FE';
@@ -4993,13 +5003,13 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             case 'ABRLL':
                 checkeado = stateSwitchTipoServicioFijoRegistro.AB;
                 laLabelSw = 'SERVICIO DE LIMPIEZA ABRILLANTADO';
-                laLabelIn = 'Precio ABRLL';
+                laLabelIn = 'ABRLL';
                 elId = 'form-precio-hora_AB-registro';
                 elValue = valuesFormRegistro.precioHora_AB || '';
                 elValueVariaciones = valuesFormRegistro.variacion_AB || '';
                 elValueDia = valuesFormRegistro.diaVariacion_AB || '';
                 elValueActivo = valuesFormRegistro.activo_AB || '';
-                laLabelWi = 110;
+                laLabelWi = 50;
                 elPrecioHora = 'precioHora_AB';
                 laVariacion = 'variacion_AB';
                 elDia = 'diaVariacion_AB';
@@ -5014,13 +5024,13 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             case 'MANT':
                 checkeado = stateSwitchTipoServicioFijoRegistro.MA;
                 laLabelSw = 'SERVICIO DE MANTENIMIENTO MÁQUINA';
-                laLabelIn = 'Precio MANT';
+                laLabelIn = 'MANT';
                 elId = 'form-precio-hora_MA-registro';
                 elValue = valuesFormRegistro.precioHora_MA || '';
                 elValueVariaciones = valuesFormRegistro.variacion_MA || '';
                 elValueDia = valuesFormRegistro.diaVariacion_MA || '';
                 elValueActivo = valuesFormRegistro.activo_MA || '';
-                laLabelWi = 105;
+                laLabelWi = 45;
                 elPrecioHora = 'precioHora_MA';
                 laVariacion = 'variacion_MA';
                 elDia = 'diaVariacion_MA';
@@ -5035,13 +5045,13 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             case 'PORT':
                 checkeado = stateSwitchTipoServicioFijoRegistro.PO;
                 laLabelSw = 'SERVICIO DE LIMPIEZA PORTERÍA';
-                laLabelIn = 'Precio PORT';
+                laLabelIn = 'PORT';
                 elId = 'form-precio-hora_PO-registro';
                 elValue = valuesFormRegistro.precioHora_PO || '';
                 elValueVariaciones = valuesFormRegistro.variacion_PO || '';
                 elValueDia = valuesFormRegistro.diaVariacion_PO || '';
                 elValueActivo = valuesFormRegistro.activo_PO || '';
-                laLabelWi = 100;
+                laLabelWi = 40;
                 elPrecioHora = 'precioHora_PO';
                 laVariacion = 'variacion_PO';
                 elDia = 'diaVariacion_PO';
@@ -5056,13 +5066,13 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             case 'BACT':
                 checkeado = stateSwitchTipoServicioFijoRegistro.BA;
                 laLabelSw = 'BOT. NOUBACT';
-                laLabelIn = 'Precio BACT';
+                laLabelIn = 'BACT';
                 elId = 'form-precio-hora_BA-registro';
                 elValue = valuesFormRegistro.precioHora_BA || '';
                 elValueVariaciones = valuesFormRegistro.variacion_BA || '';
                 elValueDia = valuesFormRegistro.diaVariacion_BA || '';
                 elValueActivo = valuesFormRegistro.activo_BA || '';
-                laLabelWi = 100;
+                laLabelWi = 40;
                 elPrecioHora = 'precioHora_BA';
                 laVariacion = 'variacion_BA';
                 elDia = 'diaVariacion_BA';
@@ -5077,13 +5087,13 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             case 'FEST':
                 checkeado = stateSwitchTipoServicioFijoRegistro.FT;
                 laLabelSw = 'SERVICIO DE LIMPIEZA DÍA FESTIVO';
-                laLabelIn = 'Precio FEST';
+                laLabelIn = 'FEST';
                 elId = 'form-precio-hora_FT-registro';
                 elValue = valuesFormRegistro.precioHora_FT || '';
                 elValueVariaciones = valuesFormRegistro.variacion_FT || '';
                 elValueDia = valuesFormRegistro.diaVariacion_FT || '';
                 elValueActivo = valuesFormRegistro.activo_FT || '';
-                laLabelWi = 100;
+                laLabelWi = 40;
                 elPrecioHora = 'precioHora_FT';
                 laVariacion = 'variacion_FT';
                 elDia = 'diaVariacion_FT';
@@ -5098,13 +5108,13 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             case 'CRTRIM':
                 checkeado = stateSwitchTipoServicioFijoRegistro.C3;
                 laLabelSw = 'LIMPIEZA DE CRISTALES TRIMESTRAL';
-                laLabelIn = 'Precio CRTRIM';
+                laLabelIn = 'CRTRIM';
                 elId = 'form-precio-hora_C3-registro';
                 elValue = valuesFormRegistro.precioHora_C3 || '';
                 elValueVariaciones = valuesFormRegistro.variacion_C3 || '';
                 elValueDia = valuesFormRegistro.diaVariacion_C3 || '';
                 elValueActivo = valuesFormRegistro.activo_C3 || '';
-                laLabelWi = 120;
+                laLabelWi = 60;
                 elPrecioHora = 'precioHora_C3';
                 laVariacion = 'variacion_C3';
                 elDia = 'diaVariacion_C3';
@@ -5119,13 +5129,13 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             case 'CRBIM':
                 checkeado = stateSwitchTipoServicioFijoRegistro.C2;
                 laLabelSw = 'LIMPIEZA DE CRISTALES BIMENSUAL';
-                laLabelIn = 'Precio CRBIM';
+                laLabelIn = 'CRBIM';
                 elId = 'form-precio-hora_C2-registro';
                 elValue = valuesFormRegistro.precioHora_C2 || '';
                 elValueVariaciones = valuesFormRegistro.variacion_C2 || '';
                 elValueDia = valuesFormRegistro.diaVariacion_C2 || '';
                 elValueActivo = valuesFormRegistro.activo_C2 || '';
-                laLabelWi = 120;
+                laLabelWi = 60;
                 elPrecioHora = 'precioHora_C2';
                 laVariacion = 'variacion_C2';
                 elDia = 'diaVariacion_C2';
@@ -5140,13 +5150,13 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             case 'LIME':
                 checkeado = stateSwitchTipoServicioFijoRegistro.ES;
                 laLabelSw = 'SERVICIO DE LIMPIEZA ESPECIAL';
-                laLabelIn = 'Precio LIME';
+                laLabelIn = 'LIME';
                 elId = 'form-precio-hora_ES-registro';
                 elValue = valuesFormRegistro.precioHora_ES || '';
                 elValueVariaciones = valuesFormRegistro.variacion_ES || '';
                 elValueDia = valuesFormRegistro.diaVariacion_ES || '';
                 elValueActivo = valuesFormRegistro.activo_ES || '';
-                laLabelWi = 95;
+                laLabelWi = 40;
                 elPrecioHora = 'precioHora_ES';
                 laVariacion = 'variacion_ES';
                 elDia = 'diaVariacion_ES';
@@ -5161,13 +5171,13 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             case 'LIMP':
                 checkeado = stateSwitchTipoServicioFijoRegistro.PA;
                 laLabelSw = 'SERVICIO DE LIMPIEZA DEL PARKING';
-                laLabelIn = 'Precio LIMP';
+                laLabelIn = 'LIMP';
                 elId = 'form-precio-hora_PA-registro';
                 elValue = valuesFormRegistro.precioHora_PA || '';
                 elValueVariaciones = valuesFormRegistro.variacion_PA || '';
                 elValueDia = valuesFormRegistro.diaVariacion_PA || '';
                 elValueActivo = valuesFormRegistro.activo_PA || '';
-                laLabelWi = 95;
+                laLabelWi = 40;
                 elPrecioHora = 'precioHora_PA';
                 laVariacion = 'variacion_PA';
                 elDia = 'diaVariacion_PA';
@@ -6963,6 +6973,22 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                 retornaTipoServicioFijoRegistro(tipo, index)
                                             ))
                                         }
+                                    </Box>
+                                    <Box
+                                        style={{ marginLeft: 10, marginTop: 10, marginBottom: 20 }}
+                                        className={classes.boxChekin}
+                                    >
+                                        <FormControlLabel
+                                            control={
+                                                <Checkbox
+                                                    checked={valuesFormRegistroGenerales.gestionEspSF || false}
+                                                    onChange={handleChangeFormRegistroGenerales('gestionEspSF')}
+                                                    name="checkedGestEsp-registro"
+                                                    color="secondary"                                                   
+                                                />
+                                            }
+                                            label={<Typography className={classes.colorText} style={{ fontSize: '0.9rem' }}>Gestión especial horas para Servicios Extra.</Typography>}
+                                        />
                                     </Box>
                                 </Grid>
                             </TabPanel>

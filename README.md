@@ -70,6 +70,18 @@ Librería parseadora y generadora de hojas de cálculo.
 
 `npm install xlsx`
 
+### `zipson`
+
+Para comprimir y parsear objetos JSON.
+
+`npm install zipson`
+
+### `react-draggable`
+
+Para implementar funcionalidad Drag & Drop a componentes.
+
+`npm install react-draggable`
+
 
 ## Available Scripts
 

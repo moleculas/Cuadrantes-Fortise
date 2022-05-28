@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
@@ -9,6 +9,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import MuiAlert from '@material-ui/lab/Alert';
+import Typography from '@material-ui/core/Typography';
 
 //importaciones acciones
 import { cambioEstadoInicioCuadrantesAccion } from '../redux/cuadrantesDucks';
@@ -36,8 +37,29 @@ const PendientesFacturados = (props) => {
     const numeroCuadrantesFacturados = useSelector(store => store.variablesPendientes.numeroCuadrantesFacturados);
 
     //states    
+    const [arrayCuadrantesModificadosFacturados, setArrayCuadrantesModificadosFacturados] = useState([]);
 
     //useEffect
+
+    useEffect(() => {
+        if (cuadrantesFacturadosArray.length > 0) {
+            let cuadrantes = [];
+            let nombreSplitted;
+            cuadrantesFacturadosArray.forEach((cuadrante, index) => {
+                let objeto = {};
+                nombreSplitted = cuadrante.nombre.split("-");
+                const nombreCentro = dispatch(obtenerObjetoPorIdAccion(listadoCentros, parseInt(nombreSplitted[2])));
+                objeto = {
+                    ...cuadrante,
+                    ['nombreCentro']: nombreCentro,
+                    idCentro: nombreSplitted[2]
+                };
+                cuadrantes.push(objeto);
+            });
+            cuadrantes.sort((a, b) => a.nombreCentro.localeCompare(b.nombreCentro));
+            setArrayCuadrantesModificadosFacturados(cuadrantes);
+        };
+    }, [cuadrantesFacturadosArray]);
 
     //funciones
 
@@ -46,7 +68,7 @@ const PendientesFacturados = (props) => {
         dispatch(obtenerCentroAccion('centros', centro));
         dispatch(cambioEstadoInicioCuadrantesAccion(false));
         dispatch(activarDesactivarCambioBotonRegistrarAccion(false));
-        dispatch(registrarIntervencionCuadranteNuevoAccion(true));
+        //dispatch(registrarIntervencionCuadranteNuevoAccion(true));
         dispatch(venimosDeRegistradosAccion(true));
     };
 
@@ -61,11 +83,40 @@ const PendientesFacturados = (props) => {
                 key={'listaCuadrantes' + index}
             >
                 <ListItem
-                    className={classes.casilla}
+                    className={cuadrante.total.procesado.valor === 'si' ? classes.casillaProcesados : classes.casilla}
                     style={{ display: 'flex', alignItems: 'flex-start' }}
                 >
                     <ListItemText
-                        primary={nombreCentro} secondary={'Facturado el ' + cuadrante.actualizacion}
+                        primary={nombreCentro}
+                        secondary={
+                            cuadrante.total.procesado.valor === 'no' ? (
+                                <Fragment>
+                                    <Typography
+                                        component="span"
+                                        variant="body2"
+                                    >
+                                        Facturado el {cuadrante.actualizacion}
+                                    </Typography>
+                                </Fragment>
+                            ) : (
+                                <Fragment>
+                                    <Typography
+                                        component="span"
+                                        variant="body2"
+                                    >
+                                        Emitido el {cuadrante.actualizacion}
+                                    </Typography>
+                                    <br />
+                                    <Typography
+                                        component="span"
+                                        variant="body2"
+                                    > {
+                                            cuadrante.total.procesado.numR ? 'Recibo nº ' + cuadrante.total.procesado.numR :
+                                                'Factura nº ' + cuadrante.total.procesado.numF
+                                        }
+                                    </Typography>
+                                </Fragment>
+                            )}
                         onClick={() => handleCuadrantesFacturados(parseInt(nombreSplitted[2]))}
                     />
                     <ListItemSecondaryAction>
@@ -98,21 +149,21 @@ const PendientesFacturados = (props) => {
                     </Box>
                 ) : (numeroCuadrantesFacturados < 1 ? (
                     <Box p={3} style={{ width: '100%', minHeight: props.prHeightContenedores, maxHeight: props.prHeightContenedores }}>
-                            <Alert severity="info">No hay cuadrantes facturados por gestionar.</Alert>
-                        </Box>
-                    ) : (
-                        <Box
+                        <Alert severity="info">No hay cuadrantes facturados por gestionar.</Alert>
+                    </Box>
+                ) : (
+                    <Box
                         className={classes.scrollable}
                         style={{ width: props.prWidthContenedores, height: props.prHeightContenedores - 10, margin: 10 }}
                     >
                         <List dense={true}
                             style={{ padding: 15 }}>
-                            {cuadrantesFacturadosArray.map((cuadrante, index) => (
+                            {arrayCuadrantesModificadosFacturados.map((cuadrante, index) => (
                                 retornaCuadranteFacturado(cuadrante, index)
                             ))}
                         </List>
                     </Box>
-                    ))}
+                ))}
             </Grid>
             {/* {console.log(checked)} */}
         </div>

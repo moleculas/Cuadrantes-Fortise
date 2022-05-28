@@ -197,12 +197,12 @@ export const obtenerTrabajadorAccion = (objeto, id) => async (dispatch, getState
             type: OBTENER_TRABAJADOR_EXITO,
             payload: {
                 id: res.data.id,
-                nombre: res.data.nombre, 
-                dni: res.data.dni, 
-                segSocial: res.data.seg_social, 
-                telefono: res.data.telefono, 
+                nombre: res.data.nombre,
+                dni: res.data.dni,
+                segSocial: res.data.seg_social,
+                telefono: res.data.telefono,
                 estado: res.data.estado,
-                datosEstado: JSON.parse(res.data.datos_estado),
+                datosEstado: res.data.datos_estado ? JSON.parse(res.data.datos_estado) : null,
                 historicoBajas: JSON.parse(res.data.historico_bajas)
             }
         })
@@ -218,28 +218,44 @@ export const obtenerSuplenteAccion = (objeto, id) => async (dispatch, getState) 
         type: LOADING_TRABAJADORES
     });
     try {
-        const formData = new FormData();
-        formData.append("objeto", objeto);
-        formData.append("id", id);
-        let apiUrl = rutaApi + "obtener.php";
-        const res = await axios.post(apiUrl, formData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            }
-        });
-        dispatch({
-            type: OBTENER_SUPLENTE_EXITO,
-            payload: {
-                id: res.data.id,
-                nombre: res.data.nombre,
-                dni: res.data.dni, 
-                segSocial: res.data.seg_social, 
-                telefono: res.data.telefono, 
-                estado: res.data.estado,
-                datosEstado: JSON.parse(res.data.datos_estado),
-                historicoBajas: JSON.parse(res.data.historico_bajas)
-            }
-        })
+        if (id !== 999) {
+            const formData = new FormData();
+            formData.append("objeto", objeto);
+            formData.append("id", id);
+            let apiUrl = rutaApi + "obtener.php";
+            const res = await axios.post(apiUrl, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                }
+            });
+            dispatch({
+                type: OBTENER_SUPLENTE_EXITO,
+                payload: {
+                    id: res.data.id,
+                    nombre: res.data.nombre,
+                    dni: res.data.dni,
+                    segSocial: res.data.seg_social,
+                    telefono: res.data.telefono,
+                    estado: res.data.estado,
+                    datosEstado: JSON.parse(res.data.datos_estado),
+                    historicoBajas: JSON.parse(res.data.historico_bajas)
+                }
+            })
+        } else {
+            dispatch({
+                type: OBTENER_SUPLENTE_EXITO,
+                payload: {
+                    id: id,
+                    nombre: 'Suplente',
+                    dni: null,
+                    segSocial: null,
+                    telefono: null,
+                    estado: 'alta',
+                    datosEstado: null,
+                    historicoBajas: null
+                }
+            })
+        };
     } catch (error) {
         dispatch({
             type: ERROR_DE_CARGA_TRABAJADORES
@@ -300,9 +316,9 @@ export const vaciarDatosTrabajadorAccion = () => (dispatch, getState) => {
                 id: null,
                 nombre: '',
                 categoria: 1,
-                dni: '', 
-                segSocial: '', 
-                telefono: '', 
+                dni: '',
+                segSocial: '',
+                telefono: '',
                 estado: '',
                 datosEstado: {
                     inicioBaja: null,

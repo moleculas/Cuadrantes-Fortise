@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Constantes from "../constantes";
+import { parse } from 'zipson';
 
 //constantes
 const rutaApi = Constantes.RUTA_API;
@@ -82,23 +83,29 @@ export const obtenerCuadrantesPorAnyoAccion = (objeto) => (dispatch, getState) =
             responses.forEach(res => arrayCuadrantes.push(res.data))
             //finished all queries
             let array = [];
-            let sumatorio = 0;
+            let sumatorioA = 0;
+            let sumatorioB = 0;
             let elObjetoTotal;
             let elEstado;
             arrayCuadrantes.forEach((mes, index) => {
                 if (mes.length > 0) {
                     mes.forEach((mesInt, index) => {
                         elEstado = mesInt.estado;
-                        elObjetoTotal = JSON.parse(mesInt.total);
+                        elObjetoTotal = parse(mesInt.total);
                         if (elObjetoTotal.tocaFacturar.valor === 'si' && elEstado === 'facturado') {
-                            sumatorio += parseFloat(elObjetoTotal.total);
+                            sumatorioA += elObjetoTotal.total;
+                        };
+                        if (elObjetoTotal.tocaFacturar.valor === 'no' && elEstado === 'facturado') {
+                            sumatorioB += elObjetoTotal.total;
                         };
                     });
                     array.push({
                         name: meses[index].substr(0, 3) + '.',
-                        Ingresos: sumatorio,
+                        IngresosA: parseFloat(sumatorioA).toFixed(2),
+                        IngresosB: parseFloat(sumatorioB).toFixed(2)                      
                     });
-                    sumatorio = 0;
+                    sumatorioA = 0;
+                    sumatorioB = 0;
                 } else {
                     array.push({
                         name: meses[index].substr(0, 3) + '.',
@@ -154,7 +161,7 @@ export const obtenerNominasPorAnyoAccion = (objeto) => (dispatch, getState) => {
                 if (mes.length > 0) {
                     mes.forEach((mesInt, index) => {
                         if (mesInt.total) {
-                            elObjetoTotal = JSON.parse(mesInt.total.total);
+                            elObjetoTotal = parse(mesInt.total.total);
                             console.log(elObjetoTotal)
                             sumatorio += parseFloat(elObjetoTotal.total);
                         }
