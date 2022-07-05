@@ -27,7 +27,6 @@ const dataInicial = {
     cuadranteVacio: false,
     cuadranteEnUsoCuadrantes: 1,
     estamosActualizandoCuadranteSinCarga: false,
-    arrayDatosInforme: [],
     arrayInformeLineas: [],
     trabajadoresEnCuadrante: [],
     suplentesEnCuadrante: [],
@@ -41,7 +40,6 @@ const dataInicial = {
     valorPrevioAccordionAbierto: null,
     lastEditado: null,
     itemPrevioEditando: null,
-    estadoFlex: 'fila',
     preValueValor: {},
     controladorDeEstado: 'inicio',
     esUnaActualizacionTrabajador: false,
@@ -92,7 +90,8 @@ const dataInicial = {
     cambioSF: false,
     yaNoEsInicio: false,
     venimosDeCambioCentroSelect: false,
-    primerDiaEstadoBajaCIA: null
+    cambioRedimensionColumna: false,
+    valorTabPantallaCuadrantes: null
 };
 
 //types
@@ -103,7 +102,6 @@ const SET_FIRMAACTUALIZACION = 'SET_FIRMAACTUALIZACION';
 const SET_CUADRANTEVACIO = 'SET_CUADRANTEVACIO';
 const SET_CUADRANTEENUSOCUADRANTES = 'SET_CUADRANTEENUSOCUADRANTES';
 const SET_ESTAMOSACTUALIZANDOSINCARGA = 'SET_ESTAMOSACTUALIZANDOSINCARGA';
-const SET_ARRAYDATOSINFORME = 'SET_ARRAYDATOSINFORME';
 const SET_ARRAYINFORMELINEAS = 'SET_ARRAYINFORMELINEAS';
 const SET_TRABAJADORESENCUADRANTE = 'SET_TRABAJADORESENCUADRANTE';
 const SET_SUPLENTESESENCUADRANTE = 'SET_SUPLENTESESENCUADRANTE';
@@ -142,7 +140,8 @@ const SET_DISABLECARGANDO = ' SET_DISABLECARGANDO';
 const SET_CAMBIOSF = 'SET_CAMBIOSF';
 const SET_YANOESINICIO = 'SET_YANOESINICIO';
 const SET_VENIMOSDECAMBIOCENTROSELECT = 'SET_VENIMOSDECAMBIOCENTROSELECT';
-const SET_PRIMERDIAESTADOBAJACIA = 'SET_PRIMERDIAESTADOBAJACIA';
+const SET_CAMBIOREDIMENSIONCOLUMNA = 'SET_CAMBIOREDIMENSIONCOLUMNA';
+const SET_VALORTABPANTALLACUADRANTES = 'SET_VALORTABPANTALLACUADRANTES';
 
 //reducer
 export default function cuadrantesSettersReducer(state = dataInicial, action) {
@@ -160,9 +159,7 @@ export default function cuadrantesSettersReducer(state = dataInicial, action) {
         case SET_CUADRANTEENUSOCUADRANTES:
             return { ...state, cuadranteEnUsoCuadrantes: action.payload.valor }
         case SET_ESTAMOSACTUALIZANDOSINCARGA:
-            return { ...state, estamosActualizandoCuadranteSinCarga: action.payload.estado }
-        case SET_ARRAYDATOSINFORME:
-            return { ...state, arrayDatosInforme: action.payload.array }
+            return { ...state, estamosActualizandoCuadranteSinCarga: action.payload.estado }      
         case SET_ARRAYINFORMELINEAS:
             return { ...state, arrayInformeLineas: action.payload.array }
         case SET_TRABAJADORESENCUADRANTE:
@@ -189,8 +186,6 @@ export default function cuadrantesSettersReducer(state = dataInicial, action) {
             return { ...state, lastEditado: action.payload.valor }
         case SET_ITEMPREVIOEDITANDO:
             return { ...state, itemPrevioEditando: action.payload.valor }
-        case SET_ESTADOFLEX:
-            return { ...state, estadoFlex: action.payload.valor }
         case SET_PREVALUEVALOR:
             return { ...state, preValueValor: action.payload.objeto }
         case SET_CONTROLADORDEESTADO:
@@ -239,8 +234,10 @@ export default function cuadrantesSettersReducer(state = dataInicial, action) {
             return { ...state, yaNoEsInicio: action.payload.estado }
         case SET_VENIMOSDECAMBIOCENTROSELECT:
             return { ...state, venimosDeCambioCentroSelect: action.payload.estado }
-        case SET_PRIMERDIAESTADOBAJACIA:
-            return { ...state, primerDiaEstadoBajaCIA: action.payload.valor }
+        case SET_CAMBIOREDIMENSIONCOLUMNA:
+            return { ...state, cambioRedimensionColumna: action.payload.estado }
+        case SET_VALORTABPANTALLACUADRANTES:
+            return { ...state, valorTabPantallaCuadrantes: action.payload.valor }        
         default:
             return { ...state }
     }
@@ -248,11 +245,20 @@ export default function cuadrantesSettersReducer(state = dataInicial, action) {
 
 //acciones
 
-export const setPrimerDiaEstadoBajaCIA = (valor) => (dispatch, getState) => {
+export const setValorTabPantallaCuadrantesAccion = (valor) => (dispatch, getState) => {
     dispatch({
-        type: SET_PRIMERDIAESTADOBAJACIA,
+        type: SET_VALORTABPANTALLACUADRANTES,
         payload: {
             valor: valor
+        }
+    });
+};
+
+export const setCambioRedimensionColumnaAccion = (estado) => (dispatch, getState) => {
+    dispatch({
+        type: SET_CAMBIOREDIMENSIONCOLUMNA,
+        payload: {
+            estado: estado
         }
     });
 };
@@ -473,15 +479,6 @@ export const setPreValueValorAccion = (objeto) => (dispatch, getState) => {
     });
 };
 
-export const setEstadoFlexAccion = (valor) => (dispatch, getState) => {
-    dispatch({
-        type: SET_ESTADOFLEX,
-        payload: {
-            valor: valor
-        }
-    });
-};
-
 export const setItemPrevioEditandoAccion = (valor) => (dispatch, getState) => {
     dispatch({
         type: SET_ITEMPREVIOEDITANDO,
@@ -584,15 +581,6 @@ export const setTrabajadoresEnCuadranteAccion = (array) => (dispatch, getState) 
 export const setSuplentesEnCuadranteAccion = (array) => (dispatch, getState) => {
     dispatch({
         type: SET_SUPLENTESESENCUADRANTE,
-        payload: {
-            array: array
-        }
-    });
-};
-
-export const setArrayDatosInformeAccion = (array) => (dispatch, getState) => {
-    dispatch({
-        type: SET_ARRAYDATOSINFORME,
         payload: {
             array: array
         }
@@ -771,13 +759,7 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
         payload: {
             valor: ''
         }
-    });
-    dispatch({
-        type: SET_ARRAYDATOSINFORME,
-        payload: {
-            array: []
-        }
-    });
+    });   
     dispatch({
         type: SET_ARRAYINFORMELINEAS,
         payload: {
@@ -905,7 +887,47 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
             activo_BA: 'si',
             activo_FT: 'si',
             activo_C3: 'si',
-            activo_C2: 'si'
+            activo_C2: 'si',
+            int_TO: false,
+            int_CR: false,
+            int_CE: false,
+            int_CI: false,
+            int_MO: false,
+            int_OF: false,
+            int_AL: false,
+            int_LA: false,
+            int_TE: false,
+            int_FI: false,
+            int_FE: false,
+            int_AB: false,
+            int_MA: false,
+            int_PO: false,
+            int_BA: false,
+            int_FT: false,
+            int_C3: false,
+            int_C2: false,
+            int_ES: false,
+            int_PA: false,
+            trab_TO: '',
+            trab_CR: '',
+            trab_CE: '',
+            trab_CI: '',
+            trab_MO: '',
+            trab_OF: '',
+            trab_AL: '',
+            trab_LA: '',
+            trab_TE: '',
+            trab_FI: '',
+            trab_FE: '',
+            trab_AB: '',
+            trab_MA: '',
+            trab_PO: '',
+            trab_BA: '',
+            trab_FT: '',
+            trab_C3: '',
+            trab_C2: '',
+            trab_ES: '',
+            trab_PA: ''
         }
     }));
     dispatch({
@@ -941,6 +963,12 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
     });
     if (!excepciones) {
         //cambio cuadrante total
+        dispatch({
+            type: SET_NUMEROFACTUSOL,
+            payload: {
+                valor: null
+            }
+        });
         dispatch({
             type: SET_CUADRANTEBLOQUEADO,
             payload: {

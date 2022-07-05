@@ -65,7 +65,7 @@ const GraficoCuadrantes = (props) => {
             for (let i = 0; i < 12; i++) {          
                 objeto = {
                     name: cuadrantesPorAnyoGraficos[i].name,
-                    Ingresos: cuadrantesPorAnyoGraficos[i].IngresosA || cuadrantesPorAnyoGraficos[i].IngresosB ? parseFloat(cuadrantesPorAnyoGraficos[i].IngresosA) + parseFloat(cuadrantesPorAnyoGraficos[i].IngresosB) : 0,
+                    Ingresos: cuadrantesPorAnyoGraficos[i].Empresas || cuadrantesPorAnyoGraficos[i].Pisos ? parseFloat(cuadrantesPorAnyoGraficos[i].Empresas) + parseFloat(cuadrantesPorAnyoGraficos[i].Pisos) : 0,
                     Gastos: nominasPorAnyoGraficos[i].Gastos
                 }
                 array.push(objeto);

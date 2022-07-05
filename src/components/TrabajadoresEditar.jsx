@@ -52,8 +52,11 @@ import { retornaAnoMesDiaAccion } from '../redux/appDucks';
 import { activarDesactivarActualizarTrabajadorAccion } from '../redux/trabajadoresDucks';
 import { retornaAnoMesAccion } from '../redux/appDucks';
 import { retornaFechaEnBaseAAnoMesDiaAccion } from '../redux/appDucks';
+import { resetearCentrosVinculadosAccion } from '../redux/trabajadoresDucks';
 
+//constantes
 const estados = Constantes.ESTADO_LABORAL_TRABAJADOR;
+const subcategorias = Constantes.SUBCATEGORIAS_TRABAJADORES;
 
 //snackbar y alert
 const Alert = (props) => {
@@ -85,7 +88,7 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
     const [valuesFormEdicion, setValuesFormEdicion] = useState({
         id: null,
         nombre: '',
-        categoria: 1,
+        categoria: '',
         dni: '',
         segSocial: '',
         telefono: '',
@@ -111,7 +114,8 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
         inicioPermiso: null,
         finPermiso: null,
         inicioAusencia: null,
-        finAusencia: null
+        finAusencia: null,
+        observaciones: ''
     });
     const [historicoBajasEdicion, setHistoricoBajasEdicion] = useState(null);
     const [losCentrosVinculadosTrabajador, setLosCentrosVinculadosTrabajador] = useState([]);
@@ -176,15 +180,15 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
             segSocial: trabajadorAEditar.segSocial,
             telefono: trabajadorAEditar.telefono,
             estado: trabajadorAEditar.estado,
-            categoria: 1,
+            categoria: trabajadorAEditar.categoria
         });
         setDatosEstadoEdicion({
             inicioBajaIT: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.inicioBajaIT ? trabajadorAEditar.datosEstado.inicioBajaIT : null,
             finBajaIT: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.finBajaIT ? trabajadorAEditar.datosEstado.finBajaIT : null,
             inicioBajaACCTE: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.inicioBajaACCTE ? trabajadorAEditar.datosEstado.inicioBajaACCTE : null,
             finBajaACCTE: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.finBajaACCTE ? trabajadorAEditar.datosEstado.finBajaACCTE : null,
-            inicioBajaCIA: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.inicioBajaCIA1 ? trabajadorAEditar.datosEstado.inicioBajaCIA1 : null,
-            finBajaCIA: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.finBajaCIA2 ? trabajadorAEditar.datosEstado.finBajaCIA2 : null,
+            inicioBajaCIA: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.inicioBajaCIA ? trabajadorAEditar.datosEstado.inicioBajaCIA : null,
+            finBajaCIA: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.finBajaCIA ? trabajadorAEditar.datosEstado.finBajaCIA : null,
             inicioVacaciones: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.inicioVacaciones ? trabajadorAEditar.datosEstado.inicioVacaciones : null,
             finVacaciones: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.finVacaciones ? trabajadorAEditar.datosEstado.finVacaciones : null,
             inicioExcedencia: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.inicioExcedencia ? trabajadorAEditar.datosEstado.inicioExcedencia : null,
@@ -194,7 +198,8 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
             inicioPermiso: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.inicioPermiso ? trabajadorAEditar.datosEstado.inicioPermiso : null,
             finPermiso: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.finPermiso ? trabajadorAEditar.datosEstado.finPermiso : null,
             inicioAusencia: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.inicioAusencia ? trabajadorAEditar.datosEstado.inicioAusencia : null,
-            finAusencia: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.finAusencia ? trabajadorAEditar.datosEstado.finAusencia : null
+            finAusencia: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.finAusencia ? trabajadorAEditar.datosEstado.finAusencia : null,
+            observaciones: trabajadorAEditar.datosEstado && trabajadorAEditar.datosEstado.observaciones ? trabajadorAEditar.datosEstado.observaciones : ''
         });
         switch (trabajadorAEditar.estado) {
             case 'bajaIT':
@@ -231,8 +236,7 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                 break;
             default:
         };
-        setHistoricoBajasEdicion(trabajadorAEditar.historicoBajas)
-
+        setHistoricoBajasEdicion(trabajadorAEditar.historicoBajas);
     }, [trabajadorAEditar]);
 
     useEffect(() => {
@@ -397,7 +401,8 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
             const objetoBajasHistoricoMes = {
                 tipo: valuesFormEdicion.estado,
                 inicio: dispatch(retornaAnoMesDiaAccion(myFechaInicioRango)),
-                fin: dispatch(retornaAnoMesDiaAccion(myFechaFinRango))
+                fin: dispatch(retornaAnoMesDiaAccion(myFechaFinRango)),
+                observaciones: datosEstadoEdicion.observaciones
             };
             let arrayObjetoHistoricoMeses;
             if (historicoBajasEdicion) {
@@ -413,11 +418,11 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
             };
 
             arrayObjetoHistoricoMeses.push(objetoHistoricoRango);
-            const obJetoHistorico = {
+            const objetoHistorico = {
                 objeto: 'historico',
                 meses: arrayObjetoHistoricoMeses
             };
-            setHistoricoBajasEdicion(obJetoHistorico);
+            setHistoricoBajasEdicion(objetoHistorico);
             setValuesFormEdicion({ ...valuesFormEdicion, estado: 'alta' });
             setDatosEstadoEdicion({
                 inicioBajaIT: null,
@@ -435,7 +440,8 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                 inicioPermiso: null,
                 finPermiso: null,
                 inicioAusencia: null,
-                finAusencia: null
+                finAusencia: null,
+                observaciones: ''
             });
             setValueDatePickerInicioEdicion(null);
             setValueDatePickerFinEdicion(null);
@@ -470,6 +476,12 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                 default:
             };
         }
+        dispatch(registrarIntervencionAccion(false));
+        dispatch(activarDesactivarActualizarTrabajadorAccion(false));
+    };
+
+    const handleChangeObservacionesBaja = () => (e) => {
+        setDatosEstadoEdicion({ ...datosEstadoEdicion, observaciones: e.target.value });
         dispatch(registrarIntervencionAccion(false));
         dispatch(activarDesactivarActualizarTrabajadorAccion(false));
     };
@@ -556,64 +568,72 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                             hayDatosEstado = true;
                             losDatosEstadoRevisado = {
                                 inicioBajaIT: datosEstadoEdicion.inicioBajaIT,
-                                finBajaIT: datosEstadoEdicion.finBajaIT
+                                finBajaIT: datosEstadoEdicion.finBajaIT,
+                                observaciones: datosEstadoEdicion.observaciones
                             };
                         };
                         if (datosEstadoEdicion.inicioBajaACCTE) {
                             hayDatosEstado = true;
                             losDatosEstadoRevisado = {
                                 inicioBajaACCTE: datosEstadoEdicion.inicioBajaACCTE,
-                                finBajaACCTE: datosEstadoEdicion.finBajaACCTE
+                                finBajaACCTE: datosEstadoEdicion.finBajaACCTE,
+                                observaciones: datosEstadoEdicion.observaciones
                             };
                         };
                         if (datosEstadoEdicion.inicioBajaCIA) {
-                            hayDatosEstado = true;    
-                             
+                            hayDatosEstado = true;
+
                             losDatosEstadoRevisado = {
-                                inicioBajaCIA: datosEstadoEdicion.inicioBajaCIA,                                
-                                finBajaCIA: datosEstadoEdicion.finBajaCIA
+                                inicioBajaCIA: datosEstadoEdicion.inicioBajaCIA,
+                                finBajaCIA: datosEstadoEdicion.finBajaCIA,
+                                observaciones: datosEstadoEdicion.observaciones
                             };
                         };
                         if (datosEstadoEdicion.inicioVacaciones) {
                             hayDatosEstado = true;
                             losDatosEstadoRevisado = {
                                 inicioVacaciones: datosEstadoEdicion.inicioVacaciones,
-                                finVacaciones: datosEstadoEdicion.finVacaciones
+                                finVacaciones: datosEstadoEdicion.finVacaciones,
+                                observaciones: datosEstadoEdicion.observaciones
                             };
                         };
                         if (datosEstadoEdicion.inicioExcedencia) {
                             hayDatosEstado = true;
                             losDatosEstadoRevisado = {
                                 inicioExcedencia: datosEstadoEdicion.inicioExcedencia,
-                                finExcedencia: datosEstadoEdicion.finExcedencia
+                                finExcedencia: datosEstadoEdicion.finExcedencia,
+                                observaciones: datosEstadoEdicion.observaciones
                             };
                         };
                         if (datosEstadoEdicion.inicioPersonales) {
                             hayDatosEstado = true;
                             losDatosEstadoRevisado = {
                                 inicioPersonales: datosEstadoEdicion.inicioPersonales,
-                                finPersonales: datosEstadoEdicion.finPersonales
+                                finPersonales: datosEstadoEdicion.finPersonales,
+                                observaciones: datosEstadoEdicion.observaciones
                             };
                         };
                         if (datosEstadoEdicion.inicioPermiso) {
                             hayDatosEstado = true;
                             losDatosEstadoRevisado = {
                                 inicioPermiso: datosEstadoEdicion.inicioPermiso,
-                                finPermiso: datosEstadoEdicion.finPermiso
+                                finPermiso: datosEstadoEdicion.finPermiso,
+                                observaciones: datosEstadoEdicion.observaciones
                             };
                         };
                         if (datosEstadoEdicion.inicioAusencia) {
                             hayDatosEstado = true;
                             losDatosEstadoRevisado = {
                                 inicioAusencia: datosEstadoEdicion.inicioAusencia,
-                                finAusencia: datosEstadoEdicion.finAusencia
+                                finAusencia: datosEstadoEdicion.finAusencia,
+                                observaciones: datosEstadoEdicion.observaciones
                             };
                         };
                         //registramos
                         const trabajadorAGuardar = {
                             id: valuesFormEdicion.id,
                             nombre: valuesFormEdicion.nombre,
-                            categoria: 1,
+                            categoria: valuesFormEdicion.categoria ? valuesFormEdicion.categoria : 1,
                             dni: valuesFormEdicion.dni,
                             seg_social: valuesFormEdicion.segSocial,
                             telefono: valuesFormEdicion.telefono,
@@ -666,9 +686,11 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
             inicioPermiso: null,
             finPermiso: null,
             inicioAusencia: null,
-            finAusencia: null
+            finAusencia: null,
+            observaciones: ''
         });
         setHistoricoBajasEdicion(null);
+        dispatch(resetearCentrosVinculadosAccion());
     };
 
     const generaHistoricoDeBajas = () => {
@@ -712,7 +734,7 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
     };
 
     const retornaLineaHistoricoBajas = (linea, mes, index) => {
-        let cabeceraTexto, rangoTexto;
+        let cabeceraTexto, rangoTexto, observacionesTexto;
         let options = { year: 'numeric', month: 'long', day: 'numeric' };
         const myFechaInicioRango = dispatch(retornaFechaEnBaseAAnoMesDiaAccion(linea.inicio));
         const textoInicioRango = myFechaInicioRango.toLocaleDateString("es-ES", options);
@@ -796,13 +818,28 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                 break;
             default:
         };
+        if (linea.observaciones) {
+            observacionesTexto = 'Observaciones: ' + linea.observaciones;
+        } else {
+            observacionesTexto = '';
+        };
         return (
             <ListItem
                 key={'listabajas' + index}>
                 <ListItemText
                     primary={mes}
-                    secondary={cabeceraTexto + rangoTexto}
-                />
+                    secondary={
+                        <Fragment>
+                            <Typography component="span" variant="body2">{cabeceraTexto + rangoTexto}</Typography>
+                            {observacionesTexto !== '' ? (
+                                <Fragment>
+                                    <br />
+                                    <Typography component="span" variant="body2">{observacionesTexto}</Typography>
+                                </Fragment>
+                            ) : null}
+                        </Fragment>
+                    }>
+                </ListItemText>
                 <ListItemSecondaryAction>
                     <Tooltip title="Eliminar baja" placement="right" arrow>
                         <IconButton
@@ -820,12 +857,12 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
     const deleteBaja = (index) => {
         let array = [...historicoBajasEdicion.meses];
         array.splice(index, 1);
-        const obJetoHistorico = {
+        const objetoHistorico = {
             objeto: 'historico',
             meses: array
         };
         if (array.length > 0) {
-            setHistoricoBajasEdicion(obJetoHistorico);
+            setHistoricoBajasEdicion(objetoHistorico);
         } else {
             setHistoricoBajasEdicion(null);
         };
@@ -893,6 +930,34 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                                 className={classes.form}
                                 size="small"
                             >
+                                <InputLabel>Subcategoria</InputLabel>
+                                <Select
+                                    fullWidth
+                                    className={classes.mb15}
+                                    id="form-subcategoria-edicion"
+                                    label="Subcategoria"
+                                    value={valuesFormEdicion.categoria === 2 ? valuesFormEdicion.categoria : ''}
+                                    onChange={handleChangeFormEdicion('categoria')}
+                                    helpertext="Selecciona subcategoria"
+                                    disabled={disabledItem}
+                                >
+                                    <MenuItem value=''>
+                                        <em>No</em>
+                                    </MenuItem>
+                                    {
+                                        subcategorias.map((option) => (
+                                            <MenuItem key={option.value} value={option.value}>
+                                                {option.label}
+                                            </MenuItem>
+                                        ))
+                                    }
+                                </Select>
+                            </FormControl>
+                            <FormControl
+                                variant="outlined"
+                                className={classes.form}
+                                size="small"
+                            >
                                 <InputLabel>DNI - NIE</InputLabel>
                                 <OutlinedInput
                                     className={classes.mb15}
@@ -901,6 +966,7 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                                     value={valuesFormEdicion.dni || ''}
                                     onChange={handleChangeFormEdicion('dni')}
                                     labelWidth={65}
+                                    disabled={disabledItem}
                                 />
                             </FormControl>
                             <FormControl
@@ -916,6 +982,7 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                                     value={valuesFormEdicion.segSocial || ''}
                                     onChange={handleChangeFormEdicion('segSocial')}
                                     labelWidth={90}
+                                    disabled={disabledItem}
                                 />
                             </FormControl>
                             <FormControl
@@ -931,6 +998,7 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                                     value={valuesFormEdicion.telefono || ''}
                                     onChange={handleChangeFormEdicion('telefono')}
                                     labelWidth={65}
+                                    disabled={disabledItem}
                                 />
                             </FormControl>
                         </Box>
@@ -975,7 +1043,7 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                                     <MuiPickersUtilsProvider locale={es} utils={DateFnsUtils}>
                                         <KeyboardDatePicker
                                             inputVariant="outlined"
-                                            className={classes.mb20}
+                                            className={classes.mb10}
                                             fullWidth
                                             label={`Fecha inicio ` + valuesFormEdicion.estado}
                                             format="dd/MM/yyyy"
@@ -989,6 +1057,19 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                                             size="small"
                                         />
                                     </MuiPickersUtilsProvider>
+                                    <TextField
+                                        label="Observaciones"
+                                        id="form-observaciones-edicion"
+                                        className={classes.mb10}
+                                        value={datosEstadoEdicion.observaciones || ''}
+                                        fullWidth
+                                        placeholder={'Observaciones baja '}
+                                        multiline
+                                        rows={2}
+                                        variant="outlined"
+                                        onChange={handleChangeObservacionesBaja()}
+                                        disabled={valueDatePickerInicioEdicion ? false : true}
+                                    />
                                     <MuiPickersUtilsProvider locale={es} utils={DateFnsUtils}>
                                         <KeyboardDatePicker
                                             inputVariant="outlined"
@@ -1084,7 +1165,7 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                 prTituloDialog={tituloDialog}
                 prDescripcionDialog={descripcionDialog}
             />
-            {/* {console.log(datosEstadoEdicion)} */}
+            {/* {console.log(valuesFormEdicion)} */}
         </div>
     )
 })

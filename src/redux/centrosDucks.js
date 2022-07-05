@@ -153,7 +153,7 @@ export const obtenerCentrosPorCategoriaAccion = (objeto, categoria) => async (di
             type: ERROR_DE_CARGA_CENTROS
         })
     }
-}
+};
 
 export const obtenerCentrosAccion = (objeto, filtrados) => async (dispatch, getState) => {
     dispatch({
@@ -187,13 +187,49 @@ export const obtenerCentrosAccion = (objeto, filtrados) => async (dispatch, getS
             type: ERROR_DE_CARGA_CENTROS
         })
     }
-}
+};
+
+export const obtenerCentrosInicioAccion = (objeto) => async (dispatch, getState) => {
+    dispatch({
+        type: LOADING_CENTROS
+    });
+    try {
+        const formData = new FormData();
+        formData.append("objeto", objeto);
+        let apiUrl = rutaApi + "listar_centros_inicio.php";       
+        const res = await axios.post(apiUrl, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            }
+        });
+        const respuesta = res.data;
+        let arrayRespuesta = [];
+        respuesta.forEach((centro) => {
+            let objetoRespuesta = { ...centro };
+            let objetoRespuestaCategoria = JSON.parse(centro.categoria);
+            objetoRespuesta.categoria = objetoRespuestaCategoria.categoria;
+            arrayRespuesta.push(objetoRespuesta);
+        });
+        arrayRespuesta.sort((a, b) => a.nombre.localeCompare(b.nombre));
+        dispatch({
+            type: OBTENER_CENTROS_EXITO,
+            payload: {
+                array: arrayRespuesta,
+                errorDeCargaCentros: false
+            }
+        });
+    } catch (error) {
+        dispatch({
+            type: ERROR_DE_CARGA_CENTROS
+        })
+    }
+};
 
 export const vaciarDatosCentrosAccion = () => (dispatch, getState) => {
     dispatch({
         type: VACIAR_DATOS_CENTROS
     });
-}
+};
 
 export const vaciarDatosCentroAccion = () => (dispatch, getState) => {
     dispatch({
@@ -247,24 +283,7 @@ export const vaciarDatosCentroAccion = () => (dispatch, getState) => {
             serviciosFijos: {
                 objeto: 'serviciosFijos',
                 gestionEspSF: false,
-                servicio: [
-                    { tipoServiciofijo: 'TOL', precioHora_TO: null },
-                    { tipoServiciofijo: 'CRIS', precioHora_CR: null },
-                    { tipoServiciofijo: 'CRISE', precioHora_CE: null },
-                    { tipoServiciofijo: 'CRISE', precioHora_CI: null },
-                    { tipoServiciofijo: 'MOQ', precioHora_MO: null },
-                    { tipoServiciofijo: 'OF', precioHora_OF: null },
-                    { tipoServiciofijo: 'ALMC', precioHora_AL: null },
-                    { tipoServiciofijo: 'LAB', precioHora_LA: null },
-                    { tipoServiciofijo: 'TELÑ', precioHora_TE: null },
-                    { tipoServiciofijo: 'FCH.IN', precioHora_FI: null },
-                    { tipoServiciofijo: 'FCH.EX', precioHora_FE: null },
-                    { tipoServiciofijo: 'ABRLL', precioHora_AB: null },
-                    { tipoServiciofijo: 'MANT', precioHora_MA: null },
-                    { tipoServiciofijo: 'PORT', precioHora_PO: null },
-                    { tipoServiciofijo: 'BACT', precioHora_BA: null },
-                    { tipoServiciofijo: 'FEST', precioHora_FT: null }
-                ]
+                servicio: []
             },
             trabajadores: {
                 objeto: 'trabajadores',
@@ -276,7 +295,7 @@ export const vaciarDatosCentroAccion = () => (dispatch, getState) => {
             },
         }
     });
-}
+};
 
 export const obtenerCentroAccion = (objeto, id) => async (dispatch, getState) => {
     dispatch({
@@ -324,7 +343,7 @@ export const obtenerCentroAccion = (objeto, id) => async (dispatch, getState) =>
             type: ERROR_DE_CARGA_CENTROS
         })
     }
-}
+};
 
 export const obtenerCategoriaPorCentroAccion = (objeto, id, numeroCuadrante) => async (dispatch, getState) => {
     dispatch({
@@ -353,7 +372,7 @@ export const obtenerCategoriaPorCentroAccion = (objeto, id, numeroCuadrante) => 
             type: ERROR_DE_CARGA_CENTROS
         })
     }
-}
+};
 
 export const actualizarCentroAccion = (objeto, id, datos) => async (dispatch, getState) => {
     dispatch({
@@ -382,7 +401,7 @@ export const actualizarCentroAccion = (objeto, id, datos) => async (dispatch, ge
             type: ERROR_DE_CARGA_CENTROS
         })
     }
-}
+};
 
 export const registrarCentroAccion = (objeto, id, datos) => async (dispatch, getState) => {
     dispatch({
@@ -411,7 +430,7 @@ export const registrarCentroAccion = (objeto, id, datos) => async (dispatch, get
             type: ERROR_DE_CARGA_CENTROS
         })
     }
-}
+};
 
 export const eliminarCentroAccion = (objeto, id) => async (dispatch, getState) => {
     dispatch({
@@ -438,7 +457,7 @@ export const eliminarCentroAccion = (objeto, id) => async (dispatch, getState) =
             type: ERROR_DE_CARGA_CENTROS
         })
     }
-}
+};
 
 export const activarDesactivarNuevoCentroAccion = (estado) => (dispatch, getState) => {
     dispatch({
@@ -447,7 +466,7 @@ export const activarDesactivarNuevoCentroAccion = (estado) => (dispatch, getStat
             estado: estado
         }
     });
-}
+};
 
 export const cambiarEstadoYaEstaRegistradoAccion = (estado) => (dispatch, getState) => {
     dispatch({
@@ -456,7 +475,7 @@ export const cambiarEstadoYaEstaRegistradoAccion = (estado) => (dispatch, getSta
             estado: estado
         }
     });
-}
+};
 
 export const activarDesactivarActualizarCentroAccion = (estado) => (dispatch, getState) => {
     dispatch({
@@ -465,7 +484,7 @@ export const activarDesactivarActualizarCentroAccion = (estado) => (dispatch, ge
             estado: estado
         }
     });
-}
+};
 
 export const activarDesactivarRegistrarCentroAccion = (estado) => (dispatch, getState) => {
     dispatch({
@@ -474,4 +493,4 @@ export const activarDesactivarRegistrarCentroAccion = (estado) => (dispatch, get
             estado: estado
         }
     });
-}
+};

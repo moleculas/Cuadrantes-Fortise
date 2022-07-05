@@ -26,12 +26,14 @@ import Clases from "../clases";
 //importaciones acciones
 import { retornaAnoMesCuadranteAccion } from '../redux/appDucks';
 import { obtenerCentrosAccion } from '../redux/centrosDucks';
-import { obtenerCuadrantesPendientesAccion } from '../redux/pendientesDucks';
-import { obtenerCuadrantesRegistradosFacturadosAccion } from '../redux/pendientesDucks';
+import { obtenerCuadrantesAccion } from '../redux/pendientesDucks';
 import { vaciarDatosPendientesAccion } from '../redux/pendientesDucks';
 import { finalizarArchivosXLSLoteAccion } from '../redux/appDucks';
 import { forzarRecargaGraficosCuadrantesAccion } from '../redux/graficosDucks';
 import { setDisableCargandoAccion } from '../redux/cuadrantesSettersDucks';
+import { setValorTabPantallaCuadrantesAccion } from '../redux/cuadrantesSettersDucks';
+import { gestionaCuadrantesAccion } from '../redux/pendientesDucks';
+
 
 const getHeightContenedoresPeq = () => ((window.innerHeight / 2) - 162) || ((document.documentElement.clientHeight / 2) - 162) || ((document.body.clientHeight / 2) - 162);
 const getHeightContenedoresGra = () => ((window.innerHeight) - 264) || ((document.documentElement.clientHeight) - 264) || ((document.body.clientHeight) - 264);
@@ -81,6 +83,8 @@ const PantallaCuadrantes = () => {
     const listadoCentros = useSelector(store => store.variablesCentros.arrayCentros);
     const cuadrantesPendientesArray = useSelector(store => store.variablesPendientes.cuadrantesPendientesArray);
     const finalizandoLoteEstado = useSelector(store => store.variablesApp.finalizandoLoteEstado);
+    const valorTabPantallaCuadrantes = useSelector(store => store.variablesCuadrantesSetters.valorTabPantallaCuadrantes);
+    const arrayCuadantes = useSelector(store => store.variablesPendientes.arrayCuadantes);
 
     //states
 
@@ -111,7 +115,7 @@ const PantallaCuadrantes = () => {
         if (listadoCentros.length === 0) {
             dispatch(obtenerCentrosAccion('centros', true));
         };
-    }, [dispatch]);
+    }, [listadoCentros]);
 
     useEffect(() => {
         dispatch(vaciarDatosPendientesAccion());
@@ -126,11 +130,18 @@ const PantallaCuadrantes = () => {
             if (cuadrantesPendientesArray.length === 0) {
                 const { monthNum, year } = dispatch(retornaAnoMesCuadranteAccion(calendarioAGestionar));
                 const anyoMes = year + '-' + monthNum;
-                dispatch(obtenerCuadrantesPendientesAccion('cuadrantes', anyoMes, listadoCentros));
-                dispatch(obtenerCuadrantesRegistradosFacturadosAccion('cuadrantes', anyoMes, listadoCentros));
+                dispatch(obtenerCuadrantesAccion('cuadrantes', anyoMes, listadoCentros));
             }
         }
     }, [listadoCentros, calendarioAGestionar, finalizandoLoteEstado]);
+
+    useEffect(() => {
+        if(arrayCuadantes.length > 0){            
+            if (arrayCuadantes.length === listadoCentros.length) {
+                dispatch(gestionaCuadrantesAccion());
+            };
+        };        
+    }, [arrayCuadantes]);
 
     useEffect(() => {
         if (errorDeCargaCentros || errorDeCargaCuadrantes) {
@@ -143,13 +154,20 @@ const PantallaCuadrantes = () => {
     }, [errorDeCargaCentros, errorDeCargaCuadrantes]);
 
     useEffect(() => {
-        if ((numeroCuadrantesPendientes + numeroCuadrantesRegistrados + numeroCuadrantesFacturados) < listadoCentros.length) {           
+        if ((numeroCuadrantesPendientes + numeroCuadrantesRegistrados + numeroCuadrantesFacturados) < listadoCentros.length) {
             setOpenLoading(true);
         } else {
             setOpenLoading(false);
             dispatch(setDisableCargandoAccion(false));
         };
     }, [numeroCuadrantesPendientes, numeroCuadrantesRegistrados, numeroCuadrantesFacturados]);
+
+    useEffect(() => {
+        if (valorTabPantallaCuadrantes) {
+            setValueTab(valorTabPantallaCuadrantes);
+            dispatch(setValorTabPantallaCuadrantesAccion(null));
+        };
+    }, [valorTabPantallaCuadrantes]);
 
     //funciones    
 
@@ -316,7 +334,7 @@ const PantallaCuadrantes = () => {
                     {alert.mensaje}
                 </Alert>
             </Snackbar>
-            {/* {console.log(openLoading)} */}
+            {/* {console.log(numeroCuadrantesPendientes, numeroCuadrantesRegistrados, numeroCuadrantesFacturados)} */}
         </div>
     )
 }

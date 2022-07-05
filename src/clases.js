@@ -1,5 +1,5 @@
 import { makeStyles } from "@material-ui/core";
-import { amber, blueGrey, green, lime, indigo, red, grey, blue, yellow, teal, brown } from '@material-ui/core/colors';
+import { amber, blueGrey, green, lime, indigo, red, grey, blue, yellow, teal, brown, lightGreen } from '@material-ui/core/colors';
 
 const Clases = makeStyles((theme) => ({
     //loading
@@ -149,6 +149,9 @@ const Clases = makeStyles((theme) => ({
     cabeceraServicios: {
         backgroundColor: `${teal[500]} !important`,
     },
+    cabeceraServiciosInt: {
+        backgroundColor: `${lightGreen[500]} !important`,
+    },
     casillaLaboral: {
         backgroundColor: `${blueGrey[50]} !important`,
         cursor: 'pointer',
@@ -166,6 +169,16 @@ const Clases = makeStyles((theme) => ({
     },
     casillaSF: {
         backgroundColor: `${teal[100]} !important`,
+        padding: 9,
+        cursor: 'pointer',
+    },
+    casillaVaciaSFInt: {
+        backgroundColor: `${lightGreen[50]} !important`,
+        padding: 9,
+        cursor: 'pointer',
+    },
+    casillaSFInt: {
+        backgroundColor: `${lightGreen[100]} !important`,
         padding: 9,
         cursor: 'pointer',
     },
@@ -196,9 +209,9 @@ const Clases = makeStyles((theme) => ({
         pointerEvents: 'none',
         padding: 9
     },
-    casillaBajaCIA: {
-        backgroundColor: `${amber[900]} !important`,
-        color: '#ffffff',
+    casillaBajaEsp: {
+        backgroundColor: `${amber[100]} !important`,
+        color: '#78909c',
         cursor: 'default',
         pointerEvents: 'none',
         padding: 9
@@ -277,6 +290,9 @@ const Clases = makeStyles((theme) => ({
     mt_25: {
         marginTop: -25,
     },
+    mb_10: {
+        marginBottom: -10,
+    },
     mr15: {
         marginRight: 15,
     },
@@ -304,6 +320,14 @@ const Clases = makeStyles((theme) => ({
         },
         width: 30,
         height: 30,
+        marginLeft: 5
+    },
+    btnAmpliarcolumna: {
+        width: 30,
+        height: 30,
+        color: theme.palette.error.contrastText,
+        marginTop: 5,
+        marginLeft: 5
     },
     ampliadoInferiorScroller: {
         paddingTop: 133,
@@ -457,16 +481,6 @@ const Clases = makeStyles((theme) => ({
         position: 'absolute',
         bottom: theme.spacing(4),
         right: theme.spacing(8),
-        cursor: 'grab',
-        "&:active": {
-            cursor: 'grabbing',
-        },
-    },
-    fabBloqueado: {
-        position: 'absolute',
-        bottom: theme.spacing(4),
-        right: theme.spacing(8),
-        backgroundColor: `${red[100]} !important`,
         cursor: 'grab',
         "&:active": {
             cursor: 'grabbing',
@@ -651,8 +665,17 @@ const Clases = makeStyles((theme) => ({
     nested: {
         paddingLeft: theme.spacing(4),
     },
+    nestedIns: {
+        paddingLeft: theme.spacing(4),
+        height: 45,        
+    },
+    nestedInsLink: {
+        textDecoration: 'none',
+        color: 'rgba(0, 0, 0, 0.54)',
+        fontSize: '0.6rem'
+    },
     colorText: {
-        color: 'rgba(0, 0, 0, 0.54)'
+        color: 'rgba(0, 0, 0, 0.54)',
     },
     tabsStl: {
         minHeight: 40,
@@ -699,7 +722,10 @@ const Clases = makeStyles((theme) => ({
         backgroundColor: green[200]
     },
     conServiciosA2: {
-        backgroundColor: green[400]
+        backgroundColor: teal[500]
+    },
+    conServiciosA2Int: {
+        backgroundColor: lightGreen[500]
     },
     sinServiciosA: {
         backgroundColor: amber[300]
@@ -749,11 +775,55 @@ const Clases = makeStyles((theme) => ({
         border: '1px solid',
         borderColor: 'rgba(0, 0, 0, 0.25)'
     },
-    enA: {            
+    enA: {
         backgroundColor: '#00bcd4',
     },
-    enB: {          
+    enB: {
         backgroundColor: '#8884d8',
+    },
+    noMaxWidth: {
+        maxWidth: 'none',
+    },
+    rootMenuInstrucciones: {
+        width: '100%',
+        maxWidth: 360,
+        backgroundColor: theme.palette.background.paper,
+    },
+    tituloInstrucciones: {
+        fontSize: '1.5rem',
+        fontWeight: 400,
+        lineHeight: 1.334,
+        letterSpacing: '0em',
+        position: 'relative',
+        marginBottom: 10,
+        marginTop: 10,
+        "& > a": {
+            display: 'none',
+        },
+        "&:hover > a": {
+            display: 'inline-block',
+        },
+    },
+    anchorLink: {
+        position: 'absolute',
+        marginLeft: 10,
+        marginTop: 5,
+        color: 'rgba(0, 0, 0, 0.87)',
+        "&:hover": {
+            color: 'rgba(0, 0, 0, 0.54)',
+        },
+    },
+    cercleInstruccionsVer: {
+        color: 'red', 
+        fontSize: 25,
+        position: 'relative',
+        top: 3
+    },
+    cercleInstruccions: {
+        color: 'rgba(0, 0, 0, 0.87)',
+        fontSize: 25,
+        position: 'relative',
+        top: 3
     }
 }), { index: 1 });
 

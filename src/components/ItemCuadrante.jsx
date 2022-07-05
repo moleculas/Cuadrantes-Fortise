@@ -24,6 +24,7 @@ import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 //estilos
 import Clases from "../clases";
 
+//constantes
 const cantidadHoras = Constantes.CANTIDAD_HORAS_CENTROS;
 const variaciones = Constantes.VARIACIONES_CUADRANTES;
 const tiposServicios = Constantes.TIPO_SERVICIO;
@@ -235,8 +236,8 @@ const ItemCuadrante = (props) => {
                 justifyContent="flex-end"
                 className={classes.mt_25}
             >
-                {/* {retornaBotonVariaciones()} */}
-                <Tooltip title={retornaActivoBotonResetear('text')} placement="left" arrow>
+                {retornaBotonVariaciones()}
+                <Tooltip title={retornaActivoBotonResetear('text')} placement="top-end" arrow>
                     <span>
                         <IconButton
                             className={clsx(classes.btnLimpieza, classes.blanc, classes.mb10)}
@@ -424,6 +425,9 @@ const ItemCuadrante = (props) => {
                             />
                         }
                     >
+                        <MenuItem value=''>
+                            <em>No</em>
+                        </MenuItem>
                         {variaciones.map((option) => (
                             <MenuItem key={option.value} value={option.value}>
                                 {option.label}

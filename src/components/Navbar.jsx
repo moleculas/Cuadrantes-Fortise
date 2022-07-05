@@ -75,7 +75,7 @@ const Navbar = (props) => {
                     <img src={logo} className={classes.logo} alt="logo" />
                 </Box>
                 <Typography className={classes.title} variant="h5">
-                    Gestión Cuadrates de Servicio Fortise SL
+                    Gestión Cuadrantes de Servicio Fortise SL
                 </Typography>
                 <p>{laData()}</p>
             </Toolbar>

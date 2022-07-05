@@ -20,6 +20,8 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import { Link } from "react-router-dom";
+import Tooltip from '@material-ui/core/Tooltip';
+import PrintIcon from '@material-ui/icons/Print';
 
 //carga componentes
 import GraficoInicio from './GraficoInicio';
@@ -29,13 +31,16 @@ import Clases from "../clases";
 
 //importaciones acciones
 import { onEstemAccion } from '../redux/appDucks';
-import { obtenerCentrosAccion } from '../redux/centrosDucks';
+import { obtenerCentrosInicioAccion } from '../redux/centrosDucks';
 import { obtenerTrabajadoresAccion } from '../redux/trabajadoresDucks';
 import { forzarRecargaGraficosCuadrantesAccion } from '../redux/graficosDucks';
 import { forzarRecargaGraficosNominasAccion } from '../redux/graficosDucks';
 import { obtenerUltimasIntervencionesAccion } from '../redux/appDucks';
 import { obtenerObjetoPorIdAccion } from '../redux/appDucks';
+import { generaArchivoXLSCentrosAccion } from '../redux/appDucks';
+import { generaArchivoXLSTrabajadoresAccion } from '../redux/appDucks';
 
+//constantes
 const meses = Constantes.MESES;
 
 const getHeightContenedoresPeq = () => ((window.innerHeight / 2) - 107) || ((document.documentElement.clientHeight / 2) - 107) || ((document.body.clientHeight / 2) - 107);
@@ -110,7 +115,7 @@ const Inicio = (props) => {
     useEffect(() => {
         dispatch(onEstemAccion('inicio'));
         if (listadoCentros.length === 0) {
-            dispatch(obtenerCentrosAccion('centros', false));
+            dispatch(obtenerCentrosInicioAccion('centros'));
         };
         if (listadoTrabajadores.length === 0) {
             dispatch(obtenerTrabajadoresAccion('trabajadores'));
@@ -167,6 +172,14 @@ const Inicio = (props) => {
         setOpenSnack(false);
     };
 
+    const handleGenerarXLS = () => {
+        if(valueTab === 0){
+            dispatch(generaArchivoXLSCentrosAccion());
+        }else{
+            dispatch(generaArchivoXLSTrabajadoresAccion()); 
+        };
+    };
+
     //retorno componentes
 
     const retornaCentros = (centro, index) => {
@@ -174,7 +187,7 @@ const Inicio = (props) => {
             <Link key={'listaCentros' + index} to={`/centros/${centro.id}/${centro.nombre}`} className={classes.link}>
                 <Box >
                     <ListItem
-                       className={centro.estado !== 'alta' ? classes.casillaBajasInicio : classes.casilla}
+                        className={centro.estado !== 'alta' ? classes.casillaBajasInicio : classes.casilla}
                     >
                         <ListItemText
                             primary={centro.nombre}
@@ -212,7 +225,6 @@ const Inicio = (props) => {
     };
 
     const retornaUltimasIntervenciones = (intervencion, index) => {
-
         let nombreSplitted;
         if (Object.keys(intervencion)[0] === 'nombre_cuadrante') {
             nombreSplitted = intervencion.nombre_cuadrante.split("-");
@@ -257,15 +269,25 @@ const Inicio = (props) => {
                             style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
                         >
                             <Tabs value={valueTab} onChange={handleChangeTab} className={classes.tabsStl}>
-                                <Tab label="Centros" {...a11yProps(0)} style={{paddingBottom: 10}}/>
-                                <Tab label="Trabajadores" {...a11yProps(1)} style={{paddingBottom: 10}} />
+                                <Tab label="Centros" {...a11yProps(0)} style={{ paddingBottom: 10 }} />
+                                <Tab label="Trabajadores" {...a11yProps(1)} style={{ paddingBottom: 10 }} />
                             </Tabs>
-                            <Avatar
-                                className={clsx(classes.small3, classes.secLight)}
-                                style={{ marginRight: 8 }}
-                            >
-                                <Typography variant='body2'>{valueTab === 0 ? listadoCentros.length : listadoTrabajadores.length}</Typography>
-                            </Avatar>
+                            <Box className={classes.alignRight}>
+                                <Avatar
+                                    className={clsx(classes.small3, classes.secLight)}
+                                    style={{ marginRight: 8, marginTop: 2 }}
+                                >
+                                    <Typography variant='body2'>{valueTab === 0 ? listadoCentros.length : listadoTrabajadores.length}</Typography>
+                                </Avatar>
+                                <Tooltip title={valueTab === 0 ? 'Crear Excel listado CENTROS' : 'Crear Excel listado TRABAJADORES'} placement="left" arrow >
+                                    <Box
+                                        style={{ marginRight: 10, cursor: 'pointer' }}
+                                        onClick={handleGenerarXLS}
+                                    >
+                                        <PrintIcon style={{ color: 'white', marginTop: 5 }} />
+                                    </Box>
+                                </Tooltip>
+                            </Box>
                         </AppBar>
                         <TabPanel value={valueTab} index={0}>
                             <Paper
@@ -345,7 +367,7 @@ const Inicio = (props) => {
                 </Grid>
                 <Grid item xs={6}>
                     <Grid className={classes.mb20}>
-                        <Box                            
+                        <Box
                             m={1}
                             color="primary.contrastText"
                             bgcolor="primary.main"
@@ -362,10 +384,10 @@ const Inicio = (props) => {
                     </Grid>
                     <Grid>
                         <Box
-                           m={1}
-                           color="primary.contrastText"
-                           bgcolor="primary.main"
-                           className={clsx(classes.sombraBox, classes.boxStl)}
+                            m={1}
+                            color="primary.contrastText"
+                            bgcolor="primary.main"
+                            className={clsx(classes.sombraBox, classes.boxStl)}
                         >
                             <Typography variant="body2">Últimas intervenciones en la base de datos</Typography>
                         </Box>
@@ -412,8 +434,8 @@ const Inicio = (props) => {
                     {alert.mensaje}
                 </Alert>
             </Snackbar>
-            {/* {console.log(arrayUltimasIntervenciones)} */}
-        </div>
+            {/* {console.log(listadoCentros)} */}
+        </div >
     )
 }
 

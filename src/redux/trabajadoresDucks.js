@@ -56,6 +56,8 @@ const dataInicial = {
     estadoActivadoDesactivadoNuevoTrabajador: true,
     estadoActivadoDesactivadoActualizacionTrabajador: true,
     estadoActivadoDesactivadoRegistroTrabajador: true,
+    trabajadoresCargados: false,
+    arrayTrabajadoresSubcategoria: [],
 }
 
 //types
@@ -76,6 +78,8 @@ const RESETEA_EXITO_TRABAJADORES = 'RESETEA_EXITO_TRABAJADORES';
 const ACTIVAR_DESACTIVAR_COMPONENTE_NUEVO_TRABAJADOR = 'ACTIVAR_DESACTIVAR_COMPONENTE_NUEVO_TRABAJADOR';
 const ACTIVAR_DESACTIVAR_COMPONENTE_ACTUALIZACION_TRABAJADOR = 'ACTIVAR_DESACTIVAR_COMPONENTE_ACTUALIZACION_TRABAJADOR';
 const ACTIVAR_DESACTIVAR_COMPONENTE_REGISTRO_TRABAJADOR = 'ACTIVAR_DESACTIVAR_COMPONENTE_REGISTRO_TRABAJADOR';
+const RESETEAR_CENTROS_VINCULADOS = 'RESETEAR_CENTROS_VINCULADOS';
+const OBTENER_TRABAJADORES_SUBCATEGORIA_EXITO = 'OBTENER_TRABAJADORES_SUBCATEGORIA_EXITO';
 
 //reducer
 export default function trabajadoresReducer(state = dataInicial, action) {
@@ -83,7 +87,7 @@ export default function trabajadoresReducer(state = dataInicial, action) {
         case LOADING_TRABAJADORES:
             return { ...state, loadingTrabajadores: true }
         case OBTENER_TRABAJADORES_EXITO:
-            return { ...state, arrayTrabajadores: action.payload.array, errorDeCargaTrabajadores: action.payload.errorDeCargaTrabajadores, loadingTrabajadores: false }
+            return { ...state, arrayTrabajadores: action.payload.array, errorDeCargaTrabajadores: action.payload.errorDeCargaTrabajadores, loadingTrabajadores: false, trabajadoresCargados: true }
         case OBTENER_TRABAJADORES_BAJA_EXITO:
             return { ...state, arrayTrabajadoresBaja: action.payload.array, errorDeCargaTrabajadores: action.payload.errorDeCargaTrabajadores, loadingTrabajadores: false }
         case OBTENER_TRABAJADOR_EXITO:
@@ -114,12 +118,41 @@ export default function trabajadoresReducer(state = dataInicial, action) {
             return { ...state, estadoActivadoDesactivadoActualizacionTrabajador: action.payload.estado }
         case ACTIVAR_DESACTIVAR_COMPONENTE_REGISTRO_TRABAJADOR:
             return { ...state, estadoActivadoDesactivadoRegistroTrabajador: action.payload.estado }
+        case RESETEAR_CENTROS_VINCULADOS:
+            return { ...state, objetoCentroVinculadoTrabajador: action.payload.array, objetoCentroVinculadoSuplente: action.payload.array }
+        case OBTENER_TRABAJADORES_SUBCATEGORIA_EXITO:
+            return { ...state, arrayTrabajadoresSubcategoria: action.payload.array }
         default:
             return { ...state }
     }
 }
 
 //acciones
+
+export const obtenerTrabajadoresSubcategoriaAccion = (categoria) => (dispatch, getState) => {
+    const { arrayTrabajadores } = getState().variablesTrabajadores;
+    let arrayTrabajadoresSubcategoria = [];
+    arrayTrabajadores.forEach((trabajador) => {
+        if (trabajador.categoria === categoria) {
+            arrayTrabajadoresSubcategoria.push(trabajador);
+        };
+    });
+    dispatch({
+        type: OBTENER_TRABAJADORES_SUBCATEGORIA_EXITO,
+        payload: {
+            array: arrayTrabajadoresSubcategoria
+        }
+    });
+};
+
+export const resetearCentrosVinculadosAccion = () => (dispatch, getState) => {
+    dispatch({
+        type: RESETEAR_CENTROS_VINCULADOS,
+        payload: {
+            array: []
+        }
+    });
+};
 
 export const obtenerTrabajadoresAccion = (objeto) => async (dispatch, getState) => {
     dispatch({
@@ -202,6 +235,7 @@ export const obtenerTrabajadorAccion = (objeto, id) => async (dispatch, getState
                 segSocial: res.data.seg_social,
                 telefono: res.data.telefono,
                 estado: res.data.estado,
+                categoria: res.data.categoria,
                 datosEstado: res.data.datos_estado ? JSON.parse(res.data.datos_estado) : null,
                 historicoBajas: JSON.parse(res.data.historico_bajas)
             }
@@ -237,6 +271,7 @@ export const obtenerSuplenteAccion = (objeto, id) => async (dispatch, getState) 
                     segSocial: res.data.seg_social,
                     telefono: res.data.telefono,
                     estado: res.data.estado,
+                    categoria: res.data.categoria,
                     datosEstado: JSON.parse(res.data.datos_estado),
                     historicoBajas: JSON.parse(res.data.historico_bajas)
                 }
@@ -251,6 +286,7 @@ export const obtenerSuplenteAccion = (objeto, id) => async (dispatch, getState) 
                     segSocial: null,
                     telefono: null,
                     estado: 'alta',
+                    categoria: 1,
                     datosEstado: null,
                     historicoBajas: null
                 }

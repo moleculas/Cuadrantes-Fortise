@@ -101,8 +101,8 @@ export const obtenerCuadrantesPorAnyoAccion = (objeto) => (dispatch, getState) =
                     });
                     array.push({
                         name: meses[index].substr(0, 3) + '.',
-                        IngresosA: parseFloat(sumatorioA).toFixed(2),
-                        IngresosB: parseFloat(sumatorioB).toFixed(2)                      
+                        Empresas: parseFloat(sumatorioA).toFixed(2),
+                        Pisos: parseFloat(sumatorioB).toFixed(2)                      
                     });
                     sumatorioA = 0;
                     sumatorioB = 0;

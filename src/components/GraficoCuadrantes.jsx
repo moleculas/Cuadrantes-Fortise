@@ -105,8 +105,8 @@ const GraficoCuadrantes = (props) => {
                         <YAxis style={{ fontSize: '0.7rem' }} />
                         <Tooltip />
                         {/* <Legend /> */}
-                        <Bar type="monotone" dataKey="IngresosA" stackId="a" fill="#00bcd4" />
-                        <Bar type="monotone" dataKey="IngresosB" stackId="a" fill="#8884d8" />                       
+                        <Bar type="monotone" dataKey="Empresas" stackId="a" fill="#00bcd4" />
+                        <Bar type="monotone" dataKey="Pisos" stackId="a" fill="#8884d8" />                       
                     </BarChart>
                 )}
                 <Snackbar open={openSnack} autoHideDuration={12000} onClose={handleCloseSnack}>

@@ -1,9 +1,9 @@
 * Filtre treballadors x centre i a l'inrevés
-* Bloquejar còmput SF
-* Subcategoria treballadors cristales
-* Que apareguin en les caselles SF quadrants nom treballadors
 * Controlar les hores SF
-* Completar fitxa treballadors (x imprimir i PDF)
+* Completar fitxa treballadors (x imprimir i PDF) - POSPOSAT
 * Llistat de treballadors x mes quadrants
-* Observacions històric baixes treballadors
-* SF inclosos al còmput
+
+* Instruccions:   
+    * Gestió especial horas (explicar)
+    * Diferències de festius en còmput (explicar tipus i com actuen en els quadrants)
+

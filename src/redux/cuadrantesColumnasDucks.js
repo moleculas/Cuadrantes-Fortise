@@ -9,7 +9,7 @@ import { actualizarObjetoCuadranteAccion } from './cuadrantesDucks';
 import { setEstamosActualizandoCuadranteSinCargaAccion } from './cuadrantesSettersDucks';
 import { setBufferSwitchedDiasFestivosCuadranteAccion } from './cuadrantesSettersDucks';
 import { setYaNoEsInicioAccion } from './cuadrantesSettersDucks';
-import { setPrimerDiaEstadoBajaCIA } from './cuadrantesSettersDucks';
+import { setItemEditandoConfiguracionAccion } from './cuadrantesSettersDucks';
 
 //constantes
 const dataInicial = {
@@ -37,45 +37,12 @@ export const completarCuadranteAccion = (cuadrante) => (dispatch, getState) => {
         objetoResultante.tipoHorario = cuadranteColumna.tipoHorario;
         objetoResultante.tipoTrabajador = cuadranteColumna.tipoTrabajador;
         objetoResultante.hayBaja = cuadranteColumna.hayBaja;
-        if (cuadranteColumna.horasFestivasComputables_L) {
-            objetoResultante.horasFestivasComputables_L = cuadranteColumna.horasFestivasComputables_L;
+        objetoResultante.reducido = cuadranteColumna.reducido;
+        objetoResultante.tipoServicio = cuadranteColumna.tipoServicio;
+        if (cuadranteColumna.horasFestivasComputables) {
+            objetoResultante.horasFestivasComputables = cuadranteColumna.horasFestivasComputables;
         } else {
-            objetoResultante.horasFestivasComputables_L = 0;
-        };
-        if (cuadranteColumna.horasFestivasComputables_E) {
-            objetoResultante.horasFestivasComputables_E = cuadranteColumna.horasFestivasComputables_E;
-        } else {
-            objetoResultante.horasFestivasComputables_E = 0;
-        };
-        if (cuadranteColumna.horasFestivasComputables_P) {
-            objetoResultante.horasFestivasComputables_P = cuadranteColumna.horasFestivasComputables_P;
-        } else {
-            objetoResultante.horasFestivasComputables_P = 0;
-        };
-        if (cuadranteColumna.horasFestivasComputables_N) {
-            objetoResultante.horasFestivasComputables_N = cuadranteColumna.horasFestivasComputables_N;
-        } else {
-            objetoResultante.horasFestivasComputables_N = 0;
-        };
-        if (cuadranteColumna.horasFestivasComputables_R) {
-            objetoResultante.horasFestivasComputables_R = cuadranteColumna.horasFestivasComputables_R;
-        } else {
-            objetoResultante.horasFestivasComputables_R = 0;
-        };
-        if (cuadranteColumna.horasFestivasComputables_L1) {
-            objetoResultante.horasFestivasComputables_L1 = cuadranteColumna.horasFestivasComputables_L1;
-        } else {
-            objetoResultante.horasFestivasComputables_L1 = 0;
-        };
-        if (cuadranteColumna.horasFestivasComputables_L2) {
-            objetoResultante.horasFestivasComputables_L2 = cuadranteColumna.horasFestivasComputables_L2;
-        } else {
-            objetoResultante.horasFestivasComputables_L2 = 0;
-        };
-        if (cuadranteColumna.horasFestivasComputables_F) {
-            objetoResultante.horasFestivasComputables_F = cuadranteColumna.horasFestivasComputables_F;
-        } else {
-            objetoResultante.horasFestivasComputables_F = 0;
+            objetoResultante.horasFestivasComputables = 0;
         };
         if (cuadranteColumna.horasBajasComputables) {
             objetoResultante.horasBajasComputables = cuadranteColumna.horasBajasComputables;
@@ -426,29 +393,12 @@ export const limpiarCuadranteAccion = (elCuadrante) => (dispatch, getState) => {
         objetoResultante.tipoHorario = cuadranteColumna.tipoHorario;
         objetoResultante.tipoTrabajador = cuadranteColumna.tipoTrabajador;
         objetoResultante.hayBaja = cuadranteColumna.hayBaja;
-        if (cuadranteColumna.horasFestivasComputables_L) {
-            objetoResultante.horasFestivasComputables_L = cuadranteColumna.horasFestivasComputables_L;
-        };
-        if (cuadranteColumna.horasFestivasComputables_E) {
-            objetoResultante.horasFestivasComputables_E = cuadranteColumna.horasFestivasComputables_E;
-        };
-        if (cuadranteColumna.horasFestivasComputables_P) {
-            objetoResultante.horasFestivasComputables_P = cuadranteColumna.horasFestivasComputables_P;
-        };
-        if (cuadranteColumna.horasFestivasComputables_N) {
-            objetoResultante.horasFestivasComputables_N = cuadranteColumna.horasFestivasComputables_N;
-        };
-        if (cuadranteColumna.horasFestivasComputables_R) {
-            objetoResultante.horasFestivasComputables_R = cuadranteColumna.horasFestivasComputables_R;
-        };
-        if (cuadranteColumna.horasFestivasComputables_L1) {
-            objetoResultante.horasFestivasComputables_L1 = cuadranteColumna.horasFestivasComputables_L1;
-        };
-        if (cuadranteColumna.horasFestivasComputables_L2) {
-            objetoResultante.horasFestivasComputables_L2 = cuadranteColumna.horasFestivasComputables_L2;
-        };
-        if (cuadranteColumna.horasFestivasComputables_F) {
-            objetoResultante.horasFestivasComputables_F = cuadranteColumna.horasFestivasComputables_F;
+        objetoResultante.reducido = cuadranteColumna.reducido;
+        objetoResultante.tipoServicio = cuadranteColumna.tipoServicio;
+        if (cuadranteColumna.horasFestivasComputables) {
+            objetoResultante.horasFestivasComputables = cuadranteColumna.horasFestivasComputables;
+        } else {
+            objetoResultante.horasFestivasComputables = 0;
         };
         if (cuadranteColumna.horasBajasComputables) {
             objetoResultante.horasBajasComputables = cuadranteColumna.horasBajasComputables;
@@ -647,37 +597,13 @@ export const limpiarCuadranteInformeAccion = (informe) => (dispatch) => {
         excepcion: informe.excepcion,
         bloqueado: informe.bloqueado,
         tipoRegistro: informe.tipoRegistro,
-        totalHorasInicial: informe.totalHorasInicial,
-        proporcion: parseFloat(informe.proporcion)
     };
     if (informe.mensualPactadoInicial) {
         elObjetoDatosInforme['mensualPactado'] = parseFloat(informe.mensualPactado);
         elObjetoDatosInforme['mensualPactadoInicial'] = parseFloat(informe.mensualPactadoInicial);
-        elObjetoDatosInforme['totalFacturado_M'] = parseFloat(informe.totalFacturado_M);
-        if (informe.totalHorasInicial_L) {
-            elObjetoDatosInforme['totalHorasInicial_L'] = parseFloat(informe.totalHorasInicial_L);
-        };
-        if (informe.totalHorasInicial_E) {
-            elObjetoDatosInforme['totalHorasInicial_E'] = parseFloat(informe.totalHorasInicial_E);
-        };
-        if (informe.totalHorasInicial_P) {
-            elObjetoDatosInforme['totalHorasInicial_P'] = parseFloat(informe.totalHorasInicial_P);
-        };
-        if (informe.totalHorasInicial_N) {
-            elObjetoDatosInforme['totalHorasInicial_N'] = parseFloat(informe.totalHorasInicial_N);
-        };
-        if (informe.totalHorasInicial_R) {
-            elObjetoDatosInforme['totalHorasInicial_R'] = parseFloat(informe.totalHorasInicial_R);
-        };
-        if (informe.totalHorasInicial_L1) {
-            elObjetoDatosInforme['totalHorasInicial_L1'] = parseFloat(informe.totalHorasInicial_L1);
-        };
-        if (informe.totalHorasInicial_L2) {
-            elObjetoDatosInforme['totalHorasInicial_L2'] = parseFloat(informe.totalHorasInicial_L2);
-        };
-        if (informe.totalHorasInicial_F) {
-            elObjetoDatosInforme['totalHorasInicial_F'] = parseFloat(informe.totalHorasInicial_F);
-        };
+        elObjetoDatosInforme['proporcion'] = parseFloat(informe.proporcion);
+    } else {
+        elObjetoDatosInforme['precioHoraTotal'] = parseFloat(informe.precioHoraTotal);
     };
     if (informe.precioHora_L) {
         elObjetoDatosInforme['precioHora_L'] = parseFloat(informe.precioHora_L);
@@ -724,14 +650,19 @@ const retornaMinutosAccionEnCuadrantes = (primeraHora, segundaHora) => {
         const horasSegundaHora = parseInt(myArrSplit2[0]);
         const minutosSegundaHora = parseInt(myArrSplit2[1]);
         const minutosTotalesSegundaHora = (horasSegundaHora * 60) + minutosSegundaHora;
-        const diff = minutosTotalesSegundaHora - minutosTotalesPrimeraHora;
+        let diff;
+        if (minutosTotalesSegundaHora < minutosTotalesPrimeraHora) {
+            diff = (minutosTotalesSegundaHora + 1440) - minutosTotalesPrimeraHora;
+        } else {
+            diff = minutosTotalesSegundaHora - minutosTotalesPrimeraHora;
+        };
         return diff;
     }
 };
 
 export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
     const { cuadrante, objetoCuadrante, cuadranteRegistrado } = getState().variablesCuadrantes;
-    const { cuadranteEnUsoCuadrantes } = getState().variablesCuadrantesSetters;
+    const { cuadranteEnUsoCuadrantes, itemEditandoConfiguracion } = getState().variablesCuadrantesSetters;
     const { objetoCentro } = getState().variablesCentros;
     let arrayResultante = [];
     let sumatorioHoras;
@@ -753,49 +684,11 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
     let sumatorioHorasExtra_F;
     let lasHorasNormal;
     let lasHorasExtra;
-    let totalHorasInicial_L = 0;
-    let totalHorasInicial_E = 0;
-    let totalHorasInicial_P = 0;
-    let totalHorasInicial_N = 0;
-    let totalHorasInicial_R = 0;
-    let totalHorasInicial_L1 = 0;
-    let totalHorasInicial_L2 = 0;
-    let totalHorasInicial_F = 0;
     let totalHorasInicial = 0;
-    let totalHorasInicialTra_L = 0;
-    let totalHorasInicialTra_E = 0;
-    let totalHorasInicialTra_P = 0;
-    let totalHorasInicialTra_N = 0;
-    let totalHorasInicialTra_R = 0;
-    let totalHorasInicialTra_L1 = 0;
-    let totalHorasInicialTra_L2 = 0;
-    let totalHorasInicialTra_F = 0;
     let totalHorasInicialTra = 0;
-    let totalHorasInicialSup_L = 0;
-    let totalHorasInicialSup_E = 0;
-    let totalHorasInicialSup_P = 0;
-    let totalHorasInicialSup_N = 0;
-    let totalHorasInicialSup_R = 0;
-    let totalHorasInicialSup_L1 = 0;
-    let totalHorasInicialSup_L2 = 0;
-    let totalHorasInicialSup_F = 0;
     let totalHorasInicialSup = 0;
-    let sumatorioHorasFestivasComputablesTra_L = 0;
-    let sumatorioHorasFestivasComputablesTra_E = 0;
-    let sumatorioHorasFestivasComputablesTra_P = 0;
-    let sumatorioHorasFestivasComputablesTra_N = 0;
-    let sumatorioHorasFestivasComputablesTra_R = 0;
-    let sumatorioHorasFestivasComputablesTra_L1 = 0;
-    let sumatorioHorasFestivasComputablesTra_L2 = 0;
-    let sumatorioHorasFestivasComputablesTra_F = 0;
-    let sumatorioHorasFestivasComputablesSup_L = 0;
-    let sumatorioHorasFestivasComputablesSup_E = 0;
-    let sumatorioHorasFestivasComputablesSup_P = 0;
-    let sumatorioHorasFestivasComputablesSup_N = 0;
-    let sumatorioHorasFestivasComputablesSup_R = 0;
-    let sumatorioHorasFestivasComputablesSup_L1 = 0;
-    let sumatorioHorasFestivasComputablesSup_L2 = 0;
-    let sumatorioHorasFestivasComputablesSup_F = 0;
+    let sumatorioTotalHorasFestivasComputablesTra = 0;
+    let sumatorioTotalHorasFestivasComputablesSup = 0;
     let sumatorioTotalHorasNormalTra_L = 0;
     let sumatorioTotalHorasNormalTra_E = 0;
     let sumatorioTotalHorasNormalTra_P = 0;
@@ -814,14 +707,27 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
     let sumatorioTotalHorasNormalSup_F = 0;
     let sumatorioHorasBajasComputablesTra = 0;
     let sumatorioHorasBajasComputablesSup = 0;
+    let sumatorioTotalHorasVariacion = 0;
+    let cantidadMensualPactado = parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial);
+    let esMensualPactado = false;
+    let elTipoServicio;
+    let elPrecioHora_L = null;
+    let elPrecioHora_E = null;
+    let elPrecioHora_P = null;
+    let elPrecioHora_N = null;
+    let elPrecioHora_R = null;
+    let elPrecioHora_L1 = null;
+    let elPrecioHora_L2 = null;
+    let elPrecioHora_F = null;
+    if (cantidadMensualPactado >= 0) {
+        esMensualPactado = true;
+    };
     cuadrante.forEach((cuadranteColumna, index) => {
         switch (cuadranteColumna.tipoHorario) {
             case 'rango':
                 arrayResultante.push({
-                    trabajador: cuadranteColumna.idTrabajador,
+                    trabajador: cuadranteColumna.nombreTrabajador,
                     tipo: cuadranteColumna.tipoTrabajador,
-                    //si se quisieran contabilizar los días/hora concretos activar el array cómputo
-                    computo: [],
                     totalHorasNormal_L: null,
                     totalHorasExtra_L: null,
                     totalHorasNormal_E: null,
@@ -864,32 +770,14 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Considerar como horas extra'
-                                        lasHorasNormal = null;
-                                        lasHorasExtra = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicioRango, cuadranteColumna[prop].lunesFinRango) / 60;
-                                        break;
-                                    case 2:
-                                        //'Añadir 0.5 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicioRango, cuadranteColumna[prop].lunesFinRango) / 60;
-                                        lasHorasExtra = 30 / 60;
-                                        break;
-                                    case 3:
-                                        //'Añadir 1 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicioRango, cuadranteColumna[prop].lunesFinRango) / 60;
-                                        lasHorasExtra = 60 / 60;
-                                        break;
-                                    case 4:
-                                        //'Añadir 1.5 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicioRango, cuadranteColumna[prop].lunesFinRango) / 60;
-                                        lasHorasExtra = 90 / 60;
-                                        break;
-                                    case 5:
-                                        //'Añadir 2 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicioRango, cuadranteColumna[prop].lunesFinRango) / 60;
-                                        lasHorasExtra = 120 / 60;
-                                        break;
-                                    case 6:
-                                        //'Horas especiales (+15%)'
+                                        //'Horas sin coste'
+                                        if (!esMensualPactado) {
+                                            lasHorasNormal = null;
+                                            lasHorasExtra = null;
+                                        } else {
+                                            lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicioRango, cuadranteColumna[prop].lunesFinRango) / 60;
+                                            lasHorasExtra = null;
+                                        };
                                         break;
                                     default:
                                 }
@@ -933,11 +821,6 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                                 default:
                             }
                             sumatorioHoras += (lasHorasNormal + lasHorasExtra);
-                            arrayResultante[index].computo.push({
-                                dia: 'Lunes-' + mySplit[1],
-                                horasNormal: lasHorasNormal,
-                                horasExtra: lasHorasExtra
-                            });
                         };
                     };
                     if (prop.includes('Martes')) {
@@ -946,32 +829,14 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Considerar como horas extra'
-                                        lasHorasNormal = null;
-                                        lasHorasExtra = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60;
-                                        break;
-                                    case 2:
-                                        //'Añadir 0.5 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60;
-                                        lasHorasExtra = 30 / 60;
-                                        break;
-                                    case 3:
-                                        //'Añadir 1 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60;
-                                        lasHorasExtra = 60 / 60;
-                                        break;
-                                    case 4:
-                                        //'Añadir 1.5 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60;
-                                        lasHorasExtra = 90 / 60;
-                                        break;
-                                    case 5:
-                                        //'Añadir 2 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60;
-                                        lasHorasExtra = 120 / 60;
-                                        break;
-                                    case 6:
-                                        //'Horas especiales (+15%)'
+                                        //'Horas sin coste'
+                                        if (!esMensualPactado) {
+                                            lasHorasNormal = null;
+                                            lasHorasExtra = null;
+                                        } else {
+                                            lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60;
+                                            lasHorasExtra = null;
+                                        };
                                         break;
                                     default:
                                 }
@@ -1015,11 +880,6 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                                 default:
                             }
                             sumatorioHoras += (lasHorasNormal + lasHorasExtra);
-                            arrayResultante[index].computo.push({
-                                dia: 'Martes-' + mySplit[1],
-                                horasNormal: lasHorasNormal,
-                                horasExtra: lasHorasExtra
-                            });
                         };
                     };
                     if (prop.includes('Miércoles')) {
@@ -1028,32 +888,14 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Considerar como horas extra'
-                                        lasHorasNormal = null;
-                                        lasHorasExtra = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicioRango, cuadranteColumna[prop].miercolesFinRango) / 60;
-                                        break;
-                                    case 2:
-                                        //'Añadir 0.5 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicioRango, cuadranteColumna[prop].miercolesFinRango) / 60;
-                                        lasHorasExtra = 30 / 60;
-                                        break;
-                                    case 3:
-                                        //'Añadir 1 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicioRango, cuadranteColumna[prop].miercolesFinRango) / 60;
-                                        lasHorasExtra = 60 / 60;
-                                        break;
-                                    case 4:
-                                        //'Añadir 1.5 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicioRango, cuadranteColumna[prop].miercolesFinRango) / 60;
-                                        lasHorasExtra = 90 / 60;
-                                        break;
-                                    case 5:
-                                        //'Añadir 2 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicioRango, cuadranteColumna[prop].miercolesFinRango) / 60;
-                                        lasHorasExtra = 120 / 60;
-                                        break;
-                                    case 6:
-                                        //'Horas especiales (+15%)'
+                                        //'Horas sin coste'
+                                        if (!esMensualPactado) {
+                                            lasHorasNormal = null;
+                                            lasHorasExtra = null;
+                                        } else {
+                                            lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicioRango, cuadranteColumna[prop].miercolesFinRango) / 60;
+                                            lasHorasExtra = null;
+                                        };
                                         break;
                                     default:
                                 }
@@ -1097,11 +939,6 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                                 default:
                             }
                             sumatorioHoras += (lasHorasNormal + lasHorasExtra);
-                            arrayResultante[index].computo.push({
-                                dia: 'Miércoles-' + mySplit[1],
-                                horasNormal: lasHorasNormal,
-                                horasExtra: lasHorasExtra
-                            });
                         };
                     };
                     if (prop.includes('Jueves')) {
@@ -1110,32 +947,14 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Considerar como horas extra'
-                                        lasHorasNormal = null;
-                                        lasHorasExtra = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicioRango, cuadranteColumna[prop].juevesFinRango) / 60;
-                                        break;
-                                    case 2:
-                                        //'Añadir 0.5 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicioRango, cuadranteColumna[prop].juevesFinRango) / 60;
-                                        lasHorasExtra = 30 / 60;
-                                        break;
-                                    case 3:
-                                        //'Añadir 1 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicioRango, cuadranteColumna[prop].juevesFinRango) / 60;
-                                        lasHorasExtra = 60 / 60;
-                                        break;
-                                    case 4:
-                                        //'Añadir 1.5 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicioRango, cuadranteColumna[prop].juevesFinRango) / 60;
-                                        lasHorasExtra = 90 / 60;
-                                        break;
-                                    case 5:
-                                        //'Añadir 2 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicioRango, cuadranteColumna[prop].juevesFinRango) / 60;
-                                        lasHorasExtra = 120 / 60;
-                                        break;
-                                    case 6:
-                                        //'Horas especiales (+15%)'
+                                        //'Horas sin coste'
+                                        if (!esMensualPactado) {
+                                            lasHorasNormal = null;
+                                            lasHorasExtra = null;
+                                        } else {
+                                            lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicioRango, cuadranteColumna[prop].juevesFinRango) / 60;
+                                            lasHorasExtra = null;
+                                        };
                                         break;
                                     default:
                                 }
@@ -1179,11 +998,6 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                                 default:
                             }
                             sumatorioHoras += (lasHorasNormal + lasHorasExtra);
-                            arrayResultante[index].computo.push({
-                                dia: 'Jueves-' + mySplit[1],
-                                horasNormal: lasHorasNormal,
-                                horasExtra: lasHorasExtra
-                            });
                         };
                     };
                     if (prop.includes('Viernes')) {
@@ -1192,32 +1006,14 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Considerar como horas extra'
-                                        lasHorasNormal = null;
-                                        lasHorasExtra = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicioRango, cuadranteColumna[prop].viernesFinRango) / 60;
-                                        break;
-                                    case 2:
-                                        //'Añadir 0.5 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicioRango, cuadranteColumna[prop].viernesFinRango) / 60;
-                                        lasHorasExtra = 30 / 60;
-                                        break;
-                                    case 3:
-                                        //'Añadir 1 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicioRango, cuadranteColumna[prop].viernesFinRango) / 60;
-                                        lasHorasExtra = 60 / 60;
-                                        break;
-                                    case 4:
-                                        //'Añadir 1.5 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicioRango, cuadranteColumna[prop].viernesFinRango) / 60;
-                                        lasHorasExtra = 90 / 60;
-                                        break;
-                                    case 5:
-                                        //'Añadir 2 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicioRango, cuadranteColumna[prop].viernesFinRango) / 60;
-                                        lasHorasExtra = 120 / 60;
-                                        break;
-                                    case 6:
-                                        //'Horas especiales (+15%)'
+                                        //'Horas sin coste'
+                                        if (!esMensualPactado) {
+                                            lasHorasNormal = null;
+                                            lasHorasExtra = null;
+                                        } else {
+                                            lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicioRango, cuadranteColumna[prop].viernesFinRango) / 60;
+                                            lasHorasExtra = null;
+                                        };
                                         break;
                                     default:
                                 }
@@ -1261,11 +1057,6 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                                 default:
                             }
                             sumatorioHoras += (lasHorasNormal + lasHorasExtra);
-                            arrayResultante[index].computo.push({
-                                dia: 'Viernes-' + mySplit[1],
-                                horasNormal: lasHorasNormal,
-                                horasExtra: lasHorasExtra
-                            });
                         };
                     };
                     if (prop.includes('Sábado')) {
@@ -1274,32 +1065,14 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Considerar como horas extra'
-                                        lasHorasNormal = null;
-                                        lasHorasExtra = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicioRango, cuadranteColumna[prop].sabadoFinRango) / 60;
-                                        break;
-                                    case 2:
-                                        //'Añadir 0.5 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicioRango, cuadranteColumna[prop].sabadoFinRango) / 60;
-                                        lasHorasExtra = 30 / 60;
-                                        break;
-                                    case 3:
-                                        //'Añadir 1 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicioRango, cuadranteColumna[prop].sabadoFinRango) / 60;
-                                        lasHorasExtra = 60 / 60;
-                                        break;
-                                    case 4:
-                                        //'Añadir 1.5 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicioRango, cuadranteColumna[prop].sabadoFinRango) / 60;
-                                        lasHorasExtra = 90 / 60;
-                                        break;
-                                    case 5:
-                                        //'Añadir 2 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicioRango, cuadranteColumna[prop].sabadoFinRango) / 60;
-                                        lasHorasExtra = 120 / 60;
-                                        break;
-                                    case 6:
-                                        //'Horas especiales (+15%)'
+                                        //'Horas sin coste'
+                                        if (!esMensualPactado) {
+                                            lasHorasNormal = null;
+                                            lasHorasExtra = null;
+                                        } else {
+                                            lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicioRango, cuadranteColumna[prop].sabadoFinRango) / 60;
+                                            lasHorasExtra = null;
+                                        };
                                         break;
                                     default:
                                 }
@@ -1343,11 +1116,6 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                                 default:
                             }
                             sumatorioHoras += (lasHorasNormal + lasHorasExtra);
-                            arrayResultante[index].computo.push({
-                                dia: 'Sábado-' + mySplit[1],
-                                horasNormal: lasHorasNormal,
-                                horasExtra: lasHorasExtra
-                            });
                         };
                     };
                     if (prop.includes('Domingo')) {
@@ -1356,32 +1124,14 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Considerar como horas extra'
-                                        lasHorasNormal = null;
-                                        lasHorasExtra = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicioRango, cuadranteColumna[prop].domingoFinRango) / 60;
-                                        break;
-                                    case 2:
-                                        //'Añadir 0.5 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicioRango, cuadranteColumna[prop].domingoFinRango) / 60;
-                                        lasHorasExtra = 30 / 60;
-                                        break;
-                                    case 3:
-                                        //'Añadir 1 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicioRango, cuadranteColumna[prop].domingoFinRango) / 60;
-                                        lasHorasExtra = 60 / 60;
-                                        break;
-                                    case 4:
-                                        //'Añadir 1.5 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicioRango, cuadranteColumna[prop].domingoFinRango) / 60;
-                                        lasHorasExtra = 90 / 60;
-                                        break;
-                                    case 5:
-                                        //'Añadir 2 horas extra de trabajo'
-                                        lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicioRango, cuadranteColumna[prop].domingoFinRango) / 60;
-                                        lasHorasExtra = 120 / 60;
-                                        break;
-                                    case 6:
-                                        //'Horas especiales (+15%)'
+                                        //'Horas sin coste'
+                                        if (!esMensualPactado) {
+                                            lasHorasNormal = null;
+                                            lasHorasExtra = null;
+                                        } else {
+                                            lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicioRango, cuadranteColumna[prop].domingoFinRango) / 60;
+                                            lasHorasExtra = null;
+                                        };
                                         break;
                                     default:
                                 }
@@ -1425,11 +1175,6 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                                 default:
                             }
                             sumatorioHoras += (lasHorasNormal + lasHorasExtra);
-                            arrayResultante[index].computo.push({
-                                dia: 'Domingo-' + mySplit[1],
-                                horasNormal: lasHorasNormal,
-                                horasExtra: lasHorasExtra
-                            });
                         };
                     };
                     arrayResultante[index].totalHorasNormal_L = sumatorioHorasNormal_L;
@@ -1453,10 +1198,8 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                 break;
             case 'rangoDescanso':
                 arrayResultante.push({
-                    trabajador: cuadranteColumna.idTrabajador,
-                    //trabajadorNombre: cuadranteColumna.nombreTrabajador,
+                    trabajador: cuadranteColumna.nombreTrabajador,
                     tipo: cuadranteColumna.tipoTrabajador,
-                    computo: [],
                     totalHorasNormal_L: null,
                     totalHorasExtra_L: null,
                     totalHorasNormal_E: null,
@@ -1506,32 +1249,14 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Considerar como horas extra'
-                                        lasHorasNormal = null;
-                                        lasHorasExtra = rango1 + rango2;
-                                        break;
-                                    case 2:
-                                        //'Añadir 0.5 horas extra de trabajo'
-                                        lasHorasNormal = rango1 + rango2;
-                                        lasHorasExtra = 30 / 60;
-                                        break;
-                                    case 3:
-                                        //'Añadir 1 horas extra de trabajo'
-                                        lasHorasNormal = rango1 + rango2;
-                                        lasHorasExtra = 60 / 60;
-                                        break;
-                                    case 4:
-                                        //'Añadir 1.5 horas extra de trabajo'
-                                        lasHorasNormal = rango1 + rango2;
-                                        lasHorasExtra = 90 / 60;
-                                        break;
-                                    case 5:
-                                        //'Añadir 2 horas extra de trabajo'
-                                        lasHorasNormal = rango1 + rango2;
-                                        lasHorasExtra = 120 / 60;
-                                        break;
-                                    case 6:
-                                        //'Horas especiales (+15%)'
+                                        //'Horas sin coste'
+                                        if (!esMensualPactado) {
+                                            lasHorasNormal = null;
+                                            lasHorasExtra = null;
+                                        } else {
+                                            lasHorasNormal = rango1 + rango2;
+                                            lasHorasExtra = null;
+                                        };
                                         break;
                                     default:
                                 }
@@ -1575,11 +1300,6 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                                 default:
                             }
                             sumatorioHoras += (lasHorasNormal + lasHorasExtra);
-                            arrayResultante[index].computo.push({
-                                dia: 'Lunes-' + mySplit[1],
-                                horasNormal: lasHorasNormal,
-                                horasExtra: lasHorasExtra
-                            });
                         }
                     };
                     if (prop.includes('Martes')) {
@@ -1594,32 +1314,14 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Considerar como horas extra'
-                                        lasHorasNormal = null;
-                                        lasHorasExtra = rango1 + rango2;
-                                        break;
-                                    case 2:
-                                        //'Añadir 0.5 horas extra de trabajo'
-                                        lasHorasNormal = rango1 + rango2;
-                                        lasHorasExtra = 30 / 60;
-                                        break;
-                                    case 3:
-                                        //'Añadir 1 horas extra de trabajo'
-                                        lasHorasNormal = rango1 + rango2;
-                                        lasHorasExtra = 60 / 60;
-                                        break;
-                                    case 4:
-                                        //'Añadir 1.5 horas extra de trabajo'
-                                        lasHorasNormal = rango1 + rango2;
-                                        lasHorasExtra = 90 / 60;
-                                        break;
-                                    case 5:
-                                        //'Añadir 2 horas extra de trabajo'
-                                        lasHorasNormal = rango1 + rango2;
-                                        lasHorasExtra = 120 / 60;
-                                        break;
-                                    case 6:
-                                        //'Horas especiales (+15%)'
+                                        //'Horas sin coste'
+                                        if (!esMensualPactado) {
+                                            lasHorasNormal = null;
+                                            lasHorasExtra = null;
+                                        } else {
+                                            lasHorasNormal = rango1 + rango2;
+                                            lasHorasExtra = null;
+                                        };
                                         break;
                                     default:
                                 }
@@ -1663,11 +1365,6 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                                 default:
                             }
                             sumatorioHoras += (lasHorasNormal + lasHorasExtra);
-                            arrayResultante[index].computo.push({
-                                dia: 'Martes-' + mySplit[1],
-                                horasNormal: lasHorasNormal,
-                                horasExtra: lasHorasExtra
-                            });
                         }
                     };
                     if (prop.includes('Miércoles')) {
@@ -1682,32 +1379,14 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Considerar como horas extra'
-                                        lasHorasNormal = null;
-                                        lasHorasExtra = rango1 + rango2;
-                                        break;
-                                    case 2:
-                                        //'Añadir 0.5 horas extra de trabajo'
-                                        lasHorasNormal = rango1 + rango2;
-                                        lasHorasExtra = 30 / 60;
-                                        break;
-                                    case 3:
-                                        //'Añadir 1 horas extra de trabajo'
-                                        lasHorasNormal = rango1 + rango2;
-                                        lasHorasExtra = 60 / 60;
-                                        break;
-                                    case 4:
-                                        //'Añadir 1.5 horas extra de trabajo'
-                                        lasHorasNormal = rango1 + rango2;
-                                        lasHorasExtra = 90 / 60;
-                                        break;
-                                    case 5:
-                                        //'Añadir 2 horas extra de trabajo'
-                                        lasHorasNormal = rango1 + rango2;
-                                        lasHorasExtra = 120 / 60;
-                                        break;
-                                    case 6:
-                                        //'Horas especiales (+15%)'
+                                        //'Horas sin coste'
+                                        if (!esMensualPactado) {
+                                            lasHorasNormal = null;
+                                            lasHorasExtra = null;
+                                        } else {
+                                            lasHorasNormal = rango1 + rango2;
+                                            lasHorasExtra = null;
+                                        };
                                         break;
                                     default:
                                 }
@@ -1751,11 +1430,6 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                                 default:
                             }
                             sumatorioHoras += (lasHorasNormal + lasHorasExtra);
-                            arrayResultante[index].computo.push({
-                                dia: 'Miércoles-' + mySplit[1],
-                                horasNormal: lasHorasNormal,
-                                horasExtra: lasHorasExtra
-                            });
                         }
                     };
                     if (prop.includes('Jueves')) {
@@ -1770,32 +1444,14 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Considerar como horas extra'
-                                        lasHorasNormal = null;
-                                        lasHorasExtra = rango1 + rango2;
-                                        break;
-                                    case 2:
-                                        //'Añadir 0.5 horas extra de trabajo'
-                                        lasHorasNormal = rango1 + rango2;
-                                        lasHorasExtra = 30 / 60;
-                                        break;
-                                    case 3:
-                                        //'Añadir 1 horas extra de trabajo'
-                                        lasHorasNormal = rango1 + rango2;
-                                        lasHorasExtra = 60 / 60;
-                                        break;
-                                    case 4:
-                                        //'Añadir 1.5 horas extra de trabajo'
-                                        lasHorasNormal = rango1 + rango2;
-                                        lasHorasExtra = 90 / 60;
-                                        break;
-                                    case 5:
-                                        //'Añadir 2 horas extra de trabajo'
-                                        lasHorasNormal = rango1 + rango2;
-                                        lasHorasExtra = 120 / 60;
-                                        break;
-                                    case 6:
-                                        //'Horas especiales (+15%)'
+                                        //'Horas sin coste'
+                                        if (!esMensualPactado) {
+                                            lasHorasNormal = null;
+                                            lasHorasExtra = null;
+                                        } else {
+                                            lasHorasNormal = rango1 + rango2;
+                                            lasHorasExtra = null;
+                                        };
                                         break;
                                     default:
                                 }
@@ -1839,11 +1495,6 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                                 default:
                             }
                             sumatorioHoras += (lasHorasNormal + lasHorasExtra);
-                            arrayResultante[index].computo.push({
-                                dia: 'Jueves-' + mySplit[1],
-                                horasNormal: lasHorasNormal,
-                                horasExtra: lasHorasExtra
-                            });
                         }
                     };
                     if (prop.includes('Viernes')) {
@@ -1858,32 +1509,14 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Considerar como horas extra'
-                                        lasHorasNormal = null;
-                                        lasHorasExtra = rango1 + rango2;
-                                        break;
-                                    case 2:
-                                        //'Añadir 0.5 horas extra de trabajo'
-                                        lasHorasNormal = rango1 + rango2;
-                                        lasHorasExtra = 30 / 60;
-                                        break;
-                                    case 3:
-                                        //'Añadir 1 horas extra de trabajo'
-                                        lasHorasNormal = rango1 + rango2;
-                                        lasHorasExtra = 60 / 60;
-                                        break;
-                                    case 4:
-                                        //'Añadir 1.5 horas extra de trabajo'
-                                        lasHorasNormal = rango1 + rango2;
-                                        lasHorasExtra = 90 / 60;
-                                        break;
-                                    case 5:
-                                        //'Añadir 2 horas extra de trabajo'
-                                        lasHorasNormal = rango1 + rango2;
-                                        lasHorasExtra = 120 / 60;
-                                        break;
-                                    case 6:
-                                        //'Horas especiales (+15%)'
+                                        //'Horas sin coste'
+                                        if (!esMensualPactado) {
+                                            lasHorasNormal = null;
+                                            lasHorasExtra = null;
+                                        } else {
+                                            lasHorasNormal = rango1 + rango2;
+                                            lasHorasExtra = null;
+                                        };
                                         break;
                                     default:
                                 }
@@ -1927,11 +1560,6 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                                 default:
                             }
                             sumatorioHoras += (lasHorasNormal + lasHorasExtra);
-                            arrayResultante[index].computo.push({
-                                dia: 'Viernes-' + mySplit[1],
-                                horasNormal: lasHorasNormal,
-                                horasExtra: lasHorasExtra
-                            });
                         }
                     };
                     if (prop.includes('Sábado')) {
@@ -1946,32 +1574,14 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Considerar como horas extra'
-                                        lasHorasNormal = null;
-                                        lasHorasExtra = rango1 + rango2;
-                                        break;
-                                    case 2:
-                                        //'Añadir 0.5 horas extra de trabajo'
-                                        lasHorasNormal = rango1 + rango2;
-                                        lasHorasExtra = 30 / 60;
-                                        break;
-                                    case 3:
-                                        //'Añadir 1 horas extra de trabajo'
-                                        lasHorasNormal = rango1 + rango2;
-                                        lasHorasExtra = 60 / 60;
-                                        break;
-                                    case 4:
-                                        //'Añadir 1.5 horas extra de trabajo'
-                                        lasHorasNormal = rango1 + rango2;
-                                        lasHorasExtra = 90 / 60;
-                                        break;
-                                    case 5:
-                                        //'Añadir 2 horas extra de trabajo'
-                                        lasHorasNormal = rango1 + rango2;
-                                        lasHorasExtra = 120 / 60;
-                                        break;
-                                    case 6:
-                                        //'Horas especiales (+15%)'
+                                        //'Horas sin coste'
+                                        if (!esMensualPactado) {
+                                            lasHorasNormal = null;
+                                            lasHorasExtra = null;
+                                        } else {
+                                            lasHorasNormal = rango1 + rango2;
+                                            lasHorasExtra = null;
+                                        };
                                         break;
                                     default:
                                 }
@@ -2015,11 +1625,6 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                                 default:
                             }
                             sumatorioHoras += (lasHorasNormal + lasHorasExtra);
-                            arrayResultante[index].computo.push({
-                                dia: 'Sábado-' + mySplit[1],
-                                horasNormal: lasHorasNormal,
-                                horasExtra: lasHorasExtra
-                            });
                         }
                     };
                     if (prop.includes('Domingo')) {
@@ -2034,32 +1639,14 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Considerar como horas extra'
-                                        lasHorasNormal = null;
-                                        lasHorasExtra = rango1 + rango2;
-                                        break;
-                                    case 2:
-                                        //'Añadir 0.5 horas extra de trabajo'
-                                        lasHorasNormal = rango1 + rango2;
-                                        lasHorasExtra = 30 / 60;
-                                        break;
-                                    case 3:
-                                        //'Añadir 1 horas extra de trabajo'
-                                        lasHorasNormal = rango1 + rango2;
-                                        lasHorasExtra = 60 / 60;
-                                        break;
-                                    case 4:
-                                        //'Añadir 1.5 horas extra de trabajo'
-                                        lasHorasNormal = rango1 + rango2;
-                                        lasHorasExtra = 90 / 60;
-                                        break;
-                                    case 5:
-                                        //'Añadir 2 horas extra de trabajo'
-                                        lasHorasNormal = rango1 + rango2;
-                                        lasHorasExtra = 120 / 60;
-                                        break;
-                                    case 6:
-                                        //'Horas especiales (+15%)'
+                                        //'Horas sin coste'
+                                        if (!esMensualPactado) {
+                                            lasHorasNormal = null;
+                                            lasHorasExtra = null;
+                                        } else {
+                                            lasHorasNormal = rango1 + rango2;
+                                            lasHorasExtra = null;
+                                        };
                                         break;
                                     default:
                                 }
@@ -2103,11 +1690,6 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                                 default:
                             }
                             sumatorioHoras += (lasHorasNormal + lasHorasExtra);
-                            arrayResultante[index].computo.push({
-                                dia: 'Domingo-' + mySplit[1],
-                                horasNormal: lasHorasNormal,
-                                horasExtra: lasHorasExtra
-                            });
                         }
                     };
                     arrayResultante[index].totalHorasNormal_L = sumatorioHorasNormal_L;
@@ -2131,10 +1713,8 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                 break;
             case 'cantidad':
                 arrayResultante.push({
-                    trabajador: cuadranteColumna.idTrabajador,
-                    //trabajadorNombre: cuadranteColumna.nombreTrabajador,
+                    trabajador: cuadranteColumna.nombreTrabajador,
                     tipo: cuadranteColumna.tipoTrabajador,
-                    computo: [],
                     totalHorasNormal_L: null,
                     totalHorasExtra_L: null,
                     totalHorasNormal_E: null,
@@ -2177,32 +1757,14 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Considerar como horas extra'
-                                        lasHorasNormal = null;
-                                        lasHorasExtra = cuadranteColumna[prop].lunesCantidad / 60;
-                                        break;
-                                    case 2:
-                                        //'Añadir 0.5 horas extra de trabajo'
-                                        lasHorasNormal = cuadranteColumna[prop].lunesCantidad / 60;
-                                        lasHorasExtra = 30 / 60;
-                                        break;
-                                    case 3:
-                                        //'Añadir 1 horas extra de trabajo'
-                                        lasHorasNormal = cuadranteColumna[prop].lunesCantidad / 60;
-                                        lasHorasExtra = 60 / 60;
-                                        break;
-                                    case 4:
-                                        //'Añadir 1.5 horas extra de trabajo'
-                                        lasHorasNormal = cuadranteColumna[prop].lunesCantidad / 60;
-                                        lasHorasExtra = 90 / 60;
-                                        break;
-                                    case 5:
-                                        //'Añadir 2 horas extra de trabajo'
-                                        lasHorasNormal = cuadranteColumna[prop].lunesCantidad / 60;
-                                        lasHorasExtra = 120 / 60;
-                                        break;
-                                    case 6:
-                                        //'Horas especiales (+15%)'
+                                        //'Horas sin coste'
+                                        if (!esMensualPactado) {
+                                            lasHorasNormal = null;
+                                            lasHorasExtra = null;
+                                        } else {
+                                            lasHorasNormal = cuadranteColumna[prop].lunesCantidad / 60;
+                                            lasHorasExtra = null;
+                                        };
                                         break;
                                     default:
                                 }
@@ -2246,11 +1808,6 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                                 default:
                             }
                             sumatorioHoras += (lasHorasNormal + lasHorasExtra);
-                            arrayResultante[index].computo.push({
-                                dia: 'Lunes-' + mySplit[1],
-                                horasNormal: lasHorasNormal,
-                                horasExtra: lasHorasExtra
-                            });
                         }
                     };
                     if (prop.includes('Martes')) {
@@ -2259,32 +1816,14 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Considerar como horas extra'
-                                        lasHorasNormal = null;
-                                        lasHorasExtra = cuadranteColumna[prop].martesCantidad / 60;
-                                        break;
-                                    case 2:
-                                        //'Añadir 0.5 horas extra de trabajo'
-                                        lasHorasNormal = cuadranteColumna[prop].martesCantidad / 60;
-                                        lasHorasExtra = 30 / 60;
-                                        break;
-                                    case 3:
-                                        //'Añadir 1 horas extra de trabajo'
-                                        lasHorasNormal = cuadranteColumna[prop].martesCantidad / 60;
-                                        lasHorasExtra = 60 / 60;
-                                        break;
-                                    case 4:
-                                        //'Añadir 1.5 horas extra de trabajo'
-                                        lasHorasNormal = cuadranteColumna[prop].martesCantidad / 60;
-                                        lasHorasExtra = 90 / 60;
-                                        break;
-                                    case 5:
-                                        //'Añadir 2 horas extra de trabajo'
-                                        lasHorasNormal = cuadranteColumna[prop].martesCantidad / 60;
-                                        lasHorasExtra = 120 / 60;
-                                        break;
-                                    case 6:
-                                        //'Horas especiales (+15%)'
+                                        //'Horas sin coste'
+                                        if (!esMensualPactado) {
+                                            lasHorasNormal = null;
+                                            lasHorasExtra = null;
+                                        } else {
+                                            lasHorasNormal = cuadranteColumna[prop].martesCantidad / 60;
+                                            lasHorasExtra = null;
+                                        };
                                         break;
                                     default:
                                 }
@@ -2328,11 +1867,6 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                                 default:
                             }
                             sumatorioHoras += (lasHorasNormal + lasHorasExtra);
-                            arrayResultante[index].computo.push({
-                                dia: 'Martes-' + mySplit[1],
-                                horasNormal: lasHorasNormal,
-                                horasExtra: lasHorasExtra
-                            });
                         }
                     };
                     if (prop.includes('Miércoles')) {
@@ -2341,32 +1875,14 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Considerar como horas extra'
-                                        lasHorasNormal = null;
-                                        lasHorasExtra = cuadranteColumna[prop].miercolesCantidad / 60;
-                                        break;
-                                    case 2:
-                                        //'Añadir 0.5 horas extra de trabajo'
-                                        lasHorasNormal = cuadranteColumna[prop].miercolesCantidad / 60;
-                                        lasHorasExtra = 30 / 60;
-                                        break;
-                                    case 3:
-                                        //'Añadir 1 horas extra de trabajo'
-                                        lasHorasNormal = cuadranteColumna[prop].miercolesCantidad / 60;
-                                        lasHorasExtra = 60 / 60;
-                                        break;
-                                    case 4:
-                                        //'Añadir 1.5 horas extra de trabajo'
-                                        lasHorasNormal = cuadranteColumna[prop].miercolesCantidad / 60;
-                                        lasHorasExtra = 90 / 60;
-                                        break;
-                                    case 5:
-                                        //'Añadir 2 horas extra de trabajo'
-                                        lasHorasNormal = cuadranteColumna[prop].miercolesCantidad / 60;
-                                        lasHorasExtra = 120 / 60;
-                                        break;
-                                    case 6:
-                                        //'Horas especiales (+15%)'
+                                        //'Horas sin coste'
+                                        if (!esMensualPactado) {
+                                            lasHorasNormal = null;
+                                            lasHorasExtra = null;
+                                        } else {
+                                            lasHorasNormal = cuadranteColumna[prop].miercolesCantidad / 60;
+                                            lasHorasExtra = null;
+                                        };
                                         break;
                                     default:
                                 }
@@ -2410,11 +1926,6 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                                 default:
                             }
                             sumatorioHoras += (lasHorasNormal + lasHorasExtra);
-                            arrayResultante[index].computo.push({
-                                dia: 'Miércoles-' + mySplit[1],
-                                horasNormal: lasHorasNormal,
-                                horasExtra: lasHorasExtra
-                            });
                         }
                     };
                     if (prop.includes('Jueves')) {
@@ -2423,32 +1934,14 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Considerar como horas extra'
-                                        lasHorasNormal = null;
-                                        lasHorasExtra = cuadranteColumna[prop].juevesCantidad / 60;
-                                        break;
-                                    case 2:
-                                        //'Añadir 0.5 horas extra de trabajo'
-                                        lasHorasNormal = cuadranteColumna[prop].juevesCantidad / 60;
-                                        lasHorasExtra = 30 / 60;
-                                        break;
-                                    case 3:
-                                        //'Añadir 1 horas extra de trabajo'
-                                        lasHorasNormal = cuadranteColumna[prop].juevesCantidad / 60;
-                                        lasHorasExtra = 60 / 60;
-                                        break;
-                                    case 4:
-                                        //'Añadir 1.5 horas extra de trabajo'
-                                        lasHorasNormal = cuadranteColumna[prop].juevesCantidad / 60;
-                                        lasHorasExtra = 90 / 60;
-                                        break;
-                                    case 5:
-                                        //'Añadir 2 horas extra de trabajo'
-                                        lasHorasNormal = cuadranteColumna[prop].juevesCantidad / 60;
-                                        lasHorasExtra = 120 / 60;
-                                        break;
-                                    case 6:
-                                        //'Horas especiales (+15%)'
+                                        //'Horas sin coste'
+                                        if (!esMensualPactado) {
+                                            lasHorasNormal = null;
+                                            lasHorasExtra = null;
+                                        } else {
+                                            lasHorasNormal = cuadranteColumna[prop].juevesCantidad / 60;
+                                            lasHorasExtra = null;
+                                        };
                                         break;
                                     default:
                                 }
@@ -2492,11 +1985,6 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                                 default:
                             }
                             sumatorioHoras += (lasHorasNormal + lasHorasExtra);
-                            arrayResultante[index].computo.push({
-                                dia: 'Jueves-' + mySplit[1],
-                                horasNormal: lasHorasNormal,
-                                horasExtra: lasHorasExtra
-                            });
                         }
                     };
                     if (prop.includes('Viernes')) {
@@ -2505,32 +1993,14 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Considerar como horas extra'
-                                        lasHorasNormal = null;
-                                        lasHorasExtra = cuadranteColumna[prop].viernesCantidad / 60;
-                                        break;
-                                    case 2:
-                                        //'Añadir 0.5 horas extra de trabajo'
-                                        lasHorasNormal = cuadranteColumna[prop].viernesCantidad / 60;
-                                        lasHorasExtra = 30 / 60;
-                                        break;
-                                    case 3:
-                                        //'Añadir 1 horas extra de trabajo'
-                                        lasHorasNormal = cuadranteColumna[prop].viernesCantidad / 60;
-                                        lasHorasExtra = 60 / 60;
-                                        break;
-                                    case 4:
-                                        //'Añadir 1.5 horas extra de trabajo'
-                                        lasHorasNormal = cuadranteColumna[prop].viernesCantidad / 60;
-                                        lasHorasExtra = 90 / 60;
-                                        break;
-                                    case 5:
-                                        //'Añadir 2 horas extra de trabajo'
-                                        lasHorasNormal = cuadranteColumna[prop].viernesCantidad / 60;
-                                        lasHorasExtra = 120 / 60;
-                                        break;
-                                    case 6:
-                                        //'Horas especiales (+15%)'
+                                        //'Horas sin coste'
+                                        if (!esMensualPactado) {
+                                            lasHorasNormal = null;
+                                            lasHorasExtra = null;
+                                        } else {
+                                            lasHorasNormal = cuadranteColumna[prop].viernesCantidad / 60;
+                                            lasHorasExtra = null;
+                                        };
                                         break;
                                     default:
                                 }
@@ -2574,11 +2044,6 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                                 default:
                             }
                             sumatorioHoras += (lasHorasNormal + lasHorasExtra);
-                            arrayResultante[index].computo.push({
-                                dia: 'Viernes-' + mySplit[1],
-                                horasNormal: lasHorasNormal,
-                                horasExtra: lasHorasExtra
-                            });
                         }
                     };
                     if (prop.includes('Sábado')) {
@@ -2587,32 +2052,14 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Considerar como horas extra'
-                                        lasHorasNormal = null;
-                                        lasHorasExtra = cuadranteColumna[prop].sabadoCantidad / 60;
-                                        break;
-                                    case 2:
-                                        //'Añadir 0.5 horas extra de trabajo'
-                                        lasHorasNormal = cuadranteColumna[prop].sabadoCantidad / 60;
-                                        lasHorasExtra = 30 / 60;
-                                        break;
-                                    case 3:
-                                        //'Añadir 1 horas extra de trabajo'
-                                        lasHorasNormal = cuadranteColumna[prop].sabadoCantidad / 60;
-                                        lasHorasExtra = 60 / 60;
-                                        break;
-                                    case 4:
-                                        //'Añadir 1.5 horas extra de trabajo'
-                                        lasHorasNormal = cuadranteColumna[prop].sabadoCantidad / 60;
-                                        lasHorasExtra = 90 / 60;
-                                        break;
-                                    case 5:
-                                        //'Añadir 2 horas extra de trabajo'
-                                        lasHorasNormal = cuadranteColumna[prop].sabadoCantidad / 60;
-                                        lasHorasExtra = 120 / 60;
-                                        break;
-                                    case 6:
-                                        //'Horas especiales (+15%)'
+                                        //'Horas sin coste'
+                                        if (!esMensualPactado) {
+                                            lasHorasNormal = null;
+                                            lasHorasExtra = null;
+                                        } else {
+                                            lasHorasNormal = cuadranteColumna[prop].sabadoCantidad / 60;
+                                            lasHorasExtra = null;
+                                        };
                                         break;
                                     default:
                                 }
@@ -2656,11 +2103,6 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                                 default:
                             }
                             sumatorioHoras += (lasHorasNormal + lasHorasExtra);
-                            arrayResultante[index].computo.push({
-                                dia: 'Sábado-' + mySplit[1],
-                                horasNormal: lasHorasNormal,
-                                horasExtra: lasHorasExtra
-                            });
                         }
                     };
                     if (prop.includes('Domingo')) {
@@ -2669,32 +2111,14 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Considerar como horas extra'
-                                        lasHorasNormal = null;
-                                        lasHorasExtra = cuadranteColumna[prop].domingoCantidad / 60;
-                                        break;
-                                    case 2:
-                                        //'Añadir 0.5 horas extra de trabajo'
-                                        lasHorasNormal = cuadranteColumna[prop].domingoCantidad / 60;
-                                        lasHorasExtra = 30 / 60;
-                                        break;
-                                    case 3:
-                                        //'Añadir 1 horas extra de trabajo'
-                                        lasHorasNormal = cuadranteColumna[prop].domingoCantidad / 60;
-                                        lasHorasExtra = 60 / 60;
-                                        break;
-                                    case 4:
-                                        //'Añadir 1.5 horas extra de trabajo'
-                                        lasHorasNormal = cuadranteColumna[prop].domingoCantidad / 60;
-                                        lasHorasExtra = 90 / 60;
-                                        break;
-                                    case 5:
-                                        //'Añadir 2 horas extra de trabajo'
-                                        lasHorasNormal = cuadranteColumna[prop].domingoCantidad / 60;
-                                        lasHorasExtra = 120 / 60;
-                                        break;
-                                    case 6:
-                                        //'Horas especiales (+15%)'
+                                        //'Horas sin coste'
+                                        if (!esMensualPactado) {
+                                            lasHorasNormal = null;
+                                            lasHorasExtra = null;
+                                        } else {
+                                            lasHorasNormal = cuadranteColumna[prop].domingoCantidad / 60;
+                                            lasHorasExtra = null;
+                                        };
                                         break;
                                     default:
                                 }
@@ -2738,11 +2162,6 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                                 default:
                             }
                             sumatorioHoras += (lasHorasNormal + lasHorasExtra);
-                            arrayResultante[index].computo.push({
-                                dia: 'Domingo-' + mySplit[1],
-                                horasNormal: lasHorasNormal,
-                                horasExtra: lasHorasExtra
-                            });
                         }
                     };
                     arrayResultante[index].totalHorasNormal_L = sumatorioHorasNormal_L;
@@ -2766,15 +2185,8 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                 break;
             default:
         };
+        elTipoServicio = cuadranteColumna.tipoServicio;
         if (cuadranteColumna.tipoTrabajador === 'trabajador') {
-            sumatorioHorasFestivasComputablesTra_L += cuadranteColumna.horasFestivasComputables_L;
-            sumatorioHorasFestivasComputablesTra_E += cuadranteColumna.horasFestivasComputables_E;
-            sumatorioHorasFestivasComputablesTra_P += cuadranteColumna.horasFestivasComputables_P;
-            sumatorioHorasFestivasComputablesTra_N += cuadranteColumna.horasFestivasComputables_N;
-            sumatorioHorasFestivasComputablesTra_R += cuadranteColumna.horasFestivasComputables_R;
-            sumatorioHorasFestivasComputablesTra_L1 += cuadranteColumna.horasFestivasComputables_L1;
-            sumatorioHorasFestivasComputablesTra_L2 += cuadranteColumna.horasFestivasComputables_L2;
-            sumatorioHorasFestivasComputablesTra_F += cuadranteColumna.horasFestivasComputables_F;
             sumatorioTotalHorasNormalTra_L += sumatorioHorasNormal_L;
             sumatorioTotalHorasNormalTra_E += sumatorioHorasNormal_E;
             sumatorioTotalHorasNormalTra_P += sumatorioHorasNormal_P;
@@ -2784,16 +2196,22 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
             sumatorioTotalHorasNormalTra_L2 += sumatorioHorasNormal_L2;
             sumatorioTotalHorasNormalTra_F += sumatorioHorasNormal_F;
             sumatorioHorasBajasComputablesTra += cuadranteColumna.horasBajasComputables;
+            if (esMensualPactado) {
+                if ((sumatorioHorasNormal_L +
+                    sumatorioHorasNormal_E +
+                    sumatorioHorasNormal_P +
+                    sumatorioHorasNormal_N +
+                    sumatorioHorasNormal_R +
+                    sumatorioHorasNormal_L1 +
+                    sumatorioHorasNormal_L2 +
+                    sumatorioHorasNormal_F) === 0) {
+                    sumatorioTotalHorasFestivasComputablesTra += 0;
+                } else {
+                    sumatorioTotalHorasFestivasComputablesTra += cuadranteColumna.horasFestivasComputables;
+                };
+            };
         };
         if (cuadranteColumna.tipoTrabajador === 'suplente') {
-            sumatorioHorasFestivasComputablesSup_L += cuadranteColumna.horasFestivasComputables_L;
-            sumatorioHorasFestivasComputablesSup_E += cuadranteColumna.horasFestivasComputables_E;
-            sumatorioHorasFestivasComputablesSup_P += cuadranteColumna.horasFestivasComputables_P;
-            sumatorioHorasFestivasComputablesSup_N += cuadranteColumna.horasFestivasComputables_N;
-            sumatorioHorasFestivasComputablesSup_R += cuadranteColumna.horasFestivasComputables_R;
-            sumatorioHorasFestivasComputablesSup_L1 += cuadranteColumna.horasFestivasComputables_L1;
-            sumatorioHorasFestivasComputablesSup_L2 += cuadranteColumna.horasFestivasComputables_L2;
-            sumatorioHorasFestivasComputablesSup_F += cuadranteColumna.horasFestivasComputables_F;
             sumatorioTotalHorasNormalSup_L += sumatorioHorasNormal_L;
             sumatorioTotalHorasNormalSup_E += sumatorioHorasNormal_E;
             sumatorioTotalHorasNormalSup_P += sumatorioHorasNormal_P;
@@ -2803,15 +2221,32 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
             sumatorioTotalHorasNormalSup_L2 += sumatorioHorasNormal_L2;
             sumatorioTotalHorasNormalSup_F += sumatorioHorasNormal_F;
             sumatorioHorasBajasComputablesSup += cuadranteColumna.horasBajasComputables;
+            if (esMensualPactado) {
+                if ((sumatorioHorasNormal_L +
+                    sumatorioHorasNormal_E +
+                    sumatorioHorasNormal_P +
+                    sumatorioHorasNormal_N +
+                    sumatorioHorasNormal_R +
+                    sumatorioHorasNormal_L1 +
+                    sumatorioHorasNormal_L2 +
+                    sumatorioHorasNormal_F) === 0) {
+                    sumatorioTotalHorasFestivasComputablesSup += 0;
+                } else {
+                    sumatorioTotalHorasFestivasComputablesSup += cuadranteColumna.horasFestivasComputables;
+                };
+            };
         };
     });
-    let objetoDatosInforme = {};
     let totalMensualPactado;
+    let totalPrecioHora;
     let proporcion;
-    //gestion mensualPactado    
-    let cantidadMensualPactado = parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado);
-    if (cantidadMensualPactado >= 0) {
-        let cambiosEnConfiguracion = false;
+    let cambiosEnConfiguracion = false;
+    let objetoDatosInforme = {
+        ...objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1],
+        arrayDatosInforme: arrayResultante
+    };
+    if (esMensualPactado) {
+        //gestion mensualPactado 
         if (objetoCentro.nombre !== '') {
             if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial && !objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1]) {
                 cambiosEnConfiguracion = true;
@@ -2851,221 +2286,263 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
         };
         if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].iniciado || cambioConf) {
             //caudrante no iniciado 
-            //control de excepciones                
+            totalHorasInicialTra =
+                sumatorioTotalHorasNormalTra_L +
+                sumatorioTotalHorasNormalTra_E +
+                sumatorioTotalHorasNormalTra_P +
+                sumatorioTotalHorasNormalTra_N +
+                sumatorioTotalHorasNormalTra_R +
+                sumatorioTotalHorasNormalTra_L1 +
+                sumatorioTotalHorasNormalTra_L2 +
+                sumatorioTotalHorasNormalTra_F;
+            totalHorasInicialSup =
+                sumatorioTotalHorasNormalSup_L +
+                sumatorioTotalHorasNormalSup_E +
+                sumatorioTotalHorasNormalSup_P +
+                sumatorioTotalHorasNormalSup_N +
+                sumatorioTotalHorasNormalSup_R +
+                sumatorioTotalHorasNormalSup_L1 +
+                sumatorioTotalHorasNormalSup_L2 +
+                sumatorioTotalHorasNormalSup_F;
+            totalHorasInicial = totalHorasInicialTra + totalHorasInicialSup + sumatorioTotalHorasVariacion;
+            //control de excepciones                         
             switch (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].excepcion) {
                 case 1:
-                    totalHorasInicialTra_L = sumatorioTotalHorasNormalTra_L + sumatorioHorasFestivasComputablesTra_L;
-                    totalHorasInicialTra_E = sumatorioTotalHorasNormalTra_E + sumatorioHorasFestivasComputablesTra_E;
-                    totalHorasInicialTra_P = sumatorioTotalHorasNormalTra_P + sumatorioHorasFestivasComputablesTra_P;
-                    totalHorasInicialTra_N = sumatorioTotalHorasNormalTra_N + sumatorioHorasFestivasComputablesTra_N;
-                    totalHorasInicialTra_R = sumatorioTotalHorasNormalTra_R + sumatorioHorasFestivasComputablesTra_R;
-                    totalHorasInicialTra_L1 = sumatorioTotalHorasNormalTra_L1 + sumatorioHorasFestivasComputablesTra_L1;
-                    totalHorasInicialTra_L2 = sumatorioTotalHorasNormalTra_L2 + sumatorioHorasFestivasComputablesTra_L2;
-                    totalHorasInicialTra_F = sumatorioTotalHorasNormalTra_F + sumatorioHorasFestivasComputablesTra_F;
-                    totalHorasInicialTra =
-                        totalHorasInicialTra_L +
-                        totalHorasInicialTra_E +
-                        totalHorasInicialTra_P +
-                        totalHorasInicialTra_N +
-                        totalHorasInicialTra_R +
-                        totalHorasInicialTra_L1 +
-                        totalHorasInicialTra_L2 +
-                        totalHorasInicialTra_F;
-                    totalHorasInicialSup_L = sumatorioTotalHorasNormalSup_L;
-                    totalHorasInicialSup_E = sumatorioTotalHorasNormalSup_E;
-                    totalHorasInicialSup_P = sumatorioTotalHorasNormalSup_P;
-                    totalHorasInicialSup_N = sumatorioTotalHorasNormalSup_N;
-                    totalHorasInicialSup_R = sumatorioTotalHorasNormalSup_R;
-                    totalHorasInicialSup_L1 = sumatorioTotalHorasNormalSup_L1;
-                    totalHorasInicialSup_L2 = sumatorioTotalHorasNormalSup_L2;
-                    totalHorasInicialSup_F = sumatorioTotalHorasNormalSup_F;
-                    totalHorasInicialSup =
-                        totalHorasInicialSup_L +
-                        totalHorasInicialSup_E +
-                        totalHorasInicialSup_P +
-                        totalHorasInicialSup_N +
-                        totalHorasInicialSup_R +
-                        totalHorasInicialSup_L1 +
-                        totalHorasInicialSup_L2 +
-                        totalHorasInicialSup_F;
-                    totalHorasInicial_L = totalHorasInicialTra_L + totalHorasInicialSup_L;
-                    totalHorasInicial_E = totalHorasInicialTra_E + totalHorasInicialSup_E;
-                    totalHorasInicial_P = totalHorasInicialTra_P + totalHorasInicialSup_P;
-                    totalHorasInicial_N = totalHorasInicialTra_N + totalHorasInicialSup_N;
-                    totalHorasInicial_R = totalHorasInicialTra_R + totalHorasInicialSup_R;
-                    totalHorasInicial_L1 = totalHorasInicialTra_L1 + totalHorasInicialSup_L1;
-                    totalHorasInicial_L2 = totalHorasInicialTra_L2 + totalHorasInicialSup_L2;
-                    totalHorasInicial_F = totalHorasInicialTra_F + totalHorasInicialSup_F;
-                    totalHorasInicial = totalHorasInicialTra + totalHorasInicialSup;
                     if (cuadranteRegistrado === 'no') {
-                        proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial / (totalHorasInicialTra + sumatorioHorasBajasComputablesTra);
-                        totalMensualPactado = (totalHorasInicialTra + totalHorasInicialSup) * proporcion;
-                    } else {
-                        if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].bloqueado === 'no') {
-                            proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion;
-                            totalMensualPactado = ((totalHorasInicialTra + totalHorasInicialSup) - (
-                                sumatorioHorasFestivasComputablesTra_L +
-                                sumatorioHorasFestivasComputablesTra_E +
-                                sumatorioHorasFestivasComputablesTra_P +
-                                sumatorioHorasFestivasComputablesTra_N +
-                                sumatorioHorasFestivasComputablesTra_R +
-                                sumatorioHorasFestivasComputablesTra_L1 +
-                                sumatorioHorasFestivasComputablesTra_L2 +
-                                sumatorioHorasFestivasComputablesTra_F
-                            )) * proporcion;
-                        } else {
-                            proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion;
-                            totalMensualPactado = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial;
+                        proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial / (totalHorasInicialTra + sumatorioHorasBajasComputablesTra + sumatorioTotalHorasFestivasComputablesTra);
+                        switch (elTipoServicio) {
+                            case 'LIM':
+                                elPrecioHora_L = proporcion;
+                                break;
+                            case 'LIME':
+                                elPrecioHora_E = proporcion;
+                                break;
+                            case 'LIMP':
+                                elPrecioHora_P = proporcion;
+                                break;
+                            case 'NAVE2':
+                                elPrecioHora_N = proporcion;
+                                break;
+                            case 'REFZ':
+                                elPrecioHora_R = proporcion;
+                                break;
+                            case 'LIM1':
+                                elPrecioHora_L1 = proporcion;
+                                break;
+                            case 'LIM2':
+                                elPrecioHora_L2 = proporcion;
+                                break;
+                            case 'FEST':
+                                elPrecioHora_F = proporcion;
+                                break;
+                            default:
                         };
-                    };
-                    objetoDatosInforme = {
-                        ...objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1],
-                        mensualPactado: totalMensualPactado,
-                        iniciado: resultadoIniciado,
-                        totalHorasInicial_L: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_L : totalHorasInicial_L > 0 ? (totalHorasInicial_L) : null,
-                        totalHorasInicial_E: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_E : totalHorasInicial_E > 0 ? (totalHorasInicial_E) : null,
-                        totalHorasInicial_P: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_P : totalHorasInicial_P > 0 ? (totalHorasInicial_P) : null,
-                        totalHorasInicial_N: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_N : totalHorasInicial_N > 0 ? (totalHorasInicial_N) : null,
-                        totalHorasInicial_R: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_R : totalHorasInicial_R > 0 ? (totalHorasInicial_R) : null,
-                        totalHorasInicial_L1: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_L1 : totalHorasInicial_L1 > 0 ? (totalHorasInicial_L1) : null,
-                        totalHorasInicial_L2: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_L2 : totalHorasInicial_L2 > 0 ? (totalHorasInicial_L2) : null,
-                        totalHorasInicial_F: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_F : totalHorasInicial_F > 0 ? (totalHorasInicial_F) : null,
-                        totalHorasInicial: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial : totalHorasInicial,
-                        proporcion: proporcion,
+                        totalMensualPactado =
+                            ((sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) * elPrecioHora_L) +
+                            ((sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) * elPrecioHora_E) +
+                            ((sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) * elPrecioHora_P) +
+                            ((sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) * elPrecioHora_N) +
+                            ((sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) * elPrecioHora_R) +
+                            ((sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) * elPrecioHora_L1) +
+                            ((sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) * elPrecioHora_L2) +
+                            ((sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) * elPrecioHora_F);
+                    } else {
+                        proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion;
+                        elPrecioHora_L = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L;
+                        elPrecioHora_E = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_E;
+                        elPrecioHora_P = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_P;
+                        elPrecioHora_N = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_N;
+                        elPrecioHora_R = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_R;
+                        elPrecioHora_L1 = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L1;
+                        elPrecioHora_L2 = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L2;
+                        elPrecioHora_F = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F;
+                        totalMensualPactado = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado;
                     };
                     break;
                 case '':
-                    totalHorasInicialTra_L = sumatorioTotalHorasNormalTra_L;
-                    totalHorasInicialTra_E = sumatorioTotalHorasNormalTra_E;
-                    totalHorasInicialTra_P = sumatorioTotalHorasNormalTra_P;
-                    totalHorasInicialTra_N = sumatorioTotalHorasNormalTra_N;
-                    totalHorasInicialTra_R = sumatorioTotalHorasNormalTra_R;
-                    totalHorasInicialTra_L1 = sumatorioTotalHorasNormalTra_L1;
-                    totalHorasInicialTra_L2 = sumatorioTotalHorasNormalTra_L2;
-                    totalHorasInicialTra_F = sumatorioTotalHorasNormalTra_F;
-                    totalHorasInicialTra =
-                        totalHorasInicialTra_L +
-                        totalHorasInicialTra_E +
-                        totalHorasInicialTra_P +
-                        totalHorasInicialTra_N +
-                        totalHorasInicialTra_R +
-                        totalHorasInicialTra_L1 +
-                        totalHorasInicialTra_L2 +
-                        totalHorasInicialTra_F;
-                    totalHorasInicialSup_L = sumatorioTotalHorasNormalSup_L;
-                    totalHorasInicialSup_E = sumatorioTotalHorasNormalSup_E;
-                    totalHorasInicialSup_P = sumatorioTotalHorasNormalSup_P;
-                    totalHorasInicialSup_N = sumatorioTotalHorasNormalSup_N;
-                    totalHorasInicialSup_R = sumatorioTotalHorasNormalSup_R;
-                    totalHorasInicialSup_L1 = sumatorioTotalHorasNormalSup_L1;
-                    totalHorasInicialSup_L2 = sumatorioTotalHorasNormalSup_L2;
-                    totalHorasInicialSup_F = sumatorioTotalHorasNormalSup_F;
-                    totalHorasInicialSup =
-                        totalHorasInicialSup_L +
-                        totalHorasInicialSup_E +
-                        totalHorasInicialSup_P +
-                        totalHorasInicialSup_N +
-                        totalHorasInicialSup_R +
-                        totalHorasInicialSup_L1 +
-                        totalHorasInicialSup_L2 +
-                        totalHorasInicialSup_F;
-                    totalHorasInicial_L = totalHorasInicialTra_L + totalHorasInicialSup_L;
-                    totalHorasInicial_E = totalHorasInicialTra_E + totalHorasInicialSup_E;
-                    totalHorasInicial_P = totalHorasInicialTra_P + totalHorasInicialSup_P;
-                    totalHorasInicial_N = totalHorasInicialTra_N + totalHorasInicialSup_N;
-                    totalHorasInicial_R = totalHorasInicialTra_R + totalHorasInicialSup_R;
-                    totalHorasInicial_L1 = totalHorasInicialTra_L1 + totalHorasInicialSup_L1;
-                    totalHorasInicial_L2 = totalHorasInicialTra_L2 + totalHorasInicialSup_L2;
-                    totalHorasInicial_F = totalHorasInicialTra_F + totalHorasInicialSup_F;
-                    totalHorasInicial = totalHorasInicialTra + totalHorasInicialSup;
                     if (cuadranteRegistrado === 'no') {
-                        proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial / (totalHorasInicialTra + sumatorioHorasBajasComputablesTra);
-                        totalMensualPactado = (totalHorasInicialTra + totalHorasInicialSup) * proporcion;
-                    } else {
-                        if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].bloqueado === 'no') {
-                            proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion;
-                            totalMensualPactado = (totalHorasInicialTra + totalHorasInicialSup) * proporcion;
-                        } else {
-                            proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion;
-                            totalMensualPactado = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial;
+                        proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial / (totalHorasInicialTra + sumatorioHorasBajasComputablesTra + sumatorioTotalHorasFestivasComputablesTra);
+                        switch (elTipoServicio) {
+                            case 'LIM':
+                                elPrecioHora_L = proporcion;
+                                break;
+                            case 'LIME':
+                                elPrecioHora_E = proporcion;
+                                break;
+                            case 'LIMP':
+                                elPrecioHora_P = proporcion;
+                                break;
+                            case 'NAVE2':
+                                elPrecioHora_N = proporcion;
+                                break;
+                            case 'REFZ':
+                                elPrecioHora_R = proporcion;
+                                break;
+                            case 'LIM1':
+                                elPrecioHora_L1 = proporcion;
+                                break;
+                            case 'LIM2':
+                                elPrecioHora_L2 = proporcion;
+                                break;
+                            case 'FEST':
+                                elPrecioHora_F = proporcion;
+                                break;
+                            default:
                         };
-                    };
-                    objetoDatosInforme = {
-                        ...objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1],
-                        mensualPactado: totalMensualPactado,
-                        iniciado: resultadoIniciado,
-                        totalHorasInicial_L: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_L : totalHorasInicial_L > 0 ? (totalHorasInicial_L) : null,
-                        totalHorasInicial_E: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_E : totalHorasInicial_E > 0 ? (totalHorasInicial_E) : null,
-                        totalHorasInicial_P: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_P : totalHorasInicial_P > 0 ? (totalHorasInicial_P) : null,
-                        totalHorasInicial_N: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_N : totalHorasInicial_N > 0 ? (totalHorasInicial_N) : null,
-                        totalHorasInicial_R: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_R : totalHorasInicial_R > 0 ? (totalHorasInicial_R) : null,
-                        totalHorasInicial_L1: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_L1 : totalHorasInicial_L1 > 0 ? (totalHorasInicial_L1) : null,
-                        totalHorasInicial_L2: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_L2 : totalHorasInicial_L2 > 0 ? (totalHorasInicial_L2) : null,
-                        totalHorasInicial_F: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial_F : totalHorasInicial_F > 0 ? (totalHorasInicial_F) : null,
-                        totalHorasInicial: cuadranteRegistrado === 'si' ? objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalHorasInicial : totalHorasInicial,
-                        proporcion: proporcion,
-                    };
-                    break;
-                default:
-            };
-        };
-        if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].iniciado && !cambioConf) {
-            //caudrante iniciado
-            //control de excepciones
-            let totalHorasIniciado;
-            switch (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].excepcion) {
-                case 1:
-                    if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].bloqueado === 'no') {
-                        totalHorasIniciado =
-                            sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L +
-                            sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E +
-                            sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P +
-                            sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N +
-                            sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R +
-                            sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1 +
-                            sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2 +
-                            sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F;
-                        totalMensualPactado = totalHorasIniciado * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion;
+                        totalMensualPactado =
+                            ((sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) * elPrecioHora_L) +
+                            ((sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) * elPrecioHora_E) +
+                            ((sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) * elPrecioHora_P) +
+                            ((sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) * elPrecioHora_N) +
+                            ((sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) * elPrecioHora_R) +
+                            ((sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) * elPrecioHora_L1) +
+                            ((sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) * elPrecioHora_L2) +
+                            ((sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) * elPrecioHora_F) +
+                            (sumatorioTotalHorasFestivasComputablesTra * proporcion);
                     } else {
-                        totalMensualPactado = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial;
-                    };
-                    break;
-                case '':
-                    if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].bloqueado === 'no') {
-                        totalHorasIniciado =
-                            sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L +
-                            sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E +
-                            sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P +
-                            sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N +
-                            sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R +
-                            sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1 +
-                            sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2 +
-                            sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F;
-                        totalMensualPactado = totalHorasIniciado * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion;
-                    } else {
-                        totalMensualPactado = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial;
+                        proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion;
+                        elPrecioHora_L = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L;
+                        elPrecioHora_E = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_E;
+                        elPrecioHora_P = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_P;
+                        elPrecioHora_N = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_N;
+                        elPrecioHora_R = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_R;
+                        elPrecioHora_L1 = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L1;
+                        elPrecioHora_L2 = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L2;
+                        elPrecioHora_F = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F;
+                        totalMensualPactado = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado;
                     };
                     break;
                 default:
             };
             objetoDatosInforme = {
-                ...objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1],
-                mensualPactado: totalMensualPactado
+                ...objetoDatosInforme,
+                iniciado: resultadoIniciado,
+                precioHora_L: elPrecioHora_L,
+                precioHora_E: elPrecioHora_E,
+                precioHora_P: elPrecioHora_P,
+                precioHora_N: elPrecioHora_N,
+                precioHora_R: elPrecioHora_R,
+                precioHora_L1: elPrecioHora_L1,
+                precioHora_L2: elPrecioHora_L2,
+                precioHora_F: elPrecioHora_F,
+                proporcion: proporcion,
+                totalFacturado_L: (sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) ? (sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) * elPrecioHora_L : null,
+                totalFacturado_E: (sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) ? (sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) * elPrecioHora_E : null,
+                totalFacturado_P: (sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) ? (sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) * elPrecioHora_P : null,
+                totalFacturado_N: (sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) ? (sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) * elPrecioHora_N : null,
+                totalFacturado_R: (sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) ? (sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) * elPrecioHora_R : null,
+                totalFacturado_L1: (sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) ? (sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) * elPrecioHora_L1 : null,
+                totalFacturado_L2: (sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) ? (sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) * elPrecioHora_L2 : null,
+                totalFacturado_F: (sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) ? (sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) * elPrecioHora_F : null,
+                mensualPactado: totalMensualPactado,
+            };
+            const objetoDatosCuadrante = {
+                ...itemEditandoConfiguracion,
+                precioHora_L: elPrecioHora_L ? elPrecioHora_L : '',
+                precioHora_E: elPrecioHora_E ? elPrecioHora_E : '',
+                precioHora_P: elPrecioHora_P ? elPrecioHora_P : '',
+                precioHora_N: elPrecioHora_N ? elPrecioHora_N : '',
+                precioHora_R: elPrecioHora_R ? elPrecioHora_R : '',
+                precioHora_L1: elPrecioHora_L1 ? elPrecioHora_L1 : '',
+                precioHora_L2: elPrecioHora_L2 ? elPrecioHora_L2 : '',
+                precioHora_F: elPrecioHora_F ? elPrecioHora_F : '',
+            };
+            dispatch(setItemEditandoConfiguracionAccion(objetoDatosCuadrante));
+        };
+        if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].iniciado && !cambioConf) {
+            //caudrante iniciado
+            //control de excepciones           
+            switch (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].excepcion) {
+                case 1:
+                    if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].bloqueado === 'no') {
+                        totalMensualPactado =
+                            ((sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L) +
+                            ((sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_E) +
+                            ((sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_P) +
+                            ((sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_N) +
+                            ((sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_R) +
+                            ((sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L1) +
+                            ((sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L2) +
+                            ((sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F);
+                        objetoDatosInforme = {
+                            ...objetoDatosInforme,
+                            totalFacturado_L: (sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) ? ((sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L) : null,
+                            totalFacturado_E: (sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) ? ((sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_E) : null,
+                            totalFacturado_P: (sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) ? ((sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_P) : null,
+                            totalFacturado_N: (sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) ? ((sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_N) : null,
+                            totalFacturado_R: (sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) ? ((sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_R) : null,
+                            totalFacturado_L1: (sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) ? ((sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L1) : null,
+                            totalFacturado_L2: (sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) ? ((sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L2) : null,
+                            totalFacturado_F: (sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) ? ((sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F) : null,
+                            mensualPactado: totalMensualPactado,
+                        };
+                    };
+                    break;
+                case '':
+                    console.log(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L)
+                    if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].bloqueado === 'no') {
+                        totalMensualPactado =
+                            ((sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L) +
+                            ((sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_E) +
+                            ((sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_P) +
+                            ((sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_N) +
+                            ((sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_R) +
+                            ((sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L1) +
+                            ((sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L2) +
+                            ((sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F) +
+                            (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion);
+                        objetoDatosInforme = {
+                            ...objetoDatosInforme,
+                            totalFacturado_L: (sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) ? ((sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
+                            totalFacturado_E: (sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) ? ((sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_E) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
+                            totalFacturado_P: (sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) ? ((sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_P) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
+                            totalFacturado_N: (sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) ? ((sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_N) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
+                            totalFacturado_R: (sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) ? ((sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_R) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
+                            totalFacturado_L1: (sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) ? ((sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L1) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
+                            totalFacturado_L2: (sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) ? ((sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L2) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
+                            totalFacturado_F: (sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) ? ((sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
+                            mensualPactado: totalMensualPactado,
+                        };
+                    };
+                    break;
+                default:
             };
         };
-        let elArrayDatosInforme = [...objetoCuadrante.datosInforme.datosInforme];
-        elArrayDatosInforme[cuadranteEnUsoCuadrantes - 1] = objetoDatosInforme;
-        const losDatosInforme = {
-            ...objetoCuadrante.datosInforme,
-            datosInforme: elArrayDatosInforme
+    } else {
+        //gestion precio/hora
+        totalPrecioHora =
+            ((sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L) +
+            ((sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_E) +
+            ((sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_P) +
+            ((sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_N) +
+            ((sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_R) +
+            ((sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L1) +
+            ((sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L2) +
+            ((sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F);
+        objetoDatosInforme = {
+            ...objetoDatosInforme,
+            totalFacturado_L: (sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) ? ((sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L) : null,
+            totalFacturado_E: (sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) ? ((sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_E) : null,
+            totalFacturado_P: (sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) ? ((sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_P) : null,
+            totalFacturado_N: (sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) ? ((sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_N) : null,
+            totalFacturado_R: (sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) ? ((sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_R) : null,
+            totalFacturado_L1: (sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) ? ((sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L1) : null,
+            totalFacturado_L2: (sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) ? ((sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L2) : null,
+            totalFacturado_F: (sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) ? ((sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F) : null,
+            precioHoraTotal: totalPrecioHora
         };
-        dispatch(setEstamosActualizandoCuadranteSinCargaAccion(true));
-        dispatch(actualizarObjetoCuadranteAccion({
-            ...objetoCuadrante,
-            datosInforme: losDatosInforme
-        }));
+    };    
+    let elArrayDatosInforme = [...objetoCuadrante.datosInforme.datosInforme];
+    elArrayDatosInforme[cuadranteEnUsoCuadrantes - 1] = objetoDatosInforme;
+    const losDatosInforme = {
+        ...objetoCuadrante.datosInforme,
+        datosInforme: elArrayDatosInforme
     };
-    return arrayResultante;
+    dispatch(setEstamosActualizandoCuadranteSinCargaAccion(true));
+    dispatch(actualizarObjetoCuadranteAccion({
+        ...objetoCuadrante,
+        datosInforme: losDatosInforme
+    }));
 };
 
 function calculoDiasTotalesPorMes(month, year) {
@@ -3074,7 +2551,6 @@ function calculoDiasTotalesPorMes(month, year) {
 
 const retornaTipoBajaPorHistorico = (dia, historico, elEstado) => (dispatch, getState) => {
     const { calendarioAGestionar } = getState().variablesCuadrantes;
-    const { primerDiaEstadoBajaCIA } = getState().variablesCuadrantesSetters;
     let myArrSplitCalendario = calendarioAGestionar.split("-");
     const mesCalendario = parseInt(myArrSplitCalendario[1]);
     const anyoCalendario = parseInt(myArrSplitCalendario[0]);
@@ -3097,8 +2573,14 @@ const retornaTipoBajaPorHistorico = (dia, historico, elEstado) => (dispatch, get
         if (anyoFin > anyoCalendario || mesFin > mesCalendario) {
             diaFin = calculoDiasTotalesPorMes(mesCalendario, anyoCalendario);
         };
-        for (let i = diaInicio; i < diaFin; i++) {
-            rangoHistorico.push([i, registro.baja[0].tipo]);
+        if (elEstado === 'alta') {
+            for (let i = diaInicio; i <= diaFin; i++) {
+                rangoHistorico.push([i, registro.baja[0].tipo]);
+            };
+        } else {
+            for (let i = diaInicio; i < diaFin; i++) {
+                rangoHistorico.push([i, registro.baja[0].tipo]);
+            };
         };
     });
     elRetorno = elEstado;
@@ -3107,48 +2589,28 @@ const retornaTipoBajaPorHistorico = (dia, historico, elEstado) => (dispatch, get
             elRetorno = elDia[1];
         };
     });
-    if (elEstado === 'bajaCIA') {
-        if (elRetorno === elEstado) {
-            if (!primerDiaEstadoBajaCIA) {
-                dispatch(setPrimerDiaEstadoBajaCIA(dia));
-            } else {
-                elRetorno = 'bajaCIA2';
-            };
-        };
-    };
     return elRetorno
 };
 
 const retornaTipoBajaSinHistorico = (dia, elEstado) => (dispatch, getState) => {
-    const { primerDiaEstadoBajaCIA } = getState().variablesCuadrantesSetters;
-    let elRetorno = '';
-    if (elEstado === 'bajaCIA') {
-        if (!primerDiaEstadoBajaCIA) {
-            elRetorno = elEstado;
-            dispatch(setPrimerDiaEstadoBajaCIA(dia));
-        } else {
-            elRetorno = 'bajaCIA2';
-        };
-    } else {
-        elRetorno = elEstado;
-    };
+    let elRetorno = elEstado;
     return elRetorno
 };
 
 const periodoBajaTrabajadorAccion = (calendarioAGestionar, inicioBaja, finBaja, diasMes) => {
     let myArrSplitCalendario = calendarioAGestionar.split("-");
-    const anyoCalendario = myArrSplitCalendario[0];
-    const mesCalendario = myArrSplitCalendario[1];
+    const anyoCalendario = parseInt(myArrSplitCalendario[0]);
+    const mesCalendario = parseInt(myArrSplitCalendario[1]);
     let myArrSplitInicioB = inicioBaja.split("-");
-    const anyoInicioB = myArrSplitInicioB[0];
-    const mesInicioB = myArrSplitInicioB[1];
-    const diaInicioB = myArrSplitInicioB[2];
+    const anyoInicioB = parseInt(myArrSplitInicioB[0]);
+    const mesInicioB = parseInt(myArrSplitInicioB[1]);
+    const diaInicioB = parseInt(myArrSplitInicioB[2]);
     let anyoFinB, mesFinB, diaFinB;
     if (finBaja) {
         let myArrSplitFinB = finBaja.split("-");
-        anyoFinB = myArrSplitFinB[0];
-        mesFinB = myArrSplitFinB[1];
-        diaFinB = myArrSplitFinB[2];
+        anyoFinB = parseInt(myArrSplitFinB[0]);
+        mesFinB = parseInt(myArrSplitFinB[1]);
+        diaFinB = parseInt(myArrSplitFinB[2]);
     } else {
         anyoFinB = anyoCalendario;
         mesFinB = mesCalendario;
@@ -3173,7 +2635,7 @@ const periodoBajaTrabajadorAccion = (calendarioAGestionar, inicioBaja, finBaja, 
         if (anyoFinB === anyoCalendario && mesFinB === mesCalendario) {
             acabamosPor = parseInt(diaFinB);
         };
-    }
+    };
     let arrayBaja = [];
     for (let i = empezamosPor; i <= acabamosPor; i++) {
         arrayBaja.push(i);
@@ -3599,7 +3061,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
     tipoHorario,
     esActualizacion
 ) => (dispatch, getState) => {
-    const { cuadrante, calendarioAGestionar, losDiasDelMes, stateFestivo } = getState().variablesCuadrantes;
+    const { cuadrante, calendarioAGestionar, losDiasDelMes, stateFestivo, objetoCuadrante } = getState().variablesCuadrantes;
     const { bufferSwitchedDiasFestivosCuadrante, cuadranteEnUsoCuadrantes, yaNoEsInicio } = getState().variablesCuadrantesSetters;
     let columnaAnadir;
     let numeroSemana;
@@ -3611,14 +3073,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
     let tipoRegistro = elHorarioCuadrante.tipoRegistro;
     let cantidadTrabajadoresCentro = elHorarioCuadrante.tipoRegistroTrabajador.length;
     let festivoComputable, bajaComputable;
-    let contadorHorasFestivosComputables_L = 0;
-    let contadorHorasFestivosComputables_E = 0;
-    let contadorHorasFestivosComputables_P = 0;
-    let contadorHorasFestivosComputables_N = 0;
-    let contadorHorasFestivosComputables_R = 0;
-    let contadorHorasFestivosComputables_L1 = 0;
-    let contadorHorasFestivosComputables_L2 = 0;
-    let contadorHorasFestivosComputables_F = 0;
+    let contadorHorasFestivosComputables = 0;
     let contadorHorasBajasComputables = 0;
     let objetoBuffer = {};
     let elDia;
@@ -3678,30 +3133,51 @@ const gestionaColumnaCuadranteInteriorAccion = (
             columnaAnadir['hayBaja'] = false;
         };
         if (trabajador.historicoBajas) {
+            let hayBajaEnElMes = false;
             trabajador.historicoBajas.meses.forEach((registro, index) => {
                 const registroInicioSplitted = registro.baja[0].inicio.split("-");
                 const elMesInicio = registroInicioSplitted[0] + '-' + registroInicioSplitted[1];
                 const registroFinSplitted = registro.baja[0].fin.split("-");
                 const elMesFin = registroFinSplitted[0] + '-' + registroFinSplitted[1];
-                if ((elMesFin === calendarioAGestionar) && (elMesInicio !== calendarioAGestionar)) {
-                    arrayRegistrosHistorico.push(registro);
-                    columnaAnadir['hayBaja'] = true;
+                if (((elMesFin === calendarioAGestionar) && (elMesInicio !== calendarioAGestionar)) ||
+                    ((elMesFin !== calendarioAGestionar) && (elMesInicio === calendarioAGestionar)) ||
+                    ((elMesFin === calendarioAGestionar) && (elMesInicio === calendarioAGestionar))) {
+                    if ((elMesFin === calendarioAGestionar) && (elMesInicio !== calendarioAGestionar)) {
+                        if (parseInt(registroFinSplitted[2]) === 1) {
+                            if (trabajador.estado !== 'alta') {
+                                columnaAnadir['hayBaja'] = true;
+                            } else {
+                                columnaAnadir['hayBaja'] = false;
+                            };
+                        } else {
+                            arrayRegistrosHistorico.push(registro);
+                            columnaAnadir['hayBaja'] = true;
+                            hayBajaEnElMes = true;
+                        }
+                    } else {
+                        arrayRegistrosHistorico.push(registro);
+                        columnaAnadir['hayBaja'] = true;
+                        hayBajaEnElMes = true;
+                    };
                 };
-                if ((elMesFin !== calendarioAGestionar) && (elMesInicio === calendarioAGestionar)) {
-                    arrayRegistrosHistorico.push(registro);
-                    columnaAnadir['hayBaja'] = true;
+                if ((elMesFin !== calendarioAGestionar) && (elMesInicio !== calendarioAGestionar)) {
+                    if ((elMesFin > calendarioAGestionar) && (elMesInicio < calendarioAGestionar)) {
+                        arrayRegistrosHistorico.push(registro);
+                        columnaAnadir['hayBaja'] = true;
+                    };
+                    if (((elMesFin > calendarioAGestionar) && (elMesInicio > calendarioAGestionar)) ||
+                        ((elMesFin < calendarioAGestionar) && (elMesInicio < calendarioAGestionar))) {
+                        if (hayBajaEnElMes) {
+                            columnaAnadir['hayBaja'] = true;
+                        } else {
+                            if (trabajador.estado !== 'alta') {
+                                columnaAnadir['hayBaja'] = true;
+                            } else {
+                                columnaAnadir['hayBaja'] = false;
+                            };
+                        };
+                    };
                 };
-                if ((elMesFin === calendarioAGestionar) && (elMesInicio === calendarioAGestionar)) {
-                    arrayRegistrosHistorico.push(registro);
-                    columnaAnadir['hayBaja'] = true;
-                };
-                // if ((elMesFin !== calendarioAGestionar) && (elMesFin !== calendarioAGestionar)) {
-                //     if (trabajador.estado !== 'alta') {
-                //         columnaAnadir['hayBaja'] = true;
-                //     } else {
-                //         columnaAnadir['hayBaja'] = false;
-                //     };
-                // };
             });
             arrayRegistrosHistorico.forEach((registro, index) => {
                 const arrayBajaTraspaso = periodoBajaTrabajadorAccion(calendarioAGestionar, registro.baja[0].inicio, registro.baja[0].fin, losDiasDelMes.length);
@@ -3720,19 +3196,57 @@ const gestionaColumnaCuadranteInteriorAccion = (
         hayTrabajador = false;
         columnaAnadir['hayBaja'] = false;
     };
+    if (hayTrabajador) {
+        if (arrayBaja.length === losDiasDelMes.length) {
+            if (esInicio) {
+                columnaAnadir['reducido'] = true;
+            } else {
+                columnaAnadir['reducido'] = false;
+            }
+        } else {
+            columnaAnadir['reducido'] = false;
+        };
+    } else {
+        columnaAnadir['reducido'] = false;
+    };
+    let elTipoServicio;
     switch (tipoHorario) {
         case 'rango':
             losDiasDelMes.forEach((dia, index) => {
                 objetoBuffer = {};
                 numeroSemana = Math.ceil((index + 1) / 7);
+                if (dia[1][0] === 'Lunes') {
+                    elTipoServicio = gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio');
+                };
+                if (dia[1][0] === 'Martes') {
+                    elTipoServicio = gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio');
+                };
+                if (dia[1][0] === 'Miércoles') {
+                    elTipoServicio = gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio');
+                };
+                if (dia[1][0] === 'Jueves') {
+                    elTipoServicio = gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio');
+                };
+                if (dia[1][0] === 'Viernes') {
+                    elTipoServicio = gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio');
+                };
+                if (dia[1][0] === 'Sábado') {
+                    elTipoServicio = gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio');
+                };
+                if (dia[1][0] === 'Domingo') {
+                    elTipoServicio = gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio');
+                };
+                if (elTipoServicio) {
+                    columnaAnadir['tipoServicio'] = elTipoServicio;
+                };
                 if (stateFestivo['estadoFestivoDia' + (index + 1)] || !hayTrabajador) {
                     if (dia[1][0] === 'Lunes') {
                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                             lunesInicioRango: null,
                             lunesFinRango: null,
                             tipoServicio: '',
-                            baja: false,
-                            tipoBaja: null,
+                            baja: arrayBaja.includes(index + 1) ? true : false,
+                            tipoBaja: arrayBaja.includes(index + 1) ? (arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado))) : null,
                             festivo: true,
                             observaciones: '',
                             modificado: false,
@@ -3761,33 +3275,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             };
                             festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesInicioRango');
                             if (festivoComputable.cantidad > 0) {
-                                switch (festivoComputable.servicio) {
-                                    case 'LIM':
-                                        contadorHorasFestivosComputables_L += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIME':
-                                        contadorHorasFestivosComputables_E += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIMP':
-                                        contadorHorasFestivosComputables_P += festivoComputable.cantidad;
-                                        break;
-                                    case 'NAVE2':
-                                        contadorHorasFestivosComputables_N += festivoComputable.cantidad;
-                                        break;
-                                    case 'REFZ':
-                                        contadorHorasFestivosComputables_R += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM1':
-                                        contadorHorasFestivosComputables_L1 += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM2':
-                                        contadorHorasFestivosComputables_L2 += festivoComputable.cantidad;
-                                        break;
-                                    case 'FEST':
-                                        contadorHorasFestivosComputables_F += festivoComputable.cantidad;
-                                        break;
-                                    default:
-                                };
+                                contadorHorasFestivosComputables += festivoComputable.cantidad;
                             };
                         };
                     };
@@ -3856,7 +3344,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                     lunesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicioRango'),
                                                     lunesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFinRango'),
-                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
+                                                    tipoServicio: elTipoServicio,
                                                     baja: false,
                                                     tipoBaja: null,
                                                     festivo: false,
@@ -3911,7 +3399,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 lunesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicioRango'),
                                                 lunesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFinRango'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -3971,7 +3459,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 lunesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicioRango'),
                                                 lunesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFinRango'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -4026,7 +3514,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             lunesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicioRango'),
                                             lunesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFinRango'),
-                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
+                                            tipoServicio: elTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -4047,8 +3535,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             martesInicioRango: null,
                             martesFinRango: null,
                             tipoServicio: '',
-                            baja: false,
-                            tipoBaja: null,
+                            baja: arrayBaja.includes(index + 1) ? true : false,
+                            tipoBaja: arrayBaja.includes(index + 1) ? (arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado))) : null,
                             festivo: true,
                             observaciones: '',
                             modificado: false,
@@ -4077,33 +3565,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             };
                             festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesInicioRango');
                             if (festivoComputable.cantidad > 0) {
-                                switch (festivoComputable.servicio) {
-                                    case 'LIM':
-                                        contadorHorasFestivosComputables_L += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIME':
-                                        contadorHorasFestivosComputables_E += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIMP':
-                                        contadorHorasFestivosComputables_P += festivoComputable.cantidad;
-                                        break;
-                                    case 'NAVE2':
-                                        contadorHorasFestivosComputables_N += festivoComputable.cantidad;
-                                        break;
-                                    case 'REFZ':
-                                        contadorHorasFestivosComputables_R += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM1':
-                                        contadorHorasFestivosComputables_L1 += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM2':
-                                        contadorHorasFestivosComputables_L2 += festivoComputable.cantidad;
-                                        break;
-                                    case 'FEST':
-                                        contadorHorasFestivosComputables_F += festivoComputable.cantidad;
-                                        break;
-                                    default:
-                                };
+                                contadorHorasFestivosComputables += festivoComputable.cantidad;
                             };
                         };
                     };
@@ -4172,7 +3634,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                     martesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicioRango'),
                                                     martesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFinRango'),
-                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
+                                                    tipoServicio: elTipoServicio,
                                                     baja: false,
                                                     tipoBaja: null,
                                                     festivo: false,
@@ -4227,7 +3689,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 martesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicioRango'),
                                                 martesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFinRango'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -4287,7 +3749,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 martesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicioRango'),
                                                 martesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFinRango'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -4342,7 +3804,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             martesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicioRango'),
                                             martesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFinRango'),
-                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
+                                            tipoServicio: elTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -4363,8 +3825,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             miercolesInicioRango: null,
                             miercolesFinRango: null,
                             tipoServicio: '',
-                            baja: false,
-                            tipoBaja: null,
+                            baja: arrayBaja.includes(index + 1) ? true : false,
+                            tipoBaja: arrayBaja.includes(index + 1) ? (arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado))) : null,
                             festivo: true,
                             observaciones: '',
                             modificado: false,
@@ -4393,33 +3855,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             };
                             festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesInicioRango');
                             if (festivoComputable.cantidad > 0) {
-                                switch (festivoComputable.servicio) {
-                                    case 'LIM':
-                                        contadorHorasFestivosComputables_L += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIME':
-                                        contadorHorasFestivosComputables_E += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIMP':
-                                        contadorHorasFestivosComputables_P += festivoComputable.cantidad;
-                                        break;
-                                    case 'NAVE2':
-                                        contadorHorasFestivosComputables_N += festivoComputable.cantidad;
-                                        break;
-                                    case 'REFZ':
-                                        contadorHorasFestivosComputables_R += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM1':
-                                        contadorHorasFestivosComputables_L1 += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM2':
-                                        contadorHorasFestivosComputables_L2 += festivoComputable.cantidad;
-                                        break;
-                                    case 'FEST':
-                                        contadorHorasFestivosComputables_F += festivoComputable.cantidad;
-                                        break;
-                                    default:
-                                };
+                                contadorHorasFestivosComputables += festivoComputable.cantidad;
                             };
                         };
                     };
@@ -4488,7 +3924,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                     miercolesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicioRango'),
                                                     miercolesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFinRango'),
-                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
+                                                    tipoServicio: elTipoServicio,
                                                     baja: false,
                                                     tipoBaja: null,
                                                     festivo: false,
@@ -4543,7 +3979,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 miercolesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicioRango'),
                                                 miercolesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFinRango'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -4603,7 +4039,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 miercolesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicioRango'),
                                                 miercolesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFinRango'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -4658,7 +4094,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             miercolesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicioRango'),
                                             miercolesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFinRango'),
-                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
+                                            tipoServicio: elTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -4679,8 +4115,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             juevesInicioRango: null,
                             juevesFinRango: null,
                             tipoServicio: '',
-                            baja: false,
-                            tipoBaja: null,
+                            baja: arrayBaja.includes(index + 1) ? true : false,
+                            tipoBaja: arrayBaja.includes(index + 1) ? (arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado))) : null,
                             festivo: true,
                             observaciones: '',
                             modificado: false,
@@ -4709,33 +4145,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             };
                             festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesInicioRango');
                             if (festivoComputable.cantidad > 0) {
-                                switch (festivoComputable.servicio) {
-                                    case 'LIM':
-                                        contadorHorasFestivosComputables_L += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIME':
-                                        contadorHorasFestivosComputables_E += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIMP':
-                                        contadorHorasFestivosComputables_P += festivoComputable.cantidad;
-                                        break;
-                                    case 'NAVE2':
-                                        contadorHorasFestivosComputables_N += festivoComputable.cantidad;
-                                        break;
-                                    case 'REFZ':
-                                        contadorHorasFestivosComputables_R += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM1':
-                                        contadorHorasFestivosComputables_L1 += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM2':
-                                        contadorHorasFestivosComputables_L2 += festivoComputable.cantidad;
-                                        break;
-                                    case 'FEST':
-                                        contadorHorasFestivosComputables_F += festivoComputable.cantidad;
-                                        break;
-                                    default:
-                                };
+                                contadorHorasFestivosComputables += festivoComputable.cantidad;
                             };
                         };
                     };
@@ -4804,7 +4214,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                     juevesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicioRango'),
                                                     juevesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFinRango'),
-                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
+                                                    tipoServicio: elTipoServicio,
                                                     baja: false,
                                                     tipoBaja: null,
                                                     festivo: false,
@@ -4859,7 +4269,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 juevesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicioRango'),
                                                 juevesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFinRango'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -4919,7 +4329,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 juevesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicioRango'),
                                                 juevesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFinRango'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -4974,7 +4384,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             juevesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicioRango'),
                                             juevesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFinRango'),
-                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
+                                            tipoServicio: elTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -4995,8 +4405,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             viernesInicioRango: null,
                             viernesFinRango: null,
                             tipoServicio: '',
-                            baja: false,
-                            tipoBaja: null,
+                            baja: arrayBaja.includes(index + 1) ? true : false,
+                            tipoBaja: arrayBaja.includes(index + 1) ? (arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado))) : null,
                             festivo: true,
                             observaciones: '',
                             modificado: false,
@@ -5025,33 +4435,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             };
                             festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesInicioRango');
                             if (festivoComputable.cantidad > 0) {
-                                switch (festivoComputable.servicio) {
-                                    case 'LIM':
-                                        contadorHorasFestivosComputables_L += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIME':
-                                        contadorHorasFestivosComputables_E += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIMP':
-                                        contadorHorasFestivosComputables_P += festivoComputable.cantidad;
-                                        break;
-                                    case 'NAVE2':
-                                        contadorHorasFestivosComputables_N += festivoComputable.cantidad;
-                                        break;
-                                    case 'REFZ':
-                                        contadorHorasFestivosComputables_R += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM1':
-                                        contadorHorasFestivosComputables_L1 += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM2':
-                                        contadorHorasFestivosComputables_L2 += festivoComputable.cantidad;
-                                        break;
-                                    case 'FEST':
-                                        contadorHorasFestivosComputables_F += festivoComputable.cantidad;
-                                        break;
-                                    default:
-                                };
+                                contadorHorasFestivosComputables += festivoComputable.cantidad;
                             };
                         };
                     };
@@ -5120,7 +4504,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                     viernesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicioRango'),
                                                     viernesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFinRango'),
-                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
+                                                    tipoServicio: elTipoServicio,
                                                     baja: false,
                                                     tipoBaja: null,
                                                     festivo: false,
@@ -5175,7 +4559,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 viernesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicioRango'),
                                                 viernesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFinRango'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -5235,7 +4619,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 viernesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicioRango'),
                                                 viernesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFinRango'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -5290,7 +4674,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             viernesInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicioRango'),
                                             viernesFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFinRango'),
-                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
+                                            tipoServicio: elTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -5311,8 +4695,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             sabadoInicioRango: null,
                             sabadoFinRango: null,
                             tipoServicio: '',
-                            baja: false,
-                            tipoBaja: null,
+                            baja: arrayBaja.includes(index + 1) ? true : false,
+                            tipoBaja: arrayBaja.includes(index + 1) ? (arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado))) : null,
                             festivo: true,
                             observaciones: '',
                             modificado: false,
@@ -5341,33 +4725,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             };
                             festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoInicioRango');
                             if (festivoComputable.cantidad > 0) {
-                                switch (festivoComputable.servicio) {
-                                    case 'LIM':
-                                        contadorHorasFestivosComputables_L += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIME':
-                                        contadorHorasFestivosComputables_E += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIMP':
-                                        contadorHorasFestivosComputables_P += festivoComputable.cantidad;
-                                        break;
-                                    case 'NAVE2':
-                                        contadorHorasFestivosComputables_N += festivoComputable.cantidad;
-                                        break;
-                                    case 'REFZ':
-                                        contadorHorasFestivosComputables_R += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM1':
-                                        contadorHorasFestivosComputables_L1 += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM2':
-                                        contadorHorasFestivosComputables_L2 += festivoComputable.cantidad;
-                                        break;
-                                    case 'FEST':
-                                        contadorHorasFestivosComputables_F += festivoComputable.cantidad;
-                                        break;
-                                    default:
-                                };
+                                contadorHorasFestivosComputables += festivoComputable.cantidad;
                             };
                         };
                     };
@@ -5436,7 +4794,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                     sabadoInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicioRango'),
                                                     sabadoFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFinRango'),
-                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
+                                                    tipoServicio: elTipoServicio,
                                                     baja: false,
                                                     tipoBaja: null,
                                                     festivo: false,
@@ -5491,7 +4849,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 sabadoInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicioRango'),
                                                 sabadoFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFinRango'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -5551,7 +4909,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 sabadoInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicioRango'),
                                                 sabadoFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFinRango'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -5606,7 +4964,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             sabadoInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicioRango'),
                                             sabadoFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFinRango'),
-                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
+                                            tipoServicio: elTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -5627,8 +4985,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             domingoInicioRango: null,
                             domingoFinRango: null,
                             tipoServicio: '',
-                            baja: false,
-                            tipoBaja: null,
+                            baja: arrayBaja.includes(index + 1) ? true : false,
+                            tipoBaja: arrayBaja.includes(index + 1) ? (arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado))) : null,
                             festivo: true,
                             observaciones: '',
                             modificado: false,
@@ -5657,33 +5015,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             };
                             festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoInicioRango');
                             if (festivoComputable.cantidad > 0) {
-                                switch (festivoComputable.servicio) {
-                                    case 'LIM':
-                                        contadorHorasFestivosComputables_L += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIME':
-                                        contadorHorasFestivosComputables_E += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIMP':
-                                        contadorHorasFestivosComputables_P += festivoComputable.cantidad;
-                                        break;
-                                    case 'NAVE2':
-                                        contadorHorasFestivosComputables_N += festivoComputable.cantidad;
-                                        break;
-                                    case 'REFZ':
-                                        contadorHorasFestivosComputables_R += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM1':
-                                        contadorHorasFestivosComputables_L1 += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM2':
-                                        contadorHorasFestivosComputables_L2 += festivoComputable.cantidad;
-                                        break;
-                                    case 'FEST':
-                                        contadorHorasFestivosComputables_F += festivoComputable.cantidad;
-                                        break;
-                                    default:
-                                };
+                                contadorHorasFestivosComputables += festivoComputable.cantidad;
                             };
                         };
                     };
@@ -5752,7 +5084,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                     domingoInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicioRango'),
                                                     domingoFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFinRango'),
-                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
+                                                    tipoServicio: elTipoServicio,
                                                     baja: false,
                                                     tipoBaja: null,
                                                     festivo: false,
@@ -5807,7 +5139,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 domingoInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicioRango'),
                                                 domingoFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFinRango'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -5867,7 +5199,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 domingoInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicioRango'),
                                                 domingoFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFinRango'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -5922,7 +5254,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             domingoInicioRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicioRango'),
                                             domingoFinRango: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFinRango'),
-                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
+                                            tipoServicio: elTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -5943,6 +5275,30 @@ const gestionaColumnaCuadranteInteriorAccion = (
             losDiasDelMes.forEach((dia, index) => {
                 objetoBuffer = {};
                 numeroSemana = Math.ceil((index + 1) / 7);
+                if (dia[1][0] === 'Lunes') {
+                    elTipoServicio = gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio');
+                };
+                if (dia[1][0] === 'Martes') {
+                    elTipoServicio = gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio');
+                };
+                if (dia[1][0] === 'Miércoles') {
+                    elTipoServicio = gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio');
+                };
+                if (dia[1][0] === 'Jueves') {
+                    elTipoServicio = gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio');
+                };
+                if (dia[1][0] === 'Viernes') {
+                    elTipoServicio = gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio');
+                };
+                if (dia[1][0] === 'Sábado') {
+                    elTipoServicio = gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio');
+                };
+                if (dia[1][0] === 'Domingo') {
+                    elTipoServicio = gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio');
+                };
+                if (elTipoServicio) {
+                    columnaAnadir['tipoServicio'] = elTipoServicio;
+                };
                 if (stateFestivo['estadoFestivoDia' + (index + 1)] || !hayTrabajador) {
                     if (dia[1][0] === 'Lunes') {
                         columnaAnadir[dia[1][0] + dia[0][0]] = {
@@ -5951,8 +5307,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             lunesInicio2RangoDescanso: null,
                             lunesFin2RangoDescanso: null,
                             tipoServicio: '',
-                            baja: false,
-                            tipoBaja: null,
+                            baja: arrayBaja.includes(index + 1) ? true : false,
+                            tipoBaja: arrayBaja.includes(index + 1) ? (arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado))) : null,
                             festivo: true,
                             observaciones: '',
                             modificado: false,
@@ -5983,33 +5339,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             };
                             festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesInicio1RangoDescanso');
                             if (festivoComputable.cantidad > 0) {
-                                switch (festivoComputable.servicio) {
-                                    case 'LIM':
-                                        contadorHorasFestivosComputables_L += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIME':
-                                        contadorHorasFestivosComputables_E += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIMP':
-                                        contadorHorasFestivosComputables_P += festivoComputable.cantidad;
-                                        break;
-                                    case 'NAVE2':
-                                        contadorHorasFestivosComputables_N += festivoComputable.cantidad;
-                                        break;
-                                    case 'REFZ':
-                                        contadorHorasFestivosComputables_R += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM1':
-                                        contadorHorasFestivosComputables_L1 += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM2':
-                                        contadorHorasFestivosComputables_L2 += festivoComputable.cantidad;
-                                        break;
-                                    case 'FEST':
-                                        contadorHorasFestivosComputables_F += festivoComputable.cantidad;
-                                        break;
-                                    default:
-                                };
+                                contadorHorasFestivosComputables += festivoComputable.cantidad;
                             };
                         };
                     };
@@ -6086,7 +5416,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                                     lunesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFin1RangoDescanso'),
                                                     lunesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicio2RangoDescanso'),
                                                     lunesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFin2RangoDescanso'),
-                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
+                                                    tipoServicio: elTipoServicio,
                                                     baja: false,
                                                     tipoBaja: null,
                                                     festivo: false,
@@ -6147,7 +5477,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                                 lunesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFin1RangoDescanso'),
                                                 lunesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicio2RangoDescanso'),
                                                 lunesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFin2RangoDescanso'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -6213,7 +5543,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                                 lunesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFin1RangoDescanso'),
                                                 lunesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicio2RangoDescanso'),
                                                 lunesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFin2RangoDescanso'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -6274,7 +5604,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             lunesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFin1RangoDescanso'),
                                             lunesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesInicio2RangoDescanso'),
                                             lunesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesFin2RangoDescanso'),
-                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
+                                            tipoServicio: elTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -6297,8 +5627,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             martesInicio2RangoDescanso: null,
                             martesFin2RangoDescanso: null,
                             tipoServicio: '',
-                            baja: false,
-                            tipoBaja: null,
+                            baja: arrayBaja.includes(index + 1) ? true : false,
+                            tipoBaja: arrayBaja.includes(index + 1) ? (arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado))) : null,
                             festivo: true,
                             observaciones: '',
                             modificado: false,
@@ -6329,33 +5659,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             };
                             festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesInicio1RangoDescanso');
                             if (festivoComputable.cantidad > 0) {
-                                switch (festivoComputable.servicio) {
-                                    case 'LIM':
-                                        contadorHorasFestivosComputables_L += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIME':
-                                        contadorHorasFestivosComputables_E += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIMP':
-                                        contadorHorasFestivosComputables_P += festivoComputable.cantidad;
-                                        break;
-                                    case 'NAVE2':
-                                        contadorHorasFestivosComputables_N += festivoComputable.cantidad;
-                                        break;
-                                    case 'REFZ':
-                                        contadorHorasFestivosComputables_R += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM1':
-                                        contadorHorasFestivosComputables_L1 += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM2':
-                                        contadorHorasFestivosComputables_L2 += festivoComputable.cantidad;
-                                        break;
-                                    case 'FEST':
-                                        contadorHorasFestivosComputables_F += festivoComputable.cantidad;
-                                        break;
-                                    default:
-                                };
+                                contadorHorasFestivosComputables += festivoComputable.cantidad;
                             };
                         };
                     };
@@ -6432,7 +5736,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                                     martesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFin1RangoDescanso'),
                                                     martesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicio2RangoDescanso'),
                                                     martesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFin2RangoDescanso'),
-                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
+                                                    tipoServicio: elTipoServicio,
                                                     baja: false,
                                                     tipoBaja: null,
                                                     festivo: false,
@@ -6493,7 +5797,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                                 martesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFin1RangoDescanso'),
                                                 martesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicio2RangoDescanso'),
                                                 martesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFin2RangoDescanso'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -6559,7 +5863,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                                 martesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFin1RangoDescanso'),
                                                 martesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicio2RangoDescanso'),
                                                 martesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFin2RangoDescanso'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -6620,7 +5924,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             martesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFin1RangoDescanso'),
                                             martesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesInicio2RangoDescanso'),
                                             martesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesFin2RangoDescanso'),
-                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
+                                            tipoServicio: elTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -6643,8 +5947,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             miercolesInicio2RangoDescanso: null,
                             miercolesFin2RangoDescanso: null,
                             tipoServicio: '',
-                            baja: false,
-                            tipoBaja: null,
+                            baja: arrayBaja.includes(index + 1) ? true : false,
+                            tipoBaja: arrayBaja.includes(index + 1) ? (arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado))) : null,
                             festivo: true,
                             observaciones: '',
                             modificado: false,
@@ -6675,33 +5979,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             };
                             festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesInicio1RangoDescanso');
                             if (festivoComputable.cantidad > 0) {
-                                switch (festivoComputable.servicio) {
-                                    case 'LIM':
-                                        contadorHorasFestivosComputables_L += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIME':
-                                        contadorHorasFestivosComputables_E += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIMP':
-                                        contadorHorasFestivosComputables_P += festivoComputable.cantidad;
-                                        break;
-                                    case 'NAVE2':
-                                        contadorHorasFestivosComputables_N += festivoComputable.cantidad;
-                                        break;
-                                    case 'REFZ':
-                                        contadorHorasFestivosComputables_R += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM1':
-                                        contadorHorasFestivosComputables_L1 += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM2':
-                                        contadorHorasFestivosComputables_L2 += festivoComputable.cantidad;
-                                        break;
-                                    case 'FEST':
-                                        contadorHorasFestivosComputables_F += festivoComputable.cantidad;
-                                        break;
-                                    default:
-                                };
+                                contadorHorasFestivosComputables += festivoComputable.cantidad;
                             };
                         };
                     };
@@ -6778,7 +6056,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                                     miercolesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFin1RangoDescanso'),
                                                     miercolesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicio2RangoDescanso'),
                                                     miercolesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFin2RangoDescanso'),
-                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
+                                                    tipoServicio: elTipoServicio,
                                                     baja: false,
                                                     tipoBaja: null,
                                                     festivo: false,
@@ -6839,7 +6117,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                                 miercolesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFin1RangoDescanso'),
                                                 miercolesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicio2RangoDescanso'),
                                                 miercolesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFin2RangoDescanso'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -6905,7 +6183,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                                 miercolesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFin1RangoDescanso'),
                                                 miercolesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicio2RangoDescanso'),
                                                 miercolesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFin2RangoDescanso'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -6966,7 +6244,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             miercolesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFin1RangoDescanso'),
                                             miercolesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesInicio2RangoDescanso'),
                                             miercolesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesFin2RangoDescanso'),
-                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
+                                            tipoServicio: elTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -6989,8 +6267,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             juevesInicio2RangoDescanso: null,
                             juevesFin2RangoDescanso: null,
                             tipoServicio: '',
-                            baja: false,
-                            tipoBaja: null,
+                            baja: arrayBaja.includes(index + 1) ? true : false,
+                            tipoBaja: arrayBaja.includes(index + 1) ? (arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado))) : null,
                             festivo: true,
                             observaciones: '',
                             modificado: false,
@@ -7021,33 +6299,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             };
                             festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesInicio1RangoDescanso');
                             if (festivoComputable.cantidad > 0) {
-                                switch (festivoComputable.servicio) {
-                                    case 'LIM':
-                                        contadorHorasFestivosComputables_L += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIME':
-                                        contadorHorasFestivosComputables_E += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIMP':
-                                        contadorHorasFestivosComputables_P += festivoComputable.cantidad;
-                                        break;
-                                    case 'NAVE2':
-                                        contadorHorasFestivosComputables_N += festivoComputable.cantidad;
-                                        break;
-                                    case 'REFZ':
-                                        contadorHorasFestivosComputables_R += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM1':
-                                        contadorHorasFestivosComputables_L1 += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM2':
-                                        contadorHorasFestivosComputables_L2 += festivoComputable.cantidad;
-                                        break;
-                                    case 'FEST':
-                                        contadorHorasFestivosComputables_F += festivoComputable.cantidad;
-                                        break;
-                                    default:
-                                };
+                                contadorHorasFestivosComputables += festivoComputable.cantidad;
                             };
                         };
                     };
@@ -7124,7 +6376,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                                     juevesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFin1RangoDescanso'),
                                                     juevesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicio2RangoDescanso'),
                                                     juevesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFin2RangoDescanso'),
-                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
+                                                    tipoServicio: elTipoServicio,
                                                     baja: false,
                                                     tipoBaja: null,
                                                     festivo: false,
@@ -7185,7 +6437,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                                 juevesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFin1RangoDescanso'),
                                                 juevesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicio2RangoDescanso'),
                                                 juevesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFin2RangoDescanso'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -7251,7 +6503,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                                 juevesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFin1RangoDescanso'),
                                                 juevesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicio2RangoDescanso'),
                                                 juevesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFin2RangoDescanso'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -7312,7 +6564,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             juevesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFin1RangoDescanso'),
                                             juevesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesInicio2RangoDescanso'),
                                             juevesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesFin2RangoDescanso'),
-                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
+                                            tipoServicio: elTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -7335,8 +6587,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             viernesInicio2RangoDescanso: null,
                             viernesFin2RangoDescanso: null,
                             tipoServicio: '',
-                            baja: false,
-                            tipoBaja: null,
+                            baja: arrayBaja.includes(index + 1) ? true : false,
+                            tipoBaja: arrayBaja.includes(index + 1) ? (arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado))) : null,
                             festivo: true,
                             observaciones: '',
                             modificado: false,
@@ -7367,33 +6619,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             };
                             festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesInicio1RangoDescanso');
                             if (festivoComputable.cantidad > 0) {
-                                switch (festivoComputable.servicio) {
-                                    case 'LIM':
-                                        contadorHorasFestivosComputables_L += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIME':
-                                        contadorHorasFestivosComputables_E += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIMP':
-                                        contadorHorasFestivosComputables_P += festivoComputable.cantidad;
-                                        break;
-                                    case 'NAVE2':
-                                        contadorHorasFestivosComputables_N += festivoComputable.cantidad;
-                                        break;
-                                    case 'REFZ':
-                                        contadorHorasFestivosComputables_R += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM1':
-                                        contadorHorasFestivosComputables_L1 += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM2':
-                                        contadorHorasFestivosComputables_L2 += festivoComputable.cantidad;
-                                        break;
-                                    case 'FEST':
-                                        contadorHorasFestivosComputables_F += festivoComputable.cantidad;
-                                        break;
-                                    default:
-                                };
+                                contadorHorasFestivosComputables += festivoComputable.cantidad;
                             };
                         };
                     };
@@ -7470,7 +6696,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                                     viernesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFin1RangoDescanso'),
                                                     viernesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicio2RangoDescanso'),
                                                     viernesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFin2RangoDescanso'),
-                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
+                                                    tipoServicio: elTipoServicio,
                                                     baja: false,
                                                     tipoBaja: null,
                                                     festivo: false,
@@ -7531,7 +6757,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                                 viernesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFin1RangoDescanso'),
                                                 viernesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicio2RangoDescanso'),
                                                 viernesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFin2RangoDescanso'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -7597,7 +6823,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                                 viernesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFin1RangoDescanso'),
                                                 viernesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicio2RangoDescanso'),
                                                 viernesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFin2RangoDescanso'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -7658,7 +6884,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             viernesFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFin1RangoDescanso'),
                                             viernesInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesInicio2RangoDescanso'),
                                             viernesFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesFin2RangoDescanso'),
-                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
+                                            tipoServicio: elTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -7681,8 +6907,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             sabadoInicio2RangoDescanso: null,
                             sabadoFin2RangoDescanso: null,
                             tipoServicio: '',
-                            baja: false,
-                            tipoBaja: null,
+                            baja: arrayBaja.includes(index + 1) ? true : false,
+                            tipoBaja: arrayBaja.includes(index + 1) ? (arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado))) : null,
                             festivo: true,
                             observaciones: '',
                             modificado: false,
@@ -7713,33 +6939,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             };
                             festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoInicio1RangoDescanso');
                             if (festivoComputable.cantidad > 0) {
-                                switch (festivoComputable.servicio) {
-                                    case 'LIM':
-                                        contadorHorasFestivosComputables_L += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIME':
-                                        contadorHorasFestivosComputables_E += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIMP':
-                                        contadorHorasFestivosComputables_P += festivoComputable.cantidad;
-                                        break;
-                                    case 'NAVE2':
-                                        contadorHorasFestivosComputables_N += festivoComputable.cantidad;
-                                        break;
-                                    case 'REFZ':
-                                        contadorHorasFestivosComputables_R += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM1':
-                                        contadorHorasFestivosComputables_L1 += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM2':
-                                        contadorHorasFestivosComputables_L2 += festivoComputable.cantidad;
-                                        break;
-                                    case 'FEST':
-                                        contadorHorasFestivosComputables_F += festivoComputable.cantidad;
-                                        break;
-                                    default:
-                                };
+                                contadorHorasFestivosComputables += festivoComputable.cantidad;
                             };
                         };
                     };
@@ -7816,7 +7016,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                                     sabadoFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFin1RangoDescanso'),
                                                     sabadoInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicio2RangoDescanso'),
                                                     sabadoFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFin2RangoDescanso'),
-                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
+                                                    tipoServicio: elTipoServicio,
                                                     baja: false,
                                                     tipoBaja: null,
                                                     festivo: false,
@@ -7877,7 +7077,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                                 sabadoFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFin1RangoDescanso'),
                                                 sabadoInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicio2RangoDescanso'),
                                                 sabadoFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFin2RangoDescanso'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -7943,7 +7143,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                                 sabadoFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFin1RangoDescanso'),
                                                 sabadoInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicio2RangoDescanso'),
                                                 sabadoFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFin2RangoDescanso'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -8004,7 +7204,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             sabadoFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFin1RangoDescanso'),
                                             sabadoInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoInicio2RangoDescanso'),
                                             sabadoFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoFin2RangoDescanso'),
-                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
+                                            tipoServicio: elTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -8027,8 +7227,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             domingoInicio2RangoDescanso: null,
                             domingoFin2RangoDescanso: null,
                             tipoServicio: '',
-                            baja: false,
-                            tipoBaja: null,
+                            baja: arrayBaja.includes(index + 1) ? true : false,
+                            tipoBaja: arrayBaja.includes(index + 1) ? (arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado))) : null,
                             festivo: true,
                             observaciones: '',
                             modificado: false,
@@ -8059,33 +7259,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             };
                             festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoInicio1RangoDescanso');
                             if (festivoComputable.cantidad > 0) {
-                                switch (festivoComputable.servicio) {
-                                    case 'LIM':
-                                        contadorHorasFestivosComputables_L += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIME':
-                                        contadorHorasFestivosComputables_E += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIMP':
-                                        contadorHorasFestivosComputables_P += festivoComputable.cantidad;
-                                        break;
-                                    case 'NAVE2':
-                                        contadorHorasFestivosComputables_N += festivoComputable.cantidad;
-                                        break;
-                                    case 'REFZ':
-                                        contadorHorasFestivosComputables_R += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM1':
-                                        contadorHorasFestivosComputables_L1 += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM2':
-                                        contadorHorasFestivosComputables_L2 += festivoComputable.cantidad;
-                                        break;
-                                    case 'FEST':
-                                        contadorHorasFestivosComputables_F += festivoComputable.cantidad;
-                                        break;
-                                    default:
-                                };
+                                contadorHorasFestivosComputables += festivoComputable.cantidad;
                             };
                         };
                     };
@@ -8162,7 +7336,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                                     domingoFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFin1RangoDescanso'),
                                                     domingoInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicio2RangoDescanso'),
                                                     domingoFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFin2RangoDescanso'),
-                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
+                                                    tipoServicio: elTipoServicio,
                                                     baja: false,
                                                     tipoBaja: null,
                                                     festivo: false,
@@ -8223,7 +7397,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                                 domingoFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFin1RangoDescanso'),
                                                 domingoInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicio2RangoDescanso'),
                                                 domingoFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFin2RangoDescanso'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -8289,7 +7463,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                                 domingoFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFin1RangoDescanso'),
                                                 domingoInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicio2RangoDescanso'),
                                                 domingoFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFin2RangoDescanso'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -8350,7 +7524,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             domingoFin1RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFin1RangoDescanso'),
                                             domingoInicio2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoInicio2RangoDescanso'),
                                             domingoFin2RangoDescanso: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoFin2RangoDescanso'),
-                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
+                                            tipoServicio: elTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -8371,13 +7545,37 @@ const gestionaColumnaCuadranteInteriorAccion = (
             losDiasDelMes.forEach((dia, index) => {
                 objetoBuffer = {};
                 numeroSemana = Math.ceil((index + 1) / 7);
+                if (dia[1][0] === 'Lunes') {
+                    elTipoServicio = gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio');
+                };
+                if (dia[1][0] === 'Martes') {
+                    elTipoServicio = gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio');
+                };
+                if (dia[1][0] === 'Miércoles') {
+                    elTipoServicio = gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio');
+                };
+                if (dia[1][0] === 'Jueves') {
+                    elTipoServicio = gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio');
+                };
+                if (dia[1][0] === 'Viernes') {
+                    elTipoServicio = gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio');
+                };
+                if (dia[1][0] === 'Sábado') {
+                    elTipoServicio = gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio');
+                };
+                if (dia[1][0] === 'Domingo') {
+                    elTipoServicio = gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio');
+                };
+                if (elTipoServicio) {
+                    columnaAnadir['tipoServicio'] = elTipoServicio;
+                };
                 if (stateFestivo['estadoFestivoDia' + (index + 1)] || !hayTrabajador) {
                     if (dia[1][0] === 'Lunes') {
                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                             lunesCantidad: '',
                             tipoServicio: '',
-                            baja: false,
-                            tipoBaja: null,
+                            baja: arrayBaja.includes(index + 1) ? true : false,
+                            tipoBaja: arrayBaja.includes(index + 1) ? (arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado))) : null,
                             festivo: true,
                             observaciones: '',
                             modificado: false,
@@ -8405,33 +7603,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             };
                             festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesCantidad');
                             if (festivoComputable.cantidad > 0) {
-                                switch (festivoComputable.servicio) {
-                                    case 'LIM':
-                                        contadorHorasFestivosComputables_L += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIME':
-                                        contadorHorasFestivosComputables_E += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIMP':
-                                        contadorHorasFestivosComputables_P += festivoComputable.cantidad;
-                                        break;
-                                    case 'NAVE2':
-                                        contadorHorasFestivosComputables_N += festivoComputable.cantidad;
-                                        break;
-                                    case 'REFZ':
-                                        contadorHorasFestivosComputables_R += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM1':
-                                        contadorHorasFestivosComputables_L1 += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM2':
-                                        contadorHorasFestivosComputables_L2 += festivoComputable.cantidad;
-                                        break;
-                                    case 'FEST':
-                                        contadorHorasFestivosComputables_F += festivoComputable.cantidad;
-                                        break;
-                                    default:
-                                };
+                                contadorHorasFestivosComputables += festivoComputable.cantidad;
                             };
                         };
                     };
@@ -8496,7 +7668,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             } else {
                                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                     lunesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesCantidad'),
-                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
+                                                    tipoServicio: elTipoServicio,
                                                     baja: false,
                                                     tipoBaja: null,
                                                     festivo: false,
@@ -8548,7 +7720,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                         } else {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 lunesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesCantidad'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -8605,7 +7777,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                         } else {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 lunesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesCantidad'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -8657,7 +7829,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             lunesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesCantidad'),
-                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio'),
+                                            tipoServicio: elTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -8677,8 +7849,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                             martesCantidad: '',
                             tipoServicio: '',
-                            baja: false,
-                            tipoBaja: null,
+                            baja: arrayBaja.includes(index + 1) ? true : false,
+                            tipoBaja: arrayBaja.includes(index + 1) ? (arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado))) : null,
                             festivo: true,
                             observaciones: '',
                             modificado: false,
@@ -8706,33 +7878,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             };
                             festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesCantidad');
                             if (festivoComputable.cantidad > 0) {
-                                switch (festivoComputable.servicio) {
-                                    case 'LIM':
-                                        contadorHorasFestivosComputables_L += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIME':
-                                        contadorHorasFestivosComputables_E += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIMP':
-                                        contadorHorasFestivosComputables_P += festivoComputable.cantidad;
-                                        break;
-                                    case 'NAVE2':
-                                        contadorHorasFestivosComputables_N += festivoComputable.cantidad;
-                                        break;
-                                    case 'REFZ':
-                                        contadorHorasFestivosComputables_R += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM1':
-                                        contadorHorasFestivosComputables_L1 += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM2':
-                                        contadorHorasFestivosComputables_L2 += festivoComputable.cantidad;
-                                        break;
-                                    case 'FEST':
-                                        contadorHorasFestivosComputables_F += festivoComputable.cantidad;
-                                        break;
-                                    default:
-                                };
+                                contadorHorasFestivosComputables += festivoComputable.cantidad;
                             };
                         };
                     };
@@ -8797,7 +7943,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             } else {
                                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                     martesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesCantidad'),
-                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
+                                                    tipoServicio: elTipoServicio,
                                                     baja: false,
                                                     tipoBaja: null,
                                                     festivo: false,
@@ -8849,7 +7995,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                         } else {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 martesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesCantidad'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -8906,7 +8052,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                         } else {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 martesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesCantidad'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -8958,7 +8104,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             martesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesCantidad'),
-                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'martesTipoServicio'),
+                                            tipoServicio: elTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -8978,8 +8124,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                             miercolesCantidad: '',
                             tipoServicio: '',
-                            baja: false,
-                            tipoBaja: null,
+                            baja: arrayBaja.includes(index + 1) ? true : false,
+                            tipoBaja: arrayBaja.includes(index + 1) ? (arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado))) : null,
                             festivo: true,
                             observaciones: '',
                             modificado: false,
@@ -9007,33 +8153,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             };
                             festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesCantidad');
                             if (festivoComputable.cantidad > 0) {
-                                switch (festivoComputable.servicio) {
-                                    case 'LIM':
-                                        contadorHorasFestivosComputables_L += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIME':
-                                        contadorHorasFestivosComputables_E += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIMP':
-                                        contadorHorasFestivosComputables_P += festivoComputable.cantidad;
-                                        break;
-                                    case 'NAVE2':
-                                        contadorHorasFestivosComputables_N += festivoComputable.cantidad;
-                                        break;
-                                    case 'REFZ':
-                                        contadorHorasFestivosComputables_R += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM1':
-                                        contadorHorasFestivosComputables_L1 += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM2':
-                                        contadorHorasFestivosComputables_L2 += festivoComputable.cantidad;
-                                        break;
-                                    case 'FEST':
-                                        contadorHorasFestivosComputables_F += festivoComputable.cantidad;
-                                        break;
-                                    default:
-                                };
+                                contadorHorasFestivosComputables += festivoComputable.cantidad;
                             };
                         };
                     };
@@ -9098,7 +8218,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             } else {
                                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                     miercolesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesCantidad'),
-                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
+                                                    tipoServicio: elTipoServicio,
                                                     baja: false,
                                                     tipoBaja: null,
                                                     festivo: false,
@@ -9150,7 +8270,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                         } else {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 miercolesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesCantidad'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -9207,7 +8327,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                         } else {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 miercolesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesCantidad'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -9259,7 +8379,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             miercolesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesCantidad'),
-                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'miercolesTipoServicio'),
+                                            tipoServicio: elTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -9279,8 +8399,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                             juevesCantidad: '',
                             tipoServicio: '',
-                            baja: false,
-                            tipoBaja: null,
+                            baja: arrayBaja.includes(index + 1) ? true : false,
+                            tipoBaja: arrayBaja.includes(index + 1) ? (arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado))) : null,
                             festivo: true,
                             observaciones: '',
                             modificado: false,
@@ -9308,33 +8428,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             };
                             festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesCantidad');
                             if (festivoComputable.cantidad > 0) {
-                                switch (festivoComputable.servicio) {
-                                    case 'LIM':
-                                        contadorHorasFestivosComputables_L += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIME':
-                                        contadorHorasFestivosComputables_E += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIMP':
-                                        contadorHorasFestivosComputables_P += festivoComputable.cantidad;
-                                        break;
-                                    case 'NAVE2':
-                                        contadorHorasFestivosComputables_N += festivoComputable.cantidad;
-                                        break;
-                                    case 'REFZ':
-                                        contadorHorasFestivosComputables_R += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM1':
-                                        contadorHorasFestivosComputables_L1 += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM2':
-                                        contadorHorasFestivosComputables_L2 += festivoComputable.cantidad;
-                                        break;
-                                    case 'FEST':
-                                        contadorHorasFestivosComputables_F += festivoComputable.cantidad;
-                                        break;
-                                    default:
-                                };
+                                contadorHorasFestivosComputables += festivoComputable.cantidad;
                             };
                         };
                     };
@@ -9399,7 +8493,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             } else {
                                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                     juevesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesCantidad'),
-                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
+                                                    tipoServicio: elTipoServicio,
                                                     baja: false,
                                                     tipoBaja: null,
                                                     festivo: false,
@@ -9451,7 +8545,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                         } else {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 juevesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesCantidad'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -9508,7 +8602,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                         } else {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 juevesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesCantidad'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -9560,7 +8654,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             juevesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesCantidad'),
-                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'juevesTipoServicio'),
+                                            tipoServicio: elTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -9580,8 +8674,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                             viernesCantidad: '',
                             tipoServicio: '',
-                            baja: false,
-                            tipoBaja: null,
+                            baja: arrayBaja.includes(index + 1) ? true : false,
+                            tipoBaja: arrayBaja.includes(index + 1) ? (arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado))) : null,
                             festivo: true,
                             observaciones: '',
                             modificado: false,
@@ -9609,33 +8703,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             };
                             festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesCantidad');
                             if (festivoComputable.cantidad > 0) {
-                                switch (festivoComputable.servicio) {
-                                    case 'LIM':
-                                        contadorHorasFestivosComputables_L += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIME':
-                                        contadorHorasFestivosComputables_E += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIMP':
-                                        contadorHorasFestivosComputables_P += festivoComputable.cantidad;
-                                        break;
-                                    case 'NAVE2':
-                                        contadorHorasFestivosComputables_N += festivoComputable.cantidad;
-                                        break;
-                                    case 'REFZ':
-                                        contadorHorasFestivosComputables_R += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM1':
-                                        contadorHorasFestivosComputables_L1 += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM2':
-                                        contadorHorasFestivosComputables_L2 += festivoComputable.cantidad;
-                                        break;
-                                    case 'FEST':
-                                        contadorHorasFestivosComputables_F += festivoComputable.cantidad;
-                                        break;
-                                    default:
-                                };
+                                contadorHorasFestivosComputables += festivoComputable.cantidad;
                             };
                         };
                     };
@@ -9700,7 +8768,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             } else {
                                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                     viernesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesCantidad'),
-                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
+                                                    tipoServicio: elTipoServicio,
                                                     baja: false,
                                                     tipoBaja: null,
                                                     festivo: false,
@@ -9752,7 +8820,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                         } else {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 viernesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesCantidad'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -9809,7 +8877,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                         } else {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 viernesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesCantidad'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -9861,7 +8929,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             viernesCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesCantidad'),
-                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio'),
+                                            tipoServicio: elTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -9881,8 +8949,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                             sabadoCantidad: '',
                             tipoServicio: '',
-                            baja: false,
-                            tipoBaja: null,
+                            baja: arrayBaja.includes(index + 1) ? true : false,
+                            tipoBaja: arrayBaja.includes(index + 1) ? (arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado))) : null,
                             festivo: true,
                             observaciones: '',
                             modificado: false,
@@ -9910,33 +8978,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             };
                             festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoCantidad');
                             if (festivoComputable.cantidad > 0) {
-                                switch (festivoComputable.servicio) {
-                                    case 'LIM':
-                                        contadorHorasFestivosComputables_L += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIME':
-                                        contadorHorasFestivosComputables_E += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIMP':
-                                        contadorHorasFestivosComputables_P += festivoComputable.cantidad;
-                                        break;
-                                    case 'NAVE2':
-                                        contadorHorasFestivosComputables_N += festivoComputable.cantidad;
-                                        break;
-                                    case 'REFZ':
-                                        contadorHorasFestivosComputables_R += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM1':
-                                        contadorHorasFestivosComputables_L1 += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM2':
-                                        contadorHorasFestivosComputables_L2 += festivoComputable.cantidad;
-                                        break;
-                                    case 'FEST':
-                                        contadorHorasFestivosComputables_F += festivoComputable.cantidad;
-                                        break;
-                                    default:
-                                };
+                                contadorHorasFestivosComputables += festivoComputable.cantidad;
                             };
                         };
                     };
@@ -10001,7 +9043,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             } else {
                                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                     sabadoCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoCantidad'),
-                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
+                                                    tipoServicio: elTipoServicio,
                                                     baja: false,
                                                     tipoBaja: null,
                                                     festivo: false,
@@ -10053,7 +9095,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                         } else {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 sabadoCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoCantidad'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -10110,7 +9152,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                         } else {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 sabadoCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoCantidad'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -10162,7 +9204,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             sabadoCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoCantidad'),
-                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio'),
+                                            tipoServicio: elTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -10182,8 +9224,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                             domingoCantidad: '',
                             tipoServicio: '',
-                            baja: false,
-                            tipoBaja: null,
+                            baja: arrayBaja.includes(index + 1) ? true : false,
+                            tipoBaja: arrayBaja.includes(index + 1) ? (arrayRegistrosHistorico.length > 0 ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : dispatch(retornaTipoBajaSinHistorico(index + 1, trabajador.estado))) : null,
                             festivo: true,
                             observaciones: '',
                             modificado: false,
@@ -10211,33 +9253,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             };
                             festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoCantidad');
                             if (festivoComputable.cantidad > 0) {
-                                switch (festivoComputable.servicio) {
-                                    case 'LIM':
-                                        contadorHorasFestivosComputables_L += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIME':
-                                        contadorHorasFestivosComputables_E += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIMP':
-                                        contadorHorasFestivosComputables_P += festivoComputable.cantidad;
-                                        break;
-                                    case 'NAVE2':
-                                        contadorHorasFestivosComputables_N += festivoComputable.cantidad;
-                                        break;
-                                    case 'REFZ':
-                                        contadorHorasFestivosComputables_R += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM1':
-                                        contadorHorasFestivosComputables_L1 += festivoComputable.cantidad;
-                                        break;
-                                    case 'LIM2':
-                                        contadorHorasFestivosComputables_L2 += festivoComputable.cantidad;
-                                        break;
-                                    case 'FEST':
-                                        contadorHorasFestivosComputables_F += festivoComputable.cantidad;
-                                        break;
-                                    default:
-                                };
+                                contadorHorasFestivosComputables += festivoComputable.cantidad;
                             };
                         };
                     };
@@ -10302,7 +9318,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             } else {
                                                 columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                     domingoCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoCantidad'),
-                                                    tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
+                                                    tipoServicio: elTipoServicio,
                                                     baja: false,
                                                     tipoBaja: null,
                                                     festivo: false,
@@ -10354,7 +9370,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                         } else {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 domingoCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoCantidad'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -10411,7 +9427,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                         } else {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 domingoCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoCantidad'),
-                                                tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
+                                                tipoServicio: elTipoServicio,
                                                 baja: false,
                                                 tipoBaja: null,
                                                 festivo: false,
@@ -10463,7 +9479,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     } else {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             domingoCantidad: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoCantidad'),
-                                            tipoServicio: gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'domingoTipoServicio'),
+                                            tipoServicio: elTipoServicio,
                                             baja: false,
                                             tipoBaja: null,
                                             festivo: false,
@@ -10482,46 +9498,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
             break;
         default:
     };
-    if (contadorHorasFestivosComputables_L > 0) {
-        columnaAnadir['horasFestivasComputables_L'] = contadorHorasFestivosComputables_L;
-    } else {
-        columnaAnadir['horasFestivasComputables_L'] = 0;
-    };
-    if (contadorHorasFestivosComputables_E > 0) {
-        columnaAnadir['horasFestivasComputables_E'] = contadorHorasFestivosComputables_E;
-    } else {
-        columnaAnadir['horasFestivasComputables_E'] = 0;
-    };
-    if (contadorHorasFestivosComputables_P > 0) {
-        columnaAnadir['horasFestivasComputables_P'] = contadorHorasFestivosComputables_P;
-    } else {
-        columnaAnadir['horasFestivasComputables_P'] = 0;
-    };
-    if (contadorHorasFestivosComputables_N > 0) {
-        columnaAnadir['horasFestivasComputables_N'] = contadorHorasFestivosComputables_N;
-    } else {
-        columnaAnadir['horasFestivasComputables_N'] = 0;
-    };
-    if (contadorHorasFestivosComputables_R > 0) {
-        columnaAnadir['horasFestivasComputables_R'] = contadorHorasFestivosComputables_R;
-    } else {
-        columnaAnadir['horasFestivasComputables_R'] = 0;
-    };
-    if (contadorHorasFestivosComputables_L1 > 0) {
-        columnaAnadir['horasFestivasComputables_L1'] = contadorHorasFestivosComputables_L1;
-    } else {
-        columnaAnadir['horasFestivasComputables_L1'] = 0;
-    };
-    if (contadorHorasFestivosComputables_L2 > 0) {
-        columnaAnadir['horasFestivasComputables_L2'] = contadorHorasFestivosComputables_L2;
-    } else {
-        columnaAnadir['horasFestivasComputables_L2'] = 0;
-    };
-    if (contadorHorasFestivosComputables_F > 0) {
-        columnaAnadir['horasFestivasComputables_F'] = contadorHorasFestivosComputables_F;
-    } else {
-        columnaAnadir['horasFestivasComputables_F'] = 0;
-    };
+    columnaAnadir['horasFestivasComputables'] = contadorHorasFestivosComputables;
     if (contadorHorasBajasComputables > 0) {
         columnaAnadir['horasBajasComputables'] = contadorHorasBajasComputables;
     } else {
@@ -10536,9 +9513,6 @@ const gestionaColumnaCuadranteInteriorAccion = (
                 dispatch(setYaNoEsInicioAccion(true));
             };
         };
-    };
-    if (trabajador && trabajador.estado === 'bajaCIA') {
-        dispatch(setPrimerDiaEstadoBajaCIA(null));
     };
     return {
         columnaAnadir,
@@ -10586,7 +9560,7 @@ export const gestionaColumnaCuadranteAccion = (trabajador, tipoTrabajador, esRev
                 dispatch(setPosicionSuplentePrevioACambiarAccion(null));
             } else {
                 if (esAnadirColumna) {
-                    posicionTrabajador = columna;
+                    posicionTrabajador = columna + 1;
                 } else {
                     if (esInicio) {
                         posicionTrabajador = trabajador.laPosicionDelTrabajador;
@@ -10625,6 +9599,9 @@ export const gestionaColumnaCuadranteAccion = (trabajador, tipoTrabajador, esRev
                 return;
             };
         };
+    };
+    if (esInicio && cuadrante.length === 0 && tipoTrabajador === 'suplente') {
+        return;
     };
     if (!objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1]) {
         dispatch(setAlertaAccion({

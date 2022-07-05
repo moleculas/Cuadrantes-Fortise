@@ -15,3 +15,7 @@
 .calendarioOculto .MuiFormHelperText-root.Mui-error {
     display: none !important
 }
+
+.botoneraTrab .MuiButtonGroup-grouped {
+    min-width: 20%;
+}

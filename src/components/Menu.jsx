@@ -76,10 +76,10 @@ const Menu = (props) => {
     };
 
     const limpiezaGeneral = () => {
-        if (onEstem === 'editarCentros' || onEstem === 'registrarCentros') {
+        if (onEstem === 'editarCentros' || onEstem === 'registrarCentros' || onEstem === 'inicio') {
             dispatch(vaciarDatosCentrosAccion());
         };
-        if (onEstem === 'editarTrabajadores' || onEstem === 'registrarTrabajadores') {
+        if (onEstem === 'editarTrabajadores' || onEstem === 'registrarTrabajadores' || onEstem === 'inicio') {
             dispatch(vaciarDatosTrabajadoresAccion());
         };
         //gestión pendientes
@@ -304,7 +304,8 @@ const Menu = (props) => {
                         </ListItem>
                         <ListItem
                             button
-                            disabled={onEstem === 'nominas' ? true : false}
+                            //disabled={onEstem === 'nominas' ? true : false}
+                            disabled={true}
                             onClick={() => handleClick('/nominas')}
                         >
                             <ListItemIcon>

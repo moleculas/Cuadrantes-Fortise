@@ -34,6 +34,8 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import Checkbox from '@material-ui/core/Checkbox';
+import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
+import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
 
 //carga componentes
 import ItemListTime from './ItemListTime';
@@ -59,7 +61,9 @@ import { cierraObjetoDialogAccion } from '../redux/appDucks';
 import { activarDesactivarActualizarCentroAccion } from '../redux/centrosDucks';
 import { validarMailAccion } from '../redux/appDucks';
 import { vaciarDatosCentrosAccion } from '../redux/centrosDucks';
+import { obtenerTrabajadoresSubcategoriaAccion } from '../redux/trabajadoresDucks';
 
+//constantes
 const categorias = Constantes.CATEGORIAS_CENTROS;
 const variaciones = Constantes.VARIACIONES_HORARIOS_CENTROS;
 const tipos = Constantes.MODO_ENTRADA_HORARIOS;
@@ -159,6 +163,8 @@ const CentrosEditar = forwardRef((props, ref) => {
     const listadoTrabajadores = useSelector(store => store.variablesTrabajadores.arrayTrabajadores);
     const disabledItem = useSelector(store => store.variablesApp.estadoActivadoDesactivado);
     const openDialog2 = useSelector(store => store.variablesApp.openDialog[1]);
+    const trabajadoresCargados = useSelector(store => store.variablesTrabajadores.trabajadoresCargados);
+    const arrayTrabajadoresSubcategoria = useSelector(store => store.variablesTrabajadores.arrayTrabajadoresSubcategoria);
 
     //states
 
@@ -265,7 +271,47 @@ const CentrosEditar = forwardRef((props, ref) => {
         activo_C3: 'si',
         activo_C2: 'si',
         activo_ES: 'si',
-        activo_PA: 'si'
+        activo_PA: 'si',
+        int_TO: false,
+        int_CR: false,
+        int_CE: false,
+        int_CI: false,
+        int_MO: false,
+        int_OF: false,
+        int_AL: false,
+        int_LA: false,
+        int_TE: false,
+        int_FI: false,
+        int_FE: false,
+        int_AB: false,
+        int_MA: false,
+        int_PO: false,
+        int_BA: false,
+        int_FT: false,
+        int_C3: false,
+        int_C2: false,
+        int_ES: false,
+        int_PA: false,
+        trab_TO: '',
+        trab_CR: '',
+        trab_CE: '',
+        trab_CI: '',
+        trab_MO: '',
+        trab_OF: '',
+        trab_AL: '',
+        trab_LA: '',
+        trab_TE: '',
+        trab_FI: '',
+        trab_FE: '',
+        trab_AB: '',
+        trab_MA: '',
+        trab_PO: '',
+        trab_BA: '',
+        trab_FT: '',
+        trab_C3: '',
+        trab_C2: '',
+        trab_ES: '',
+        trab_PA: ''
     });
     const [valueTimePickerInicioEdicion, setValueTimePickerInicioEdicion] = useState([
         {
@@ -499,6 +545,10 @@ const CentrosEditar = forwardRef((props, ref) => {
         };
         if (listadoTrabajadores.length === 0) {
             dispatch(obtenerTrabajadoresAccion('trabajadores'));
+        } else {
+            if (trabajadoresCargados) {
+                dispatch(obtenerTrabajadoresSubcategoriaAccion(2));
+            };
         };
     }, [listadoCentros, listadoTrabajadores]);
 
@@ -579,6 +629,9 @@ const CentrosEditar = forwardRef((props, ref) => {
                 activoNumCuenta: centroAEditar.activoNumCuenta === 'si' ? true : false,
                 gestionEspSF: centroAEditar.serviciosFijos.gestionEspSF || false
             });
+            if (centroAEditar.estado === 'baja') {
+                setStateSwitchEstadoEdicion(true);
+            };
         };
     }, [centroAEditar]);
 
@@ -908,6 +961,45 @@ const CentrosEditar = forwardRef((props, ref) => {
             }
             return;
         };
+        if (prop === "int_TO" ||
+            prop === "int_CR" ||
+            prop === "int_CE" ||
+            prop === "int_CI" ||
+            prop === "int_MO" ||
+            prop === "int_OF" ||
+            prop === "int_AL" ||
+            prop === "int_LA" ||
+            prop === "int_TE" ||
+            prop === "int_FI" ||
+            prop === "int_FE" ||
+            prop === "int_AB" ||
+            prop === "int_MA" ||
+            prop === "int_PO" ||
+            prop === "int_BA" ||
+            prop === "int_FT" ||
+            prop === "int_C3" ||
+            prop === "int_C2" ||
+            prop === "int_ES" ||
+            prop === "int_PA"
+        ) {
+            if (e.target.checked) {
+                const myPropSplitted = prop.split("_");
+                const elServicio = myPropSplitted[1];
+                setValuesFormEdicion({
+                    ...valuesFormEdicion,
+                    ['diaVariacion_' + elServicio]: '',
+                    ['precioHora_' + elServicio]: null,
+                    ['variacion_' + elServicio]: '',
+                    [prop]: e.target.checked
+                });
+                dispatch(activarDesactivarActualizarCentroAccion(false));
+                return;
+            } else {
+                setValuesFormEdicion({ ...valuesFormEdicion, [prop]: e.target.checked });
+                dispatch(activarDesactivarActualizarCentroAccion(false));
+                return;
+            };
+        };
         if (prop === "tipo") {
             setValuesFormEdicion({ ...valuesFormEdicion, [prop]: e.target.value });
             setStateSwitchTipoRegistro(false);
@@ -1186,14 +1278,14 @@ const CentrosEditar = forwardRef((props, ref) => {
         let arrayValoresTimePicker, arrayValoresHorario;
         switch (idCaso) {
             case 'timePickerInicio-edicion-lunes':
-                if (valueTimePickerFinEdicion[idIndex].lunes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinEdicion[idIndex].lunes))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerFinEdicion[idIndex].lunes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinEdicion[idIndex].lunes))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerInicioEdicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1207,14 +1299,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio-edicion-martes':
-                if (valueTimePickerFinEdicion[idIndex].martes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinEdicion[idIndex].martes))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerFinEdicion[idIndex].martes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinEdicion[idIndex].martes))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerInicioEdicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1228,14 +1320,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio-edicion-miercoles':
-                if (valueTimePickerFinEdicion[idIndex].miercoles !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinEdicion[idIndex].miercoles))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerFinEdicion[idIndex].miercoles !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinEdicion[idIndex].miercoles))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerInicioEdicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1249,14 +1341,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio-edicion-jueves':
-                if (valueTimePickerFinEdicion[idIndex].jueves !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinEdicion[idIndex].jueves))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerFinEdicion[idIndex].jueves !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinEdicion[idIndex].jueves))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerInicioEdicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1270,14 +1362,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio-edicion-viernes':
-                if (valueTimePickerFinEdicion[idIndex].viernes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinEdicion[idIndex].viernes))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerFinEdicion[idIndex].viernes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinEdicion[idIndex].viernes))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerInicioEdicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1291,14 +1383,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio-edicion-sabado':
-                if (valueTimePickerFinEdicion[idIndex].sabado !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinEdicion[idIndex].sabado))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerFinEdicion[idIndex].sabado !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinEdicion[idIndex].sabado))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerInicioEdicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1312,14 +1404,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio-edicion-domingo':
-                if (valueTimePickerFinEdicion[idIndex].domingo !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinEdicion[idIndex].domingo))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerFinEdicion[idIndex].domingo !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinEdicion[idIndex].domingo))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerInicioEdicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1333,14 +1425,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio1Descanso-edicion-lunes':
-                if (valueTimePickerFinDescanso1Edicion[idIndex].lunes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso1Edicion[idIndex].lunes))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerFinDescanso1Edicion[idIndex].lunes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso1Edicion[idIndex].lunes))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerInicioDescanso1Edicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1354,14 +1446,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio2Descanso-edicion-lunes':
-                if (valueTimePickerFinDescanso2Edicion[idIndex].lunes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso2Edicion[idIndex].lunes))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerFinDescanso2Edicion[idIndex].lunes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso2Edicion[idIndex].lunes))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerInicioDescanso2Edicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1375,14 +1467,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio1Descanso-edicion-martes':
-                if (valueTimePickerFinDescanso1Edicion[idIndex].martes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso1Edicion[idIndex].martes))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerFinDescanso1Edicion[idIndex].martes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso1Edicion[idIndex].martes))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerInicioDescanso1Edicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1396,14 +1488,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio2Descanso-edicion-martes':
-                if (valueTimePickerFinDescanso2Edicion[idIndex].martes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso2Edicion[idIndex].martes))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerFinDescanso2Edicion[idIndex].martes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso2Edicion[idIndex].martes))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerInicioDescanso2Edicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1417,14 +1509,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio1Descanso-edicion-miercoles':
-                if (valueTimePickerFinDescanso1Edicion[idIndex].miercoles !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso1Edicion[idIndex].miercoles))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerFinDescanso1Edicion[idIndex].miercoles !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso1Edicion[idIndex].miercoles))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerInicioDescanso1Edicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1438,14 +1530,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio2Descanso-edicion-miercoles':
-                if (valueTimePickerFinDescanso2Edicion[idIndex].miercoles !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso2Edicion[idIndex].miercoles))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerFinDescanso2Edicion[idIndex].miercoles !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso2Edicion[idIndex].miercoles))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerInicioDescanso2Edicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1459,14 +1551,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio1Descanso-edicion-jueves':
-                if (valueTimePickerFinDescanso1Edicion[idIndex].jueves !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso1Edicion[idIndex].jueves))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerFinDescanso1Edicion[idIndex].jueves !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso1Edicion[idIndex].jueves))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerInicioDescanso1Edicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1480,14 +1572,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio2Descanso-edicion-jueves':
-                if (valueTimePickerFinDescanso2Edicion[idIndex].jueves !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso2Edicion[idIndex].jueves))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerFinDescanso2Edicion[idIndex].jueves !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso2Edicion[idIndex].jueves))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerInicioDescanso2Edicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1501,14 +1593,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio1Descanso-edicion-viernes':
-                if (valueTimePickerFinDescanso1Edicion[idIndex].viernes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso1Edicion[idIndex].viernes))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerFinDescanso1Edicion[idIndex].viernes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso1Edicion[idIndex].viernes))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerInicioDescanso1Edicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1522,14 +1614,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio2Descanso-edicion-viernes':
-                if (valueTimePickerFinDescanso2Edicion[idIndex].viernes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso2Edicion[idIndex].viernes))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerFinDescanso2Edicion[idIndex].viernes !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso2Edicion[idIndex].viernes))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerInicioDescanso2Edicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1543,14 +1635,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio1Descanso-edicion-sabado':
-                if (valueTimePickerFinDescanso1Edicion[idIndex].sabado !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso1Edicion[idIndex].sabado))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerFinDescanso1Edicion[idIndex].sabado !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso1Edicion[idIndex].sabado))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerInicioDescanso1Edicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1564,14 +1656,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio2Descanso-edicion-sabado':
-                if (valueTimePickerFinDescanso2Edicion[idIndex].sabado !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso2Edicion[idIndex].sabado))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerFinDescanso2Edicion[idIndex].sabado !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso2Edicion[idIndex].sabado))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerInicioDescanso2Edicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1585,14 +1677,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio1Descanso-edicion-domingo':
-                if (valueTimePickerFinDescanso1Edicion[idIndex].domingo !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso1Edicion[idIndex].domingo))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerFinDescanso1Edicion[idIndex].domingo !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso1Edicion[idIndex].domingo))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerInicioDescanso1Edicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1606,14 +1698,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerInicio2Descanso-edicion-domingo':
-                if (valueTimePickerFinDescanso2Edicion[idIndex].domingo !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso2Edicion[idIndex].domingo))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerFinDescanso2Edicion[idIndex].domingo !== null && (retornaMinutos(retornaHoraRango(hora), retornaHoraRango(valueTimePickerFinDescanso2Edicion[idIndex].domingo))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerInicioDescanso2Edicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1639,14 +1731,14 @@ const CentrosEditar = forwardRef((props, ref) => {
         let arrayValoresTimePicker, arrayValoresHorario;
         switch (idCaso) {
             case 'timePickerFin-edicion-lunes':
-                if (valueTimePickerInicioEdicion[idIndex].lunes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioEdicion[idIndex].lunes), retornaHoraRango(hora))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerInicioEdicion[idIndex].lunes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioEdicion[idIndex].lunes), retornaHoraRango(hora))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerFinEdicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1660,14 +1752,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin-edicion-martes':
-                if (valueTimePickerInicioEdicion[idIndex].martes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioEdicion[idIndex].martes), retornaHoraRango(hora))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerInicioEdicion[idIndex].martes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioEdicion[idIndex].martes), retornaHoraRango(hora))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerFinEdicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1681,14 +1773,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin-edicion-miercoles':
-                if (valueTimePickerInicioEdicion[idIndex].miercoles !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioEdicion[idIndex].miercoles), retornaHoraRango(hora))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerInicioEdicion[idIndex].miercoles !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioEdicion[idIndex].miercoles), retornaHoraRango(hora))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerFinEdicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1702,14 +1794,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin-edicion-jueves':
-                if (valueTimePickerInicioEdicion[idIndex].jueves !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioEdicion[idIndex].jueves), retornaHoraRango(hora))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerInicioEdicion[idIndex].jueves !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioEdicion[idIndex].jueves), retornaHoraRango(hora))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerFinEdicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1723,14 +1815,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin-edicion-viernes':
-                if (valueTimePickerInicioEdicion[idIndex].viernes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioEdicion[idIndex].viernes), retornaHoraRango(hora))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerInicioEdicion[idIndex].viernes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioEdicion[idIndex].viernes), retornaHoraRango(hora))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerFinEdicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1744,14 +1836,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin-edicion-sabado':
-                if (valueTimePickerInicioEdicion[idIndex].sabado !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioEdicion[idIndex].sabado), retornaHoraRango(hora))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerInicioEdicion[idIndex].sabado !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioEdicion[idIndex].sabado), retornaHoraRango(hora))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerFinEdicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1765,14 +1857,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin-edicion-domingo':
-                if (valueTimePickerInicioEdicion[idIndex].domingo !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioEdicion[idIndex].domingo), retornaHoraRango(hora))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerInicioEdicion[idIndex].domingo !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioEdicion[idIndex].domingo), retornaHoraRango(hora))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerFinEdicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1786,14 +1878,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin1Descanso-edicion-lunes':
-                if (valueTimePickerInicioDescanso1Edicion[idIndex].lunes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso1Edicion[idIndex].lunes), retornaHoraRango(hora))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerInicioDescanso1Edicion[idIndex].lunes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso1Edicion[idIndex].lunes), retornaHoraRango(hora))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerFinDescanso1Edicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1807,14 +1899,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin2Descanso-edicion-lunes':
-                if (valueTimePickerInicioDescanso2Edicion[idIndex].lunes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2Edicion[idIndex].lunes), retornaHoraRango(hora))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerInicioDescanso2Edicion[idIndex].lunes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2Edicion[idIndex].lunes), retornaHoraRango(hora))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerFinDescanso2Edicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1828,14 +1920,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin1Descanso-edicion-martes':
-                if (valueTimePickerInicioDescanso1Edicion[idIndex].martes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso1Edicion[idIndex].martes), retornaHoraRango(hora))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerInicioDescanso1Edicion[idIndex].martes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso1Edicion[idIndex].martes), retornaHoraRango(hora))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerFinDescanso1Edicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1849,14 +1941,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin2Descanso-edicion-martes':
-                if (valueTimePickerInicioDescanso2Edicion[idIndex].martes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2Edicion[idIndex].martes), retornaHoraRango(hora))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerInicioDescanso2Edicion[idIndex].martes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2Edicion[idIndex].martes), retornaHoraRango(hora))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerFinDescanso2Edicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1870,14 +1962,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin1Descanso-edicion-miercoles':
-                if (valueTimePickerInicioDescanso1Edicion[idIndex].miercoles !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso1Edicion[idIndex].miercoles), retornaHoraRango(hora))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerInicioDescanso1Edicion[idIndex].miercoles !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso1Edicion[idIndex].miercoles), retornaHoraRango(hora))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerFinDescanso1Edicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1891,14 +1983,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin2Descanso-edicion-miercoles':
-                if (valueTimePickerInicioDescanso2Edicion[idIndex].miercoles !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2Edicion[idIndex].miercoles), retornaHoraRango(hora))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerInicioDescanso2Edicion[idIndex].miercoles !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2Edicion[idIndex].miercoles), retornaHoraRango(hora))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerFinDescanso2Edicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1912,14 +2004,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin1Descanso-edicion-jueves':
-                if (valueTimePickerInicioDescanso1Edicion[idIndex].jueves !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso1Edicion[idIndex].jueves), retornaHoraRango(hora))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerInicioDescanso1Edicion[idIndex].jueves !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso1Edicion[idIndex].jueves), retornaHoraRango(hora))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerFinDescanso1Edicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1933,14 +2025,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin2Descanso-edicion-jueves':
-                if (valueTimePickerInicioDescanso2Edicion[idIndex].jueves !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2Edicion[idIndex].jueves), retornaHoraRango(hora))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerInicioDescanso2Edicion[idIndex].jueves !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2Edicion[idIndex].jueves), retornaHoraRango(hora))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerFinDescanso2Edicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1954,14 +2046,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin1Descanso-edicion-viernes':
-                if (valueTimePickerInicioDescanso1Edicion[idIndex].viernes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso1Edicion[idIndex].viernes), retornaHoraRango(hora))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerInicioDescanso1Edicion[idIndex].viernes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso1Edicion[idIndex].viernes), retornaHoraRango(hora))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerFinDescanso1Edicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1975,14 +2067,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin2Descanso-edicion-viernes':
-                if (valueTimePickerInicioDescanso2Edicion[idIndex].viernes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2Edicion[idIndex].viernes), retornaHoraRango(hora))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerInicioDescanso2Edicion[idIndex].viernes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2Edicion[idIndex].viernes), retornaHoraRango(hora))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerFinDescanso2Edicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -1996,14 +2088,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin1Descanso-edicion-sabado':
-                if (valueTimePickerInicioDescanso1Edicion[idIndex].sabado !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso1Edicion[idIndex].sabado), retornaHoraRango(hora))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerInicioDescanso1Edicion[idIndex].sabado !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso1Edicion[idIndex].sabado), retornaHoraRango(hora))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerFinDescanso1Edicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -2017,14 +2109,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin2Descanso-edicion-sabado':
-                if (valueTimePickerInicioDescanso2Edicion[idIndex].sabado !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2Edicion[idIndex].sabado), retornaHoraRango(hora))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerInicioDescanso2Edicion[idIndex].sabado !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2Edicion[idIndex].sabado), retornaHoraRango(hora))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerFinDescanso2Edicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -2038,14 +2130,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin1Descanso-edicion-domingo':
-                if (valueTimePickerInicioDescanso1Edicion[idIndex].domingo !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso1Edicion[idIndex].domingo), retornaHoraRango(hora))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerInicioDescanso1Edicion[idIndex].domingo !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso1Edicion[idIndex].domingo), retornaHoraRango(hora))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerFinDescanso1Edicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -2059,14 +2151,14 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
             case 'timePickerFin2Descanso-edicion-domingo':
-                if (valueTimePickerInicioDescanso2Edicion[idIndex].domingo !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2Edicion[idIndex].domingo), retornaHoraRango(hora))) < 0) {
-                    setAlert({
-                        mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
-                        tipo: 'error'
-                    })
-                    setOpenSnack(true);
-                    return;
-                };
+                // if (valueTimePickerInicioDescanso2Edicion[idIndex].domingo !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2Edicion[idIndex].domingo), retornaHoraRango(hora))) < 0) {
+                //     setAlert({
+                //         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
+                //         tipo: 'error'
+                //     })
+                //     setOpenSnack(true);
+                //     return;
+                // };
                 arrayValoresTimePicker = [...valueTimePickerFinDescanso2Edicion];
                 arrayValoresHorario = [...horarioIntervencionEdicion.tipoRegistroTrabajador];
                 if (hora) {
@@ -2225,121 +2317,121 @@ const CentrosEditar = forwardRef((props, ref) => {
     const handleChangeSwitchTipoServicioFijoEdicion = (e) => {
         if (e.target.name.includes('TO')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_TO: null, variacion_TO: '', diaVariacion_TO: '', activo_TO: 'si' });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_TO: null, variacion_TO: '', diaVariacion_TO: '', activo_TO: 'si', int_TO: false, trab_TO: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, TO: e.target.checked });
         };
         if (e.target.name.includes('CR')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_CR: null, variacion_CR: '', diaVariacion_CR: '', activo_CR: 'si' });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_CR: null, variacion_CR: '', diaVariacion_CR: '', activo_CR: 'si', int_CR: false, trab_CR: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, CR: e.target.checked });
         };
         if (e.target.name.includes('CE')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_CE: null, variacion_CE: '', diaVariacion_CE: '', activo_CE: 'si' });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_CE: null, variacion_CE: '', diaVariacion_CE: '', activo_CE: 'si', int_CE: false, trab_CE: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, CE: e.target.checked });
         };
         if (e.target.name.includes('CI')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_CI: null, variacion_CI: '', diaVariacion_CI: '', activo_CI: 'si' });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_CI: null, variacion_CI: '', diaVariacion_CI: '', activo_CI: 'si', int_CI: false, trab_CI: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, CI: e.target.checked });
         };
         if (e.target.name.includes('MO')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_MO: null, variacion_MO: '', diaVariacion_MO: '', activo_MO: 'si' });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_MO: null, variacion_MO: '', diaVariacion_MO: '', activo_MO: 'si', int_MO: false, trab_MO: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, MO: e.target.checked });
         };
         if (e.target.name.includes('OF')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_OF: null, variacion_OF: '', diaVariacion_OF: '', activo_OF: 'si' });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_OF: null, variacion_OF: '', diaVariacion_OF: '', activo_OF: 'si', int_OF: false, trab_OF: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, OF: e.target.checked });
         };
         if (e.target.name.includes('AL')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_AL: null, variacion_AL: '', diaVariacion_AL: '', activo_AL: 'si' });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_AL: null, variacion_AL: '', diaVariacion_AL: '', activo_AL: 'si', int_AL: false, trab_AL: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, AL: e.target.checked });
         };
         if (e.target.name.includes('LA')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_LA: null, variacion_LA: '', diaVariacion_LA: '', activo_LA: 'si' });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_LA: null, variacion_LA: '', diaVariacion_LA: '', activo_LA: 'si', int_LA: false, trab_LA: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, LA: e.target.checked });
         };
         if (e.target.name.includes('TE')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_TE: null, variacion_TE: '', diaVariacion_TE: '', activo_TE: 'si' });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_TE: null, variacion_TE: '', diaVariacion_TE: '', activo_TE: 'si', int_TE: false, trab_TE: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, TE: e.target.checked });
         };
         if (e.target.name.includes('FI')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_FI: null, variacion_FI: '', diaVariacion_FI: '', activo_FI: 'si' });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_FI: null, variacion_FI: '', diaVariacion_FI: '', activo_FI: 'si', int_FI: false, trab_FI: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, FI: e.target.checked });
         };
         if (e.target.name.includes('FE')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_FE: null, variacion_FE: '', diaVariacion_FE: '', activo_FE: 'si' });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_FE: null, variacion_FE: '', diaVariacion_FE: '', activo_FE: 'si', int_FE: false, trab_FE: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, FE: e.target.checked });
         };
         if (e.target.name.includes('AB')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_AB: null, variacion_AB: '', diaVariacion_AB: '', activo_AB: 'si' });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_AB: null, variacion_AB: '', diaVariacion_AB: '', activo_AB: 'si', int_AB: false, trab_AB: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, AB: e.target.checked });
         };
         if (e.target.name.includes('MA')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_MA: null, variacion_MA: '', diaVariacion_MA: '', activo_MA: 'si' });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_MA: null, variacion_MA: '', diaVariacion_MA: '', activo_MA: 'si', int_MA: false, trab_MA: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, MA: e.target.checked });
         };
         if (e.target.name.includes('PO')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_PO: null, variacion_PO: '', diaVariacion_PO: '', activo_PO: 'si' });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_PO: null, variacion_PO: '', diaVariacion_PO: '', activo_PO: 'si', int_PO: false, trab_PO: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, PO: e.target.checked });
         };
         if (e.target.name.includes('BA')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_BA: null, variacion_BA: '', diaVariacion_BA: '', activo_BA: 'si' });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_BA: null, variacion_BA: '', diaVariacion_BA: '', activo_BA: 'si', int_BA: false, trab_BA: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, BA: e.target.checked });
         };
         if (e.target.name.includes('FT')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_FT: null, variacion_FT: '', diaVariacion_FT: '', activo_FT: 'si' });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_FT: null, variacion_FT: '', diaVariacion_FT: '', activo_FT: 'si', int_FT: false, trab_FT: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, FT: e.target.checked });
         };
         if (e.target.name.includes('C3')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_C3: null, variacion_C3: '', diaVariacion_C3: '', activo_C3: 'si' });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_C3: null, variacion_C3: '', diaVariacion_C3: '', activo_C3: 'si', int_C3: false, trab_C3: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, C3: e.target.checked });
         };
         if (e.target.name.includes('C2')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_C2: null, variacion_C2: '', diaVariacion_C2: '', activo_C2: 'si' });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_C2: null, variacion_C2: '', diaVariacion_C2: '', activo_C2: 'si', int_C2: false, trab_C2: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, C2: e.target.checked });
         };
         if (e.target.name.includes('ES')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_ES: null, variacion_ES: '', diaVariacion_ES: '', activo_ES: 'si' });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_ES: null, variacion_ES: '', diaVariacion_ES: '', activo_ES: 'si', int_ES: false, trab_ES: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, ES: e.target.checked });
         };
         if (e.target.name.includes('PA')) {
             if (!e.target.checked) {
-                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_PA: null, variacion_PA: '', diaVariacion_PA: '', activo_PA: 'si' });
+                setValuesFormEdicion({ ...valuesFormEdicion, precioHora_PA: null, variacion_PA: '', diaVariacion_PA: '', activo_PA: 'si', int_PA: false, trab_PA: '' });
             };
             setStateSwitchTipoServicioFijoEdicion({ ...stateSwitchTipoServicioFijoEdicion, PA: e.target.checked });
         };
@@ -2568,26 +2660,26 @@ const CentrosEditar = forwardRef((props, ref) => {
                 setOpenSnack(true);
                 return;
             };
-            if ((stateSwitchTipoServicioFijoEdicion.TO && (!valuesFormEdicion.variacion_TO || !valuesFormEdicion.precioHora_TO)) ||
-                (stateSwitchTipoServicioFijoEdicion.CR && (!valuesFormEdicion.variacion_CR || !valuesFormEdicion.precioHora_CR)) ||
-                (stateSwitchTipoServicioFijoEdicion.CE && (!valuesFormEdicion.variacion_CE || !valuesFormEdicion.precioHora_CE)) ||
-                (stateSwitchTipoServicioFijoEdicion.CI && (!valuesFormEdicion.variacion_CI || !valuesFormEdicion.precioHora_CI)) ||
-                (stateSwitchTipoServicioFijoEdicion.MO && (!valuesFormEdicion.variacion_MO || !valuesFormEdicion.precioHora_MO)) ||
-                (stateSwitchTipoServicioFijoEdicion.OF && (!valuesFormEdicion.variacion_OF || !valuesFormEdicion.precioHora_OF)) ||
-                (stateSwitchTipoServicioFijoEdicion.AL && (!valuesFormEdicion.variacion_AL || !valuesFormEdicion.precioHora_AL)) ||
-                (stateSwitchTipoServicioFijoEdicion.LA && (!valuesFormEdicion.variacion_LA || !valuesFormEdicion.precioHora_LA)) ||
-                (stateSwitchTipoServicioFijoEdicion.TE && (!valuesFormEdicion.variacion_TE || !valuesFormEdicion.precioHora_TE)) ||
-                (stateSwitchTipoServicioFijoEdicion.FI && (!valuesFormEdicion.variacion_FI || !valuesFormEdicion.precioHora_FI)) ||
-                (stateSwitchTipoServicioFijoEdicion.FE && (!valuesFormEdicion.variacion_FE || !valuesFormEdicion.precioHora_FE)) ||
-                (stateSwitchTipoServicioFijoEdicion.AB && (!valuesFormEdicion.variacion_AB || !valuesFormEdicion.precioHora_AB)) ||
-                (stateSwitchTipoServicioFijoEdicion.MA && (!valuesFormEdicion.variacion_MA || !valuesFormEdicion.precioHora_MA)) ||
-                (stateSwitchTipoServicioFijoEdicion.PO && (!valuesFormEdicion.variacion_PO || !valuesFormEdicion.precioHora_PO)) ||
-                (stateSwitchTipoServicioFijoEdicion.BA && (!valuesFormEdicion.variacion_BA || !valuesFormEdicion.precioHora_BA)) ||
-                (stateSwitchTipoServicioFijoEdicion.FT && (!valuesFormEdicion.variacion_FT || !valuesFormEdicion.precioHora_FT)) ||
-                (stateSwitchTipoServicioFijoEdicion.C3 && (!valuesFormEdicion.variacion_C3 || !valuesFormEdicion.precioHora_C3)) ||
-                (stateSwitchTipoServicioFijoEdicion.C2 && (!valuesFormEdicion.variacion_C2 || !valuesFormEdicion.precioHora_C2)) ||
-                (stateSwitchTipoServicioFijoEdicion.ES && (!valuesFormEdicion.variacion_ES || !valuesFormEdicion.precioHora_ES)) ||
-                (stateSwitchTipoServicioFijoEdicion.PA && (!valuesFormEdicion.variacion_PA || !valuesFormEdicion.precioHora_PA))
+            if ((stateSwitchTipoServicioFijoEdicion.TO && !valuesFormEdicion.int_TO && (!valuesFormEdicion.variacion_TO || !valuesFormEdicion.precioHora_TO)) ||
+                (stateSwitchTipoServicioFijoEdicion.CR && !valuesFormEdicion.int_CR && (!valuesFormEdicion.variacion_CR || !valuesFormEdicion.precioHora_CR)) ||
+                (stateSwitchTipoServicioFijoEdicion.CE && !valuesFormEdicion.int_CE && (!valuesFormEdicion.variacion_CE || !valuesFormEdicion.precioHora_CE)) ||
+                (stateSwitchTipoServicioFijoEdicion.CI && !valuesFormEdicion.int_CI && (!valuesFormEdicion.variacion_CI || !valuesFormEdicion.precioHora_CI)) ||
+                (stateSwitchTipoServicioFijoEdicion.MO && !valuesFormEdicion.int_MO && (!valuesFormEdicion.variacion_MO || !valuesFormEdicion.precioHora_MO)) ||
+                (stateSwitchTipoServicioFijoEdicion.OF && !valuesFormEdicion.int_OF && (!valuesFormEdicion.variacion_OF || !valuesFormEdicion.precioHora_OF)) ||
+                (stateSwitchTipoServicioFijoEdicion.AL && !valuesFormEdicion.int_AL && (!valuesFormEdicion.variacion_AL || !valuesFormEdicion.precioHora_AL)) ||
+                (stateSwitchTipoServicioFijoEdicion.LA && !valuesFormEdicion.int_LA && (!valuesFormEdicion.variacion_LA || !valuesFormEdicion.precioHora_LA)) ||
+                (stateSwitchTipoServicioFijoEdicion.TE && !valuesFormEdicion.int_TE && (!valuesFormEdicion.variacion_TE || !valuesFormEdicion.precioHora_TE)) ||
+                (stateSwitchTipoServicioFijoEdicion.FI && !valuesFormEdicion.int_FI && (!valuesFormEdicion.variacion_FI || !valuesFormEdicion.precioHora_FI)) ||
+                (stateSwitchTipoServicioFijoEdicion.FE && !valuesFormEdicion.int_FE && (!valuesFormEdicion.variacion_FE || !valuesFormEdicion.precioHora_FE)) ||
+                (stateSwitchTipoServicioFijoEdicion.AB && !valuesFormEdicion.int_AB && (!valuesFormEdicion.variacion_AB || !valuesFormEdicion.precioHora_AB)) ||
+                (stateSwitchTipoServicioFijoEdicion.MA && !valuesFormEdicion.int_MA && (!valuesFormEdicion.variacion_MA || !valuesFormEdicion.precioHora_MA)) ||
+                (stateSwitchTipoServicioFijoEdicion.PO && !valuesFormEdicion.int_PO && (!valuesFormEdicion.variacion_PO || !valuesFormEdicion.precioHora_PO)) ||
+                (stateSwitchTipoServicioFijoEdicion.BA && !valuesFormEdicion.int_BA && (!valuesFormEdicion.variacion_BA || !valuesFormEdicion.precioHora_BA)) ||
+                (stateSwitchTipoServicioFijoEdicion.FT && !valuesFormEdicion.int_FT && (!valuesFormEdicion.variacion_FT || !valuesFormEdicion.precioHora_FT)) ||
+                (stateSwitchTipoServicioFijoEdicion.C3 && !valuesFormEdicion.int_C3 && (!valuesFormEdicion.variacion_C3 || !valuesFormEdicion.precioHora_C3)) ||
+                (stateSwitchTipoServicioFijoEdicion.C2 && !valuesFormEdicion.int_C2 && (!valuesFormEdicion.variacion_C2 || !valuesFormEdicion.precioHora_C2)) ||
+                (stateSwitchTipoServicioFijoEdicion.ES && !valuesFormEdicion.int_ES && (!valuesFormEdicion.variacion_ES || !valuesFormEdicion.precioHora_ES)) ||
+                (stateSwitchTipoServicioFijoEdicion.PA && !valuesFormEdicion.int_PA && (!valuesFormEdicion.variacion_PA || !valuesFormEdicion.precioHora_PA))
             ) {
                 setAlert({
                     mensaje: "Has selecionado un tipo de servicio extra pero no has asignado precio o variación. Revisa el formulario.",
@@ -2627,6 +2719,7 @@ const CentrosEditar = forwardRef((props, ref) => {
             let valoresComputoPreciosHoraVariables = true;
             let valoresComputoPreciosHoraFijos = true;
             let valoresCorrectosComputo = false;
+            let valoresServiciosIntegrados = false;
             if (valuesFormEdicion.computo === '' &&
                 !valuesFormEdicion.mensualPactado &&
                 !valuesFormEdicion.precioHora_L &&
@@ -2668,28 +2761,57 @@ const CentrosEditar = forwardRef((props, ref) => {
             } else {
                 valoresCorrectosComputo = true;
             }
-            if (!valuesFormEdicion.precioHora_TO &&
-                !valuesFormEdicion.precioHora_CR &&
-                !valuesFormEdicion.precioHora_CE &&
-                !valuesFormEdicion.precioHora_CI &&
-                !valuesFormEdicion.precioHora_MO &&
-                !valuesFormEdicion.precioHora_OF &&
-                !valuesFormEdicion.precioHora_AL &&
-                !valuesFormEdicion.precioHora_LA &&
-                !valuesFormEdicion.precioHora_TE &&
-                !valuesFormEdicion.precioHora_FI &&
-                !valuesFormEdicion.precioHora_FE &&
-                !valuesFormEdicion.precioHora_AB &&
-                !valuesFormEdicion.precioHora_MA &&
-                !valuesFormEdicion.precioHora_PO &&
-                !valuesFormEdicion.precioHora_BA &&
-                !valuesFormEdicion.precioHora_FT &&
-                !valuesFormEdicion.precioHora_C3 &&
-                !valuesFormEdicion.precioHora_C2 &&
-                !valuesFormEdicion.precioHora_ES &&
-                !valuesFormEdicion.precioHora_PA
-            ) {
+            if ((!valuesFormEdicion.precioHora_TO && !valuesFormEdicion.int_TO) &&
+                (!valuesFormEdicion.precioHora_CR && !valuesFormEdicion.int_CR) &&
+                (!valuesFormEdicion.precioHora_CE && !valuesFormEdicion.int_CE) &&
+                (!valuesFormEdicion.precioHora_CI && !valuesFormEdicion.int_CI) &&
+                (!valuesFormEdicion.precioHora_MO && !valuesFormEdicion.int_MO) &&
+                (!valuesFormEdicion.precioHora_OF && !valuesFormEdicion.int_OF) &&
+                (!valuesFormEdicion.precioHora_AL && !valuesFormEdicion.int_AL) &&
+                (!valuesFormEdicion.precioHora_LA && !valuesFormEdicion.int_LA) &&
+                (!valuesFormEdicion.precioHora_TE && !valuesFormEdicion.int_TE) &&
+                (!valuesFormEdicion.precioHora_FI && !valuesFormEdicion.int_FI) &&
+                (!valuesFormEdicion.precioHora_FE && !valuesFormEdicion.int_FE) &&
+                (!valuesFormEdicion.precioHora_AB && !valuesFormEdicion.int_AB) &&
+                (!valuesFormEdicion.precioHora_MA && !valuesFormEdicion.int_MA) &&
+                (!valuesFormEdicion.precioHora_PO && !valuesFormEdicion.int_PO) &&
+                (!valuesFormEdicion.precioHora_BA && !valuesFormEdicion.int_BA) &&
+                (!valuesFormEdicion.precioHora_FT && !valuesFormEdicion.int_FT) &&
+                (!valuesFormEdicion.precioHora_C3 && !valuesFormEdicion.int_C3) &&
+                (!valuesFormEdicion.precioHora_C2 && !valuesFormEdicion.int_C2) &&
+                (!valuesFormEdicion.precioHora_ES && !valuesFormEdicion.int_ES) &&
+                (!valuesFormEdicion.precioHora_PA && !valuesFormEdicion.int_PA)) {
                 valoresComputoPreciosHoraFijos = false;
+            };
+            if (valuesFormEdicion.int_TO ||
+                valuesFormEdicion.int_CR ||
+                valuesFormEdicion.int_CE ||
+                valuesFormEdicion.int_CI ||
+                valuesFormEdicion.int_MO ||
+                valuesFormEdicion.int_OF ||
+                valuesFormEdicion.int_AL ||
+                valuesFormEdicion.int_LA ||
+                valuesFormEdicion.int_TE ||
+                valuesFormEdicion.int_FI ||
+                valuesFormEdicion.int_FE ||
+                valuesFormEdicion.int_AB ||
+                valuesFormEdicion.int_MA ||
+                valuesFormEdicion.int_PO ||
+                valuesFormEdicion.int_BA ||
+                valuesFormEdicion.int_FT ||
+                valuesFormEdicion.int_C3 ||
+                valuesFormEdicion.int_C2 ||
+                valuesFormEdicion.int_ES ||
+                valuesFormEdicion.int_PA) {
+                valoresServiciosIntegrados = true;
+            };
+            if (valoresServiciosIntegrados && !valoresComputoPreciosHoraVariables) {
+                setAlert({
+                    mensaje: "Faltan datos por completar. Los Servicios Extra integrados en cómputo deben tener cómputo de horas en el formulario.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return;
             };
             if ((!valoresComputoPreciosHoraFijos && !valoresComputoPreciosHoraVariables) ||
                 (!valoresComputoPreciosHoraVariables && valuesFormEdicion.numeroTrabajadores)) {
@@ -3597,184 +3719,224 @@ const CentrosEditar = forwardRef((props, ref) => {
                 objeto: 'serviciosFijos',
                 servicio: []
             };
-            if (valuesFormEdicion.precioHora_TO) {
+            if (valuesFormEdicion.precioHora_TO || valuesFormEdicion.int_TO) {
                 serviciosFijosEdicion.servicio.push({
                     tipoServiciofijo: 'TOL',
-                    precioHora_TO: parseFloat(valuesFormEdicion.precioHora_TO),
-                    variacion_TO: parseFloat(valuesFormEdicion.variacion_TO),
-                    diaVariacion_TO: valuesFormEdicion.variacion_TO !== 3 ? valuesFormEdicion.diaVariacion_TO : '',
-                    activo_TO: valuesFormEdicion.activo_TO
+                    precioHora_TO: valuesFormEdicion.precioHora_TO ? parseFloat(valuesFormEdicion.precioHora_TO) : null,
+                    variacion_TO: valuesFormEdicion.variacion_TO ? parseFloat(valuesFormEdicion.variacion_TO) : '',
+                    diaVariacion_TO: !valuesFormEdicion.int_TO ? (valuesFormEdicion.variacion_TO !== 3 ? valuesFormEdicion.diaVariacion_TO : '') : '',
+                    activo_TO: valuesFormEdicion.activo_TO,
+                    int_TO: valuesFormEdicion.int_TO,
+                    trab_TO: valuesFormEdicion.trab_TO ? parseInt(valuesFormEdicion.trab_TO) : null
                 });
             };
-            if (valuesFormEdicion.precioHora_CR) {
+            if (valuesFormEdicion.precioHora_CR || valuesFormEdicion.int_CR) {
                 serviciosFijosEdicion.servicio.push({
                     tipoServiciofijo: 'CRIS',
-                    precioHora_CR: parseFloat(valuesFormEdicion.precioHora_CR),
-                    variacion_CR: parseFloat(valuesFormEdicion.variacion_CR),
-                    diaVariacion_CR: valuesFormEdicion.variacion_CR !== 3 ? valuesFormEdicion.diaVariacion_CR : '',
-                    activo_CR: valuesFormEdicion.activo_CR
+                    precioHora_CR: valuesFormEdicion.precioHora_CR ? parseFloat(valuesFormEdicion.precioHora_CR) : null,
+                    variacion_CR: valuesFormEdicion.variacion_CR ? parseFloat(valuesFormEdicion.variacion_CR) : '',
+                    diaVariacion_CR: !valuesFormEdicion.int_CR ? (valuesFormEdicion.variacion_CR !== 3 ? valuesFormEdicion.diaVariacion_CR : '') : '',
+                    activo_CR: valuesFormEdicion.activo_CR,
+                    int_CR: valuesFormEdicion.int_CR,
+                    trab_CR: valuesFormEdicion.trab_CR ? parseInt(valuesFormEdicion.trab_CR) : null
                 });
             };
-            if (valuesFormEdicion.precioHora_CE) {
+            if (valuesFormEdicion.precioHora_CE || valuesFormEdicion.int_CE) {
                 serviciosFijosEdicion.servicio.push({
                     tipoServiciofijo: 'CRISE',
-                    precioHora_CE: parseFloat(valuesFormEdicion.precioHora_CE),
-                    variacion_CE: parseFloat(valuesFormEdicion.variacion_CE),
-                    diaVariacion_CE: valuesFormEdicion.variacion_CE !== 3 ? valuesFormEdicion.diaVariacion_CE : '',
-                    activo_CE: valuesFormEdicion.activo_CE
+                    precioHora_CE: valuesFormEdicion.precioHora_CE ? parseFloat(valuesFormEdicion.precioHora_CE) : null,
+                    variacion_CE: valuesFormEdicion.variacion_CE ? parseFloat(valuesFormEdicion.variacion_CE) : '',
+                    diaVariacion_CE: !valuesFormEdicion.int_CE ? (valuesFormEdicion.variacion_CE !== 3 ? valuesFormEdicion.diaVariacion_CE : '') : '',
+                    activo_CE: valuesFormEdicion.activo_CE,
+                    int_CE: valuesFormEdicion.int_CE,
+                    trab_CE: valuesFormEdicion.trab_CE ? parseInt(valuesFormEdicion.trab_CE) : null
                 });
             };
-            if (valuesFormEdicion.precioHora_CI) {
+            if (valuesFormEdicion.precioHora_CI || valuesFormEdicion.int_CI) {
                 serviciosFijosEdicion.servicio.push({
                     tipoServiciofijo: 'CRISI',
-                    precioHora_CI: parseFloat(valuesFormEdicion.precioHora_CI),
-                    variacion_CI: parseFloat(valuesFormEdicion.variacion_CI),
-                    diaVariacion_CI: valuesFormEdicion.variacion_CI !== 3 ? valuesFormEdicion.diaVariacion_CI : '',
-                    activo_CI: valuesFormEdicion.activo_CI
+                    precioHora_CI: valuesFormEdicion.precioHora_CI ? parseFloat(valuesFormEdicion.precioHora_CI) : null,
+                    variacion_CI: valuesFormEdicion.variacion_CI ? parseFloat(valuesFormEdicion.variacion_CI) : '',
+                    diaVariacion_CI: !valuesFormEdicion.int_CI ? (valuesFormEdicion.variacion_CI !== 3 ? valuesFormEdicion.diaVariacion_CI : '') : '',
+                    activo_CI: valuesFormEdicion.activo_CI,
+                    int_CI: valuesFormEdicion.int_CI,
+                    trab_CI: valuesFormEdicion.trab_CI ? parseInt(valuesFormEdicion.trab_CI) : null
                 });
             };
-            if (valuesFormEdicion.precioHora_MO) {
+            if (valuesFormEdicion.precioHora_MO || valuesFormEdicion.int_MO) {
                 serviciosFijosEdicion.servicio.push({
                     tipoServiciofijo: 'MOQ',
-                    precioHora_MO: parseFloat(valuesFormEdicion.precioHora_MO),
-                    variacion_MO: parseFloat(valuesFormEdicion.variacion_MO),
-                    diaVariacion_MO: valuesFormEdicion.variacion_MO !== 3 ? valuesFormEdicion.diaVariacion_MO : '',
-                    activo_MO: valuesFormEdicion.activo_MO
+                    precioHora_MO: valuesFormEdicion.precioHora_MO ? parseFloat(valuesFormEdicion.precioHora_MO) : null,
+                    variacion_MO: valuesFormEdicion.variacion_MO ? parseFloat(valuesFormEdicion.variacion_MO) : '',
+                    diaVariacion_MO: !valuesFormEdicion.int_MO ? (valuesFormEdicion.variacion_MO !== 3 ? valuesFormEdicion.diaVariacion_MO : '') : '',
+                    activo_MO: valuesFormEdicion.activo_MO,
+                    int_MO: valuesFormEdicion.int_MO,
+                    trab_MO: valuesFormEdicion.trab_MO ? parseInt(valuesFormEdicion.trab_MO) : null
                 });
             };
-            if (valuesFormEdicion.precioHora_OF) {
+            if (valuesFormEdicion.precioHora_OF || valuesFormEdicion.int_OF) {
                 serviciosFijosEdicion.servicio.push({
                     tipoServiciofijo: 'OF',
-                    precioHora_OF: parseFloat(valuesFormEdicion.precioHora_OF),
-                    variacion_OF: parseFloat(valuesFormEdicion.variacion_OF),
-                    diaVariacion_OF: valuesFormEdicion.variacion_OF !== 3 ? valuesFormEdicion.diaVariacion_OF : '',
-                    activo_OF: valuesFormEdicion.activo_OF
+                    precioHora_OF: valuesFormEdicion.precioHora_OF ? parseFloat(valuesFormEdicion.precioHora_OF) : null,
+                    variacion_OF: valuesFormEdicion.variacion_OF ? parseFloat(valuesFormEdicion.variacion_OF) : '',
+                    diaVariacion_OF: !valuesFormEdicion.int_OF ? (valuesFormEdicion.variacion_OF !== 3 ? valuesFormEdicion.diaVariacion_OF : '') : '',
+                    activo_OF: valuesFormEdicion.activo_OF,
+                    int_OF: valuesFormEdicion.int_OF,
+                    trab_OF: valuesFormEdicion.trab_OF ? parseInt(valuesFormEdicion.trab_OF) : null
                 });
             };
-            if (valuesFormEdicion.precioHora_AL) {
+            if (valuesFormEdicion.precioHora_AL || valuesFormEdicion.int_AL) {
                 serviciosFijosEdicion.servicio.push({
                     tipoServiciofijo: 'ALMC',
-                    precioHora_AL: parseFloat(valuesFormEdicion.precioHora_AL),
-                    variacion_AL: parseFloat(valuesFormEdicion.variacion_AL),
-                    diaVariacion_AL: valuesFormEdicion.variacion_AL !== 3 ? valuesFormEdicion.diaVariacion_AL : '',
-                    activo_AL: valuesFormEdicion.activo_AL
+                    precioHora_AL: valuesFormEdicion.precioHora_AL ? parseFloat(valuesFormEdicion.precioHora_AL) : null,
+                    variacion_AL: valuesFormEdicion.variacion_AL ? parseFloat(valuesFormEdicion.variacion_AL) : '',
+                    diaVariacion_AL: !valuesFormEdicion.int_AL ? (valuesFormEdicion.variacion_AL !== 3 ? valuesFormEdicion.diaVariacion_AL : '') : '',
+                    activo_AL: valuesFormEdicion.activo_AL,
+                    int_AL: valuesFormEdicion.int_AL,
+                    trab_AL: valuesFormEdicion.trab_AL ? parseInt(valuesFormEdicion.trab_AL) : null
                 });
             };
-            if (valuesFormEdicion.precioHora_LA) {
+            if (valuesFormEdicion.precioHora_LA || valuesFormEdicion.int_LA) {
                 serviciosFijosEdicion.servicio.push({
                     tipoServiciofijo: 'LAB',
-                    precioHora_LA: parseFloat(valuesFormEdicion.precioHora_LA),
-                    variacion_LA: parseFloat(valuesFormEdicion.variacion_LA),
-                    diaVariacion_LA: valuesFormEdicion.variacion_LA !== 3 ? valuesFormEdicion.diaVariacion_LA : '',
-                    activo_LA: valuesFormEdicion.activo_LA
+                    precioHora_LA: valuesFormEdicion.precioHora_LA ? parseFloat(valuesFormEdicion.precioHora_LA) : null,
+                    variacion_LA: valuesFormEdicion.variacion_LA ? parseFloat(valuesFormEdicion.variacion_LA) : '',
+                    diaVariacion_LA: !valuesFormEdicion.int_LA ? (valuesFormEdicion.variacion_LA !== 3 ? valuesFormEdicion.diaVariacion_LA : '') : '',
+                    activo_LA: valuesFormEdicion.activo_LA,
+                    int_LA: valuesFormEdicion.int_LA,
+                    trab_LA: valuesFormEdicion.trab_LA ? parseInt(valuesFormEdicion.trab_LA) : null
                 });
             };
-            if (valuesFormEdicion.precioHora_TE) {
+            if (valuesFormEdicion.precioHora_TE || valuesFormEdicion.int_TE) {
                 serviciosFijosEdicion.servicio.push({
                     tipoServiciofijo: 'TELÑ',
-                    precioHora_TE: parseFloat(valuesFormEdicion.precioHora_TE),
-                    variacion_TE: parseFloat(valuesFormEdicion.variacion_TE),
-                    diaVariacion_TE: valuesFormEdicion.variacion_TE !== 3 ? valuesFormEdicion.diaVariacion_TE : '',
-                    activo_TE: valuesFormEdicion.activo_TE
+                    precioHora_TE: valuesFormEdicion.precioHora_TE ? parseFloat(valuesFormEdicion.precioHora_TE) : null,
+                    variacion_TE: valuesFormEdicion.variacion_TE ? parseFloat(valuesFormEdicion.variacion_TE) : '',
+                    diaVariacion_TE: !valuesFormEdicion.int_TE ? (valuesFormEdicion.variacion_TE !== 3 ? valuesFormEdicion.diaVariacion_TE : '') : '',
+                    activo_TE: valuesFormEdicion.activo_TE,
+                    int_TE: valuesFormEdicion.int_TE,
+                    trab_TE: valuesFormEdicion.trab_TE ? parseInt(valuesFormEdicion.trab_TE) : null
                 });
             };
-            if (valuesFormEdicion.precioHora_FI) {
+            if (valuesFormEdicion.precioHora_FI || valuesFormEdicion.int_FI) {
                 serviciosFijosEdicion.servicio.push({
                     tipoServiciofijo: 'FCH.IN',
-                    precioHora_FI: parseFloat(valuesFormEdicion.precioHora_FI),
-                    variacion_FI: parseFloat(valuesFormEdicion.variacion_FI),
-                    diaVariacion_FI: valuesFormEdicion.variacion_FI !== 3 ? valuesFormEdicion.diaVariacion_FI : '',
-                    activo_FI: valuesFormEdicion.activo_FI
+                    precioHora_FI: valuesFormEdicion.precioHora_FI ? parseFloat(valuesFormEdicion.precioHora_FI) : null,
+                    variacion_FI: valuesFormEdicion.variacion_FI ? parseFloat(valuesFormEdicion.variacion_FI) : '',
+                    diaVariacion_FI: !valuesFormEdicion.int_FI ? (valuesFormEdicion.variacion_FI !== 3 ? valuesFormEdicion.diaVariacion_FI : '') : '',
+                    activo_FI: valuesFormEdicion.activo_FI,
+                    int_FI: valuesFormEdicion.int_FI,
+                    trab_FI: valuesFormEdicion.trab_FI ? parseInt(valuesFormEdicion.trab_FI) : null
                 });
             };
-            if (valuesFormEdicion.precioHora_FE) {
+            if (valuesFormEdicion.precioHora_FE || valuesFormEdicion.int_FE) {
                 serviciosFijosEdicion.servicio.push({
                     tipoServiciofijo: 'FCH.EX',
-                    precioHora_FE: parseFloat(valuesFormEdicion.precioHora_FE),
-                    variacion_FE: parseFloat(valuesFormEdicion.variacion_FE),
-                    diaVariacion_FE: valuesFormEdicion.variacion_FE !== 3 ? valuesFormEdicion.diaVariacion_FE : '',
-                    activo_FE: valuesFormEdicion.activo_FE
+                    precioHora_FE: valuesFormEdicion.precioHora_FE ? parseFloat(valuesFormEdicion.precioHora_FE) : null,
+                    variacion_FE: valuesFormEdicion.variacion_FE ? parseFloat(valuesFormEdicion.variacion_FE) : '',
+                    diaVariacion_FE: !valuesFormEdicion.int_FE ? (valuesFormEdicion.variacion_FE !== 3 ? valuesFormEdicion.diaVariacion_FE : '') : '',
+                    activo_FE: valuesFormEdicion.activo_FE,
+                    int_FE: valuesFormEdicion.int_FE,
+                    trab_FE: valuesFormEdicion.trab_FE ? parseInt(valuesFormEdicion.trab_FE) : null
                 });
             };
-            if (valuesFormEdicion.precioHora_AB) {
+            if (valuesFormEdicion.precioHora_AB || valuesFormEdicion.int_AB) {
                 serviciosFijosEdicion.servicio.push({
                     tipoServiciofijo: 'ABRLL',
-                    precioHora_AB: parseFloat(valuesFormEdicion.precioHora_AB),
-                    variacion_AB: parseFloat(valuesFormEdicion.variacion_AB),
-                    diaVariacion_AB: valuesFormEdicion.variacion_AB !== 3 ? valuesFormEdicion.diaVariacion_AB : '',
-                    activo_AB: valuesFormEdicion.activo_AB
+                    precioHora_AB: valuesFormEdicion.precioHora_AB ? parseFloat(valuesFormEdicion.precioHora_AB) : null,
+                    variacion_AB: valuesFormEdicion.variacion_AB ? parseFloat(valuesFormEdicion.variacion_AB) : '',
+                    diaVariacion_AB: !valuesFormEdicion.int_AB ? (valuesFormEdicion.variacion_AB !== 3 ? valuesFormEdicion.diaVariacion_AB : '') : '',
+                    activo_AB: valuesFormEdicion.activo_AB,
+                    int_AB: valuesFormEdicion.int_AB,
+                    trab_AB: valuesFormEdicion.trab_AB ? parseInt(valuesFormEdicion.trab_AB) : null
                 });
             };
-            if (valuesFormEdicion.precioHora_MA) {
+            if (valuesFormEdicion.precioHora_MA || valuesFormEdicion.int_MA) {
                 serviciosFijosEdicion.servicio.push({
                     tipoServiciofijo: 'MANT',
-                    precioHora_MA: parseFloat(valuesFormEdicion.precioHora_MA),
-                    variacion_MA: parseFloat(valuesFormEdicion.variacion_MA),
-                    diaVariacion_MA: valuesFormEdicion.variacion_MA !== 3 ? valuesFormEdicion.diaVariacion_MA : '',
-                    activo_MA: valuesFormEdicion.activo_MA
+                    precioHora_MA: valuesFormEdicion.precioHora_MA ? parseFloat(valuesFormEdicion.precioHora_MA) : null,
+                    variacion_MA: valuesFormEdicion.variacion_MA ? parseFloat(valuesFormEdicion.variacion_MA) : '',
+                    diaVariacion_MA: !valuesFormEdicion.int_MA ? (valuesFormEdicion.variacion_MA !== 3 ? valuesFormEdicion.diaVariacion_MA : '') : '',
+                    activo_MA: valuesFormEdicion.activo_MA,
+                    int_MA: valuesFormEdicion.int_MA,
+                    trab_MA: valuesFormEdicion.trab_MA ? parseInt(valuesFormEdicion.trab_MA) : null
                 });
             };
-            if (valuesFormEdicion.precioHora_PO) {
+            if (valuesFormEdicion.precioHora_PO || valuesFormEdicion.int_PO) {
                 serviciosFijosEdicion.servicio.push({
                     tipoServiciofijo: 'PORT',
-                    precioHora_PO: parseFloat(valuesFormEdicion.precioHora_PO),
-                    variacion_PO: parseFloat(valuesFormEdicion.variacion_PO),
-                    diaVariacion_PO: valuesFormEdicion.variacion_PO !== 3 ? valuesFormEdicion.diaVariacion_PO : '',
-                    activo_PO: valuesFormEdicion.activo_PO
+                    precioHora_PO: valuesFormEdicion.precioHora_PO ? parseFloat(valuesFormEdicion.precioHora_PO) : null,
+                    variacion_PO: valuesFormEdicion.variacion_PO ? parseFloat(valuesFormEdicion.variacion_PO) : '',
+                    diaVariacion_PO: !valuesFormEdicion.int_PO ? (valuesFormEdicion.variacion_PO !== 3 ? valuesFormEdicion.diaVariacion_PO : '') : '',
+                    activo_PO: valuesFormEdicion.activo_PO,
+                    int_PO: valuesFormEdicion.int_PO,
+                    trab_PO: valuesFormEdicion.trab_PO ? parseInt(valuesFormEdicion.trab_PO) : null
                 });
             };
-            if (valuesFormEdicion.precioHora_BA) {
+            if (valuesFormEdicion.precioHora_BA || valuesFormEdicion.int_BA) {
                 serviciosFijosEdicion.servicio.push({
                     tipoServiciofijo: 'BACT',
-                    precioHora_BA: parseFloat(valuesFormEdicion.precioHora_BA),
-                    variacion_BA: parseFloat(valuesFormEdicion.variacion_BA),
-                    diaVariacion_BA: valuesFormEdicion.variacion_BA !== 3 ? valuesFormEdicion.diaVariacion_BA : '',
-                    activo_BA: valuesFormEdicion.activo_BA
+                    precioHora_BA: valuesFormEdicion.precioHora_BA ? parseFloat(valuesFormEdicion.precioHora_BA) : null,
+                    variacion_BA: valuesFormEdicion.variacion_BA ? parseFloat(valuesFormEdicion.variacion_BA) : '',
+                    diaVariacion_BA: !valuesFormEdicion.int_BA ? (valuesFormEdicion.variacion_BA !== 3 ? valuesFormEdicion.diaVariacion_BA : '') : '',
+                    activo_BA: valuesFormEdicion.activo_BA,
+                    int_BA: valuesFormEdicion.int_BA,
+                    trab_BA: valuesFormEdicion.trab_BA ? parseInt(valuesFormEdicion.trab_BA) : null
                 });
             };
-            if (valuesFormEdicion.precioHora_FT) {
+            if (valuesFormEdicion.precioHora_FT || valuesFormEdicion.int_FT) {
                 serviciosFijosEdicion.servicio.push({
                     tipoServiciofijo: 'FEST',
-                    precioHora_FT: parseFloat(valuesFormEdicion.precioHora_FT),
-                    variacion_FT: parseFloat(valuesFormEdicion.variacion_FT),
-                    diaVariacion_FT: valuesFormEdicion.variacion_FT !== 3 ? valuesFormEdicion.diaVariacion_FT : '',
-                    activo_FT: valuesFormEdicion.activo_FT
+                    precioHora_FT: valuesFormEdicion.precioHora_FT ? parseFloat(valuesFormEdicion.precioHora_FT) : null,
+                    variacion_FT: valuesFormEdicion.variacion_FT ? parseFloat(valuesFormEdicion.variacion_FT) : '',
+                    diaVariacion_FT: !valuesFormEdicion.int_FT ? (valuesFormEdicion.variacion_FT !== 3 ? valuesFormEdicion.diaVariacion_FT : '') : '',
+                    activo_FT: valuesFormEdicion.activo_FT,
+                    int_FT: valuesFormEdicion.int_FT,
+                    trab_FT: valuesFormEdicion.trab_FT ? parseInt(valuesFormEdicion.trab_FT) : null
                 });
             };
-            if (valuesFormEdicion.precioHora_C3) {
+            if (valuesFormEdicion.precioHora_C3 || valuesFormEdicion.int_C3) {
                 serviciosFijosEdicion.servicio.push({
                     tipoServiciofijo: 'CRTRIM',
-                    precioHora_C3: parseFloat(valuesFormEdicion.precioHora_C3),
-                    variacion_C3: parseFloat(valuesFormEdicion.variacion_C3),
-                    diaVariacion_C3: valuesFormEdicion.variacion_C3 !== 3 ? valuesFormEdicion.diaVariacion_C3 : '',
-                    activo_C3: valuesFormEdicion.activo_C3
+                    precioHora_C3: valuesFormEdicion.precioHora_C3 ? parseFloat(valuesFormEdicion.precioHora_C3) : null,
+                    variacion_C3: valuesFormEdicion.variacion_C3 ? parseFloat(valuesFormEdicion.variacion_C3) : '',
+                    diaVariacion_C3: !valuesFormEdicion.int_C3 ? (valuesFormEdicion.variacion_C3 !== 3 ? valuesFormEdicion.diaVariacion_C3 : '') : '',
+                    activo_C3: valuesFormEdicion.activo_C3,
+                    int_C3: valuesFormEdicion.int_C3,
+                    trab_C3: valuesFormEdicion.trab_C3 ? parseInt(valuesFormEdicion.trab_C3) : null
                 });
             };
-            if (valuesFormEdicion.precioHora_C2) {
+            if (valuesFormEdicion.precioHora_C2 || valuesFormEdicion.int_C2) {
                 serviciosFijosEdicion.servicio.push({
                     tipoServiciofijo: 'CRBIM',
-                    precioHora_C2: parseFloat(valuesFormEdicion.precioHora_C2),
-                    variacion_C2: parseFloat(valuesFormEdicion.variacion_C2),
-                    diaVariacion_C2: valuesFormEdicion.variacion_C2 !== 3 ? valuesFormEdicion.diaVariacion_C2 : '',
-                    activo_C2: valuesFormEdicion.activo_C2
+                    precioHora_C2: valuesFormEdicion.precioHora_C2 ? parseFloat(valuesFormEdicion.precioHora_C2) : null,
+                    variacion_C2: valuesFormEdicion.variacion_C2 ? parseFloat(valuesFormEdicion.variacion_C2) : '',
+                    diaVariacion_C2: !valuesFormEdicion.int_C2 ? (valuesFormEdicion.variacion_C2 !== 3 ? valuesFormEdicion.diaVariacion_C2 : '') : '',
+                    activo_C2: valuesFormEdicion.activo_C2,
+                    int_C2: valuesFormEdicion.int_C2,
+                    trab_C2: valuesFormEdicion.trab_C2 ? parseInt(valuesFormEdicion.trab_C2) : null
                 });
             };
-            if (valuesFormEdicion.precioHora_ES) {
+            if (valuesFormEdicion.precioHora_ES || valuesFormEdicion.int_ES) {
                 serviciosFijosEdicion.servicio.push({
                     tipoServiciofijo: 'LIME',
-                    precioHora_ES: parseFloat(valuesFormEdicion.precioHora_ES),
-                    variacion_ES: parseFloat(valuesFormEdicion.variacion_ES),
-                    diaVariacion_ES: valuesFormEdicion.variacion_ES !== 3 ? valuesFormEdicion.diaVariacion_ES : '',
-                    activo_ES: valuesFormEdicion.activo_ES
+                    precioHora_ES: valuesFormEdicion.precioHora_ES ? parseFloat(valuesFormEdicion.precioHora_ES) : null,
+                    variacion_ES: valuesFormEdicion.variacion_ES ? parseFloat(valuesFormEdicion.variacion_ES) : '',
+                    diaVariacion_ES: !valuesFormEdicion.int_ES ? (valuesFormEdicion.variacion_ES !== 3 ? valuesFormEdicion.diaVariacion_ES : '') : '',
+                    activo_ES: valuesFormEdicion.activo_ES,
+                    int_ES: valuesFormEdicion.int_ES,
+                    trab_ES: valuesFormEdicion.trab_ES ? parseInt(valuesFormEdicion.trab_ES) : null
                 });
             };
-            if (valuesFormEdicion.precioHora_PA) {
+            if (valuesFormEdicion.precioHora_PA || valuesFormEdicion.int_PA) {
                 serviciosFijosEdicion.servicio.push({
                     tipoServiciofijo: 'LIMP',
-                    precioHora_PA: parseFloat(valuesFormEdicion.precioHora_PA),
-                    variacion_PA: parseFloat(valuesFormEdicion.variacion_PA),
-                    diaVariacion_PA: valuesFormEdicion.variacion_PA !== 3 ? valuesFormEdicion.diaVariacion_PA : '',
-                    activo_PA: valuesFormEdicion.activo_PA
+                    precioHora_PA: valuesFormEdicion.precioHora_PA ? parseFloat(valuesFormEdicion.precioHora_PA) : null,
+                    variacion_PA: valuesFormEdicion.variacion_PA ? parseFloat(valuesFormEdicion.variacion_PA) : '',
+                    diaVariacion_PA: !valuesFormEdicion.int_PA ? (valuesFormEdicion.variacion_PA !== 3 ? valuesFormEdicion.diaVariacion_PA : '') : '',
+                    activo_PA: valuesFormEdicion.activo_PA,
+                    int_PA: valuesFormEdicion.int_PA,
+                    trab_PA: valuesFormEdicion.trab_PA ? parseInt(valuesFormEdicion.trab_PA) : null
                 });
             };
             if (serviciosFijosEdicion.servicio.length === 0) {
@@ -4122,7 +4284,47 @@ const CentrosEditar = forwardRef((props, ref) => {
                 activo_C3: 'si',
                 activo_C2: 'si',
                 activo_ES: 'si',
-                activo_PA: 'si'
+                activo_PA: 'si',
+                int_TO: false,
+                int_CR: false,
+                int_CE: false,
+                int_CI: false,
+                int_MO: false,
+                int_OF: false,
+                int_AL: false,
+                int_LA: false,
+                int_TE: false,
+                int_FI: false,
+                int_FE: false,
+                int_AB: false,
+                int_MA: false,
+                int_PO: false,
+                int_BA: false,
+                int_FT: false,
+                int_C3: false,
+                int_C2: false,
+                int_ES: false,
+                int_PA: false,
+                trab_TO: '',
+                trab_CR: '',
+                trab_CE: '',
+                trab_CI: '',
+                trab_MO: '',
+                trab_OF: '',
+                trab_AL: '',
+                trab_LA: '',
+                trab_TE: '',
+                trab_FI: '',
+                trab_FE: '',
+                trab_AB: '',
+                trab_MA: '',
+                trab_PO: '',
+                trab_BA: '',
+                trab_FT: '',
+                trab_C3: '',
+                trab_C2: '',
+                trab_ES: '',
+                trab_PA: ''
             });
             setValuesFormEdicionGenerales({
                 id: null,
@@ -4246,7 +4448,47 @@ const CentrosEditar = forwardRef((props, ref) => {
                 activo_C3: 'si',
                 activo_C2: 'si',
                 activo_ES: 'si',
-                activo_PA: 'si'
+                activo_PA: 'si',
+                int_TO: false,
+                int_CR: false,
+                int_CE: false,
+                int_CI: false,
+                int_MO: false,
+                int_OF: false,
+                int_AL: false,
+                int_LA: false,
+                int_TE: false,
+                int_FI: false,
+                int_FE: false,
+                int_AB: false,
+                int_MA: false,
+                int_PO: false,
+                int_BA: false,
+                int_FT: false,
+                int_C3: false,
+                int_C2: false,
+                int_ES: false,
+                int_PA: false,
+                trab_TO: '',
+                trab_CR: '',
+                trab_CE: '',
+                trab_CI: '',
+                trab_MO: '',
+                trab_OF: '',
+                trab_AL: '',
+                trab_LA: '',
+                trab_TE: '',
+                trab_FI: '',
+                trab_FE: '',
+                trab_AB: '',
+                trab_MA: '',
+                trab_PO: '',
+                trab_BA: '',
+                trab_FT: '',
+                trab_C3: '',
+                trab_C2: '',
+                trab_ES: '',
+                trab_PA: ''
             });
         };
         setValueTimePickerInicioEdicion([
@@ -4870,7 +5112,7 @@ const CentrosEditar = forwardRef((props, ref) => {
     };
 
     const retornaTipoServicioFijoEdicion = (tipo, index) => {
-        let checkeado, laLabelSw, laLabelIn, elId, elValue, laLabelWi, elPrecioHora, laClase, elValueVariaciones, laVariacion, elValueDia, elDia, elValueActivo, elActivo, desactivadoDia;
+        let checkeado, laLabelSw, laLabelIn, elId, elValue, laLabelWi, elPrecioHora, laClase, elValueVariaciones, laVariacion, elValueDia, elDia, elValueActivo, elActivo, desactivadoDia, elValueInt, elInt, elValueTrab, elTrab;
         switch (tipo.value) {
             case 'TOL':
                 checkeado = stateSwitchTipoServicioFijoEdicion.TO;
@@ -4881,11 +5123,15 @@ const CentrosEditar = forwardRef((props, ref) => {
                 elValueVariaciones = valuesFormEdicion.variacion_TO || '';
                 elValueDia = valuesFormEdicion.diaVariacion_TO || '';
                 elValueActivo = valuesFormEdicion.activo_TO || '';
+                elValueInt = valuesFormEdicion.int_TO || false;
+                elValueTrab = valuesFormEdicion.trab_TO || '';
                 laLabelWi = 30;
                 elPrecioHora = 'precioHora_TO';
                 laVariacion = 'variacion_TO';
                 elDia = 'diaVariacion_TO';
                 elActivo = 'activo_TO';
+                elInt = 'int_TO';
+                elTrab = 'trab_TO';
                 laClase =
                     (valuesFormEdicion.activo_TO === 'no') ?
                         classes.fondoInactivoServicioFijo :
@@ -4902,11 +5148,15 @@ const CentrosEditar = forwardRef((props, ref) => {
                 elValueVariaciones = valuesFormEdicion.variacion_CR || '';
                 elValueDia = valuesFormEdicion.diaVariacion_CR || '';
                 elValueActivo = valuesFormEdicion.activo_CR || '';
+                elValueInt = valuesFormEdicion.int_CR || false;
+                elValueTrab = valuesFormEdicion.trab_CR || '';
                 laLabelWi = 40;
                 elPrecioHora = 'precioHora_CR';
                 laVariacion = 'variacion_CR';
                 elDia = 'diaVariacion_CR';
                 elActivo = 'activo_CR';
+                elInt = 'int_CR';
+                elTrab = 'trab_CR';
                 laClase =
                     (valuesFormEdicion.activo_CR === 'no') ?
                         classes.fondoInactivoServicioFijo :
@@ -4923,11 +5173,15 @@ const CentrosEditar = forwardRef((props, ref) => {
                 elValueVariaciones = valuesFormEdicion.variacion_CE || '';
                 elValueDia = valuesFormEdicion.diaVariacion_CE || '';
                 elValueActivo = valuesFormEdicion.activo_CE || '';
+                elValueInt = valuesFormEdicion.int_CE || false;
+                elValueTrab = valuesFormEdicion.trab_CE || '';
                 laLabelWi = 50;
                 elPrecioHora = 'precioHora_CE';
                 laVariacion = 'variacion_CE';
                 elDia = 'diaVariacion_CE';
                 elActivo = 'activo_CE';
+                elInt = 'int_CE';
+                elTrab = 'trab_CE';
                 laClase =
                     (valuesFormEdicion.activo_CE === 'no') ?
                         classes.fondoInactivoServicioFijo :
@@ -4944,11 +5198,15 @@ const CentrosEditar = forwardRef((props, ref) => {
                 elValueVariaciones = valuesFormEdicion.variacion_CI || '';
                 elValueDia = valuesFormEdicion.diaVariacion_CI || '';
                 elValueActivo = valuesFormEdicion.activo_CI || '';
+                elValueInt = valuesFormEdicion.int_CI || false;
+                elValueTrab = valuesFormEdicion.trab_CI || '';
                 laLabelWi = 45;
                 elPrecioHora = 'precioHora_CI';
                 laVariacion = 'variacion_CI';
                 elDia = 'diaVariacion_CI';
                 elActivo = 'activo_CI';
+                elInt = 'int_CI';
+                elTrab = 'trab_CI';
                 laClase =
                     (valuesFormEdicion.activo_CI === 'no') ?
                         classes.fondoInactivoServicioFijo :
@@ -4965,11 +5223,15 @@ const CentrosEditar = forwardRef((props, ref) => {
                 elValueVariaciones = valuesFormEdicion.variacion_MO || '';
                 elValueDia = valuesFormEdicion.diaVariacion_MO || '';
                 elValueActivo = valuesFormEdicion.activo_MO || '';
+                elValueInt = valuesFormEdicion.int_MO || false;
+                elValueTrab = valuesFormEdicion.trab_MO || '';
                 laLabelWi = 35;
                 elPrecioHora = 'precioHora_MO';
                 laVariacion = 'variacion_MO';
                 elDia = 'diaVariacion_MO';
                 elActivo = 'activo_MO';
+                elInt = 'int_MO';
+                elTrab = 'trab_MO';
                 laClase =
                     (valuesFormEdicion.activo_MO === 'no') ?
                         classes.fondoInactivoServicioFijo :
@@ -4986,11 +5248,15 @@ const CentrosEditar = forwardRef((props, ref) => {
                 elValueVariaciones = valuesFormEdicion.variacion_OF || '';
                 elValueDia = valuesFormEdicion.diaVariacion_OF || '';
                 elValueActivo = valuesFormEdicion.activo_OF || '';
+                elValueInt = valuesFormEdicion.int_OF || false;
+                elValueTrab = valuesFormEdicion.trab_OF || '';
                 laLabelWi = 20;
                 elPrecioHora = 'precioHora_OF';
                 laVariacion = 'variacion_OF';
                 elDia = 'diaVariacion_OF';
                 elActivo = 'activo_OF';
+                elInt = 'int_OF';
+                elTrab = 'trab_OF';
                 laClase =
                     (valuesFormEdicion.activo_OF === 'no') ?
                         classes.fondoInactivoServicioFijo :
@@ -5007,11 +5273,15 @@ const CentrosEditar = forwardRef((props, ref) => {
                 elValueVariaciones = valuesFormEdicion.variacion_AL || '';
                 elValueDia = valuesFormEdicion.diaVariacion_AL || '';
                 elValueActivo = valuesFormEdicion.activo_AL || '';
+                elValueInt = valuesFormEdicion.int_AL || false;
+                elValueTrab = valuesFormEdicion.trab_AL || '';
                 laLabelWi = 45;
                 elPrecioHora = 'precioHora_AL';
                 laVariacion = 'variacion_AL';
                 elDia = 'diaVariacion_AL';
                 elActivo = 'activo_AL';
+                elInt = 'int_AL';
+                elTrab = 'trab_AL';
                 laClase =
                     (valuesFormEdicion.activo_AL === 'no') ?
                         classes.fondoInactivoServicioFijo :
@@ -5028,11 +5298,15 @@ const CentrosEditar = forwardRef((props, ref) => {
                 elValueVariaciones = valuesFormEdicion.variacion_LA || '';
                 elValueDia = valuesFormEdicion.diaVariacion_LA || '';
                 elValueActivo = valuesFormEdicion.activo_LA || '';
+                elValueInt = valuesFormEdicion.int_LA || false;
+                elValueTrab = valuesFormEdicion.trab_LA || '';
                 laLabelWi = 30;
                 elPrecioHora = 'precioHora_LA';
                 laVariacion = 'variacion_LA';
                 elDia = 'diaVariacion_LA';
                 elActivo = 'activo_LA';
+                elInt = 'int_LA';
+                elTrab = 'trab_LA';
                 laClase =
                     (valuesFormEdicion.activo_LA === 'no') ?
                         classes.fondoInactivoServicioFijo :
@@ -5049,11 +5323,15 @@ const CentrosEditar = forwardRef((props, ref) => {
                 elValueVariaciones = valuesFormEdicion.variacion_TE || '';
                 elValueDia = valuesFormEdicion.diaVariacion_TE || '';
                 elValueActivo = valuesFormEdicion.activo_TE || '';
+                elValueInt = valuesFormEdicion.int_TE || false;
+                elValueTrab = valuesFormEdicion.trab_TE || '';
                 laLabelWi = 40;
                 elPrecioHora = 'precioHora_TE';
                 laVariacion = 'variacion_TE';
                 elDia = 'diaVariacion_TE';
                 elActivo = 'activo_TE';
+                elInt = 'int_TE';
+                elTrab = 'trab_TE';
                 laClase =
                     (valuesFormEdicion.activo_TE === 'no') ?
                         classes.fondoInactivoServicioFijo :
@@ -5070,11 +5348,15 @@ const CentrosEditar = forwardRef((props, ref) => {
                 elValueVariaciones = valuesFormEdicion.variacion_FI || '';
                 elValueDia = valuesFormEdicion.diaVariacion_FI || '';
                 elValueActivo = valuesFormEdicion.activo_FI || '';
+                elValueInt = valuesFormEdicion.int_FI || false;
+                elValueTrab = valuesFormEdicion.trab_FI || '';
                 laLabelWi = 60;
                 elPrecioHora = 'precioHora_FI';
                 laVariacion = 'variacion_FI';
                 elDia = 'diaVariacion_FI';
                 elActivo = 'activo_FI';
+                elInt = 'int_FI';
+                elTrab = 'trab_FI';
                 laClase =
                     (valuesFormEdicion.activo_FI === 'no') ?
                         classes.fondoInactivoServicioFijo :
@@ -5091,11 +5373,15 @@ const CentrosEditar = forwardRef((props, ref) => {
                 elValueVariaciones = valuesFormEdicion.variacion_FE || '';
                 elValueDia = valuesFormEdicion.diaVariacion_FE || '';
                 elValueActivo = valuesFormEdicion.activo_FE || '';
+                elValueInt = valuesFormEdicion.int_FE || false;
+                elValueTrab = valuesFormEdicion.trab_FE || '';
                 laLabelWi = 60;
                 elPrecioHora = 'precioHora_FE';
                 laVariacion = 'variacion_FE';
                 elDia = 'diaVariacion_FE';
                 elActivo = 'activo_FE';
+                elInt = 'int_FE';
+                elTrab = 'trab_FE';
                 laClase =
                     (valuesFormEdicion.activo_FE === 'no') ?
                         classes.fondoInactivoServicioFijo :
@@ -5112,11 +5398,15 @@ const CentrosEditar = forwardRef((props, ref) => {
                 elValueVariaciones = valuesFormEdicion.variacion_AB || '';
                 elValueDia = valuesFormEdicion.diaVariacion_AB || '';
                 elValueActivo = valuesFormEdicion.activo_AB || '';
+                elValueInt = valuesFormEdicion.int_AB || false;
+                elValueTrab = valuesFormEdicion.trab_AB || '';
                 laLabelWi = 50;
                 elPrecioHora = 'precioHora_AB';
                 laVariacion = 'variacion_AB';
                 elDia = 'diaVariacion_AB';
                 elActivo = 'activo_AB';
+                elInt = 'int_AB';
+                elTrab = 'trab_AB';
                 laClase =
                     (valuesFormEdicion.activo_AB === 'no') ?
                         classes.fondoInactivoServicioFijo :
@@ -5133,11 +5423,15 @@ const CentrosEditar = forwardRef((props, ref) => {
                 elValueVariaciones = valuesFormEdicion.variacion_MA || '';
                 elValueDia = valuesFormEdicion.diaVariacion_MA || '';
                 elValueActivo = valuesFormEdicion.activo_MA || '';
+                elValueInt = valuesFormEdicion.int_MA || false;
+                elValueTrab = valuesFormEdicion.trab_MA || '';
                 laLabelWi = 45;
                 elPrecioHora = 'precioHora_MA';
                 laVariacion = 'variacion_MA';
                 elDia = 'diaVariacion_MA';
                 elActivo = 'activo_MA';
+                elInt = 'int_MA';
+                elTrab = 'trab_MA';
                 laClase =
                     (valuesFormEdicion.activo_MA === 'no') ?
                         classes.fondoInactivoServicioFijo :
@@ -5154,11 +5448,15 @@ const CentrosEditar = forwardRef((props, ref) => {
                 elValueVariaciones = valuesFormEdicion.variacion_PO || '';
                 elValueDia = valuesFormEdicion.diaVariacion_PO || '';
                 elValueActivo = valuesFormEdicion.activo_PO || '';
+                elValueInt = valuesFormEdicion.int_PO || false;
+                elValueTrab = valuesFormEdicion.trab_PO || '';
                 laLabelWi = 40;
                 elPrecioHora = 'precioHora_PO';
                 laVariacion = 'variacion_PO';
                 elDia = 'diaVariacion_PO';
                 elActivo = 'activo_PO';
+                elInt = 'int_PO';
+                elTrab = 'trab_PO';
                 laClase =
                     (valuesFormEdicion.activo_PO === 'no') ?
                         classes.fondoInactivoServicioFijo :
@@ -5175,11 +5473,15 @@ const CentrosEditar = forwardRef((props, ref) => {
                 elValueVariaciones = valuesFormEdicion.variacion_BA || '';
                 elValueDia = valuesFormEdicion.diaVariacion_BA || '';
                 elValueActivo = valuesFormEdicion.activo_BA || '';
+                elValueInt = valuesFormEdicion.int_BA || false;
+                elValueTrab = valuesFormEdicion.trab_BA || '';
                 laLabelWi = 40;
                 elPrecioHora = 'precioHora_BA';
                 laVariacion = 'variacion_BA';
                 elDia = 'diaVariacion_BA';
                 elActivo = 'activo_BA';
+                elInt = 'int_BA';
+                elTrab = 'trab_BA';
                 laClase =
                     (valuesFormEdicion.activo_BA === 'no') ?
                         classes.fondoInactivoServicioFijo :
@@ -5196,11 +5498,15 @@ const CentrosEditar = forwardRef((props, ref) => {
                 elValueVariaciones = valuesFormEdicion.variacion_FT || '';
                 elValueDia = valuesFormEdicion.diaVariacion_FT || '';
                 elValueActivo = valuesFormEdicion.activo_FT || '';
+                elValueInt = valuesFormEdicion.int_FT || false;
+                elValueTrab = valuesFormEdicion.trab_FT || '';
                 laLabelWi = 40;
                 elPrecioHora = 'precioHora_FT';
                 laVariacion = 'variacion_FT';
                 elDia = 'diaVariacion_FT';
                 elActivo = 'activo_FT';
+                elInt = 'int_FT';
+                elTrab = 'trab_FT';
                 laClase =
                     (valuesFormEdicion.activo_FT === 'no') ?
                         classes.fondoInactivoServicioFijo :
@@ -5217,11 +5523,15 @@ const CentrosEditar = forwardRef((props, ref) => {
                 elValueVariaciones = valuesFormEdicion.variacion_C3 || '';
                 elValueDia = valuesFormEdicion.diaVariacion_C3 || '';
                 elValueActivo = valuesFormEdicion.activo_C3 || '';
+                elValueInt = valuesFormEdicion.int_C3 || false;
+                elValueTrab = valuesFormEdicion.trab_C3 || '';
                 laLabelWi = 60;
                 elPrecioHora = 'precioHora_C3';
                 laVariacion = 'variacion_C3';
                 elDia = 'diaVariacion_C3';
                 elActivo = 'activo_C3';
+                elInt = 'int_C3';
+                elTrab = 'trab_C3';
                 laClase =
                     (valuesFormEdicion.activo_C3 === 'no') ?
                         classes.fondoInactivoServicioFijo :
@@ -5232,17 +5542,21 @@ const CentrosEditar = forwardRef((props, ref) => {
             case 'CRBIM':
                 checkeado = stateSwitchTipoServicioFijoEdicion.C2;
                 laLabelSw = 'LIMPIEZA DE CRISTALES BIMENSUAL';
-                laLabelIn = 'PCRBIM';
+                laLabelIn = 'CRBIM';
                 elId = 'form-precio-hora_C2-edicion';
                 elValue = valuesFormEdicion.precioHora_C2 || '';
                 elValueVariaciones = valuesFormEdicion.variacion_C2 || '';
                 elValueDia = valuesFormEdicion.diaVariacion_C2 || '';
                 elValueActivo = valuesFormEdicion.activo_C2 || '';
+                elValueInt = valuesFormEdicion.int_C2 || false;
+                elValueTrab = valuesFormEdicion.trab_C2 || '';
                 laLabelWi = 60;
                 elPrecioHora = 'precioHora_C2';
                 laVariacion = 'variacion_C2';
                 elDia = 'diaVariacion_C2';
                 elActivo = 'activo_C2';
+                elInt = 'int_C2';
+                elTrab = 'trab_C2';
                 laClase =
                     (valuesFormEdicion.activo_C2 === 'no') ?
                         classes.fondoInactivoServicioFijo :
@@ -5259,11 +5573,15 @@ const CentrosEditar = forwardRef((props, ref) => {
                 elValueVariaciones = valuesFormEdicion.variacion_ES || '';
                 elValueDia = valuesFormEdicion.diaVariacion_ES || '';
                 elValueActivo = valuesFormEdicion.activo_ES || '';
+                elValueInt = valuesFormEdicion.int_ES || false;
+                elValueTrab = valuesFormEdicion.trab_ES || '';
                 laLabelWi = 40;
                 elPrecioHora = 'precioHora_ES';
                 laVariacion = 'variacion_ES';
                 elDia = 'diaVariacion_ES';
                 elActivo = 'activo_ES';
+                elInt = 'int_ES';
+                elTrab = 'trab_ES';
                 laClase =
                     (valuesFormEdicion.activo_ES === 'no') ?
                         classes.fondoInactivoServicioFijo :
@@ -5280,11 +5598,15 @@ const CentrosEditar = forwardRef((props, ref) => {
                 elValueVariaciones = valuesFormEdicion.variacion_PA || '';
                 elValueDia = valuesFormEdicion.diaVariacion_PA || '';
                 elValueActivo = valuesFormEdicion.activo_PA || '';
+                elValueInt = valuesFormEdicion.int_PA || false;
+                elValueTrab = valuesFormEdicion.trab_PA || '';
                 laLabelWi = 40;
                 elPrecioHora = 'precioHora_PA';
                 laVariacion = 'variacion_PA';
                 elDia = 'diaVariacion_PA';
                 elActivo = 'activo_PA';
+                elInt = 'int_PA';
+                elTrab = 'trab_PA';
                 laClase =
                     (valuesFormEdicion.activo_PA === 'no') ?
                         classes.fondoInactivoServicioFijo :
@@ -5298,14 +5620,13 @@ const CentrosEditar = forwardRef((props, ref) => {
             <Grid
                 container
                 direction="row"
-                justifycontent="flex-start"
                 alignItems="center"
                 spacing={1}
                 className={laClase}
-                style={{ height: 80, paddingTop: 5, paddingBottom: 10, paddingRight: 10, paddingLeft: 10, marginBottom: 15 }}
+                style={{ height: 165, paddingTop: 5, paddingBottom: 10, paddingRight: 10, paddingLeft: 10, marginBottom: 15 }}
                 key={'formServicio' + index}
             >
-                <Grid item xs={4}>
+                <Grid item xs={5}>
                     <FormControlLabel
                         control={
                             <Switch
@@ -5321,104 +5642,170 @@ const CentrosEditar = forwardRef((props, ref) => {
                         style={{ marginTop: 5 }}
                     />
                 </Grid>
-                <Grid item xs={2}>
-                    <FormControl
-                        variant="outlined"
-                        className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
-                        size="small"
-                        style={{ marginTop: 5 }}
+                <Grid item xs={7}>
+                    <Grid
+                        container
+                        direction="row"
+                        alignItems="center"
+                        spacing={1}
+                        style={{ marginBottom: -10, marginTop: -10 }}
                     >
-                        <InputLabel>{laLabelIn}</InputLabel>
-                        <OutlinedInput
-                            fullWidth
-                            id={elId}
-                            value={elValue}
-                            onChange={handleChangeFormEdicion(elPrecioHora)}
-                            labelWidth={laLabelWi}
-                            startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                        />
-                    </FormControl>
-                </Grid>
-                <Grid item xs={3}>
-                    <FormControl
-                        variant="outlined"
-                        className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
-                        size="small"
-                        style={{ marginTop: 5 }}
-                    >
-                        <InputLabel>Variaciones</InputLabel>
-                        <Select
-                            fullWidth
-                            value={elValueVariaciones}
-                            onChange={handleChangeFormEdicion(laVariacion)}
-                            helpertext="Selecciona variaciones"
-                            label="Variaciones"
+                        <RadioGroup
+                            row
+                            value={elValueActivo}
+                            onChange={handleChangeFormEdicion(elActivo)}
+                            className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
+                            style={{ marginRight: 15 }}
                         >
-                            {variacionesServiciosFijos.map((option) => (
-                                <MenuItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                </Grid>
-                <Grid item xs={2}>
-                    <FormControl
-                        variant="outlined"
-                        className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
-                        size="small"
-                        style={{ marginRight: 10, marginTop: 5 }}
-                    >
-                        <InputLabel>Día</InputLabel>
-                        <Select
-                            fullWidth
-                            value={elValueDia}
-                            onChange={handleChangeFormEdicion(elDia)}
-                            helpertext="Selecciona Día"
-                            label="Día"
-                            disabled={desactivadoDia}
-                        >
-                            <MenuItem value=''>
-                                <em>No</em>
-                            </MenuItem>
-                            {diasSemana.map((option) => (
-                                <MenuItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                </Grid>
-                <Grid item xs={1}>
-                    <RadioGroup
-                        value={elValueActivo}
-                        onChange={handleChangeFormEdicion(elActivo)}
-                        className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
-                        style={{ marginTop: -5, marginBottom: -10 }}
-                    >
+                            <FormControlLabel
+                                value="si"
+                                control={
+                                    <Radio
+                                        size='small'
+                                    />
+                                }
+                                label={<Typography style={{ fontSize: '0.7rem', marginLeft: -5 }}>ACTIVO</Typography>}
+                                labelPlacement="end"
+                            />
+                            <FormControlLabel
+                                value="no"
+                                control={
+                                    <Radio
+                                        size='small'
+                                    />
+                                }
+                                label={<Typography style={{ fontSize: '0.7rem', marginLeft: -5 }}>INACTIVO</Typography>}
+                                labelPlacement="end"
+                            />
+                        </RadioGroup>
                         <FormControlLabel
-                            value="si"
+                            className={!checkeado ? classes.displayNone : null}
                             control={
-                                <Radio
+                                <Checkbox
                                     size='small'
+                                    icon={<RadioButtonUncheckedIcon />} checkedIcon={<RadioButtonCheckedIcon />}
+                                    checked={elValueInt}
+                                    onChange={handleChangeFormEdicion(elInt)}
+                                    name="checkedComputa-edicion"
+                                    color="secondary"
                                 />
                             }
-                            label={<Typography style={{ fontSize: '0.7rem', marginLeft: -5 }}>ON</Typography>}
-                            labelPlacement="end"
-                            style={{ marginBottom: -20 }}
-
+                            label={<Typography style={{ fontSize: '0.7rem', marginLeft: -5 }}>INTEGRADO EN CÓMPUTO</Typography>}
                         />
-                        <FormControlLabel
-                            value="no"
-                            control={
-                                <Radio
-                                    size='small'
+                    </Grid>
+                    <Grid
+                        container
+                        direction="row"
+                        alignItems="center"
+                        spacing={1}
+                    >
+                        <Grid item xs={6}>
+                            <FormControl
+                                variant="outlined"
+                                className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
+                                size="small"
+                                style={{ marginTop: 5 }}
+                                disabled={elValueInt}
+                            >
+                                <InputLabel>{laLabelIn}</InputLabel>
+                                <OutlinedInput
+                                    fullWidth
+                                    id={elId}
+                                    value={elValue}
+                                    onChange={handleChangeFormEdicion(elPrecioHora)}
+                                    labelWidth={laLabelWi}
+                                    startAdornment={<InputAdornment position="start">€</InputAdornment>}
                                 />
-                            }
-                            label={<Typography style={{ fontSize: '0.7rem', marginLeft: -5 }}>OFF</Typography>}
-                            labelPlacement="end"
-                        />
-                    </RadioGroup>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <FormControl
+                                variant="outlined"
+                                className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
+                                size="small"
+                                style={{ marginRight: 10 }}
+                            >
+                                <InputLabel>Trabajador</InputLabel>
+                                <Select
+                                    fullWidth
+                                    id="form-trabajadorSF-edicion"
+                                    label="Trabajador"
+                                    value={elValueTrab}
+                                    onChange={handleChangeFormEdicion(elTrab)}
+                                    helpertext="Selecciona trabajador"
+                                >
+                                    <MenuItem value=''>
+                                        <em>Sin trabajador</em>
+                                    </MenuItem>
+                                    {
+                                        arrayTrabajadoresSubcategoria.map((option) => (
+                                            <MenuItem key={option.id} value={option.id}>
+                                                {option.nombre}
+                                            </MenuItem>
+                                        ))
+                                    }
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                    </Grid>
+                    <Grid
+                        container
+                        direction="row"
+                        alignItems="center"
+                        spacing={1}
+                    >
+                        <Grid item xs={6}>
+                            <FormControl
+                                variant="outlined"
+                                className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
+                                size="small"
+                                style={{ marginTop: 5 }}
+                                disabled={elValueInt}
+                            >
+                                <InputLabel>Variaciones</InputLabel>
+                                <Select
+                                    fullWidth
+                                    value={elValueVariaciones}
+                                    onChange={handleChangeFormEdicion(laVariacion)}
+                                    helpertext="Selecciona variaciones"
+                                    label="Variaciones"
+                                >
+                                    {variacionesServiciosFijos.map((option) => (
+                                        <MenuItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <FormControl
+                                variant="outlined"
+                                className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
+                                size="small"
+                                style={{ marginRight: 10, marginTop: 5 }}
+                            >
+                                <InputLabel>Día</InputLabel>
+                                <Select
+                                    fullWidth
+                                    value={elValueDia}
+                                    onChange={handleChangeFormEdicion(elDia)}
+                                    helpertext="Selecciona Día"
+                                    label="Día"
+                                    disabled={elValueInt ? elValueInt : desactivadoDia}
+                                >
+                                    <MenuItem value=''>
+                                        <em>No</em>
+                                    </MenuItem>
+                                    {diasSemana.map((option) => (
+                                        <MenuItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                    </Grid>
                 </Grid>
             </Grid>
         )
@@ -5613,7 +6000,47 @@ const CentrosEditar = forwardRef((props, ref) => {
             activo_C3: 'si',
             activo_C2: 'si',
             activo_ES: 'si',
-            activo_PA: 'si'
+            activo_PA: 'si',
+            int_TO: false,
+            int_CR: false,
+            int_CE: false,
+            int_CI: false,
+            int_MO: false,
+            int_OF: false,
+            int_AL: false,
+            int_LA: false,
+            int_TE: false,
+            int_FI: false,
+            int_FE: false,
+            int_AB: false,
+            int_MA: false,
+            int_PO: false,
+            int_BA: false,
+            int_FT: false,
+            int_C3: false,
+            int_C2: false,
+            int_ES: false,
+            int_PA: false,
+            trab_TO: '',
+            trab_CR: '',
+            trab_CE: '',
+            trab_CI: '',
+            trab_MO: '',
+            trab_OF: '',
+            trab_AL: '',
+            trab_LA: '',
+            trab_TE: '',
+            trab_FI: '',
+            trab_FE: '',
+            trab_AB: '',
+            trab_MA: '',
+            trab_PO: '',
+            trab_BA: '',
+            trab_FT: '',
+            trab_C3: '',
+            trab_C2: '',
+            trab_ES: '',
+            trab_PA: ''
         };
         let objetoEstadosSwitch = {
             TO: false,
@@ -5639,144 +6066,184 @@ const CentrosEditar = forwardRef((props, ref) => {
         };
         if (cuadranteAGestionar.servicios_fijos) {
             cuadranteAGestionar.servicios_fijos.servicio.forEach((servicio) => {
-                if (servicio.precioHora_TO) {
+                if (servicio.precioHora_TO || servicio.int_TO) {
                     myObjetoServiciosFijos.precioHora_TO = servicio.precioHora_TO;
                     myObjetoServiciosFijos.variacion_TO = servicio.variacion_TO;
                     myObjetoServiciosFijos.diaVariacion_TO = servicio.diaVariacion_TO;
                     myObjetoServiciosFijos.activo_TO = servicio.activo_TO;
+                    myObjetoServiciosFijos.int_TO = servicio.int_TO;
+                    myObjetoServiciosFijos.trab_TO = servicio.trab_TO;
                     objetoEstadosSwitch.TO = true;
                 };
-                if (servicio.precioHora_CR) {
+                if (servicio.precioHora_CR || servicio.int_CR) {
                     myObjetoServiciosFijos.precioHora_CR = servicio.precioHora_CR;
                     myObjetoServiciosFijos.variacion_CR = servicio.variacion_CR;
                     myObjetoServiciosFijos.diaVariacion_CR = servicio.diaVariacion_CR;
                     myObjetoServiciosFijos.activo_CR = servicio.activo_CR;
+                    myObjetoServiciosFijos.int_CR = servicio.int_CR;
+                    myObjetoServiciosFijos.trab_CR = servicio.trab_CR;
                     objetoEstadosSwitch.CR = true;
                 };
-                if (servicio.precioHora_CE) {
+                if (servicio.precioHora_CE || servicio.int_CE) {
                     myObjetoServiciosFijos.precioHora_CE = servicio.precioHora_CE;
                     myObjetoServiciosFijos.variacion_CE = servicio.variacion_CE;
                     myObjetoServiciosFijos.diaVariacion_CE = servicio.diaVariacion_CE;
                     myObjetoServiciosFijos.activo_CE = servicio.activo_CE;
+                    myObjetoServiciosFijos.int_CE = servicio.int_CE;
+                    myObjetoServiciosFijos.trab_CE = servicio.trab_CE;
                     objetoEstadosSwitch.CE = true;
                 };
-                if (servicio.precioHora_CI) {
+                if (servicio.precioHora_CI || servicio.int_CI) {
                     myObjetoServiciosFijos.precioHora_CI = servicio.precioHora_CI;
                     myObjetoServiciosFijos.variacion_CI = servicio.variacion_CI;
                     myObjetoServiciosFijos.diaVariacion_CI = servicio.diaVariacion_CI;
                     myObjetoServiciosFijos.activo_CI = servicio.activo_CI;
+                    myObjetoServiciosFijos.int_CI = servicio.int_CI;
+                    myObjetoServiciosFijos.trab_CI = servicio.trab_CI;
                     objetoEstadosSwitch.CI = true;
                 };
-                if (servicio.precioHora_MO) {
+                if (servicio.precioHora_MO || servicio.int_MA) {
                     myObjetoServiciosFijos.precioHora_MO = servicio.precioHora_MO;
                     myObjetoServiciosFijos.variacion_MO = servicio.variacion_MO;
                     myObjetoServiciosFijos.diaVariacion_MO = servicio.diaVariacion_MO;
                     myObjetoServiciosFijos.activo_MO = servicio.activo_MO;
+                    myObjetoServiciosFijos.int_MO = servicio.int_MO;
+                    myObjetoServiciosFijos.trab_MO = servicio.trab_MO;
                     objetoEstadosSwitch.MO = true;
                 };
-                if (servicio.precioHora_OF) {
+                if (servicio.precioHora_OF || servicio.int_OF) {
                     myObjetoServiciosFijos.precioHora_OF = servicio.precioHora_OF;
                     myObjetoServiciosFijos.variacion_OF = servicio.variacion_OF;
                     myObjetoServiciosFijos.diaVariacion_OF = servicio.diaVariacion_OF;
                     myObjetoServiciosFijos.activo_OF = servicio.activo_OF;
+                    myObjetoServiciosFijos.int_OF = servicio.int_OF;
+                    myObjetoServiciosFijos.trab_OF = servicio.trab_OF;
                     objetoEstadosSwitch.OF = true;
                 };
-                if (servicio.precioHora_AL) {
+                if (servicio.precioHora_AL || servicio.int_AL) {
                     myObjetoServiciosFijos.precioHora_AL = servicio.precioHora_AL;
                     myObjetoServiciosFijos.variacion_AL = servicio.variacion_AL;
                     myObjetoServiciosFijos.diaVariacion_AL = servicio.diaVariacion_AL;
                     myObjetoServiciosFijos.activo_AL = servicio.activo_AL;
+                    myObjetoServiciosFijos.int_AL = servicio.int_AL;
+                    myObjetoServiciosFijos.trab_AL = servicio.trab_AL;
                     objetoEstadosSwitch.AL = true;
                 };
-                if (servicio.precioHora_LA) {
+                if (servicio.precioHora_LA || servicio.int_LA) {
                     myObjetoServiciosFijos.precioHora_LA = servicio.precioHora_LA;
                     myObjetoServiciosFijos.variacion_LA = servicio.variacion_LA;
                     myObjetoServiciosFijos.diaVariacion_LA = servicio.diaVariacion_LA;
                     myObjetoServiciosFijos.activo_LA = servicio.activo_LA;
+                    myObjetoServiciosFijos.int_LA = servicio.int_LA;
+                    myObjetoServiciosFijos.trab_LA = servicio.trab_LA;
                     objetoEstadosSwitch.LA = true;
                 };
-                if (servicio.precioHora_TE) {
+                if (servicio.precioHora_TE || servicio.int_TE) {
                     myObjetoServiciosFijos.precioHora_TE = servicio.precioHora_TE;
                     myObjetoServiciosFijos.variacion_TE = servicio.variacion_TE;
                     myObjetoServiciosFijos.diaVariacion_TE = servicio.diaVariacion_TE;
-                    myObjetoServiciosFijos.activo_TE = servicio.activo_TE
+                    myObjetoServiciosFijos.activo_TE = servicio.activo_TE;
+                    myObjetoServiciosFijos.int_TE = servicio.int_TE;
+                    myObjetoServiciosFijos.trab_TE = servicio.trab_TE;
                     objetoEstadosSwitch.TE = true;
                 };
-                if (servicio.precioHora_FI) {
+                if (servicio.precioHora_FI || servicio.int_FI) {
                     myObjetoServiciosFijos.precioHora_FI = servicio.precioHora_FI;
                     myObjetoServiciosFijos.variacion_FI = servicio.variacion_FI;
                     myObjetoServiciosFijos.diaVariacion_FI = servicio.diaVariacion_FI;
                     myObjetoServiciosFijos.activo_FI = servicio.activo_FI;
+                    myObjetoServiciosFijos.int_FI = servicio.int_FI;
+                    myObjetoServiciosFijos.trab_FI = servicio.trab_FI;
                     objetoEstadosSwitch.FI = true;
                 };
-                if (servicio.precioHora_FE) {
+                if (servicio.precioHora_FE || servicio.int_FE) {
                     myObjetoServiciosFijos.precioHora_FE = servicio.precioHora_FE;
                     myObjetoServiciosFijos.variacion_FE = servicio.variacion_FE;
                     myObjetoServiciosFijos.diaVariacion_FE = servicio.diaVariacion_FE;
                     myObjetoServiciosFijos.activo_FE = servicio.activo_FE;
+                    myObjetoServiciosFijos.int_FE = servicio.int_FE;
+                    myObjetoServiciosFijos.trab_FE = servicio.trab_FE;
                     objetoEstadosSwitch.FE = true;
                 };
-                if (servicio.precioHora_AB) {
+                if (servicio.precioHora_AB || servicio.int_AL) {
                     myObjetoServiciosFijos.precioHora_AB = servicio.precioHora_AB;
                     myObjetoServiciosFijos.variacion_AB = servicio.variacion_AB;
                     myObjetoServiciosFijos.diaVariacion_AB = servicio.diaVariacion_AB;
                     myObjetoServiciosFijos.activo_AB = servicio.activo_AB;
+                    myObjetoServiciosFijos.int_AB = servicio.int_AB;
+                    myObjetoServiciosFijos.trab_AB = servicio.trab_AB;
                     objetoEstadosSwitch.AB = true;
                 };
-                if (servicio.precioHora_MA) {
+                if (servicio.precioHora_MA || servicio.int_MA) {
                     myObjetoServiciosFijos.precioHora_MA = servicio.precioHora_MA;
                     myObjetoServiciosFijos.variacion_MA = servicio.variacion_MA;
                     myObjetoServiciosFijos.diaVariacion_MA = servicio.diaVariacion_MA;
                     myObjetoServiciosFijos.activo_MA = servicio.activo_MA;
+                    myObjetoServiciosFijos.int_MA = servicio.int_MA;
+                    myObjetoServiciosFijos.trab_MA = servicio.trab_MA;
                     objetoEstadosSwitch.MA = true;
                 };
-                if (servicio.precioHora_PO) {
+                if (servicio.precioHora_PO || servicio.int_PO) {
                     myObjetoServiciosFijos.precioHora_PO = servicio.precioHora_PO;
                     myObjetoServiciosFijos.variacion_PO = servicio.variacion_PO;
                     myObjetoServiciosFijos.diaVariacion_PO = servicio.diaVariacion_PO;
                     myObjetoServiciosFijos.activo_PO = servicio.activo_PO;
+                    myObjetoServiciosFijos.int_PO = servicio.int_PO;
+                    myObjetoServiciosFijos.trab_PO = servicio.trab_PO;
                     objetoEstadosSwitch.PO = true;
                 };
-                if (servicio.precioHora_BA) {
+                if (servicio.precioHora_BA || servicio.int_BA) {
                     myObjetoServiciosFijos.precioHora_BA = servicio.precioHora_BA;
                     myObjetoServiciosFijos.variacion_BA = servicio.variacion_BA;
                     myObjetoServiciosFijos.diaVariacion_BA = servicio.diaVariacion_BA;
                     myObjetoServiciosFijos.activo_BA = servicio.activo_BA;
+                    myObjetoServiciosFijos.int_BA = servicio.int_BA;
+                    myObjetoServiciosFijos.trab_BA = servicio.trab_BA;
                     objetoEstadosSwitch.BA = true;
                 };
-                if (servicio.precioHora_FT) {
+                if (servicio.precioHora_FT || servicio.int_FT) {
                     myObjetoServiciosFijos.precioHora_FT = servicio.precioHora_FT;
                     myObjetoServiciosFijos.variacion_FT = servicio.variacion_FT;
                     myObjetoServiciosFijos.diaVariacion_FT = servicio.diaVariacion_FT;
                     myObjetoServiciosFijos.activo_FT = servicio.activo_FT;
+                    myObjetoServiciosFijos.int_FT = servicio.int_FT;
+                    myObjetoServiciosFijos.trab_FT = servicio.trab_FT;
                     objetoEstadosSwitch.FT = true;
                 };
-                if (servicio.precioHora_C3) {
+                if (servicio.precioHora_C3 || servicio.int_C3) {
                     myObjetoServiciosFijos.precioHora_C3 = servicio.precioHora_C3;
                     myObjetoServiciosFijos.variacion_C3 = servicio.variacion_C3;
                     myObjetoServiciosFijos.diaVariacion_C3 = servicio.diaVariacion_C3;
                     myObjetoServiciosFijos.activo_C3 = servicio.activo_C3;
+                    myObjetoServiciosFijos.int_C3 = servicio.int_C3;
+                    myObjetoServiciosFijos.trab_C3 = servicio.trab_C3;
                     objetoEstadosSwitch.C3 = true;
                 };
-                if (servicio.precioHora_C2) {
+                if (servicio.precioHora_C2 || servicio.int_C2) {
                     myObjetoServiciosFijos.precioHora_C2 = servicio.precioHora_C2;
                     myObjetoServiciosFijos.variacion_C2 = servicio.variacion_C2;
                     myObjetoServiciosFijos.diaVariacion_C2 = servicio.diaVariacion_C2;
                     myObjetoServiciosFijos.activo_C2 = servicio.activo_C2;
+                    myObjetoServiciosFijos.int_C2 = servicio.int_C2;
+                    myObjetoServiciosFijos.trab_C2 = servicio.trab_C2;
                     objetoEstadosSwitch.C2 = true;
                 };
-                if (servicio.precioHora_ES) {
+                if (servicio.precioHora_ES || servicio.int_ES) {
                     myObjetoServiciosFijos.precioHora_ES = servicio.precioHora_ES;
                     myObjetoServiciosFijos.variacion_ES = servicio.variacion_ES;
                     myObjetoServiciosFijos.diaVariacion_ES = servicio.diaVariacion_ES;
                     myObjetoServiciosFijos.activo_ES = servicio.activo_ES;
+                    myObjetoServiciosFijos.int_ES = servicio.int_ES;
+                    myObjetoServiciosFijos.trab_ES = servicio.trab_ES;
                     objetoEstadosSwitch.ES = true;
                 };
-                if (servicio.precioHora_PA) {
+                if (servicio.precioHora_PA || servicio.int_PA) {
                     myObjetoServiciosFijos.precioHora_PA = servicio.precioHora_PA;
                     myObjetoServiciosFijos.variacion_PA = servicio.variacion_PA;
                     myObjetoServiciosFijos.diaVariacion_PA = servicio.diaVariacion_PA;
                     myObjetoServiciosFijos.activo_PA = servicio.activo_PA;
+                    myObjetoServiciosFijos.int_PA = servicio.int_PA;
+                    myObjetoServiciosFijos.trab_PA = servicio.trab_PA;
                     objetoEstadosSwitch.PA = true;
                 };
             });
@@ -5880,7 +6347,47 @@ const CentrosEditar = forwardRef((props, ref) => {
             activo_C3: myObjetoServiciosFijos.activo_C3,
             activo_C2: myObjetoServiciosFijos.activo_C2,
             activo_ES: myObjetoServiciosFijos.activo_ES,
-            activo_PA: myObjetoServiciosFijos.activo_PA
+            activo_PA: myObjetoServiciosFijos.activo_PA,
+            int_TO: myObjetoServiciosFijos.int_TO,
+            int_CR: myObjetoServiciosFijos.int_CR,
+            int_CE: myObjetoServiciosFijos.int_CE,
+            int_CI: myObjetoServiciosFijos.int_CI,
+            int_MO: myObjetoServiciosFijos.int_MO,
+            int_OF: myObjetoServiciosFijos.int_OF,
+            int_AL: myObjetoServiciosFijos.int_AL,
+            int_LA: myObjetoServiciosFijos.int_LA,
+            int_TE: myObjetoServiciosFijos.int_TE,
+            int_FI: myObjetoServiciosFijos.int_FI,
+            int_FE: myObjetoServiciosFijos.int_FE,
+            int_AB: myObjetoServiciosFijos.int_AB,
+            int_MA: myObjetoServiciosFijos.int_MA,
+            int_PO: myObjetoServiciosFijos.int_PO,
+            int_BA: myObjetoServiciosFijos.int_BA,
+            int_FT: myObjetoServiciosFijos.int_FT,
+            int_C3: myObjetoServiciosFijos.int_C3,
+            int_C2: myObjetoServiciosFijos.int_C2,
+            int_ES: myObjetoServiciosFijos.int_ES,
+            int_PA: myObjetoServiciosFijos.int_PA,
+            trab_TO: myObjetoServiciosFijos.trab_TO ? myObjetoServiciosFijos.trab_TO : '',
+            trab_CR: myObjetoServiciosFijos.trab_CR ? myObjetoServiciosFijos.trab_CR : '',
+            trab_CE: myObjetoServiciosFijos.trab_CE ? myObjetoServiciosFijos.trab_CE : '',
+            trab_CI: myObjetoServiciosFijos.trab_CI ? myObjetoServiciosFijos.trab_CI : '',
+            trab_MO: myObjetoServiciosFijos.trab_MO ? myObjetoServiciosFijos.trab_MO : '',
+            trab_OF: myObjetoServiciosFijos.trab_OF ? myObjetoServiciosFijos.trab_OF : '',
+            trab_AL: myObjetoServiciosFijos.trab_AL ? myObjetoServiciosFijos.trab_AL : '',
+            trab_LA: myObjetoServiciosFijos.trab_LA ? myObjetoServiciosFijos.trab_LA : '',
+            trab_TE: myObjetoServiciosFijos.trab_TE ? myObjetoServiciosFijos.trab_TE : '',
+            trab_FI: myObjetoServiciosFijos.trab_FI ? myObjetoServiciosFijos.trab_FI : '',
+            trab_FE: myObjetoServiciosFijos.trab_FE ? myObjetoServiciosFijos.trab_FE : '',
+            trab_AB: myObjetoServiciosFijos.trab_AB ? myObjetoServiciosFijos.trab_AB : '',
+            trab_MA: myObjetoServiciosFijos.trab_MA ? myObjetoServiciosFijos.trab_MA : '',
+            trab_PO: myObjetoServiciosFijos.trab_PO ? myObjetoServiciosFijos.trab_PO : '',
+            trab_BA: myObjetoServiciosFijos.trab_BA ? myObjetoServiciosFijos.trab_BA : '',
+            trab_FT: myObjetoServiciosFijos.trab_FT ? myObjetoServiciosFijos.trab_FT : '',
+            trab_C3: myObjetoServiciosFijos.trab_C3 ? myObjetoServiciosFijos.trab_C3 : '',
+            trab_C2: myObjetoServiciosFijos.trab_C2 ? myObjetoServiciosFijos.trab_C2 : '',
+            trab_ES: myObjetoServiciosFijos.trab_ES ? myObjetoServiciosFijos.trab_ES : '',
+            trab_PA: myObjetoServiciosFijos.trab_PA ? myObjetoServiciosFijos.trab_PA : ''
         });
         if (cuadranteAGestionar.horario) {
             if (cuadranteAGestionar.horario.tipo === "rango") {

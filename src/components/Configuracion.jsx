@@ -28,11 +28,20 @@ import InputLabel from '@material-ui/core/InputLabel';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import TextField from '@material-ui/core/TextField';
+import Collapse from '@material-ui/core/Collapse';
+import ExpandLess from '@material-ui/icons/ExpandLess';
+import ExpandMore from '@material-ui/icons/ExpandMore';
 import clsx from 'clsx';
 import { stringify, parse } from 'zipson';
+import SimpleReactLightbox from 'simple-react-lightbox';
+import { HashLink } from 'react-router-hash-link';
 
 //carga componentes
 import DialogComponente from './DialogComponente';
+import InstruccionesCuadrantes from './InstruccionesCuadrantes';
+import InstruccionesCentros from './InstruccionesCentros';
+import InstruccionesTrabajadores from './InstruccionesTrabajadores';
+import InstruccionesVarios from './InstruccionesVarios';
 
 //estilos
 import Clases from "../clases";
@@ -48,6 +57,7 @@ import { actualizarConfiguracionAccion } from '../redux/appDucks';
 import { setAnchorElMenuAccion } from '../redux/cuadrantesSettersDucks';
 
 const getHeightScrollable = () => (window.innerHeight - 200) || (document.documentElement.clientHeight - 200) || (document.body.clientHeight - 200);
+const getWidthWindow = () => (window.innerWidth - 230) || (document.documentElement.clientWidth - 230) || (document.body.clientWidth - 230);
 
 //menu
 const StyledMenu = withStyles({
@@ -124,6 +134,7 @@ const Configuracion = (props) => {
     const [preValueTab, setPreValueTab] = useState(null);
     const [anchorElMenu, setAnchorElMenu] = useState(null);
     const [heightScrollable, setHeightScrollable] = useState(getHeightScrollable());
+    const [widthWindow, setWidthWindow] = useState(getWidthWindow());
     const [openSnack, setOpenSnack] = useState(false);
     const [alert, setAlert] = useState({});
     const [valuesFormConfiguracion, setValuesFormConfiguracion] = useState({
@@ -148,6 +159,10 @@ const Configuracion = (props) => {
         stringParseado: {},
     });
     const [openLoading, setOpenLoading] = useState(false);
+    const [openMenu1, setOpenMenu1] = useState(false);
+    const [openMenu2, setOpenMenu2] = useState(false);
+    const [openMenu3, setOpenMenu3] = useState(false);
+    const [openMenu4, setOpenMenu4] = useState(false);
 
     //useEffect
 
@@ -169,6 +184,7 @@ const Configuracion = (props) => {
     useEffect(() => {
         const resizeListener = () => {
             setHeightScrollable(getHeightScrollable());
+            setWidthWindow(getWidthWindow());
         };
         window.addEventListener('resize', resizeListener);
         return () => {
@@ -225,6 +241,34 @@ const Configuracion = (props) => {
     }, [objetoConfiguracion]);
 
     //funciones    
+
+    const handleClickMenuInstrucciones1 = () => {
+        setOpenMenu1(!openMenu1);
+        setOpenMenu2(false);
+        setOpenMenu3(false);
+        setOpenMenu4(false);
+    };
+
+    const handleClickMenuInstrucciones2 = () => {
+        setOpenMenu2(!openMenu2);
+        setOpenMenu1(false);
+        setOpenMenu3(false);
+        setOpenMenu4(false);
+    };
+
+    const handleClickMenuInstrucciones3 = () => {
+        setOpenMenu3(!openMenu3);
+        setOpenMenu2(false);
+        setOpenMenu1(false);
+        setOpenMenu4(false);
+    };
+
+    const handleClickMenuInstrucciones4 = () => {
+        setOpenMenu4(!openMenu4);
+        setOpenMenu2(false);
+        setOpenMenu1(false);
+        setOpenMenu3(false);
+    };
 
     const handleClickMenu = (e) => {
         setAnchorElMenu(anchorElMenu ? null : e.currentTarget);
@@ -304,7 +348,7 @@ const Configuracion = (props) => {
             let myobj1 = JSON.parse(valuesHerramientasParseador.parsePorParsear);
             respuesta = stringify(myobj1, options);
         } else {
-            let myobj2 = valuesHerramientasParseador.stringPorParsear;            
+            let myobj2 = valuesHerramientasParseador.stringPorParsear;
             respuesta = JSON.stringify(parse(myobj2));
         };
         setValuesHerramientasParseador({ ...valuesHerramientasParseador, [prop]: respuesta });
@@ -383,7 +427,7 @@ const Configuracion = (props) => {
                 <CircularProgress color="inherit" />
             </Backdrop>
             <Grid container spacing={2}>
-                <Grid item xs={12} className={classes.mt_5}>
+                <Grid item xs={12} className={classes.mt_5} style={{ position: 'fixed', height: '100%', width: widthWindow }}>
                     <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Grid item xs={6}>
                             <Chip style={{ padding: 5 }} icon={<SettingsIcon />} label="Configuración general" />
@@ -429,26 +473,158 @@ const Configuracion = (props) => {
                         <div className={classes.root2} >
                             <AppBar position="static">
                                 <Tabs value={valueTab} onChange={handleChangeTab} className={classes.tabsStl}>
+                                    <Tooltip title="Instrucciones de trabajo" placement="top-end" arrow>
+                                        <Tab label="Instrucciones" {...a11yProps(0)} style={{ paddingBottom: 10 }} />
+                                    </Tooltip>
                                     <Tooltip title="Modificar varios parámetros establecidos" placement="top-end" arrow>
-                                        <Tab label="Varios" {...a11yProps(0)} style={{ paddingBottom: 10 }} />
+                                        <Tab label="Varios" {...a11yProps(1)} style={{ paddingBottom: 10 }} />
                                     </Tooltip>
                                     <Tooltip title="Modificar mensajes predeterminados en mails" placement="top-end" arrow>
-                                        <Tab label="Plantillas mails" {...a11yProps(1)} style={{ paddingBottom: 10 }} />
+                                        <Tab label="Plantillas mails" {...a11yProps(2)} style={{ paddingBottom: 10 }} />
                                     </Tooltip>
                                     <Tooltip title="Modificar datos bancarios" placement="top-end" arrow>
-                                        <Tab label="Datos bancarios" {...a11yProps(2)} style={{ paddingBottom: 10 }} />
+                                        <Tab label="Datos bancarios" {...a11yProps(3)} style={{ paddingBottom: 10 }} />
                                     </Tooltip>
                                     <Tooltip title="Informe cambios en versiones" placement="top-end" arrow>
-                                        <Tab label="Control de versiones" {...a11yProps(3)} style={{ paddingBottom: 10 }} />
+                                        <Tab label="Control de versiones" {...a11yProps(4)} style={{ paddingBottom: 10 }} />
                                     </Tooltip>
                                     {usuarioActivo.nombre === 'admin' ? (
                                         <Tooltip title="Herramientas desarrollo" placement="top-end" arrow>
-                                            <Tab label="Herramientas" {...a11yProps(4)} style={{ paddingBottom: 10 }} />
+                                            <Tab label="Herramientas" {...a11yProps(5)} style={{ paddingBottom: 10 }} />
                                         </Tooltip>
                                     ) : null}
                                 </Tabs>
                             </AppBar>
                             <TabPanel value={valueTab} index={0} className={classes.scrollable} style={{ height: heightScrollable }}>
+                                <Grid
+                                    container
+                                    direction="row"
+                                    justifycontent="flex-start"
+                                    alignItems="flex-start"
+                                    spacing={2}
+                                >
+                                    <Grid item lg={10} sm={10} xs={12}>
+                                        <Box
+                                            m={0.5}
+                                            bgcolor="secondary.light"
+                                            color="secondary.contrastText"
+                                            className={clsx(classes.boxStl2, classes.mb20)}
+                                        >
+                                            Instrucciones de trabajo
+                                        </Box>
+                                        <Grid
+                                            container
+                                            direction="row"
+                                            justifycontent="flex-start"
+                                            alignItems="flex-start"
+                                            spacing={1}
+                                        >
+                                            <Grid item lg={3} sm={3} xs={3}>
+                                                <Grid className={classes.scrollable} style={{ height: heightScrollable - 125 }}>
+                                                    <Box m={0.5} p={0.5} className={classes.scrollable} style={{ marginRight: 10, backgroundColor: 'white' }}>
+                                                        <List
+                                                            component="nav"
+                                                            className={classes.rootMenuInstrucciones}
+                                                        >
+                                                            <ListItem button onClick={handleClickMenuInstrucciones1}>
+                                                                <ListItemText primary="Gestión Cuadrantes" />
+                                                                {openMenu1 ? <ExpandLess /> : <ExpandMore />}
+                                                            </ListItem>
+                                                            <Collapse in={openMenu1} timeout="auto" unmountOnExit>
+                                                                <List component="div" disablePadding>
+                                                                    <ListItem button className={classes.nestedIns}>
+                                                                        <HashLink to={'#c1'} scroll={(el) => el.scrollIntoView({ behavior: 'auto', block: 'end' })} className={classes.nestedInsLink}>
+                                                                            <ListItemText primary="Ciclo de vida de un cuadrante" />
+                                                                        </HashLink>
+                                                                    </ListItem>
+                                                                    <ListItem button className={classes.nestedIns}>
+                                                                        <HashLink to={'#c2'} scroll={(el) => el.scrollIntoView({ behavior: 'auto', block: 'start' })} className={classes.nestedInsLink}>
+                                                                            <ListItemText primary="Crear intervalo de festivos" />
+                                                                        </HashLink>
+                                                                    </ListItem>
+                                                                    <ListItem button className={classes.nestedIns}>
+                                                                        <HashLink to={'#c3'} scroll={(el) => el.scrollIntoView({ behavior: 'auto', block: 'start' })} className={classes.nestedInsLink}>
+                                                                            <ListItemText primary="Actualizar estado trabajador" />
+                                                                        </HashLink>
+                                                                    </ListItem>
+                                                                    <ListItem button className={classes.nestedIns}>
+                                                                        <HashLink to={'#c4'} scroll={(el) => el.scrollIntoView({ behavior: 'auto', block: 'start' })} className={classes.nestedInsLink}>
+                                                                            <ListItemText primary="Asignar horas sin coste" />
+                                                                        </HashLink>
+                                                                    </ListItem>
+                                                                    <ListItem button className={classes.nestedIns}>
+                                                                        <HashLink to={'#c5'} scroll={(el) => el.scrollIntoView({ behavior: 'auto', block: 'start' })} className={classes.nestedInsLink}>
+                                                                            <ListItemText primary="Bloquear cómputo de horas" />
+                                                                        </HashLink>
+                                                                    </ListItem>
+                                                                </List>
+                                                            </Collapse>
+                                                            <ListItem button onClick={handleClickMenuInstrucciones2}>
+                                                                <ListItemText primary="Gestión Centros" />
+                                                                {openMenu2 ? <ExpandLess /> : <ExpandMore />}
+                                                            </ListItem>
+                                                            <Collapse in={openMenu2} timeout="auto" unmountOnExit>
+                                                                <List component="div" disablePadding>
+                                                                    <ListItem button className={classes.nestedIns}>
+                                                                        <HashLink to={'#ce1'} scroll={(el) => el.scrollIntoView({ behavior: 'auto', block: 'end' })} className={classes.nestedInsLink}>
+                                                                            <ListItemText primary="Dar un centro de baja" />
+                                                                        </HashLink>
+                                                                    </ListItem>
+                                                                    <ListItem button className={classes.nestedIns}>
+                                                                        <HashLink to={'#ce2'} scroll={(el) => el.scrollIntoView({ behavior: 'auto', block: 'start' })} className={classes.nestedInsLink}>
+                                                                            <ListItemText primary="Centro con varios cuadrantes" />
+                                                                        </HashLink>
+                                                                    </ListItem>
+                                                                    <ListItem button className={classes.nestedIns}>
+                                                                        <HashLink to={'#ce3'} scroll={(el) => el.scrollIntoView({ behavior: 'auto', block: 'start' })} className={classes.nestedInsLink}>
+                                                                            <ListItemText primary="Servicios Extra incluidos" />
+                                                                        </HashLink>
+                                                                    </ListItem>
+                                                                </List>
+                                                            </Collapse>
+                                                            <ListItem button onClick={handleClickMenuInstrucciones3}>
+                                                                <ListItemText primary="Gestión Trabajadores" />
+                                                                {openMenu3 ? <ExpandLess /> : <ExpandMore />}
+                                                            </ListItem>
+                                                            <Collapse in={openMenu3} timeout="auto" unmountOnExit>
+                                                                <List component="div" disablePadding>
+                                                                    <ListItem button className={classes.nestedIns}>
+                                                                        <HashLink to={'#t1'} scroll={(el) => el.scrollIntoView({ behavior: 'auto', block: 'end' })} className={classes.nestedInsLink}>
+                                                                            <ListItemText primary="Agregar trabajador a listados de Servicios Extra" />
+                                                                        </HashLink>
+                                                                    </ListItem>
+                                                                </List>
+                                                            </Collapse>
+                                                            <ListItem button onClick={handleClickMenuInstrucciones4}>
+                                                                <ListItemText primary="Gestión Varios" />
+                                                                {openMenu4 ? <ExpandLess /> : <ExpandMore />}
+                                                            </ListItem>
+                                                            <Collapse in={openMenu4} timeout="auto" unmountOnExit>
+                                                                <List component="div" disablePadding>
+                                                                    <ListItem button className={classes.nestedIns}>
+                                                                        <HashLink to={'#v1'} scroll={(el) => el.scrollIntoView({ behavior: 'auto', block: 'end' })} className={classes.nestedInsLink}>
+                                                                            <ListItemText primary="Crear listados Excel de datos" />
+                                                                        </HashLink>
+                                                                    </ListItem>
+                                                                </List>
+                                                            </Collapse>
+                                                        </List>
+                                                    </Box>
+                                                </Grid>
+                                            </Grid>
+                                            <Grid item lg={9} sm={9} xs={9}>
+                                                <SimpleReactLightbox>
+                                                    {openMenu1 || (!openMenu1 && !openMenu2 && !openMenu3 && !openMenu4) ? (<InstruccionesCuadrantes />) : null}
+                                                    {openMenu2 ? (<InstruccionesCentros />) : null}
+                                                    {openMenu3 ? (<InstruccionesTrabajadores />) : null}
+                                                    {openMenu4 ? (<InstruccionesVarios />) : null}
+                                                </SimpleReactLightbox>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                            </TabPanel>
+                            <TabPanel value={valueTab} index={1} className={classes.scrollable} style={{ height: heightScrollable }}>
                                 <Grid
                                     container
                                     direction="row"
@@ -525,7 +701,7 @@ const Configuracion = (props) => {
                                     </Grid>
                                 </Grid>
                             </TabPanel>
-                            <TabPanel value={valueTab} index={1} className={classes.scrollable} style={{ height: heightScrollable }}>
+                            <TabPanel value={valueTab} index={2} className={classes.scrollable} style={{ height: heightScrollable }}>
                                 <Grid
                                     container
                                     direction="row"
@@ -565,7 +741,7 @@ const Configuracion = (props) => {
                                     </Grid>
                                 </Grid>
                             </TabPanel>
-                            <TabPanel value={valueTab} index={2} className={classes.scrollable} style={{ height: heightScrollable }}>
+                            <TabPanel value={valueTab} index={3} className={classes.scrollable} style={{ height: heightScrollable }}>
                                 <Grid
                                     container
                                     direction="row"
@@ -644,7 +820,7 @@ const Configuracion = (props) => {
                                     </Grid>
                                 </Grid>
                             </TabPanel>
-                            <TabPanel value={valueTab} index={3} className={classes.scrollable} style={{ height: heightScrollable }}>
+                            <TabPanel value={valueTab} index={4} className={classes.scrollable} style={{ height: heightScrollable }}>
                                 <Grid
                                     container
                                     direction="row"
@@ -833,7 +1009,7 @@ const Configuracion = (props) => {
                                                     </ListItem >
                                                     <ListItem>
                                                         <ListItemText
-                                                            primary="V. 1.12+1 - 21/05/2022"
+                                                            primary="V. 1.12 + 1 - 21/05/2022"
                                                             secondary={
                                                                 <Fragment>
                                                                     <Typography component="span" variant="body2">1.- Implementada funcionalidad para generar períodos de festivos para gestión de vacaciones en ficha cuadrantes.</Typography>
@@ -846,13 +1022,58 @@ const Configuracion = (props) => {
                                                             }
                                                         />
                                                     </ListItem >
+                                                    <ListItem>
+                                                        <ListItemText
+                                                            primary="V. 1.14 - 01/06/2022"
+                                                            secondary={
+                                                                <Fragment>
+                                                                    <Typography component="span" variant="body2">1.- Añadida funcionalidad para gestionar Servicios Extra integrados en cómputo en ficha centros y ficha cuadrantes.</Typography>
+                                                                    <br />
+                                                                    <Typography component="span" variant="body2">2.- Añadida funcionalidad para ocultar / mostrar individualmente columas de trabajadores en ficha cuadrantes.</Typography>
+                                                                    <br />
+                                                                    <Typography component="span" variant="body2">3.- Añadido campo de observaciones baja en ficha trabajadores.</Typography>
+                                                                    <br />
+                                                                </Fragment>
+                                                            }
+                                                        />
+                                                    </ListItem >
+                                                    <ListItem>
+                                                        <ListItemText
+                                                            primary="V. 1.15 - 05/06/2022"
+                                                            secondary={
+                                                                <Fragment>
+                                                                    <Typography component="span" variant="body2">1.- Añadida opción de subcategoría en fichas trabajadores para gestión de Servicios Extra.</Typography>
+                                                                    <br />
+                                                                    <Typography component="span" variant="body2">2.- Implementada opción de selección de trabajadores con subcategoría de Servicios Extra en fichas centros.</Typography>
+                                                                    <br />
+                                                                    <Typography component="span" variant="body2">2.- Modificada vista de casillas Servicios Extra en fichas cuadrantes para mostrar nombre trabajador en lugar de precio Servicio.</Typography>
+                                                                    <br />
+                                                                </Fragment>
+                                                            }
+                                                        />
+                                                    </ListItem >
+                                                    <ListItem>
+                                                        <ListItemText
+                                                            primary="V. 1.16 - 27/06/2022"
+                                                            secondary={
+                                                                <Fragment>
+                                                                    <Typography component="span" variant="body2">1.- Implementada funcionalidad variaciones de horas sin gasto en casillas horaras fichas cuadrantes.</Typography>
+                                                                    <br />
+                                                                    <Typography component="span" variant="body2">2.- Implementada funcionalidad para generar ficheros Excel con listados de trabajadores / centros en pantalla Inicio.</Typography>
+                                                                    <br />
+                                                                    <Typography component="span" variant="body2">3.- Generado módulo Instrucciones de Trabajo en pantalla General.</Typography>
+                                                                    <br />
+                                                                </Fragment>
+                                                            }
+                                                        />
+                                                    </ListItem >
                                                 </List>
                                             </Box>
                                         </Box>
                                     </Grid>
                                 </Grid>
                             </TabPanel>
-                            <TabPanel value={valueTab} index={4} className={classes.scrollable} style={{ height: heightScrollable }}>
+                            <TabPanel value={valueTab} index={5} className={classes.scrollable} style={{ height: heightScrollable }}>
                                 <Grid
                                     container
                                     direction="row"

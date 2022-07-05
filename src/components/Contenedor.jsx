@@ -19,21 +19,22 @@ import Trabajadores from './Trabajadores';
 import Nominas from './Nominas';
 import Configuracion from './Configuracion';
 import Centros from './Centros';
+import NotFoundPage from './NotFoundPage';
 
 //error boundary
-//import { ErrorBoundary } from 'react-error-boundary'
+import { ErrorBoundary } from 'react-error-boundary'
 
 function MyFallbackComponent({ error, resetErrorBoundary }) {
-    return (
-        <div role="alert">
-            <p>Something went wrong:</p>
-            <pre>{error.message}</pre>
-            <button onClick={alert('jal')}>Try again</button>
-        </div>
-    )
-}
+    if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+        console.log(error.message);
+    } else {
+        window.location.reload(false);
+    };
+};
 
+//constantes
 const subProduccio = Constantes.SUBDIRECTORI_PRODUCCIO;
+
 const estilos = makeStyles(theme => ({
     root: {
         display: 'flex'
@@ -96,15 +97,15 @@ const Contenedor = () => {
                                 <Login />
                             </Route>
                             <Route path="/cuadrantes" >
-                                {/* <ErrorBoundary
+                                <ErrorBoundary
                                     FallbackComponent={MyFallbackComponent}
-                                    onError={(error, errorInfo) => console.log({ error, errorInfo })}
-                                    onReset={() => {
-                                        // reset the state of your app
-                                    }}
-                                > */}
+                                // onError={(error, errorInfo) => console.log({ error, errorInfo })}
+                                // onReset={() => {
+                                //     // reset the state of your app
+                                // }}
+                                >
                                     <Cuadrantes />
-                                {/* </ErrorBoundary> */}
+                                </ErrorBoundary>
                             </Route>
                             <Route path="/trabajadores/:id/:nombre" exact>
                                 <Trabajadores />
@@ -124,9 +125,11 @@ const Contenedor = () => {
                             <Route path="/configuracion" >
                                 <Configuracion />
                             </Route>
+                            <Route path="*" >
+                                <NotFoundPage />
+                            </Route>
                         </Switch>
                     </div>
-
                 ) : (<div className={classes.content}>
                     <div className={classes.toolbar}></div>
                     <Grid

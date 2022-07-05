@@ -27,6 +27,7 @@ import { gestionaRangoFechasVacacionesAccion } from '../redux/appDucks';
 //estilos
 import Clases from "../clases";
 
+//constantes
 const tipos = Constantes.MODO_ENTRADA_HORARIOS;
 const computoHoras = Constantes.COMPUTO_HORAS;
 const excepciones = Constantes.EXCEPCIONES_CENTROS;
@@ -87,9 +88,6 @@ const ConfiguracionCuadrante = (props) => {
 
     const handleChangeFormConfiguracionCuadrante = (prop) => (e) => {
         props.prHandleChangeFormConfiguracionCuadrante(prop, e);
-    };
-    const handleChangeTimePickerFestivos = (prop) => (fecha) => {
-        props.prHandleChangeTimePickerFestivos(prop, fecha);
     };
 
     return (

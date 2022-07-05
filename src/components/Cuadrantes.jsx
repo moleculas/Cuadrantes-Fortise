@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment, useRef } from 'react';
+import React, { useState, useEffect, Fragment, useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Constantes from "../constantes";
 import { withRouter } from "react-router-dom";
@@ -60,6 +60,8 @@ import PopupState, { bindTrigger, bindPopover } from 'material-ui-popup-state';
 import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Draggable from 'react-draggable';
+import KeyboardTabIcon from '@material-ui/icons/KeyboardTab';
+import ButtonGroup from '@material-ui/core/ButtonGroup';
 
 //carga componentes
 import ItemCuadrante from './ItemCuadrante';
@@ -89,6 +91,7 @@ import { diaDeLaSemanaAccion } from '../redux/appDucks';
 import { onEstemAccion } from '../redux/appDucks';
 import { gestionaMaxDateCalendarAccion } from '../redux/appDucks';
 import { obtenerTrabajadoresAccion } from '../redux/trabajadoresDucks';
+import { obtenerTrabajadoresSubcategoriaAccion } from '../redux/trabajadoresDucks';
 import {
     cambioEstadoInicioCuadrantesAccion,
     activarDesactivarCambioBotonRegistrarAccion,
@@ -110,14 +113,12 @@ import {
     procesarDatosCuadranteAccion,
     gestionTrabajadorAccion,
     gestionSuplenteAccion,
-    gestionarReciboCuadranteAccion
+    gestionarDocumentosCuadranteAccion
 } from '../redux/cuadrantesGestionDucks';
 import {
     setVenimosDeCambioCuadranteAccion,
     setEstamosActualizandoCuadranteSinCargaAccion,
-    setArrayDatosInformeAccion,
     setValorPrevioAccordionAbiertoAccion,
-    setEstadoFlexAccion,
     setControladorDeEstadoAccion,
     setVisibleCuadranteAccion,
     setVisibleCuadranteServiciosFijosAccion,
@@ -129,7 +130,8 @@ import {
     setVenimosBorrarCuadranteAccion,
     setDisableCargandoAccion,
     setCambioSFAccion,
-    setVenimosDeCambioCentroSelectAccion
+    setVenimosDeCambioCentroSelectAccion,
+    setCambioRedimensionColumnaAccion
 } from '../redux/cuadrantesSettersDucks';
 import {
     abrePopoverDiasAccion,
@@ -180,7 +182,8 @@ import {
     handleChangeTipoHorarioAccion,
     configuraStateFestivoAccion,
     handleLimpiezaHorarioAccion,
-    handleResetearCasillaAccion
+    handleResetearCasillaAccion,
+    handleGestionarTamanoColumnaAccion
 } from '../redux/cuadrantesHandlersDucks';
 import {
     retornaInfoFabButtonAccion,
@@ -192,6 +195,7 @@ import {
     handleClickFacturarReciboCuadranteAccion
 } from '../redux/cuadrantesFacturacionDucks';
 
+//constantes
 const categorias = Constantes.CATEGORIAS_CENTROS;
 const tipos = Constantes.MODO_ENTRADA_HORARIOS;
 const tipoFestivo = Constantes.TIPO_FESTIVO;
@@ -334,7 +338,6 @@ const Cuadrantes = (props) => {
     const expandedAccordion = useSelector(store => store.variablesCuadrantesSetters.expandedAccordion);
     const variablesPopoverDias = useSelector(store => store.variablesCuadrantesPopovers.variablesPopoverDias);
     const variablesPopoverGeneral = useSelector(store => store.variablesCuadrantesPopovers.variablesPopoverGeneral);
-    const estadoFlex = useSelector(store => store.variablesCuadrantesSetters.estadoFlex);
     const controladorDeEstado = useSelector(store => store.variablesCuadrantesSetters.controladorDeEstado);
     const itemEditandoServiciosFijos = useSelector(store => store.variablesCuadrantesServiciosFijos.itemEditandoServiciosFijos);
     const itemEditandoConfiguracion = useSelector(store => store.variablesCuadrantesSetters.itemEditandoConfiguracion);
@@ -359,16 +362,14 @@ const Cuadrantes = (props) => {
     const cambioSF = useSelector(store => store.variablesCuadrantesSetters.cambioSF);
     const yaNoEsInicio = useSelector(store => store.variablesCuadrantesSetters.yaNoEsInicio);
     const venimosDeCambioCentroSelect = useSelector(store => store.variablesCuadrantesSetters.venimosDeCambioCentroSelect);
+    const cambioRedimensionColumna = useSelector(store => store.variablesCuadrantesSetters.cambioRedimensionColumna);
+    const trabajadoresCargados = useSelector(store => store.variablesTrabajadores.trabajadoresCargados);
 
     //para test
-    const arrayDatosInforme = useSelector(store => store.variablesCuadrantesSetters.arrayDatosInforme);
     const itemPrevioEditando = useSelector(store => store.variablesCuadrantesSetters.itemPrevioEditando);
-    const bufferSwitchedDiasFestivosCuadranteDesactivados = useSelector(store => store.variablesCuadrantesSetters.bufferSwitchedDiasFestivosCuadranteDesactivados);
     const bufferSwitchedDiasFestivosCuadrante = useSelector(store => store.variablesCuadrantesSetters.bufferSwitchedDiasFestivosCuadrante);
-    const trabajadoresEnCuadrante = useSelector(store => store.variablesCuadrantesSetters.trabajadoresEnCuadrante);
-    const suplentesEnCuadrante = useSelector(store => store.variablesCuadrantesSetters.suplentesEnCuadrante);
-    const primerDiaEstadoBajaCIA = useSelector(store => store.variablesCuadrantesSetters.primerDiaEstadoBajaCIA);
-
+    const arrayDatosInforme = useSelector(store => store.variablesCuadrantesSetters.arrayDatosInforme);
+ 
     //helpers
 
     const {
@@ -451,10 +452,17 @@ const Cuadrantes = (props) => {
         dispatch(setCalendarioAGestionarAccion(retornaAnoMesAccion()));
         dispatch(forzarRecargaGraficosCuadrantesAccion(true));
         dispatch(onEstemAccion('cuadrantes'));
+    }, [dispatch]);
+
+    useEffect(() => {
         if (listadoTrabajadores.length === 0) {
             dispatch(obtenerTrabajadoresAccion('trabajadores'));
+        } else {
+            if (trabajadoresCargados) {
+                dispatch(obtenerTrabajadoresSubcategoriaAccion(2));
+            };
         };
-    }, [dispatch]);
+    }, [listadoTrabajadores]);
 
     //secuencia gestión meses
 
@@ -495,7 +503,7 @@ const Cuadrantes = (props) => {
                 dispatch(setVenimosBorrarCuadranteAccion(false));
             };
         };
-        dispatch(setDisableCargandoAccion(false));
+        //dispatch(setDisableCargandoAccion(false));
     }, [objetoCuadrante]);
 
     useEffect(() => {
@@ -566,7 +574,7 @@ const Cuadrantes = (props) => {
     useEffect(() => {
         let abortController = new AbortController();
         if (cuadrante.length > 0) {
-            dispatch(setArrayDatosInformeAccion(dispatch(gestionarInformeAccion(false))));
+            dispatch(gestionarInformeAccion(false));
         };
         return () => {
             abortController.abort();
@@ -574,16 +582,24 @@ const Cuadrantes = (props) => {
     }, [cuadrante]);
 
     useEffect(() => {
-        if (cuadrante.length > 0 || cuadranteServiciosFijos.length > 0 || cambioSF) {
+        if (cuadrante.length > 0 || cuadranteServiciosFijos.length > 0) {
+            if (cuadranteRegistrado === 'no' && !numeroCuadrantesCuadrantes[cuadranteEnUsoCuadrantes - 1].revisado && !yaNoEsInicio) {
+                dispatch(configuraStateFestivoAccion());
+            };
+        };
+    }, [cuadrante.length, cuadranteServiciosFijos.length]);
+
+    useEffect(() => {
+        if (cuadrante.length > 0 || cuadranteServiciosFijos.length > 0 || cambioSF || cambioRedimensionColumna) {
             redimensionarEspacio();
             if (cambioSF) {
                 dispatch(setCambioSFAccion(false));
             };
-            if (cuadranteRegistrado === 'no' && !numeroCuadrantesCuadrantes[cuadranteEnUsoCuadrantes - 1].revisado && !yaNoEsInicio && !cambioSF) {
-                dispatch(configuraStateFestivoAccion());
+            if (cambioRedimensionColumna) {
+                dispatch(setCambioRedimensionColumnaAccion(false));
             };
         };
-    }, [cuadrante.length, cuadranteServiciosFijos.length, visibleCuadranteServiciosFijos, visibleCuadrante, cambioSF]);
+    }, [cuadrante.length, cuadranteServiciosFijos.length, visibleCuadranteServiciosFijos, visibleCuadrante, cambioSF, cambioRedimensionColumna]);
 
     //secuencia venimos de pendientes o registrados
 
@@ -732,6 +748,7 @@ const Cuadrantes = (props) => {
         let dimCuadrante = 0;
         let serviciosActivos = 0;
         let cuadrantesActivos = 0;
+        let cuadrantesActivosReducidos = 0;
         if (cuadranteServiciosFijos.length > 0 && visibleCuadranteServiciosFijos) {
             cuadranteServiciosFijos.forEach((servicio) => {
                 for (const prop in servicio) {
@@ -744,27 +761,26 @@ const Cuadrantes = (props) => {
         };
         if (cuadrante.length > 0 && visibleCuadrante) {
             cuadrante.forEach((columna) => {
-                dimCuadrante += 350;
-                cuadrantesActivos += 1;
+                if (columna.reducido) {
+                    dimCuadrante += 40;
+                    cuadrantesActivosReducidos += 1;
+                } else {
+                    dimCuadrante += 350;
+                    cuadrantesActivos += 1;
+                };
             })
         };
         const { innerWidth: finestraWidth } = window;
         const ampleAGestionar = finestraWidth - 500;
         if ((dimCuadrante + dimServiciosAnadir) > ampleAGestionar) {
-            setDimensionsColumna({ width: ((ampleAGestionar / (serviciosActivos + cuadrantesActivos)) - 5) });
-            setDimensionsColumnaServiciosFijos({ width: ((ampleAGestionar / (serviciosActivos + cuadrantesActivos)) - 5) });
-            if (ampleAGestionar / (serviciosActivos + cuadrantesActivos) < 175) {
-                dispatch(setEstadoFlexAccion('columna'));
-            } else {
-                dispatch(setEstadoFlexAccion('fila'));
-            }
+            setDimensionsColumna({ width: (((ampleAGestionar - (45 * cuadrantesActivosReducidos)) / (serviciosActivos + cuadrantesActivos)) - 5) });
+            setDimensionsColumnaServiciosFijos({ width: (((ampleAGestionar - (45 * cuadrantesActivosReducidos)) / (serviciosActivos + cuadrantesActivos)) - 5) });
         } else {
             if (dimensionsColumna.width < 350) {
                 if (((dimCuadrante + dimServiciosAnadir) - 5) < ampleAGestionar) {
                     setDimensionsColumna({ width: 350 });
                     setDimensionsColumnaServiciosFijos({ width: 165 });
                 }
-                dispatch(setEstadoFlexAccion('fila'));
             };
             if (dimensionsColumnaServiciosFijos.width < 165) {
                 if (((dimCuadrante + dimServiciosAnadir) - 5) < ampleAGestionar) {
@@ -784,7 +800,7 @@ const Cuadrantes = (props) => {
             const fileURL = URL.createObjectURL(file);
             const pdfWindow = window.open();
             pdfWindow.location.href = fileURL;
-            dispatch(gestionarReciboCuadranteAccion());
+            dispatch(gestionarDocumentosCuadranteAccion('recibo'));
         };
     };
 
@@ -838,7 +854,7 @@ const Cuadrantes = (props) => {
     const descripcionDialogCuadrantes5 = "Estás tratando de borrar el cuadrante nº " + cuadranteEnUsoCuadrantes + " de la serie del Centro " + objetoCentro.nombre + ". Si estás conforme pulsa 'De acuerdo', de lo contrario pulsa 'No'.";
 
     const retornaColorDiaFestivo = (dia) => {
-        if (stateFestivo['tipoFestivoDia' + dia] === 1) {
+        if (stateFestivo['tipoFestivoDia' + dia] !== 2) {
             return classes.diaFestivo
         } else {
             return classes.diaFestivoCierre
@@ -878,35 +894,45 @@ const Cuadrantes = (props) => {
                 alignItems="flex-start"
                 key={'Columna_' + (indexColumna + 1) + '_' + dia[0][0]}
             >
-                < Box
-                    m={0.3}
-                    p={1.5}
-                    ref={ref => { boxes.current[indexColumna] = ref }}
-                    className={gestionaClassesColoresGeneralAccion(indexDia + 1, columna[postRef].baja, columna[postRef].modificado, columna.nombreTrabajador, columna[postRef].tipoBaja) || null}
-                    style={{ width: dimensionsColumna.width, minHeight: alturaCasilla(), maxHeight: alturaCasilla(), display: 'flex', flexDirection: 'row', justifycontent: 'space-between', alignItems: 'center' }}
-                    onClick={(event) => dispatch(abrePopoverGeneralAccion(postRef, indexDia, dia[1][0], columna, indexColumna, indexColumna, event, scrollable, boxes, classes))}
-                >
-                    <Grid item xs={10}>
-                        <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{gestionaTextoCasillasAccion(indexDia + 1, postRef, columna, dia[1][0])}</Typography>
-                    </Grid>
-                    <Grid item xs={2}>
-                        <Box style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
-                            {columna[postRef].observaciones && !columna[postRef].festivo && !columna[postRef].baja ? (
-                                <Tooltip title={columna[postRef].observaciones} placement="top-end" arrow >
-                                    <ChatIcon
-                                        className={classes.gris}
-                                    />
-                                </Tooltip>
-                            ) : null}
-                            {columna[postRef].tipoVariacion && !columna[postRef].festivo && !columna[postRef].baja ? (
-                                retornaIconoVariacionAccion(columna, postRef, dia[1][0])
-                            ) : null}
-                            {columna[postRef].tipoServicio && !columna[postRef].festivo && !columna[postRef].baja ? (
-                                retornaIconoTipoServicioAccion(columna[postRef].tipoServicio)
-                            ) : null}
-                        </Box>
-                    </Grid>
-                </Box >
+                {columna.reducido ? (
+                    < Box
+                        m={0.3}
+                        p={1.5}
+                        className={gestionaClassesColoresGeneralAccion(indexDia + 1, columna[postRef].baja, columna[postRef].modificado, columna.nombreTrabajador, columna[postRef].tipoBaja) || null}
+                        style={{ width: 40, minHeight: alturaCasilla(), maxHeight: alturaCasilla(), pointerEvents: 'none' }}
+                    >
+                    </Box>
+                ) : (
+                    < Box
+                        m={0.3}
+                        p={1.5}
+                        ref={ref => { boxes.current[indexColumna] = ref }}
+                        className={gestionaClassesColoresGeneralAccion(indexDia + 1, columna[postRef].baja, columna[postRef].modificado, columna.nombreTrabajador, columna[postRef].tipoBaja) || null}
+                        style={{ width: retornaAnchoColumna(columna.reducido), minHeight: alturaCasilla(), maxHeight: alturaCasilla(), display: 'flex', flexDirection: 'row', justifycontent: 'space-between', alignItems: 'center' }}
+                        onClick={(event) => dispatch(abrePopoverGeneralAccion(postRef, indexDia, dia[1][0], columna, indexColumna, indexColumna, event, scrollable, boxes, classes))}
+                    >
+                        <Grid item xs={10}>
+                            <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{gestionaTextoCasillasAccion(indexDia + 1, postRef, columna, dia[1][0])}</Typography>
+                        </Grid>
+                        <Grid item xs={2}>
+                            <Box style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
+                                {columna[postRef].observaciones && !columna[postRef].festivo && !columna[postRef].baja ? (
+                                    <Tooltip title={columna[postRef].observaciones} placement="top-end" arrow >
+                                        <ChatIcon
+                                            className={classes.gris}
+                                        />
+                                    </Tooltip>
+                                ) : null}
+                                {columna[postRef].tipoVariacion && !columna[postRef].festivo && !columna[postRef].baja ? (
+                                    retornaIconoVariacionAccion(columna, postRef, dia[1][0])
+                                ) : null}
+                                {columna[postRef].tipoServicio && !columna[postRef].festivo && !columna[postRef].baja ? (
+                                    retornaIconoTipoServicioAccion(columna[postRef].tipoServicio)
+                                ) : null}
+                            </Box>
+                        </Grid>
+                    </Box >
+                )}
             </Grid>
         )
     };
@@ -915,69 +941,92 @@ const Cuadrantes = (props) => {
         let tipo = servicio.tipoServiciofijo;
         let postRef = dia[1][0] + dia[0][0];
         let hayServicio = false;
-        let precio = '';
+        let trab = '';
+        let integrado = false;
+        if (servicio.int_TO ||
+            servicio.int_CR ||
+            servicio.int_CE ||
+            servicio.int_CI ||
+            servicio.int_MO ||
+            servicio.int_OF ||
+            servicio.int_AL ||
+            servicio.int_LA ||
+            servicio.int_TE ||
+            servicio.int_FI ||
+            servicio.int_FE ||
+            servicio.int_AB ||
+            servicio.int_MA ||
+            servicio.int_PO ||
+            servicio.int_BA ||
+            servicio.int_FT ||
+            servicio.int_C3 ||
+            servicio.int_C2 ||
+            servicio.int_ES ||
+            servicio.int_PA) {
+            integrado = true;
+        };
         for (const prop in servicio) {
             if (prop === postRef && servicio[prop] !== 'anulado') {
                 hayServicio = true;
-                if (servicio['precioHora_TO']) {
-                    precio = servicio['precioHora_TO'];
+                if (servicio['precioHora_TO'] || servicio['int_TO']) {
+                    trab = servicio['trab_TO'];
                 };
-                if (servicio['precioHora_CR']) {
-                    precio = servicio['precioHora_CR'];
+                if (servicio['precioHora_CR'] || servicio['int_CR']) {
+                    trab = servicio['trab_CR'];
                 };
-                if (servicio['precioHora_CE']) {
-                    precio = servicio['precioHora_CE'];
+                if (servicio['precioHora_CE'] || servicio['int_CE']) {
+                    trab = servicio['trab_CE'];
                 };
-                if (servicio['precioHora_CI']) {
-                    precio = servicio['precioHora_CI'];
+                if (servicio['precioHora_CI'] || servicio['int_CI']) {
+                    trab = servicio['trab_CI'];
                 };
-                if (servicio['precioHora_MO']) {
-                    precio = servicio['precioHora_MO'];
+                if (servicio['precioHora_MO'] || servicio['int_MA']) {
+                    trab = servicio['trab_MO'];
                 };
-                if (servicio['precioHora_OF']) {
-                    precio = servicio['precioHora_OF'];
+                if (servicio['precioHora_OF'] || servicio['int_OF']) {
+                    trab = servicio['trab_OF'];
                 };
-                if (servicio['precioHora_AL']) {
-                    precio = servicio['precioHora_AL'];
+                if (servicio['precioHora_AL'] || servicio['int_AL']) {
+                    trab = servicio['trab_AL'];
                 };
-                if (servicio['precioHora_LA']) {
-                    precio = servicio['precioHora_LA'];
+                if (servicio['precioHora_LA'] || servicio['int_LA']) {
+                    trab = servicio['trab_LA'];
                 };
-                if (servicio['precioHora_TE']) {
-                    precio = servicio['precioHora_TE'];
+                if (servicio['precioHora_TE'] || servicio['int_TE']) {
+                    trab = servicio['trab_TE'];
                 };
-                if (servicio['precioHora_FI']) {
-                    precio = servicio['precioHora_FI'];
+                if (servicio['precioHora_FI'] || servicio['int_FI']) {
+                    trab = servicio['trab_FI'];
                 };
-                if (servicio['precioHora_FE']) {
-                    precio = servicio['precioHora_FE'];
+                if (servicio['precioHora_FE'] || servicio['int_FE']) {
+                    trab = servicio['trab_FE'];
                 };
-                if (servicio['precioHora_AB']) {
-                    precio = servicio['precioHora_AB'];
+                if (servicio['precioHora_AB'] || servicio['int_AB']) {
+                    trab = servicio['trab_AB'];
                 };
-                if (servicio['precioHora_MA']) {
-                    precio = servicio['precioHora_MA'];
+                if (servicio['precioHora_MA'] || servicio['int_MA']) {
+                    trab = servicio['trab_MA'];
                 };
-                if (servicio['precioHora_PO']) {
-                    precio = servicio['precioHora_PO'];
+                if (servicio['precioHora_PO'] || servicio['int_PO']) {
+                    trab = servicio['trab_PO'];
                 };
-                if (servicio['precioHora_BA']) {
-                    precio = servicio['precioHora_BA'];
+                if (servicio['precioHora_BA'] || servicio['int_BA']) {
+                    trab = servicio['trab_BA'];
                 };
-                if (servicio['precioHora_FT']) {
-                    precio = servicio['precioHora_FT'];
+                if (servicio['precioHora_FT'] || servicio['int_FT']) {
+                    trab = servicio['trab_FT'];
                 };
-                if (servicio['precioHora_C3']) {
-                    precio = servicio['precioHora_C3'];
+                if (servicio['precioHora_C3'] || servicio['int_C3']) {
+                    trab = servicio['trab_C3'];
                 };
-                if (servicio['precioHora_C2']) {
-                    precio = servicio['precioHora_C2'];
+                if (servicio['precioHora_C2'] || servicio['int_C2']) {
+                    trab = servicio['trab_C2'];
                 };
-                if (servicio['precioHora_ES']) {
-                    precio = servicio['precioHora_ES'];
+                if (servicio['precioHora_ES'] || servicio['int_ES']) {
+                    trab = servicio['trab_ES'];
                 };
-                if (servicio['precioHora_PA']) {
-                    precio = servicio['precioHora_PA'];
+                if (servicio['precioHora_PA'] || servicio['int_PA']) {
+                    trab = servicio['trab_PA'];
                 };
             };
         };
@@ -1005,8 +1054,6 @@ const Cuadrantes = (props) => {
                 <Grid
                     container
                     direction="column"
-                    justifycontent="flex-start"
-                    alignItems="flex-start"
                     key={'Columna_sf' + (indexDia)}
                 >
                     <PopupState variant="popover">
@@ -1015,11 +1062,11 @@ const Cuadrantes = (props) => {
                                 < Box
                                     m={0.3}
                                     p={1.5}
-                                    className={gestionaClassesColoresServiciosFijosAccion(indexDia + 1, hayServicio) || null}
-                                    style={{ width: dimensionsColumnaServiciosFijos.width, minHeight: alturaCasilla(), maxHeight: alturaCasilla(), }}
+                                    className={gestionaClassesColoresServiciosFijosAccion(indexDia + 1, hayServicio, integrado) || null}
+                                    style={{ width: dimensionsColumnaServiciosFijos.width, minHeight: alturaCasilla(), maxHeight: alturaCasilla(), display: 'flex', alignItems: 'center' }}
                                     {...bindTrigger(popupState)}
                                 >
-                                    <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{gestionaTextoCasillasServiciosFijosAccion(indexDia + 1, precio)}</Typography>
+                                    <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{gestionaTextoCasillasServiciosFijosAccion(indexDia + 1, trab, cuadranteServiciosFijos[indice]['estados']['estadoCasillaDia' + (indexDia + 1)])}</Typography>
                                 </Box >
                                 <Popover
                                     {...bindPopover(popupState)}
@@ -1251,62 +1298,37 @@ const Cuadrantes = (props) => {
         }
     };
 
-    const retornaBotoneraAcco1 = (index, columnaCabecera) => {
-        return (
-            <Fragment>
-                <Tooltip title={columnaCabecera.nombreTrabajador ? "Añadir suplente" : ""} placement="top-end" arrow>
-                    <div>
-                        <IconButton
-                            className={clsx(classes.btnAddSuplente, classes.blanc, classes.mb10)}
-                            onClick={() => dispatch(handleClickAddColumnaAccion('suplente', index, scrollable, classesDisp))}
-                            disabled={columnaCabecera.nombreTrabajador ? false : true}
-                        >
-                            <PersonAddIcon style={{ fontSize: 18 }} />
-                        </IconButton>
-                    </div>
-                </Tooltip>
-                <Tooltip title={columnaCabecera.nombreTrabajador ? "Limpiar horario columna" : ""} placement="top-end" arrow>
-                    <div>
-                        <IconButton
-                            className={clsx(classes.btnLimpieza, classes.blanc, classes.mb10)}
-                            size="small"
-                            onClick={() => dispatch(handleLimpiezaHorarioAccion(index))}
-                            disabled={columnaCabecera.nombreTrabajador ? false : true}
-                        >
-                            <RemoveCircleOutlineIcon />
-                        </IconButton>
-                    </div>
-                </Tooltip>
-            </Fragment>
-        )
+    const retornaAnchoColumna = (reducido) => {
+        if (reducido) {
+            return 40
+        } else {
+            return dimensionsColumna.width
+        };
     };
 
-    const retornaBotoneraAcco2 = (index, columnaCabecera) => {
-        return (
-            <Fragment>
-                <Tooltip title={columnaCabecera.nombreTrabajador ? "Actualizar trabajador" : ""} placement="top-end" arrow>
-                    <div>
-                        <IconButton
-                            className={clsx(classes.btnBajas, classes.mb10)}
-                            size="small"
-                            onClick={() => dispatch(handleActualizarTrabajadoresAccion(index, columnaCabecera.tipoTrabajador, columnaCabecera.idTrabajador))}
-                            disabled={columnaCabecera.nombreTrabajador ? false : true}
-                        >
-                            <CachedIcon />
-                        </IconButton>
-                    </div>
-                </Tooltip>
-                <Tooltip title="Eliminar trabajador" placement="top-end" arrow>
-                    <IconButton
-                        className={clsx(classes.btnError, classes.mb10)}
-                        size="small"
-                        onClick={() => dispatch(eliminarColumnaAccion(index, columnaCabecera.idTrabajador, scrollable, classesDisp))}
-                    >
-                        <DeleteIcon />
-                    </IconButton>
-                </Tooltip>
-            </Fragment>
-        )
+    const retornaTamanoIcono = () => {
+        if (dimensionsColumna.width > 185) {
+            return 24
+        } else {
+            let proporcion = (((dimensionsColumna.width * 100) / 350) / 100) + 0.2;
+            return 24 * proporcion
+        };
+    };
+
+    const retornaNombreTrabajador = (nombre) => {
+        let nombreARetornar;
+        let longitudTrunc;
+        if (dimensionsColumna.width < 200) {
+            longitudTrunc = 11;
+        } else {
+            longitudTrunc = parseInt((dimensionsColumna.width * 33) / 350);
+        };
+        if (nombre.length > longitudTrunc) {
+            nombreARetornar = nombre.substring(0, longitudTrunc) + "…";
+        } else {
+            nombreARetornar = nombre;
+        };
+        return nombreARetornar
     };
 
     const retornaCuadranteCompleto = () => {
@@ -1359,121 +1381,149 @@ const Cuadrantes = (props) => {
                                             <Accordion
                                                 expanded={expandedAccordion === 'panel_' + (index + 1)}
                                                 className={gestionaClassesColoresTrabajadoresAccion(columnaCabecera.tipoTrabajador, columnaCabecera.idTrabajador)}
-                                                style={{ width: dimensionsColumna.width, minHeight: alturaCasilla(), maxHeight: alturaCasilla() }}
+                                                style={{ width: retornaAnchoColumna(columnaCabecera.reducido), minHeight: alturaCasilla(), maxHeight: alturaCasilla() }}
                                                 onChange={(e, expandedAccordion) => { dispatch(handleCambioAccordionHeaderAccion(expandedAccordion, 'panel_' + (index + 1), index, scrollable, classesDisp)) }}
                                             >
-                                                {esDesktop ? (
-                                                    <AccordionSummary1
-                                                        expandIcon={<ExpandMoreIcon className={classes.blanc} />}
-                                                    >
-                                                        <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{columnaCabecera.nombreTrabajador !== 'Suplente' ? columnaCabecera.nombreTrabajador : ''}</Typography>
-                                                    </AccordionSummary1>
+                                                {columnaCabecera.reducido ? (
+                                                    <Tooltip title={!columnaCabecera.reducido ? '' : columnaCabecera.nombreTrabajador !== 'Suplente' ? columnaCabecera.nombreTrabajador : ''} placement="top" arrow>
+                                                        <Box style={{ width: 40, minHeight: alturaCasilla(), maxHeight: alturaCasilla(), cursor: 'pointer' }}
+                                                            onClick={() => dispatch(handleGestionarTamanoColumnaAccion(index, 'ampliar', null, null))}
+                                                        >
+                                                            <IconButton
+                                                                className={classes.btnAmpliarcolumna}
+                                                            >
+                                                                <KeyboardTabIcon style={{ fontSize: 18 }} />
+                                                            </IconButton>
+                                                        </Box>
+                                                    </Tooltip>
                                                 ) : (
-                                                    <AccordionSummary2
-                                                        expandIcon={<ExpandMoreIcon className={classes.blanc} />}
-                                                    >
-                                                        <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{columnaCabecera.nombreTrabajador !== 'Suplente' ? columnaCabecera.nombreTrabajador : ''}</Typography>
-                                                    </AccordionSummary2>
-                                                )}
+                                                    esDesktop ? (
+                                                        <AccordionSummary1
+                                                            expandIcon={<ExpandMoreIcon className={classes.blanc} />}
+                                                        >
+                                                            <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{columnaCabecera.reducido ? '' : columnaCabecera.nombreTrabajador !== 'Suplente' ? retornaNombreTrabajador(columnaCabecera.nombreTrabajador) : ''}</Typography>
+                                                        </AccordionSummary1>
+                                                    ) : (
+                                                        <AccordionSummary2
+                                                            expandIcon={<ExpandMoreIcon className={classes.blanc} />}
+                                                        >
+                                                            <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{columnaCabecera.reducido ? '' : columnaCabecera.nombreTrabajador !== 'Suplente' ? retornaNombreTrabajador(columnaCabecera.nombreTrabajador) : ''}</Typography>
+                                                        </AccordionSummary2>
+                                                    ))}
                                                 <AccordionDetails
                                                     style={{ marginTop: 1 }}>
                                                     <Grid container
                                                         className={classes.mt5}
                                                     >
-                                                        <Grid
-                                                            container
-                                                            direction="column"
-                                                            justifycontent="flex-start"
-                                                            alignItems="flex-start"
-                                                        >
-                                                            <Box
-                                                                style={{ width: '100%', display: 'flex' }}
-                                                                className={estadoFlex === 'fila' ? classes.flexRow : classes.flexColumn}
+                                                        {!columnaCabecera.reducido ? (
+                                                            <Grid
+                                                                container
+                                                                direction="column"
+                                                                justifycontent="flex-start"
+                                                                alignItems="flex-start"
                                                             >
-                                                                {estadoFlex === 'fila' ? (
-                                                                    <Fragment>
-                                                                        <Grid item xs={12}>
-                                                                            <Box
-                                                                                display="flex"
-                                                                                alignItems="center"
-                                                                                justifyContent="flex-end"
-                                                                            >
-                                                                                {retornaBotoneraAcco1(index, columnaCabecera)}
-                                                                                {retornaBotoneraAcco2(index, columnaCabecera)}
-                                                                            </Box>
-                                                                        </Grid>
-                                                                    </Fragment>
-                                                                ) : (
-                                                                    <Fragment>
-                                                                        <Grid item xs={12}>
-                                                                            <Box
-                                                                                display="flex"
-                                                                                alignItems="center"
-                                                                                justifyContent="flex-end"
-                                                                            >
-                                                                                {retornaBotoneraAcco1(index, columnaCabecera)}
-                                                                            </Box>
-                                                                        </Grid>
-                                                                        <Grid item xs={12}>
-                                                                            <Box
-                                                                                display="flex"
-                                                                                alignItems="center"
-                                                                                justifyContent="flex-end"
-                                                                            >
-                                                                                {retornaBotoneraAcco2(index, columnaCabecera)}
-                                                                            </Box>
-                                                                        </Grid>
-                                                                    </Fragment>
-                                                                )}
-                                                            </Box>
-                                                            <FormControl
-                                                                variant="outlined"
-                                                                fullWidth
-                                                                className={classes.mt15}
-                                                                size="small"
-                                                            >
-                                                                <InputLabel>{esDesktop ? ((columnaCabecera.tipoTrabajador === 'trabajador' || !columnaCabecera.tipoTrabajador) ? 'Trabajador' : 'Suplente') : ((columnaCabecera.tipoTrabajador === 'trabajador' || !columnaCabecera.tipoTrabajador) ? 'Trab' : 'Supl')}</InputLabel>
-                                                                <Select
-                                                                    id={`form-trabajador-` + (index + 1)}
-                                                                    value={columnaCabecera.idTrabajador < 999 ? columnaCabecera.idTrabajador : ''}
-                                                                    onChange={(event) => dispatch(handleChangeFormTrabajadoresAccion(index, columnaCabecera.tipoTrabajador, event))}
-                                                                    onOpen={() => dispatch(setValorPrevioAccordionAbiertoAccion(columnaCabecera.idTrabajador))}
-                                                                    input={
-                                                                        <OutlinedInput
-                                                                            labelWidth={esDesktop ? 80 : 35}
-                                                                        />
-                                                                    }
+                                                                <Box
+                                                                    style={{ width: '100%', display: 'flex', marginTop: 10, marginBottom: 10 }}
                                                                 >
-                                                                    {listadoTrabajadores.map((option) => (
-                                                                        <MenuItem key={option.id} value={option.id}>
-                                                                            {option.nombre}
-                                                                        </MenuItem>
-                                                                    ))}
-                                                                </Select>
-                                                            </FormControl>
-                                                            <FormControl
-                                                                variant="outlined"
-                                                                fullWidth
-                                                                className={classes.mt15}
-                                                                size="small"
-                                                            >
-                                                                <InputLabel>{esDesktop ? 'Modo entrada datos' : 'Datos'}</InputLabel>
-                                                                <Select
-                                                                    id="form-tipo-cuadrantes"
-                                                                    label={esDesktop ? 'Modo entrada datos' : 'Datos'}
-                                                                    value={columnaCabecera.tipoHorario || ''}
-                                                                    onChange={(event) => dispatch(handleChangeTipoHorarioAccion(index, event))}
-                                                                    helpertext="Selecciona Modo entrada datos"
-                                                                    disabled={columnaCabecera.nombreTrabajador ? false : true}
+                                                                    <ButtonGroup size="small"
+                                                                        fullWidth
+                                                                        className='botoneraTrab'
+                                                                    >
+                                                                        <Tooltip title={columnaCabecera.nombreTrabajador ? "Reducir columna" : ""} placement="top" arrow>
+                                                                            <Button
+                                                                                onClick={() => dispatch(handleGestionarTamanoColumnaAccion(index, 'reducir', scrollable, classes))}
+                                                                                disabled={columnaCabecera.nombreTrabajador ? false : true}
+                                                                            >
+                                                                                <KeyboardTabIcon className={classes.colorText}
+                                                                                    style={{ transform: 'rotate(180deg)', fontSize: retornaTamanoIcono() }} />
+                                                                            </Button>
+                                                                        </Tooltip>
+                                                                        <Tooltip title={columnaCabecera.nombreTrabajador ? "Añadir suplente" : ""} placement="top" arrow>
+                                                                            <Button
+                                                                                onClick={() => dispatch(handleClickAddColumnaAccion('suplente', index, scrollable, classesDisp))}
+                                                                                disabled={columnaCabecera.nombreTrabajador ? false : true}
+                                                                            >
+                                                                                <PersonAddIcon className={classes.colorText}
+                                                                                    style={{ fontSize: retornaTamanoIcono() }} />
+                                                                            </Button>
+                                                                        </Tooltip>
+                                                                        <Tooltip title={columnaCabecera.nombreTrabajador ? "Limpiar horario columna" : ""} placement="top" arrow>
+                                                                            <Button
+                                                                                onClick={() => dispatch(handleLimpiezaHorarioAccion(index))}
+                                                                                disabled={columnaCabecera.nombreTrabajador ? false : true}
+                                                                            >
+                                                                                <RemoveCircleOutlineIcon className={classes.colorText}
+                                                                                    style={{ fontSize: retornaTamanoIcono() }} />
+                                                                            </Button>
+                                                                        </Tooltip>
+                                                                        <Tooltip title={columnaCabecera.nombreTrabajador ? "Actualizar trabajador" : ""} placement="top" arrow>
+                                                                            <Button
+                                                                                onClick={() => dispatch(handleActualizarTrabajadoresAccion(index, columnaCabecera.tipoTrabajador, columnaCabecera.idTrabajador))}
+                                                                                disabled={columnaCabecera.nombreTrabajador ? false : true}
+                                                                            >
+                                                                                <CachedIcon className={classes.colorText}
+                                                                                    style={{ fontSize: retornaTamanoIcono() }} />
+                                                                            </Button>
+                                                                        </Tooltip>
+                                                                        <Tooltip title="Eliminar trabajador" placement="top" arrow>
+                                                                            <Button
+                                                                                onClick={() => dispatch(eliminarColumnaAccion(index, columnaCabecera.idTrabajador, scrollable, classesDisp))}
+                                                                            >
+                                                                                <DeleteIcon
+                                                                                    style={{ color: '#f44336', fontSize: retornaTamanoIcono() }} />
+                                                                            </Button>
+                                                                        </Tooltip>
+                                                                    </ButtonGroup>
+                                                                </Box>
+                                                                <FormControl
+                                                                    variant="outlined"
+                                                                    fullWidth
+                                                                    className={classes.mt15}
+                                                                    size="small"
                                                                 >
-                                                                    {tipos.map((option) => (
-                                                                        <MenuItem key={option.value} value={option.value}>
-                                                                            {option.label}
-                                                                        </MenuItem>
-                                                                    ))}
-                                                                </Select>
-                                                            </FormControl>
-                                                        </Grid>
+                                                                    <InputLabel>{esDesktop ? ((columnaCabecera.tipoTrabajador === 'trabajador' || !columnaCabecera.tipoTrabajador) ? 'Trabajador' : 'Suplente') : ((columnaCabecera.tipoTrabajador === 'trabajador' || !columnaCabecera.tipoTrabajador) ? 'Trab' : 'Supl')}</InputLabel>
+                                                                    <Select
+                                                                        id={`form-trabajador-` + (index + 1)}
+                                                                        value={columnaCabecera.idTrabajador < 999 ? columnaCabecera.idTrabajador : ''}
+                                                                        onChange={(event) => dispatch(handleChangeFormTrabajadoresAccion(index, columnaCabecera.tipoTrabajador, event))}
+                                                                        onOpen={() => dispatch(setValorPrevioAccordionAbiertoAccion(columnaCabecera.idTrabajador))}
+                                                                        input={
+                                                                            <OutlinedInput
+                                                                                labelWidth={esDesktop ? 80 : 35}
+                                                                            />
+                                                                        }
+                                                                    >
+                                                                        {listadoTrabajadores.map((option) => (
+                                                                            <MenuItem key={option.id} value={option.id}>
+                                                                                {option.nombre}
+                                                                            </MenuItem>
+                                                                        ))}
+                                                                    </Select>
+                                                                </FormControl>
+                                                                <FormControl
+                                                                    variant="outlined"
+                                                                    fullWidth
+                                                                    className={classes.mt15}
+                                                                    size="small"
+                                                                >
+                                                                    <InputLabel>{esDesktop ? 'Modo entrada datos' : 'Datos'}</InputLabel>
+                                                                    <Select
+                                                                        id="form-tipo-cuadrantes"
+                                                                        label={esDesktop ? 'Modo entrada datos' : 'Datos'}
+                                                                        value={columnaCabecera.tipoHorario || ''}
+                                                                        onChange={(event) => dispatch(handleChangeTipoHorarioAccion(index, event))}
+                                                                        helpertext="Selecciona Modo entrada datos"
+                                                                        disabled={columnaCabecera.nombreTrabajador ? false : true}
+                                                                    >
+                                                                        {tipos.map((option) => (
+                                                                            <MenuItem key={option.value} value={option.value}>
+                                                                                {option.label}
+                                                                            </MenuItem>
+                                                                        ))}
+                                                                    </Select>
+                                                                </FormControl>
+                                                            </Grid>
+                                                        ) : null}
                                                     </Grid>
                                                 </AccordionDetails>
                                             </Accordion>
@@ -1544,7 +1594,7 @@ const Cuadrantes = (props) => {
                     <Tooltip title="Informe Cuadrante" placement="left" arrow>
                         <Fab
                             variant="extended"
-                            className={objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1] && objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].bloqueado === 'si' ? classes.fabBloqueado : classes.fab}
+                            className={classes.fab}
                             onClick={() => !isDragging ? dispatch(handleClickOpenDialogCuadrantes4Accion()) : null}
                         >
                             <Typography variant="body2" className={classes.typoFab}>{dispatch(retornaInfoFabButtonAccion())}</Typography>
@@ -1552,7 +1602,6 @@ const Cuadrantes = (props) => {
                         </Fab>
                     </Tooltip>
                 </Draggable>
-
             </Grid >
         )
     };
@@ -1785,7 +1834,7 @@ const Cuadrantes = (props) => {
                                 <FormControl
                                     variant="outlined"
                                     fullWidth
-                                    disabled={!disableCargando ? disableSelectCentros : disableCargando}
+                                    disabled={venimosDeCambioCentroSelect ? true : !disableCargando ? disableSelectCentros : disableCargando}
                                     size="small"
                                 >
                                     <InputLabel>Centro</InputLabel>
@@ -1947,37 +1996,27 @@ const Cuadrantes = (props) => {
                     className={classes.tooltip}
                     style={{ width: 165 }}>
                     <Grid component="label" container alignItems="center" spacing={1}>
-                        <Grid item>
-                            <Switch
-                                id="check-valorFestivo"
-                                checked={stateFestivo['estadoFestivoDia' + (variablesPopoverDias.index + 1)] || false}
-                                onChange={(event) => dispatch(handleChangeFestivoDiaAccion(variablesPopoverDias.postRef, variablesPopoverDias.index + 1, variablesPopoverDias.dia, event, 1, false))}
-                            />
-                        </Grid>
-                        <Grid item><Typography variant="body2" color="textPrimary">Lab./Fes.</Typography></Grid>
-                        {stateFestivo['estadoFestivoDia' + (variablesPopoverDias.index + 1)] ? (
-                            <FormControl
-                                variant="outlined"
-                                fullWidth
-                                className={clsx(classes.mt5, classes.px5)}
-                                size="small"
+                        <FormControl
+                            variant="outlined"
+                            fullWidth
+                            className={clsx(classes.mt5, classes.px5)}
+                            size="small"
+                        >
+                            <InputLabel>Estado</InputLabel>
+                            <Select
+                                id="form-tipoFestivo"
+                                label="Estado"
+                                value={stateFestivo['estadoFestivoDia' + (variablesPopoverDias.index + 1)] ? stateFestivo['tipoFestivoDia' + (variablesPopoverDias.index + 1)] : 0}
+                                onChange={(event) => dispatch(handleChangeFestivoDiaAccion(variablesPopoverDias.postRef, variablesPopoverDias.index + 1, variablesPopoverDias.dia, event, null, false, scrollable, classesDisp))}
+                                helpertext="Selecciona Tipo Festivo"
                             >
-                                <InputLabel>Tipo festivo</InputLabel>
-                                <Select
-                                    id="form-tipoFestivo"
-                                    label="Tipo festivo"
-                                    value={stateFestivo['tipoFestivoDia' + (variablesPopoverDias.index + 1)] || ''}
-                                    onChange={(event) => dispatch(handleChangeFestivoDiaAccion(variablesPopoverDias.postRef, variablesPopoverDias.index + 1, variablesPopoverDias.dia, event, null, false))}
-                                    helpertext="Selecciona Tipo Festivo"
-                                >
-                                    {tipoFestivo.map((option) => (
-                                        <MenuItem key={option.value} value={option.value}>
-                                            {option.label}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        ) : null}
+                                {tipoFestivo.map((option) => (
+                                    <MenuItem key={option.value} value={option.value}>
+                                        {option.label}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                     </Grid>
                 </Box>
             </Popover>
@@ -2222,6 +2261,7 @@ const Cuadrantes = (props) => {
                 prNoTieneBotones={true}
                 prFullWidth={true}
                 prMaxWidth={true}
+                prBotonImprimir={true}
             />
             <DialogComponente
                 //eliminar cuadrante (múltiple)
@@ -2230,7 +2270,7 @@ const Cuadrantes = (props) => {
                 prTituloDialog={tituloDialogCuadrantes5}
                 prDescripcionDialog={descripcionDialogCuadrantes5}
             />
-            {/* {console.log(isDragging)} */}
+            {console.log(itemEditandoConfiguracion)}
         </div >
     )
 }

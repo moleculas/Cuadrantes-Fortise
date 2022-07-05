@@ -12,7 +12,7 @@ function App() {
 
   leerUsuarioAccion()(store.dispatch);
 
-  return (   
+  return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <Contenedor />

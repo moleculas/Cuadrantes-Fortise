@@ -30,7 +30,6 @@ import MuiAlert from '@material-ui/lab/Alert';
 //importaciones acciones
 import { cambioEstadoInicioCuadrantesAccion } from '../redux/cuadrantesDucks';
 import { activarDesactivarCambioBotonRegistrarAccion } from '../redux/cuadrantesDucks';
-import { registrarIntervencionCuadranteNuevoAccion } from '../redux/cuadrantesDucks';
 import { venimosDeRegistradosAccion } from '../redux/pendientesDucks';
 import { setCentroAccion } from '../redux/cuadrantesDucks';
 import { obtenerCentroAccion } from '../redux/centrosDucks';
@@ -39,6 +38,8 @@ import { generarArchivosXLSLoteAccion } from '../redux/appDucks';
 import { finalizarArchivosXLSLoteAccion } from '../redux/appDucks';
 import { forzarRecargaGraficosCuadrantesAccion } from '../redux/graficosDucks';
 import { emitirArchivosXLSLoteAccion } from '../redux/appDucks';
+import { actualizarCuadrantesIteradosAccion } from '../redux/appDucks';
+import { setValorTabPantallaCuadrantesAccion } from '../redux/cuadrantesSettersDucks';
 
 //estilos
 import Clases from "../clases";
@@ -82,7 +83,6 @@ const PendientesRegistrados = (props) => {
     const dispatch = useDispatch();
     const cuadrantesRegistradosArray = useSelector(store => store.variablesPendientes.cuadrantesRegistradosArray);
     const listadoCentros = useSelector(store => store.variablesCentros.arrayCentros);
-    const objetoUsuarioActivo = useSelector(store => store.variablesUsuario.usuarioActivo);
     const laDataFAC = useSelector(store => store.variablesApp.laDataFAC);
     const laDataLFA = useSelector(store => store.variablesApp.laDataLFA);
     const numeroCuadrantesRegistrados = useSelector(store => store.variablesPendientes.numeroCuadrantesRegistrados);
@@ -142,11 +142,19 @@ const PendientesRegistrados = (props) => {
 
     useEffect(() => {
         if ((laDataFAC.length > 0) && (laDataFAC.length === arrayCuadrantesDefsParaCheck.length)) {
+            dispatch(actualizarCuadrantesIteradosAccion());
             setArrayCuadrantesDefsParaCheck([]);
             dispatch(finalizarArchivosXLSLoteAccion(true));
-            dispatch(forzarRecargaGraficosCuadrantesAccion(true));
             dispatch(emitirArchivosXLSLoteAccion(laDataFAC, laDataLFA));
-        }
+            setNumeroFactusolPendientes(null);
+            setExpandedAccordion(false);
+            setHeighCambio({
+                scroller: heighCambio.scroller + 70,
+                accordion: heighCambio.accordion - 0
+            });
+            dispatch(forzarRecargaGraficosCuadrantesAccion(true));
+            dispatch(setValorTabPantallaCuadrantesAccion(2));
+        };
     }, [laDataFAC]);
 
     //funciones
@@ -250,9 +258,7 @@ const PendientesRegistrados = (props) => {
     };
 
     const handleGenerarLoteArchivos = () => {
-        if (numeroFactusolPendientes) {
-            let fechaHoy = new Date().toLocaleString() + '';
-            let laFirmaActualizacion = fechaHoy + ' por ' + objetoUsuarioActivo.nombre.charAt(0).toUpperCase() + objetoUsuarioActivo.nombre.slice(1);
+        if (numeroFactusolPendientes) {           
             let arrayIdsCuadrantes = [];
             let arrayCuadrantesDef = [];
             for (const prop in checked) {
@@ -267,7 +273,7 @@ const PendientesRegistrados = (props) => {
                 }
             });
             setArrayCuadrantesDefsParaCheck(arrayCuadrantesDef);
-            dispatch(generarArchivosXLSLoteAccion(numeroFactusolPendientes, arrayCuadrantesDef, laFirmaActualizacion));
+            dispatch(generarArchivosXLSLoteAccion(numeroFactusolPendientes, arrayCuadrantesDef));
         } else {
             setAlert({
                 mensaje: "Debes introducir el último número de factura emitida en FACTUSOL para generar los archivos.",

@@ -5,7 +5,7 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
 } else {
     rutaServer = window.location.protocol + "//" + window.location.host;
     rutaApi = rutaServer + "/api/";
-}
+};
 
 const subdirectoriProduccio = '';
 //afegir a package.json: "homepage": "https://domini/subdomini",
@@ -71,20 +71,23 @@ const devuelveFestivos = () => {
         '1-5',
         retornaDiaMes(segundaPascua),
         '24-6',
+        '15-8',
         '11-9',
         '24-9',
         '12-10',
         '1-11',
         '6-12',
         '8-12',
-        '25-12'
+        '25-12',
+        '26-12'
     ];
     return arrayFestivos;
-}
+};
 
 const festivos = devuelveFestivos();
 
 const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+const numeracioInstruccions = ['🄌', '➊', '➋', '➌', '➍', '➎', '➏', '➐', '➑', '➒', '➓'];
 
 const Constantes = {
     SUBDIRECTORI_PRODUCCIO: subdirectoriProduccio,
@@ -98,27 +101,27 @@ const Constantes = {
         { value: 6, label: 'Residencias' }
     ],
     CANTIDAD_HORAS_CENTROS: [
-        { value: 30, label: '30 mts.' },
-        { value: 45, label: '45 mts.' },
+        { value: 30, label: '30 min.' },
+        { value: 45, label: '45 min.' },
         { value: 60, label: '1 hora' },
-        { value: 75, label: '1 hora 15 mts.' },
-        { value: 90, label: '1 hora 30 mts.' },
-        { value: 105, label: '1 hora 45 mts.' },
+        { value: 75, label: '1 hora 15 min.' },
+        { value: 90, label: '1 hora 30 min.' },
+        { value: 105, label: '1 hora 45 min.' },
         { value: 120, label: '2 horas' },
-        { value: 135, label: '2 horas 15 mts.' },
-        { value: 140, label: '2 horas 20 mts.' },
-        { value: 150, label: '2 horas 30 mts.' },
-        { value: 165, label: '2 horas 45 mts.' },
+        { value: 135, label: '2 horas 15 min.' },
+        { value: 140, label: '2 horas 20 min.' },
+        { value: 150, label: '2 horas 30 min.' },
+        { value: 165, label: '2 horas 45 min.' },
         { value: 180, label: '3 horas' },
-        { value: 210, label: '3 horas 30 mts.' },
+        { value: 210, label: '3 horas 30 min.' },
         { value: 240, label: '4 horas' },
-        { value: 270, label: '4 horas 30 mts.' },
+        { value: 270, label: '4 horas 30 min.' },
         { value: 300, label: '5 horas' },
-        { value: 330, label: '5 horas 30 mts.' },
+        { value: 330, label: '5 horas 30 min.' },
         { value: 360, label: '6 horas' },
-        { value: 390, label: '6 horas 30 mts.' },
+        { value: 390, label: '6 horas 30 min.' },
         { value: 420, label: '7 horas' },
-        { value: 450, label: '7 horas 30 mts.' },
+        { value: 450, label: '7 horas 30 min.' },
         { value: 480, label: '8 horas' },
         { value: 540, label: '9 horas' },
         { value: 600, label: '10 horas' },
@@ -137,8 +140,12 @@ const Constantes = {
     EXCEPCIONES_CENTROS: [
         { value: 1, label: 'Festivos restan cómputo horas' }
     ],
+    SUBCATEGORIAS_TRABAJADORES: [
+        { value: 2, label: 'Servicios Extra' }
+    ],
     TIPO_FESTIVO: [
-        { value: 1, label: 'Normal' },
+        { value: 0, label: 'Laboral' },
+        { value: 1, label: 'Festivo' },
         { value: 2, label: 'Cierre centro' }
     ],
     TRABAJADORES_ASIGNADOS_CENTRO: [
@@ -162,12 +169,7 @@ const Constantes = {
     ],
     CALENDARIO_FESTIVOS: festivos,
     VARIACIONES_CUADRANTES: [
-        { value: 1, label: 'Considerar como horas extra' },
-        { value: 2, label: 'Añadir 0.5 horas extra de trabajo' },
-        { value: 3, label: 'Añadir 1 hora extra de trabajo' },
-        { value: 4, label: 'Añadir 1.5 horas extra de trabajo' },
-        { value: 5, label: 'Añadir 2 horas extra de trabajo' },
-        { value: 6, label: 'Horas especiales (+15%)' }
+        { value: 1, label: 'Sin coste' }
     ],
     COMPUTO_HORAS: [
         { value: 1, label: 'Total mensual pactado' },
@@ -281,5 +283,6 @@ const Constantes = {
         { value: 'domingo', label: 'Domingo' }
     ],
     MESES: meses,
+    NUMERACIO_INSTRUCCIONS: numeracioInstruccions,
 };
 export default Constantes;

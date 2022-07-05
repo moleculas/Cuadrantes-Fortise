@@ -1,5 +1,9 @@
 import React from 'react';
 import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
+import { useDispatch } from 'react-redux';
+
+//importaciones acciones
+import { obtenerNumeroRecibosAccion } from '../redux/appDucks';
 
 // Create styles
 Font.register({
@@ -126,6 +130,14 @@ const styles = StyleSheet.create({
 });
 
 const ReciboPDF = ({ objetoReciboPDF }) => {
+
+    const dispatch = useDispatch();
+    let elNumeroRecibo;
+    if(objetoReciboPDF.numeroRecibos){
+        elNumeroRecibo = objetoReciboPDF.numeroRecibos;
+    }else{
+        elNumeroRecibo = dispatch(obtenerNumeroRecibosAccion('configuracion')) + '-2';
+    };    
     return (
         <Document>
             <Page style={styles.body}>

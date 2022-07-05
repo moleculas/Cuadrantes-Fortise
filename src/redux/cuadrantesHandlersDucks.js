@@ -57,7 +57,6 @@ import { obtenerTrabajadorAccion } from './trabajadoresDucks';
 import { obtenerSuplenteAccion } from './trabajadoresDucks';
 import { setEsUnaActualizacionTrabajadorAccion } from './cuadrantesSettersDucks';
 import { retornaHoraRangoAccion } from './appDucks';
-import { retornaMinutosAccion } from './appDucks';
 import { isNumeric } from './appDucks';
 import { setItemEditandoConfiguracionAccion } from './cuadrantesSettersDucks';
 import { setItemPrevioEditandoConfiguracionAccion } from './cuadrantesSettersDucks';
@@ -73,12 +72,13 @@ import { handleClosePopoverGeneralAccion } from './cuadrantesPopoversDucks';
 import { handleClosePopoverServiciosFijosAccion } from './cuadrantesPopoversDucks';
 import { handleClosePopoverConfiguracionAccion } from './cuadrantesPopoversDucks';
 import { obtenerCentroAccion } from './centrosDucks';
-import { setArrayDatosInformeAccion } from '../redux/cuadrantesSettersDucks';
 import { gestionarInformeAccion } from '../redux/cuadrantesColumnasDucks';
 import { setDisableCargandoAccion } from '../redux/cuadrantesSettersDucks';
 import { setCambioSFAccion } from '../redux/cuadrantesSettersDucks';
 import { setYaNoEsInicioAccion } from './cuadrantesSettersDucks';
 import { setVenimosDeCambioCentroSelectAccion } from './cuadrantesSettersDucks';
+import { setCambioRedimensionColumnaAccion } from './cuadrantesSettersDucks';
+import { handleClosePopoverDiasAccion } from './cuadrantesPopoversDucks';
 
 //constantes
 const arrayFestivos = Constantes.CALENDARIO_FESTIVOS;
@@ -607,37 +607,35 @@ export const configuraStateFestivoAccion = () => (dispatch, getState) => {
             let object = {};
             for (let i = 1; i <= losDiasDelMes.length; i++) {
                 if (dispatch(esFestivoFuncionAccion(i))) {
-                    dispatch(handleChangeFestivoDiaAccion(losDiasDelMes[i - 1][1] + losDiasDelMes[i - 1][0], losDiasDelMes[i - 1][0][0], losDiasDelMes[i - 1][1][0], null, 1, false))
+                    dispatch(handleChangeFestivoDiaAccion(losDiasDelMes[i - 1][1] + losDiasDelMes[i - 1][0], losDiasDelMes[i - 1][0][0], losDiasDelMes[i - 1][1][0], null, 1, false, null, null))
                     object['estadoFestivoDia' + i] = true;
+                    object['tipoFestivoDia' + i] = 1;
                 } else {
                     object['estadoFestivoDia' + i] = false;
+                    object['tipoFestivoDia' + i] = 0;
                 };
-                object['tipoFestivoDia' + i] = 1;
             }
             dispatch(setStateFestivoAccion(object));
         };
     };
 };
 
-export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, tipoFestivo, esPeriodo) => (dispatch, getState) => {
+export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, tipoFestivo, esPeriodo, scrollable, classes) => (dispatch, getState) => {
     const { cuadrante, stateFestivo, cuadranteRegistrado } = getState().variablesCuadrantes;
     const { bufferSwitchedDiasFestivosCuadrante, cuadranteEnUsoCuadrantes, numeroCuadrantesCuadrantes } = getState().variablesCuadrantesSetters;
     const { cuadranteServiciosFijos } = getState().variablesCuadrantesServiciosFijos;
     const { objetoCentro } = getState().variablesCentros;
     let valorEvento;
     let elTipoFestivo;
-    let traspasoObjetoBuffer;
     let esInicio = false;
     if (event) {
-        if (event.target.id === 'check-valorFestivo') {
-            dispatch(setStateFestivoAccion({ ...stateFestivo, ['estadoFestivoDia' + index]: event.target.checked, ['tipoFestivoDia' + index]: 1 }));
-            valorEvento = event.target.checked;
-            elTipoFestivo = tipoFestivo;
+        if (event.target.value === 0) {
+            valorEvento = false;
         } else {
-            dispatch(setStateFestivoAccion({ ...stateFestivo, ['tipoFestivoDia' + index]: event.target.value }));
             valorEvento = true;
             elTipoFestivo = event.target.value;
         };
+        dispatch(setStateFestivoAccion({ ...stateFestivo, ['estadoFestivoDia' + index]: valorEvento, ['tipoFestivoDia' + index]: event.target.value }));
     } else {
         if (!esPeriodo) {
             valorEvento = true;
@@ -653,6 +651,17 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
     let arrayBuffer = [...bufferSwitchedDiasFestivosCuadrante];
     objetoBuffer[postRef] = [];
     let hayAlgunServicioActivo = false;
+    let indiceObjeto;
+    let elTipoPrevio = null;
+    if (arrayBuffer.length > 0) {
+        arrayBuffer[cuadranteEnUsoCuadrantes - 1] = [...arrayBuffer[cuadranteEnUsoCuadrantes - 1]];
+        indiceObjeto = arrayBuffer[cuadranteEnUsoCuadrantes - 1].findIndex(dia => (Object.keys(dia)[0]) === postRef);
+        if (indiceObjeto >= 0) {
+            if (arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto].activo) {
+                elTipoPrevio = arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto].tipo;
+            };
+        };
+    };
     if (cuadranteServiciosFijos.length > 0) {
         cuadranteServiciosFijos.forEach((servicio) => {
             for (const prop in servicio) {
@@ -772,18 +781,8 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
             objetoBuffer.activo = valorEvento;
             objetoBuffer.tipo = elTipoFestivo;
             if (arrayBuffer.length > 0) {
-                arrayBuffer[cuadranteEnUsoCuadrantes - 1] = [...arrayBuffer[cuadranteEnUsoCuadrantes - 1]];
-                let indiceObjeto = arrayBuffer[cuadranteEnUsoCuadrantes - 1].findIndex(dia => (Object.keys(dia)[0]) === postRef);
                 if (indiceObjeto >= 0) {
-                    if (elTipoFestivo === 1) {
-                        arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
-                    } else {
-                        traspasoObjetoBuffer = {
-                            ...bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto],
-                            tipo: elTipoFestivo
-                        };
-                        arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = traspasoObjetoBuffer;
-                    };
+                    arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                 } else {
                     arrayBuffer[cuadranteEnUsoCuadrantes - 1].push(objetoBuffer);
                 };
@@ -809,7 +808,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                     arrayBuffer[cuadranteEnUsoCuadrantes - 1] = [...bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1]];
                     objetoBuffer = arrayBuffer[cuadranteEnUsoCuadrantes - 1][indexABorrarSF];
                     objetoBuffer.activo = valorEvento;
-                    objetoBuffer.tipo = elTipoFestivo;
+                    objetoBuffer.tipo = 0;
                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indexABorrarSF] = objetoBuffer;
                 };
             };
@@ -831,234 +830,157 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                         case 'rango':
                             switch (diaSemana) {
                                 case 'Lunes':
-                                    objetoBuffer[postRef].push([columna[postRef].lunesInicioRango, columna[postRef].lunesFinRango]);
+                                    if (event) {
+                                        if (elTipoPrevio !== 1 && elTipoPrevio !== 2) {
+                                            objetoBuffer[postRef].push([columna[postRef].lunesInicioRango, columna[postRef].lunesFinRango]);
+                                        } else {
+                                            objetoBuffer[postRef] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto][postRef];
+                                        };
+                                    } else {
+                                        objetoBuffer[postRef].push([columna[postRef].lunesInicioRango, columna[postRef].lunesFinRango]);
+                                    };
                                     columna[postRef].lunesInicioRango = null;
                                     columna[postRef].lunesFinRango = null;
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'lunesInicioRango');
-                                    switch (festivoComputable.servicio) {
-                                        case 'LIM':
-                                            columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIME':
-                                            columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIMP':
-                                            columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
-                                            break;
-                                        case 'NAVE2':
-                                            columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
-                                            break;
-                                        case 'REFZ':
-                                            columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM1':
-                                            columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM2':
-                                            columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
-                                            break;
-                                        case 'FEST':
-                                            columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
-                                            break;
-                                        default:
+                                    if (!esInicio) {
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'lunesInicioRango');
+                                        if (elTipoFestivo === 1) {
+                                            columna.horasFestivasComputables = !columna.horasFestivasComputables ? festivoComputable.cantidad : columna.horasFestivasComputables += festivoComputable.cantidad;
+                                        };
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
+                                        };
                                     };
                                     break;
                                 case 'Martes':
-                                    objetoBuffer[postRef].push([columna[postRef].martesInicioRango, columna[postRef].martesFinRango]);
+                                    if (event) {
+                                        if (elTipoPrevio !== 1 && elTipoPrevio !== 2) {
+                                            objetoBuffer[postRef].push([columna[postRef].martesInicioRango, columna[postRef].martesFinRango]);
+                                        } else {
+                                            objetoBuffer[postRef] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto][postRef];
+                                        };
+                                    } else {
+                                        objetoBuffer[postRef].push([columna[postRef].martesInicioRango, columna[postRef].martesFinRango]);
+                                    };
                                     columna[postRef].martesInicioRango = null;
                                     columna[postRef].martesFinRango = null;
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'martesInicioRango');
-                                    switch (festivoComputable.servicio) {
-                                        case 'LIM':
-                                            columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIME':
-                                            columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIMP':
-                                            columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
-                                            break;
-                                        case 'NAVE2':
-                                            columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
-                                            break;
-                                        case 'REFZ':
-                                            columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM1':
-                                            columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM2':
-                                            columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
-                                            break;
-                                        case 'FEST':
-                                            columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
-                                            break;
-                                        default:
+                                    if (!esInicio) {
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'martesInicioRango');
+                                        if (elTipoFestivo === 1) {
+                                            columna.horasFestivasComputables = !columna.horasFestivasComputables ? festivoComputable.cantidad : columna.horasFestivasComputables += festivoComputable.cantidad;
+                                        };
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
+                                        };
                                     };
                                     break;
                                 case 'Miércoles':
-                                    objetoBuffer[postRef].push([columna[postRef].miercolesInicioRango, columna[postRef].miercolesFinRango]);
+                                    if (event) {
+                                        if (elTipoPrevio !== 1 && elTipoPrevio !== 2) {
+                                            objetoBuffer[postRef].push([columna[postRef].miercolesInicioRango, columna[postRef].miercolesFinRango]);
+                                        } else {
+                                            objetoBuffer[postRef] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto][postRef];
+                                        };
+                                    } else {
+                                        objetoBuffer[postRef].push([columna[postRef].miercolesInicioRango, columna[postRef].miercolesFinRango]);
+                                    };
                                     columna[postRef].miercolesInicioRango = null;
                                     columna[postRef].miercolesFinRango = null;
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'miercolesInicioRango');
-                                    switch (festivoComputable.servicio) {
-                                        case 'LIM':
-                                            columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIME':
-                                            columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIMP':
-                                            columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
-                                            break;
-                                        case 'NAVE2':
-                                            columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
-                                            break;
-                                        case 'REFZ':
-                                            columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM1':
-                                            columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM2':
-                                            columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
-                                            break;
-                                        case 'FEST':
-                                            columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
-                                            break;
-                                        default:
+                                    if (!esInicio) {
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'miercolesInicioRango');
+                                        if (elTipoFestivo === 1) {
+                                            columna.horasFestivasComputables = !columna.horasFestivasComputables ? festivoComputable.cantidad : columna.horasFestivasComputables += festivoComputable.cantidad;
+                                        };
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
+                                        };
                                     };
                                     break;
                                 case 'Jueves':
-                                    objetoBuffer[postRef].push([columna[postRef].juevesInicioRango, columna[postRef].juevesFinRango]);
+                                    if (event) {
+                                        if (elTipoPrevio !== 1 && elTipoPrevio !== 2) {
+                                            objetoBuffer[postRef].push([columna[postRef].juevesInicioRango, columna[postRef].juevesFinRango]);
+                                        } else {
+                                            objetoBuffer[postRef] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto][postRef];
+                                        };
+                                    } else {
+                                        objetoBuffer[postRef].push([columna[postRef].juevesInicioRango, columna[postRef].juevesFinRango]);
+                                    };
                                     columna[postRef].juevesInicioRango = null;
                                     columna[postRef].juevesFinRango = null;
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'juevesInicioRango');
-                                    switch (festivoComputable.servicio) {
-                                        case 'LIM':
-                                            columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIME':
-                                            columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIMP':
-                                            columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
-                                            break;
-                                        case 'NAVE2':
-                                            columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
-                                            break;
-                                        case 'REFZ':
-                                            columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM1':
-                                            columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM2':
-                                            columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
-                                            break;
-                                        case 'FEST':
-                                            columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
-                                            break;
-                                        default:
+                                    if (!esInicio) {
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'juevesInicioRango');
+                                        if (elTipoFestivo === 1) {
+                                            columna.horasFestivasComputables = !columna.horasFestivasComputables ? festivoComputable.cantidad : columna.horasFestivasComputables += festivoComputable.cantidad;
+                                        };
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
+                                        };
                                     };
                                     break;
                                 case 'Viernes':
-                                    objetoBuffer[postRef].push([columna[postRef].viernesInicioRango, columna[postRef].viernesFinRango]);
+                                    if (event) {
+                                        if (elTipoPrevio !== 1 && elTipoPrevio !== 2) {
+                                            objetoBuffer[postRef].push([columna[postRef].viernesInicioRango, columna[postRef].viernesFinRango]);
+                                        } else {
+                                            objetoBuffer[postRef] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto][postRef];
+                                        };
+                                    } else {
+                                        objetoBuffer[postRef].push([columna[postRef].viernesInicioRango, columna[postRef].viernesFinRango]);
+                                    };
                                     columna[postRef].viernesInicioRango = null;
                                     columna[postRef].viernesFinRango = null;
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'viernesInicioRango');
-                                    switch (festivoComputable.servicio) {
-                                        case 'LIM':
-                                            columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIME':
-                                            columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIMP':
-                                            columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
-                                            break;
-                                        case 'NAVE2':
-                                            columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
-                                            break;
-                                        case 'REFZ':
-                                            columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM1':
-                                            columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM2':
-                                            columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
-                                            break;
-                                        case 'FEST':
-                                            columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
-                                            break;
-                                        default:
+                                    if (!esInicio) {
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'viernesInicioRango');
+                                        if (elTipoFestivo === 1) {
+                                            columna.horasFestivasComputables = !columna.horasFestivasComputables ? festivoComputable.cantidad : columna.horasFestivasComputables += festivoComputable.cantidad;
+                                        };
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
+                                        };
                                     };
                                     break;
                                 case 'Sábado':
-                                    objetoBuffer[postRef].push([columna[postRef].sabadoInicioRango, columna[postRef].sabadoFinRango]);
+                                    if (event) {
+                                        if (elTipoPrevio !== 1 && elTipoPrevio !== 2) {
+                                            objetoBuffer[postRef].push([columna[postRef].sabadoInicioRango, columna[postRef].sabadoFinRango]);
+                                        } else {
+                                            objetoBuffer[postRef] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto][postRef];
+                                        };
+                                    } else {
+                                        objetoBuffer[postRef].push([columna[postRef].sabadoInicioRango, columna[postRef].sabadoFinRango]);
+                                    };
                                     columna[postRef].sabadoInicioRango = null;
                                     columna[postRef].sabadoFinRango = null;
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'sabadoInicioRango');
-                                    switch (festivoComputable.servicio) {
-                                        case 'LIM':
-                                            columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIME':
-                                            columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIMP':
-                                            columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
-                                            break;
-                                        case 'NAVE2':
-                                            columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
-                                            break;
-                                        case 'REFZ':
-                                            columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM1':
-                                            columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM2':
-                                            columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
-                                            break;
-                                        case 'FEST':
-                                            columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
-                                            break;
-                                        default:
+                                    if (!esInicio) {
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'sabadoInicioRango');
+                                        if (elTipoFestivo === 1) {
+                                            columna.horasFestivasComputables = !columna.horasFestivasComputables ? festivoComputable.cantidad : columna.horasFestivasComputables += festivoComputable.cantidad;
+                                        };
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
+                                        };
                                     };
                                     break;
                                 case 'Domingo':
-                                    objetoBuffer[postRef].push([columna[postRef].domingoInicioRango, columna[postRef].domingoFinRango]);
+                                    if (event) {
+                                        if (elTipoPrevio !== 1 && elTipoPrevio !== 2) {
+                                            objetoBuffer[postRef].push([columna[postRef].domingoInicioRango, columna[postRef].domingoFinRango]);
+                                        } else {
+                                            objetoBuffer[postRef] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto][postRef];
+                                        };
+                                    } else {
+                                        objetoBuffer[postRef].push([columna[postRef].domingoInicioRango, columna[postRef].domingoFinRango]);
+                                    };
                                     columna[postRef].domingoInicioRango = null;
                                     columna[postRef].domingoFinRango = null;
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'domingoInicioRango');
-                                    switch (festivoComputable.servicio) {
-                                        case 'LIM':
-                                            columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIME':
-                                            columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIMP':
-                                            columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
-                                            break;
-                                        case 'NAVE2':
-                                            columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
-                                            break;
-                                        case 'REFZ':
-                                            columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM1':
-                                            columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM2':
-                                            columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
-                                            break;
-                                        case 'FEST':
-                                            columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
-                                            break;
-                                        default:
+                                    if (!esInicio) {
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'domingoInicioRango');
+                                        if (elTipoFestivo === 1) {
+                                            columna.horasFestivasComputables = !columna.horasFestivasComputables ? festivoComputable.cantidad : columna.horasFestivasComputables += festivoComputable.cantidad;
+                                        };
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
+                                        };
                                     };
                                     break;
                                 default:
@@ -1067,248 +989,171 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                         case 'rangoDescanso':
                             switch (diaSemana) {
                                 case 'Lunes':
-                                    objetoBuffer[postRef].push([columna[postRef].lunesInicio1RangoDescanso, columna[postRef].lunesFin1RangoDescanso, columna[postRef].lunesInicio2RangoDescanso, columna[postRef].lunesFin2RangoDescanso]);
+                                    if (event) {
+                                        if (elTipoPrevio !== 1 && elTipoPrevio !== 2) {
+                                            objetoBuffer[postRef].push([columna[postRef].lunesInicio1RangoDescanso, columna[postRef].lunesFin1RangoDescanso, columna[postRef].lunesInicio2RangoDescanso, columna[postRef].lunesFin2RangoDescanso]);
+                                        } else {
+                                            objetoBuffer[postRef] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto][postRef];
+                                        };
+                                    } else {
+                                        objetoBuffer[postRef].push([columna[postRef].lunesInicio1RangoDescanso, columna[postRef].lunesFin1RangoDescanso, columna[postRef].lunesInicio2RangoDescanso, columna[postRef].lunesFin2RangoDescanso]);
+                                    };
                                     columna[postRef].lunesInicio1RangoDescanso = null;
                                     columna[postRef].lunesFin1RangoDescanso = null;
                                     columna[postRef].lunesInicio2RangoDescanso = null;
                                     columna[postRef].lunesFin2RangoDescanso = null;
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'lunesInicio1RangoDescanso');
-                                    switch (festivoComputable.servicio) {
-                                        case 'LIM':
-                                            columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIME':
-                                            columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIMP':
-                                            columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
-                                            break;
-                                        case 'NAVE2':
-                                            columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
-                                            break;
-                                        case 'REFZ':
-                                            columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM1':
-                                            columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM2':
-                                            columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
-                                            break;
-                                        case 'FEST':
-                                            columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
-                                            break;
-                                        default:
+                                    if (!esInicio) {
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'lunesInicio1RangoDescanso');
+                                        if (elTipoFestivo === 1) {
+                                            columna.horasFestivasComputables = !columna.horasFestivasComputables ? festivoComputable.cantidad : columna.horasFestivasComputables += festivoComputable.cantidad;
+                                        };
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = !columna[postRef].baja ? columna.horasFestivasComputables - festivoComputable.cantidad : columna.horasFestivasComputables;
+                                        };
                                     };
                                     break;
                                 case 'Martes':
-                                    objetoBuffer[postRef].push([columna[postRef].martesInicio1RangoDescanso, columna[postRef].martesFin1RangoDescanso, columna[postRef].martesInicio2RangoDescanso, columna[postRef].martesFin2RangoDescanso]);
+                                    if (event) {
+                                        if (elTipoPrevio !== 1 && elTipoPrevio !== 2) {
+                                            objetoBuffer[postRef].push([columna[postRef].martesInicio1RangoDescanso, columna[postRef].martesFin1RangoDescanso, columna[postRef].martesInicio2RangoDescanso, columna[postRef].martesFin2RangoDescanso]);
+                                        } else {
+                                            objetoBuffer[postRef] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto][postRef];
+                                        };
+                                    } else {
+                                        objetoBuffer[postRef].push([columna[postRef].martesInicio1RangoDescanso, columna[postRef].martesFin1RangoDescanso, columna[postRef].martesInicio2RangoDescanso, columna[postRef].martesFin2RangoDescanso]);
+                                    };
                                     columna[postRef].martesInicio1RangoDescanso = null;
                                     columna[postRef].martesFin1RangoDescanso = null;
                                     columna[postRef].martesInicio2RangoDescanso = null;
                                     columna[postRef].martesFin2RangoDescanso = null;
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'martesInicio1RangoDescanso');
-                                    switch (festivoComputable.servicio) {
-                                        case 'LIM':
-                                            columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIME':
-                                            columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIMP':
-                                            columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
-                                            break;
-                                        case 'NAVE2':
-                                            columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
-                                            break;
-                                        case 'REFZ':
-                                            columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM1':
-                                            columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM2':
-                                            columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
-                                            break;
-                                        case 'FEST':
-                                            columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
-                                            break;
-                                        default:
+                                    if (!esInicio) {
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'martesInicio1RangoDescanso');
+                                        if (elTipoFestivo === 1) {
+                                            columna.horasFestivasComputables = !columna.horasFestivasComputables ? festivoComputable.cantidad : columna.horasFestivasComputables += festivoComputable.cantidad;
+                                        };
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = !columna[postRef].baja ? columna.horasFestivasComputables - festivoComputable.cantidad : columna.horasFestivasComputables;
+                                        };
                                     };
                                     break;
                                 case 'Miércoles':
-                                    objetoBuffer[postRef].push([columna[postRef].miercolesInicio1RangoDescanso, columna[postRef].miercolesFin1RangoDescanso, columna[postRef].miercolesInicio2RangoDescanso, columna[postRef].miercolesFin2RangoDescanso]);
+                                    if (event) {
+                                        if (elTipoPrevio !== 1 && elTipoPrevio !== 2) {
+                                            objetoBuffer[postRef].push([columna[postRef].miercolesInicio1RangoDescanso, columna[postRef].miercolesFin1RangoDescanso, columna[postRef].miercolesInicio2RangoDescanso, columna[postRef].miercolesFin2RangoDescanso]);
+                                        } else {
+                                            objetoBuffer[postRef] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto][postRef];
+                                        };
+                                    } else {
+                                        objetoBuffer[postRef].push([columna[postRef].miercolesInicio1RangoDescanso, columna[postRef].miercolesFin1RangoDescanso, columna[postRef].miercolesInicio2RangoDescanso, columna[postRef].miercolesFin2RangoDescanso]);
+                                    };
                                     columna[postRef].miercolesInicio1RangoDescanso = null;
                                     columna[postRef].miercolesFin1RangoDescanso = null;
                                     columna[postRef].miercolesInicio2RangoDescanso = null;
                                     columna[postRef].miercolesFin2RangoDescanso = null;
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'miercolesInicio1RangoDescanso');
-                                    switch (festivoComputable.servicio) {
-                                        case 'LIM':
-                                            columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIME':
-                                            columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIMP':
-                                            columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
-                                            break;
-                                        case 'NAVE2':
-                                            columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
-                                            break;
-                                        case 'REFZ':
-                                            columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM1':
-                                            columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM2':
-                                            columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
-                                            break;
-                                        case 'FEST':
-                                            columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
-                                            break;
-                                        default:
+                                    if (!esInicio) {
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'miercolesInicio1RangoDescanso');
+                                        if (elTipoFestivo === 1) {
+                                            columna.horasFestivasComputables = !columna.horasFestivasComputables ? festivoComputable.cantidad : columna.horasFestivasComputables += festivoComputable.cantidad;
+                                        };
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = !columna[postRef].baja ? columna.horasFestivasComputables - festivoComputable.cantidad : columna.horasFestivasComputables;
+                                        };
                                     };
                                     break;
                                 case 'Jueves':
-                                    objetoBuffer[postRef].push([columna[postRef].juevesInicio1RangoDescanso, columna[postRef].juevesFin1RangoDescanso, columna[postRef].juevesInicio2RangoDescanso, columna[postRef].juevesFin2RangoDescanso]);
+                                    if (event) {
+                                        if (elTipoPrevio !== 1 && elTipoPrevio !== 2) {
+                                            objetoBuffer[postRef].push([columna[postRef].juevesInicio1RangoDescanso, columna[postRef].juevesFin1RangoDescanso, columna[postRef].juevesInicio2RangoDescanso, columna[postRef].juevesFin2RangoDescanso]);
+                                        } else {
+                                            objetoBuffer[postRef] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto][postRef];
+                                        };
+                                    } else {
+                                        objetoBuffer[postRef].push([columna[postRef].juevesInicio1RangoDescanso, columna[postRef].juevesFin1RangoDescanso, columna[postRef].juevesInicio2RangoDescanso, columna[postRef].juevesFin2RangoDescanso]);
+                                    };
                                     columna[postRef].juevesInicio1RangoDescanso = null;
                                     columna[postRef].juevesFin1RangoDescanso = null;
                                     columna[postRef].juevesInicio2RangoDescanso = null;
                                     columna[postRef].juevesFin2RangoDescanso = null;
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'juevesInicio1RangoDescanso');
-                                    switch (festivoComputable.servicio) {
-                                        case 'LIM':
-                                            columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIME':
-                                            columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIMP':
-                                            columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
-                                            break;
-                                        case 'NAVE2':
-                                            columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
-                                            break;
-                                        case 'REFZ':
-                                            columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM1':
-                                            columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM2':
-                                            columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
-                                            break;
-                                        case 'FEST':
-                                            columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
-                                            break;
-                                        default:
+                                    if (!esInicio) {
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'juevesInicio1RangoDescanso');
+                                        if (elTipoFestivo === 1) {
+                                            columna.horasFestivasComputables = !columna.horasFestivasComputables ? festivoComputable.cantidad : columna.horasFestivasComputables += festivoComputable.cantidad;
+                                        };
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = !columna[postRef].baja ? columna.horasFestivasComputables - festivoComputable.cantidad : columna.horasFestivasComputables;
+                                        };
                                     };
                                     break;
                                 case 'Viernes':
-                                    objetoBuffer[postRef].push([columna[postRef].viernesInicio1RangoDescanso, columna[postRef].viernesFin1RangoDescanso, columna[postRef].viernesInicio2RangoDescanso, columna[postRef].viernesFin2RangoDescanso]);
+                                    if (event) {
+                                        if (elTipoPrevio !== 1 && elTipoPrevio !== 2) {
+                                            objetoBuffer[postRef].push([columna[postRef].viernesInicio1RangoDescanso, columna[postRef].viernesFin1RangoDescanso, columna[postRef].viernesInicio2RangoDescanso, columna[postRef].viernesFin2RangoDescanso]);
+                                        } else {
+                                            objetoBuffer[postRef] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto][postRef];
+                                        };
+                                    } else {
+                                        objetoBuffer[postRef].push([columna[postRef].viernesInicio1RangoDescanso, columna[postRef].viernesFin1RangoDescanso, columna[postRef].viernesInicio2RangoDescanso, columna[postRef].viernesFin2RangoDescanso]);
+                                    };
                                     columna[postRef].viernesInicio1RangoDescanso = null;
                                     columna[postRef].viernesFin1RangoDescanso = null;
                                     columna[postRef].viernesInicio2RangoDescanso = null;
                                     columna[postRef].viernesFin2RangoDescanso = null;
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'viernesInicio1RangoDescanso');
-                                    switch (festivoComputable.servicio) {
-                                        case 'LIM':
-                                            columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIME':
-                                            columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIMP':
-                                            columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
-                                            break;
-                                        case 'NAVE2':
-                                            columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
-                                            break;
-                                        case 'REFZ':
-                                            columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM1':
-                                            columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM2':
-                                            columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
-                                            break;
-                                        case 'FEST':
-                                            columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
-                                            break;
-                                        default:
+                                    if (!esInicio) {
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'viernesInicio1RangoDescanso');
+                                        if (elTipoFestivo === 1) {
+                                            columna.horasFestivasComputables = !columna.horasFestivasComputables ? festivoComputable.cantidad : columna.horasFestivasComputables += festivoComputable.cantidad;
+                                        };
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = !columna[postRef].baja ? columna.horasFestivasComputables - festivoComputable.cantidad : columna.horasFestivasComputables;
+                                        };
                                     };
                                     break;
                                 case 'Sábado':
-                                    objetoBuffer[postRef].push([columna[postRef].sabadoInicio1RangoDescanso, columna[postRef].sabadoFin1RangoDescanso, columna[postRef].sabadoInicio2RangoDescanso, columna[postRef].sabadoFin2RangoDescanso]);
+                                    if (event) {
+                                        if (elTipoPrevio !== 1 && elTipoPrevio !== 2) {
+                                            objetoBuffer[postRef].push([columna[postRef].sabadoInicio1RangoDescanso, columna[postRef].sabadoFin1RangoDescanso, columna[postRef].sabadoInicio2RangoDescanso, columna[postRef].sabadoFin2RangoDescanso]);
+                                        } else {
+                                            objetoBuffer[postRef] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto][postRef];
+                                        };
+                                    } else {
+                                        objetoBuffer[postRef].push([columna[postRef].sabadoInicio1RangoDescanso, columna[postRef].sabadoFin1RangoDescanso, columna[postRef].sabadoInicio2RangoDescanso, columna[postRef].sabadoFin2RangoDescanso]);
+                                    };
                                     columna[postRef].sabadoInicio1RangoDescanso = null;
                                     columna[postRef].sabadoFin1RangoDescanso = null;
                                     columna[postRef].sabadoInicio2RangoDescanso = null;
                                     columna[postRef].sabadoFin2RangoDescanso = null;
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'sabadoInicio1RangoDescanso');
-                                    switch (festivoComputable.servicio) {
-                                        case 'LIM':
-                                            columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIME':
-                                            columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIMP':
-                                            columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
-                                            break;
-                                        case 'NAVE2':
-                                            columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
-                                            break;
-                                        case 'REFZ':
-                                            columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM1':
-                                            columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM2':
-                                            columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
-                                            break;
-                                        case 'FEST':
-                                            columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
-                                            break;
-                                        default:
+                                    if (!esInicio) {
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'sabadoInicio1RangoDescanso');
+                                        if (elTipoFestivo === 1) {
+                                            columna.horasFestivasComputables = !columna.horasFestivasComputables ? festivoComputable.cantidad : columna.horasFestivasComputables += festivoComputable.cantidad;
+                                        };
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = !columna[postRef].baja ? columna.horasFestivasComputables - festivoComputable.cantidad : columna.horasFestivasComputables;
+                                        };
                                     };
                                     break;
                                 case 'Domingo':
-                                    objetoBuffer[postRef].push([columna[postRef].domingoInicio1RangoDescanso, columna[postRef].domingoFin1RangoDescanso, columna[postRef].domingoInicio2RangoDescanso, columna[postRef].domingoFin2RangoDescanso]);
+                                    if (event) {
+                                        if (elTipoPrevio !== 1 && elTipoPrevio !== 2) {
+                                            objetoBuffer[postRef].push([columna[postRef].domingoInicio1RangoDescanso, columna[postRef].domingoFin1RangoDescanso, columna[postRef].domingoInicio2RangoDescanso, columna[postRef].domingoFin2RangoDescanso]);
+                                        } else {
+                                            objetoBuffer[postRef] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto][postRef];
+                                        };
+                                    } else {
+                                        objetoBuffer[postRef].push([columna[postRef].domingoInicio1RangoDescanso, columna[postRef].domingoFin1RangoDescanso, columna[postRef].domingoInicio2RangoDescanso, columna[postRef].domingoFin2RangoDescanso]);
+                                    };
                                     columna[postRef].domingoInicio1RangoDescanso = null;
                                     columna[postRef].domingoFin1RangoDescanso = null;
                                     columna[postRef].domingoInicio2RangoDescanso = null;
                                     columna[postRef].domingoFin2RangoDescanso = null;
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'domingoInicio1RangoDescanso');
-                                    switch (festivoComputable.servicio) {
-                                        case 'LIM':
-                                            columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIME':
-                                            columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIMP':
-                                            columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
-                                            break;
-                                        case 'NAVE2':
-                                            columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
-                                            break;
-                                        case 'REFZ':
-                                            columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM1':
-                                            columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM2':
-                                            columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
-                                            break;
-                                        case 'FEST':
-                                            columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
-                                            break;
-                                        default:
+                                    if (!esInicio) {
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'domingoInicio1RangoDescanso');
+                                        if (elTipoFestivo === 1) {
+                                            columna.horasFestivasComputables = !columna.horasFestivasComputables ? festivoComputable.cantidad : columna.horasFestivasComputables += festivoComputable.cantidad;
+                                        };
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
+                                        };
                                     };
                                     break;
                                 default:
@@ -1317,227 +1162,150 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                         case 'cantidad':
                             switch (diaSemana) {
                                 case 'Lunes':
-                                    objetoBuffer[postRef].push([columna[postRef].lunesCantidad]);
+                                    if (event) {
+                                        if (elTipoPrevio !== 1 && elTipoPrevio !== 2) {
+                                            objetoBuffer[postRef].push([columna[postRef].lunesCantidad]);
+                                        } else {
+                                            objetoBuffer[postRef] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto][postRef];
+                                        };
+                                    } else {
+                                        objetoBuffer[postRef].push([columna[postRef].lunesCantidad]);
+                                    };
                                     columna[postRef].lunesCantidad = '';
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'lunesCantidad');
-                                    switch (festivoComputable.servicio) {
-                                        case 'LIM':
-                                            columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIME':
-                                            columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIMP':
-                                            columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
-                                            break;
-                                        case 'NAVE2':
-                                            columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
-                                            break;
-                                        case 'REFZ':
-                                            columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM1':
-                                            columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM2':
-                                            columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
-                                            break;
-                                        case 'FEST':
-                                            columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
-                                            break;
-                                        default:
+                                    if (!esInicio) {
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'lunesCantidad');
+                                        if (elTipoFestivo === 1) {
+                                            columna.horasFestivasComputables = !columna.horasFestivasComputables ? festivoComputable.cantidad : columna.horasFestivasComputables += festivoComputable.cantidad;
+                                        };
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
+                                        };
                                     };
                                     break;
                                 case 'Martes':
-                                    objetoBuffer[postRef].push([columna[postRef].martesCantidad]);
+                                    if (event) {
+                                        if (elTipoPrevio !== 1 && elTipoPrevio !== 2) {
+                                            objetoBuffer[postRef].push([columna[postRef].martesCantidad]);
+                                        } else {
+                                            objetoBuffer[postRef] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto][postRef];
+                                        };
+                                    } else {
+                                        objetoBuffer[postRef].push([columna[postRef].martesCantidad]);
+                                    };
                                     columna[postRef].martesCantidad = '';
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'martesCantidad');
-                                    switch (festivoComputable.servicio) {
-                                        case 'LIM':
-                                            columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIME':
-                                            columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIMP':
-                                            columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
-                                            break;
-                                        case 'NAVE2':
-                                            columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
-                                            break;
-                                        case 'REFZ':
-                                            columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM1':
-                                            columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM2':
-                                            columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
-                                            break;
-                                        case 'FEST':
-                                            columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
-                                            break;
-                                        default:
+                                    if (!esInicio) {
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'martesCantidad');
+                                        if (elTipoFestivo === 1) {
+                                            columna.horasFestivasComputables = !columna.horasFestivasComputables ? festivoComputable.cantidad : columna.horasFestivasComputables += festivoComputable.cantidad;
+                                        };
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
+                                        };
                                     };
                                     break;
                                 case 'Miércoles':
-                                    objetoBuffer[postRef].push([columna[postRef].miercolesCantidad]);
+                                    if (event) {
+                                        if (elTipoPrevio !== 1 && elTipoPrevio !== 2) {
+                                            objetoBuffer[postRef].push([columna[postRef].miercolesCantidad]);
+                                        } else {
+                                            objetoBuffer[postRef] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto][postRef];
+                                        };
+                                    } else {
+                                        objetoBuffer[postRef].push([columna[postRef].miercolesCantidad]);
+                                    };
                                     columna[postRef].miercolesCantidad = '';
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'miercolesCantidad');
-                                    switch (festivoComputable.servicio) {
-                                        case 'LIM':
-                                            columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIME':
-                                            columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIMP':
-                                            columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
-                                            break;
-                                        case 'NAVE2':
-                                            columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
-                                            break;
-                                        case 'REFZ':
-                                            columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM1':
-                                            columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM2':
-                                            columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
-                                            break;
-                                        case 'FEST':
-                                            columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
-                                            break;
-                                        default:
+                                    if (!esInicio) {
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'miercolesCantidad');
+                                        if (elTipoFestivo === 1) {
+                                            columna.horasFestivasComputables = !columna.horasFestivasComputables ? festivoComputable.cantidad : columna.horasFestivasComputables += festivoComputable.cantidad;
+                                        };
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
+                                        };
                                     };
                                     break;
                                 case 'Jueves':
-                                    objetoBuffer[postRef].push([columna[postRef].juevesCantidad]);
+                                    if (event) {
+                                        if (elTipoPrevio !== 1 && elTipoPrevio !== 2) {
+                                            objetoBuffer[postRef].push([columna[postRef].juevesCantidad]);
+                                        } else {
+                                            objetoBuffer[postRef] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto][postRef];
+                                        };
+                                    } else {
+                                        objetoBuffer[postRef].push([columna[postRef].juevesCantidad]);
+                                    };
                                     columna[postRef].juevesCantidad = '';
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'juevesCantidad');
-                                    switch (festivoComputable.servicio) {
-                                        case 'LIM':
-                                            columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIME':
-                                            columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIMP':
-                                            columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
-                                            break;
-                                        case 'NAVE2':
-                                            columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
-                                            break;
-                                        case 'REFZ':
-                                            columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM1':
-                                            columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM2':
-                                            columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
-                                            break;
-                                        case 'FEST':
-                                            columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
-                                            break;
-                                        default:
+                                    if (!esInicio) {
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'juevesCantidad');
+                                        if (elTipoFestivo === 1) {
+                                            columna.horasFestivasComputables = !columna.horasFestivasComputables ? festivoComputable.cantidad : columna.horasFestivasComputables += festivoComputable.cantidad;
+                                        };
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
+                                        };
                                     };
                                     break;
                                 case 'Viernes':
-                                    objetoBuffer[postRef].push([columna[postRef].viernesCantidad]);
+                                    if (event) {
+                                        if (elTipoPrevio !== 1 && elTipoPrevio !== 2) {
+                                            objetoBuffer[postRef].push([columna[postRef].viernesCantidad]);
+                                        } else {
+                                            objetoBuffer[postRef] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto][postRef];
+                                        };
+                                    } else {
+                                        objetoBuffer[postRef].push([columna[postRef].viernesCantidad]);
+                                    };
                                     columna[postRef].viernesCantidad = '';
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'viernesCantidad');
-                                    switch (festivoComputable.servicio) {
-                                        case 'LIM':
-                                            columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIME':
-                                            columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIMP':
-                                            columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
-                                            break;
-                                        case 'NAVE2':
-                                            columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
-                                            break;
-                                        case 'REFZ':
-                                            columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM1':
-                                            columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM2':
-                                            columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
-                                            break;
-                                        case 'FEST':
-                                            columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
-                                            break;
-                                        default:
+                                    if (!esInicio) {
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'viernesCantidad');
+                                        if (elTipoFestivo === 1) {
+                                            columna.horasFestivasComputables = !columna.horasFestivasComputables ? festivoComputable.cantidad : columna.horasFestivasComputables += festivoComputable.cantidad;
+                                        };
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
+                                        };
                                     };
                                     break;
                                 case 'Sábado':
-                                    objetoBuffer[postRef].push([columna[postRef].sabadoCantidad]);
+                                    if (event) {
+                                        if (elTipoPrevio !== 1 && elTipoPrevio !== 2) {
+                                            objetoBuffer[postRef].push([columna[postRef].sabadoCantidad]);
+                                        } else {
+                                            objetoBuffer[postRef] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto][postRef];
+                                        };
+                                    } else {
+                                        objetoBuffer[postRef].push([columna[postRef].sabadoCantidad]);
+                                    };
                                     columna[postRef].sabadoCantidad = '';
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'sabadoCantidad');
-                                    switch (festivoComputable.servicio) {
-                                        case 'LIM':
-                                            columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIME':
-                                            columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIMP':
-                                            columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
-                                            break;
-                                        case 'NAVE2':
-                                            columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
-                                            break;
-                                        case 'REFZ':
-                                            columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM1':
-                                            columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM2':
-                                            columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
-                                            break;
-                                        case 'FEST':
-                                            columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
-                                            break;
-                                        default:
+                                    if (!esInicio) {
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'sabadoCantidad');
+                                        if (elTipoFestivo === 1) {
+                                            columna.horasFestivasComputables = !columna.horasFestivasComputables ? festivoComputable.cantidad : columna.horasFestivasComputables += festivoComputable.cantidad;
+                                        };
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
+                                        };
                                     };
                                     break;
                                 case 'Domingo':
-                                    objetoBuffer[postRef].push([columna[postRef].domingoCantidad]);
+                                    if (event) {
+                                        if (elTipoPrevio !== 1 && elTipoPrevio !== 2) {
+                                            objetoBuffer[postRef].push([columna[postRef].domingoCantidad]);
+                                        } else {
+                                            objetoBuffer[postRef] = bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto][postRef];
+                                        };
+                                    } else {
+                                        objetoBuffer[postRef].push([columna[postRef].domingoCantidad]);
+                                    };
                                     columna[postRef].domingoCantidad = '';
-                                    festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'domingoCantidad');
-                                    switch (festivoComputable.servicio) {
-                                        case 'LIM':
-                                            columna.horasFestivasComputables_L = !columna.horasFestivasComputables_L ? festivoComputable.cantidad : columna.horasFestivasComputables_L += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIME':
-                                            columna.horasFestivasComputables_E = !columna.horasFestivasComputables_E ? festivoComputable.cantidad : columna.horasFestivasComputables_E += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIMP':
-                                            columna.horasFestivasComputables_P = !columna.horasFestivasComputables_P ? festivoComputable.cantidad : columna.horasFestivasComputables_P += festivoComputable.cantidad;
-                                            break;
-                                        case 'NAVE2':
-                                            columna.horasFestivasComputables_N = !columna.horasFestivasComputables_N ? festivoComputable.cantidad : columna.horasFestivasComputables_N += festivoComputable.cantidad;
-                                            break;
-                                        case 'REFZ':
-                                            columna.horasFestivasComputables_R = !columna.horasFestivasComputables_R ? festivoComputable.cantidad : columna.horasFestivasComputables_R += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM1':
-                                            columna.horasFestivasComputables_L1 = !columna.horasFestivasComputables_L1 ? festivoComputable.cantidad : columna.horasFestivasComputables_L1 += festivoComputable.cantidad;
-                                            break;
-                                        case 'LIM2':
-                                            columna.horasFestivasComputables_L2 = !columna.horasFestivasComputables_L2 ? festivoComputable.cantidad : columna.horasFestivasComputables_L2 += festivoComputable.cantidad;
-                                            break;
-                                        case 'FEST':
-                                            columna.horasFestivasComputables_F = !columna.horasFestivasComputables_F ? festivoComputable.cantidad : columna.horasFestivasComputables_F += festivoComputable.cantidad;
-                                            break;
-                                        default:
+                                    if (!esInicio) {
+                                        festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'domingoCantidad');
+                                        if (elTipoFestivo === 1) {
+                                            columna.horasFestivasComputables = !columna.horasFestivasComputables ? festivoComputable.cantidad : columna.horasFestivasComputables += festivoComputable.cantidad;
+                                        };
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
+                                        };
                                     };
                                     break;
                                 default:
@@ -1551,19 +1319,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                         arrayBuffer[cuadranteEnUsoCuadrantes - 1] = [...arrayBuffer[cuadranteEnUsoCuadrantes - 1]];
                         let indiceObjeto = arrayBuffer[cuadranteEnUsoCuadrantes - 1].findIndex(dia => (Object.keys(dia)[0]) === postRef);
                         if (indiceObjeto >= 0) {
-                            if (elTipoFestivo === 1) {
-                                arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
-                            } else {
-                                if (!esPeriodo) {
-                                    traspasoObjetoBuffer = {
-                                        ...bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1][indiceObjeto],
-                                        tipo: elTipoFestivo
-                                    };
-                                    arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = traspasoObjetoBuffer;
-                                } else {
-                                    arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
-                                };
-                            };
+                            arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                         } else {
                             arrayBuffer[cuadranteEnUsoCuadrantes - 1].push(objetoBuffer);
                         };
@@ -1585,7 +1341,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                     if (bufferSwitchedDiasFestivosCuadrante.length > 0) {
                         bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1].forEach((registroBuffer, index) => {
                             if (Object.keys(registroBuffer)[0] === postRef && registroBuffer.activo) {
-                                if (registroBuffer[postRef][indexFor][0] === 'SF') {
+                                if (registroBuffer[postRef][0][0] === 'SF') {
                                     variableBuffer1 = registroBuffer[postRef][indexFor + 1][0];
                                     variableBuffer2 = registroBuffer[postRef][indexFor + 1][1];
                                     variableBuffer3 = registroBuffer[postRef][indexFor + 1][2];
@@ -1611,32 +1367,8 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].lunesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].lunesTipoServicio : '';
                                         festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'lunesInicioRango');
-                                        switch (festivoComputable.servicio) {
-                                            case 'LIM':
-                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIME':
-                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIMP':
-                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
-                                                break;
-                                            case 'NAVE2':
-                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
-                                                break;
-                                            case 'REFZ':
-                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM1':
-                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM2':
-                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
-                                                break;
-                                            case 'FEST':
-                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
-                                                break;
-                                            default:
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
                                         };
                                         break;
                                     case 'Martes':
@@ -1648,32 +1380,8 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].martesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].martesTipoServicio : '';
                                         festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'martesInicioRango');
-                                        switch (festivoComputable.servicio) {
-                                            case 'LIM':
-                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIME':
-                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIMP':
-                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
-                                                break;
-                                            case 'NAVE2':
-                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
-                                                break;
-                                            case 'REFZ':
-                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM1':
-                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM2':
-                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
-                                                break;
-                                            case 'FEST':
-                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
-                                                break;
-                                            default:
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
                                         };
                                         break;
                                     case 'Miércoles':
@@ -1685,32 +1393,8 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].miercolesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].miercolesTipoServicio : '';
                                         festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'miercolesInicioRango');
-                                        switch (festivoComputable.servicio) {
-                                            case 'LIM':
-                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIME':
-                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIMP':
-                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
-                                                break;
-                                            case 'NAVE2':
-                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
-                                                break;
-                                            case 'REFZ':
-                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM1':
-                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM2':
-                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
-                                                break;
-                                            case 'FEST':
-                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
-                                                break;
-                                            default:
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
                                         };
                                         break;
                                     case 'Jueves':
@@ -1722,32 +1406,8 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].juevesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].juevesTipoServicio : '';
                                         festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'juevesInicioRango');
-                                        switch (festivoComputable.servicio) {
-                                            case 'LIM':
-                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIME':
-                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIMP':
-                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
-                                                break;
-                                            case 'NAVE2':
-                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
-                                                break;
-                                            case 'REFZ':
-                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM1':
-                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM2':
-                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
-                                                break;
-                                            case 'FEST':
-                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
-                                                break;
-                                            default:
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
                                         };
                                         break;
                                     case 'Viernes':
@@ -1759,32 +1419,8 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].viernesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].viernesTipoServicio : '';
                                         festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'viernesInicioRango');
-                                        switch (festivoComputable.servicio) {
-                                            case 'LIM':
-                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIME':
-                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIMP':
-                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
-                                                break;
-                                            case 'NAVE2':
-                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
-                                                break;
-                                            case 'REFZ':
-                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM1':
-                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM2':
-                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
-                                                break;
-                                            case 'FEST':
-                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
-                                                break;
-                                            default:
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
                                         };
                                         break;
                                     case 'Sábado':
@@ -1796,32 +1432,8 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].sabadoTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].sabadoTipoServicio : '';
                                         festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'sabadoInicioRango');
-                                        switch (festivoComputable.servicio) {
-                                            case 'LIM':
-                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIME':
-                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIMP':
-                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
-                                                break;
-                                            case 'NAVE2':
-                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
-                                                break;
-                                            case 'REFZ':
-                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM1':
-                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM2':
-                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
-                                                break;
-                                            case 'FEST':
-                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
-                                                break;
-                                            default:
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
                                         };
                                         break;
                                     case 'Domingo':
@@ -1833,32 +1445,8 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].domingoTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].domingoTipoServicio : '';
                                         festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'domingoInicioRango');
-                                        switch (festivoComputable.servicio) {
-                                            case 'LIM':
-                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIME':
-                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIMP':
-                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
-                                                break;
-                                            case 'NAVE2':
-                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
-                                                break;
-                                            case 'REFZ':
-                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM1':
-                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM2':
-                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
-                                                break;
-                                            case 'FEST':
-                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
-                                                break;
-                                            default:
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
                                         };
                                         break;
                                     default:
@@ -1877,32 +1465,8 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].lunesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].lunesTipoServicio : '';
                                         festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'lunesInicio1RangoDescanso');
-                                        switch (festivoComputable.servicio) {
-                                            case 'LIM':
-                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIME':
-                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIMP':
-                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
-                                                break;
-                                            case 'NAVE2':
-                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
-                                                break;
-                                            case 'REFZ':
-                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM1':
-                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM2':
-                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
-                                                break;
-                                            case 'FEST':
-                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
-                                                break;
-                                            default:
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
                                         };
                                         break;
                                     case 'Martes':
@@ -1916,32 +1480,8 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].martesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].martesTipoServicio : '';
                                         festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'martesInicio1RangoDescanso');
-                                        switch (festivoComputable.servicio) {
-                                            case 'LIM':
-                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIME':
-                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIMP':
-                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
-                                                break;
-                                            case 'NAVE2':
-                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
-                                                break;
-                                            case 'REFZ':
-                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM1':
-                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM2':
-                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
-                                                break;
-                                            case 'FEST':
-                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
-                                                break;
-                                            default:
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
                                         };
                                         break;
                                     case 'Miércoles':
@@ -1955,32 +1495,8 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].miercolesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].miercolesTipoServicio : '';
                                         festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'miercolesInicio1RangoDescanso');
-                                        switch (festivoComputable.servicio) {
-                                            case 'LIM':
-                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIME':
-                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIMP':
-                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
-                                                break;
-                                            case 'NAVE2':
-                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
-                                                break;
-                                            case 'REFZ':
-                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM1':
-                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM2':
-                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
-                                                break;
-                                            case 'FEST':
-                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
-                                                break;
-                                            default:
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
                                         };
                                         break;
                                     case 'Jueves':
@@ -1994,32 +1510,8 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].juevesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].juevesTipoServicio : '';
                                         festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'juevesInicio1RangoDescanso');
-                                        switch (festivoComputable.servicio) {
-                                            case 'LIM':
-                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIME':
-                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIMP':
-                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
-                                                break;
-                                            case 'NAVE2':
-                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
-                                                break;
-                                            case 'REFZ':
-                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM1':
-                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM2':
-                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
-                                                break;
-                                            case 'FEST':
-                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
-                                                break;
-                                            default:
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
                                         };
                                         break;
                                     case 'Viernes':
@@ -2033,32 +1525,8 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].viernesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].viernesTipoServicio : '';
                                         festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'viernesInicio1RangoDescanso');
-                                        switch (festivoComputable.servicio) {
-                                            case 'LIM':
-                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIME':
-                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIMP':
-                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
-                                                break;
-                                            case 'NAVE2':
-                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
-                                                break;
-                                            case 'REFZ':
-                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM1':
-                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM2':
-                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
-                                                break;
-                                            case 'FEST':
-                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
-                                                break;
-                                            default:
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
                                         };
                                         break;
                                     case 'Sábado':
@@ -2072,32 +1540,8 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].sabadoTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].sabadoTipoServicio : '';
                                         festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'sabadoInicio1RangoDescanso');
-                                        switch (festivoComputable.servicio) {
-                                            case 'LIM':
-                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIME':
-                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIMP':
-                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
-                                                break;
-                                            case 'NAVE2':
-                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
-                                                break;
-                                            case 'REFZ':
-                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM1':
-                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM2':
-                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
-                                                break;
-                                            case 'FEST':
-                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
-                                                break;
-                                            default:
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
                                         };
                                         break;
                                     case 'Domingo':
@@ -2111,32 +1555,8 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].domingoTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].domingoTipoServicio : '';
                                         festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'domingoInicio1RangoDescanso');
-                                        switch (festivoComputable.servicio) {
-                                            case 'LIM':
-                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIME':
-                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIMP':
-                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
-                                                break;
-                                            case 'NAVE2':
-                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
-                                                break;
-                                            case 'REFZ':
-                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM1':
-                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM2':
-                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
-                                                break;
-                                            case 'FEST':
-                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
-                                                break;
-                                            default:
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
                                         };
                                         break;
                                     default:
@@ -2152,32 +1572,8 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].lunesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].lunesTipoServicio : '';
                                         festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'lunesCantidad');
-                                        switch (festivoComputable.servicio) {
-                                            case 'LIM':
-                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIME':
-                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIMP':
-                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
-                                                break;
-                                            case 'NAVE2':
-                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
-                                                break;
-                                            case 'REFZ':
-                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM1':
-                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM2':
-                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
-                                                break;
-                                            case 'FEST':
-                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
-                                                break;
-                                            default:
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
                                         };
                                         break;
                                     case 'Martes':
@@ -2188,32 +1584,8 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].martesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].martesTipoServicio : '';
                                         festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'martesCantidad');
-                                        switch (festivoComputable.servicio) {
-                                            case 'LIM':
-                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIME':
-                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIMP':
-                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
-                                                break;
-                                            case 'NAVE2':
-                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
-                                                break;
-                                            case 'REFZ':
-                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM1':
-                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM2':
-                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
-                                                break;
-                                            case 'FEST':
-                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
-                                                break;
-                                            default:
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
                                         };
                                         break;
                                     case 'Miércoles':
@@ -2224,32 +1596,8 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].miercolesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].miercolesTipoServicio : '';
                                         festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'miercolesCantidad');
-                                        switch (festivoComputable.servicio) {
-                                            case 'LIM':
-                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIME':
-                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIMP':
-                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
-                                                break;
-                                            case 'NAVE2':
-                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
-                                                break;
-                                            case 'REFZ':
-                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM1':
-                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM2':
-                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
-                                                break;
-                                            case 'FEST':
-                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
-                                                break;
-                                            default:
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
                                         };
                                         break;
                                     case 'Jueves':
@@ -2260,32 +1608,8 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].juevesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].juevesTipoServicio : '';
                                         festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'juevesCantidad');
-                                        switch (festivoComputable.servicio) {
-                                            case 'LIM':
-                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIME':
-                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIMP':
-                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
-                                                break;
-                                            case 'NAVE2':
-                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
-                                                break;
-                                            case 'REFZ':
-                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM1':
-                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM2':
-                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
-                                                break;
-                                            case 'FEST':
-                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
-                                                break;
-                                            default:
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
                                         };
                                         break;
                                     case 'Viernes':
@@ -2296,32 +1620,8 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].viernesTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].viernesTipoServicio : '';
                                         festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'viernesCantidad');
-                                        switch (festivoComputable.servicio) {
-                                            case 'LIM':
-                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIME':
-                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIMP':
-                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
-                                                break;
-                                            case 'NAVE2':
-                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
-                                                break;
-                                            case 'REFZ':
-                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM1':
-                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM2':
-                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
-                                                break;
-                                            case 'FEST':
-                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
-                                                break;
-                                            default:
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
                                         };
                                         break;
                                     case 'Sábado':
@@ -2332,32 +1632,8 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].sabadoTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].sabadoTipoServicio : '';
                                         festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'sabadoCantidad');
-                                        switch (festivoComputable.servicio) {
-                                            case 'LIM':
-                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIME':
-                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIMP':
-                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
-                                                break;
-                                            case 'NAVE2':
-                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
-                                                break;
-                                            case 'REFZ':
-                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM1':
-                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM2':
-                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
-                                                break;
-                                            case 'FEST':
-                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
-                                                break;
-                                            default:
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
                                         };
                                         break;
                                     case 'Domingo':
@@ -2368,32 +1644,8 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                                                 objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].domingoTipoServicio && variableBuffer1 ?
                                                     objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipoRegistroTrabajador[0].domingoTipoServicio : '';
                                         festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, columna.tipoHorario, indexFor + 1, 'domingoCantidad');
-                                        switch (festivoComputable.servicio) {
-                                            case 'LIM':
-                                                columna.horasFestivasComputables_L = columna.horasFestivasComputables_L - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIME':
-                                                columna.horasFestivasComputables_E = columna.horasFestivasComputables_E - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIMP':
-                                                columna.horasFestivasComputables_P = columna.horasFestivasComputables_P - festivoComputable.cantidad;
-                                                break;
-                                            case 'NAVE2':
-                                                columna.horasFestivasComputables_N = columna.horasFestivasComputables_N - festivoComputable.cantidad;
-                                                break;
-                                            case 'REFZ':
-                                                columna.horasFestivasComputables_R = columna.horasFestivasComputables_R - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM1':
-                                                columna.horasFestivasComputables_L1 = columna.horasFestivasComputables_L1 - festivoComputable.cantidad;
-                                                break;
-                                            case 'LIM2':
-                                                columna.horasFestivasComputables_L2 = columna.horasFestivasComputables_L2 - festivoComputable.cantidad;
-                                                break;
-                                            case 'FEST':
-                                                columna.horasFestivasComputables_F = columna.horasFestivasComputables_F - festivoComputable.cantidad;
-                                                break;
-                                            default:
+                                        if (elTipoPrevio === 1) {
+                                            columna.horasFestivasComputables = columna.horasFestivasComputables - festivoComputable.cantidad;
                                         };
                                         break;
                                     default:
@@ -2411,7 +1663,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
             arrayBuffer[cuadranteEnUsoCuadrantes - 1] = [...bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1]];
             objetoBuffer = arrayBuffer[cuadranteEnUsoCuadrantes - 1][indexABorrar];
             objetoBuffer.activo = valorEvento;
-            objetoBuffer.tipo = elTipoFestivo;
+            objetoBuffer.tipo = 0;
             arrayBuffer[cuadranteEnUsoCuadrantes - 1][indexABorrar] = objetoBuffer;
         };
     };
@@ -2422,6 +1674,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
         };
         dispatch(registrarIntervencionAccion(false));
         dispatch(cambiarEstadoCuadranteEnUsoRevisadoAccion(false));
+        dispatch(handleClosePopoverDiasAccion(scrollable, classes))
     };
 };
 
@@ -2559,15 +1812,15 @@ export const handleChangeTimePickerInicioCuadranteAccion = (id, index, horaParej
     } else {
         laHoraInicio = null;
     };
-    const laHoraFin = dispatch(retornaHoraRangoAccion(horaPareja));
-    if (laHoraFin !== null && (dispatch(retornaMinutosAccion(laHoraInicio, laHoraFin))) < 0) {
-        dispatch(setAlertaAccion({
-            abierto: true,
-            mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
-            tipo: 'error'
-        }));
-        return;
-    };
+    // const laHoraFin = dispatch(retornaHoraRangoAccion(horaPareja));
+    // if (laHoraFin !== null && (dispatch(retornaMinutosAccion(laHoraInicio, laHoraFin))) < 0) {
+    //     dispatch(setAlertaAccion({
+    //         abierto: true,
+    //         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
+    //         tipo: 'error'
+    //     }));
+    //     return;
+    // };    
     if (key.includes('Lunes')) {
         if (timePicker === 'timePickerInicio') {
             arrayCuadrante[index][key].lunesInicioRango = laHoraInicio;
@@ -2662,15 +1915,15 @@ export const handleChangeTimePickerFinCuadranteAccion = (id, index, horaPareja, 
     } else {
         laHoraFin = null;
     };
-    const laHoraInicio = dispatch(retornaHoraRangoAccion(horaPareja));
-    if (laHoraInicio !== null && (dispatch(retornaMinutosAccion(laHoraInicio, laHoraFin))) < 0) {
-        dispatch(setAlertaAccion({
-            abierto: true,
-            mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
-            tipo: 'error'
-        }));
-        return;
-    };
+    // const laHoraInicio = dispatch(retornaHoraRangoAccion(horaPareja));
+    // if (laHoraInicio !== null && (dispatch(retornaMinutosAccion(laHoraInicio, laHoraFin))) < 0) {        
+    //     dispatch(setAlertaAccion({
+    //         abierto: true,
+    //         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
+    //         tipo: 'error'
+    //     }));
+    //     return;
+    // };
     if (key.includes('Lunes')) {
         if (timePicker === 'timePickerFin') {
             arrayCuadrante[index][key].lunesFinRango = laHoraFin;
@@ -2748,7 +2001,6 @@ export const handleChangeTimePickerFinCuadranteAccion = (id, index, horaPareja, 
             arrayCuadrante[index][key].domingoFin2RangoDescanso = laHoraFin;
         }
     };
-
     dispatch(setItemPrevioEditandoAccion({ ...itemPrevioEditando, modificado: true }));
     dispatch(activarDesactivarCambioAccion(false));
 };
@@ -2996,6 +2248,8 @@ export const handleChangeFormConfiguracionServiciosFijosAccion = (tipo, prop, ev
                 losServicios['variacion_TO'] = '';
                 losServicios['diaVariacion_TO'] = '';
                 losServicios['activo_TO'] = 'si';
+                losServicios['int_TO'] = false;
+                losServicios['trab_TO'] = '';
             };
             losEstados['TO'] = event.target.checked;
         };
@@ -3005,6 +2259,8 @@ export const handleChangeFormConfiguracionServiciosFijosAccion = (tipo, prop, ev
                 losServicios['variacion_CR'] = '';
                 losServicios['diaVariacion_CR'] = '';
                 losServicios['activo_CR'] = 'si';
+                losServicios['int_CR'] = false;
+                losServicios['trab_CR'] = '';
             };
             losEstados['CR'] = event.target.checked;
         };
@@ -3014,6 +2270,8 @@ export const handleChangeFormConfiguracionServiciosFijosAccion = (tipo, prop, ev
                 losServicios['variacion_CE'] = '';
                 losServicios['diaVariacion_CE'] = '';
                 losServicios['activo_CE'] = 'si';
+                losServicios['int_CE'] = false;
+                losServicios['trab_CE'] = '';
             };
             losEstados['CE'] = event.target.checked;
         };
@@ -3023,6 +2281,8 @@ export const handleChangeFormConfiguracionServiciosFijosAccion = (tipo, prop, ev
                 losServicios['variacion_CI'] = '';
                 losServicios['diaVariacion_CI'] = '';
                 losServicios['activo_CI'] = 'si';
+                losServicios['int_CI'] = false;
+                losServicios['trab_CI'] = '';
             };
             losEstados['CI'] = event.target.checked;
         };
@@ -3032,6 +2292,8 @@ export const handleChangeFormConfiguracionServiciosFijosAccion = (tipo, prop, ev
                 losServicios['variacion_MO'] = '';
                 losServicios['diaVariacion_MO'] = '';
                 losServicios['activo_MO'] = 'si';
+                losServicios['int_MO'] = false;
+                losServicios['trab_MO'] = '';
             };
             losEstados['MO'] = event.target.checked;
         };
@@ -3041,6 +2303,8 @@ export const handleChangeFormConfiguracionServiciosFijosAccion = (tipo, prop, ev
                 losServicios['variacion_OF'] = '';
                 losServicios['diaVariacion_OF'] = '';
                 losServicios['activo_OF'] = 'si';
+                losServicios['int_OF'] = false;
+                losServicios['trab_OF'] = '';
             };
             losEstados['OF'] = event.target.checked;
         };
@@ -3050,6 +2314,8 @@ export const handleChangeFormConfiguracionServiciosFijosAccion = (tipo, prop, ev
                 losServicios['variacion_AL'] = '';
                 losServicios['diaVariacion_AL'] = '';
                 losServicios['activo_AL'] = 'si';
+                losServicios['int_AL'] = false;
+                losServicios['trab_AL'] = '';
             };
             losEstados['AL'] = event.target.checked;
         };
@@ -3059,6 +2325,8 @@ export const handleChangeFormConfiguracionServiciosFijosAccion = (tipo, prop, ev
                 losServicios['variacion_LA'] = '';
                 losServicios['diaVariacion_LA'] = '';
                 losServicios['activo_LA'] = 'si';
+                losServicios['int_LA'] = false;
+                losServicios['trab_LA'] = '';
             };
             losEstados['LA'] = event.target.checked;
         };
@@ -3068,6 +2336,8 @@ export const handleChangeFormConfiguracionServiciosFijosAccion = (tipo, prop, ev
                 losServicios['variacion_TE'] = '';
                 losServicios['diaVariacion_TE'] = '';
                 losServicios['activo_TE'] = 'si';
+                losServicios['int_TE'] = false;
+                losServicios['trab_TE'] = '';
             };
             losEstados['TE'] = event.target.checked;
         };
@@ -3077,6 +2347,8 @@ export const handleChangeFormConfiguracionServiciosFijosAccion = (tipo, prop, ev
                 losServicios['variacion_FI'] = '';
                 losServicios['diaVariacion_FI'] = '';
                 losServicios['activo_FI'] = 'si';
+                losServicios['int_FI'] = false;
+                losServicios['trab_FI'] = '';
             };
             losEstados['FI'] = event.target.checked;
         };
@@ -3086,6 +2358,8 @@ export const handleChangeFormConfiguracionServiciosFijosAccion = (tipo, prop, ev
                 losServicios['variacion_FE'] = '';
                 losServicios['diaVariacion_FE'] = '';
                 losServicios['activo_FE'] = 'si';
+                losServicios['int_FE'] = false;
+                losServicios['trab_FE'] = '';
             };
             losEstados['FE'] = event.target.checked;
         };
@@ -3095,6 +2369,8 @@ export const handleChangeFormConfiguracionServiciosFijosAccion = (tipo, prop, ev
                 losServicios['variacion_AB'] = '';
                 losServicios['diaVariacion_AB'] = '';
                 losServicios['activo_AB'] = 'si';
+                losServicios['int_AB'] = false;
+                losServicios['trab_AB'] = '';
             };
             losEstados['AB'] = event.target.checked;
         };
@@ -3104,6 +2380,8 @@ export const handleChangeFormConfiguracionServiciosFijosAccion = (tipo, prop, ev
                 losServicios['variacion_MA'] = '';
                 losServicios['diaVariacion_MA'] = '';
                 losServicios['activo_MA'] = 'si';
+                losServicios['int_MA'] = false;
+                losServicios['trab_MA'] = '';
             };
             losEstados['MA'] = event.target.checked;
         };
@@ -3113,6 +2391,8 @@ export const handleChangeFormConfiguracionServiciosFijosAccion = (tipo, prop, ev
                 losServicios['variacion_PO'] = '';
                 losServicios['diaVariacion_PO'] = '';
                 losServicios['activo_PO'] = 'si';
+                losServicios['int_PO'] = false;
+                losServicios['trab_PO'] = '';
             };
             losEstados['PO'] = event.target.checked;
         };
@@ -3122,6 +2402,8 @@ export const handleChangeFormConfiguracionServiciosFijosAccion = (tipo, prop, ev
                 losServicios['variacion_BA'] = '';
                 losServicios['diaVariacion_BA'] = '';
                 losServicios['activo_BA'] = 'si';
+                losServicios['int_BA'] = false;
+                losServicios['trab_BA'] = '';
             };
             losEstados['BA'] = event.target.checked;
         };
@@ -3131,6 +2413,8 @@ export const handleChangeFormConfiguracionServiciosFijosAccion = (tipo, prop, ev
                 losServicios['variacion_FT'] = '';
                 losServicios['diaVariacion_FT'] = '';
                 losServicios['activo_FT'] = 'si';
+                losServicios['int_FT'] = false;
+                losServicios['trab_FT'] = '';
             };
             losEstados['FT'] = event.target.checked;
         };
@@ -3140,6 +2424,8 @@ export const handleChangeFormConfiguracionServiciosFijosAccion = (tipo, prop, ev
                 losServicios['variacion_C3'] = '';
                 losServicios['diaVariacion_C3'] = '';
                 losServicios['activo_C3'] = 'si';
+                losServicios['int_C3'] = false;
+                losServicios['trab_C3'] = '';
             };
             losEstados['C3'] = event.target.checked;
         };
@@ -3149,6 +2435,8 @@ export const handleChangeFormConfiguracionServiciosFijosAccion = (tipo, prop, ev
                 losServicios['variacion_C2'] = '';
                 losServicios['diaVariacion_C2'] = '';
                 losServicios['activo_C2'] = 'si';
+                losServicios['int_C2'] = false;
+                losServicios['trab_C2'] = '';
             };
             losEstados['C2'] = event.target.checked;
         };
@@ -3158,6 +2446,8 @@ export const handleChangeFormConfiguracionServiciosFijosAccion = (tipo, prop, ev
                 losServicios['variacion_ES'] = '';
                 losServicios['diaVariacion_ES'] = '';
                 losServicios['activo_ES'] = 'si';
+                losServicios['int_ES'] = false;
+                losServicios['trab_ES'] = '';
             };
             losEstados['ES'] = event.target.checked;
         };
@@ -3167,6 +2457,8 @@ export const handleChangeFormConfiguracionServiciosFijosAccion = (tipo, prop, ev
                 losServicios['variacion_PA'] = '';
                 losServicios['diaVariacion_PA'] = '';
                 losServicios['activo_PA'] = 'si';
+                losServicios['int_PA'] = false;
+                losServicios['trab_PA'] = '';
             };
             losEstados['PA'] = event.target.checked;
         };
@@ -3181,6 +2473,32 @@ export const handleChangeFormConfiguracionServiciosFijosAccion = (tipo, prop, ev
     if (tipo === "select" || tipo === "radio") {
         losServicios[prop] = event.target.value;
         dispatch(setItemEditandoServiciosFijosAccion({ ...itemEditandoServiciosFijos, servicios: losServicios }));
+    };
+    if (tipo === "check") {
+        if (event.target.checked) {
+            const myPropSplitted = prop.split("_");
+            const elServicio = myPropSplitted[1];
+            losServicios[prop] = event.target.checked;
+            losServicios['diaVariacion_' + elServicio] = '';
+            losServicios['precioHora_' + elServicio] = null;
+            losServicios['variacion_' + elServicio] = '';
+            dispatch(setItemEditandoServiciosFijosAccion({ ...itemEditandoServiciosFijos, servicios: losServicios }));
+        } else {
+            losServicios[prop] = event.target.checked;
+            dispatch(setItemEditandoServiciosFijosAccion({ ...itemEditandoServiciosFijos, servicios: losServicios }));
+        };
+    };
+    if (tipo === "check2") {
+        let resultadoChecked;
+        if (event.target.checked) {
+            resultadoChecked = 'si';
+        } else {
+            resultadoChecked = 'no';
+        };
+        dispatch(setItemEditandoServiciosFijosAccion({
+            ...itemEditandoServiciosFijos,
+            [prop]: resultadoChecked
+        }));
     };
     dispatch(setItemPrevioEditandoServiciosFijosAccion({ ...itemPrevioEditandoServiciosFijos, modificado: true }));
     dispatch(activarDesactivarCambioAccion(false));
@@ -4256,72 +3574,72 @@ export const handleResetearCasillaAccion = (id, index, tipo, scrollable, boxes, 
             arrayCuadrante[index][key].tipoServicio = "";
         };
     };
-    if (tipo === 'rangoDescanso') {       
+    if (tipo === 'rangoDescanso') {
         if (key.includes('Lunes')) {
-            arrayCuadrante[index][key].lunesInicio1RangoDescanso =null;
-            arrayCuadrante[index][key].lunesFin1RangoDescanso =null;
-            arrayCuadrante[index][key].lunesInicio2RangoDescanso =null;
-            arrayCuadrante[index][key].lunesFin2RangoDescanso =null;
+            arrayCuadrante[index][key].lunesInicio1RangoDescanso = null;
+            arrayCuadrante[index][key].lunesFin1RangoDescanso = null;
+            arrayCuadrante[index][key].lunesInicio2RangoDescanso = null;
+            arrayCuadrante[index][key].lunesFin2RangoDescanso = null;
             arrayCuadrante[index][key].observaciones = "";
             arrayCuadrante[index][key].visibleVariaciones = false;
             arrayCuadrante[index][key].tipoVariacion = "";
-            arrayCuadrante[index][key].tipoServicio = "";       
+            arrayCuadrante[index][key].tipoServicio = "";
         };
         if (key.includes('Martes')) {
-            arrayCuadrante[index][key].martesInicio1RangoDescanso =null;
-            arrayCuadrante[index][key].martesFin1RangoDescanso =null;
-            arrayCuadrante[index][key].martesInicio2RangoDescanso =null;
-            arrayCuadrante[index][key].martesFin2RangoDescanso =null;
+            arrayCuadrante[index][key].martesInicio1RangoDescanso = null;
+            arrayCuadrante[index][key].martesFin1RangoDescanso = null;
+            arrayCuadrante[index][key].martesInicio2RangoDescanso = null;
+            arrayCuadrante[index][key].martesFin2RangoDescanso = null;
             arrayCuadrante[index][key].observaciones = "";
             arrayCuadrante[index][key].visibleVariaciones = false;
             arrayCuadrante[index][key].tipoVariacion = "";
             arrayCuadrante[index][key].tipoServicio = "";
         };
         if (key.includes('Miércoles')) {
-            arrayCuadrante[index][key].miercolesInicio1RangoDescanso =null;
-            arrayCuadrante[index][key].miercolesFin1RangoDescanso =null;
-            arrayCuadrante[index][key].miercolesInicio2RangoDescanso =null;
-            arrayCuadrante[index][key].miercolesFin2RangoDescanso =null;
+            arrayCuadrante[index][key].miercolesInicio1RangoDescanso = null;
+            arrayCuadrante[index][key].miercolesFin1RangoDescanso = null;
+            arrayCuadrante[index][key].miercolesInicio2RangoDescanso = null;
+            arrayCuadrante[index][key].miercolesFin2RangoDescanso = null;
             arrayCuadrante[index][key].observaciones = "";
             arrayCuadrante[index][key].visibleVariaciones = false;
             arrayCuadrante[index][key].tipoVariacion = "";
             arrayCuadrante[index][key].tipoServicio = "";
         };
         if (key.includes('Jueves')) {
-            arrayCuadrante[index][key].juevesInicio1RangoDescanso =null;
-            arrayCuadrante[index][key].juevesFin1RangoDescanso =null;
-            arrayCuadrante[index][key].juevesInicio2RangoDescanso =null;
-            arrayCuadrante[index][key].juevesFin2RangoDescanso =null;
+            arrayCuadrante[index][key].juevesInicio1RangoDescanso = null;
+            arrayCuadrante[index][key].juevesFin1RangoDescanso = null;
+            arrayCuadrante[index][key].juevesInicio2RangoDescanso = null;
+            arrayCuadrante[index][key].juevesFin2RangoDescanso = null;
             arrayCuadrante[index][key].observaciones = "";
             arrayCuadrante[index][key].visibleVariaciones = false;
             arrayCuadrante[index][key].tipoVariacion = "";
             arrayCuadrante[index][key].tipoServicio = "";
         };
         if (key.includes('Viernes')) {
-            arrayCuadrante[index][key].viernesInicio1RangoDescanso =null;
-            arrayCuadrante[index][key].viernesFin1RangoDescanso =null;
-            arrayCuadrante[index][key].viernesInicio2RangoDescanso =null;
-            arrayCuadrante[index][key].viernesFin2RangoDescanso =null;
+            arrayCuadrante[index][key].viernesInicio1RangoDescanso = null;
+            arrayCuadrante[index][key].viernesFin1RangoDescanso = null;
+            arrayCuadrante[index][key].viernesInicio2RangoDescanso = null;
+            arrayCuadrante[index][key].viernesFin2RangoDescanso = null;
             arrayCuadrante[index][key].observaciones = "";
             arrayCuadrante[index][key].visibleVariaciones = false;
             arrayCuadrante[index][key].tipoVariacion = "";
             arrayCuadrante[index][key].tipoServicio = "";
         };
         if (key.includes('Sábado')) {
-            arrayCuadrante[index][key].sabadoInicio1RangoDescanso =null;
-            arrayCuadrante[index][key].sabadoFin1RangoDescanso =null;
-            arrayCuadrante[index][key].sabadoInicio2RangoDescanso =null;
-            arrayCuadrante[index][key].sabadoFin2RangoDescanso =null;
+            arrayCuadrante[index][key].sabadoInicio1RangoDescanso = null;
+            arrayCuadrante[index][key].sabadoFin1RangoDescanso = null;
+            arrayCuadrante[index][key].sabadoInicio2RangoDescanso = null;
+            arrayCuadrante[index][key].sabadoFin2RangoDescanso = null;
             arrayCuadrante[index][key].observaciones = "";
             arrayCuadrante[index][key].visibleVariaciones = false;
             arrayCuadrante[index][key].tipoVariacion = "";
             arrayCuadrante[index][key].tipoServicio = "";
         };
         if (key.includes('Domingo')) {
-            arrayCuadrante[index][key].domingoInicio1RangoDescanso =null;
-            arrayCuadrante[index][key].domingoFin1RangoDescanso =null;
-            arrayCuadrante[index][key].domingoInicio2RangoDescanso =null;
-            arrayCuadrante[index][key].domingoFin2RangoDescanso =null;
+            arrayCuadrante[index][key].domingoInicio1RangoDescanso = null;
+            arrayCuadrante[index][key].domingoFin1RangoDescanso = null;
+            arrayCuadrante[index][key].domingoInicio2RangoDescanso = null;
+            arrayCuadrante[index][key].domingoFin2RangoDescanso = null;
             arrayCuadrante[index][key].observaciones = "";
             arrayCuadrante[index][key].visibleVariaciones = false;
             arrayCuadrante[index][key].tipoVariacion = "";
@@ -4330,49 +3648,49 @@ export const handleResetearCasillaAccion = (id, index, tipo, scrollable, boxes, 
     };
     if (tipo === 'cantidad') {
         if (key.includes('Lunes')) {
-            arrayCuadrante[index][key].lunesCantidad ="";
+            arrayCuadrante[index][key].lunesCantidad = "";
             arrayCuadrante[index][key].observaciones = "";
             arrayCuadrante[index][key].visibleVariaciones = false;
             arrayCuadrante[index][key].tipoVariacion = "";
             arrayCuadrante[index][key].tipoServicio = "";
         };
         if (key.includes('Martes')) {
-            arrayCuadrante[index][key].martesCantidad ="";
+            arrayCuadrante[index][key].martesCantidad = "";
             arrayCuadrante[index][key].observaciones = "";
             arrayCuadrante[index][key].visibleVariaciones = false;
             arrayCuadrante[index][key].tipoVariacion = "";
             arrayCuadrante[index][key].tipoServicio = "";
         };
         if (key.includes('Miércoles')) {
-            arrayCuadrante[index][key].miercolesCantidad ="";
+            arrayCuadrante[index][key].miercolesCantidad = "";
             arrayCuadrante[index][key].observaciones = "";
             arrayCuadrante[index][key].visibleVariaciones = false;
             arrayCuadrante[index][key].tipoVariacion = "";
             arrayCuadrante[index][key].tipoServicio = "";
         };
         if (key.includes('Jueves')) {
-            arrayCuadrante[index][key].juevesCantidad ="";
+            arrayCuadrante[index][key].juevesCantidad = "";
             arrayCuadrante[index][key].observaciones = "";
             arrayCuadrante[index][key].visibleVariaciones = false;
             arrayCuadrante[index][key].tipoVariacion = "";
             arrayCuadrante[index][key].tipoServicio = "";
         };
         if (key.includes('Viernes')) {
-            arrayCuadrante[index][key].viernesCantidad ="";
+            arrayCuadrante[index][key].viernesCantidad = "";
             arrayCuadrante[index][key].observaciones = "";
             arrayCuadrante[index][key].visibleVariaciones = false;
             arrayCuadrante[index][key].tipoVariacion = "";
             arrayCuadrante[index][key].tipoServicio = "";
         };
         if (key.includes('Sábado')) {
-            arrayCuadrante[index][key].sabadoCantidad ="";
+            arrayCuadrante[index][key].sabadoCantidad = "";
             arrayCuadrante[index][key].observaciones = "";
             arrayCuadrante[index][key].visibleVariaciones = false;
             arrayCuadrante[index][key].tipoVariacion = "";
             arrayCuadrante[index][key].tipoServicio = "";
         };
         if (key.includes('Domingo')) {
-            arrayCuadrante[index][key].domingoCantidad ="";
+            arrayCuadrante[index][key].domingoCantidad = "";
             arrayCuadrante[index][key].observaciones = "";
             arrayCuadrante[index][key].visibleVariaciones = false;
             arrayCuadrante[index][key].tipoVariacion = "";
@@ -4400,28 +3718,30 @@ export const gestionItemPrevioEditandoServiciosFijosAccion = (valores) => (dispa
 
 export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, classes) => (dispatch, getState) => {
     const { itemEditandoServiciosFijos, cuadranteServiciosFijos } = getState().variablesCuadrantesServiciosFijos;
-    const { yaNoEsInicio, cuadranteEnUsoCuadrantes, bufferSwitchedDiasFestivosCuadrante } = getState().variablesCuadrantesSetters;
-    const { cuadranteRegistrado } = getState().variablesCuadrantes;
-    if ((itemEditandoServiciosFijos.switch.TO && (!itemEditandoServiciosFijos.servicios.variacion_TO || !itemEditandoServiciosFijos.servicios.precioHora_TO)) ||
-        (itemEditandoServiciosFijos.switch.CR && (!itemEditandoServiciosFijos.servicios.variacion_CR || !itemEditandoServiciosFijos.servicios.precioHora_CR)) ||
-        (itemEditandoServiciosFijos.switch.CE && (!itemEditandoServiciosFijos.servicios.variacion_CE || !itemEditandoServiciosFijos.servicios.precioHora_CE)) ||
-        (itemEditandoServiciosFijos.switch.CI && (!itemEditandoServiciosFijos.servicios.variacion_CI || !itemEditandoServiciosFijos.servicios.precioHora_CI)) ||
-        (itemEditandoServiciosFijos.switch.MO && (!itemEditandoServiciosFijos.servicios.variacion_MO || !itemEditandoServiciosFijos.servicios.precioHora_MO)) ||
-        (itemEditandoServiciosFijos.switch.OF && (!itemEditandoServiciosFijos.servicios.variacion_OF || !itemEditandoServiciosFijos.servicios.precioHora_OF)) ||
-        (itemEditandoServiciosFijos.switch.AL && (!itemEditandoServiciosFijos.servicios.variacion_AL || !itemEditandoServiciosFijos.servicios.precioHora_AL)) ||
-        (itemEditandoServiciosFijos.switch.LA && (!itemEditandoServiciosFijos.servicios.variacion_LA || !itemEditandoServiciosFijos.servicios.precioHora_LA)) ||
-        (itemEditandoServiciosFijos.switch.TE && (!itemEditandoServiciosFijos.servicios.variacion_TE || !itemEditandoServiciosFijos.servicios.precioHora_TE)) ||
-        (itemEditandoServiciosFijos.switch.FI && (!itemEditandoServiciosFijos.servicios.variacion_FI || !itemEditandoServiciosFijos.servicios.precioHora_FI)) ||
-        (itemEditandoServiciosFijos.switch.FE && (!itemEditandoServiciosFijos.servicios.variacion_FE || !itemEditandoServiciosFijos.servicios.precioHora_FE)) ||
-        (itemEditandoServiciosFijos.switch.AB && (!itemEditandoServiciosFijos.servicios.variacion_AB || !itemEditandoServiciosFijos.servicios.precioHora_AB)) ||
-        (itemEditandoServiciosFijos.switch.MA && (!itemEditandoServiciosFijos.servicios.variacion_MA || !itemEditandoServiciosFijos.servicios.precioHora_MA)) ||
-        (itemEditandoServiciosFijos.switch.PO && (!itemEditandoServiciosFijos.servicios.variacion_PO || !itemEditandoServiciosFijos.servicios.precioHora_PO)) ||
-        (itemEditandoServiciosFijos.switch.BA && (!itemEditandoServiciosFijos.servicios.variacion_BA || !itemEditandoServiciosFijos.servicios.precioHora_BA)) ||
-        (itemEditandoServiciosFijos.switch.FT && (!itemEditandoServiciosFijos.servicios.variacion_FT || !itemEditandoServiciosFijos.servicios.precioHora_FT)) ||
-        (itemEditandoServiciosFijos.switch.C3 && (!itemEditandoServiciosFijos.servicios.variacion_C3 || !itemEditandoServiciosFijos.servicios.precioHora_C3)) ||
-        (itemEditandoServiciosFijos.switch.C2 && (!itemEditandoServiciosFijos.servicios.variacion_C2 || !itemEditandoServiciosFijos.servicios.precioHora_C2)) ||
-        (itemEditandoServiciosFijos.switch.ES && (!itemEditandoServiciosFijos.servicios.variacion_ES || !itemEditandoServiciosFijos.servicios.precioHora_ES)) ||
-        (itemEditandoServiciosFijos.switch.PA && (!itemEditandoServiciosFijos.servicios.variacion_PA || !itemEditandoServiciosFijos.servicios.precioHora_PA))
+    const { yaNoEsInicio, cuadranteEnUsoCuadrantes, bufferSwitchedDiasFestivosCuadrante, cuadranteVacio } = getState().variablesCuadrantesSetters;
+    const { cuadranteRegistrado, objetoCuadrante } = getState().variablesCuadrantes;
+    let valoresComputoPreciosHoraFijos = true;
+    let valoresComputoPreciosHoraIntegrados = false;
+    if ((itemEditandoServiciosFijos.switch.TO && !itemEditandoServiciosFijos.servicios.int_TO && (!itemEditandoServiciosFijos.servicios.variacion_TO || !itemEditandoServiciosFijos.servicios.precioHora_TO)) ||
+        (itemEditandoServiciosFijos.switch.CR && !itemEditandoServiciosFijos.servicios.int_CR && (!itemEditandoServiciosFijos.servicios.variacion_CR || !itemEditandoServiciosFijos.servicios.precioHora_CR)) ||
+        (itemEditandoServiciosFijos.switch.CE && !itemEditandoServiciosFijos.servicios.int_CE && (!itemEditandoServiciosFijos.servicios.variacion_CE || !itemEditandoServiciosFijos.servicios.precioHora_CE)) ||
+        (itemEditandoServiciosFijos.switch.CI && !itemEditandoServiciosFijos.servicios.int_CI && (!itemEditandoServiciosFijos.servicios.variacion_CI || !itemEditandoServiciosFijos.servicios.precioHora_CI)) ||
+        (itemEditandoServiciosFijos.switch.MO && !itemEditandoServiciosFijos.servicios.int_MO && (!itemEditandoServiciosFijos.servicios.variacion_MO || !itemEditandoServiciosFijos.servicios.precioHora_MO)) ||
+        (itemEditandoServiciosFijos.switch.OF && !itemEditandoServiciosFijos.servicios.int_OF && (!itemEditandoServiciosFijos.servicios.variacion_OF || !itemEditandoServiciosFijos.servicios.precioHora_OF)) ||
+        (itemEditandoServiciosFijos.switch.AL && !itemEditandoServiciosFijos.servicios.int_AL && (!itemEditandoServiciosFijos.servicios.variacion_AL || !itemEditandoServiciosFijos.servicios.precioHora_AL)) ||
+        (itemEditandoServiciosFijos.switch.LA && !itemEditandoServiciosFijos.servicios.int_LA && (!itemEditandoServiciosFijos.servicios.variacion_LA || !itemEditandoServiciosFijos.servicios.precioHora_LA)) ||
+        (itemEditandoServiciosFijos.switch.TE && !itemEditandoServiciosFijos.servicios.int_TE && (!itemEditandoServiciosFijos.servicios.variacion_TE || !itemEditandoServiciosFijos.servicios.precioHora_TE)) ||
+        (itemEditandoServiciosFijos.switch.FI && !itemEditandoServiciosFijos.servicios.int_FI && (!itemEditandoServiciosFijos.servicios.variacion_FI || !itemEditandoServiciosFijos.servicios.precioHora_FI)) ||
+        (itemEditandoServiciosFijos.switch.FE && !itemEditandoServiciosFijos.servicios.int_FE && (!itemEditandoServiciosFijos.servicios.variacion_FE || !itemEditandoServiciosFijos.servicios.precioHora_FE)) ||
+        (itemEditandoServiciosFijos.switch.AB && !itemEditandoServiciosFijos.servicios.int_AB && (!itemEditandoServiciosFijos.servicios.variacion_AB || !itemEditandoServiciosFijos.servicios.precioHora_AB)) ||
+        (itemEditandoServiciosFijos.switch.MA && !itemEditandoServiciosFijos.servicios.int_MA && (!itemEditandoServiciosFijos.servicios.variacion_MA || !itemEditandoServiciosFijos.servicios.precioHora_MA)) ||
+        (itemEditandoServiciosFijos.switch.PO && !itemEditandoServiciosFijos.servicios.int_PO && (!itemEditandoServiciosFijos.servicios.variacion_PO || !itemEditandoServiciosFijos.servicios.precioHora_PO)) ||
+        (itemEditandoServiciosFijos.switch.BA && !itemEditandoServiciosFijos.servicios.int_BA && (!itemEditandoServiciosFijos.servicios.variacion_BA || !itemEditandoServiciosFijos.servicios.precioHora_BA)) ||
+        (itemEditandoServiciosFijos.switch.FT && !itemEditandoServiciosFijos.servicios.int_FT && (!itemEditandoServiciosFijos.servicios.variacion_FT || !itemEditandoServiciosFijos.servicios.precioHora_FT)) ||
+        (itemEditandoServiciosFijos.switch.C3 && !itemEditandoServiciosFijos.servicios.int_C3 && (!itemEditandoServiciosFijos.servicios.variacion_C3 || !itemEditandoServiciosFijos.servicios.precioHora_C3)) ||
+        (itemEditandoServiciosFijos.switch.C2 && !itemEditandoServiciosFijos.servicios.int_C2 && (!itemEditandoServiciosFijos.servicios.variacion_C2 || !itemEditandoServiciosFijos.servicios.precioHora_C2)) ||
+        (itemEditandoServiciosFijos.switch.ES && !itemEditandoServiciosFijos.servicios.int_ES && (!itemEditandoServiciosFijos.servicios.variacion_ES || !itemEditandoServiciosFijos.servicios.precioHora_ES)) ||
+        (itemEditandoServiciosFijos.switch.PA && !itemEditandoServiciosFijos.servicios.int_PA && (!itemEditandoServiciosFijos.servicios.variacion_PA || !itemEditandoServiciosFijos.servicios.precioHora_PA))
     ) {
         dispatch(setAlertaAccion({
             abierto: true,
@@ -4454,6 +3774,58 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
         dispatch(setAlertaAccion({
             abierto: true,
             mensaje: "Debes seleccionar un día de la semana para la variación de servicio fijo elegida. Revisa el formulario.",
+            tipo: 'error'
+        }));
+        return;
+    };
+    if ((!itemEditandoServiciosFijos.servicios.precioHora_TO) &&
+        (!itemEditandoServiciosFijos.servicios.precioHora_CR) &&
+        (!itemEditandoServiciosFijos.servicios.precioHora_CE) &&
+        (!itemEditandoServiciosFijos.servicios.precioHora_CI) &&
+        (!itemEditandoServiciosFijos.servicios.precioHora_MO) &&
+        (!itemEditandoServiciosFijos.servicios.precioHora_OF) &&
+        (!itemEditandoServiciosFijos.servicios.precioHora_AL) &&
+        (!itemEditandoServiciosFijos.servicios.precioHora_LA) &&
+        (!itemEditandoServiciosFijos.servicios.precioHora_TE) &&
+        (!itemEditandoServiciosFijos.servicios.precioHora_FI) &&
+        (!itemEditandoServiciosFijos.servicios.precioHora_FE) &&
+        (!itemEditandoServiciosFijos.servicios.precioHora_AB) &&
+        (!itemEditandoServiciosFijos.servicios.precioHora_MA) &&
+        (!itemEditandoServiciosFijos.servicios.precioHora_PO) &&
+        (!itemEditandoServiciosFijos.servicios.precioHora_BA) &&
+        (!itemEditandoServiciosFijos.servicios.precioHora_FT) &&
+        (!itemEditandoServiciosFijos.servicios.precioHora_C3) &&
+        (!itemEditandoServiciosFijos.servicios.precioHora_C2) &&
+        (!itemEditandoServiciosFijos.servicios.precioHora_ES) &&
+        (!itemEditandoServiciosFijos.servicios.precioHora_PA)) {
+        valoresComputoPreciosHoraFijos = false;
+    };
+    if (itemEditandoServiciosFijos.servicios.int_TO ||
+        itemEditandoServiciosFijos.servicios.int_CR ||
+        itemEditandoServiciosFijos.servicios.int_CE ||
+        itemEditandoServiciosFijos.servicios.int_CI ||
+        itemEditandoServiciosFijos.servicios.int_MO ||
+        itemEditandoServiciosFijos.servicios.int_OF ||
+        itemEditandoServiciosFijos.servicios.int_AL ||
+        itemEditandoServiciosFijos.servicios.int_LA ||
+        itemEditandoServiciosFijos.servicios.int_TE ||
+        itemEditandoServiciosFijos.servicios.int_FI ||
+        itemEditandoServiciosFijos.servicios.int_FE ||
+        itemEditandoServiciosFijos.servicios.int_AB ||
+        itemEditandoServiciosFijos.servicios.int_MA ||
+        itemEditandoServiciosFijos.servicios.int_PO ||
+        itemEditandoServiciosFijos.servicios.int_BA ||
+        itemEditandoServiciosFijos.servicios.int_FT ||
+        itemEditandoServiciosFijos.servicios.int_C3 ||
+        itemEditandoServiciosFijos.servicios.int_C2 ||
+        itemEditandoServiciosFijos.servicios.int_ES ||
+        itemEditandoServiciosFijos.servicios.int_PA) {
+        valoresComputoPreciosHoraIntegrados = true;
+    };
+    if (cuadranteVacio && !valoresComputoPreciosHoraFijos && valoresComputoPreciosHoraIntegrados) {
+        dispatch(setAlertaAccion({
+            abierto: true,
+            mensaje: "Faltan datos por completar. Los Servicios Extra integrados en cómputo deben tener cómputo de horas en el formulario.",
             tipo: 'error'
         }));
         return;
@@ -4538,430 +3910,561 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
         activo_C3: itemEditandoServiciosFijos.servicios.activo_C3,
         activo_C2: itemEditandoServiciosFijos.servicios.activo_C2,
         activo_ES: itemEditandoServiciosFijos.servicios.activo_ES,
-        activo_PA: itemEditandoServiciosFijos.servicios.activo_PA
+        activo_PA: itemEditandoServiciosFijos.servicios.activo_PA,
+        int_TO: itemEditandoServiciosFijos.servicios.int_TO,
+        int_CR: itemEditandoServiciosFijos.servicios.int_CR,
+        int_CE: itemEditandoServiciosFijos.servicios.int_CE,
+        int_CI: itemEditandoServiciosFijos.servicios.int_CI,
+        int_MO: itemEditandoServiciosFijos.servicios.int_MO,
+        int_OF: itemEditandoServiciosFijos.servicios.int_OF,
+        int_AL: itemEditandoServiciosFijos.servicios.int_AL,
+        int_LA: itemEditandoServiciosFijos.servicios.int_LA,
+        int_TE: itemEditandoServiciosFijos.servicios.int_TE,
+        int_FI: itemEditandoServiciosFijos.servicios.int_FI,
+        int_FE: itemEditandoServiciosFijos.servicios.int_FE,
+        int_AB: itemEditandoServiciosFijos.servicios.int_AB,
+        int_MA: itemEditandoServiciosFijos.servicios.int_MA,
+        int_PO: itemEditandoServiciosFijos.servicios.int_PO,
+        int_BA: itemEditandoServiciosFijos.servicios.int_BA,
+        int_FT: itemEditandoServiciosFijos.servicios.int_FT,
+        int_C3: itemEditandoServiciosFijos.servicios.int_C3,
+        int_C2: itemEditandoServiciosFijos.servicios.int_C2,
+        int_ES: itemEditandoServiciosFijos.servicios.int_ES,
+        int_PA: itemEditandoServiciosFijos.servicios.int_PA,
+        trab_TO: itemEditandoServiciosFijos.servicios.trab_TO ? itemEditandoServiciosFijos.servicios.trab_TO : '',
+        trab_CR: itemEditandoServiciosFijos.servicios.trab_CR ? itemEditandoServiciosFijos.servicios.trab_CR : '',
+        trab_CE: itemEditandoServiciosFijos.servicios.trab_CE ? itemEditandoServiciosFijos.servicios.trab_CE : '',
+        trab_CI: itemEditandoServiciosFijos.servicios.trab_CI ? itemEditandoServiciosFijos.servicios.trab_CI : '',
+        trab_MO: itemEditandoServiciosFijos.servicios.trab_MO ? itemEditandoServiciosFijos.servicios.trab_MO : '',
+        trab_OF: itemEditandoServiciosFijos.servicios.trab_OF ? itemEditandoServiciosFijos.servicios.trab_OF : '',
+        trab_AL: itemEditandoServiciosFijos.servicios.trab_AL ? itemEditandoServiciosFijos.servicios.trab_AL : '',
+        trab_LA: itemEditandoServiciosFijos.servicios.trab_LA ? itemEditandoServiciosFijos.servicios.trab_LA : '',
+        trab_TE: itemEditandoServiciosFijos.servicios.trab_TE ? itemEditandoServiciosFijos.servicios.trab_TE : '',
+        trab_FI: itemEditandoServiciosFijos.servicios.trab_FI ? itemEditandoServiciosFijos.servicios.trab_FI : '',
+        trab_FE: itemEditandoServiciosFijos.servicios.trab_FE ? itemEditandoServiciosFijos.servicios.trab_FE : '',
+        trab_AB: itemEditandoServiciosFijos.servicios.trab_AB ? itemEditandoServiciosFijos.servicios.trab_AB : '',
+        trab_MA: itemEditandoServiciosFijos.servicios.trab_MA ? itemEditandoServiciosFijos.servicios.trab_MA : '',
+        trab_PO: itemEditandoServiciosFijos.servicios.trab_PO ? itemEditandoServiciosFijos.servicios.trab_PO : '',
+        trab_BA: itemEditandoServiciosFijos.servicios.trab_BA ? itemEditandoServiciosFijos.servicios.trab_BA : '',
+        trab_FT: itemEditandoServiciosFijos.servicios.trab_FT ? itemEditandoServiciosFijos.servicios.trab_FT : '',
+        trab_C3: itemEditandoServiciosFijos.servicios.trab_C3 ? itemEditandoServiciosFijos.servicios.trab_C3 : '',
+        trab_C2: itemEditandoServiciosFijos.servicios.trab_C2 ? itemEditandoServiciosFijos.servicios.trab_C2 : '',
+        trab_ES: itemEditandoServiciosFijos.servicios.trab_ES ? itemEditandoServiciosFijos.servicios.trab_ES : '',
+        trab_PA: itemEditandoServiciosFijos.servicios.trab_PA ? itemEditandoServiciosFijos.servicios.trab_PA : ''
     }));
     let arrayCuadranteServiciosFijos = [];
     let objetoServicioActivo;
-    if (itemEditandoServiciosFijos.servicios.precioHora_TO) {
+    if (itemEditandoServiciosFijos.servicios.precioHora_TO || itemEditandoServiciosFijos.servicios.int_TO) {
         objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'TOL');
         if (objetoServicioActivo) {
             arrayCuadranteServiciosFijos.push({
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'TOL',
-                precioHora_TO: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_TO),
-                variacion_TO: parseFloat(itemEditandoServiciosFijos.servicios.variacion_TO),
-                diaVariacion_TO: itemEditandoServiciosFijos.servicios.variacion_TO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_TO : '',
-                activo_TO: itemEditandoServiciosFijos.servicios.activo_TO
+                precioHora_TO: itemEditandoServiciosFijos.servicios.precioHora_TO ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_TO) : null,
+                variacion_TO: itemEditandoServiciosFijos.servicios.variacion_TO ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_TO) : null,
+                diaVariacion_TO: !itemEditandoServiciosFijos.servicios.int_TO ? (itemEditandoServiciosFijos.servicios.variacion_TO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_TO : '') : '',
+                activo_TO: itemEditandoServiciosFijos.servicios.activo_TO,
+                int_TO: itemEditandoServiciosFijos.servicios.int_TO,
+                trab_TO: itemEditandoServiciosFijos.servicios.trab_TO ? itemEditandoServiciosFijos.servicios.trab_TO : null
             });
         } else {
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'TOL',
-                precioHora_TO: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_TO),
-                variacion_TO: parseFloat(itemEditandoServiciosFijos.servicios.variacion_TO),
-                diaVariacion_TO: itemEditandoServiciosFijos.servicios.variacion_TO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_TO : '',
-                activo_TO: itemEditandoServiciosFijos.servicios.activo_TO
+                precioHora_TO: itemEditandoServiciosFijos.servicios.precioHora_TO ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_TO) : null,
+                variacion_TO: itemEditandoServiciosFijos.servicios.variacion_TO ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_TO) : null,
+                diaVariacion_TO: !itemEditandoServiciosFijos.servicios.int_TO ? (itemEditandoServiciosFijos.servicios.variacion_TO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_TO : '') : '',
+                activo_TO: itemEditandoServiciosFijos.servicios.activo_TO,
+                int_TO: itemEditandoServiciosFijos.servicios.int_TO,
+                trab_TO: itemEditandoServiciosFijos.servicios.trab_TO ? itemEditandoServiciosFijos.servicios.trab_TO : null
             });
         };
     };
-    if (itemEditandoServiciosFijos.servicios.precioHora_CR) {
+    if (itemEditandoServiciosFijos.servicios.precioHora_CR || itemEditandoServiciosFijos.servicios.int_CR) {
         objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'CRIS');
         if (objetoServicioActivo) {
             arrayCuadranteServiciosFijos.push({
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'CRIS',
-                precioHora_CR: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CR),
-                variacion_CR: parseFloat(itemEditandoServiciosFijos.servicios.variacion_CR),
-                diaVariacion_CR: itemEditandoServiciosFijos.servicios.variacion_CR !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CR : '',
-                activo_CR: itemEditandoServiciosFijos.servicios.activo_CR
+                precioHora_CR: itemEditandoServiciosFijos.servicios.precioHora_CR ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CR) : null,
+                variacion_CR: itemEditandoServiciosFijos.servicios.variacion_CR ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_CR) : null,
+                diaVariacion_CR: !itemEditandoServiciosFijos.servicios.int_CR ? (itemEditandoServiciosFijos.servicios.variacion_CR !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CR : '') : '',
+                activo_CR: itemEditandoServiciosFijos.servicios.activo_CR,
+                int_CR: itemEditandoServiciosFijos.servicios.int_CR,
+                trab_CR: itemEditandoServiciosFijos.servicios.trab_CR ? itemEditandoServiciosFijos.servicios.trab_CR : null
             });
         } else {
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'CRIS',
-                precioHora_CR: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CR),
-                variacion_CR: parseFloat(itemEditandoServiciosFijos.servicios.variacion_CR),
-                diaVariacion_CR: itemEditandoServiciosFijos.servicios.variacion_CR !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CR : '',
-                activo_CR: itemEditandoServiciosFijos.servicios.activo_CR
+                precioHora_CR: itemEditandoServiciosFijos.servicios.precioHora_CR ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CR) : null,
+                variacion_CR: itemEditandoServiciosFijos.servicios.variacion_CR ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_CR) : null,
+                diaVariacion_CR: !itemEditandoServiciosFijos.servicios.int_CR ? (itemEditandoServiciosFijos.servicios.variacion_CR !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CR : '') : '',
+                activo_CR: itemEditandoServiciosFijos.servicios.activo_CR,
+                int_CR: itemEditandoServiciosFijos.servicios.int_CR,
+                trab_CR: itemEditandoServiciosFijos.servicios.trab_CR ? itemEditandoServiciosFijos.servicios.trab_CR : null
             });
         };
     };
-    if (itemEditandoServiciosFijos.servicios.precioHora_CE) {
+    if (itemEditandoServiciosFijos.servicios.precioHora_CE || itemEditandoServiciosFijos.servicios.int_CE) {
         objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'CRISE');
         if (objetoServicioActivo) {
             arrayCuadranteServiciosFijos.push({
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'CRISE',
-                precioHora_CE: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CE),
-                variacion_CE: parseFloat(itemEditandoServiciosFijos.servicios.variacion_CE),
-                diaVariacion_CE: itemEditandoServiciosFijos.servicios.variacion_CE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CE : '',
-                activo_CE: itemEditandoServiciosFijos.servicios.activo_CE
+                precioHora_CE: itemEditandoServiciosFijos.servicios.precioHora_CE ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CE) : null,
+                variacion_CE: itemEditandoServiciosFijos.servicios.variacion_CE ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_CE) : null,
+                diaVariacion_CE: !itemEditandoServiciosFijos.servicios.int_CE ? (itemEditandoServiciosFijos.servicios.variacion_CE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CE : '') : '',
+                activo_CE: itemEditandoServiciosFijos.servicios.activo_CE,
+                int_CE: itemEditandoServiciosFijos.servicios.int_CE,
+                trab_CE: itemEditandoServiciosFijos.servicios.trab_CE ? itemEditandoServiciosFijos.servicios.trab_CE : null
             });
         } else {
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'CRISE',
-                precioHora_CE: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CE),
-                variacion_CE: parseFloat(itemEditandoServiciosFijos.servicios.variacion_CE),
-                diaVariacion_CE: itemEditandoServiciosFijos.servicios.variacion_CE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CE : '',
-                activo_CE: itemEditandoServiciosFijos.servicios.activo_CE
+                precioHora_CE: itemEditandoServiciosFijos.servicios.precioHora_CE ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CE) : null,
+                variacion_CE: itemEditandoServiciosFijos.servicios.variacion_CE ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_CE) : null,
+                diaVariacion_CE: !itemEditandoServiciosFijos.servicios.int_CE ? (itemEditandoServiciosFijos.servicios.variacion_CE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CE : '') : '',
+                activo_CE: itemEditandoServiciosFijos.servicios.activo_CE,
+                int_CE: itemEditandoServiciosFijos.servicios.int_CE,
+                trab_CE: itemEditandoServiciosFijos.servicios.trab_CE ? itemEditandoServiciosFijos.servicios.trab_CE : null
             });
         };
     };
-    if (itemEditandoServiciosFijos.servicios.precioHora_CI) {
+    if (itemEditandoServiciosFijos.servicios.precioHora_CI || itemEditandoServiciosFijos.servicios.int_CI) {
         objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'CRISI');
         if (objetoServicioActivo) {
             arrayCuadranteServiciosFijos.push({
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'CRISI',
-                precioHora_CI: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CI),
-                variacion_CI: parseFloat(itemEditandoServiciosFijos.servicios.variacion_CI),
-                diaVariacion_CI: itemEditandoServiciosFijos.servicios.variacion_CI !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CI : '',
-                activo_CI: itemEditandoServiciosFijos.servicios.activo_CI
+                precioHora_CI: itemEditandoServiciosFijos.servicios.precioHora_CI ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CI) : null,
+                variacion_CI: itemEditandoServiciosFijos.servicios.variacion_CI ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_CI) : null,
+                diaVariacion_CI: !itemEditandoServiciosFijos.servicios.int_CI ? (itemEditandoServiciosFijos.servicios.variacion_CI !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CI : '') : '',
+                activo_CI: itemEditandoServiciosFijos.servicios.activo_CI,
+                int_CI: itemEditandoServiciosFijos.servicios.int_CI,
+                trab_CI: itemEditandoServiciosFijos.servicios.trab_CI ? itemEditandoServiciosFijos.servicios.trab_CI : null
             });
         } else {
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'CRISI',
-                precioHora_CI: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CI),
-                variacion_CI: parseFloat(itemEditandoServiciosFijos.servicios.variacion_CI),
-                diaVariacion_CI: itemEditandoServiciosFijos.servicios.variacion_CI !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CI : '',
-                activo_CI: itemEditandoServiciosFijos.servicios.activo_CI
+                precioHora_CI: itemEditandoServiciosFijos.servicios.precioHora_CI ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CI) : null,
+                variacion_CI: itemEditandoServiciosFijos.servicios.variacion_CI ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_CI) : null,
+                diaVariacion_CI: !itemEditandoServiciosFijos.servicios.int_CI ? (itemEditandoServiciosFijos.servicios.variacion_CI !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CI : '') : '',
+                activo_CI: itemEditandoServiciosFijos.servicios.activo_CI,
+                int_CI: itemEditandoServiciosFijos.servicios.int_CI,
+                trab_CI: itemEditandoServiciosFijos.servicios.trab_CI ? itemEditandoServiciosFijos.servicios.trab_CI : null
             });
         };
     };
-    if (itemEditandoServiciosFijos.servicios.precioHora_MO) {
+    if (itemEditandoServiciosFijos.servicios.precioHora_MO || itemEditandoServiciosFijos.servicios.int_MO) {
         objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'MOQ');
         if (objetoServicioActivo) {
             arrayCuadranteServiciosFijos.push({
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'MOQ',
-                precioHora_MO: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_MO),
-                variacion_MO: parseFloat(itemEditandoServiciosFijos.servicios.variacion_MO),
-                diaVariacion_MO: itemEditandoServiciosFijos.servicios.variacion_MO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_MO : '',
-                activo_MO: itemEditandoServiciosFijos.servicios.activo_MO
+                precioHora_MO: itemEditandoServiciosFijos.servicios.precioHora_MO ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_MO) : null,
+                variacion_MO: itemEditandoServiciosFijos.servicios.variacion_MO ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_MO) : null,
+                diaVariacion_MO: !itemEditandoServiciosFijos.servicios.int_MO ? (itemEditandoServiciosFijos.servicios.variacion_MO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_MO : '') : '',
+                activo_MO: itemEditandoServiciosFijos.servicios.activo_MO,
+                int_MO: itemEditandoServiciosFijos.servicios.int_MO,
+                trab_MO: itemEditandoServiciosFijos.servicios.trab_MO ? itemEditandoServiciosFijos.servicios.trab_MO : null
             });
         } else {
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'MOQ',
-                precioHora_MO: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_MO),
-                variacion_MO: parseFloat(itemEditandoServiciosFijos.servicios.variacion_MO),
-                diaVariacion_MO: itemEditandoServiciosFijos.servicios.variacion_MO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_MO : '',
-                activo_MO: itemEditandoServiciosFijos.servicios.activo_MO
+                precioHora_MO: itemEditandoServiciosFijos.servicios.precioHora_MO ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_MO) : null,
+                variacion_MO: itemEditandoServiciosFijos.servicios.variacion_MO ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_MO) : null,
+                diaVariacion_MO: !itemEditandoServiciosFijos.servicios.int_MO ? (itemEditandoServiciosFijos.servicios.variacion_MO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_MO : '') : '',
+                activo_MO: itemEditandoServiciosFijos.servicios.activo_MO,
+                int_MO: itemEditandoServiciosFijos.servicios.int_MO,
+                trab_MO: itemEditandoServiciosFijos.servicios.trab_MO ? itemEditandoServiciosFijos.servicios.trab_MO : null
             });
         };
     };
-    if (itemEditandoServiciosFijos.servicios.precioHora_OF) {
+    if (itemEditandoServiciosFijos.servicios.precioHora_OF || itemEditandoServiciosFijos.servicios.int_OF) {
         objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'OF');
         if (objetoServicioActivo) {
             arrayCuadranteServiciosFijos.push({
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'OF',
-                precioHora_OF: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_OF),
-                variacion_OF: parseFloat(itemEditandoServiciosFijos.servicios.variacion_OF),
-                diaVariacion_OF: itemEditandoServiciosFijos.servicios.variacion_OF !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_OF : '',
-                activo_OF: itemEditandoServiciosFijos.servicios.activo_OF
+                precioHora_OF: itemEditandoServiciosFijos.servicios.precioHora_OF ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_OF) : null,
+                variacion_OF: itemEditandoServiciosFijos.servicios.variacion_OF ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_OF) : null,
+                diaVariacion_OF: !itemEditandoServiciosFijos.servicios.int_OF ? (itemEditandoServiciosFijos.servicios.variacion_OF !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_OF : '') : '',
+                activo_OF: itemEditandoServiciosFijos.servicios.activo_OF,
+                int_OF: itemEditandoServiciosFijos.servicios.int_OF,
+                trab_OF: itemEditandoServiciosFijos.servicios.trab_OF ? itemEditandoServiciosFijos.servicios.trab_OF : null
             });
         } else {
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'OF',
-                precioHora_OF: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_OF),
-                variacion_OF: parseFloat(itemEditandoServiciosFijos.servicios.variacion_OF),
-                diaVariacion_OF: itemEditandoServiciosFijos.servicios.variacion_OF !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_OF : '',
-                activo_OF: itemEditandoServiciosFijos.servicios.activo_OF
+                precioHora_OF: itemEditandoServiciosFijos.servicios.precioHora_OF ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_OF) : null,
+                variacion_OF: itemEditandoServiciosFijos.servicios.variacion_OF ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_OF) : null,
+                diaVariacion_OF: !itemEditandoServiciosFijos.servicios.int_OF ? (itemEditandoServiciosFijos.servicios.variacion_OF !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_OF : '') : '',
+                activo_OF: itemEditandoServiciosFijos.servicios.activo_OF,
+                int_OF: itemEditandoServiciosFijos.servicios.int_OF,
+                trab_OF: itemEditandoServiciosFijos.servicios.trab_OF ? itemEditandoServiciosFijos.servicios.trab_OF : null
             });
         };
     };
-    if (itemEditandoServiciosFijos.servicios.precioHora_AL) {
+    if (itemEditandoServiciosFijos.servicios.precioHora_AL || itemEditandoServiciosFijos.servicios.int_AL) {
         objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'ALMC');
         if (objetoServicioActivo) {
             arrayCuadranteServiciosFijos.push({
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'ALMC',
-                precioHora_AL: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_AL),
-                variacion_AL: parseFloat(itemEditandoServiciosFijos.servicios.variacion_AL),
-                diaVariacion_AL: itemEditandoServiciosFijos.servicios.variacion_AL !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_AL : '',
-                activo_AL: itemEditandoServiciosFijos.servicios.activo_AL
+                precioHora_AL: itemEditandoServiciosFijos.servicios.precioHora_AL ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_AL) : null,
+                variacion_AL: itemEditandoServiciosFijos.servicios.variacion_AL ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_AL) : null,
+                diaVariacion_AL: !itemEditandoServiciosFijos.servicios.int_AL ? (itemEditandoServiciosFijos.servicios.variacion_AL !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_AL : '') : '',
+                activo_AL: itemEditandoServiciosFijos.servicios.activo_AL,
+                int_AL: itemEditandoServiciosFijos.servicios.int_AL,
+                trab_AL: itemEditandoServiciosFijos.servicios.trab_AL ? itemEditandoServiciosFijos.servicios.trab_AL : null
             });
         } else {
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'ALMC',
-                precioHora_AL: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_AL),
-                variacion_AL: parseFloat(itemEditandoServiciosFijos.servicios.variacion_AL),
-                diaVariacion_AL: itemEditandoServiciosFijos.servicios.variacion_AL !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_AL : '',
-                activo_AL: itemEditandoServiciosFijos.servicios.activo_AL
+                precioHora_AL: itemEditandoServiciosFijos.servicios.precioHora_AL ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_AL) : null,
+                variacion_AL: itemEditandoServiciosFijos.servicios.variacion_AL ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_AL) : null,
+                diaVariacion_AL: !itemEditandoServiciosFijos.servicios.int_AL ? (itemEditandoServiciosFijos.servicios.variacion_AL !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_AL : '') : '',
+                activo_AL: itemEditandoServiciosFijos.servicios.activo_AL,
+                int_AL: itemEditandoServiciosFijos.servicios.int_AL,
+                trab_AL: itemEditandoServiciosFijos.servicios.trab_AL ? itemEditandoServiciosFijos.servicios.trab_AL : null
             });
         };
     };
-    if (itemEditandoServiciosFijos.servicios.precioHora_LA) {
+    if (itemEditandoServiciosFijos.servicios.precioHora_LA || itemEditandoServiciosFijos.servicios.int_LA) {
         objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'LAB');
         if (objetoServicioActivo) {
             arrayCuadranteServiciosFijos.push({
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'LAB',
-                precioHora_LA: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_LA),
-                variacion_LA: parseFloat(itemEditandoServiciosFijos.servicios.variacion_LA),
-                diaVariacion_LA: itemEditandoServiciosFijos.servicios.variacion_LA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_LA : '',
-                activo_LA: itemEditandoServiciosFijos.servicios.activo_LA
+                precioHora_LA: itemEditandoServiciosFijos.servicios.precioHora_LA ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_LA) : null,
+                variacion_LA: itemEditandoServiciosFijos.servicios.variacion_LA ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_LA) : null,
+                diaVariacion_LA: !itemEditandoServiciosFijos.servicios.int_LA ? (itemEditandoServiciosFijos.servicios.variacion_LA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_LA : '') : '',
+                activo_LA: itemEditandoServiciosFijos.servicios.activo_LA,
+                int_LA: itemEditandoServiciosFijos.servicios.int_LA,
+                trab_LA: itemEditandoServiciosFijos.servicios.trab_LA ? itemEditandoServiciosFijos.servicios.trab_LA : null
             });
         } else {
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'LAB',
-                precioHora_LA: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_LA),
-                variacion_LA: parseFloat(itemEditandoServiciosFijos.servicios.variacion_LA),
-                diaVariacion_LA: itemEditandoServiciosFijos.servicios.variacion_LA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_LA : '',
-                activo_LA: itemEditandoServiciosFijos.servicios.activo_LA
+                precioHora_LA: itemEditandoServiciosFijos.servicios.precioHora_LA ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_LA) : null,
+                variacion_LA: itemEditandoServiciosFijos.servicios.variacion_LA ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_LA) : null,
+                diaVariacion_LA: !itemEditandoServiciosFijos.servicios.int_LA ? (itemEditandoServiciosFijos.servicios.variacion_LA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_LA : '') : '',
+                activo_LA: itemEditandoServiciosFijos.servicios.activo_LA,
+                int_LA: itemEditandoServiciosFijos.servicios.int_LA,
+                trab_LA: itemEditandoServiciosFijos.servicios.trab_LA ? itemEditandoServiciosFijos.servicios.trab_LA : null
             });
         };
     };
-    if (itemEditandoServiciosFijos.servicios.precioHora_TE) {
+    if (itemEditandoServiciosFijos.servicios.precioHora_TE || itemEditandoServiciosFijos.servicios.int_TE) {
         objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'TELÑ');
         if (objetoServicioActivo) {
             arrayCuadranteServiciosFijos.push({
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'TELÑ',
-                precioHora_TE: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_TE),
-                variacion_TE: parseFloat(itemEditandoServiciosFijos.servicios.variacion_TE),
-                diaVariacion_TE: itemEditandoServiciosFijos.servicios.variacion_TE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_TE : '',
-                activo_TE: itemEditandoServiciosFijos.servicios.activo_TE
+                precioHora_TE: itemEditandoServiciosFijos.servicios.precioHora_TE ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_TE) : null,
+                variacion_TE: itemEditandoServiciosFijos.servicios.variacion_TE ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_TE) : null,
+                diaVariacion_TE: !itemEditandoServiciosFijos.servicios.int_TE ? (itemEditandoServiciosFijos.servicios.variacion_TE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_TE : '') : '',
+                activo_TE: itemEditandoServiciosFijos.servicios.activo_TE,
+                int_TE: itemEditandoServiciosFijos.servicios.int_TE,
+                trab_TE: itemEditandoServiciosFijos.servicios.trab_TE ? itemEditandoServiciosFijos.servicios.trab_TE : null
             });
         } else {
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'TELÑ',
-                precioHora_TE: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_TE),
-                variacion_TE: parseFloat(itemEditandoServiciosFijos.servicios.variacion_TE),
-                diaVariacion_TE: itemEditandoServiciosFijos.servicios.variacion_TE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_TE : '',
-                activo_TE: itemEditandoServiciosFijos.servicios.activo_TE
+                precioHora_TE: itemEditandoServiciosFijos.servicios.precioHora_TE ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_TE) : null,
+                variacion_TE: itemEditandoServiciosFijos.servicios.variacion_TE ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_TE) : null,
+                diaVariacion_TE: !itemEditandoServiciosFijos.servicios.int_TE ? (itemEditandoServiciosFijos.servicios.variacion_TE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_TE : '') : '',
+                activo_TE: itemEditandoServiciosFijos.servicios.activo_TE,
+                int_TE: itemEditandoServiciosFijos.servicios.int_TE,
+                trab_TE: itemEditandoServiciosFijos.servicios.trab_TE ? itemEditandoServiciosFijos.servicios.trab_TE : null
             });
         };
     };
-    if (itemEditandoServiciosFijos.servicios.precioHora_FI) {
+    if (itemEditandoServiciosFijos.servicios.precioHora_FI || itemEditandoServiciosFijos.servicios.int_FI) {
         objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'FCH.IN');
         if (objetoServicioActivo) {
             arrayCuadranteServiciosFijos.push({
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'FCH.IN',
-                precioHora_FI: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FI),
-                variacion_FI: parseFloat(itemEditandoServiciosFijos.servicios.variacion_FI),
-                diaVariacion_FI: itemEditandoServiciosFijos.servicios.variacion_FI !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FI : '',
-                activo_FI: itemEditandoServiciosFijos.servicios.activo_FI
+                precioHora_FI: itemEditandoServiciosFijos.servicios.precioHora_FI ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FI) : null,
+                variacion_FI: itemEditandoServiciosFijos.servicios.variacion_FI ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_FI) : null,
+                diaVariacion_FI: !itemEditandoServiciosFijos.servicios.int_FI ? (itemEditandoServiciosFijos.servicios.variacion_FI !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FI : '') : '',
+                activo_FI: itemEditandoServiciosFijos.servicios.activo_FI,
+                int_FI: itemEditandoServiciosFijos.servicios.int_FI,
+                trab_FI: itemEditandoServiciosFijos.servicios.trab_FI ? itemEditandoServiciosFijos.servicios.trab_FI : null
             });
         } else {
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'FCH.IN',
-                precioHora_FI: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FI),
-                variacion_FI: parseFloat(itemEditandoServiciosFijos.servicios.variacion_FI),
-                diaVariacion_FI: itemEditandoServiciosFijos.servicios.variacion_FI !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FI : '',
-                activo_FI: itemEditandoServiciosFijos.servicios.activo_FI
+                precioHora_FI: itemEditandoServiciosFijos.servicios.precioHora_FI ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FI) : null,
+                variacion_FI: itemEditandoServiciosFijos.servicios.variacion_FI ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_FI) : null,
+                diaVariacion_FI: !itemEditandoServiciosFijos.servicios.int_FI ? (itemEditandoServiciosFijos.servicios.variacion_FI !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FI : '') : '',
+                activo_FI: itemEditandoServiciosFijos.servicios.activo_FI,
+                int_FI: itemEditandoServiciosFijos.servicios.int_FI,
+                trab_FI: itemEditandoServiciosFijos.servicios.trab_FI ? itemEditandoServiciosFijos.servicios.trab_FI : null
             });
         };
     };
-    if (itemEditandoServiciosFijos.servicios.precioHora_FE) {
+    if (itemEditandoServiciosFijos.servicios.precioHora_FE || itemEditandoServiciosFijos.servicios.int_FE) {
         objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'FCH.EX');
         if (objetoServicioActivo) {
             arrayCuadranteServiciosFijos.push({
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'FCH.EX',
-                precioHora_FE: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FE),
-                variacion_FE: parseFloat(itemEditandoServiciosFijos.servicios.variacion_FE),
-                diaVariacion_FE: itemEditandoServiciosFijos.servicios.variacion_FE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FE : '',
-                activo_FE: itemEditandoServiciosFijos.servicios.activo_FE
+                precioHora_FE: itemEditandoServiciosFijos.servicios.precioHora_FE ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FE) : null,
+                variacion_FE: itemEditandoServiciosFijos.servicios.variacion_FE ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_FE) : null,
+                diaVariacion_FE: !itemEditandoServiciosFijos.servicios.int_FE ? (itemEditandoServiciosFijos.servicios.variacion_FE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FE : '') : '',
+                activo_FE: itemEditandoServiciosFijos.servicios.activo_FE,
+                int_FE: itemEditandoServiciosFijos.servicios.int_FE,
+                trab_FE: itemEditandoServiciosFijos.servicios.trab_FE ? itemEditandoServiciosFijos.servicios.trab_FE : null
             });
         } else {
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'FCH.EX',
-                precioHora_FE: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FE),
-                variacion_FE: parseFloat(itemEditandoServiciosFijos.servicios.variacion_FE),
-                diaVariacion_FE: itemEditandoServiciosFijos.servicios.variacion_FE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FE : '',
-                activo_FE: itemEditandoServiciosFijos.servicios.activo_FE
+                precioHora_FE: itemEditandoServiciosFijos.servicios.precioHora_FE ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FE) : null,
+                variacion_FE: itemEditandoServiciosFijos.servicios.variacion_FE ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_FE) : null,
+                diaVariacion_FE: !itemEditandoServiciosFijos.servicios.int_FE ? (itemEditandoServiciosFijos.servicios.variacion_FE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FE : '') : '',
+                activo_FE: itemEditandoServiciosFijos.servicios.activo_FE,
+                int_FE: itemEditandoServiciosFijos.servicios.int_FE,
+                trab_FE: itemEditandoServiciosFijos.servicios.trab_FE ? itemEditandoServiciosFijos.servicios.trab_FE : null
             });
         };
     };
-    if (itemEditandoServiciosFijos.servicios.precioHora_AB) {
+    if (itemEditandoServiciosFijos.servicios.precioHora_AB || itemEditandoServiciosFijos.servicios.int_AB) {
         objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'ABRLL');
         if (objetoServicioActivo) {
             arrayCuadranteServiciosFijos.push({
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'ABRLL',
-                precioHora_AB: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_AB),
-                variacion_AB: parseFloat(itemEditandoServiciosFijos.servicios.variacion_AB),
-                diaVariacion_AB: itemEditandoServiciosFijos.servicios.variacion_AB !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_AB : '',
-                activo_AB: itemEditandoServiciosFijos.servicios.activo_AB
+                precioHora_AB: itemEditandoServiciosFijos.servicios.precioHora_AB ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_AB) : null,
+                variacion_AB: itemEditandoServiciosFijos.servicios.variacion_AB ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_AB) : null,
+                diaVariacion_AB: !itemEditandoServiciosFijos.servicios.int_AB ? (itemEditandoServiciosFijos.servicios.variacion_AB !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_AB : '') : '',
+                activo_AB: itemEditandoServiciosFijos.servicios.activo_AB,
+                int_AB: itemEditandoServiciosFijos.servicios.int_AB,
+                trab_AB: itemEditandoServiciosFijos.servicios.trab_AB ? itemEditandoServiciosFijos.servicios.trab_AB : null
             });
         } else {
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'ABRLL',
-                precioHora_AB: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_AB),
-                variacion_AB: parseFloat(itemEditandoServiciosFijos.servicios.variacion_AB),
-                diaVariacion_AB: itemEditandoServiciosFijos.servicios.variacion_AB !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_AB : '',
-                activo_AB: itemEditandoServiciosFijos.servicios.activo_AB
+                precioHora_AB: itemEditandoServiciosFijos.servicios.precioHora_AB ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_AB) : null,
+                variacion_AB: itemEditandoServiciosFijos.servicios.variacion_AB ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_AB) : null,
+                diaVariacion_AB: !itemEditandoServiciosFijos.servicios.int_AB ? (itemEditandoServiciosFijos.servicios.variacion_AB !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_AB : '') : '',
+                activo_AB: itemEditandoServiciosFijos.servicios.activo_AB,
+                int_AB: itemEditandoServiciosFijos.servicios.int_AB,
+                trab_AB: itemEditandoServiciosFijos.servicios.trab_AB ? itemEditandoServiciosFijos.servicios.trab_AB : null
             });
         };
     };
-    if (itemEditandoServiciosFijos.servicios.precioHora_MA) {
+    if (itemEditandoServiciosFijos.servicios.precioHora_MA || itemEditandoServiciosFijos.servicios.int_MA) {
         objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'MANT');
         if (objetoServicioActivo) {
             arrayCuadranteServiciosFijos.push({
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'MANT',
-                precioHora_MA: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_MA),
-                variacion_MA: parseFloat(itemEditandoServiciosFijos.servicios.variacion_MA),
-                diaVariacion_MA: itemEditandoServiciosFijos.servicios.variacion_MA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_MA : '',
-                activo_MA: itemEditandoServiciosFijos.servicios.activo_MA
+                precioHora_MA: itemEditandoServiciosFijos.servicios.precioHora_MA ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_MA) : null,
+                variacion_MA: itemEditandoServiciosFijos.servicios.variacion_MA ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_MA) : null,
+                diaVariacion_MA: !itemEditandoServiciosFijos.servicios.int_MA ? (itemEditandoServiciosFijos.servicios.variacion_MA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_MA : '') : '',
+                activo_MA: itemEditandoServiciosFijos.servicios.activo_MA,
+                int_MA: itemEditandoServiciosFijos.servicios.int_MA,
+                trab_MA: itemEditandoServiciosFijos.servicios.trab_MA ? itemEditandoServiciosFijos.servicios.trab_MA : null
             });
         } else {
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'MANT',
-                precioHora_MA: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_MA),
-                variacion_MA: parseFloat(itemEditandoServiciosFijos.servicios.variacion_MA),
-                diaVariacion_MA: itemEditandoServiciosFijos.servicios.variacion_MA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_MA : '',
-                activo_MA: itemEditandoServiciosFijos.servicios.activo_MA
+                precioHora_MA: itemEditandoServiciosFijos.servicios.precioHora_MA ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_MA) : null,
+                variacion_MA: itemEditandoServiciosFijos.servicios.variacion_MA ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_MA) : null,
+                diaVariacion_MA: !itemEditandoServiciosFijos.servicios.int_MA ? (itemEditandoServiciosFijos.servicios.variacion_MA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_MA : '') : '',
+                activo_MA: itemEditandoServiciosFijos.servicios.activo_MA,
+                int_MA: itemEditandoServiciosFijos.servicios.int_MA,
+                trab_MA: itemEditandoServiciosFijos.servicios.trab_MA ? itemEditandoServiciosFijos.servicios.trab_MA : null
             });
         };
     };
-    if (itemEditandoServiciosFijos.servicios.precioHora_PO) {
+    if (itemEditandoServiciosFijos.servicios.precioHora_PO || itemEditandoServiciosFijos.servicios.int_PO) {
         objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'PORT');
         if (objetoServicioActivo) {
             arrayCuadranteServiciosFijos.push({
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'PORT',
-                precioHora_PO: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_PO),
-                variacion_PO: parseFloat(itemEditandoServiciosFijos.servicios.variacion_PO),
-                diaVariacion_PO: itemEditandoServiciosFijos.servicios.variacion_PO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_PO : '',
-                activo_PO: itemEditandoServiciosFijos.servicios.activo_PO
+                precioHora_PO: itemEditandoServiciosFijos.servicios.precioHora_PO ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_PO) : null,
+                variacion_PO: itemEditandoServiciosFijos.servicios.variacion_PO ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_PO) : null,
+                diaVariacion_PO: !itemEditandoServiciosFijos.servicios.int_PO ? (itemEditandoServiciosFijos.servicios.variacion_PO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_PO : '') : '',
+                activo_PO: itemEditandoServiciosFijos.servicios.activo_PO,
+                int_PO: itemEditandoServiciosFijos.servicios.int_PO,
+                trab_PO: itemEditandoServiciosFijos.servicios.trab_PO ? itemEditandoServiciosFijos.servicios.trab_PO : null
             });
         } else {
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'PORT',
-                precioHora_PO: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_PO),
-                variacion_PO: parseFloat(itemEditandoServiciosFijos.servicios.variacion_PO),
-                diaVariacion_PO: itemEditandoServiciosFijos.servicios.variacion_PO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_PO : '',
-                activo_PO: itemEditandoServiciosFijos.servicios.activo_PO
+                precioHora_PO: itemEditandoServiciosFijos.servicios.precioHora_PO ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_PO) : null,
+                variacion_PO: itemEditandoServiciosFijos.servicios.variacion_PO ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_PO) : null,
+                diaVariacion_PO: !itemEditandoServiciosFijos.servicios.int_PO ? (itemEditandoServiciosFijos.servicios.variacion_PO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_PO : '') : '',
+                activo_PO: itemEditandoServiciosFijos.servicios.activo_PO,
+                int_PO: itemEditandoServiciosFijos.servicios.int_PO,
+                trab_PO: itemEditandoServiciosFijos.servicios.trab_PO ? itemEditandoServiciosFijos.servicios.trab_PO : null
             });
         };
     };
-    if (itemEditandoServiciosFijos.servicios.precioHora_BA) {
+    if (itemEditandoServiciosFijos.servicios.precioHora_BA || itemEditandoServiciosFijos.servicios.int_BA) {
         objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'BACT');
         if (objetoServicioActivo) {
             arrayCuadranteServiciosFijos.push({
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'BACT',
-                precioHora_BA: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_BA),
-                variacion_BA: parseFloat(itemEditandoServiciosFijos.servicios.variacion_BA),
-                diaVariacion_BA: itemEditandoServiciosFijos.servicios.variacion_BA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_BA : '',
-                activo_BA: itemEditandoServiciosFijos.servicios.activo_BA
+                precioHora_BA: itemEditandoServiciosFijos.servicios.precioHora_BA ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_BA) : null,
+                variacion_BA: itemEditandoServiciosFijos.servicios.variacion_BA ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_BA) : null,
+                diaVariacion_BA: !itemEditandoServiciosFijos.servicios.int_BA ? (itemEditandoServiciosFijos.servicios.variacion_BA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_BA : '') : '',
+                activo_BA: itemEditandoServiciosFijos.servicios.activo_BA,
+                int_BA: itemEditandoServiciosFijos.servicios.int_BA,
+                trab_BA: itemEditandoServiciosFijos.servicios.trab_BA ? itemEditandoServiciosFijos.servicios.trab_BA : null
             });
         } else {
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'BACT',
-                precioHora_BA: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_BA),
-                variacion_BA: parseFloat(itemEditandoServiciosFijos.servicios.variacion_BA),
-                diaVariacion_BA: itemEditandoServiciosFijos.servicios.variacion_BA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_BA : '',
-                activo_BA: itemEditandoServiciosFijos.servicios.activo_BA
+                precioHora_BA: itemEditandoServiciosFijos.servicios.precioHora_BA ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_BA) : null,
+                variacion_BA: itemEditandoServiciosFijos.servicios.variacion_BA ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_BA) : null,
+                diaVariacion_BA: !itemEditandoServiciosFijos.servicios.int_BA ? (itemEditandoServiciosFijos.servicios.variacion_BA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_BA : '') : '',
+                activo_BA: itemEditandoServiciosFijos.servicios.activo_BA,
+                int_BA: itemEditandoServiciosFijos.servicios.int_BA,
+                trab_BA: itemEditandoServiciosFijos.servicios.trab_BA ? itemEditandoServiciosFijos.servicios.trab_BA : null
             });
         };
     };
-    if (itemEditandoServiciosFijos.servicios.precioHora_FT) {
+    if (itemEditandoServiciosFijos.servicios.precioHora_FT || itemEditandoServiciosFijos.servicios.int_FT) {
         objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'FEST');
         if (objetoServicioActivo) {
             arrayCuadranteServiciosFijos.push({
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'FEST',
-                precioHora_FT: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FT),
-                variacion_FT: parseFloat(itemEditandoServiciosFijos.servicios.variacion_FT),
-                diaVariacion_FT: itemEditandoServiciosFijos.servicios.variacion_FT !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FT : '',
-                activo_FT: itemEditandoServiciosFijos.servicios.activo_FT
+                precioHora_FT: itemEditandoServiciosFijos.servicios.precioHora_FT ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FT) : null,
+                variacion_FT: itemEditandoServiciosFijos.servicios.variacion_FT ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_FT) : null,
+                diaVariacion_FT: !itemEditandoServiciosFijos.servicios.int_FT ? (itemEditandoServiciosFijos.servicios.variacion_FT !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FT : '') : '',
+                activo_FT: itemEditandoServiciosFijos.servicios.activo_FT,
+                int_FT: itemEditandoServiciosFijos.servicios.int_FT,
+                trab_FT: itemEditandoServiciosFijos.servicios.trab_FT ? itemEditandoServiciosFijos.servicios.trab_FT : null
             });
         } else {
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'FEST',
-                precioHora_FT: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FT),
-                variacion_FT: parseFloat(itemEditandoServiciosFijos.servicios.variacion_FT),
-                diaVariacion_FT: itemEditandoServiciosFijos.servicios.variacion_FT !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FT : '',
-                activo_FT: itemEditandoServiciosFijos.servicios.activo_FT
+                precioHora_FT: itemEditandoServiciosFijos.servicios.precioHora_FT ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FT) : null,
+                variacion_FT: itemEditandoServiciosFijos.servicios.variacion_FT ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_FT) : null,
+                diaVariacion_FT: !itemEditandoServiciosFijos.servicios.int_FT ? (itemEditandoServiciosFijos.servicios.variacion_FT !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FT : '') : '',
+                activo_FT: itemEditandoServiciosFijos.servicios.activo_FT,
+                int_FT: itemEditandoServiciosFijos.servicios.int_FT,
+                trab_FT: itemEditandoServiciosFijos.servicios.trab_FT ? itemEditandoServiciosFijos.servicios.trab_FT : null
             });
         };
     };
-    if (itemEditandoServiciosFijos.servicios.precioHora_C3) {
+    if (itemEditandoServiciosFijos.servicios.precioHora_C3 || itemEditandoServiciosFijos.servicios.int_C3) {
         objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'CRTRIM');
         if (objetoServicioActivo) {
             arrayCuadranteServiciosFijos.push({
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'CRTRIM',
-                precioHora_C3: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_C3),
-                variacion_C3: parseFloat(itemEditandoServiciosFijos.servicios.variacion_C3),
-                diaVariacion_C3: itemEditandoServiciosFijos.servicios.variacion_C3 !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_C3 : '',
-                activo_C3: itemEditandoServiciosFijos.servicios.activo_C3
+                precioHora_C3: itemEditandoServiciosFijos.servicios.precioHora_C3 ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_C3) : null,
+                variacion_C3: itemEditandoServiciosFijos.servicios.variacion_C3 ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_C3) : null,
+                diaVariacion_C3: !itemEditandoServiciosFijos.servicios.int_C3 ? (itemEditandoServiciosFijos.servicios.variacion_C3 !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_C3 : '') : '',
+                activo_C3: itemEditandoServiciosFijos.servicios.activo_C3,
+                int_C3: itemEditandoServiciosFijos.servicios.int_C3,
+                trab_C3: itemEditandoServiciosFijos.servicios.trab_C3 ? itemEditandoServiciosFijos.servicios.trab_C3 : null
             });
         } else {
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'CRTRIM',
-                precioHora_C3: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_C3),
-                variacion_C3: parseFloat(itemEditandoServiciosFijos.servicios.variacion_C3),
-                diaVariacion_C3: itemEditandoServiciosFijos.servicios.variacion_C3 !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_C3 : '',
-                activo_C3: itemEditandoServiciosFijos.servicios.activo_C3
+                precioHora_C3: itemEditandoServiciosFijos.servicios.precioHora_C3 ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_C3) : null,
+                variacion_C3: itemEditandoServiciosFijos.servicios.variacion_C3 ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_C3) : null,
+                diaVariacion_C3: !itemEditandoServiciosFijos.servicios.int_C3 ? (itemEditandoServiciosFijos.servicios.variacion_C3 !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_C3 : '') : '',
+                activo_C3: itemEditandoServiciosFijos.servicios.activo_C3,
+                int_C3: itemEditandoServiciosFijos.servicios.int_C3,
+                trab_C3: itemEditandoServiciosFijos.servicios.trab_C3 ? itemEditandoServiciosFijos.servicios.trab_C3 : null
             });
         };
     };
-    if (itemEditandoServiciosFijos.servicios.precioHora_C2) {
+    if (itemEditandoServiciosFijos.servicios.precioHora_C2 || itemEditandoServiciosFijos.servicios.int_C2) {
         objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'CRBIM');
         if (objetoServicioActivo) {
             arrayCuadranteServiciosFijos.push({
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'CRBIM',
-                precioHora_C2: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_C2),
-                variacion_C2: parseFloat(itemEditandoServiciosFijos.servicios.variacion_C2),
-                diaVariacion_C2: itemEditandoServiciosFijos.servicios.variacion_C2 !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_C2 : '',
-                activo_C2: itemEditandoServiciosFijos.servicios.activo_C2
+                precioHora_C2: itemEditandoServiciosFijos.servicios.precioHora_C2 ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_C2) : null,
+                variacion_C2: itemEditandoServiciosFijos.servicios.variacion_C2 ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_C2) : null,
+                diaVariacion_C2: !itemEditandoServiciosFijos.servicios.int_C2 ? (itemEditandoServiciosFijos.servicios.variacion_C2 !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_C2 : '') : '',
+                activo_C2: itemEditandoServiciosFijos.servicios.activo_C2,
+                int_C2: itemEditandoServiciosFijos.servicios.int_C2,
+                trab_C2: itemEditandoServiciosFijos.servicios.trab_C2 ? itemEditandoServiciosFijos.servicios.trab_C2 : null
             });
         } else {
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'CRBIM',
-                precioHora_C2: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_C2),
-                variacion_C2: parseFloat(itemEditandoServiciosFijos.servicios.variacion_C2),
-                diaVariacion_C2: itemEditandoServiciosFijos.servicios.variacion_C2 !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_C2 : '',
-                activo_C2: itemEditandoServiciosFijos.servicios.activo_C2
+                precioHora_C2: itemEditandoServiciosFijos.servicios.precioHora_C2 ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_C2) : null,
+                variacion_C2: itemEditandoServiciosFijos.servicios.variacion_C2 ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_C2) : null,
+                diaVariacion_C2: !itemEditandoServiciosFijos.servicios.int_C2 ? (itemEditandoServiciosFijos.servicios.variacion_C2 !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_C2 : '') : '',
+                activo_C2: itemEditandoServiciosFijos.servicios.activo_C2,
+                int_C2: itemEditandoServiciosFijos.servicios.int_C2,
+                trab_C2: itemEditandoServiciosFijos.servicios.trab_C2 ? itemEditandoServiciosFijos.servicios.trab_C2 : null
             });
         };
     };
-    if (itemEditandoServiciosFijos.servicios.precioHora_ES) {
+    if (itemEditandoServiciosFijos.servicios.precioHora_ES || itemEditandoServiciosFijos.servicios.int_ES) {
         objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'LIME');
         if (objetoServicioActivo) {
             arrayCuadranteServiciosFijos.push({
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'LIME',
-                precioHora_ES: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_ES),
-                variacion_ES: parseFloat(itemEditandoServiciosFijos.servicios.variacion_ES),
-                diaVariacion_ES: itemEditandoServiciosFijos.servicios.variacion_ES !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_ES : '',
-                activo_ES: itemEditandoServiciosFijos.servicios.activo_ES
+                precioHora_ES: itemEditandoServiciosFijos.servicios.precioHora_ES ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_ES) : null,
+                variacion_ES: itemEditandoServiciosFijos.servicios.variacion_ES ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_ES) : null,
+                diaVariacion_ES: !itemEditandoServiciosFijos.servicios.int_ES ? (itemEditandoServiciosFijos.servicios.variacion_ES !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_ES : '') : '',
+                activo_ES: itemEditandoServiciosFijos.servicios.activo_ES,
+                int_ES: itemEditandoServiciosFijos.servicios.int_ES,
+                trab_ES: itemEditandoServiciosFijos.servicios.trab_ES ? itemEditandoServiciosFijos.servicios.trab_ES : null
             });
         } else {
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'LIME',
-                precioHora_ES: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_ES),
-                variacion_ES: parseFloat(itemEditandoServiciosFijos.servicios.variacion_ES),
-                diaVariacion_ES: itemEditandoServiciosFijos.servicios.variacion_ES !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_ES : '',
-                activo_ES: itemEditandoServiciosFijos.servicios.activo_ES
+                precioHora_ES: itemEditandoServiciosFijos.servicios.precioHora_ES ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_ES) : null,
+                variacion_ES: itemEditandoServiciosFijos.servicios.variacion_ES ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_ES) : null,
+                diaVariacion_ES: !itemEditandoServiciosFijos.servicios.int_ES ? (itemEditandoServiciosFijos.servicios.variacion_ES !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_ES : '') : '',
+                activo_ES: itemEditandoServiciosFijos.servicios.activo_ES,
+                int_ES: itemEditandoServiciosFijos.servicios.int_ES,
+                trab_ES: itemEditandoServiciosFijos.servicios.trab_ES ? itemEditandoServiciosFijos.servicios.trab_ES : null
             });
         };
     };
-    if (itemEditandoServiciosFijos.servicios.precioHora_PA) {
+    if (itemEditandoServiciosFijos.servicios.precioHora_PA || itemEditandoServiciosFijos.servicios.int_PA) {
         objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'LIMP');
         if (objetoServicioActivo) {
             arrayCuadranteServiciosFijos.push({
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'LIMP',
-                precioHora_PA: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_PA),
-                variacion_PA: parseFloat(itemEditandoServiciosFijos.servicios.variacion_PA),
-                diaVariacion_PA: itemEditandoServiciosFijos.servicios.variacion_PA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_PA : '',
-                activo_PA: itemEditandoServiciosFijos.servicios.activo_PA
+                precioHora_PA: itemEditandoServiciosFijos.servicios.precioHora_PA ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_PA) : null,
+                variacion_PA: itemEditandoServiciosFijos.servicios.variacion_PA ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_PA) : null,
+                diaVariacion_PA: !itemEditandoServiciosFijos.servicios.int_PA ? (itemEditandoServiciosFijos.servicios.variacion_PA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_PA : '') : '',
+                activo_PA: itemEditandoServiciosFijos.servicios.activo_PA,
+                int_PA: itemEditandoServiciosFijos.servicios.int_PA,
+                trab_PA: itemEditandoServiciosFijos.servicios.trab_PA ? itemEditandoServiciosFijos.servicios.trab_PA : null
             });
         } else {
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'LIMP',
-                precioHora_PA: parseFloat(itemEditandoServiciosFijos.servicios.precioHora_PA),
-                variacion_PA: parseFloat(itemEditandoServiciosFijos.servicios.variacion_PA),
-                diaVariacion_PA: itemEditandoServiciosFijos.servicios.variacion_PA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_PA : '',
-                activo_PA: itemEditandoServiciosFijos.servicios.activo_PA
+                precioHora_PA: itemEditandoServiciosFijos.servicios.precioHora_PA ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_PA) : null,
+                variacion_PA: itemEditandoServiciosFijos.servicios.variacion_PA ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_PA) : null,
+                diaVariacion_PA: !itemEditandoServiciosFijos.servicios.int_PA ? (itemEditandoServiciosFijos.servicios.variacion_PA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_PA : '') : '',
+                activo_PA: itemEditandoServiciosFijos.servicios.activo_PA,
+                int_PA: itemEditandoServiciosFijos.servicios.int_PA,
+                trab_PA: itemEditandoServiciosFijos.servicios.trab_PA ? itemEditandoServiciosFijos.servicios.trab_PA : null
             });
         };
     };
+    let elArrayServiciosBloqueados = [...objetoCuadrante.datosServicios.bloqueado];
+    elArrayServiciosBloqueados[cuadranteEnUsoCuadrantes - 1] = itemEditandoServiciosFijos.bloqueado;
+    const losDatosServicios = {
+        ...objetoCuadrante.datosServicios,
+        bloqueado: elArrayServiciosBloqueados
+    };
+    dispatch(setEstamosActualizandoCuadranteSinCargaAccion(true));
+    dispatch(actualizarObjetoCuadranteAccion({
+        ...objetoCuadrante,
+        datosServicios: losDatosServicios
+    }));
     dispatch(setCuadranteServiciosFijosAccion(dispatch(gestionaColumnaServiciosFijosInicioAccion(arrayCuadranteServiciosFijos))));
     dispatch(setStateSwitchTipoServicioFijoCuadranteAccion(itemEditandoServiciosFijos.switch));
     dispatch(setItemPrevioEditandoServiciosFijosAccion(null));
@@ -4997,7 +4500,7 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
         });
         let arrayBuffer = [...bufferSwitchedDiasFestivosCuadrante];
         arrayBuffer[cuadranteEnUsoCuadrantes - 1].forEach((dia, index) => {
-            if (dia[Object.keys(dia)[0]][0][[0]] === 'SF') {
+            if (dia[Object.keys(dia)[0]].length > 0 && dia[Object.keys(dia)[0]][0][[0]] === 'SF') {
                 if (hayAlgunServicioActivo === false) {
                     dia[Object.keys(dia)[0]].splice(0, 1);
                 };
@@ -5106,6 +4609,7 @@ export const handleRegistrarCambioEnCasillaConfiguracionAccion = (scrollable, cl
         computo: parseFloat(itemEditandoConfiguracion.computo),
         excepcion: itemEditandoConfiguracion.excepcion ? itemEditandoConfiguracion.excepcion : '',
         bloqueado: itemEditandoConfiguracion.bloqueado,
+        mensualPactado: itemEditandoConfiguracion.mensualPactado ? parseFloat(itemEditandoConfiguracion.mensualPactado) : null,
         mensualPactadoInicial: itemEditandoConfiguracion.mensualPactadoInicial ? parseFloat(itemEditandoConfiguracion.mensualPactadoInicial) : null,
         precioHora_L: itemEditandoConfiguracion.precioHora_L ? parseFloat(itemEditandoConfiguracion.precioHora_L) : null,
         precioHora_E: itemEditandoConfiguracion.precioHora_E ? parseFloat(itemEditandoConfiguracion.precioHora_E) : null,
@@ -5121,16 +4625,21 @@ export const handleRegistrarCambioEnCasillaConfiguracionAccion = (scrollable, cl
         ...objetoCuadrante.datosInforme,
         datosInforme: elArrayDatosInforme
     };
+    let cambioEnConf = false;
+    if (itemEditandoConfiguracion.mensualPactadoInicial !== objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial) {
+        cambioEnConf = true;
+    };
     if (itemEditandoConfiguracion.festivos.inicio) {
         let diaInicio = itemEditandoConfiguracion.festivos.inicio.getDate();
         let diaFin = itemEditandoConfiguracion.festivos.fin.getDate();
         let object = { ...stateFestivo };
         for (let i = diaInicio; i <= diaFin; i++) {
-            dispatch(handleChangeFestivoDiaAccion(losDiasDelMes[i - 1][1] + losDiasDelMes[i - 1][0], losDiasDelMes[i - 1][0][0], losDiasDelMes[i - 1][1][0], null, itemEditandoConfiguracion.festivos.tipo, true))
+            dispatch(handleChangeFestivoDiaAccion(losDiasDelMes[i - 1][1] + losDiasDelMes[i - 1][0], losDiasDelMes[i - 1][0][0], losDiasDelMes[i - 1][1][0], null, itemEditandoConfiguracion.festivos.tipo, true, null, null))
             object['estadoFestivoDia' + i] = true;
             object['tipoFestivoDia' + i] = itemEditandoConfiguracion.festivos.tipo;
         };
         dispatch(setStateFestivoAccion(object));
+        dispatch(setItemEditandoConfiguracionAccion({ ...itemEditandoConfiguracion, festivos: { inicio: null, fin: null, tipo: '' } }));
     };
     let elArrayDatosCuadrante = [...objetoCuadrante.datosCuadrante.datosCuadrante];
     let elObjetoDatosCuadrante = {
@@ -5157,7 +4666,7 @@ export const handleRegistrarCambioEnCasillaConfiguracionAccion = (scrollable, cl
     dispatch(registrarIntervencionAccion(false));
     dispatch(cambiarEstadoCuadranteEnUsoRevisadoAccion(false));
     dispatch(handleClosePopoverConfiguracionAccion(scrollable, classes));
-    dispatch(setArrayDatosInformeAccion(dispatch(gestionarInformeAccion(true))));
+    dispatch(gestionarInformeAccion(cambioEnConf));
 };
 
 export const handleChangeTipoHorarioAccion = (index, event) => (dispatch, getState) => {
@@ -5198,6 +4707,25 @@ export const handleLimpiezaHorarioAccion = (index) => (dispatch, getState) => {
         let suplente = suplentesEnCuadrante.find(suplente => suplente.id === cuadrante[index].idTrabajador);
         dispatch(gestionaColumnaCuadranteAccion(suplente, 'suplente', true, index, false, true, cuadrante[index].tipoHorario, false));
     }
+    if (cuadranteRegistrado === 'si') {
+        dispatch(activarDesactivarCambioBotonActualizarAccion(false));
+    };
+    dispatch(registrarIntervencionAccion(false));
+    dispatch(cambiarEstadoCuadranteEnUsoRevisadoAccion(false));
+};
+
+export const handleGestionarTamanoColumnaAccion = (index, accion, scrollable, classes) => (dispatch, getState) => {
+    const { cuadrante, cuadranteRegistrado } = getState().variablesCuadrantes;
+    dispatch(setCambioRedimensionColumnaAccion(true));
+    let arrayCuadrante = [...cuadrante];
+    if (accion === 'reducir') {
+        arrayCuadrante[index].reducido = true;
+        dispatch(setExpandedAccordionAccion(false));
+        scrollable.current.classList.remove(classes.openAccordion);
+    } else {
+        arrayCuadrante[index].reducido = false;
+    };
+    dispatch(setCuadranteAccion(arrayCuadrante));
     if (cuadranteRegistrado === 'si') {
         dispatch(activarDesactivarCambioBotonActualizarAccion(false));
     };

@@ -28,6 +28,12 @@ Para la gestión de rutas.
 
 `npm install react-router-dom`
 
+### `react-router-hash-link`
+
+Para la gestión de rutas entre anchor links.
+
+`npm install react-router-hash-link`
+
 ### `redux`
 
 Para la gestión de estados y acciones en base a entorno.
@@ -81,6 +87,12 @@ Para comprimir y parsear objetos JSON.
 Para implementar funcionalidad Drag & Drop a componentes.
 
 `npm install react-draggable`
+
+### `simple-react-lightbox`
+
+Para implementar efecto lightbox a imágenes.
+
+`npm install simple-react-lightbox`
 
 
 ## Available Scripts

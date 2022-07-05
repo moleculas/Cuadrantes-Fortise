@@ -482,7 +482,7 @@ export const obtenerCuadrantesPeriodicosAccion = (objeto, calendarioAGestionar, 
             variableMeses = mes - i;
             arrayNombresCuadrantes.push(anyo + '-' + variableMeses + '-' + idCentro)
         };
-    };
+    };    
     try {
         let totalObjeto = {};
         arrayNombresCuadrantes.forEach(async (cuadrante, index) => {
@@ -500,7 +500,7 @@ export const obtenerCuadrantesPeriodicosAccion = (objeto, calendarioAGestionar, 
                 noExisteCuadrante = true;
             } else {
                 totalObjeto = parse(res.data.total);
-            };
+            };           
             dispatch({
                 type: SET_TOTALESPERIODICOS,
                 payload: {

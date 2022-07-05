@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Constantes from "../constantes";
+import { useSelector } from 'react-redux';
 import Grid from '@material-ui/core/Grid';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -13,10 +14,15 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
+import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
+import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
+import Checkbox from '@material-ui/core/Checkbox';
+import Box from '@material-ui/core/Box';
 
 //estilos
 import Clases from "../clases";
 
+//constantes
 const tiposDeServicio = Constantes.TIPO_SERVICIO_FIJO;
 const variacionesServiciosFijos = Constantes.VARIACIONES_SERVICIOS_FIJOS_CENTROS;
 const diasSemana = Constantes.DIAS_SEMANA;
@@ -24,6 +30,7 @@ const diasSemana = Constantes.DIAS_SEMANA;
 const ServiciosFijos = (props) => {
 
     const classes = Clases();
+    const arrayTrabajadoresSubcategoria = useSelector(store => store.variablesTrabajadores.arrayTrabajadoresSubcategoria);
 
     const [valoresPreviosServiciosFijos, setValoresPreviosServiciosFijos] = useState({
         switch: {
@@ -128,8 +135,49 @@ const ServiciosFijos = (props) => {
             activo_C3: props.prItemEditandoServiciosFijos.servicios.activo_C3 || '',
             activo_C2: props.prItemEditandoServiciosFijos.servicios.activo_C2 || '',
             activo_ES: props.prItemEditandoServiciosFijos.servicios.activo_ES || '',
-            activo_PA: props.prItemEditandoServiciosFijos.servicios.activo_PA || ''
-        }
+            activo_PA: props.prItemEditandoServiciosFijos.servicios.activo_PA || '',
+            int_TO: props.prItemEditandoServiciosFijos.servicios.int_TO || false,
+            int_CR: props.prItemEditandoServiciosFijos.servicios.int_CR || false,
+            int_CE: props.prItemEditandoServiciosFijos.servicios.int_CE || false,
+            int_CI: props.prItemEditandoServiciosFijos.servicios.int_CI || false,
+            int_MO: props.prItemEditandoServiciosFijos.servicios.int_MO || false,
+            int_OF: props.prItemEditandoServiciosFijos.servicios.int_OF || false,
+            int_AL: props.prItemEditandoServiciosFijos.servicios.int_AL || false,
+            int_LA: props.prItemEditandoServiciosFijos.servicios.int_LA || false,
+            int_TE: props.prItemEditandoServiciosFijos.servicios.int_TE || false,
+            int_FI: props.prItemEditandoServiciosFijos.servicios.int_FI || false,
+            int_FE: props.prItemEditandoServiciosFijos.servicios.int_FE || false,
+            int_AB: props.prItemEditandoServiciosFijos.servicios.int_AB || false,
+            int_MA: props.prItemEditandoServiciosFijos.servicios.int_MA || false,
+            int_PO: props.prItemEditandoServiciosFijos.servicios.int_PO || false,
+            int_BA: props.prItemEditandoServiciosFijos.servicios.int_BA || false,
+            int_FT: props.prItemEditandoServiciosFijos.servicios.int_FT || false,
+            int_C3: props.prItemEditandoServiciosFijos.servicios.int_C3 || false,
+            int_C2: props.prItemEditandoServiciosFijos.servicios.int_C2 || false,
+            int_ES: props.prItemEditandoServiciosFijos.servicios.int_ES || false,
+            int_PA: props.prItemEditandoServiciosFijos.servicios.int_PA || false,
+            trab_TO: props.prItemEditandoServiciosFijos.servicios.trab_TO || '',
+            trab_CR: props.prItemEditandoServiciosFijos.servicios.trab_CR || '',
+            trab_CE: props.prItemEditandoServiciosFijos.servicios.trab_CE || '',
+            trab_CI: props.prItemEditandoServiciosFijos.servicios.trab_CI || '',
+            trab_MO: props.prItemEditandoServiciosFijos.servicios.trab_MO || '',
+            trab_OF: props.prItemEditandoServiciosFijos.servicios.trab_OF || '',
+            trab_AL: props.prItemEditandoServiciosFijos.servicios.trab_AL || '',
+            trab_LA: props.prItemEditandoServiciosFijos.servicios.trab_LA || '',
+            trab_TE: props.prItemEditandoServiciosFijos.servicios.trab_TE || '',
+            trab_FI: props.prItemEditandoServiciosFijos.servicios.trab_FI || '',
+            trab_FE: props.prItemEditandoServiciosFijos.servicios.trab_FE || '',
+            trab_AB: props.prItemEditandoServiciosFijos.servicios.trab_AB || '',
+            trab_MA: props.prItemEditandoServiciosFijos.servicios.trab_MA || '',
+            trab_PO: props.prItemEditandoServiciosFijos.servicios.trab_PO || '',
+            trab_BA: props.prItemEditandoServiciosFijos.servicios.trab_BA || '',
+            trab_FT: props.prItemEditandoServiciosFijos.servicios.trab_FT || '',
+            trab_C3: props.prItemEditandoServiciosFijos.servicios.trab_C3 || '',
+            trab_C2: props.prItemEditandoServiciosFijos.servicios.trab_C2 || '',
+            trab_ES: props.prItemEditandoServiciosFijos.servicios.trab_ES || '',
+            trab_PA: props.prItemEditandoServiciosFijos.servicios.trab_PA || ''
+        },
+        bloqueado: props.prItemEditandoServiciosFijos.bloqueado || ''
     });
 
     //useEffect
@@ -151,7 +199,7 @@ const ServiciosFijos = (props) => {
     //retorno componentes
 
     const retornaTipoServicioFijoCuadrantes = (tipo, index) => {
-        let checkeado, laLabelSw, elId, elValue, elPrecioHora, laClase, elValueVariaciones, laVariacion, elValueDia, elDia, elActivo, elValueActivo, desactivadoDia;
+        let checkeado, laLabelSw, elId, elValue, elPrecioHora, laClase, elValueVariaciones, laVariacion, elValueDia, elDia, elActivo, elValueActivo, desactivadoDia, elValueInt, elInt, elValueTrab, elTrab;
         switch (tipo.value) {
             case 'TOL':
                 checkeado = props.prItemEditandoServiciosFijos.switch.TO;
@@ -161,10 +209,14 @@ const ServiciosFijos = (props) => {
                 elValueVariaciones = props.prItemEditandoServiciosFijos.servicios.variacion_TO || '';
                 elValueDia = props.prItemEditandoServiciosFijos.servicios.diaVariacion_TO || '';
                 elValueActivo = props.prItemEditandoServiciosFijos.servicios.activo_TO || '';
+                elValueInt = props.prItemEditandoServiciosFijos.servicios.int_TO || false;
+                elValueTrab = props.prItemEditandoServiciosFijos.servicios.trab_TO || '';
                 elPrecioHora = 'precioHora_TO';
                 laVariacion = 'variacion_TO';
                 elDia = 'diaVariacion_TO';
                 elActivo = 'activo_TO';
+                elInt = 'int_TO';
+                elTrab = 'trab_TO';
                 laClase =
                     (props.prItemEditandoServiciosFijos.servicios.activo_TO === 'no') ?
                         classes.fondoInactivoServicioFijo : classes.paper;
@@ -178,10 +230,14 @@ const ServiciosFijos = (props) => {
                 elValueVariaciones = props.prItemEditandoServiciosFijos.servicios.variacion_CR || '';
                 elValueDia = props.prItemEditandoServiciosFijos.servicios.diaVariacion_CR || '';
                 elValueActivo = props.prItemEditandoServiciosFijos.servicios.activo_CR || '';
+                elValueInt = props.prItemEditandoServiciosFijos.servicios.int_CR || false;
+                elValueTrab = props.prItemEditandoServiciosFijos.servicios.trab_CR || '';
                 elPrecioHora = 'precioHora_CR';
                 laVariacion = 'variacion_CR';
                 elDia = 'diaVariacion_CR';
                 elActivo = 'activo_CR';
+                elInt = 'int_CR';
+                elTrab = 'trab_CR';
                 laClase =
                     (props.prItemEditandoServiciosFijos.servicios.activo_CR === 'no') ?
                         classes.fondoInactivoServicioFijo : classes.paper;
@@ -195,10 +251,14 @@ const ServiciosFijos = (props) => {
                 elValueVariaciones = props.prItemEditandoServiciosFijos.servicios.variacion_CE || '';
                 elValueDia = props.prItemEditandoServiciosFijos.servicios.diaVariacion_CE || '';
                 elValueActivo = props.prItemEditandoServiciosFijos.servicios.activo_CE || '';
+                elValueInt = props.prItemEditandoServiciosFijos.servicios.int_CE || false;
+                elValueTrab = props.prItemEditandoServiciosFijos.servicios.trab_CE || '';
                 elPrecioHora = 'precioHora_CE';
                 laVariacion = 'variacion_CE';
                 elDia = 'diaVariacion_CE';
                 elActivo = 'activo_CE';
+                elInt = 'int_CE';
+                elTrab = 'trab_CE';
                 laClase =
                     (props.prItemEditandoServiciosFijos.servicios.activo_CE === 'no') ?
                         classes.fondoInactivoServicioFijo : classes.paper;
@@ -212,10 +272,14 @@ const ServiciosFijos = (props) => {
                 elValueVariaciones = props.prItemEditandoServiciosFijos.servicios.variacion_CI || '';
                 elValueDia = props.prItemEditandoServiciosFijos.servicios.diaVariacion_CI || '';
                 elValueActivo = props.prItemEditandoServiciosFijos.servicios.activo_CI || '';
+                elValueInt = props.prItemEditandoServiciosFijos.servicios.int_CI || false;
+                elValueTrab = props.prItemEditandoServiciosFijos.servicios.trab_CI || '';
                 elPrecioHora = 'precioHora_CI';
                 laVariacion = 'variacion_CI';
                 elDia = 'diaVariacion_CI';
                 elActivo = 'activo_CI';
+                elInt = 'int_CI';
+                elTrab = 'trab_CI';
                 laClase =
                     (props.prItemEditandoServiciosFijos.servicios.activo_CI === 'no') ?
                         classes.fondoInactivoServicioFijo : classes.paper;
@@ -229,10 +293,14 @@ const ServiciosFijos = (props) => {
                 elValueVariaciones = props.prItemEditandoServiciosFijos.servicios.variacion_MO || '';
                 elValueDia = props.prItemEditandoServiciosFijos.servicios.diaVariacion_MO || '';
                 elValueActivo = props.prItemEditandoServiciosFijos.servicios.activo_MO || '';
+                elValueInt = props.prItemEditandoServiciosFijos.servicios.int_MO || false;
+                elValueTrab = props.prItemEditandoServiciosFijos.servicios.trab_MO || '';
                 elPrecioHora = 'precioHora_MO';
                 laVariacion = 'variacion_MO';
                 elDia = 'diaVariacion_MO';
                 elActivo = 'activo_MO';
+                elInt = 'int_MO';
+                elTrab = 'trab_MO';
                 laClase =
                     (props.prItemEditandoServiciosFijos.servicios.activo_MO === 'no') ?
                         classes.fondoInactivoServicioFijo : classes.paper;
@@ -246,10 +314,14 @@ const ServiciosFijos = (props) => {
                 elValueVariaciones = props.prItemEditandoServiciosFijos.servicios.variacion_OF || '';
                 elValueDia = props.prItemEditandoServiciosFijos.servicios.diaVariacion_OF || '';
                 elValueActivo = props.prItemEditandoServiciosFijos.servicios.activo_OF || '';
+                elValueInt = props.prItemEditandoServiciosFijos.servicios.int_OF || false;
+                elValueTrab = props.prItemEditandoServiciosFijos.servicios.trab_OF || '';
                 elPrecioHora = 'precioHora_OF';
                 laVariacion = 'variacion_OF';
                 elDia = 'diaVariacion_OF';
                 elActivo = 'activo_OF';
+                elInt = 'int_OF';
+                elTrab = 'trab_OF';
                 laClase =
                     (props.prItemEditandoServiciosFijos.servicios.activo_OF === 'no') ?
                         classes.fondoInactivoServicioFijo : classes.paper;
@@ -263,10 +335,14 @@ const ServiciosFijos = (props) => {
                 elValueVariaciones = props.prItemEditandoServiciosFijos.servicios.variacion_AL || '';
                 elValueDia = props.prItemEditandoServiciosFijos.servicios.diaVariacion_AL || '';
                 elValueActivo = props.prItemEditandoServiciosFijos.servicios.activo_AL || '';
+                elValueInt = props.prItemEditandoServiciosFijos.servicios.int_AL || false;
+                elValueTrab = props.prItemEditandoServiciosFijos.servicios.trab_AL || '';
                 elPrecioHora = 'precioHora_AL';
                 laVariacion = 'variacion_AL';
                 elDia = 'diaVariacion_AL';
                 elActivo = 'activo_AL';
+                elInt = 'int_AL';
+                elTrab = 'trab_AL';
                 laClase =
                     (props.prItemEditandoServiciosFijos.servicios.activo_AL === 'no') ?
                         classes.fondoInactivoServicioFijo : classes.paper;
@@ -280,10 +356,14 @@ const ServiciosFijos = (props) => {
                 elValueVariaciones = props.prItemEditandoServiciosFijos.servicios.variacion_LA || '';
                 elValueDia = props.prItemEditandoServiciosFijos.servicios.diaVariacion_LA || '';
                 elValueActivo = props.prItemEditandoServiciosFijos.servicios.activo_LA || '';
+                elValueInt = props.prItemEditandoServiciosFijos.servicios.int_LA || false;
+                elValueTrab = props.prItemEditandoServiciosFijos.servicios.trab_LA || '';
                 elPrecioHora = 'precioHora_LA';
                 laVariacion = 'variacion_LA';
                 elDia = 'diaVariacion_LA';
                 elActivo = 'activo_LA';
+                elInt = 'int_LA';
+                elTrab = 'trab_LA';
                 laClase =
                     (props.prItemEditandoServiciosFijos.servicios.activo_LA === 'no') ?
                         classes.fondoInactivoServicioFijo : classes.paper;
@@ -297,10 +377,14 @@ const ServiciosFijos = (props) => {
                 elValueVariaciones = props.prItemEditandoServiciosFijos.servicios.variacion_TE || '';
                 elValueDia = props.prItemEditandoServiciosFijos.servicios.diaVariacion_TE || '';
                 elValueActivo = props.prItemEditandoServiciosFijos.servicios.activo_TE || '';
+                elValueInt = props.prItemEditandoServiciosFijos.servicios.int_TE || false;
+                elValueTrab = props.prItemEditandoServiciosFijos.servicios.trab_TE || '';
                 elPrecioHora = 'precioHora_TE';
                 laVariacion = 'variacion_TE';
                 elDia = 'diaVariacion_TE';
                 elActivo = 'activo_TE';
+                elInt = 'int_TE';
+                elTrab = 'trab_TE';
                 laClase =
                     (props.prItemEditandoServiciosFijos.servicios.activo_TE === 'no') ?
                         classes.fondoInactivoServicioFijo : classes.paper;
@@ -314,10 +398,14 @@ const ServiciosFijos = (props) => {
                 elValueVariaciones = props.prItemEditandoServiciosFijos.servicios.variacion_FI || '';
                 elValueDia = props.prItemEditandoServiciosFijos.servicios.diaVariacion_FI || '';
                 elValueActivo = props.prItemEditandoServiciosFijos.servicios.activo_FI || '';
+                elValueInt = props.prItemEditandoServiciosFijos.servicios.int_FI || false;
+                elValueTrab = props.prItemEditandoServiciosFijos.servicios.trab_FI || '';
                 elPrecioHora = 'precioHora_FI';
                 laVariacion = 'variacion_FI';
                 elDia = 'diaVariacion_FI';
                 elActivo = 'activo_FI';
+                elInt = 'int_FI';
+                elTrab = 'trab_FI';
                 laClase =
                     (props.prItemEditandoServiciosFijos.servicios.activo_FI === 'no') ?
                         classes.fondoInactivoServicioFijo : classes.paper;
@@ -331,10 +419,14 @@ const ServiciosFijos = (props) => {
                 elValueVariaciones = props.prItemEditandoServiciosFijos.servicios.variacion_FE || '';
                 elValueDia = props.prItemEditandoServiciosFijos.servicios.diaVariacion_FE || '';
                 elValueActivo = props.prItemEditandoServiciosFijos.servicios.activo_FE || '';
+                elValueInt = props.prItemEditandoServiciosFijos.servicios.int_FE || false;
+                elValueTrab = props.prItemEditandoServiciosFijos.servicios.trab_FE || '';
                 elPrecioHora = 'precioHora_FE';
                 laVariacion = 'variacion_FE';
                 elDia = 'diaVariacion_FE';
                 elActivo = 'activo_FE';
+                elInt = 'int_FE';
+                elTrab = 'trab_FE';
                 laClase =
                     (props.prItemEditandoServiciosFijos.servicios.activo_FE === 'no') ?
                         classes.fondoInactivoServicioFijo : classes.paper;
@@ -348,10 +440,14 @@ const ServiciosFijos = (props) => {
                 elValueVariaciones = props.prItemEditandoServiciosFijos.servicios.variacion_AB || '';
                 elValueDia = props.prItemEditandoServiciosFijos.servicios.diaVariacion_AB || '';
                 elValueActivo = props.prItemEditandoServiciosFijos.servicios.activo_AB || '';
+                elValueInt = props.prItemEditandoServiciosFijos.servicios.int_AB || false;
+                elValueTrab = props.prItemEditandoServiciosFijos.servicios.trab_AB || '';
                 elPrecioHora = 'precioHora_AB';
                 laVariacion = 'variacion_AB';
                 elDia = 'diaVariacion_AB';
                 elActivo = 'activo_AB';
+                elInt = 'int_AB';
+                elTrab = 'trab_AB';
                 laClase =
                     (props.prItemEditandoServiciosFijos.servicios.activo_AB === 'no') ?
                         classes.fondoInactivoServicioFijo : classes.paper;
@@ -365,10 +461,14 @@ const ServiciosFijos = (props) => {
                 elValueVariaciones = props.prItemEditandoServiciosFijos.servicios.variacion_MA || '';
                 elValueDia = props.prItemEditandoServiciosFijos.servicios.diaVariacion_MA || '';
                 elValueActivo = props.prItemEditandoServiciosFijos.servicios.activo_MA || '';
+                elValueInt = props.prItemEditandoServiciosFijos.servicios.int_MA || false;
+                elValueTrab = props.prItemEditandoServiciosFijos.servicios.trab_MA || '';
                 elPrecioHora = 'precioHora_MA';
                 laVariacion = 'variacion_MA';
                 elDia = 'diaVariacion_MA';
                 elActivo = 'activo_MA';
+                elInt = 'int_MA';
+                elTrab = 'trab_MA';
                 laClase =
                     (props.prItemEditandoServiciosFijos.servicios.activo_MA === 'no') ?
                         classes.fondoInactivoServicioFijo : classes.paper;
@@ -382,10 +482,14 @@ const ServiciosFijos = (props) => {
                 elValueVariaciones = props.prItemEditandoServiciosFijos.servicios.variacion_PO || '';
                 elValueDia = props.prItemEditandoServiciosFijos.servicios.diaVariacion_PO || '';
                 elValueActivo = props.prItemEditandoServiciosFijos.servicios.activo_PO || '';
+                elValueInt = props.prItemEditandoServiciosFijos.servicios.int_PO || false;
+                elValueTrab = props.prItemEditandoServiciosFijos.servicios.trab_PO || '';
                 elPrecioHora = 'precioHora_PO';
                 laVariacion = 'variacion_PO';
                 elDia = 'diaVariacion_PO';
                 elActivo = 'activo_PO';
+                elInt = 'int_PO';
+                elTrab = 'trab_PO';
                 laClase =
                     (props.prItemEditandoServiciosFijos.servicios.activo_PO === 'no') ?
                         classes.fondoInactivoServicioFijo : classes.paper;
@@ -399,10 +503,14 @@ const ServiciosFijos = (props) => {
                 elValueVariaciones = props.prItemEditandoServiciosFijos.servicios.variacion_BA || '';
                 elValueDia = props.prItemEditandoServiciosFijos.servicios.diaVariacion_BA || '';
                 elValueActivo = props.prItemEditandoServiciosFijos.servicios.activo_BA || '';
+                elValueInt = props.prItemEditandoServiciosFijos.servicios.int_BA || false;
+                elValueTrab = props.prItemEditandoServiciosFijos.servicios.trab_BA || '';
                 elPrecioHora = 'precioHora_BA';
                 laVariacion = 'variacion_BA';
                 elDia = 'diaVariacion_BA';
                 elActivo = 'activo_BA';
+                elInt = 'int_BA';
+                elTrab = 'trab_BA';
                 laClase =
                     (props.prItemEditandoServiciosFijos.servicios.activo_BA === 'no') ?
                         classes.fondoInactivoServicioFijo : classes.paper;
@@ -416,10 +524,14 @@ const ServiciosFijos = (props) => {
                 elValueVariaciones = props.prItemEditandoServiciosFijos.servicios.variacion_FT || '';
                 elValueDia = props.prItemEditandoServiciosFijos.servicios.diaVariacion_FT || '';
                 elValueActivo = props.prItemEditandoServiciosFijos.servicios.activo_FT || '';
+                elValueInt = props.prItemEditandoServiciosFijos.servicios.int_FT || false;
+                elValueTrab = props.prItemEditandoServiciosFijos.servicios.trab_FT || '';
                 elPrecioHora = 'precioHora_FT';
                 laVariacion = 'variacion_FT';
                 elDia = 'diaVariacion_FT';
                 elActivo = 'activo_FT';
+                elInt = 'int_FT';
+                elTrab = 'trab_FT';
                 laClase =
                     (props.prItemEditandoServiciosFijos.servicios.activo_FT === 'no') ?
                         classes.fondoInactivoServicioFijo : classes.paper;
@@ -433,10 +545,14 @@ const ServiciosFijos = (props) => {
                 elValueVariaciones = props.prItemEditandoServiciosFijos.servicios.variacion_C3 || '';
                 elValueDia = props.prItemEditandoServiciosFijos.servicios.diaVariacion_C3 || '';
                 elValueActivo = props.prItemEditandoServiciosFijos.servicios.activo_C3 || '';
+                elValueInt = props.prItemEditandoServiciosFijos.servicios.int_C3 || false;
+                elValueTrab = props.prItemEditandoServiciosFijos.servicios.trab_C3 || '';
                 elPrecioHora = 'precioHora_C3';
                 laVariacion = 'variacion_C3';
                 elDia = 'diaVariacion_C3';
                 elActivo = 'activo_C3';
+                elInt = 'int_C3';
+                elTrab = 'trab_C3';
                 laClase =
                     (props.prItemEditandoServiciosFijos.servicios.activo_C3 === 'no') ?
                         classes.fondoInactivoServicioFijo : classes.paper;
@@ -450,10 +566,14 @@ const ServiciosFijos = (props) => {
                 elValueVariaciones = props.prItemEditandoServiciosFijos.servicios.variacion_C2 || '';
                 elValueDia = props.prItemEditandoServiciosFijos.servicios.diaVariacion_C2 || '';
                 elValueActivo = props.prItemEditandoServiciosFijos.servicios.activo_C2 || '';
+                elValueInt = props.prItemEditandoServiciosFijos.servicios.int_C2 || false;
+                elValueTrab = props.prItemEditandoServiciosFijos.servicios.trab_C2 || '';
                 elPrecioHora = 'precioHora_C2';
                 laVariacion = 'variacion_C2';
                 elDia = 'diaVariacion_C2';
                 elActivo = 'activo_C2';
+                elInt = 'int_C2';
+                elTrab = 'trab_C2';
                 laClase =
                     (props.prItemEditandoServiciosFijos.servicios.activo_C2 === 'no') ?
                         classes.fondoInactivoServicioFijo : classes.paper;
@@ -467,10 +587,14 @@ const ServiciosFijos = (props) => {
                 elValueVariaciones = props.prItemEditandoServiciosFijos.servicios.variacion_ES || '';
                 elValueDia = props.prItemEditandoServiciosFijos.servicios.diaVariacion_ES || '';
                 elValueActivo = props.prItemEditandoServiciosFijos.servicios.activo_ES || '';
+                elValueInt = props.prItemEditandoServiciosFijos.servicios.int_ES || false;
+                elValueTrab = props.prItemEditandoServiciosFijos.servicios.trab_ES || '';
                 elPrecioHora = 'precioHora_ES';
                 laVariacion = 'variacion_ES';
                 elDia = 'diaVariacion_ES';
                 elActivo = 'activo_ES';
+                elInt = 'int_ES';
+                elTrab = 'trab_ES';
                 laClase =
                     (props.prItemEditandoServiciosFijos.servicios.activo_ES === 'no') ?
                         classes.fondoInactivoServicioFijo : classes.paper;
@@ -484,10 +608,14 @@ const ServiciosFijos = (props) => {
                 elValueVariaciones = props.prItemEditandoServiciosFijos.servicios.variacion_PA || '';
                 elValueDia = props.prItemEditandoServiciosFijos.servicios.diaVariacion_PA || '';
                 elValueActivo = props.prItemEditandoServiciosFijos.servicios.activo_PA || '';
+                elValueInt = props.prItemEditandoServiciosFijos.servicios.int_PA || false;
+                elValueTrab = props.prItemEditandoServiciosFijos.servicios.trab_PA || '';
                 elPrecioHora = 'precioHora_PA';
                 laVariacion = 'variacion_PA';
                 elDia = 'diaVariacion_PA';
                 elActivo = 'activo_PA';
+                elInt = 'int_PA';
+                elTrab = 'trab_PA';
                 laClase =
                     (props.prItemEditandoServiciosFijos.servicios.activo_PA === 'no') ?
                         classes.fondoInactivoServicioFijo : classes.paper;
@@ -503,10 +631,10 @@ const ServiciosFijos = (props) => {
                 alignItems="center"
                 spacing={2}
                 className={laClase}
-                style={{ height: 80, paddingTop: 5, paddingBottom: 10, paddingRight: 10, paddingLeft: 10, marginBottom: 0 }}
+                style={{ height: 165, paddingTop: 5, paddingBottom: 10, paddingRight: 10, paddingLeft: 10, marginBottom: 15 }}
                 key={'formServicio' + index}
             >
-                <Grid item xs={4} >
+                <Grid item xs={5} >
                     <FormControlLabel
                         control={
                             <Switch
@@ -521,101 +649,165 @@ const ServiciosFijos = (props) => {
                         labelPlacement="end"
                     />
                 </Grid>
-                <Grid item xs={2}>
-                    <FormControl
-                        variant="outlined"
-                        className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
-                        size="small"
+                <Grid item xs={7}>
+                    <Grid
+                        container
+                        direction="row"
+                        alignItems="center"
+                        spacing={1}
+                        style={{ marginBottom: -10, marginTop: -10 }}
                     >
-                        <InputLabel>Precio</InputLabel>
-                        <OutlinedInput
-                            fullWidth
-                            id={elId}
-                            value={elValue || ''}
-                            onChange={handleChangeFormConfiguracionServiciosFijos('input', elPrecioHora)}
-                            labelWidth={50}
-                            startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                        />
-                    </FormControl>
-                </Grid>
-                <Grid item xs={3}>
-                    <FormControl
-                        variant="outlined"
-                        className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
-                        size="small"
-                    >
-                        <InputLabel>Variaciones</InputLabel>
-                        <Select
-                            fullWidth
-                            value={elValueVariaciones || ''}
-                            onChange={handleChangeFormConfiguracionServiciosFijos('select', laVariacion)}
-                            helpertext="Selecciona variaciones"
-                            label="Variaciones"
+                        <RadioGroup
+                            value={elValueActivo}
+                            onChange={handleChangeFormConfiguracionServiciosFijos('radio', elActivo)}
+                            className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
+                            style={{ marginRight: 15 }}
                         >
-                            {variacionesServiciosFijos.map((option) => (
-                                <MenuItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                </Grid>
-                <Grid item xs={2}>
-                    <FormControl
-                        variant="outlined"
-                        className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
-                        size="small"
-                    >
-                        <InputLabel>Día</InputLabel>
-                        <Select
-                            fullWidth
-                            value={elValueDia || ''}
-                            onChange={handleChangeFormConfiguracionServiciosFijos('select', elDia)}
-                            helpertext="Selecciona Día"
-                            label="Día"
-                            disabled={desactivadoDia}
-                        >
-                            <MenuItem value=''>
-                                <em>No</em>
-                            </MenuItem>
-                            {diasSemana.map((option) => (
-                                <MenuItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                </Grid>
-                <Grid item xs={1}>
-                    <RadioGroup
-                        value={elValueActivo}
-                        onChange={handleChangeFormConfiguracionServiciosFijos('radio', elActivo)}
-                        className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
-                        style={{ marginTop: -10, marginBottom: -10, marginLeft: -12 }}
-                    >
+                            <FormControlLabel
+                                value="si"
+                                control={
+                                    <Radio
+                                        size='small'
+                                    />
+                                }
+                                label={<Typography style={{ fontSize: '0.7rem', marginLeft: -5 }}>ACTIVO</Typography>}
+                                labelPlacement="end"
+                            />
+                            <FormControlLabel
+                                value="no"
+                                control={
+                                    <Radio
+                                        size='small'
+                                    />
+                                }
+                                label={<Typography style={{ fontSize: '0.7rem', marginLeft: -5 }}>INACTIVO</Typography>}
+                                labelPlacement="end"
+                            />
+                        </RadioGroup>
                         <FormControlLabel
-                            value="si"
+                            className={!checkeado ? classes.displayNone : null}
                             control={
-                                <Radio
+                                <Checkbox
                                     size='small'
+                                    icon={<RadioButtonUncheckedIcon />} checkedIcon={<RadioButtonCheckedIcon />}
+                                    checked={elValueInt}
+                                    onChange={handleChangeFormConfiguracionServiciosFijos('check', elInt)}
+                                    name="checkedComputa-cuadrante"
+                                    color="secondary"
                                 />
                             }
-                            label={<Typography style={{ fontSize: '0.7rem', marginLeft: -5 }}>ON</Typography>}
-                            labelPlacement="end"
-                            style={{ marginBottom: -20 }}
-
+                            label={<Typography style={{ fontSize: '0.7rem', marginLeft: -5 }}>INTEGRADO EN CÓMPUTO</Typography>}
                         />
-                        <FormControlLabel
-                            value="no"
-                            control={
-                                <Radio
-                                    size='small'
+                    </Grid>
+                    <Grid
+                        container
+                        direction="row"
+                        alignItems="center"
+                        spacing={1}
+                    >
+                        <Grid item xs={6}>
+                            <FormControl
+                                variant="outlined"
+                                className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
+                                size="small"
+                                disabled={elValueInt}
+                            >
+                                <InputLabel>Precio</InputLabel>
+                                <OutlinedInput
+                                    fullWidth
+                                    id={elId}
+                                    value={elValue || ''}
+                                    onChange={handleChangeFormConfiguracionServiciosFijos('input', elPrecioHora)}
+                                    labelWidth={50}
+                                    startAdornment={<InputAdornment position="start">€</InputAdornment>}
                                 />
-                            }
-                            label={<Typography style={{ fontSize: '0.7rem', marginLeft: -5 }}>OFF</Typography>}
-                            labelPlacement="end"
-                        />
-                    </RadioGroup>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <FormControl
+                                variant="outlined"
+                                className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
+                                size="small"                               
+                            >
+                                <InputLabel>Trabajador</InputLabel>
+                                <Select
+                                    fullWidth
+                                    id="form-trabajadorSF-cuadrantes"
+                                    label="Trabajador"
+                                    value={elValueTrab}
+                                    onChange={handleChangeFormConfiguracionServiciosFijos('select', elTrab)}
+                                    helpertext="Selecciona trabajador"
+                                >
+                                    <MenuItem value=''>
+                                        <em>Sin trabajador</em>
+                                    </MenuItem>
+                                    {
+                                        arrayTrabajadoresSubcategoria.map((option) => (
+                                            <MenuItem key={option.id} value={option.id}>
+                                                {option.nombre}
+                                            </MenuItem>
+                                        ))
+                                    }
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                    </Grid>
+                    <Grid
+                        container
+                        direction="row"
+                        alignItems="center"
+                        spacing={1}
+                    >
+                        <Grid item xs={6}>
+                            <FormControl
+                                variant="outlined"
+                                className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
+                                size="small"
+                                disabled={elValueInt}
+                            >
+                                <InputLabel>Variaciones</InputLabel>
+                                <Select
+                                    fullWidth
+                                    value={elValueVariaciones || ''}
+                                    onChange={handleChangeFormConfiguracionServiciosFijos('select', laVariacion)}
+                                    helpertext="Selecciona variaciones"
+                                    label="Variaciones"
+                                >
+                                    {variacionesServiciosFijos.map((option) => (
+                                        <MenuItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <FormControl
+                                variant="outlined"
+                                className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
+                                size="small"
+                            >
+                                <InputLabel>Día</InputLabel>
+                                <Select
+                                    fullWidth
+                                    value={elValueDia || ''}
+                                    onChange={handleChangeFormConfiguracionServiciosFijos('select', elDia)}
+                                    helpertext="Selecciona Día"
+                                    label="Día"
+                                    disabled={elValueInt ? elValueInt : desactivadoDia}
+                                >
+                                    <MenuItem value=''>
+                                        <em>No</em>
+                                    </MenuItem>
+                                    {diasSemana.map((option) => (
+                                        <MenuItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                    </Grid>
                 </Grid>
             </Grid>
         )
@@ -626,6 +818,19 @@ const ServiciosFijos = (props) => {
             {tiposDeServicio.map((tipo, index) => (
                 retornaTipoServicioFijoCuadrantes(tipo, index)
             ))}
+            <Box className={clsx(classes.boxChekin, classes.mb20)}>
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={props.prItemEditandoServiciosFijos.bloqueado === 'si' ? true : false}
+                            onChange={handleChangeFormConfiguracionServiciosFijos('check2', 'bloqueado')}
+                            name="checkedBloqueadoSF"
+                            color="secondary"
+                        />
+                    }
+                    label={<Typography className={classes.colorText} style={{ fontSize: '0.9rem' }}>Bloquear cálculo cómputo Servicios Extra.</Typography>}
+                />
+            </Box>
             {/* {console.log('valoresPreviosServicios: ',valoresPreviosServicios)} */}
         </div>
     )

@@ -1,11 +1,12 @@
 import axios from 'axios';
 import Constantes from "../constantes";
 import * as XLSX from "xlsx";
+import { stringify } from 'zipson';
 
 //constantes
 const rutaApi = Constantes.RUTA_API;
 const meses = Constantes.MESES;
-const fileExtension = ".xls";
+const fileExtension = ".xlsx";
 
 const dataInicial = {
     loadingApp: false,
@@ -39,8 +40,9 @@ const dataInicial = {
     laDataFAC: [],
     laDataLFA: [],
     finalizandoLoteEstado: false,
-    controladores: []
-}
+    controladores: [],
+    cuadrantesIteradosActualizar: [],
+};
 
 //types
 const LOADING_APP = 'LOADING_APP';
@@ -66,6 +68,7 @@ const FINALIZANDO_LOTE = 'FINALIZANDO_LOTE';
 const OBTENER_NUMERO_RECIBOS_EXITO = 'OBTENER_NUMERO_RECIBOS_EXITO';
 const RESETEA_NUMERO_RECIBOS = 'RESETEA_NUMERO_RECIBOS';
 const SET_NEWCONTROLLER = 'SET_NEWCONTROLLER';
+const SET_CUADRANTESITERADOSACTUALIZAR = 'SET_CUADRANTESITERADOSACTUALIZAR';
 
 //reducer
 export default function appReducer(state = dataInicial, action) {
@@ -116,6 +119,8 @@ export default function appReducer(state = dataInicial, action) {
             return { ...state, numeroRecibos: null }
         case SET_NEWCONTROLLER:
             return { ...state, controladores: action.payload.array }
+        case SET_CUADRANTESITERADOSACTUALIZAR:
+            return { ...state, cuadrantesIteradosActualizar: [...state.cuadrantesIteradosActualizar, action.payload.elementoArray3] }       
         default:
             return { ...state }
     }
@@ -155,7 +160,7 @@ export const retornaHoraRangoAccion = (laHora) => (dispatch, getState) => {
         const hora = laHora.getHours();
         const minuto = laHora.getMinutes();
         const laHoraRetornada = hora + ':' + minuto;
-        return laHoraRetornada;
+        return laHoraRetornada;       
     }
 };
 
@@ -683,7 +688,7 @@ const exportarAExcel = (apiData, fileName) => {
     XLSX.writeFile(wb, fileName + fileExtension)
 };
 
-export const retornaTextoConceptoServicio = (objetoTotales, servicio, horas) => (dispatch, getState) => {
+export const retornaTextoConceptoServicioAccion = (objetoTotales, servicio, horas) => (dispatch, getState) => {
     let arrayConceptos = [];
     if (servicio) {
         if (servicio === 'MT') {
@@ -923,7 +928,156 @@ export const retornaTextoConceptoServicio = (objetoTotales, servicio, horas) => 
     return retornoConcepto
 };
 
-export const generarArchivosXLSAccion = (numFactusol, centro, objetoConceptos) => async (dispatch, getState) => {
+const retornaArrayElementosAccion = (objetoConceptos) => (dispatch, getState) => {
+    let arrayElementos = [];
+    let retornoServicios = [];
+    if (objetoConceptos.MT) {
+        if (objetoConceptos.LH) {
+            retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', 'LH'));
+        };
+        if (objetoConceptos.EH) {
+            retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', 'EH'));
+        };
+        if (objetoConceptos.PH) {
+            retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', 'PH'));
+        };
+        if (objetoConceptos.NH) {
+            retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', 'NH'));
+        };
+        if (objetoConceptos.RH) {
+            retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', 'RH'));
+        };
+        if (objetoConceptos.L1H) {
+            retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', 'L1H'));
+        };
+        if (objetoConceptos.L2H) {
+            retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', 'L2H'));
+        };
+        if (objetoConceptos.FH) {
+            retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', 'FH'));
+        };
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.MT, objetoConceptos.MT, 1]);
+    };
+    if (objetoConceptos.LT) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'LT', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.LT, objetoConceptos.LPr, objetoConceptos.LH]);
+    };
+    if (objetoConceptos.ET) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'ET', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.ET, objetoConceptos.EPr, objetoConceptos.EH]);
+    };
+    if (objetoConceptos.PT) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'PT', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.PT, objetoConceptos.PPr, objetoConceptos.PH]);
+    };
+    if (objetoConceptos.NT) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'NT', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.NT, objetoConceptos.NPr, objetoConceptos.NH]);
+    };
+    if (objetoConceptos.RT) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'RT', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.RT, objetoConceptos.RPr, objetoConceptos.RH]);
+    };
+    if (objetoConceptos.L1T) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'L1T', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.L1T, objetoConceptos.L1Pr, objetoConceptos.L1H]);
+    };
+    if (objetoConceptos.L2T) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'L2T', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.L2T, objetoConceptos.L2Pr, objetoConceptos.L2H]);
+    };
+    if (objetoConceptos.FT) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'FT', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.FT, objetoConceptos.FPr, objetoConceptos.FH]);
+    };
+    if (objetoConceptos.TOT) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'TOT', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.TOT, objetoConceptos.TOT, 1]);
+    };
+    if (objetoConceptos.CRT) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'CRT', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.CRT, objetoConceptos.CRT, 1]);
+    };
+    if (objetoConceptos.CET) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'CET', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.CET, objetoConceptos.CET, 1]);
+    };
+    if (objetoConceptos.CIT) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'CIT', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.CIT, objetoConceptos.CIT, 1]);
+    };
+    if (objetoConceptos.MOT) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MOT', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.MOT, objetoConceptos.MOT, 1]);
+    };
+    if (objetoConceptos.OFT) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'OFT', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.OFT, objetoConceptos.OFT, 1]);
+    };
+    if (objetoConceptos.ALT) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'ALT', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.ALT, objetoConceptos.ALT, 1]);
+    };
+    if (objetoConceptos.LAT) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'LAT', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.LAT, objetoConceptos.LAT, 1]);
+    };
+    if (objetoConceptos.TET) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'TET', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.TET, objetoConceptos.TET, 1]);
+    };
+    if (objetoConceptos.FIT) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'FIT', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.FIT, objetoConceptos.FIT, 1]);
+    };
+    if (objetoConceptos.FET) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'FET', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.FET, objetoConceptos.FET, 1]);
+    };
+    if (objetoConceptos.ABT) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'ABT', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.ABT, objetoConceptos.ABT, 1]);
+    };
+    if (objetoConceptos.MAT) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MAT', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.MAT, objetoConceptos.MAT, 1]);
+    };
+    if (objetoConceptos.POT) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'POT', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.POT, objetoConceptos.POT, 1]);
+    };
+    if (objetoConceptos.BAT) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'BAT', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.BAT, objetoConceptos.BAT, 1]);
+    };
+    if (objetoConceptos.FTT) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'FTT', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.FTT, objetoConceptos.FTT, 1]);
+    };
+    if (objetoConceptos.C3T) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'C3T', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.C3T, objetoConceptos.C3T, 1]);
+    };
+    if (objetoConceptos.C2T) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'C2T', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.C2T, objetoConceptos.C2T, 1]);
+    };
+    if (objetoConceptos.EST) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'EST', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.EST, objetoConceptos.EST, 1]);
+    };
+    if (objetoConceptos.PAT) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'PAT', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.PAT, objetoConceptos.PAT, 1]);
+    };
+    if (objetoConceptos.NUMCT) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'NUMCT', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], 0, 0, 0]);
+    };
+    return arrayElementos
+};
+
+export const generarArchivosXLSAccion = (numFactusol, objetoConceptos) => async (dispatch, getState) => {
     const elNumFactusol = parseInt(numFactusol) + 1;
     try {
         const objetoCentroParsear = {
@@ -935,7 +1089,8 @@ export const generarArchivosXLSAccion = (numFactusol, centro, objetoConceptos) =
             provincia: objetoConceptos.provincia,
             nif: objetoConceptos.nif,
             formaPago: objetoConceptos.formaPago,
-            total: parseFloat(objetoConceptos.total).toFixed(2)
+            total: parseFloat(objetoConceptos.total).toFixed(2),
+            totalMasIva: parseFloat(objetoConceptos.totalMasIva).toFixed(2)
         };
         let dateObj = new Date();
         let month = dateObj.getUTCMonth() + 1;
@@ -948,7 +1103,7 @@ export const generarArchivosXLSAccion = (numFactusol, centro, objetoConceptos) =
             '',
             fechaHoy,
             0,
-            '',
+            'GEN',
             1,
             '',
             parseInt(objetoCentroParsear.codigo),
@@ -959,6 +1114,9 @@ export const generarArchivosXLSAccion = (numFactusol, centro, objetoConceptos) =
             objetoCentroParsear.provincia,
             objetoCentroParsear.nif,
             0,
+            0,
+            '',
+            parseFloat(objetoCentroParsear.total),
             '',
             '',
             '',
@@ -988,6 +1146,7 @@ export const generarArchivosXLSAccion = (numFactusol, centro, objetoConceptos) =
             '',
             '',
             '',
+            21,
             '',
             '',
             '',
@@ -1001,11 +1160,7 @@ export const generarArchivosXLSAccion = (numFactusol, centro, objetoConceptos) =
             '',
             '',
             '',
-            '',
-            '',
-            '',
-            '',
-            objetoCentroParsear.total,
+            parseFloat(objetoCentroParsear.totalMasIva),
             objetoCentroParsear.formaPago,
             '',
             '',
@@ -1058,151 +1213,7 @@ export const generarArchivosXLSAccion = (numFactusol, centro, objetoConceptos) =
         ]];
         exportarAExcel(dataFAC, 'FAC');
         const dataLFA = [];
-        let arrayElementos = [];
-        let retornoServicios = [];
-        if (objetoConceptos.MT) {
-            if (objetoConceptos.LH) {
-                retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'MT', 'LH'));
-            };
-            if (objetoConceptos.EH) {
-                retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'MT', 'EH'));
-            };
-            if (objetoConceptos.PH) {
-                retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'MT', 'PH'));
-            };
-            if (objetoConceptos.NH) {
-                retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'MT', 'NH'));
-            };
-            if (objetoConceptos.RH) {
-                retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'MT', 'RH'));
-            };
-            if (objetoConceptos.L1H) {
-                retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'MT', 'L1H'));
-            };
-            if (objetoConceptos.L2H) {
-                retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'MT', 'L2H'));
-            };
-            if (objetoConceptos.FH) {
-                retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'MT', 'FH'));
-            };
-            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.MT, 1, 1]);
-        };
-        if (objetoConceptos.LT) {
-            retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'LT', null));
-            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.LT, objetoConceptos.LPr, objetoConceptos.LH]);
-        };
-        if (objetoConceptos.ET) {
-            retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'ET', null));
-            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.ET, objetoConceptos.EPr, objetoConceptos.EH]);
-        };
-        if (objetoConceptos.PT) {
-            retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'PT', null));
-            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.PT, objetoConceptos.PPr, objetoConceptos.PH]);
-        };
-        if (objetoConceptos.NT) {
-            retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'NT', null));
-            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.NT, objetoConceptos.NPr, objetoConceptos.NH]);
-        };
-        if (objetoConceptos.RT) {
-            retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'RT', null));
-            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.RT, objetoConceptos.RPr, objetoConceptos.RH]);
-        };
-        if (objetoConceptos.L1T) {
-            retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'L1T', null));
-            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.L1T, objetoConceptos.L1Pr, objetoConceptos.L1H]);
-        };
-        if (objetoConceptos.L2T) {
-            retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'L2T', null));
-            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.L2T, objetoConceptos.L2Pr, objetoConceptos.L2H]);
-        };
-        if (objetoConceptos.FT) {
-            retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'FT', null));
-            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.FT, objetoConceptos.FPr, objetoConceptos.FH]);
-        };
-        if (objetoConceptos.TOT) {
-            retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'TOT', null));
-            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.TOT, 1, 1]);
-        };
-        if (objetoConceptos.CRT) {
-            retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'CRT', null));
-            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.CRT, 1, 1]);
-        };
-        if (objetoConceptos.CET) {
-            retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'CET', null));
-            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.CET, 1, 1]);
-        };
-        if (objetoConceptos.CIT) {
-            retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'CIT', null));
-            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.CIT, 1, 1]);
-        };
-        if (objetoConceptos.MOT) {
-            retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'MOT', null));
-            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.MOT, 1, 1]);
-        };
-        if (objetoConceptos.OFT) {
-            retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'OFT', null));
-            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.OFT, 1, 1]);
-        };
-        if (objetoConceptos.ALT) {
-            retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'ALT', null));
-            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.ALT, 1, 1]);
-        };
-        if (objetoConceptos.LAT) {
-            retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'LAT', null));
-            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.LAT, 1, 1]);
-        };
-        if (objetoConceptos.TET) {
-            retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'TET', null));
-            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.TET, 1, 1]);
-        };
-        if (objetoConceptos.FIT) {
-            retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'FIT', null));
-            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.FIT, 1, 1]);
-        };
-        if (objetoConceptos.FET) {
-            retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'FET', null));
-            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.FET, 1, 1]);
-        };
-        if (objetoConceptos.ABT) {
-            retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'ABT', null));
-            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.ABT, 1, 1]);
-        };
-        if (objetoConceptos.MAT) {
-            retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'MAT', null));
-            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.MAT, 1, 1]);
-        };
-        if (objetoConceptos.POT) {
-            retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'POT', null));
-            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.POT, 1, 1]);
-        };
-        if (objetoConceptos.BAT) {
-            retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'BAT', null));
-            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.BAT, 1, 1]);
-        };
-        if (objetoConceptos.FTT) {
-            retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'FTT', null));
-            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.FTT, 1, 1]);
-        };
-        if (objetoConceptos.C3T) {
-            retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'C3T', null));
-            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.C3T, 1, 1]);
-        };
-        if (objetoConceptos.C2T) {
-            retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'C2T', null));
-            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.C2T, 1, 1]);
-        };
-        if (objetoConceptos.EST) {
-            retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'EST', null));
-            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.EST, 1, 1]);
-        };
-        if (objetoConceptos.PAT) {
-            retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'PAT', null));
-            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.PAT, 1, 1]);
-        };
-        if (objetoConceptos.NUMCT) {
-            retornoServicios = dispatch(retornaTextoConceptoServicio(null, 'NUMCT', null));
-            arrayElementos.push([retornoServicios[0], retornoServicios[1], 0, 0, 0]);
-        };
+        const arrayElementos = dispatch(retornaArrayElementosAccion(objetoConceptos));
         arrayElementos.forEach((elemento, index) => {
             dataLFA.push([
                 1,
@@ -1250,14 +1261,22 @@ export const generarArchivosXLSAccion = (numFactusol, centro, objetoConceptos) =
             type: ERROR_DE_CARGA_CONFIGURACION
         })
     }
-}
+};
 
-const actualizarCuadrante = async (datos) => {
+export const actualizarCuadrantesIteradosAccion = () => async (dispatch, getState) => {
+    const { usuarioActivo } = getState().variablesUsuario;
+    const { cuadrantesIteradosActualizar } = getState().variablesApp;
+    let fechaHoy = new Date().toLocaleString() + '';
+    let laFirmaActualizacion = fechaHoy + ' por ' + usuarioActivo.nombre.charAt(0).toUpperCase() + usuarioActivo.nombre.slice(1);
+    const datos = {
+        actualizacion: laFirmaActualizacion,
+        estado: 'facturado',
+        arrayCuadrantes: cuadrantesIteradosActualizar,
+    };
     try {
         const losDatos = JSON.stringify(datos);
         const formData = new FormData();
         formData.append("objeto", 'cuadrantes');
-        formData.append("id", datos.id);
         formData.append("datos", losDatos);
         let apiUrl = rutaApi + "actualizar_lote.php";
         await axios.post(apiUrl, formData, {
@@ -1268,311 +1287,211 @@ const actualizarCuadrante = async (datos) => {
     } catch (err) {
         console.error(err)
     }
-}
+};
 
-export const generarArchivosXLSLoteAccion = (numFactusol, arrayCuadrantes, laFirmaActualizacion) => (dispatch, getState) => {
+export const generarArchivosXLSLoteAccion = (numFactusol, arrayCuadrantes) => (dispatch, getState) => {
     dispatch({
         type: PROCESANDO_LOTE
     });
-    // try {
-    //     const elNumFactusol = parseInt(numFactusol) + 1;
-    //     const dataFAC = [];
-    //     const dataLFA = [];
-    //     arrayCuadrantes.map(async (cuadranteIterado, index, arr) => {
-    //         let nombreCuadranteSplit = cuadranteIterado.nombre.split("-");
-    //         const formData1 = new FormData();
-    //         formData1.append("objeto", 'centros');
-    //         formData1.append("id", nombreCuadranteSplit[2]);
-    //         let apiUrl = rutaApi + "obtener_para_parsear.php";
-    //         const res1 = await axios.post(apiUrl, formData1, {
-    //             headers: {
-    //                 "Content-Type": "multipart/form-data",
-    //             }
-    //         });
-    //         const objetoCentroParsear = {
-    //             nombre: res1.data.nombre,
-    //             codigo: res1.data.codigo,
-    //             domicilio: res1.data.domicilio,
-    //             codigoPostal: res1.data.codigo_postal,
-    //             poblacion: res1.data.poblacion,
-    //             provincia: res1.data.provincia,
-    //             nif: res1.data.nif,
-    //             formaPago: res1.data.forma_pago,
-    //             horario: JSON.parse(res1.data.horario)
-    //         };
-    //         let dateObj = new Date();
-    //         let month = dateObj.getUTCMonth() + 1;
-    //         let day = dateObj.getUTCDate();
-    //         let year = dateObj.getUTCFullYear();
-    //         const fechaHoy = day + "/" + month + "/" + year;
-    //         let totalFacturado;
-    //         let totalFacturado_M, totalFacturado_L, totalFacturado_C, totalFacturado_E, totalFacturado_I, totalFacturado_Z, totalFacturado_T, totalFacturado_P;
-    //         let sumatorioTotalFacturado = 0;
-    //         if (objetoCentroParsear.horario.computo === 1) {
-    //             totalFacturado = objetoCentroParsear.horario.mensualPactado;
-    //             totalFacturado_M = totalFacturado;
-    //         };
-    //         if (objetoCentroParsear.horario.computo === 2) {
-    //             if (cuadranteIterado.horas.L) {
-    //                 sumatorioTotalFacturado += (parseFloat(objetoCentroParsear.horario.precioHora_L) * cuadranteIterado.horas.L);
-    //                 totalFacturado_L = (parseFloat(objetoCentroParsear.horario.precioHora_L) * cuadranteIterado.horas.L);
-    //             };
-    //             if (cuadranteIterado.horas.C) {
-    //                 sumatorioTotalFacturado += (parseFloat(objetoCentroParsear.horario.precioHora_C) * cuadranteIterado.horas.C);
-    //                 totalFacturado_C = (parseFloat(objetoCentroParsear.horario.precioHora_C) * cuadranteIterado.horas.C);
-    //             };
-    //             if (cuadranteIterado.horas.E) {
-    //                 sumatorioTotalFacturado += (parseFloat(objetoCentroParsear.horario.precioHora_E) * cuadranteIterado.horas.E);
-    //                 totalFacturado_E = (parseFloat(objetoCentroParsear.horario.precioHora_E) * cuadranteIterado.horas.E);
-    //             };
-    //             if (cuadranteIterado.horas.I) {
-    //                 sumatorioTotalFacturado += (parseFloat(objetoCentroParsear.horario.precioHora_I) * cuadranteIterado.horas.I);
-    //                 totalFacturado_I = (parseFloat(objetoCentroParsear.horario.precioHora_I) * cuadranteIterado.horas.I);
-    //             };
-    //             if (cuadranteIterado.horas.Z) {
-    //                 sumatorioTotalFacturado += (parseFloat(objetoCentroParsear.horario.precioHora_Z) * cuadranteIterado.horas.Z);
-    //                 totalFacturado_Z = (parseFloat(objetoCentroParsear.horario.precioHora_Z) * cuadranteIterado.horas.Z);
-    //             };
-    //             if (cuadranteIterado.horas.T) {
-    //                 sumatorioTotalFacturado += (parseFloat(objetoCentroParsear.horario.precioHora_T) * cuadranteIterado.horas.T);
-    //                 totalFacturado_T = (parseFloat(objetoCentroParsear.horario.precioHora_T) * cuadranteIterado.horas.T);
-    //             };
-    //             if (cuadranteIterado.horas.P) {
-    //                 sumatorioTotalFacturado += (parseFloat(objetoCentroParsear.horario.precioHora_P) * cuadranteIterado.horas.P);
-    //                 totalFacturado_P = (parseFloat(objetoCentroParsear.horario.precioHora_P) * cuadranteIterado.horas.P);
-    //             };
-    //             totalFacturado = sumatorioTotalFacturado;
-    //         };
-    //         if (objetoCentroParsear.horario.computo === 3) {
-    //             if (objetoCentroParsear.horario.mensualPactado) {
-    //                 totalFacturado = objetoCentroParsear.horario.mensualPactado;
-    //             } else {
-    //                 if (cuadranteIterado.horas.L) {
-    //                     sumatorioTotalFacturado += (parseFloat(objetoCentroParsear.horario.precioHora_L) * cuadranteIterado.horas.L);
-    //                     totalFacturado_L = (parseFloat(objetoCentroParsear.horario.precioHora_L) * cuadranteIterado.horas.L);
-    //                 };
-    //                 if (cuadranteIterado.horas.C) {
-    //                     sumatorioTotalFacturado += (parseFloat(objetoCentroParsear.horario.precioHora_C) * cuadranteIterado.horas.C);
-    //                     totalFacturado_C = (parseFloat(objetoCentroParsear.horario.precioHora_C) * cuadranteIterado.horas.C);
-    //                 };
-    //                 if (cuadranteIterado.horas.E) {
-    //                     sumatorioTotalFacturado += (parseFloat(objetoCentroParsear.horario.precioHora_E) * cuadranteIterado.horas.E);
-    //                     totalFacturado_E = (parseFloat(objetoCentroParsear.horario.precioHora_E) * cuadranteIterado.horas.E);
-    //                 };
-    //                 if (cuadranteIterado.horas.I) {
-    //                     sumatorioTotalFacturado += (parseFloat(objetoCentroParsear.horario.precioHora_I) * cuadranteIterado.horas.I);
-    //                     totalFacturado_I = (parseFloat(objetoCentroParsear.horario.precioHora_I) * cuadranteIterado.horas.I);
-    //                 };
-    //                 if (cuadranteIterado.horas.Z) {
-    //                     sumatorioTotalFacturado += (parseFloat(objetoCentroParsear.horario.precioHora_Z) * cuadranteIterado.horas.Z);
-    //                     totalFacturado_Z = (parseFloat(objetoCentroParsear.horario.precioHora_Z) * cuadranteIterado.horas.Z);
-    //                 };
-    //                 if (cuadranteIterado.horas.T) {
-    //                     sumatorioTotalFacturado += (parseFloat(objetoCentroParsear.horario.precioHora_T) * cuadranteIterado.horas.T);
-    //                     totalFacturado_T = (parseFloat(objetoCentroParsear.horario.precioHora_T) * cuadranteIterado.horas.T);
-    //                 };
-    //                 if (cuadranteIterado.horas.P) {
-    //                     sumatorioTotalFacturado += (parseFloat(objetoCentroParsear.horario.precioHora_P) * cuadranteIterado.horas.P);
-    //                     totalFacturado_P = (parseFloat(objetoCentroParsear.horario.precioHora_P) * cuadranteIterado.horas.P);
-    //                 };
-    //                 totalFacturado = sumatorioTotalFacturado;
-    //             }
-    //         };
-    //         dataFAC.push([
-    //             1,
-    //             elNumFactusol + index,
-    //             '',
-    //             fechaHoy,
-    //             0,
-    //             '',
-    //             1,
-    //             '',
-    //             parseInt(objetoCentroParsear.codigo),
-    //             objetoCentroParsear.nombre,
-    //             objetoCentroParsear.domicilio,
-    //             objetoCentroParsear.poblacion,
-    //             objetoCentroParsear.codigoPostal,
-    //             objetoCentroParsear.provincia,
-    //             objetoCentroParsear.nif,
-    //             0,
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             totalFacturado,
-    //             objetoCentroParsear.formaPago,
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             'N',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             '',
-    //             ''
-    //         ]);
-    //         let arrayElementos = [];
-    //         if (totalFacturado_M) {
-    //             arrayElementos.push([tipos[0].value, tipos[0].label, totalFacturado_M, objetoCentroParsear.horario.mensualPactado, 1]);
-    //         };
-    //         if (totalFacturado_L) {
-    //             arrayElementos.push([tipos[0].value, tipos[0].label, totalFacturado_L, objetoCentroParsear.horario.precioHora_L, cuadranteIterado.horas.L]);
-    //         };
-    //         if (totalFacturado_C) {
-    //             arrayElementos.push([tipos[1].value, tipos[1].label, totalFacturado_C, objetoCentroParsear.horario.precioHora_C, cuadranteIterado.horas.C]);
-    //         };
-    //         if (totalFacturado_E) {
-    //             arrayElementos.push([tipos[2].value, tipos[2].label, totalFacturado_E, objetoCentroParsear.horario.precioHora_E, cuadranteIterado.horas.E]);
-    //         };
-    //         if (totalFacturado_I) {
-    //             arrayElementos.push([tipos[3].value, tipos[3].label, totalFacturado_I, objetoCentroParsear.horario.precioHora_I, cuadranteIterado.horas.I]);
-    //         };
-    //         if (totalFacturado_Z) {
-    //             arrayElementos.push([tipos[4].value, tipos[4].label, totalFacturado_Z, objetoCentroParsear.horario.precioHora_Z, cuadranteIterado.horas.Z]);
-    //         };
-    //         if (totalFacturado_T) {
-    //             arrayElementos.push([tipos[5].value, tipos[5].label, totalFacturado_T, objetoCentroParsear.horario.precioHora_T, cuadranteIterado.horas.T]);
-    //         };
-    //         if (totalFacturado_P) {
-    //             arrayElementos.push([tipos[6].value, tipos[6].label, totalFacturado_P, objetoCentroParsear.horario.precioHora_P, cuadranteIterado.horas.P]);
-    //         };
-    //         arrayElementos.forEach((elemento, index2) => {
-    //             dataLFA.push([
-    //                 1,
-    //                 elNumFactusol + index,
-    //                 index2 + 1,
-    //                 elemento[0],
-    //                 elemento[1],
-    //                 elemento[4],
-    //                 '',
-    //                 '',
-    //                 '',
-    //                 elemento[3],
-    //                 elemento[2],
-    //                 0,
-    //                 '',
-    //                 '',
-    //                 '',
-    //                 '',
-    //                 '',
-    //                 '',
-    //                 '',
-    //                 '',
-    //                 '',
-    //                 '',
-    //                 '',
-    //                 '',
-    //                 '',
-    //                 '',
-    //                 '',
-    //                 '',
-    //                 '',
-    //                 '',
-    //                 ''
-    //             ])
-    //         });
-    //         const cuadranteAGuardar = {
-    //             id: cuadranteIterado.id,
-    //             actualizacion: laFirmaActualizacion,
-    //             estado: 'facturado',
-    //             total: totalFacturado
-    //         };
-    //         actualizarCuadrante(cuadranteAGuardar);
-    //         dispatch({
-    //             type: ITERACION_XLS_EXITO,
-    //             payload: {
-    //                 elementoArray1: dataFAC,
-    //                 elementoArray2: dataLFA
-    //             }
-    //         });
-    //     });
-    // } catch (error) {
-    //     dispatch({
-    //         type: ERROR_DE_CARGA_CONFIGURACION
-    //     })
-    // }
-}
+    const elNumFactusol = parseInt(numFactusol) + 1;
+    try {
+        const dataFAC = [];
+        const dataLFA = [];
+        arrayCuadrantes.map((cuadranteIterado, index, arr) => {
+            const objetoCentroParsear = {
+                nombre: cuadranteIterado.total.nombreCentro,
+                codigo: cuadranteIterado.total.codigo,
+                domicilio: cuadranteIterado.total.domicilio,
+                codigoPostal: cuadranteIterado.total.codigoPostal,
+                poblacion: cuadranteIterado.total.poblacion,
+                provincia: cuadranteIterado.total.provincia,
+                nif: cuadranteIterado.total.nif,
+                formaPago: cuadranteIterado.total.formaPago,
+                total: parseFloat(cuadranteIterado.total.total).toFixed(2),
+                totalMasIva: parseFloat(cuadranteIterado.total.totalMasIva).toFixed(2)
+            };
+            let dateObj = new Date();
+            let month = dateObj.getUTCMonth() + 1;
+            let day = dateObj.getUTCDate();
+            let year = dateObj.getUTCFullYear();
+            const fechaHoy = day + "/" + month + "/" + year;
+            dataFAC.push([
+                1,
+                elNumFactusol + index,
+                '',
+                fechaHoy,
+                0,
+                'GEN',
+                1,
+                '',
+                parseInt(objetoCentroParsear.codigo),
+                objetoCentroParsear.nombre,
+                objetoCentroParsear.domicilio,
+                objetoCentroParsear.poblacion,
+                objetoCentroParsear.codigoPostal,
+                objetoCentroParsear.provincia,
+                objetoCentroParsear.nif,
+                0,
+                0,
+                '',
+                parseFloat(objetoCentroParsear.total),
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                21,
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                parseFloat(objetoCentroParsear.totalMasIva),
+                objetoCentroParsear.formaPago,
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                'N',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                ''
+            ]);
+            const arrayElementos = dispatch(retornaArrayElementosAccion(cuadranteIterado.total));
+            arrayElementos.forEach((elemento, index2) => {
+                dataLFA.push([
+                    1,
+                    elNumFactusol + index,
+                    index2 + 1,
+                    elemento[0],
+                    elemento[1],
+                    elemento[4],
+                    '',
+                    '',
+                    '',
+                    elemento[3],
+                    elemento[2],
+                    0,
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    ''
+                ])
+            });
+            let elTotalActualizado = { ...cuadranteIterado.total };
+            elTotalActualizado.procesado.valor = 'si';
+            elTotalActualizado.procesado.numF = elNumFactusol + index;
+            const options = { fullPrecisionFloats: true };
+            dispatch({
+                type: SET_CUADRANTESITERADOSACTUALIZAR,
+                payload: {
+                    elementoArray3: {
+                        id: cuadranteIterado.id,
+                        total: stringify(elTotalActualizado, options)
+                    }
+                }
+            });
+            dispatch({
+                type: ITERACION_XLS_EXITO,
+                payload: {
+                    elementoArray1: dataFAC,
+                    elementoArray2: dataLFA
+                }
+            });
+        });
+    } catch (error) {
+        dispatch({
+            type: ERROR_DE_CARGA_CONFIGURACION
+        })
+    }
+};
 
 export const finalizarArchivosXLSLoteAccion = (estado) => (dispatch, getState) => {
     dispatch({
@@ -1581,7 +1500,7 @@ export const finalizarArchivosXLSLoteAccion = (estado) => (dispatch, getState) =
             estado: estado
         }
     });
-}
+};
 
 export const emitirArchivosXLSLoteAccion = (laDataFAC, laDataLFA) => (dispatch, getState) => {
     exportarAExcel(laDataFAC[0], 'FAC');
@@ -1592,8 +1511,58 @@ export const emitirArchivosXLSLoteAccion = (laDataFAC, laDataLFA) => (dispatch, 
     dispatch({
         type: RESETEA_EXITO_CONFIGURACION
     });
-}
+};
 
 export const isNumeric = (num) => {
     return (num >= 0 || num < 0);
+};
+
+export const generaArchivoXLSCentrosAccion = () => (dispatch, getState) => {
+    const { arrayCentros } = getState().variablesCentros;
+    let elListadoCentros = [];
+    arrayCentros.forEach((centro) => {
+        let categoriasCentro = [];
+        let elObjetoCentro = { ...centro };
+        centro.categoria.forEach((cat) => {
+            switch (cat) {
+                case 1:
+                    categoriasCentro.push('Barcelona');
+                    break;
+                case 2:
+                    categoriasCentro.push('Comunidades de pisos');
+                    break;
+                case 3:
+                    categoriasCentro.push('Farmacias');
+                    break;
+                case 4:
+                    categoriasCentro.push('Fuera de Barcelona');
+                    break;
+                case 5:
+                    categoriasCentro.push('Pisos');
+                    break;
+                case 6:
+                    categoriasCentro.push('Residencias');
+                    break;
+                default:
+            }
+        });
+        let categoriasCentroStr = categoriasCentro.toString();
+        elObjetoCentro.categoria = categoriasCentroStr;
+        elListadoCentros.push(elObjetoCentro);
+    });
+    elListadoCentros.sort((a, b) => a.categoria.localeCompare(b.categoria));
+    const elListadoCentrosImprimir = [];
+    elListadoCentros.forEach((centro) => {
+        elListadoCentrosImprimir.push([centro.nombre, centro.categoria, centro.estado]);
+    });
+    exportarAExcel(elListadoCentrosImprimir, 'listado_centros');
+};
+
+export const generaArchivoXLSTrabajadoresAccion = () => (dispatch, getState) => {
+    const { arrayTrabajadores } = getState().variablesTrabajadores;
+    const elListadoTrabajadoresImprimir = [];
+    arrayTrabajadores.forEach((trabajador) => {
+        elListadoTrabajadoresImprimir.push([trabajador.nombre, trabajador.estado]);
+    });
+    exportarAExcel(elListadoTrabajadoresImprimir, 'listado_trabajadores');
 };

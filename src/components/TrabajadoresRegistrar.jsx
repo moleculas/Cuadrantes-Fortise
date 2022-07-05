@@ -29,7 +29,9 @@ import { retornaAnoMesDiaAccion } from '../redux/appDucks';
 import { activarDesactivarNuevoTrabajadorAccion } from '../redux/trabajadoresDucks';
 import { activarDesactivarRegistrarTrabajadorAccion } from '../redux/trabajadoresDucks';
 
+//constantes
 const estados = Constantes.ESTADO_LABORAL_TRABAJADOR;
+const subcategorias = Constantes.SUBCATEGORIAS_TRABAJADORES;
 
 //snackbar y alert
 const Alert = (props) => {
@@ -51,7 +53,7 @@ const TrabajadoresRegistrar = forwardRef((props, ref) => {
     const [valuesFormRegistro, setValuesFormRegistro] = useState({
         id: null,
         nombre: '',
-        categoria: 1,
+        categoria: '',
         dni: '',
         segSocial: '',
         telefono: '',
@@ -225,7 +227,7 @@ const TrabajadoresRegistrar = forwardRef((props, ref) => {
                         const trabajadorAGuardar = {
                             id: valuesFormRegistro.id,
                             nombre: valuesFormRegistro.nombre,
-                            categoria: 1,
+                            categoria: valuesFormRegistro.categoria ? valuesFormRegistro.categoria : 1,
                             dni: valuesFormRegistro.dni,
                             seg_social: valuesFormRegistro.segSocial,
                             telefono: valuesFormRegistro.telefono,
@@ -305,6 +307,33 @@ const TrabajadoresRegistrar = forwardRef((props, ref) => {
                                     onChange={handleChangeFormRegistro('nombre')}
                                     labelWidth={60}
                                 />
+                            </FormControl>
+                            <FormControl
+                                variant="outlined"
+                                className={classes.form}
+                                size="small"
+                            >
+                                <InputLabel>Subcategoria</InputLabel>
+                                <Select
+                                    fullWidth
+                                    className={classes.mb15}
+                                    id="form-subcategoria-registro"
+                                    label="Subcategoria"
+                                    value={valuesFormRegistro.categoria || ''}
+                                    onChange={handleChangeFormRegistro('categoria')}
+                                    helpertext="Selecciona subcategoria"
+                                >
+                                    <MenuItem value=''>
+                                        <em>No</em>
+                                    </MenuItem>
+                                    {
+                                        subcategorias.map((option) => (
+                                            <MenuItem key={option.value} value={option.value}>
+                                                {option.label}
+                                            </MenuItem>
+                                        ))
+                                    }
+                                </Select>
                             </FormControl>
                             <FormControl
                                 variant="outlined"
@@ -438,6 +467,7 @@ const TrabajadoresRegistrar = forwardRef((props, ref) => {
                     {alert.mensaje}
                 </Alert>
             </Snackbar>
+            {console.log(valuesFormRegistro)}
         </div>
     )
 })

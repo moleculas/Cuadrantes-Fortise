@@ -11,10 +11,8 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import MuiAlert from '@material-ui/lab/Alert';
 
 //importaciones acciones
-import { obtenerCentroAccion } from '../redux/centrosDucks';
 import { cambioEstadoInicioCuadrantesAccion } from '../redux/cuadrantesDucks';
 import { activarDesactivarCambioBotonRegistrarAccion } from '../redux/cuadrantesDucks';
-import { registrarIntervencionCuadranteNuevoAccion } from '../redux/cuadrantesDucks';
 import { cambiarACuadranteNoRegistradoAccion } from '../redux/cuadrantesDucks';
 import { venimosDePendientesAccion } from '../redux/pendientesDucks';
 import { setCentroAccion } from '../redux/cuadrantesDucks';

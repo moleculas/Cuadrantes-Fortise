@@ -16,6 +16,7 @@ import clsx from 'clsx';
 //estilos
 import Clases from "../clases";
 
+//constantes
 const cantidadHoras = Constantes.CANTIDAD_HORAS_CENTROS;
 const tiposServicios = Constantes.TIPO_SERVICIO;
 
