@@ -14,7 +14,6 @@ import Typography from '@material-ui/core/Typography';
 //importaciones acciones
 import { cambioEstadoInicioCuadrantesAccion } from '../redux/cuadrantesDucks';
 import { activarDesactivarCambioBotonRegistrarAccion } from '../redux/cuadrantesDucks';
-import { registrarIntervencionCuadranteNuevoAccion } from '../redux/cuadrantesDucks';
 import { venimosDeRegistradosAccion } from '../redux/pendientesDucks';
 import { setCentroAccion } from '../redux/cuadrantesDucks';
 import { obtenerCentroAccion } from '../redux/centrosDucks';

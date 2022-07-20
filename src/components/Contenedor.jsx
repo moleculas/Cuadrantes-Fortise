@@ -60,7 +60,7 @@ const Contenedor = () => {
     //states
 
     const [abrir, setAbrir] = useState(false);
-    const esDesktop = useMediaQuery(theme => theme.breakpoints.up('lg'));
+    const esDesktop = useMediaQuery(theme => theme.breakpoints.up('md'));
 
     //funciones    
 

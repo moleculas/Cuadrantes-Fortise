@@ -3,7 +3,6 @@
 * Completar fitxa treballadors (x imprimir i PDF) - POSPOSAT
 * Llistat de treballadors x mes quadrants
 
-* Instruccions:   
-    * Gestió especial horas (explicar)
+* Instruccions:  
     * Diferències de festius en còmput (explicar tipus i com actuen en els quadrants)
 

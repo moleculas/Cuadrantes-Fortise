@@ -169,7 +169,8 @@ const Constantes = {
     ],
     CALENDARIO_FESTIVOS: festivos,
     VARIACIONES_CUADRANTES: [
-        { value: 1, label: 'Sin coste' }
+        { value: 1, label: 'Sin coste' },
+        { value: 2, label: 'Sustitución festivos' }
     ],
     COMPUTO_HORAS: [
         { value: 1, label: 'Total mensual pactado' },

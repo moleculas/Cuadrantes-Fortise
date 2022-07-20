@@ -21,7 +21,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import { Link } from "react-router-dom";
 import Tooltip from '@material-ui/core/Tooltip';
-import PrintIcon from '@material-ui/icons/Print';
+import DescriptionIcon from '@material-ui/icons/Description';
 
 //carga componentes
 import GraficoInicio from './GraficoInicio';
@@ -66,14 +66,14 @@ function TabPanel(props) {
             )}
         </div>
     );
-}
+};
 
 function a11yProps(index) {
     return {
         id: `simple-tab-${index}`,
         'aria-controls': `simple-tabpanel-${index}`,
     };
-}
+};
 
 //snackbar y alert
 const Alert = (props) => {
@@ -279,12 +279,12 @@ const Inicio = (props) => {
                                 >
                                     <Typography variant='body2'>{valueTab === 0 ? listadoCentros.length : listadoTrabajadores.length}</Typography>
                                 </Avatar>
-                                <Tooltip title={valueTab === 0 ? 'Crear Excel listado CENTROS' : 'Crear Excel listado TRABAJADORES'} placement="left" arrow >
+                                <Tooltip title={valueTab === 0 ? 'Crear Excel listado CENTROS' : 'Crear Excel listado TRABAJADORES'} placement="top-start" arrow >
                                     <Box
                                         style={{ marginRight: 10, cursor: 'pointer' }}
                                         onClick={handleGenerarXLS}
                                     >
-                                        <PrintIcon style={{ color: 'white', marginTop: 5 }} />
+                                        <DescriptionIcon style={{ color: 'white', marginTop: 5 }} />
                                     </Box>
                                 </Tooltip>
                             </Box>

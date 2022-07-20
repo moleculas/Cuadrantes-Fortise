@@ -14,6 +14,8 @@ import ce3 from '../images/instrucciones/centros/ce_3.jpg';
 import ce4 from '../images/instrucciones/centros/ce_4.jpg';
 import ce5 from '../images/instrucciones/centros/ce_5.jpg';
 import ce6 from '../images/instrucciones/centros/ce_6.jpg';
+import ce7 from '../images/instrucciones/centros/ce_7.jpg';
+import ce8 from '../images/instrucciones/centros/ce_8.jpg';
 
 //carga componentes
 
@@ -157,6 +159,32 @@ const InstruccionesCentros = () => {
                             <SRLWrapper options={options}>
                                 <a href={ce6}>
                                     <img style={{ marginTop: 25 }} src={ce6} alt="ce6" />
+                                </a>
+                            </SRLWrapper>
+                            <br />
+                            {/* Elemento 4 */}
+                            <div className={classes.tituloInstrucciones} id="ce4">
+                                Gestión especial de horas
+                                <HashLink to={'#ce4'} className={classes.anchorLink} scroll={(el) => el.scrollIntoView({ behavior: 'auto', block: 'start' })}><LinkIcon /></HashLink>
+                            </div>
+                            <Typography component="span" variant="body2">Para configurar un centro del tipo Gestión especial de horas (Se emite recibo):</Typography>
+                            <br />
+                            <br />
+                            <Typography component="span" variant="body2">Si el centro contempla un horario de trabajadores: una vez seleccionada la pestaña superior <b>Horario</b> en el apartado <b>Cómputo de horas</b> del desplegable Tipo cómputo elegir <b>Gestión especial horas</b>.</Typography>
+                            <br />
+                            <Typography component="span" variant="body2">Una vez seleccionado el Tipo cómputo Gestión especial de horas añadir el precio del total Mensual Pactado (para cómputo mensual pactado) o Precio/Hora del Servicio concreto (para cómputo por precio/hora).</Typography>
+                            <br />
+                            <SRLWrapper options={options}>
+                                <a href={ce7}>
+                                    <img style={{ marginTop: 25 }} src={ce7} alt="ce7" />
+                                </a>
+                            </SRLWrapper>
+                            <br />
+                            <Typography component="span" variant="body2">Si el centro solo contempla Servicios Extra: una vez seleccionada la pestaña superior <b>Servicios Extra</b> pulsar la casilla inferior <b>Gestión especial horas para Servicios Extra</b>.</Typography>
+                            <br />
+                            <SRLWrapper options={options}>
+                                <a href={ce8}>
+                                    <img style={{ marginTop: 25 }} src={ce8} alt="ce8" />
                                 </a>
                             </SRLWrapper>
                             <br />

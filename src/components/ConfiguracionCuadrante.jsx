@@ -1,5 +1,5 @@
 import React, { useEffect, useState, Fragment } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Constantes from "../constantes";
 import Grid from '@material-ui/core/Grid';
 import FormControl from '@material-ui/core/FormControl';
@@ -19,6 +19,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import DateFnsUtils from '@date-io/date-fns';
 import { es } from "date-fns/locale";
 import { MuiPickersUtilsProvider, KeyboardDatePicker, } from '@material-ui/pickers';
+import Switch from '@material-ui/core/Switch';
 
 //importaciones acciones
 import { retornaFormaPagoAccion } from '../redux/cuadrantesDucks';
@@ -58,9 +59,11 @@ const ConfiguracionCuadrante = (props) => {
             inicio: props.prItemEditandoConfiguracion.festivos.inicio || null,
             fin: props.prItemEditandoConfiguracion.festivos.fin || null,
             tipo: props.prItemEditandoConfiguracion.festivos.tipo || ''
-        }
+        },
+        seqSemSiNo: props.prItemEditandoConfiguracion.seqSemSiNo || null
     });
     const [esMensualPactadoGEH, setEsMensualPactadoGEH] = useState(false);
+    const cuadranteEnUsoCuadrantes = useSelector(store => store.variablesCuadrantesSetters.cuadranteEnUsoCuadrantes);
 
     //useEffect
 
@@ -414,8 +417,34 @@ const ConfiguracionCuadrante = (props) => {
                     </Fragment>
                 ) : null}
             </Grid>
+            {!props.prCuadranteVacio && props.prCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].variacion === "semanaSiNo" ? (
+                <Grid item xs={12}>
+                    <List dense={true} className={classes.mb20}>
+                        <ListItem
+                            className={classes.listConfig}
+                        >
+                            <ListItemText
+                                primary="Gestión secuencia semanas"
+                            />
+                        </ListItem >
+                    </List>
+                    <FormControlLabel
+                        className={classes.mb15}
+                        control={
+                            <Switch
+                                checked={props.prItemEditandoConfiguracion.seqSemSiNo === 1 || !props.prItemEditandoConfiguracion.seqSemSiNo ? true : false}
+                                id="form-seq-semanas-cuadrante"
+                                color="secondary"
+                                onChange={handleChangeFormConfiguracionCuadrante('seqSemSiNo')}
+                            />
+                        }
+                        label={<Typography variant="body2">Cambio secuencia Semana Sí, Semana No</Typography>}
+                        labelPlacement="end"
+                    />
+                </Grid>
+            ) : null}
             <Grid item xs={12}>
-                <List dense={true} className={classes.mb20}>
+                <List dense={true} className={classes.mb15}>
                     <ListItem
                         className={classes.listConfig}
                     >
@@ -483,7 +512,7 @@ const ConfiguracionCuadrante = (props) => {
                     </Select>
                 </FormControl>
             </Grid>
-            {/* {console.log(esMensualPactadoGEH)} */}
+            {/* {console.log(props.prCentro)} */}
         </div>
     )
 }

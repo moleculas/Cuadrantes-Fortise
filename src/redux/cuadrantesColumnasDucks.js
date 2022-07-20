@@ -10,6 +10,7 @@ import { setEstamosActualizandoCuadranteSinCargaAccion } from './cuadrantesSette
 import { setBufferSwitchedDiasFestivosCuadranteAccion } from './cuadrantesSettersDucks';
 import { setYaNoEsInicioAccion } from './cuadrantesSettersDucks';
 import { setItemEditandoConfiguracionAccion } from './cuadrantesSettersDucks';
+import { setCambioSecuenciaSemanasAccion } from './cuadrantesSettersDucks';
 
 //constantes
 const dataInicial = {
@@ -410,7 +411,8 @@ export const limpiarCuadranteAccion = (elCuadrante) => (dispatch, getState) => {
                         if (cuadranteColumna[prop].lunesInicioRango ||
                             cuadranteColumna[prop].baja ||
                             cuadranteColumna[prop].festivo ||
-                            cuadranteColumna[prop].observaciones) {
+                            cuadranteColumna[prop].observaciones ||
+                            cuadranteColumna[prop].modificado) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
@@ -418,7 +420,8 @@ export const limpiarCuadranteAccion = (elCuadrante) => (dispatch, getState) => {
                         if (cuadranteColumna[prop].martesInicioRango ||
                             cuadranteColumna[prop].baja ||
                             cuadranteColumna[prop].festivo ||
-                            cuadranteColumna[prop].observaciones) {
+                            cuadranteColumna[prop].observaciones ||
+                            cuadranteColumna[prop].modificado) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
@@ -426,7 +429,8 @@ export const limpiarCuadranteAccion = (elCuadrante) => (dispatch, getState) => {
                         if (cuadranteColumna[prop].miercolesInicioRango ||
                             cuadranteColumna[prop].baja ||
                             cuadranteColumna[prop].festivo ||
-                            cuadranteColumna[prop].observaciones) {
+                            cuadranteColumna[prop].observaciones ||
+                            cuadranteColumna[prop].modificado) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
@@ -434,7 +438,8 @@ export const limpiarCuadranteAccion = (elCuadrante) => (dispatch, getState) => {
                         if (cuadranteColumna[prop].juevesInicioRango ||
                             cuadranteColumna[prop].baja ||
                             cuadranteColumna[prop].festivo ||
-                            cuadranteColumna[prop].observaciones) {
+                            cuadranteColumna[prop].observaciones ||
+                            cuadranteColumna[prop].modificado) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
@@ -442,7 +447,8 @@ export const limpiarCuadranteAccion = (elCuadrante) => (dispatch, getState) => {
                         if (cuadranteColumna[prop].viernesInicioRango ||
                             cuadranteColumna[prop].baja ||
                             cuadranteColumna[prop].festivo ||
-                            cuadranteColumna[prop].observaciones) {
+                            cuadranteColumna[prop].observaciones ||
+                            cuadranteColumna[prop].modificado) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
@@ -450,7 +456,8 @@ export const limpiarCuadranteAccion = (elCuadrante) => (dispatch, getState) => {
                         if (cuadranteColumna[prop].sabadoInicioRango ||
                             cuadranteColumna[prop].baja ||
                             cuadranteColumna[prop].festivo ||
-                            cuadranteColumna[prop].observaciones) {
+                            cuadranteColumna[prop].observaciones ||
+                            cuadranteColumna[prop].modificado) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
@@ -458,7 +465,8 @@ export const limpiarCuadranteAccion = (elCuadrante) => (dispatch, getState) => {
                         if (cuadranteColumna[prop].domingoInicioRango ||
                             cuadranteColumna[prop].baja ||
                             cuadranteColumna[prop].festivo ||
-                            cuadranteColumna[prop].observaciones) {
+                            cuadranteColumna[prop].observaciones ||
+                            cuadranteColumna[prop].modificado) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
@@ -470,7 +478,8 @@ export const limpiarCuadranteAccion = (elCuadrante) => (dispatch, getState) => {
                         if (cuadranteColumna[prop].lunesInicio1RangoDescanso ||
                             cuadranteColumna[prop].baja ||
                             cuadranteColumna[prop].festivo ||
-                            cuadranteColumna[prop].observaciones) {
+                            cuadranteColumna[prop].observaciones ||
+                            cuadranteColumna[prop].modificado) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
@@ -478,7 +487,8 @@ export const limpiarCuadranteAccion = (elCuadrante) => (dispatch, getState) => {
                         if (cuadranteColumna[prop].martesInicio1RangoDescanso ||
                             cuadranteColumna[prop].baja ||
                             cuadranteColumna[prop].festivo ||
-                            cuadranteColumna[prop].observaciones) {
+                            cuadranteColumna[prop].observaciones ||
+                            cuadranteColumna[prop].modificado) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
@@ -486,7 +496,8 @@ export const limpiarCuadranteAccion = (elCuadrante) => (dispatch, getState) => {
                         if (cuadranteColumna[prop].miercolesInicio1RangoDescanso ||
                             cuadranteColumna[prop].baja ||
                             cuadranteColumna[prop].festivo ||
-                            cuadranteColumna[prop].observaciones) {
+                            cuadranteColumna[prop].observaciones ||
+                            cuadranteColumna[prop].modificado) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
@@ -494,7 +505,8 @@ export const limpiarCuadranteAccion = (elCuadrante) => (dispatch, getState) => {
                         if (cuadranteColumna[prop].juevesInicio1RangoDescanso ||
                             cuadranteColumna[prop].baja ||
                             cuadranteColumna[prop].festivo ||
-                            cuadranteColumna[prop].observaciones) {
+                            cuadranteColumna[prop].observaciones ||
+                            cuadranteColumna[prop].modificado) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
@@ -502,7 +514,8 @@ export const limpiarCuadranteAccion = (elCuadrante) => (dispatch, getState) => {
                         if (cuadranteColumna[prop].viernesInicio1RangoDescanso ||
                             cuadranteColumna[prop].baja ||
                             cuadranteColumna[prop].festivo ||
-                            cuadranteColumna[prop].observaciones) {
+                            cuadranteColumna[prop].observaciones ||
+                            cuadranteColumna[prop].modificado) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
@@ -510,7 +523,8 @@ export const limpiarCuadranteAccion = (elCuadrante) => (dispatch, getState) => {
                         if (cuadranteColumna[prop].sabadoInicio1RangoDescanso ||
                             cuadranteColumna[prop].baja ||
                             cuadranteColumna[prop].festivo ||
-                            cuadranteColumna[prop].observaciones) {
+                            cuadranteColumna[prop].observaciones ||
+                            cuadranteColumna[prop].modificado) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
@@ -518,7 +532,8 @@ export const limpiarCuadranteAccion = (elCuadrante) => (dispatch, getState) => {
                         if (cuadranteColumna[prop].domingoInicio1RangoDescanso ||
                             cuadranteColumna[prop].baja ||
                             cuadranteColumna[prop].festivo ||
-                            cuadranteColumna[prop].observaciones) {
+                            cuadranteColumna[prop].observaciones ||
+                            cuadranteColumna[prop].modificado) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
@@ -530,7 +545,8 @@ export const limpiarCuadranteAccion = (elCuadrante) => (dispatch, getState) => {
                         if (cuadranteColumna[prop].lunesCantidad ||
                             cuadranteColumna[prop].baja ||
                             cuadranteColumna[prop].festivo ||
-                            cuadranteColumna[prop].observaciones) {
+                            cuadranteColumna[prop].observaciones ||
+                            cuadranteColumna[prop].modificado) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
@@ -538,7 +554,8 @@ export const limpiarCuadranteAccion = (elCuadrante) => (dispatch, getState) => {
                         if (cuadranteColumna[prop].martesCantidad ||
                             cuadranteColumna[prop].baja ||
                             cuadranteColumna[prop].festivo ||
-                            cuadranteColumna[prop].observaciones) {
+                            cuadranteColumna[prop].observaciones ||
+                            cuadranteColumna[prop].modificado) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
@@ -546,7 +563,8 @@ export const limpiarCuadranteAccion = (elCuadrante) => (dispatch, getState) => {
                         if (cuadranteColumna[prop].miercolesCantidad ||
                             cuadranteColumna[prop].baja ||
                             cuadranteColumna[prop].festivo ||
-                            cuadranteColumna[prop].observaciones) {
+                            cuadranteColumna[prop].observaciones ||
+                            cuadranteColumna[prop].modificado) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
@@ -554,7 +572,8 @@ export const limpiarCuadranteAccion = (elCuadrante) => (dispatch, getState) => {
                         if (cuadranteColumna[prop].juevesCantidad ||
                             cuadranteColumna[prop].baja ||
                             cuadranteColumna[prop].festivo ||
-                            cuadranteColumna[prop].observaciones) {
+                            cuadranteColumna[prop].observaciones ||
+                            cuadranteColumna[prop].modificado) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
@@ -562,7 +581,8 @@ export const limpiarCuadranteAccion = (elCuadrante) => (dispatch, getState) => {
                         if (cuadranteColumna[prop].viernesCantidad ||
                             cuadranteColumna[prop].baja ||
                             cuadranteColumna[prop].festivo ||
-                            cuadranteColumna[prop].observaciones) {
+                            cuadranteColumna[prop].observaciones ||
+                            cuadranteColumna[prop].modificado) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
@@ -570,7 +590,8 @@ export const limpiarCuadranteAccion = (elCuadrante) => (dispatch, getState) => {
                         if (cuadranteColumna[prop].sabadoCantidad ||
                             cuadranteColumna[prop].baja ||
                             cuadranteColumna[prop].festivo ||
-                            cuadranteColumna[prop].observaciones) {
+                            cuadranteColumna[prop].observaciones ||
+                            cuadranteColumna[prop].modificado) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
@@ -578,7 +599,8 @@ export const limpiarCuadranteAccion = (elCuadrante) => (dispatch, getState) => {
                         if (cuadranteColumna[prop].domingoCantidad ||
                             cuadranteColumna[prop].baja ||
                             cuadranteColumna[prop].festivo ||
-                            cuadranteColumna[prop].observaciones) {
+                            cuadranteColumna[prop].observaciones ||
+                            cuadranteColumna[prop].modificado) {
                             objetoResultante[prop] = cuadranteColumna[prop];
                         };
                     };
@@ -597,6 +619,7 @@ export const limpiarCuadranteInformeAccion = (informe) => (dispatch) => {
         excepcion: informe.excepcion,
         bloqueado: informe.bloqueado,
         tipoRegistro: informe.tipoRegistro,
+        seqSemSiNo: informe.seqSemSiNo
     };
     if (informe.mensualPactadoInicial) {
         elObjetoDatosInforme['mensualPactado'] = parseFloat(informe.mensualPactado);
@@ -662,7 +685,7 @@ const retornaMinutosAccionEnCuadrantes = (primeraHora, segundaHora) => {
 
 export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
     const { cuadrante, objetoCuadrante, cuadranteRegistrado } = getState().variablesCuadrantes;
-    const { cuadranteEnUsoCuadrantes, itemEditandoConfiguracion } = getState().variablesCuadrantesSetters;
+    const { cuadranteEnUsoCuadrantes, itemEditandoConfiguracion, numeroCuadrantesCuadrantes, cambioSecuenciaSemanas } = getState().variablesCuadrantesSetters;
     const { objetoCentro } = getState().variablesCentros;
     let arrayResultante = [];
     let sumatorioHoras;
@@ -765,20 +788,15 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                 sumatorioHorasExtra_F = 0;
                 for (const prop in cuadranteColumna) {
                     if (prop.includes('Lunes')) {
-                        const mySplit = prop.split('Lunes');
                         if (cuadranteColumna[prop].lunesInicioRango) {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Horas sin coste'
-                                        if (!esMensualPactado) {
-                                            lasHorasNormal = null;
-                                            lasHorasExtra = null;
-                                        } else {
-                                            lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicioRango, cuadranteColumna[prop].lunesFinRango) / 60;
-                                            lasHorasExtra = null;
-                                        };
-                                        break;
+case 2:
+//Horas sin coste & Sustitución festivos
+lasHorasNormal = null;
+lasHorasExtra = null;
+break;
                                     default:
                                 }
                             } else {
@@ -824,20 +842,15 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                         };
                     };
                     if (prop.includes('Martes')) {
-                        const mySplit = prop.split('Martes');
                         if (cuadranteColumna[prop].martesInicioRango) {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Horas sin coste'
-                                        if (!esMensualPactado) {
-                                            lasHorasNormal = null;
-                                            lasHorasExtra = null;
-                                        } else {
-                                            lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicioRango, cuadranteColumna[prop].martesFinRango) / 60;
-                                            lasHorasExtra = null;
-                                        };
-                                        break;
+case 2:
+//Horas sin coste & Sustitución festivos
+lasHorasNormal = null;
+lasHorasExtra = null;
+break;
                                     default:
                                 }
                             } else {
@@ -883,20 +896,15 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                         };
                     };
                     if (prop.includes('Miércoles')) {
-                        const mySplit = prop.split('Miércoles');
                         if (cuadranteColumna[prop].miercolesInicioRango) {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Horas sin coste'
-                                        if (!esMensualPactado) {
-                                            lasHorasNormal = null;
-                                            lasHorasExtra = null;
-                                        } else {
-                                            lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicioRango, cuadranteColumna[prop].miercolesFinRango) / 60;
-                                            lasHorasExtra = null;
-                                        };
-                                        break;
+case 2:
+//Horas sin coste & Sustitución festivos
+lasHorasNormal = null;
+lasHorasExtra = null;
+break;
                                     default:
                                 }
                             } else {
@@ -942,20 +950,15 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                         };
                     };
                     if (prop.includes('Jueves')) {
-                        const mySplit = prop.split('Jueves');
                         if (cuadranteColumna[prop].juevesInicioRango) {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Horas sin coste'
-                                        if (!esMensualPactado) {
-                                            lasHorasNormal = null;
-                                            lasHorasExtra = null;
-                                        } else {
-                                            lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicioRango, cuadranteColumna[prop].juevesFinRango) / 60;
-                                            lasHorasExtra = null;
-                                        };
-                                        break;
+case 2:
+//Horas sin coste & Sustitución festivos
+lasHorasNormal = null;
+lasHorasExtra = null;
+break;
                                     default:
                                 }
                             } else {
@@ -1001,19 +1004,14 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                         };
                     };
                     if (prop.includes('Viernes')) {
-                        const mySplit = prop.split('Viernes');
                         if (cuadranteColumna[prop].viernesInicioRango) {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Horas sin coste'
-                                        if (!esMensualPactado) {
-                                            lasHorasNormal = null;
-                                            lasHorasExtra = null;
-                                        } else {
-                                            lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicioRango, cuadranteColumna[prop].viernesFinRango) / 60;
-                                            lasHorasExtra = null;
-                                        };
+                                    case 2:
+                                        //Horas sin coste & Sustitución festivos
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = null;
                                         break;
                                     default:
                                 }
@@ -1060,20 +1058,15 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                         };
                     };
                     if (prop.includes('Sábado')) {
-                        const mySplit = prop.split('Sábado');
                         if (cuadranteColumna[prop].sabadoInicioRango) {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Horas sin coste'
-                                        if (!esMensualPactado) {
-                                            lasHorasNormal = null;
-                                            lasHorasExtra = null;
-                                        } else {
-                                            lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicioRango, cuadranteColumna[prop].sabadoFinRango) / 60;
-                                            lasHorasExtra = null;
-                                        };
-                                        break;
+case 2:
+//Horas sin coste & Sustitución festivos
+lasHorasNormal = null;
+lasHorasExtra = null;
+break;
                                     default:
                                 }
                             } else {
@@ -1119,20 +1112,15 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                         };
                     };
                     if (prop.includes('Domingo')) {
-                        const mySplit = prop.split('Domingo');
                         if (cuadranteColumna[prop].domingoInicioRango) {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Horas sin coste'
-                                        if (!esMensualPactado) {
-                                            lasHorasNormal = null;
-                                            lasHorasExtra = null;
-                                        } else {
-                                            lasHorasNormal = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicioRango, cuadranteColumna[prop].domingoFinRango) / 60;
-                                            lasHorasExtra = null;
-                                        };
-                                        break;
+case 2:
+//Horas sin coste & Sustitución festivos
+lasHorasNormal = null;
+lasHorasExtra = null;
+break;
                                     default:
                                 }
                             } else {
@@ -1238,7 +1226,6 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                 let rango1, rango2;
                 for (const prop in cuadranteColumna) {
                     if (prop.includes('Lunes')) {
-                        const mySplit = prop.split('Lunes');
                         if (cuadranteColumna[prop].lunesInicio1RangoDescanso) {
                             rango1 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].lunesInicio1RangoDescanso, cuadranteColumna[prop].lunesFin1RangoDescanso) / 60;
                             if (cuadranteColumna[prop].lunesInicio2RangoDescanso) {
@@ -1249,15 +1236,11 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Horas sin coste'
-                                        if (!esMensualPactado) {
-                                            lasHorasNormal = null;
-                                            lasHorasExtra = null;
-                                        } else {
-                                            lasHorasNormal = rango1 + rango2;
-                                            lasHorasExtra = null;
-                                        };
-                                        break;
+case 2:
+//Horas sin coste & Sustitución festivos
+lasHorasNormal = null;
+lasHorasExtra = null;
+break;
                                     default:
                                 }
                             } else {
@@ -1303,7 +1286,6 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                         }
                     };
                     if (prop.includes('Martes')) {
-                        const mySplit = prop.split('Martes');
                         if (cuadranteColumna[prop].martesInicio1RangoDescanso) {
                             rango1 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].martesInicio1RangoDescanso, cuadranteColumna[prop].martesFin1RangoDescanso) / 60;
                             if (cuadranteColumna[prop].martesInicio2RangoDescanso) {
@@ -1314,15 +1296,11 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Horas sin coste'
-                                        if (!esMensualPactado) {
-                                            lasHorasNormal = null;
-                                            lasHorasExtra = null;
-                                        } else {
-                                            lasHorasNormal = rango1 + rango2;
-                                            lasHorasExtra = null;
-                                        };
-                                        break;
+case 2:
+//Horas sin coste & Sustitución festivos
+lasHorasNormal = null;
+lasHorasExtra = null;
+break;
                                     default:
                                 }
                             } else {
@@ -1368,7 +1346,6 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                         }
                     };
                     if (prop.includes('Miércoles')) {
-                        const mySplit = prop.split('Miércoles');
                         if (cuadranteColumna[prop].miercolesInicio1RangoDescanso) {
                             rango1 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].miercolesInicio1RangoDescanso, cuadranteColumna[prop].miercolesFin1RangoDescanso) / 60;
                             if (cuadranteColumna[prop].miercolesInicio2RangoDescanso) {
@@ -1379,15 +1356,11 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Horas sin coste'
-                                        if (!esMensualPactado) {
-                                            lasHorasNormal = null;
-                                            lasHorasExtra = null;
-                                        } else {
-                                            lasHorasNormal = rango1 + rango2;
-                                            lasHorasExtra = null;
-                                        };
-                                        break;
+case 2:
+//Horas sin coste & Sustitución festivos
+lasHorasNormal = null;
+lasHorasExtra = null;
+break;
                                     default:
                                 }
                             } else {
@@ -1433,7 +1406,6 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                         }
                     };
                     if (prop.includes('Jueves')) {
-                        const mySplit = prop.split('Jueves');
                         if (cuadranteColumna[prop].juevesInicio1RangoDescanso) {
                             rango1 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].juevesInicio1RangoDescanso, cuadranteColumna[prop].juevesFin1RangoDescanso) / 60;
                             if (cuadranteColumna[prop].juevesInicio2RangoDescanso) {
@@ -1444,15 +1416,11 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Horas sin coste'
-                                        if (!esMensualPactado) {
-                                            lasHorasNormal = null;
-                                            lasHorasExtra = null;
-                                        } else {
-                                            lasHorasNormal = rango1 + rango2;
-                                            lasHorasExtra = null;
-                                        };
-                                        break;
+case 2:
+//Horas sin coste & Sustitución festivos
+lasHorasNormal = null;
+lasHorasExtra = null;
+break;
                                     default:
                                 }
                             } else {
@@ -1498,7 +1466,6 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                         }
                     };
                     if (prop.includes('Viernes')) {
-                        const mySplit = prop.split('Viernes');
                         if (cuadranteColumna[prop].viernesInicio1RangoDescanso) {
                             rango1 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].viernesInicio1RangoDescanso, cuadranteColumna[prop].viernesFin1RangoDescanso) / 60;
                             if (cuadranteColumna[prop].viernesInicio2RangoDescanso) {
@@ -1509,15 +1476,11 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Horas sin coste'
-                                        if (!esMensualPactado) {
-                                            lasHorasNormal = null;
-                                            lasHorasExtra = null;
-                                        } else {
-                                            lasHorasNormal = rango1 + rango2;
-                                            lasHorasExtra = null;
-                                        };
-                                        break;
+case 2:
+//Horas sin coste & Sustitución festivos
+lasHorasNormal = null;
+lasHorasExtra = null;
+break;
                                     default:
                                 }
                             } else {
@@ -1563,7 +1526,6 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                         }
                     };
                     if (prop.includes('Sábado')) {
-                        const mySplit = prop.split('Sábado');
                         if (cuadranteColumna[prop].sabadoInicio1RangoDescanso) {
                             rango1 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].sabadoInicio1RangoDescanso, cuadranteColumna[prop].sabadoFin1RangoDescanso) / 60;
                             if (cuadranteColumna[prop].sabadoInicio2RangoDescanso) {
@@ -1574,15 +1536,11 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Horas sin coste'
-                                        if (!esMensualPactado) {
-                                            lasHorasNormal = null;
-                                            lasHorasExtra = null;
-                                        } else {
-                                            lasHorasNormal = rango1 + rango2;
-                                            lasHorasExtra = null;
-                                        };
-                                        break;
+case 2:
+//Horas sin coste & Sustitución festivos
+lasHorasNormal = null;
+lasHorasExtra = null;
+break;
                                     default:
                                 }
                             } else {
@@ -1628,7 +1586,6 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                         }
                     };
                     if (prop.includes('Domingo')) {
-                        const mySplit = prop.split('Domingo');
                         if (cuadranteColumna[prop].domingoInicio1RangoDescanso) {
                             rango1 = retornaMinutosAccionEnCuadrantes(cuadranteColumna[prop].domingoInicio1RangoDescanso, cuadranteColumna[prop].domingoFin1RangoDescanso) / 60;
                             if (cuadranteColumna[prop].domingoInicio2RangoDescanso) {
@@ -1639,15 +1596,11 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Horas sin coste'
-                                        if (!esMensualPactado) {
-                                            lasHorasNormal = null;
-                                            lasHorasExtra = null;
-                                        } else {
-                                            lasHorasNormal = rango1 + rango2;
-                                            lasHorasExtra = null;
-                                        };
-                                        break;
+case 2:
+//Horas sin coste & Sustitución festivos
+lasHorasNormal = null;
+lasHorasExtra = null;
+break;
                                     default:
                                 }
                             } else {
@@ -1752,20 +1705,15 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                 sumatorioHorasExtra_F = 0;
                 for (const prop in cuadranteColumna) {
                     if (prop.includes('Lunes')) {
-                        const mySplit = prop.split('Lunes');
                         if (cuadranteColumna[prop].lunesCantidad) {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Horas sin coste'
-                                        if (!esMensualPactado) {
-                                            lasHorasNormal = null;
-                                            lasHorasExtra = null;
-                                        } else {
-                                            lasHorasNormal = cuadranteColumna[prop].lunesCantidad / 60;
-                                            lasHorasExtra = null;
-                                        };
-                                        break;
+case 2:
+//Horas sin coste & Sustitución festivos
+lasHorasNormal = null;
+lasHorasExtra = null;
+break;
                                     default:
                                 }
                             } else {
@@ -1811,20 +1759,15 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                         }
                     };
                     if (prop.includes('Martes')) {
-                        const mySplit = prop.split('Martes');
                         if (cuadranteColumna[prop].martesCantidad) {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Horas sin coste'
-                                        if (!esMensualPactado) {
-                                            lasHorasNormal = null;
-                                            lasHorasExtra = null;
-                                        } else {
-                                            lasHorasNormal = cuadranteColumna[prop].martesCantidad / 60;
-                                            lasHorasExtra = null;
-                                        };
-                                        break;
+case 2:
+//Horas sin coste & Sustitución festivos
+lasHorasNormal = null;
+lasHorasExtra = null;
+break;
                                     default:
                                 }
                             } else {
@@ -1870,20 +1813,15 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                         }
                     };
                     if (prop.includes('Miércoles')) {
-                        const mySplit = prop.split('Miércoles');
                         if (cuadranteColumna[prop].miercolesCantidad) {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Horas sin coste'
-                                        if (!esMensualPactado) {
-                                            lasHorasNormal = null;
-                                            lasHorasExtra = null;
-                                        } else {
-                                            lasHorasNormal = cuadranteColumna[prop].miercolesCantidad / 60;
-                                            lasHorasExtra = null;
-                                        };
-                                        break;
+case 2:
+//Horas sin coste & Sustitución festivos
+lasHorasNormal = null;
+lasHorasExtra = null;
+break;
                                     default:
                                 }
                             } else {
@@ -1929,20 +1867,15 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                         }
                     };
                     if (prop.includes('Jueves')) {
-                        const mySplit = prop.split('Jueves');
                         if (cuadranteColumna[prop].juevesCantidad) {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Horas sin coste'
-                                        if (!esMensualPactado) {
-                                            lasHorasNormal = null;
-                                            lasHorasExtra = null;
-                                        } else {
-                                            lasHorasNormal = cuadranteColumna[prop].juevesCantidad / 60;
-                                            lasHorasExtra = null;
-                                        };
-                                        break;
+case 2:
+//Horas sin coste & Sustitución festivos
+lasHorasNormal = null;
+lasHorasExtra = null;
+break;
                                     default:
                                 }
                             } else {
@@ -1988,20 +1921,15 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                         }
                     };
                     if (prop.includes('Viernes')) {
-                        const mySplit = prop.split('Viernes');
                         if (cuadranteColumna[prop].viernesCantidad) {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Horas sin coste'
-                                        if (!esMensualPactado) {
-                                            lasHorasNormal = null;
-                                            lasHorasExtra = null;
-                                        } else {
-                                            lasHorasNormal = cuadranteColumna[prop].viernesCantidad / 60;
-                                            lasHorasExtra = null;
-                                        };
-                                        break;
+case 2:
+//Horas sin coste & Sustitución festivos
+lasHorasNormal = null;
+lasHorasExtra = null;
+break;
                                     default:
                                 }
                             } else {
@@ -2047,20 +1975,15 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                         }
                     };
                     if (prop.includes('Sábado')) {
-                        const mySplit = prop.split('Sábado');
                         if (cuadranteColumna[prop].sabadoCantidad) {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Horas sin coste'
-                                        if (!esMensualPactado) {
-                                            lasHorasNormal = null;
-                                            lasHorasExtra = null;
-                                        } else {
-                                            lasHorasNormal = cuadranteColumna[prop].sabadoCantidad / 60;
-                                            lasHorasExtra = null;
-                                        };
-                                        break;
+case 2:
+//Horas sin coste & Sustitución festivos
+lasHorasNormal = null;
+lasHorasExtra = null;
+break;
                                     default:
                                 }
                             } else {
@@ -2106,20 +2029,15 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                         }
                     };
                     if (prop.includes('Domingo')) {
-                        const mySplit = prop.split('Domingo');
                         if (cuadranteColumna[prop].domingoCantidad) {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-                                        //'Horas sin coste'
-                                        if (!esMensualPactado) {
-                                            lasHorasNormal = null;
-                                            lasHorasExtra = null;
-                                        } else {
-                                            lasHorasNormal = cuadranteColumna[prop].domingoCantidad / 60;
-                                            lasHorasExtra = null;
-                                        };
-                                        break;
+case 2:
+//Horas sin coste & Sustitución festivos
+lasHorasNormal = null;
+lasHorasExtra = null;
+break;
                                     default:
                                 }
                             } else {
@@ -2284,7 +2202,7 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
         } else {
             resultadoIniciado = true;
         };
-        if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].iniciado || cambioConf) {
+        if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].iniciado || cambioConf || cambioSecuenciaSemanas.gestion) {
             //caudrante no iniciado 
             totalHorasInicialTra =
                 sumatorioTotalHorasNormalTra_L +
@@ -2308,7 +2226,7 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
             //control de excepciones                         
             switch (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].excepcion) {
                 case 1:
-                    if (cuadranteRegistrado === 'no') {
+                    if (cuadranteRegistrado === 'no' && !numeroCuadrantesCuadrantes[cuadranteEnUsoCuadrantes - 1].revisado) {
                         proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial / (totalHorasInicialTra + sumatorioHorasBajasComputablesTra + sumatorioTotalHorasFestivasComputablesTra);
                         switch (elTipoServicio) {
                             case 'LIM':
@@ -2346,7 +2264,8 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             ((sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) * elPrecioHora_L1) +
                             ((sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) * elPrecioHora_L2) +
                             ((sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) * elPrecioHora_F);
-                    } else {
+                    };
+                    if (cuadranteRegistrado === 'si' || (cuadranteRegistrado === 'no' && numeroCuadrantesCuadrantes[cuadranteEnUsoCuadrantes - 1].revisado)) {
                         proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion;
                         elPrecioHora_L = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L;
                         elPrecioHora_E = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_E;
@@ -2360,8 +2279,9 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                     };
                     break;
                 case '':
-                    if (cuadranteRegistrado === 'no') {
-                        proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial / (totalHorasInicialTra + sumatorioHorasBajasComputablesTra + sumatorioTotalHorasFestivasComputablesTra);
+                    if (cuadranteRegistrado === 'no' && !numeroCuadrantesCuadrantes[cuadranteEnUsoCuadrantes - 1].revisado) {
+                        // proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial / (totalHorasInicialTra + sumatorioHorasBajasComputablesTra + sumatorioTotalHorasFestivasComputablesTra);
+                        proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial / (totalHorasInicialTra + sumatorioHorasBajasComputablesTra);
                         switch (elTipoServicio) {
                             case 'LIM':
                                 elPrecioHora_L = proporcion;
@@ -2398,8 +2318,10 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             ((sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) * elPrecioHora_L1) +
                             ((sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) * elPrecioHora_L2) +
                             ((sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) * elPrecioHora_F) +
-                            (sumatorioTotalHorasFestivasComputablesTra * proporcion);
-                    } else {
+                            //(sumatorioTotalHorasFestivasComputablesTra * proporcion);
+                            (0);
+                    };
+                    if (cuadranteRegistrado === 'si' || (cuadranteRegistrado === 'no' && numeroCuadrantesCuadrantes[cuadranteEnUsoCuadrantes - 1].revisado)) {
                         proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion;
                         elPrecioHora_L = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L;
                         elPrecioHora_E = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_E;
@@ -2448,8 +2370,9 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                 precioHora_F: elPrecioHora_F ? elPrecioHora_F : '',
             };
             dispatch(setItemEditandoConfiguracionAccion(objetoDatosCuadrante));
+            cambioSecuenciaSemanas.gestion && (dispatch(setCambioSecuenciaSemanasAccion({ inicial: false, gestion: false })));
         };
-        if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].iniciado && !cambioConf) {
+        if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].iniciado && !cambioConf && !cambioSecuenciaSemanas.gestion) {
             //caudrante iniciado
             //control de excepciones           
             switch (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].excepcion) {
@@ -2479,7 +2402,6 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                     };
                     break;
                 case '':
-                    console.log(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L)
                     if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].bloqueado === 'no') {
                         totalMensualPactado =
                             ((sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L) +
@@ -2490,17 +2412,26 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             ((sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L1) +
                             ((sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L2) +
                             ((sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F) +
-                            (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion);
+                            //(sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion);
+                            (0);
                         objetoDatosInforme = {
                             ...objetoDatosInforme,
-                            totalFacturado_L: (sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) ? ((sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
-                            totalFacturado_E: (sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) ? ((sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_E) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
-                            totalFacturado_P: (sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) ? ((sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_P) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
-                            totalFacturado_N: (sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) ? ((sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_N) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
-                            totalFacturado_R: (sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) ? ((sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_R) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
-                            totalFacturado_L1: (sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) ? ((sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L1) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
-                            totalFacturado_L2: (sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) ? ((sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L2) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
-                            totalFacturado_F: (sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) ? ((sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
+                            // totalFacturado_L: (sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) ? ((sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
+                            // totalFacturado_E: (sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) ? ((sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_E) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
+                            // totalFacturado_P: (sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) ? ((sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_P) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
+                            // totalFacturado_N: (sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) ? ((sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_N) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
+                            // totalFacturado_R: (sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) ? ((sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_R) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
+                            // totalFacturado_L1: (sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) ? ((sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L1) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
+                            // totalFacturado_L2: (sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) ? ((sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L2) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
+                            // totalFacturado_F: (sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) ? ((sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
+                            totalFacturado_L: (sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) ? ((sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L) : null,
+                            totalFacturado_E: (sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) ? ((sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_E) : null,
+                            totalFacturado_P: (sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) ? ((sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_P) : null,
+                            totalFacturado_N: (sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) ? ((sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_N) : null,
+                            totalFacturado_R: (sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) ? ((sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_R) : null,
+                            totalFacturado_L1: (sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) ? ((sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L1) : null,
+                            totalFacturado_L2: (sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) ? ((sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L2) : null,
+                            totalFacturado_F: (sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) ? ((sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F) : null,
                             mensualPactado: totalMensualPactado,
                         };
                     };
@@ -2531,7 +2462,7 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
             totalFacturado_F: (sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) ? ((sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F) : null,
             precioHoraTotal: totalPrecioHora
         };
-    };    
+    };
     let elArrayDatosInforme = [...objetoCuadrante.datosInforme.datosInforme];
     elArrayDatosInforme[cuadranteEnUsoCuadrantes - 1] = objetoDatosInforme;
     const losDatosInforme = {
@@ -3083,6 +3014,17 @@ const gestionaColumnaCuadranteInteriorAccion = (
     if (bufferSwitchedDiasFestivosCuadrante.length > 0 && !esInicio) {
         arrayBuffer[cuadranteEnUsoCuadrantes - 1] = [...bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1]];
     };
+    let priDigSem, segDigSem, terDigSem;
+    if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].seqSemSiNo === 1 || !objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].seqSemSiNo) {
+        priDigSem = 2;
+        segDigSem = 4;
+        terDigSem = 6;
+    };
+    if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].seqSemSiNo === 2) {
+        priDigSem = 1;
+        segDigSem = 3;
+        terDigSem = 5;
+    };
     if (trabajador && tipoTrabajador) {
         if (esRevision) {
             columnaAnadir = {
@@ -3295,15 +3237,22 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesInicioRango');
-                                contadorHorasBajasComputables += bajaComputable.cantidad;
+                                if (elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesInicioRango');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                } else {
+                                    bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesInicioRango');
+                                    contadorHorasBajasComputables += bajaComputable.cantidad;
+                                };
                             }
                         } else {
                             if (esActualizacion) {
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                         if (dia[1][0] === 'Lunes') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 lunesInicioRango: null,
@@ -3358,7 +3307,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Lunes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             lunesInicioRango: null,
@@ -3418,7 +3367,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Lunes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             lunesInicioRango: null,
@@ -3473,7 +3422,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Lunes') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         lunesInicioRango: null,
@@ -3585,15 +3534,22 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesInicioRango');
-                                contadorHorasBajasComputables += bajaComputable.cantidad;
+                                if (elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesInicioRango');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                } else {
+                                    bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesInicioRango');
+                                    contadorHorasBajasComputables += bajaComputable.cantidad;
+                                };
                             }
                         } else {
                             if (esActualizacion) {
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                         if (dia[1][0] === 'Martes') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 martesInicioRango: null,
@@ -3648,7 +3604,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Martes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             martesInicioRango: null,
@@ -3708,7 +3664,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Martes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             martesInicioRango: null,
@@ -3763,7 +3719,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Martes') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         martesInicioRango: null,
@@ -3875,15 +3831,22 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesInicioRango');
-                                contadorHorasBajasComputables += bajaComputable.cantidad;
+                                if (elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesInicioRango');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                } else {
+                                    bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesInicioRango');
+                                    contadorHorasBajasComputables += bajaComputable.cantidad;
+                                };
                             }
                         } else {
                             if (esActualizacion) {
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                         if (dia[1][0] === 'Miércoles') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 miercolesInicioRango: null,
@@ -3938,7 +3901,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Miércoles') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             miercolesInicioRango: null,
@@ -3998,7 +3961,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Miércoles') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             miercolesInicioRango: null,
@@ -4053,7 +4016,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Miércoles') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         miercolesInicioRango: null,
@@ -4165,15 +4128,22 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesInicioRango');
-                                contadorHorasBajasComputables += bajaComputable.cantidad;
+                                if (elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesInicioRango');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                } else {
+                                    bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesInicioRango');
+                                    contadorHorasBajasComputables += bajaComputable.cantidad;
+                                };
                             }
                         } else {
                             if (esActualizacion) {
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                         if (dia[1][0] === 'Jueves') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 juevesInicioRango: null,
@@ -4228,7 +4198,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Jueves') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             juevesInicioRango: null,
@@ -4288,7 +4258,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Jueves') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             juevesInicioRango: null,
@@ -4343,7 +4313,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Jueves') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         juevesInicioRango: null,
@@ -4455,15 +4425,22 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesInicioRango');
-                                contadorHorasBajasComputables += bajaComputable.cantidad;
+                                if (elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesInicioRango');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                } else {
+                                    bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesInicioRango');
+                                    contadorHorasBajasComputables += bajaComputable.cantidad;
+                                };
                             }
                         } else {
                             if (esActualizacion) {
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                         if (dia[1][0] === 'Viernes') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 viernesInicioRango: null,
@@ -4518,7 +4495,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Viernes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             viernesInicioRango: null,
@@ -4578,7 +4555,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Viernes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             viernesInicioRango: null,
@@ -4633,7 +4610,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Viernes') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         viernesInicioRango: null,
@@ -4745,15 +4722,22 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoInicioRango');
-                                contadorHorasBajasComputables += bajaComputable.cantidad;
+                                if (elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoInicioRango');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                } else {
+                                    bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoInicioRango');
+                                    contadorHorasBajasComputables += bajaComputable.cantidad;
+                                };
                             }
                         } else {
                             if (esActualizacion) {
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                         if (dia[1][0] === 'Sábado') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 sabadoInicioRango: null,
@@ -4808,7 +4792,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Sábado') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             sabadoInicioRango: null,
@@ -4868,7 +4852,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Sábado') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             sabadoInicioRango: null,
@@ -4923,7 +4907,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Sábado') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         sabadoInicioRango: null,
@@ -5035,15 +5019,22 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoInicioRango');
-                                contadorHorasBajasComputables += bajaComputable.cantidad;
+                                if (elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoInicioRango');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                } else {
+                                    bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoInicioRango');
+                                    contadorHorasBajasComputables += bajaComputable.cantidad;
+                                };
                             }
                         } else {
                             if (esActualizacion) {
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                         if (dia[1][0] === 'Domingo') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 domingoInicioRango: null,
@@ -5098,7 +5089,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Domingo') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             domingoInicioRango: null,
@@ -5158,7 +5149,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Domingo') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             domingoInicioRango: null,
@@ -5213,7 +5204,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Domingo') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         domingoInicioRango: null,
@@ -5361,15 +5352,22 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesInicio1RangoDescanso');
-                                contadorHorasBajasComputables += bajaComputable.cantidad;
+                                if (elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesInicio1RangoDescanso');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                } else {
+                                    bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesInicio1RangoDescanso');
+                                    contadorHorasBajasComputables += bajaComputable.cantidad;
+                                };
                             }
                         } else {
                             if (esActualizacion) {
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                         if (dia[1][0] === 'Lunes') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 lunesInicio1RangoDescanso: null,
@@ -5430,7 +5428,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Lunes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             lunesInicio1RangoDescanso: null,
@@ -5496,7 +5494,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Lunes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             lunesInicio1RangoDescanso: null,
@@ -5557,7 +5555,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Lunes') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         lunesInicio1RangoDescanso: null,
@@ -5681,15 +5679,22 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesInicio1RangoDescanso');
-                                contadorHorasBajasComputables += bajaComputable.cantidad;
+                                if (elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesInicio1RangoDescanso');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                } else {
+                                    bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesInicio1RangoDescanso');
+                                    contadorHorasBajasComputables += bajaComputable.cantidad;
+                                };
                             }
                         } else {
                             if (esActualizacion) {
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                         if (dia[1][0] === 'Martes') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 martesInicio1RangoDescanso: null,
@@ -5750,7 +5755,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Martes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             martesInicio1RangoDescanso: null,
@@ -5816,7 +5821,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Martes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             martesInicio1RangoDescanso: null,
@@ -5877,7 +5882,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Martes') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         martesInicio1RangoDescanso: null,
@@ -6001,15 +6006,22 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesInicio1RangoDescanso');
-                                contadorHorasBajasComputables += bajaComputable.cantidad;
+                                if (elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesInicio1RangoDescanso');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                } else {
+                                    bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesInicio1RangoDescanso');
+                                    contadorHorasBajasComputables += bajaComputable.cantidad;
+                                };
                             }
                         } else {
                             if (esActualizacion) {
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                         if (dia[1][0] === 'Miércoles') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 miercolesInicio1RangoDescanso: null,
@@ -6070,7 +6082,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Miércoles') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             miercolesInicio1RangoDescanso: null,
@@ -6136,7 +6148,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Miércoles') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             miercolesInicio1RangoDescanso: null,
@@ -6197,7 +6209,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Miércoles') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         miercolesInicio1RangoDescanso: null,
@@ -6321,15 +6333,22 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesInicio1RangoDescanso');
-                                contadorHorasBajasComputables += bajaComputable.cantidad;
+                                if (elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesInicio1RangoDescanso');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                } else {
+                                    bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesInicio1RangoDescanso');
+                                    contadorHorasBajasComputables += bajaComputable.cantidad;
+                                };
                             }
                         } else {
                             if (esActualizacion) {
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                         if (dia[1][0] === 'Jueves') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 juevesInicio1RangoDescanso: null,
@@ -6390,7 +6409,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Jueves') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             juevesInicio1RangoDescanso: null,
@@ -6456,7 +6475,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Jueves') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             juevesInicio1RangoDescanso: null,
@@ -6517,7 +6536,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Jueves') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         juevesInicio1RangoDescanso: null,
@@ -6641,15 +6660,22 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesInicio1RangoDescanso');
-                                contadorHorasBajasComputables += bajaComputable.cantidad;
+                                if (elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesInicio1RangoDescanso');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                } else {
+                                    bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesInicio1RangoDescanso');
+                                    contadorHorasBajasComputables += bajaComputable.cantidad;
+                                };
                             }
                         } else {
                             if (esActualizacion) {
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                         if (dia[1][0] === 'Viernes') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 viernesInicio1RangoDescanso: null,
@@ -6710,7 +6736,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Viernes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             viernesInicio1RangoDescanso: null,
@@ -6776,7 +6802,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Viernes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             viernesInicio1RangoDescanso: null,
@@ -6837,7 +6863,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Viernes') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         viernesInicio1RangoDescanso: null,
@@ -6961,15 +6987,22 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoInicio1RangoDescanso');
-                                contadorHorasBajasComputables += bajaComputable.cantidad;
+                                if (elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoInicio1RangoDescanso');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                } else {
+                                    bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoInicio1RangoDescanso');
+                                    contadorHorasBajasComputables += bajaComputable.cantidad;
+                                };
                             }
                         } else {
                             if (esActualizacion) {
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                         if (dia[1][0] === 'Sábado') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 sabadoInicio1RangoDescanso: null,
@@ -7030,7 +7063,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Sábado') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             sabadoInicio1RangoDescanso: null,
@@ -7096,7 +7129,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Sábado') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             sabadoInicio1RangoDescanso: null,
@@ -7157,7 +7190,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Sábado') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         sabadoInicio1RangoDescanso: null,
@@ -7281,15 +7314,22 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoInicio1RangoDescanso');
-                                contadorHorasBajasComputables += bajaComputable.cantidad;
+                                if (elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoInicio1RangoDescanso');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                } else {
+                                    bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoInicio1RangoDescanso');
+                                    contadorHorasBajasComputables += bajaComputable.cantidad;
+                                };
                             }
                         } else {
                             if (esActualizacion) {
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                         if (dia[1][0] === 'Domingo') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 domingoInicio1RangoDescanso: null,
@@ -7350,7 +7390,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Domingo') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             domingoInicio1RangoDescanso: null,
@@ -7416,7 +7456,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Domingo') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             domingoInicio1RangoDescanso: null,
@@ -7477,7 +7517,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Domingo') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         domingoInicio1RangoDescanso: null,
@@ -7622,15 +7662,22 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesCantidad');
-                                contadorHorasBajasComputables += bajaComputable.cantidad;
+                                if (elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesCantidad');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                } else {
+                                    bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesCantidad');
+                                    contadorHorasBajasComputables += bajaComputable.cantidad;
+                                };
                             }
                         } else {
                             if (esActualizacion) {
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                         if (dia[1][0] === 'Lunes') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 lunesCantidad: '',
@@ -7682,7 +7729,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Lunes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             lunesCantidad: '',
@@ -7739,7 +7786,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Lunes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             lunesCantidad: '',
@@ -7791,7 +7838,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Lunes') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         lunesCantidad: '',
@@ -7897,15 +7944,22 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesCantidad');
-                                contadorHorasBajasComputables += bajaComputable.cantidad;
+                                if (elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesCantidad');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                } else {
+                                    bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesCantidad');
+                                    contadorHorasBajasComputables += bajaComputable.cantidad;
+                                };
                             }
                         } else {
                             if (esActualizacion) {
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                         if (dia[1][0] === 'Martes') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 martesCantidad: '',
@@ -7957,7 +8011,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Martes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             martesCantidad: '',
@@ -8014,7 +8068,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Martes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             martesCantidad: '',
@@ -8066,7 +8120,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Martes') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         martesCantidad: '',
@@ -8172,15 +8226,22 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesCantidad');
-                                contadorHorasBajasComputables += bajaComputable.cantidad;
+                                if (elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesCantidad');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                } else {
+                                    bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesCantidad');
+                                    contadorHorasBajasComputables += bajaComputable.cantidad;
+                                };
                             }
                         } else {
                             if (esActualizacion) {
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                         if (dia[1][0] === 'Miércoles') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 miercolesCantidad: '',
@@ -8232,7 +8293,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Miércoles') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             miercolesCantidad: '',
@@ -8289,7 +8350,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Miércoles') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             miercolesCantidad: '',
@@ -8341,7 +8402,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Miércoles') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         miercolesCantidad: '',
@@ -8447,15 +8508,22 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesCantidad');
-                                contadorHorasBajasComputables += bajaComputable.cantidad;
+                                if (elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesCantidad');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                } else {
+                                    bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesCantidad');
+                                    contadorHorasBajasComputables += bajaComputable.cantidad;
+                                };
                             }
                         } else {
                             if (esActualizacion) {
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                         if (dia[1][0] === 'Jueves') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 juevesCantidad: '',
@@ -8507,7 +8575,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Jueves') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             juevesCantidad: '',
@@ -8564,7 +8632,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Jueves') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             juevesCantidad: '',
@@ -8616,7 +8684,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Jueves') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         juevesCantidad: '',
@@ -8722,15 +8790,22 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesCantidad');
-                                contadorHorasBajasComputables += bajaComputable.cantidad;
+                                if (elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesCantidad');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                } else {
+                                    bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesCantidad');
+                                    contadorHorasBajasComputables += bajaComputable.cantidad;
+                                };
                             }
                         } else {
                             if (esActualizacion) {
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                         if (dia[1][0] === 'Viernes') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 viernesCantidad: '',
@@ -8782,7 +8857,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Viernes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             viernesCantidad: '',
@@ -8839,7 +8914,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Viernes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             viernesCantidad: '',
@@ -8891,7 +8966,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Viernes') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         viernesCantidad: '',
@@ -8997,15 +9072,22 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoCantidad');
-                                contadorHorasBajasComputables += bajaComputable.cantidad;
+                                if (elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoCantidad');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                } else {
+                                    bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoCantidad');
+                                    contadorHorasBajasComputables += bajaComputable.cantidad;
+                                };
                             }
                         } else {
                             if (esActualizacion) {
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                         if (dia[1][0] === 'Sábado') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 sabadoCantidad: '',
@@ -9057,7 +9139,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Sábado') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             sabadoCantidad: '',
@@ -9114,7 +9196,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Sábado') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             sabadoCantidad: '',
@@ -9166,7 +9248,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Sábado') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         sabadoCantidad: '',
@@ -9272,15 +9354,22 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
-                                bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoCantidad');
-                                contadorHorasBajasComputables += bajaComputable.cantidad;
+                                if (elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoCantidad');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                } else {
+                                    bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoCantidad');
+                                    contadorHorasBajasComputables += bajaComputable.cantidad;
+                                };
                             }
                         } else {
                             if (esActualizacion) {
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                         if (dia[1][0] === 'Domingo') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 domingoCantidad: '',
@@ -9332,7 +9421,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Domingo') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             domingoCantidad: '',
@@ -9389,7 +9478,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (dia[1][0] === 'Domingo') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             domingoCantidad: '',
@@ -9441,7 +9530,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === 2 || numeroSemana === 4 || numeroSemana === 6) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
                                 if (dia[1][0] === 'Domingo') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         domingoCantidad: '',

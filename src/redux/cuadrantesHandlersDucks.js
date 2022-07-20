@@ -79,6 +79,8 @@ import { setYaNoEsInicioAccion } from './cuadrantesSettersDucks';
 import { setVenimosDeCambioCentroSelectAccion } from './cuadrantesSettersDucks';
 import { setCambioRedimensionColumnaAccion } from './cuadrantesSettersDucks';
 import { handleClosePopoverDiasAccion } from './cuadrantesPopoversDucks';
+import { setCambioSecuenciaSemanasAccion } from './cuadrantesSettersDucks';
+import { setMesConFestivosCompletoAccion } from './cuadrantesSettersDucks';
 
 //constantes
 const arrayFestivos = Constantes.CALENDARIO_FESTIVOS;
@@ -621,7 +623,7 @@ export const configuraStateFestivoAccion = () => (dispatch, getState) => {
 };
 
 export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, tipoFestivo, esPeriodo, scrollable, classes) => (dispatch, getState) => {
-    const { cuadrante, stateFestivo, cuadranteRegistrado } = getState().variablesCuadrantes;
+    const { cuadrante, stateFestivo, cuadranteRegistrado, losDiasDelMes } = getState().variablesCuadrantes;
     const { bufferSwitchedDiasFestivosCuadrante, cuadranteEnUsoCuadrantes, numeroCuadrantesCuadrantes } = getState().variablesCuadrantesSetters;
     const { cuadranteServiciosFijos } = getState().variablesCuadrantesServiciosFijos;
     const { objetoCentro } = getState().variablesCentros;
@@ -1667,6 +1669,16 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
             arrayBuffer[cuadranteEnUsoCuadrantes - 1][indexABorrar] = objetoBuffer;
         };
     };
+    if (cuadranteRegistrado === 'no') {
+        //control mes completo vacaciones
+        let contadorDias = 0;
+        arrayBuffer[cuadranteEnUsoCuadrantes - 1].forEach((festivo, index) => {
+            festivo.activo && (contadorDias++);
+        });
+        if (losDiasDelMes.length === contadorDias) {
+            dispatch(setMesConFestivosCompletoAccion(true));
+        };
+    };
     dispatch(setBufferSwitchedDiasFestivosCuadranteAccion(arrayBuffer));
     if (event) {
         if (cuadranteRegistrado === 'si') {
@@ -1808,6 +1820,9 @@ export const handleChangeTimePickerInicioCuadranteAccion = (id, index, horaParej
     let arrayCuadrante = [...cuadrante];
     let laHoraInicio;
     if (hora) {
+        if (hora === "Invalid Date") {
+            console.log('no')
+        }
         laHoraInicio = dispatch(retornaHoraRangoAccion(hora));
     } else {
         laHoraInicio = null;
@@ -2232,6 +2247,12 @@ export const handleChangeFormConfiguracionCuadranteAccion = (prop, event) => (di
         objetoFestivos = { ...itemEditandoConfiguracion.festivos };
         objetoFestivos.tipo = event.target.value;
         dispatch(setItemEditandoConfiguracionAccion({ ...itemEditandoConfiguracion, festivos: objetoFestivos }));
+    };
+    if (prop === "seqSemSiNo") {
+        dispatch(setItemEditandoConfiguracionAccion({
+            ...itemEditandoConfiguracion,
+            [prop]: event.target.checked ? 1 : 2
+        }));
     };
     dispatch(setItemPrevioEditandoConfiguracionAccion({ ...itemPrevioEditandoConfiguracion, modificado: true }));
     dispatch(activarDesactivarCambioAccion(false));
@@ -4603,6 +4624,9 @@ export const handleRegistrarCambioEnCasillaConfiguracionAccion = (scrollable, cl
             dispatch(setCambiadaConfiguracionGeneralAccion(true));
         };
     };
+    if (itemEditandoConfiguracion.seqSemSiNo) {
+        dispatch(setCambioSecuenciaSemanasAccion({ inicial: true, gestion: false }));
+    };
     let elArrayDatosInforme = [...objetoCuadrante.datosInforme.datosInforme];
     let elObjetoDatosInforme = {
         ...elArrayDatosInforme[cuadranteEnUsoCuadrantes - 1],
@@ -4618,7 +4642,8 @@ export const handleRegistrarCambioEnCasillaConfiguracionAccion = (scrollable, cl
         precioHora_R: itemEditandoConfiguracion.precioHora_R ? parseFloat(itemEditandoConfiguracion.precioHora_R) : null,
         precioHora_L1: itemEditandoConfiguracion.precioHora_L1 ? parseFloat(itemEditandoConfiguracion.precioHora_L1) : null,
         precioHora_L2: itemEditandoConfiguracion.precioHora_L2 ? parseFloat(itemEditandoConfiguracion.precioHora_L2) : null,
-        precioHora_F: itemEditandoConfiguracion.precioHora_F ? parseFloat(itemEditandoConfiguracion.precioHora_F) : null
+        precioHora_F: itemEditandoConfiguracion.precioHora_F ? parseFloat(itemEditandoConfiguracion.precioHora_F) : null,
+        seqSemSiNo: itemEditandoConfiguracion.seqSemSiNo ? itemEditandoConfiguracion.seqSemSiNo : null
     };
     elArrayDatosInforme[cuadranteEnUsoCuadrantes - 1] = elObjetoDatosInforme;
     const losDatosInforme = {

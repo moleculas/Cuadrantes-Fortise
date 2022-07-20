@@ -2535,13 +2535,33 @@ const CentrosRegistrar = forwardRef((props, ref) => {
 
     const procesarDatosRegistroPromesa = () => {
         return new Promise((resolve, reject) => {
-            if (valuesFormRegistroGenerales.nombre === '' ||
-                valuesFormRegistro.categoria === '' ||
-                valuesFormRegistroGenerales.formaPago === '' ||
-                valuesFormRegistroGenerales.tempPago === ''
-            ) {
+            if (valuesFormRegistroGenerales.nombre === '') {
                 setAlert({
-                    mensaje: "Faltan datos por completar. Revisa el formulario.",
+                    mensaje: "Faltan datos por completar. Campo Nombre. Revisa el formulario.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return;
+            };
+            if (valuesFormRegistroGenerales.categoria === '') {
+                setAlert({
+                    mensaje: "Faltan datos por completar. Campo Categoría Centro. Revisa el formulario.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return;
+            };
+            if (valuesFormRegistroGenerales.formaPago === '') {
+                setAlert({
+                    mensaje: "Faltan datos por completar. Campo Forma pago. Revisa el formulario.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return;
+            };
+            if (valuesFormRegistroGenerales.tempPago === '') {
+                setAlert({
+                    mensaje: "Faltan datos por completar. Campo Temporización. Revisa el formulario.",
                     tipo: 'error'
                 })
                 setOpenSnack(true);
@@ -3577,6 +3597,21 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     excepcion: horarioIntervencionRegistro.excepcion,
                     tipoRegistroTrabajador: elArrayTipoRegistroTrabajador
                 };
+            };
+            //revisión horario correcto
+            let errorEnHorario = false;
+            horarioIntervencionRegistro.tipoRegistroTrabajador.forEach((harario, index) => {
+                if (Object.values(horarioIntervencionRegistro.tipoRegistroTrabajador[index]).indexOf('NaN:NaN') > -1) {
+                    errorEnHorario = true;
+                };
+            });
+            if (errorEnHorario) {
+                setAlert({
+                    mensaje: "Alguna casilla del Horario trabajadores contiene datos erróneos. Revísalo antes de registrar.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return
             };
             //añadimos cómputo final     
             let elHorarioIntervencionRegistradoRevisado = {

@@ -1,5 +1,5 @@
 import { makeStyles } from "@material-ui/core";
-import { amber, blueGrey, green, lime, indigo, red, grey, blue, yellow, teal, brown, lightGreen } from '@material-ui/core/colors';
+import { amber, blueGrey, green, lime, indigo, red, grey, blue, yellow, teal, brown, lightGreen, orange } from '@material-ui/core/colors';
 
 const Clases = makeStyles((theme) => ({
     //loading
@@ -183,8 +183,17 @@ const Clases = makeStyles((theme) => ({
         cursor: 'pointer',
     },
     casillaModificado: {
-        backgroundColor: `${lime[100]} !important`,
-        color: `${lime[900]} !important`,
+        backgroundColor: `${lime[100]} !important`,       
+        cursor: 'pointer',
+        padding: 9,
+    },
+    casillaVariacion1: {
+        backgroundColor: `${orange[100]} !important`,       
+        cursor: 'pointer',
+        padding: 9,
+    },
+    casillaVariacion2: {
+        backgroundColor: `${blue[100]} !important`,
         cursor: 'pointer',
         padding: 9,
     },

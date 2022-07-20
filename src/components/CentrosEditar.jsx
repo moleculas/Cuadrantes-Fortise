@@ -2648,13 +2648,33 @@ const CentrosEditar = forwardRef((props, ref) => {
 
     const procesarDatosEdicionPromesa = () => {
         return new Promise((resolve, reject) => {
-            if (valuesFormEdicionGenerales.nombre === '' ||
-                valuesFormEdicion.categoria === '' ||
-                valuesFormEdicionGenerales.formaPago === '' ||
-                valuesFormEdicionGenerales.tempPago === ''
-            ) {
+            if (valuesFormEdicionGenerales.nombre === '') {
                 setAlert({
-                    mensaje: "Faltan datos por completar. Revisa el formulario.",
+                    mensaje: "Faltan datos por completar. Campo Nombre. Revisa el formulario.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return;
+            };
+            if (valuesFormEdicion.categoria === '') {
+                setAlert({
+                    mensaje: "Faltan datos por completar. Campo Categoría Centro. Revisa el formulario.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return;
+            };
+            if (valuesFormEdicionGenerales.formaPago === '') {
+                setAlert({
+                    mensaje: "Faltan datos por completar. Campo Forma pago. Revisa el formulario.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return;
+            };
+            if (valuesFormEdicionGenerales.tempPago === '') {
+                setAlert({
+                    mensaje: "Faltan datos por completar. Campo Temporización. Revisa el formulario.",
                     tipo: 'error'
                 })
                 setOpenSnack(true);
@@ -3682,6 +3702,21 @@ const CentrosEditar = forwardRef((props, ref) => {
                     excepcion: horarioIntervencionEdicion.excepcion,
                     tipoRegistroTrabajador: elArrayTipoRegistroTrabajador
                 };
+            };
+            //revisión horario correcto
+            let errorEnHorario = false;
+            horarioIntervencionEdicion.tipoRegistroTrabajador.forEach((harario, index) => {
+                if (Object.values(horarioIntervencionEdicion.tipoRegistroTrabajador[index]).indexOf('NaN:NaN') > -1) {
+                    errorEnHorario = true;
+                };
+            });
+            if (errorEnHorario) {
+                setAlert({
+                    mensaje: "Alguna casilla del Horario trabajadores contiene datos erróneos. Revísalo antes de actualizar.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return
             };
             //añadimos cómputo final                           
             let elHorarioIntervencionEditadoRevisado = {

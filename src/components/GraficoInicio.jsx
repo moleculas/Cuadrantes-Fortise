@@ -62,10 +62,14 @@ const GraficoCuadrantes = (props) => {
         if (cuadrantesPorAnyoGraficos.length === 12 && nominasPorAnyoGraficos.length === 12) {
             let array = [];
             let objeto;
-            for (let i = 0; i < 12; i++) {          
+            for (let i = 0; i < 12; i++) {    
+                let empresas = 0;
+                let pisos = 0;
+                cuadrantesPorAnyoGraficos[i].Empresas && (empresas = cuadrantesPorAnyoGraficos[i].Empresas);
+                cuadrantesPorAnyoGraficos[i].Pisos && (pisos = cuadrantesPorAnyoGraficos[i].Pisos);               
                 objeto = {
                     name: cuadrantesPorAnyoGraficos[i].name,
-                    Ingresos: cuadrantesPorAnyoGraficos[i].Empresas || cuadrantesPorAnyoGraficos[i].Pisos ? parseFloat(cuadrantesPorAnyoGraficos[i].Empresas) + parseFloat(cuadrantesPorAnyoGraficos[i].Pisos) : 0,
+                    Ingresos: cuadrantesPorAnyoGraficos[i].Empresas || cuadrantesPorAnyoGraficos[i].Pisos ? +parseFloat(empresas).toFixed(2) + +parseFloat(pisos).toFixed(2) : 0,
                     Gastos: nominasPorAnyoGraficos[i].Gastos
                 }
                 array.push(objeto);

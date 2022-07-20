@@ -32,6 +32,10 @@ import c20 from '../images/instrucciones/cuadrantes/c_20.jpg';
 import c21 from '../images/instrucciones/cuadrantes/c_21.jpg';
 import c22 from '../images/instrucciones/cuadrantes/c_22.jpg';
 import c23 from '../images/instrucciones/cuadrantes/c_23.jpg';
+import c24 from '../images/instrucciones/cuadrantes/c_24.jpg';
+import c25 from '../images/instrucciones/cuadrantes/c_25.jpg';
+import c26 from '../images/instrucciones/cuadrantes/c_26.jpg';
+import c27 from '../images/instrucciones/cuadrantes/c_27.jpg';
 
 //carga componentes
 
@@ -297,8 +301,8 @@ const InstruccionesCuadrantes = () => {
                             </SRLWrapper>
                             <br />
                             <Typography component="span" variant="body2"><Typography variant="h5" component="span" className={classes.cercleInstruccions}>{numeracioInstruccions[2]}</Typography> Si el trabajador va seguido de un suplente que lo complementa, se deberá hacer el mismo proceso en la columna del suplente para actualizar los datos en función a la nueva columna del trabajador. De otro modo se generaría una incongruencia en el cómputo de horas.</Typography>
-                            <br />   
-                            <br />   
+                            <br />
+                            <br />
                             {/* Elemento 4 */}
                             <div className={classes.tituloInstrucciones} id="c4">
                                 Asignar horas sin coste
@@ -330,8 +334,8 @@ const InstruccionesCuadrantes = () => {
                                 </a>
                             </SRLWrapper>
                             <br />
-                             {/* Elemento 5 */}
-                             <div className={classes.tituloInstrucciones} id="c5">
+                            {/* Elemento 5 */}
+                            <div className={classes.tituloInstrucciones} id="c5">
                                 Bloquear cómputo de horas
                                 <HashLink to={`#c5`} className={classes.anchorLink} scroll={(el) => el.scrollIntoView({ behavior: 'auto', block: 'start' })}><LinkIcon /></HashLink>
                             </div>
@@ -364,6 +368,79 @@ const InstruccionesCuadrantes = () => {
                                     <img style={{ marginTop: 25, width: '100%' }} src={c23} alt="c23" />
                                 </a>
                             </SRLWrapper>
+                            <br />
+                            {/* Elemento 6 */}
+                            <div className={classes.tituloInstrucciones} id="c6">
+                                Revertir secuencia semanas
+                                <HashLink to={`#c6`} className={classes.anchorLink} scroll={(el) => el.scrollIntoView({ behavior: 'auto', block: 'start' })}><LinkIcon /></HashLink>
+                            </div>
+                            <Typography component="span" variant="body2">Todo centro registrado que tenga implementada la configuración horaria quincenal (Semana Sí, Semana No), por defecto generará los cuadrantes empezando por la primera semana. Es posible que esta configuración no se corresponda con la realidad en ciertos meses. Desde la ficha cuadrante se puede revertir esta secuencia para adaptarla a la configuración del mes sin necesidad de bloquear cálculos o recomponer casillas de horarios.</Typography>
+                            <br />
+                            <Typography component="span" variant="body2">Para cambiar la secuencia quincenal Semana Sí, Semana No:</Typography>
+                            <br />
+                            <Typography component="span" variant="body2"><Typography variant="h5" component="span" className={classes.cercleInstruccionsVer}>{numeracioInstruccions[1]}</Typography> Pulsar el botón <b>Ajustes cuadrante</b>.</Typography>
+                            <br />
+                            <Typography component="span" variant="body2"><Typography variant="h5" component="span" className={classes.cercleInstruccionsVer}>{numeracioInstruccions[2]}</Typography> Pulsar el interruptor <b>Cambio secuencia Semana Sí, Semana No</b>.</Typography>
+                            <br />
+                            <Typography component="span" variant="body2"><Typography variant="h5" component="span" className={classes.cercleInstruccionsVer}>{numeracioInstruccions[3]}</Typography> Pulsar botón <b>Registrar cambio</b>.</Typography>
+                            <br />
+                            <SRLWrapper options={options}>
+                                <a href={c24}>
+                                    <img style={{ marginTop: 25 }} src={c24} alt="c24" />
+                                </a>
+                            </SRLWrapper>
+                            <br />
+                            {/* Elemento 7 */}
+                            <div className={classes.tituloInstrucciones} id="c7">
+                                Horas sustitución festivos
+                                <HashLink to={`#c7`} className={classes.anchorLink} scroll={(el) => el.scrollIntoView({ behavior: 'auto', block: 'start' })}><LinkIcon /></HashLink>
+                            </div>
+                            <Typography component="span" variant="body2">Para asignar un intervalo de horas en cuadrantes tipo <b>Mensual Pactado</b> que no interese computar porque es una sustitución de días festivos. En cualquier columna de trabajador o suplente:</Typography>
+                            <br />
+                            <Typography component="span" variant="body2"><Typography variant="h5" component="span" className={classes.cercleInstruccions}>{numeracioInstruccions[1]}</Typography> Pulsar la casilla que se quiera editar y pulsar el botón <b>Añadir variación</b>.</Typography>
+                            <br />
+                            <SRLWrapper options={options}>
+                                <a href={c19}>
+                                    <img style={{ marginTop: 25 }} src={c19} alt="c19" />
+                                </a>
+                            </SRLWrapper>
+                            <br />
+                            <Typography component="span" variant="body2"><Typography variant="h5" component="span" className={classes.cercleInstruccions}>{numeracioInstruccions[2]}</Typography> En el desplegable que aparece <b>Variaciones</b> <Typography variant="h5" component="span" className={classes.cercleInstruccionsVer}>{numeracioInstruccions[1]}</Typography> elegir <b>Sustitución festivos</b> y <Typography variant="h5" component="span" className={classes.cercleInstruccionsVer}>{numeracioInstruccions[2]}</Typography> pulsar el botón <b>Registrar cambio</b>.</Typography>
+                            <br />
+                            <SRLWrapper options={options}>
+                                <a href={c25}>
+                                    <img style={{ marginTop: 25 }} src={c25} alt="c25" />
+                                </a>
+                            </SRLWrapper>
+                            <br />
+                            <Typography component="span" variant="body2"><Typography variant="h5" component="span" className={classes.cercleInstruccions}>{numeracioInstruccions[3]}</Typography> El cómputo de horas del cuadrante se actualizará en función a la variación implementada. El rango horario determinado no intervendrá en el cómputo total de horas y la casilla mostrará un icono que señalará el tipo de variación (Sustitución festivos).</Typography>
+                            <br />
+                            <SRLWrapper options={options}>
+                                <a href={c26}>
+                                    <img style={{ marginTop: 25 }} src={c26} alt="c26" />
+                                </a>
+                            </SRLWrapper>
+                            <br />
+                            {/* Elemento 8 */}
+                            <div className={classes.tituloInstrucciones} id="c8">
+                                Tipos de festivos
+                                <HashLink to={`#c8`} className={classes.anchorLink} scroll={(el) => el.scrollIntoView({ behavior: 'auto', block: 'start' })}><LinkIcon /></HashLink>
+                            </div>
+                            <Typography component="span" variant="body2">Todo cuadrante cargará automáticamente los festivos anuales que correspondan por calendario laborar. Alternativamente, se podrán gestionar festivos concretos desde el mismo cuadrante. Para hacerlo:</Typography>
+                            <br />
+                            <Typography component="span" variant="body2">Al pulsar cualquier casilla Días (primera columna de todo cuadrante), elegir la opción deseada dels desplegable.</Typography>
+                            <br />
+                            <SRLWrapper options={options}>
+                                <a href={c27}>
+                                    <img style={{ marginTop: 25 }} src={c27} alt="c27" />
+                                </a>
+                            </SRLWrapper>
+                            <br />
+                            <Typography component="span" variant="body2"><Typography variant="h5" component="span" className={classes.cercleInstruccions}>{numeracioInstruccions[1]}</Typography> LABORAL: Sirve para devolver a la fila seleccionada el estado laboral en el caso que previamente se haya configurado como festivo. La fila afectada retornará los intervalos horarios si los tuviera.</Typography>
+                            <br />
+                            <Typography component="span" variant="body2"><Typography variant="h5" component="span" className={classes.cercleInstruccions}>{numeracioInstruccions[2]}</Typography> FESTIVO: Al seleccionar esta opción la fila afectada correspondiente al día elegido eliminará los intervalos horarios y ninguna casilla de la fila se podrá editar. Si el cuadrante responde a la configuración <b>precio/hora</b> en el cómputo horario se habrán restado las horas que contemple el día festivo. Si el cuadrante responde a la configuración <b>Mensual pactado</b> el cómputo horario no se verá afectado por las horas que se hayan restado de la correspondiente fila, a no ser que el cuadrante esté configurado con la excepción <b>Festivos restan cómputo de horas</b>. Ej: Cuadrante BILANX.</Typography>
+                            <br />
+                            <Typography component="span" variant="body2"><Typography variant="h5" component="span" className={classes.cercleInstruccions}>{numeracioInstruccions[3]}</Typography> CIERRE CENTRO: Al seleccionar esta opción la fila afectada correspondiente al día elegido eliminará los intervalos horarios y ninguna casilla de la fila se podrá editar. Todo cuandrante restará las horas correspondientes del cómputo horario.</Typography>
                             <br />
                         </Fragment>
                     </Box>

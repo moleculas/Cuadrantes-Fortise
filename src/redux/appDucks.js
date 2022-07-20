@@ -120,7 +120,7 @@ export default function appReducer(state = dataInicial, action) {
         case SET_NEWCONTROLLER:
             return { ...state, controladores: action.payload.array }
         case SET_CUADRANTESITERADOSACTUALIZAR:
-            return { ...state, cuadrantesIteradosActualizar: [...state.cuadrantesIteradosActualizar, action.payload.elementoArray3] }       
+            return { ...state, cuadrantesIteradosActualizar: [...state.cuadrantesIteradosActualizar, action.payload.elementoArray3] }
         default:
             return { ...state }
     }
@@ -160,7 +160,7 @@ export const retornaHoraRangoAccion = (laHora) => (dispatch, getState) => {
         const hora = laHora.getHours();
         const minuto = laHora.getMinutes();
         const laHoraRetornada = hora + ':' + minuto;
-        return laHoraRetornada;       
+        return laHoraRetornada;
     }
 };
 
@@ -1551,7 +1551,7 @@ export const generaArchivoXLSCentrosAccion = () => (dispatch, getState) => {
         elListadoCentros.push(elObjetoCentro);
     });
     elListadoCentros.sort((a, b) => a.categoria.localeCompare(b.categoria));
-    const elListadoCentrosImprimir = [];
+    const elListadoCentrosImprimir = [["LISTADO CENTROS"], ["CENTRO", "CATEGORÍA", "ESTADO"]];
     elListadoCentros.forEach((centro) => {
         elListadoCentrosImprimir.push([centro.nombre, centro.categoria, centro.estado]);
     });
@@ -1560,9 +1560,74 @@ export const generaArchivoXLSCentrosAccion = () => (dispatch, getState) => {
 
 export const generaArchivoXLSTrabajadoresAccion = () => (dispatch, getState) => {
     const { arrayTrabajadores } = getState().variablesTrabajadores;
-    const elListadoTrabajadoresImprimir = [];
+    const elListadoTrabajadoresImprimir = [["LISTADO TRABAJADORES"], ["NOMBRE TRABAJADOR", "ESTADO"]];
     arrayTrabajadores.forEach((trabajador) => {
         elListadoTrabajadoresImprimir.push([trabajador.nombre, trabajador.estado]);
     });
     exportarAExcel(elListadoTrabajadoresImprimir, 'listado_trabajadores');
+};
+
+export const generaArchivoXLSCuadrantesPendientesAccion = (mes) => (dispatch, getState) => {
+    const { cuadrantesPendientesArray } = getState().variablesPendientes;
+    const { arrayCentros } = getState().variablesCentros;
+    const elListadoCuadrantesPendientesImprimir = [["LISTADO CUADRANTES PENDIENTES MES " + mes], ["CENTRO"]];
+    arrayCentros.forEach((centro) => {
+        if (cuadrantesPendientesArray.includes(centro.id)) {
+            elListadoCuadrantesPendientesImprimir.push([centro.nombre]);
+        };
+    });
+    const nombreArchivo = 'listado_cuadrantes_pendientes_' + mes;
+    exportarAExcel(elListadoCuadrantesPendientesImprimir, nombreArchivo);
+};
+
+export const generaArchivoXLSCuadrantesRegistradosAccion = (mes) => (dispatch, getState) => {
+    const { cuadrantesRegistradosArray } = getState().variablesPendientes;
+    let cuadrantes = [];
+    cuadrantesRegistradosArray.forEach((cuadrante, index) => {
+        let objeto = {};
+        objeto['nombreCentro'] = cuadrante.total.nombreCentro;
+        objeto['tocaFacturar'] = cuadrante.total.tocaFacturar.valor;
+        objeto['razon'] = cuadrante.total.tocaFacturar.razon;
+        objeto['total'] = parseFloat(cuadrante.total.total).toFixed(2) + ' €';
+        objeto['totalMasIva'] = parseFloat(cuadrante.total.totalMasIva).toFixed(2) + ' €';
+        cuadrantes.push(objeto);
+    });
+    cuadrantes.sort((a, b) => a.nombreCentro.localeCompare(b.nombreCentro));
+    const elListadoCuadrantesFacturadosImprimir = [["LISTADO CUADRANTES REGISTRADOS MES " + mes], ["CENTRO", "TOCA FACTURAR", "RAZÓN", "TOTAL", "TOTAL + IVA"]];
+    cuadrantes.forEach((cuadrante) => {
+        elListadoCuadrantesFacturadosImprimir.push([cuadrante.nombreCentro, cuadrante.tocaFacturar, cuadrante.razon, cuadrante.total, cuadrante.totalMasIva]);
+    });
+    const nombreArchivo = 'listado_cuadrantes_registrados_' + mes;
+    exportarAExcel(elListadoCuadrantesFacturadosImprimir, nombreArchivo);
+};
+
+export const generaArchivoXLSCuadrantesFacturadosAccion = (mes) => (dispatch, getState) => {
+    const { cuadrantesFacturadosArray } = getState().variablesPendientes;
+    let cuadrantes = [];
+    cuadrantesFacturadosArray.forEach((cuadrante, index) => {
+        let objeto = {};
+        objeto['nombreCentro'] = cuadrante.total.nombreCentro;
+        objeto['tocaFacturar'] = cuadrante.total.tocaFacturar.valor;
+        objeto['razon'] = cuadrante.total.tocaFacturar.razon;
+        objeto['procesado'] = cuadrante.total.procesado.valor;
+        if (cuadrante.total.procesado.valor === "si") {
+            if (cuadrante.total.procesado.numF) {
+                objeto['numero'] = "Número factura: " + cuadrante.total.procesado.numF;
+            } else if (cuadrante.total.procesado.numR) {
+                objeto['numero'] = "Número recibo: " + cuadrante.total.procesado.numR;
+            } else {
+                objeto['numero'] = "";
+            };
+        };
+        objeto['total'] = parseFloat(cuadrante.total.total).toFixed(2) + ' €';
+        objeto['totalMasIva'] = parseFloat(cuadrante.total.totalMasIva).toFixed(2) + ' €';
+        cuadrantes.push(objeto);
+    });
+    cuadrantes.sort((a, b) => a.nombreCentro.localeCompare(b.nombreCentro));
+    const elListadoCuadrantesFacturadosImprimir = [["LISTADO CUADRANTES FACTURADOS MES " + mes], ["CENTRO", "TOCA FACTURAR", "RAZÓN", "EMITIDO", "NÚMERO FACTURA / RECIBO", "TOTAL", "TOTAL + IVA"]];
+    cuadrantes.forEach((cuadrante) => {
+        elListadoCuadrantesFacturadosImprimir.push([cuadrante.nombreCentro, cuadrante.tocaFacturar, cuadrante.razon, cuadrante.procesado, cuadrante.numero, cuadrante.total, cuadrante.totalMasIva]);
+    });
+    const nombreArchivo = 'listado_cuadrantes_registrados_' + mes;
+    exportarAExcel(elListadoCuadrantesFacturadosImprimir, nombreArchivo);
 };

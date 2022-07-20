@@ -12,6 +12,7 @@ import Tab from '@material-ui/core/Tab';
 import Tooltip from '@material-ui/core/Tooltip';
 import MuiAlert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
+import DescriptionIcon from '@material-ui/icons/Description';
 
 //carga componentes
 import Pendientes from './Pendientes';
@@ -33,6 +34,9 @@ import { forzarRecargaGraficosCuadrantesAccion } from '../redux/graficosDucks';
 import { setDisableCargandoAccion } from '../redux/cuadrantesSettersDucks';
 import { setValorTabPantallaCuadrantesAccion } from '../redux/cuadrantesSettersDucks';
 import { gestionaCuadrantesAccion } from '../redux/pendientesDucks';
+import { generaArchivoXLSCuadrantesPendientesAccion } from '../redux/appDucks';
+import { generaArchivoXLSCuadrantesRegistradosAccion } from '../redux/appDucks';
+import { generaArchivoXLSCuadrantesFacturadosAccion } from '../redux/appDucks';
 
 
 const getHeightContenedoresPeq = () => ((window.innerHeight / 2) - 162) || ((document.documentElement.clientHeight / 2) - 162) || ((document.body.clientHeight / 2) - 162);
@@ -136,11 +140,11 @@ const PantallaCuadrantes = () => {
     }, [listadoCentros, calendarioAGestionar, finalizandoLoteEstado]);
 
     useEffect(() => {
-        if(arrayCuadantes.length > 0){            
+        if (arrayCuadantes.length > 0) {
             if (arrayCuadantes.length === listadoCentros.length) {
                 dispatch(gestionaCuadrantesAccion());
             };
-        };        
+        };
     }, [arrayCuadantes]);
 
     useEffect(() => {
@@ -182,6 +186,18 @@ const PantallaCuadrantes = () => {
         setValueTab(newValue)
     };
 
+    const handleGenerarXLSCuadrantes = () => {
+        if (valueTab === 0) {
+            dispatch(generaArchivoXLSCuadrantesPendientesAccion(monthLet));
+        };
+        if (valueTab === 1) {
+            dispatch(generaArchivoXLSCuadrantesRegistradosAccion(monthLet));
+        };
+        if (valueTab === 2) {
+            dispatch(generaArchivoXLSCuadrantesFacturadosAccion(monthLet));
+        };
+    };
+
     return (
         <div>
             <Grid
@@ -209,18 +225,28 @@ const PantallaCuadrantes = () => {
                                     <Tab label={'Facturados'} {...a11yProps(2)} style={{ paddingBottom: 10 }} />
                                 </Tooltip>
                             </Tabs>
-                            <Avatar
-                                className={clsx(classes.small3, valueTab === 0 ? classes.red : valueTab === 1 ? classes.orange : classes.green)}
-                                style={{ marginRight: 8 }}
-                            >
-                                <Typography variant='body2'>{
-                                    valueTab === 0 ?
-                                        (numeroCuadrantesPendientes ? numeroCuadrantesPendientes : 0) :
-                                        valueTab === 1 ?
-                                            (numeroCuadrantesRegistrados ? numeroCuadrantesRegistrados : 0) :
-                                            (numeroCuadrantesFacturados ? numeroCuadrantesFacturados : 0)
-                                }</Typography>
-                            </Avatar>
+                            <Box className={classes.alignRight}>
+                                <Avatar
+                                    className={clsx(classes.small3, valueTab === 0 ? classes.red : valueTab === 1 ? classes.orange : classes.green)}
+                                    style={{ marginRight: 8, marginTop: 3 }}
+                                >
+                                    <Typography variant='body2'>{
+                                        valueTab === 0 ?
+                                            (numeroCuadrantesPendientes ? numeroCuadrantesPendientes : 0) :
+                                            valueTab === 1 ?
+                                                (numeroCuadrantesRegistrados ? numeroCuadrantesRegistrados : 0) :
+                                                (numeroCuadrantesFacturados ? numeroCuadrantesFacturados : 0)
+                                    }</Typography>
+                                </Avatar>
+                                <Tooltip title={valueTab === 0 ? 'Crear Excel listado Cuadrantes PENDIENTES ' + monthLet : valueTab === 1 ? 'Crear Excel listado Cuadrantes REGISTRADOS ' + monthLet : 'Crear Excel listado Cuadrantes FACTURADOS ' + monthLet} placement="top-start" arrow >
+                                    <Box
+                                        style={{ marginRight: 6,  marginLeft: 6, cursor: 'pointer' }}
+                                        onClick={handleGenerarXLSCuadrantes}
+                                    >
+                                        <DescriptionIcon style={{ color: 'white', marginTop: 5 }} />
+                                    </Box>
+                                </Tooltip>
+                            </Box>
                         </AppBar>
                         <TabPanel value={valueTab} index={0}>
                             <Paper

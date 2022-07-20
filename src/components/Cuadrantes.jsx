@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment, useRef, useCallback } from 'react';
+import React, { useState, useEffect, Fragment, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Constantes from "../constantes";
 import { withRouter } from "react-router-dom";
@@ -113,7 +113,8 @@ import {
     procesarDatosCuadranteAccion,
     gestionTrabajadorAccion,
     gestionSuplenteAccion,
-    gestionarDocumentosCuadranteAccion
+    gestionarDocumentosCuadranteAccion,
+    resetPorCambioSecuenciaAccion
 } from '../redux/cuadrantesGestionDucks';
 import {
     setVenimosDeCambioCuadranteAccion,
@@ -131,7 +132,8 @@ import {
     setDisableCargandoAccion,
     setCambioSFAccion,
     setVenimosDeCambioCentroSelectAccion,
-    setCambioRedimensionColumnaAccion
+    setCambioRedimensionColumnaAccion,
+    setCambioSecuenciaSemanasAccion
 } from '../redux/cuadrantesSettersDucks';
 import {
     abrePopoverDiasAccion,
@@ -364,12 +366,13 @@ const Cuadrantes = (props) => {
     const venimosDeCambioCentroSelect = useSelector(store => store.variablesCuadrantesSetters.venimosDeCambioCentroSelect);
     const cambioRedimensionColumna = useSelector(store => store.variablesCuadrantesSetters.cambioRedimensionColumna);
     const trabajadoresCargados = useSelector(store => store.variablesTrabajadores.trabajadoresCargados);
+    const cambioSecuenciaSemanas = useSelector(store => store.variablesCuadrantesSetters.cambioSecuenciaSemanas);
 
-    //para test
+    //parche para actualizar popovers
     const itemPrevioEditando = useSelector(store => store.variablesCuadrantesSetters.itemPrevioEditando);
-    const bufferSwitchedDiasFestivosCuadrante = useSelector(store => store.variablesCuadrantesSetters.bufferSwitchedDiasFestivosCuadrante);
-    const arrayDatosInforme = useSelector(store => store.variablesCuadrantesSetters.arrayDatosInforme);
- 
+
+    //para test 
+
     //helpers
 
     const {
@@ -411,6 +414,10 @@ const Cuadrantes = (props) => {
     });
     const [isDragging, setIsDragging] = useState(false);
 
+    //parche para actualizar popovers
+    const [, updateState] = useState();
+    const forceUpdate = React.useCallback(() => updateState({}), []);
+
     //mediaQueries
 
     const esDesktop = useMediaQuery(theme => theme.breakpoints.up('desktop'));
@@ -447,6 +454,13 @@ const Cuadrantes = (props) => {
             window.removeEventListener('resize', resizeListener);
         }
     }, []);
+
+    //parche para actualizar popovers
+    useEffect(() => {
+        if (itemPrevioEditando) {
+            forceUpdate()
+        };
+    }, [itemPrevioEditando]);
 
     useEffect(() => {
         dispatch(setCalendarioAGestionarAccion(retornaAnoMesAccion()));
@@ -724,6 +738,13 @@ const Cuadrantes = (props) => {
     }, [exitoGenerarArchivos]);
 
     useEffect(() => {
+        if (cambioSecuenciaSemanas.inicial) {
+            dispatch(resetPorCambioSecuenciaAccion());
+            dispatch(setCambioSecuenciaSemanasAccion({ inicial: false, gestion: true }));
+        };
+    }, [cambioSecuenciaSemanas.inicial]);
+
+    useEffect(() => {
         if (!openLoadingCentros || !openLoadingTrabajadores || !openLoadingCuadrantes) {
             dispatch(setOpenLoadingAccion(false));
         } else {
@@ -898,7 +919,7 @@ const Cuadrantes = (props) => {
                     < Box
                         m={0.3}
                         p={1.5}
-                        className={gestionaClassesColoresGeneralAccion(indexDia + 1, columna[postRef].baja, columna[postRef].modificado, columna.nombreTrabajador, columna[postRef].tipoBaja) || null}
+                        className={gestionaClassesColoresGeneralAccion(indexDia + 1, columna[postRef].baja, columna[postRef].modificado, columna.nombreTrabajador, columna[postRef].tipoBaja, columna[postRef].tipoVariacion) || null}
                         style={{ width: 40, minHeight: alturaCasilla(), maxHeight: alturaCasilla(), pointerEvents: 'none' }}
                     >
                     </Box>
@@ -907,7 +928,7 @@ const Cuadrantes = (props) => {
                         m={0.3}
                         p={1.5}
                         ref={ref => { boxes.current[indexColumna] = ref }}
-                        className={gestionaClassesColoresGeneralAccion(indexDia + 1, columna[postRef].baja, columna[postRef].modificado, columna.nombreTrabajador, columna[postRef].tipoBaja) || null}
+                        className={gestionaClassesColoresGeneralAccion(indexDia + 1, columna[postRef].baja, columna[postRef].modificado, columna.nombreTrabajador, columna[postRef].tipoBaja, columna[postRef].tipoVariacion) || null}
                         style={{ width: retornaAnchoColumna(columna.reducido), minHeight: alturaCasilla(), maxHeight: alturaCasilla(), display: 'flex', flexDirection: 'row', justifycontent: 'space-between', alignItems: 'center' }}
                         onClick={(event) => dispatch(abrePopoverGeneralAccion(postRef, indexDia, dia[1][0], columna, indexColumna, indexColumna, event, scrollable, boxes, classes))}
                     >
@@ -919,7 +940,7 @@ const Cuadrantes = (props) => {
                                 {columna[postRef].observaciones && !columna[postRef].festivo && !columna[postRef].baja ? (
                                     <Tooltip title={columna[postRef].observaciones} placement="top-end" arrow >
                                         <ChatIcon
-                                            className={classes.gris}
+                                            className={classes.colorText}
                                         />
                                     </Tooltip>
                                 ) : null}
@@ -2121,7 +2142,6 @@ const Cuadrantes = (props) => {
                                     </Fragment>
                                 ) : null
                             ) : null}
-
                         </Box>
                     </Grid>
                 </Box>
@@ -2270,7 +2290,7 @@ const Cuadrantes = (props) => {
                 prTituloDialog={tituloDialogCuadrantes5}
                 prDescripcionDialog={descripcionDialogCuadrantes5}
             />
-            {console.log(itemEditandoConfiguracion)}
+            {/* {console.log(cuadranteServiciosFijos)} */}
         </div >
     )
 }

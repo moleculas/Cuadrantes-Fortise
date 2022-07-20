@@ -91,7 +91,12 @@ const dataInicial = {
     yaNoEsInicio: false,
     venimosDeCambioCentroSelect: false,
     cambioRedimensionColumna: false,
-    valorTabPantallaCuadrantes: null
+    valorTabPantallaCuadrantes: null,
+    mesConFestivosCompleto: false,
+    cambioSecuenciaSemanas: {
+        inicial: false,
+        gestion: false
+    }
 };
 
 //types
@@ -142,6 +147,8 @@ const SET_YANOESINICIO = 'SET_YANOESINICIO';
 const SET_VENIMOSDECAMBIOCENTROSELECT = 'SET_VENIMOSDECAMBIOCENTROSELECT';
 const SET_CAMBIOREDIMENSIONCOLUMNA = 'SET_CAMBIOREDIMENSIONCOLUMNA';
 const SET_VALORTABPANTALLACUADRANTES = 'SET_VALORTABPANTALLACUADRANTES';
+const SET_MESCONFESTIVOCOMPLETO = 'SET_MESCONFESTIVOCOMPLETO';
+const SET_CAMBIOSECUENCIASEMANAS = 'SET_CAMBIOSECUENCIASEMANAS';
 
 //reducer
 export default function cuadrantesSettersReducer(state = dataInicial, action) {
@@ -159,7 +166,7 @@ export default function cuadrantesSettersReducer(state = dataInicial, action) {
         case SET_CUADRANTEENUSOCUADRANTES:
             return { ...state, cuadranteEnUsoCuadrantes: action.payload.valor }
         case SET_ESTAMOSACTUALIZANDOSINCARGA:
-            return { ...state, estamosActualizandoCuadranteSinCarga: action.payload.estado }      
+            return { ...state, estamosActualizandoCuadranteSinCarga: action.payload.estado }
         case SET_ARRAYINFORMELINEAS:
             return { ...state, arrayInformeLineas: action.payload.array }
         case SET_TRABAJADORESENCUADRANTE:
@@ -237,13 +244,35 @@ export default function cuadrantesSettersReducer(state = dataInicial, action) {
         case SET_CAMBIOREDIMENSIONCOLUMNA:
             return { ...state, cambioRedimensionColumna: action.payload.estado }
         case SET_VALORTABPANTALLACUADRANTES:
-            return { ...state, valorTabPantallaCuadrantes: action.payload.valor }        
+            return { ...state, valorTabPantallaCuadrantes: action.payload.valor }
+        case SET_MESCONFESTIVOCOMPLETO:
+            return { ...state, mesConFestivosCompleto: action.payload.valor }
+        case SET_CAMBIOSECUENCIASEMANAS:
+            return { ...state, cambioSecuenciaSemanas: action.payload.objeto }
         default:
             return { ...state }
     }
 }
 
 //acciones
+
+export const setCambioSecuenciaSemanasAccion = (objeto) => (dispatch, getState) => {
+    dispatch({
+        type: SET_CAMBIOSECUENCIASEMANAS,
+        payload: {
+            objeto: objeto
+        }
+    });
+};
+
+export const setMesConFestivosCompletoAccion = (valor) => (dispatch, getState) => {
+    dispatch({
+        type: SET_MESCONFESTIVOCOMPLETO,
+        payload: {
+            valor: valor
+        }
+    });
+};
 
 export const setValorTabPantallaCuadrantesAccion = (valor) => (dispatch, getState) => {
     dispatch({
@@ -759,7 +788,7 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
         payload: {
             valor: ''
         }
-    });   
+    });
     dispatch({
         type: SET_ARRAYINFORMELINEAS,
         payload: {
@@ -959,6 +988,12 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
         type: SET_YANOESINICIO,
         payload: {
             estado: false
+        }
+    });
+    dispatch({
+        type: SET_MESCONFESTIVOCOMPLETO,
+        payload: {
+            valor: false
         }
     });
     if (!excepciones) {

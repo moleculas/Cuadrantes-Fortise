@@ -395,7 +395,7 @@ const HelpersLayoutCuadrantes = () => {
         };
     };
 
-    const gestionaClassesColoresGeneralAccion = (dia, trabajadorDiaDeBaja, modificado, nombreTrabajador, tipoBaja) => {
+    const gestionaClassesColoresGeneralAccion = (dia, trabajadorDiaDeBaja, modificado, nombreTrabajador, tipoBaja, tipoVariacion) => {
         if (stateFestivo['estadoFestivoDia' + (dia)]) {
             if (stateFestivo['tipoFestivoDia' + (dia)] === 1) {
                 return classes.casillaFestivo;
@@ -412,7 +412,16 @@ const HelpersLayoutCuadrantes = () => {
             // };
         };
         if (modificado) {
-            return classes.casillaModificado;
+            if (tipoVariacion) {
+                if (tipoVariacion === 1) {
+                    return classes.casillaVariacion1;
+                };
+                if (tipoVariacion === 2) {
+                    return classes.casillaVariacion2;
+                };
+            } else {
+                return classes.casillaModificado;
+            };
         } else {
             if (nombreTrabajador) {
                 if (nombreTrabajador === 'Suplente') {
@@ -528,7 +537,7 @@ const HelpersLayoutCuadrantes = () => {
         const aRetornarIcono =
             <Tooltip title={variaciones[columna[postRef].tipoVariacion - 1].label} placement="top-end" arrow >
                 <TimerIcon
-                    className={classes.gris}
+                    className={classes.colorText}
                     style={{ marginLeft: 3 }}
                 />
             </Tooltip>;
@@ -1370,7 +1379,7 @@ const HelpersLayoutCuadrantes = () => {
             };
             if (firmaActualizacion &&
                 !intervencionRegistrada &&
-                objetoCuadrante.estado === 'registrado') {               
+                objetoCuadrante.estado === 'registrado') {
                 estado = ' - Estado: Pendiente de Actualizar Cuadrante';
             };
             if (firmaActualizacion &&

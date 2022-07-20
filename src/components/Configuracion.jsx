@@ -503,7 +503,7 @@ const Configuracion = (props) => {
                                     alignItems="flex-start"
                                     spacing={2}
                                 >
-                                    <Grid item lg={10} sm={10} xs={12}>
+                                    <Grid item xl={10} lg={12} sm={12} xs={12}>
                                         <Box
                                             m={0.5}
                                             bgcolor="secondary.light"
@@ -557,6 +557,21 @@ const Configuracion = (props) => {
                                                                             <ListItemText primary="Bloquear cómputo de horas" />
                                                                         </HashLink>
                                                                     </ListItem>
+                                                                    <ListItem button className={classes.nestedIns}>
+                                                                        <HashLink to={'#c6'} scroll={(el) => el.scrollIntoView({ behavior: 'auto', block: 'start' })} className={classes.nestedInsLink}>
+                                                                            <ListItemText primary="Revertir secuencia semanas" />
+                                                                        </HashLink>
+                                                                    </ListItem>
+                                                                    <ListItem button className={classes.nestedIns}>
+                                                                        <HashLink to={'#c7'} scroll={(el) => el.scrollIntoView({ behavior: 'auto', block: 'start' })} className={classes.nestedInsLink}>
+                                                                            <ListItemText primary="Horas sustitución festivos" />
+                                                                        </HashLink>
+                                                                    </ListItem>
+                                                                    <ListItem button className={classes.nestedIns}>
+                                                                        <HashLink to={'#c8'} scroll={(el) => el.scrollIntoView({ behavior: 'auto', block: 'start' })} className={classes.nestedInsLink}>
+                                                                            <ListItemText primary="Tipos de festivos" />
+                                                                        </HashLink>
+                                                                    </ListItem>
                                                                 </List>
                                                             </Collapse>
                                                             <ListItem button onClick={handleClickMenuInstrucciones2}>
@@ -578,6 +593,11 @@ const Configuracion = (props) => {
                                                                     <ListItem button className={classes.nestedIns}>
                                                                         <HashLink to={'#ce3'} scroll={(el) => el.scrollIntoView({ behavior: 'auto', block: 'start' })} className={classes.nestedInsLink}>
                                                                             <ListItemText primary="Servicios Extra incluidos" />
+                                                                        </HashLink>
+                                                                    </ListItem>
+                                                                    <ListItem button className={classes.nestedIns}>
+                                                                        <HashLink to={'#ce4'} scroll={(el) => el.scrollIntoView({ behavior: 'auto', block: 'start' })} className={classes.nestedInsLink}>
+                                                                            <ListItemText primary="Gestión especial de horas" />
                                                                         </HashLink>
                                                                     </ListItem>
                                                                 </List>
@@ -1062,6 +1082,17 @@ const Configuracion = (props) => {
                                                                     <Typography component="span" variant="body2">2.- Implementada funcionalidad para generar ficheros Excel con listados de trabajadores / centros en pantalla Inicio.</Typography>
                                                                     <br />
                                                                     <Typography component="span" variant="body2">3.- Generado módulo Instrucciones de Trabajo en pantalla General.</Typography>
+                                                                    <br />
+                                                                </Fragment>
+                                                            }
+                                                        />
+                                                    </ListItem >
+                                                    <ListItem>
+                                                        <ListItemText
+                                                            primary="V. 1.17 - 20/07/2022"
+                                                            secondary={
+                                                                <Fragment>
+                                                                    <Typography component="span" variant="body2">1.- Implementada funcionalidad para revertir la secuencia de semanas en cuadrantes configurados con la variación Semana Sí, Semana No en ficha cuadrantes.</Typography>
                                                                     <br />
                                                                 </Fragment>
                                                             }

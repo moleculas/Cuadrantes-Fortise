@@ -27,7 +27,7 @@ export default function cuadrantesFacturacionReducer(state = dataInicial, action
 export const retornaInfoFabButtonAccion = () => (dispatch, getState) => {
     const { objetoCuadrante, totalesPeriodicos } = getState().variablesCuadrantes;
     const { objetoCentro } = getState().variablesCentros;
-    const { numeroCuadrantesCuadrantes, cuadranteEnUsoCuadrantes, cuadranteVacio } = getState().variablesCuadrantesSetters;
+    const { numeroCuadrantesCuadrantes, cuadranteEnUsoCuadrantes, cuadranteVacio, mesConFestivosCompleto } = getState().variablesCuadrantesSetters;
     const { cuadranteServiciosFijos } = getState().variablesCuadrantesServiciosFijos;
     let cuadranteMultiple = "";
     if (numeroCuadrantesCuadrantes.length > 1) {
@@ -38,11 +38,15 @@ export const retornaInfoFabButtonAccion = () => (dispatch, getState) => {
     let stringBloqueado = '';
     let stringPeriodico = '';
     let bloqueadoSF = false;
-    cuadranteServiciosFijos.forEach((servicio, index) => {
-        if (servicio.totalServicioFijo !== null) {
-            sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
-        };
-    });
+    if (mesConFestivosCompleto) {
+        sumatorioServiciosFijos = 0;
+    } else {
+        cuadranteServiciosFijos.forEach((servicio, index) => {
+            if (servicio.totalServicioFijo !== null) {
+                sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+            };
+        });
+    };
     if (objetoCuadrante.datosServicios.bloqueado && objetoCuadrante.datosServicios.bloqueado.length > 0 && objetoCuadrante.datosServicios.bloqueado[cuadranteEnUsoCuadrantes - 1] === 'si') {
         stringBloqueado = ' (bloqueado servicios)';
         bloqueadoSF = true;
@@ -58,11 +62,18 @@ export const retornaInfoFabButtonAccion = () => (dispatch, getState) => {
                 sumatorioTotal += dato.totalHoras;
             });
             if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial) {
-                return cuadranteMultiple + 'Horas: ' + parseFloat(sumatorioTotal).toFixed(2) + ' - Total: ' +
+                if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].bloqueado === 'si') {
+                    if (bloqueadoSF) {
+                        stringBloqueado = ' (bloqueado horario + servicios)'
+                    } else {
+                        stringBloqueado = ' (bloqueado horario)'
+                    };
+                };
+                return cuadranteMultiple + 'Horas: ' + parseFloat(sumatorioTotal).toFixed(2) + ' - Total' + stringBloqueado + ': ' +
                     parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado +
                         sumatorioServiciosFijos).toFixed(2) + ' €' + stringPeriodico;
             } else {
-                return cuadranteMultiple + 'Horas: ' + parseFloat(sumatorioTotal).toFixed(2) + ' - Total: ' +
+                return cuadranteMultiple + 'Horas: ' + parseFloat(sumatorioTotal).toFixed(2) + ' - Total' + stringBloqueado + ': ' +
                     parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHoraTotal +
                         sumatorioServiciosFijos).toFixed(2) + ' €' + stringPeriodico;
             };
@@ -72,7 +83,7 @@ export const retornaInfoFabButtonAccion = () => (dispatch, getState) => {
 
 export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
     const { objetoCuadrante, calendarioAGestionar, totalesPeriodicos } = getState().variablesCuadrantes;
-    const { numeroCuadrantesCuadrantes, cuadranteEnUsoCuadrantes, firmaActualizacion } = getState().variablesCuadrantesSetters;
+    const { numeroCuadrantesCuadrantes, cuadranteEnUsoCuadrantes, firmaActualizacion, mesConFestivosCompleto } = getState().variablesCuadrantesSetters;
     const { cuadranteServiciosFijos } = getState().variablesCuadrantesServiciosFijos;
     const { objetoCentro } = getState().variablesCentros;
     const { intervencionRegistrada } = getState().variablesApp;
@@ -101,7 +112,7 @@ export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
     } else {
         arrayInforme.push(['Estado: Pendiente de registrar', 'normal']);
     };
-    if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].arrayDatosInforme.length > 0) {
+    if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1] && objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].arrayDatosInforme.length > 0) {
         let stringTipoComputo = '';
         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 1) {
             stringTipoComputo = 'proporción Mensual Pactado';
@@ -540,6 +551,9 @@ export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
             };
         });
     };
+    if (mesConFestivosCompleto) {
+        sumatorioServiciosFijos = 0;
+    };    
     sumatorioTotal += sumatorioServiciosFijos;
     arrayInforme.push(['divider', 'normal']);
     if (objetoCuadrante.datosServicios.bloqueado.length > 0 && objetoCuadrante.datosServicios.bloqueado[cuadranteEnUsoCuadrantes - 1] === 'si') {
