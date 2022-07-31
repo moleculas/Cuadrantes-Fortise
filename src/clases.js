@@ -1,5 +1,5 @@
 import { makeStyles } from "@material-ui/core";
-import { amber, blueGrey, green, lime, indigo, red, grey, blue, yellow, teal, brown, lightGreen, orange } from '@material-ui/core/colors';
+import { amber, blueGrey, green, lime, indigo, red, grey, blue, yellow, teal, brown, lightGreen, orange, deepPurple } from '@material-ui/core/colors';
 
 const Clases = makeStyles((theme) => ({
     //loading
@@ -143,6 +143,11 @@ const Clases = makeStyles((theme) => ({
         cursor: 'pointer',
         padding: 9
     },
+    diaFestivoCierreSinComputo: {
+        backgroundColor: `${deepPurple[500]} !important`,
+        cursor: 'pointer',
+        padding: 9
+    },
     cabecera: {
         backgroundColor: theme.palette.secondary.main
     },
@@ -206,6 +211,13 @@ const Clases = makeStyles((theme) => ({
     },
     casillaFestivoCierre: {
         backgroundColor: `${brown[50]} !important`,
+        color: '#78909c',
+        cursor: 'default',
+        pointerEvents: 'none',
+        padding: 9
+    },
+    casillaFestivoCierreSinComputo: {
+        backgroundColor: `${deepPurple[50]} !important`,
         color: '#78909c',
         cursor: 'default',
         pointerEvents: 'none',

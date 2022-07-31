@@ -13,6 +13,7 @@ const dataInicial = {
     numeroCuadrantesPendientes: null,
     numeroCuadrantesRegistrados: null,
     numeroCuadrantesFacturados: null,
+    numeroCuadrantesBaja: null,
     estadoVenimosDePendientes: false,
     estadoVenimosDeRegistrados: false,
     arrayCuadantes: []
@@ -29,6 +30,7 @@ const OBTENER_CUADRANTE_FACTURADO = 'OBTENER_CUADRANTE_FACTURADO';
 const CLOSE_LOADING_PENDIENTES = 'CLOSE_LOADING_PENDIENTES';
 const VENIMOS_DE_REGISTRADOS = 'VENIMOS_DE_REGISTRADOS';
 const OBTENER_CUADRANTES = 'OBTENER_CUADRANTES';
+const OBTENER_CUADRANTE_BAJA = 'OBTENER_CUADRANTE_BAJA';
 
 //reducer
 export default function pendientesReducer(state = dataInicial, action) {
@@ -50,9 +52,11 @@ export default function pendientesReducer(state = dataInicial, action) {
         case CLOSE_LOADING_PENDIENTES:
             return { ...state, loadingPendientes: false }
         case VENIMOS_DE_REGISTRADOS:
-            return { ...state, estadoVenimosDeRegistrados: action.payload.estado }        
+            return { ...state, estadoVenimosDeRegistrados: action.payload.estado }
         case OBTENER_CUADRANTES:
             return { ...state, arrayCuadantes: action.payload.array }
+        case OBTENER_CUADRANTE_BAJA:
+            return { ...state, numeroCuadrantesBaja: action.payload.contador }
         default:
             return { ...state }
     }
@@ -62,20 +66,31 @@ export default function pendientesReducer(state = dataInicial, action) {
 
 export const gestionaCuadrantesAccion = () => (dispatch, getState) => {
     const { arrayCuadantes } = getState().variablesPendientes;
-    const { arrayCentros } = getState().variablesCentros;  
+    const { arrayCentros } = getState().variablesCentros;
     let contadorPendientes = 0;
     let contadorRegistrados = 0;
     let contadorFacturados = 0;
+    let contadorBajas = 0;
     arrayCentros.forEach((centroIterado, index) => {
         if (!arrayCuadantes[index]) {
-            contadorPendientes++;
-            dispatch({
-                type: OBTENER_CUADRANTE_PENDIENTE,
-                payload: {
-                    elementoArray: centroIterado.id,
-                    contador: contadorPendientes
-                }
-            })
+            if (centroIterado.estado !== 'baja') {
+                contadorPendientes++;
+                dispatch({
+                    type: OBTENER_CUADRANTE_PENDIENTE,
+                    payload: {
+                        elementoArray: centroIterado.id,
+                        contador: contadorPendientes
+                    }
+                })
+            } else {
+                contadorBajas++;
+                dispatch({
+                    type: OBTENER_CUADRANTE_BAJA,
+                    payload: {
+                        contador: contadorBajas
+                    }
+                })
+            }
         } else {
             if (arrayCuadantes[index].estado === 'registrado') {
                 contadorRegistrados++;

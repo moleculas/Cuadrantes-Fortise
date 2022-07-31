@@ -1,0 +1,23 @@
+* Filtre treballadors x centre i a l'inrevés
+* Controlar les hores SF
+* Completar fitxa treballadors (x imprimir i PDF) - POSPOSAT
+* Llistat de treballadors x mes quadrants
+
+* Instruccions:  
+    * Diferències de festius en còmput (explicar tipus i com actuen en els quadrants)
+
+* Modificacions Mensual pactat: 
+
+-Després de revisar qaudrant (comunidades de pisos) MIQUEL ANGEL, 97
+No feia bé el càlcul afegint hores de treballador, problemes amb el càlcul de festius.
+S'ha tornat a fer el càlcul de proporció sense contar les hores festives inici i fent que no posi hores festives als treballadores que carrega
+cuadrantecolumnas 9694
+// columnaAnadir['horasFestivasComputables'] = contadorHorasFestivosComputables;
+columnaAnadir['horasFestivasComputables'] = 0;
+
+
+-Eliminat:
+if (!cuadrante[indexColumna][postRef].modificado) {
+ boxes.current[ref].classList.add(classes.editando);
+};
+de la funció abrePopoverGeneralAccion perquè en obrir el popover caselles posava l'última casella del mes en blanc.

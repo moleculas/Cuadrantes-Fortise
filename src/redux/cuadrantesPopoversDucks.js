@@ -201,9 +201,9 @@ export const abrePopoverGeneralAccion = (postRef, indexDia, dia, columna, ref, i
             }
         }
     });
-    if (!cuadrante[indexColumna][postRef].modificado) {
-        boxes.current[ref].classList.add(classes.editando);
-    };
+    // if (!cuadrante[indexColumna][postRef].modificado) {
+    //    boxes.current[ref].classList.add(classes.editando);
+    // };
     dispatch(setLastEditadoAccion(ref));
 };
 

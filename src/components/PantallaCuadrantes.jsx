@@ -89,6 +89,7 @@ const PantallaCuadrantes = () => {
     const finalizandoLoteEstado = useSelector(store => store.variablesApp.finalizandoLoteEstado);
     const valorTabPantallaCuadrantes = useSelector(store => store.variablesCuadrantesSetters.valorTabPantallaCuadrantes);
     const arrayCuadantes = useSelector(store => store.variablesPendientes.arrayCuadantes);
+    const numeroCuadrantesBaja = useSelector(store => store.variablesPendientes.numeroCuadrantesBaja);
 
     //states
 
@@ -117,7 +118,7 @@ const PantallaCuadrantes = () => {
 
     useEffect(() => {
         if (listadoCentros.length === 0) {
-            dispatch(obtenerCentrosAccion('centros', true));
+            dispatch(obtenerCentrosAccion('centros', false));
         };
     }, [listadoCentros]);
 
@@ -158,13 +159,13 @@ const PantallaCuadrantes = () => {
     }, [errorDeCargaCentros, errorDeCargaCuadrantes]);
 
     useEffect(() => {
-        if ((numeroCuadrantesPendientes + numeroCuadrantesRegistrados + numeroCuadrantesFacturados) < listadoCentros.length) {
+        if ((numeroCuadrantesPendientes + numeroCuadrantesRegistrados + numeroCuadrantesFacturados + numeroCuadrantesBaja) < listadoCentros.length) {
             setOpenLoading(true);
         } else {
             setOpenLoading(false);
             dispatch(setDisableCargandoAccion(false));
         };
-    }, [numeroCuadrantesPendientes, numeroCuadrantesRegistrados, numeroCuadrantesFacturados]);
+    }, [numeroCuadrantesPendientes, numeroCuadrantesRegistrados, numeroCuadrantesFacturados, numeroCuadrantesBaja]);
 
     useEffect(() => {
         if (valorTabPantallaCuadrantes) {

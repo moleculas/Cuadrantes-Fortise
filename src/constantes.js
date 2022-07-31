@@ -146,7 +146,8 @@ const Constantes = {
     TIPO_FESTIVO: [
         { value: 0, label: 'Laboral' },
         { value: 1, label: 'Festivo' },
-        { value: 2, label: 'Cierre centro' }
+        { value: 2, label: 'Cierre centro' },
+        { value: 3, label: 'Cierre centro facturar' }
     ],
     TRABAJADORES_ASIGNADOS_CENTRO: [
         { value: 1, label: '1' },

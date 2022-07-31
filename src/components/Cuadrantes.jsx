@@ -372,6 +372,7 @@ const Cuadrantes = (props) => {
     const itemPrevioEditando = useSelector(store => store.variablesCuadrantesSetters.itemPrevioEditando);
 
     //para test 
+    const bufferSwitchedDiasFestivosCuadrante = useSelector(store => store.variablesCuadrantesSetters.bufferSwitchedDiasFestivosCuadrante);
 
     //helpers
 
@@ -875,10 +876,12 @@ const Cuadrantes = (props) => {
     const descripcionDialogCuadrantes5 = "Estás tratando de borrar el cuadrante nº " + cuadranteEnUsoCuadrantes + " de la serie del Centro " + objetoCentro.nombre + ". Si estás conforme pulsa 'De acuerdo', de lo contrario pulsa 'No'.";
 
     const retornaColorDiaFestivo = (dia) => {
-        if (stateFestivo['tipoFestivoDia' + dia] !== 2) {
-            return classes.diaFestivo
-        } else {
+        if (stateFestivo['tipoFestivoDia' + dia] === 2) {
             return classes.diaFestivoCierre
+        } else if (stateFestivo['tipoFestivoDia' + dia] === 3) {
+            return classes.diaFestivoCierreSinComputo
+        } else {
+            return classes.diaFestivo
         };
     };
 
@@ -2290,7 +2293,7 @@ const Cuadrantes = (props) => {
                 prTituloDialog={tituloDialogCuadrantes5}
                 prDescripcionDialog={descripcionDialogCuadrantes5}
             />
-            {/* {console.log(cuadranteServiciosFijos)} */}
+            {/* {console.log(objetoCuadrante)} */}
         </div >
     )
 }

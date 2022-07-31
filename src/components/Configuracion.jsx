@@ -1098,6 +1098,17 @@ const Configuracion = (props) => {
                                                             }
                                                         />
                                                     </ListItem >
+                                                    <ListItem>
+                                                        <ListItemText
+                                                            primary="V. 1.18 - 22/07/2022"
+                                                            secondary={
+                                                                <Fragment>
+                                                                    <Typography component="span" variant="body2">1.- Añadido tipo festivo: CIERRE CENTRO SIN CÓMPUTO para gestión de festivo en fichas cuadrantes.</Typography>
+                                                                    <br />
+                                                                </Fragment>
+                                                            }
+                                                        />
+                                                    </ListItem >
                                                 </List>
                                             </Box>
                                         </Box>

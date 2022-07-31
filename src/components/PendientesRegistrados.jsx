@@ -209,11 +209,13 @@ const PendientesRegistrados = (props) => {
         let object = {};
         for (let i = 0; i < cuadrantesRegistradosArray.length; i++) {
             if (cuadrantesRegistradosArray[i].total.tocaFacturar.valor === 'si') {
-                if (!cuadrantesRegistradosArray[i].total.totalesPeriodicos) {
-                    object['checked-' + cuadrantesRegistradosArray[i]['id']] = true;
-                } else {
-                    if (!cuadrantesRegistradosArray[i].total.totalesPeriodicos.noExisteCuadrante) {
+                if (cuadrantesRegistradosArray[i].total.codigo) {
+                    if (!cuadrantesRegistradosArray[i].total.totalesPeriodicos) {
                         object['checked-' + cuadrantesRegistradosArray[i]['id']] = true;
+                    } else {
+                        if (!cuadrantesRegistradosArray[i].total.totalesPeriodicos.noExisteCuadrante) {
+                            object['checked-' + cuadrantesRegistradosArray[i]['id']] = true;
+                        };
                     };
                 };
             };
@@ -258,7 +260,7 @@ const PendientesRegistrados = (props) => {
     };
 
     const handleGenerarLoteArchivos = () => {
-        if (numeroFactusolPendientes) {           
+        if (numeroFactusolPendientes) {
             let arrayIdsCuadrantes = [];
             let arrayCuadrantesDef = [];
             for (const prop in checked) {
@@ -286,6 +288,9 @@ const PendientesRegistrados = (props) => {
 
     const retornaDisabledCheched = (total) => {
         if (total.tocaFacturar.valor === 'si') {
+            if (!total.codigo) {
+                return true
+            };
             if (!total.totalesPeriodicos) {
                 return false
             } else {
@@ -308,7 +313,8 @@ const PendientesRegistrados = (props) => {
                 key={'listaCuadrantes' + index}
             >
                 <ListItem
-                    className={cuadrante.total.tocaFacturar.valor === 'no' && cuadrante.total.tocaFacturar.razon !== 'gest' ? classes.casillaBajasInicio : classes.casilla}
+                    className={cuadrante.total.tocaFacturar.valor === 'no' && cuadrante.total.tocaFacturar.razon !== 'gest' ? classes.casillaBajasInicio : 
+                    !cuadrante.total.codigo ? classes.casillaBajasInicio : classes.casilla}
                     style={{ display: 'flex', alignItems: 'flex-start' }}
                 >
                     <Checkbox
@@ -323,14 +329,32 @@ const PendientesRegistrados = (props) => {
                         primary={cuadrante.nombreCentro}
                         secondary={
                             cuadrante.total.tocaFacturar.valor === 'si' ? (
-                                <Fragment>
-                                    <Typography
-                                        component="span"
-                                        variant="body2"
-                                    >
-                                        Actualizado el {cuadrante.actualizacion}
-                                    </Typography>
-                                </Fragment>
+                                cuadrante.total.codigo ? (
+                                    <Fragment>
+                                        <Typography
+                                            component="span"
+                                            variant="body2"
+                                        >
+                                            Actualizado el {cuadrante.actualizacion}
+                                        </Typography>
+                                    </Fragment>
+                                ) : (
+                                    <Fragment>
+                                        <Typography
+                                            component="span"
+                                            variant="body2"
+                                        >
+                                            Actualizado el {cuadrante.actualizacion}
+                                        </Typography>
+                                        <br />
+                                        <Typography
+                                            component="span"
+                                            variant="body2"
+                                        >
+                                            No se emite factura: Centro sin código Factusol.
+                                        </Typography>
+                                    </Fragment>
+                                )
                             ) : (
                                 <Fragment>
                                     <Typography

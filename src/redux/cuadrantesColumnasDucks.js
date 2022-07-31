@@ -619,7 +619,7 @@ export const limpiarCuadranteInformeAccion = (informe) => (dispatch) => {
         excepcion: informe.excepcion,
         bloqueado: informe.bloqueado,
         tipoRegistro: informe.tipoRegistro,
-        seqSemSiNo: informe.seqSemSiNo
+        seqSemSiNo: informe.seqSemSiNo,
     };
     if (informe.mensualPactadoInicial) {
         elObjetoDatosInforme['mensualPactado'] = parseFloat(informe.mensualPactado);
@@ -792,11 +792,11 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-case 2:
-//Horas sin coste & Sustitución festivos
-lasHorasNormal = null;
-lasHorasExtra = null;
-break;
+                                    case 2:
+                                        //Horas sin coste & Sustitución festivos
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = null;
+                                        break;
                                     default:
                                 }
                             } else {
@@ -846,11 +846,11 @@ break;
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-case 2:
-//Horas sin coste & Sustitución festivos
-lasHorasNormal = null;
-lasHorasExtra = null;
-break;
+                                    case 2:
+                                        //Horas sin coste & Sustitución festivos
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = null;
+                                        break;
                                     default:
                                 }
                             } else {
@@ -900,11 +900,11 @@ break;
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-case 2:
-//Horas sin coste & Sustitución festivos
-lasHorasNormal = null;
-lasHorasExtra = null;
-break;
+                                    case 2:
+                                        //Horas sin coste & Sustitución festivos
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = null;
+                                        break;
                                     default:
                                 }
                             } else {
@@ -954,11 +954,11 @@ break;
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-case 2:
-//Horas sin coste & Sustitución festivos
-lasHorasNormal = null;
-lasHorasExtra = null;
-break;
+                                    case 2:
+                                        //Horas sin coste & Sustitución festivos
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = null;
+                                        break;
                                     default:
                                 }
                             } else {
@@ -1062,11 +1062,11 @@ break;
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-case 2:
-//Horas sin coste & Sustitución festivos
-lasHorasNormal = null;
-lasHorasExtra = null;
-break;
+                                    case 2:
+                                        //Horas sin coste & Sustitución festivos
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = null;
+                                        break;
                                     default:
                                 }
                             } else {
@@ -1116,11 +1116,11 @@ break;
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-case 2:
-//Horas sin coste & Sustitución festivos
-lasHorasNormal = null;
-lasHorasExtra = null;
-break;
+                                    case 2:
+                                        //Horas sin coste & Sustitución festivos
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = null;
+                                        break;
                                     default:
                                 }
                             } else {
@@ -1236,11 +1236,11 @@ break;
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-case 2:
-//Horas sin coste & Sustitución festivos
-lasHorasNormal = null;
-lasHorasExtra = null;
-break;
+                                    case 2:
+                                        //Horas sin coste & Sustitución festivos
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = null;
+                                        break;
                                     default:
                                 }
                             } else {
@@ -1296,11 +1296,11 @@ break;
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-case 2:
-//Horas sin coste & Sustitución festivos
-lasHorasNormal = null;
-lasHorasExtra = null;
-break;
+                                    case 2:
+                                        //Horas sin coste & Sustitución festivos
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = null;
+                                        break;
                                     default:
                                 }
                             } else {
@@ -1356,11 +1356,11 @@ break;
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-case 2:
-//Horas sin coste & Sustitución festivos
-lasHorasNormal = null;
-lasHorasExtra = null;
-break;
+                                    case 2:
+                                        //Horas sin coste & Sustitución festivos
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = null;
+                                        break;
                                     default:
                                 }
                             } else {
@@ -1416,11 +1416,11 @@ break;
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-case 2:
-//Horas sin coste & Sustitución festivos
-lasHorasNormal = null;
-lasHorasExtra = null;
-break;
+                                    case 2:
+                                        //Horas sin coste & Sustitución festivos
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = null;
+                                        break;
                                     default:
                                 }
                             } else {
@@ -1476,11 +1476,11 @@ break;
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-case 2:
-//Horas sin coste & Sustitución festivos
-lasHorasNormal = null;
-lasHorasExtra = null;
-break;
+                                    case 2:
+                                        //Horas sin coste & Sustitución festivos
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = null;
+                                        break;
                                     default:
                                 }
                             } else {
@@ -1536,11 +1536,11 @@ break;
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-case 2:
-//Horas sin coste & Sustitución festivos
-lasHorasNormal = null;
-lasHorasExtra = null;
-break;
+                                    case 2:
+                                        //Horas sin coste & Sustitución festivos
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = null;
+                                        break;
                                     default:
                                 }
                             } else {
@@ -1596,11 +1596,11 @@ break;
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-case 2:
-//Horas sin coste & Sustitución festivos
-lasHorasNormal = null;
-lasHorasExtra = null;
-break;
+                                    case 2:
+                                        //Horas sin coste & Sustitución festivos
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = null;
+                                        break;
                                     default:
                                 }
                             } else {
@@ -1709,11 +1709,11 @@ break;
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-case 2:
-//Horas sin coste & Sustitución festivos
-lasHorasNormal = null;
-lasHorasExtra = null;
-break;
+                                    case 2:
+                                        //Horas sin coste & Sustitución festivos
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = null;
+                                        break;
                                     default:
                                 }
                             } else {
@@ -1763,11 +1763,11 @@ break;
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-case 2:
-//Horas sin coste & Sustitución festivos
-lasHorasNormal = null;
-lasHorasExtra = null;
-break;
+                                    case 2:
+                                        //Horas sin coste & Sustitución festivos
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = null;
+                                        break;
                                     default:
                                 }
                             } else {
@@ -1817,11 +1817,11 @@ break;
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-case 2:
-//Horas sin coste & Sustitución festivos
-lasHorasNormal = null;
-lasHorasExtra = null;
-break;
+                                    case 2:
+                                        //Horas sin coste & Sustitución festivos
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = null;
+                                        break;
                                     default:
                                 }
                             } else {
@@ -1871,11 +1871,11 @@ break;
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-case 2:
-//Horas sin coste & Sustitución festivos
-lasHorasNormal = null;
-lasHorasExtra = null;
-break;
+                                    case 2:
+                                        //Horas sin coste & Sustitución festivos
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = null;
+                                        break;
                                     default:
                                 }
                             } else {
@@ -1925,11 +1925,11 @@ break;
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-case 2:
-//Horas sin coste & Sustitución festivos
-lasHorasNormal = null;
-lasHorasExtra = null;
-break;
+                                    case 2:
+                                        //Horas sin coste & Sustitución festivos
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = null;
+                                        break;
                                     default:
                                 }
                             } else {
@@ -1979,11 +1979,11 @@ break;
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-case 2:
-//Horas sin coste & Sustitución festivos
-lasHorasNormal = null;
-lasHorasExtra = null;
-break;
+                                    case 2:
+                                        //Horas sin coste & Sustitución festivos
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = null;
+                                        break;
                                     default:
                                 }
                             } else {
@@ -2033,11 +2033,11 @@ break;
                             if (cuadranteColumna[prop].tipoVariacion) {
                                 switch (cuadranteColumna[prop].tipoVariacion) {
                                     case 1:
-case 2:
-//Horas sin coste & Sustitución festivos
-lasHorasNormal = null;
-lasHorasExtra = null;
-break;
+                                    case 2:
+                                        //Horas sin coste & Sustitución festivos
+                                        lasHorasNormal = null;
+                                        lasHorasExtra = null;
+                                        break;
                                     default:
                                 }
                             } else {
@@ -2280,7 +2280,7 @@ break;
                     break;
                 case '':
                     if (cuadranteRegistrado === 'no' && !numeroCuadrantesCuadrantes[cuadranteEnUsoCuadrantes - 1].revisado) {
-                        // proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial / (totalHorasInicialTra + sumatorioHorasBajasComputablesTra + sumatorioTotalHorasFestivasComputablesTra);
+                        //proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial / (totalHorasInicialTra + sumatorioHorasBajasComputablesTra + (sumatorioTotalHorasFestivasComputablesTra + sumatorioTotalHorasFestivasComputablesSup));
                         proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial / (totalHorasInicialTra + sumatorioHorasBajasComputablesTra);
                         switch (elTipoServicio) {
                             case 'LIM':
@@ -2317,9 +2317,8 @@ break;
                             ((sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) * elPrecioHora_R) +
                             ((sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) * elPrecioHora_L1) +
                             ((sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) * elPrecioHora_L2) +
-                            ((sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) * elPrecioHora_F) +
-                            //(sumatorioTotalHorasFestivasComputablesTra * proporcion);
-                            (0);
+                            ((sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) * elPrecioHora_F)
+                        //((sumatorioTotalHorasFestivasComputablesTra + sumatorioTotalHorasFestivasComputablesSup) * proporcion);
                     };
                     if (cuadranteRegistrado === 'si' || (cuadranteRegistrado === 'no' && numeroCuadrantesCuadrantes[cuadranteEnUsoCuadrantes - 1].revisado)) {
                         proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion;
@@ -2348,14 +2347,14 @@ break;
                 precioHora_L2: elPrecioHora_L2,
                 precioHora_F: elPrecioHora_F,
                 proporcion: proporcion,
-                totalFacturado_L: (sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) ? (sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) * elPrecioHora_L : null,
-                totalFacturado_E: (sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) ? (sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) * elPrecioHora_E : null,
-                totalFacturado_P: (sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) ? (sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) * elPrecioHora_P : null,
-                totalFacturado_N: (sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) ? (sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) * elPrecioHora_N : null,
-                totalFacturado_R: (sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) ? (sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) * elPrecioHora_R : null,
-                totalFacturado_L1: (sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) ? (sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) * elPrecioHora_L1 : null,
-                totalFacturado_L2: (sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) ? (sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) * elPrecioHora_L2 : null,
-                totalFacturado_F: (sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) ? (sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) * elPrecioHora_F : null,
+                totalFacturado_L: (sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) ? (sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L + sumatorioTotalHorasFestivasComputablesTra) * elPrecioHora_L : null,
+                totalFacturado_E: (sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) ? (sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E + sumatorioTotalHorasFestivasComputablesTra) * elPrecioHora_E : null,
+                totalFacturado_P: (sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) ? (sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P + sumatorioTotalHorasFestivasComputablesTra) * elPrecioHora_P : null,
+                totalFacturado_N: (sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) ? (sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N + sumatorioTotalHorasFestivasComputablesTra) * elPrecioHora_N : null,
+                totalFacturado_R: (sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) ? (sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R + sumatorioTotalHorasFestivasComputablesTra) * elPrecioHora_R : null,
+                totalFacturado_L1: (sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) ? (sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1 + sumatorioTotalHorasFestivasComputablesTra) * elPrecioHora_L1 : null,
+                totalFacturado_L2: (sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) ? (sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2 + sumatorioTotalHorasFestivasComputablesTra) * elPrecioHora_L2 : null,
+                totalFacturado_F: (sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) ? (sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F + sumatorioTotalHorasFestivasComputablesTra) * elPrecioHora_F : null,
                 mensualPactado: totalMensualPactado,
             };
             const objetoDatosCuadrante = {
@@ -2386,7 +2385,8 @@ break;
                             ((sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_R) +
                             ((sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L1) +
                             ((sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L2) +
-                            ((sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F);
+                            ((sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F)
+                        // ((sumatorioTotalHorasFestivasComputablesTra + sumatorioTotalHorasFestivasComputablesSup) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion);
                         objetoDatosInforme = {
                             ...objetoDatosInforme,
                             totalFacturado_L: (sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) ? ((sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L) : null,
@@ -2404,37 +2404,42 @@ break;
                 case '':
                     if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].bloqueado === 'no') {
                         totalMensualPactado =
-                            ((sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L) +
-                            ((sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_E) +
-                            ((sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_P) +
-                            ((sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_N) +
-                            ((sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_R) +
-                            ((sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L1) +
-                            ((sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L2) +
-                            ((sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F) +
-                            //(sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion);
-                            (0);
+                            ((sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L +
+                                ((sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_E) +
+                                ((sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_P) +
+                                ((sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_N) +
+                                ((sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_R) +
+                                ((sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L1) +
+                                ((sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L2) +
+                                ((sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F) +
+                                ((sumatorioTotalHorasFestivasComputablesTra + sumatorioTotalHorasFestivasComputablesSup) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion));
                         objetoDatosInforme = {
                             ...objetoDatosInforme,
-                            // totalFacturado_L: (sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) ? ((sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
-                            // totalFacturado_E: (sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) ? ((sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_E) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
-                            // totalFacturado_P: (sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) ? ((sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_P) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
-                            // totalFacturado_N: (sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) ? ((sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_N) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
-                            // totalFacturado_R: (sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) ? ((sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_R) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
-                            // totalFacturado_L1: (sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) ? ((sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L1) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
-                            // totalFacturado_L2: (sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) ? ((sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L2) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
-                            // totalFacturado_F: (sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) ? ((sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F) + (sumatorioTotalHorasFestivasComputablesTra * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
-                            totalFacturado_L: (sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) ? ((sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L) : null,
-                            totalFacturado_E: (sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) ? ((sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_E) : null,
-                            totalFacturado_P: (sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) ? ((sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_P) : null,
-                            totalFacturado_N: (sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) ? ((sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_N) : null,
-                            totalFacturado_R: (sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) ? ((sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_R) : null,
-                            totalFacturado_L1: (sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) ? ((sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L1) : null,
-                            totalFacturado_L2: (sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) ? ((sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L2) : null,
-                            totalFacturado_F: (sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) ? ((sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F) : null,
+                            totalFacturado_L: (sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) ? ((sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L) + ((sumatorioTotalHorasFestivasComputablesTra + sumatorioTotalHorasFestivasComputablesSup) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
+                            totalFacturado_E: (sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) ? ((sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_E) + ((sumatorioTotalHorasFestivasComputablesTra + sumatorioTotalHorasFestivasComputablesSup) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
+                            totalFacturado_P: (sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) ? ((sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_P) + ((sumatorioTotalHorasFestivasComputablesTra + sumatorioTotalHorasFestivasComputablesSup) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
+                            totalFacturado_N: (sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) ? ((sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_N) + ((sumatorioTotalHorasFestivasComputablesTra + sumatorioTotalHorasFestivasComputablesSup) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
+                            totalFacturado_R: (sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) ? ((sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_R) + ((sumatorioTotalHorasFestivasComputablesTra + sumatorioTotalHorasFestivasComputablesSup) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
+                            totalFacturado_L1: (sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) ? ((sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L1) + ((sumatorioTotalHorasFestivasComputablesTra + sumatorioTotalHorasFestivasComputablesSup) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
+                            totalFacturado_L2: (sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) ? ((sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L2) + ((sumatorioTotalHorasFestivasComputablesTra + sumatorioTotalHorasFestivasComputablesSup) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
+                            totalFacturado_F: (sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) ? ((sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F) + ((sumatorioTotalHorasFestivasComputablesTra + sumatorioTotalHorasFestivasComputablesSup) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].proporcion) : null,
+                            // totalFacturado_L: (sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) ? ((sumatorioTotalHorasNormalTra_L + sumatorioTotalHorasNormalSup_L) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L) : null,
+                            // totalFacturado_E: (sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) ? ((sumatorioTotalHorasNormalTra_E + sumatorioTotalHorasNormalSup_E) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_E) : null,
+                            // totalFacturado_P: (sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) ? ((sumatorioTotalHorasNormalTra_P + sumatorioTotalHorasNormalSup_P) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_P) : null,
+                            // totalFacturado_N: (sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) ? ((sumatorioTotalHorasNormalTra_N + sumatorioTotalHorasNormalSup_N) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_N) : null,
+                            // totalFacturado_R: (sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) ? ((sumatorioTotalHorasNormalTra_R + sumatorioTotalHorasNormalSup_R) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_R) : null,
+                            // totalFacturado_L1: (sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) ? ((sumatorioTotalHorasNormalTra_L1 + sumatorioTotalHorasNormalSup_L1) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L1) : null,
+                            // totalFacturado_L2: (sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) ? ((sumatorioTotalHorasNormalTra_L2 + sumatorioTotalHorasNormalSup_L2) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L2) : null,
+                            // totalFacturado_F: (sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) ? ((sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F) : null,
                             mensualPactado: totalMensualPactado,
                         };
-                    };
+                    } else {
+                        totalMensualPactado = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado;
+                        objetoDatosInforme = {
+                            ...objetoDatosInforme,
+                            mensualPactado: totalMensualPactado,
+                        };
+                    }
                     break;
                 default:
             };
@@ -2830,6 +2835,63 @@ export const gestionaDiasFestivosOBajas = (
     };
 };
 
+export const gestionaDiasFestivosHandlerAccion = (
+    tipoHorario,
+    valor1,
+    valor2,
+    valor3,
+    valor4
+) => {
+    let laCantidad;
+    let rango1, rango2;
+    let objetoARetornar;
+    switch (tipoHorario) {
+        case 'rango':
+            if (valor1 && valor2) {
+                laCantidad = retornaMinutosAccionEnCuadrantes(
+                    valor1,
+                    valor2
+                ) / 60;
+            } else {
+                laCantidad = 0;
+            };
+            objetoARetornar = { cantidad: laCantidad };
+            return objetoARetornar
+            break;
+        case 'rangoDescanso':
+            if (valor1 && valor2) {
+                if (valor3) {
+                    rango2 = retornaMinutosAccionEnCuadrantes(
+                        valor3,
+                        valor4
+                    ) / 60;
+                } else {
+                    rango2 = 0;
+                };
+                rango1 = retornaMinutosAccionEnCuadrantes(
+                    valor1,
+                    valor2
+                ) / 60;
+                laCantidad = rango1 + rango2;
+            } else {
+                laCantidad = 0;
+            };
+            objetoARetornar = { cantidad: laCantidad };
+            return objetoARetornar
+            break;
+        case 'cantidad':
+            if (valor1) {
+                laCantidad = valor1 / 60;
+            } else {
+                laCantidad = 0;
+            };
+            objetoARetornar = { cantidad: laCantidad };
+            return objetoARetornar
+            break;
+        default:
+    };
+};
+
 const gestionaDatosHorarioItem = (
     elHorarioCuadrante,
     tipoTrabajador,
@@ -3215,9 +3277,11 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesInicioRango');
-                            if (festivoComputable.cantidad > 0) {
-                                contadorHorasFestivosComputables += festivoComputable.cantidad;
+                            if (!arrayBaja.includes(index + 1)) {
+                                festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesInicioRango');
+                                if (festivoComputable.cantidad > 0) {
+                                    contadorHorasFestivosComputables += festivoComputable.cantidad;
+                                };
                             };
                         };
                     };
@@ -3512,9 +3576,11 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesInicioRango');
-                            if (festivoComputable.cantidad > 0) {
-                                contadorHorasFestivosComputables += festivoComputable.cantidad;
+                            if (!arrayBaja.includes(index + 1)) {
+                                festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesInicioRango');
+                                if (festivoComputable.cantidad > 0) {
+                                    contadorHorasFestivosComputables += festivoComputable.cantidad;
+                                };
                             };
                         };
                     };
@@ -3809,9 +3875,11 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesInicioRango');
-                            if (festivoComputable.cantidad > 0) {
-                                contadorHorasFestivosComputables += festivoComputable.cantidad;
+                            if (!arrayBaja.includes(index + 1)) {
+                                festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesInicioRango');
+                                if (festivoComputable.cantidad > 0) {
+                                    contadorHorasFestivosComputables += festivoComputable.cantidad;
+                                };
                             };
                         };
                     };
@@ -4106,9 +4174,11 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesInicioRango');
-                            if (festivoComputable.cantidad > 0) {
-                                contadorHorasFestivosComputables += festivoComputable.cantidad;
+                            if (!arrayBaja.includes(index + 1)) {
+                                festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesInicioRango');
+                                if (festivoComputable.cantidad > 0) {
+                                    contadorHorasFestivosComputables += festivoComputable.cantidad;
+                                };
                             };
                         };
                     };
@@ -4403,9 +4473,11 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesInicioRango');
-                            if (festivoComputable.cantidad > 0) {
-                                contadorHorasFestivosComputables += festivoComputable.cantidad;
+                            if (!arrayBaja.includes(index + 1)) {
+                                festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesInicioRango');
+                                if (festivoComputable.cantidad > 0) {
+                                    contadorHorasFestivosComputables += festivoComputable.cantidad;
+                                };
                             };
                         };
                     };
@@ -4700,9 +4772,11 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoInicioRango');
-                            if (festivoComputable.cantidad > 0) {
-                                contadorHorasFestivosComputables += festivoComputable.cantidad;
+                            if (!arrayBaja.includes(index + 1)) {
+                                festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoInicioRango');
+                                if (festivoComputable.cantidad > 0) {
+                                    contadorHorasFestivosComputables += festivoComputable.cantidad;
+                                };
                             };
                         };
                     };
@@ -4997,9 +5071,11 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoInicioRango');
-                            if (festivoComputable.cantidad > 0) {
-                                contadorHorasFestivosComputables += festivoComputable.cantidad;
+                            if (!arrayBaja.includes(index + 1)) {
+                                festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoInicioRango');
+                                if (festivoComputable.cantidad > 0) {
+                                    contadorHorasFestivosComputables += festivoComputable.cantidad;
+                                };
                             };
                         };
                     };
@@ -5328,9 +5404,11 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesInicio1RangoDescanso');
-                            if (festivoComputable.cantidad > 0) {
-                                contadorHorasFestivosComputables += festivoComputable.cantidad;
+                            if (!arrayBaja.includes(index + 1)) {
+                                festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesInicio1RangoDescanso');
+                                if (festivoComputable.cantidad > 0) {
+                                    contadorHorasFestivosComputables += festivoComputable.cantidad;
+                                };
                             };
                         };
                     };
@@ -5655,9 +5733,11 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesInicio1RangoDescanso');
-                            if (festivoComputable.cantidad > 0) {
-                                contadorHorasFestivosComputables += festivoComputable.cantidad;
+                            if (!arrayBaja.includes(index + 1)) {
+                                festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesInicio1RangoDescanso');
+                                if (festivoComputable.cantidad > 0) {
+                                    contadorHorasFestivosComputables += festivoComputable.cantidad;
+                                };
                             };
                         };
                     };
@@ -5982,9 +6062,11 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesInicio1RangoDescanso');
-                            if (festivoComputable.cantidad > 0) {
-                                contadorHorasFestivosComputables += festivoComputable.cantidad;
+                            if (!arrayBaja.includes(index + 1)) {
+                                festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesInicio1RangoDescanso');
+                                if (festivoComputable.cantidad > 0) {
+                                    contadorHorasFestivosComputables += festivoComputable.cantidad;
+                                };
                             };
                         };
                     };
@@ -6309,9 +6391,11 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesInicio1RangoDescanso');
-                            if (festivoComputable.cantidad > 0) {
-                                contadorHorasFestivosComputables += festivoComputable.cantidad;
+                            if (!arrayBaja.includes(index + 1)) {
+                                festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesInicio1RangoDescanso');
+                                if (festivoComputable.cantidad > 0) {
+                                    contadorHorasFestivosComputables += festivoComputable.cantidad;
+                                };
                             };
                         };
                     };
@@ -6636,9 +6720,11 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesInicio1RangoDescanso');
-                            if (festivoComputable.cantidad > 0) {
-                                contadorHorasFestivosComputables += festivoComputable.cantidad;
+                            if (!arrayBaja.includes(index + 1)) {
+                                festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesInicio1RangoDescanso');
+                                if (festivoComputable.cantidad > 0) {
+                                    contadorHorasFestivosComputables += festivoComputable.cantidad;
+                                };
                             };
                         };
                     };
@@ -6963,9 +7049,11 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoInicio1RangoDescanso');
-                            if (festivoComputable.cantidad > 0) {
-                                contadorHorasFestivosComputables += festivoComputable.cantidad;
+                            if (!arrayBaja.includes(index + 1)) {
+                                festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoInicio1RangoDescanso');
+                                if (festivoComputable.cantidad > 0) {
+                                    contadorHorasFestivosComputables += festivoComputable.cantidad;
+                                };
                             };
                         };
                     };
@@ -7290,9 +7378,11 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoInicio1RangoDescanso');
-                            if (festivoComputable.cantidad > 0) {
-                                contadorHorasFestivosComputables += festivoComputable.cantidad;
+                            if (!arrayBaja.includes(index + 1)) {
+                                festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoInicio1RangoDescanso');
+                                if (festivoComputable.cantidad > 0) {
+                                    contadorHorasFestivosComputables += festivoComputable.cantidad;
+                                };
                             };
                         };
                     };
@@ -7641,9 +7731,11 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesCantidad');
-                            if (festivoComputable.cantidad > 0) {
-                                contadorHorasFestivosComputables += festivoComputable.cantidad;
+                            if (!arrayBaja.includes(index + 1)) {
+                                festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesCantidad');
+                                if (festivoComputable.cantidad > 0) {
+                                    contadorHorasFestivosComputables += festivoComputable.cantidad;
+                                };
                             };
                         };
                     };
@@ -7923,9 +8015,11 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesCantidad');
-                            if (festivoComputable.cantidad > 0) {
-                                contadorHorasFestivosComputables += festivoComputable.cantidad;
+                            if (!arrayBaja.includes(index + 1)) {
+                                festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesCantidad');
+                                if (festivoComputable.cantidad > 0) {
+                                    contadorHorasFestivosComputables += festivoComputable.cantidad;
+                                };
                             };
                         };
                     };
@@ -8205,9 +8299,11 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesCantidad');
-                            if (festivoComputable.cantidad > 0) {
-                                contadorHorasFestivosComputables += festivoComputable.cantidad;
+                            if (!arrayBaja.includes(index + 1)) {
+                                festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesCantidad');
+                                if (festivoComputable.cantidad > 0) {
+                                    contadorHorasFestivosComputables += festivoComputable.cantidad;
+                                };
                             };
                         };
                     };
@@ -8487,9 +8583,11 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesCantidad');
-                            if (festivoComputable.cantidad > 0) {
-                                contadorHorasFestivosComputables += festivoComputable.cantidad;
+                            if (!arrayBaja.includes(index + 1)) {
+                                festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesCantidad');
+                                if (festivoComputable.cantidad > 0) {
+                                    contadorHorasFestivosComputables += festivoComputable.cantidad;
+                                };
                             };
                         };
                     };
@@ -8769,9 +8867,11 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesCantidad');
-                            if (festivoComputable.cantidad > 0) {
-                                contadorHorasFestivosComputables += festivoComputable.cantidad;
+                            if (!arrayBaja.includes(index + 1)) {
+                                festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesCantidad');
+                                if (festivoComputable.cantidad > 0) {
+                                    contadorHorasFestivosComputables += festivoComputable.cantidad;
+                                };
                             };
                         };
                     };
@@ -9051,9 +9151,11 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoCantidad');
-                            if (festivoComputable.cantidad > 0) {
-                                contadorHorasFestivosComputables += festivoComputable.cantidad;
+                            if (!arrayBaja.includes(index + 1)) {
+                                festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoCantidad');
+                                if (festivoComputable.cantidad > 0) {
+                                    contadorHorasFestivosComputables += festivoComputable.cantidad;
+                                };
                             };
                         };
                     };
@@ -9333,9 +9435,11 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto] = objetoBuffer;
                                 };
                             };
-                            festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoCantidad');
-                            if (festivoComputable.cantidad > 0) {
-                                contadorHorasFestivosComputables += festivoComputable.cantidad;
+                            if (!arrayBaja.includes(index + 1)) {
+                                festivoComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoCantidad');
+                                if (festivoComputable.cantidad > 0) {
+                                    contadorHorasFestivosComputables += festivoComputable.cantidad;
+                                };
                             };
                         };
                     };
@@ -9587,7 +9691,14 @@ const gestionaColumnaCuadranteInteriorAccion = (
             break;
         default:
     };
-    columnaAnadir['horasFestivasComputables'] = contadorHorasFestivosComputables;
+    // columnaAnadir['horasFestivasComputables'] = contadorHorasFestivosComputables;    
+    if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].excepcion) {
+        columnaAnadir['horasFestivasComputables'] = 0;
+    } else {
+        if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].excepcion === 1) {
+            columnaAnadir['horasFestivasComputables'] = contadorHorasFestivosComputables;
+        };
+    };
     if (contadorHorasBajasComputables > 0) {
         columnaAnadir['horasBajasComputables'] = contadorHorasBajasComputables;
     } else {

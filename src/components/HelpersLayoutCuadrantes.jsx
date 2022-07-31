@@ -81,8 +81,12 @@ const HelpersLayoutCuadrantes = () => {
         if (stateFestivo['estadoFestivoDia' + (indexDia)]) {
             if (stateFestivo['tipoFestivoDia' + (indexDia)] === 1) {
                 return 'Día festivo'
-            } else {
+            };
+            if (stateFestivo['tipoFestivoDia' + (indexDia)] === 2) {
                 return 'Cierre centro'
+            };
+            if (stateFestivo['tipoFestivoDia' + (indexDia)] === 3) {
+                return 'Cierre centro facturar'
             };
         } else {
             return textoSF;
@@ -97,8 +101,12 @@ const HelpersLayoutCuadrantes = () => {
         if (stateFestivo['estadoFestivoDia' + (indexDia)]) {
             if (stateFestivo['tipoFestivoDia' + (indexDia)] === 1) {
                 return 'Día festivo'
-            } else {
+            };
+            if (stateFestivo['tipoFestivoDia' + (indexDia)] === 2) {
                 return 'Cierre centro'
+            };
+            if (stateFestivo['tipoFestivoDia' + (indexDia)] === 3) {
+                return 'Cierre centro facturar'
             };
         } else if (columna[dia].baja) {
             switch (columna[dia].tipoBaja) {
@@ -399,8 +407,12 @@ const HelpersLayoutCuadrantes = () => {
         if (stateFestivo['estadoFestivoDia' + (dia)]) {
             if (stateFestivo['tipoFestivoDia' + (dia)] === 1) {
                 return classes.casillaFestivo;
-            } else {
+            };
+            if (stateFestivo['tipoFestivoDia' + (dia)] === 2) {
                 return classes.casillaFestivoCierre;
+            };
+            if (stateFestivo['tipoFestivoDia' + (dia)] === 3) {
+                return classes.casillaFestivoCierreSinComputo;
             };
         };
         if (trabajadorDiaDeBaja) {
@@ -439,8 +451,12 @@ const HelpersLayoutCuadrantes = () => {
         if (stateFestivo['estadoFestivoDia' + (dia)]) {
             if (stateFestivo['tipoFestivoDia' + (dia)] === 1) {
                 return classes.casillaFestivo;
-            } else {
+            };
+            if (stateFestivo['tipoFestivoDia' + (dia)] === 2) {
                 return classes.casillaFestivoCierre;
+            };
+            if (stateFestivo['tipoFestivoDia' + (dia)] === 3) {
+                return classes.casillaFestivoCierreSinComputo;
             };
         } else {
             if (hayServicio) {
@@ -1420,16 +1436,27 @@ const HelpersLayoutCuadrantes = () => {
 
     const retornaColorChipAccion = () => {
         let color;
-        if (objetoCuadrante.estado === 'facturado' &&
-            objetoCuadrante.total &&
-            objetoCuadrante.total.procesado.valor === 'si') {
-            if (intervencionRegistrada) {
-                color = classes.conServicios;
+        if (objetoCuadrante.nombre) {
+            if (objetoCuadrante.estado === 'facturado' &&
+                objetoCuadrante.total &&
+                objetoCuadrante.total.procesado.valor === 'si') {
+                if (intervencionRegistrada) {
+                    color = classes.conServicios;
+                };
             };
-        };
-        if (objetoCuadrante.estado === 'registrado' &&
-            objetoCuadrante.datosInforme.tocaFacturar.valor === 'no' && objetoCuadrante.datosInforme.tocaFacturar.razon !== 'gest') {
-            color = classes.noFacturacion;
+            if (objetoCuadrante.estado === 'registrado') {
+                if (objetoCuadrante.datosInforme.tocaFacturar.valor === 'no') {
+                    if (objetoCuadrante.datosInforme.tocaFacturar.razon !== 'gest') {
+                        color = classes.noFacturacion;
+                    };
+                } else {
+                    if (objetoCuadrante.total) {
+                        if (!objetoCuadrante.total.codigo) {
+                            color = classes.noFacturacion;
+                        };
+                    };
+                };
+            };
         };
         if (color) {
             return color

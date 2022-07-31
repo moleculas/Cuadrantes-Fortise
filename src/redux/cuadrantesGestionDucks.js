@@ -360,6 +360,9 @@ export const gestionaFestivosInicio = () => (dispatch, getState) => {
                             if (festivo.tipo === 2) {
                                 object['tipoFestivoDia' + mySplitDia[1]] = 2;
                             };
+                            if (festivo.tipo === 3) {
+                                object['tipoFestivoDia' + mySplitDia[1]] = 3;
+                            };
                         };
                     });
                     dispatch(setStateFestivoAccion(object));
@@ -395,6 +398,9 @@ export const gestionaFestivosInicio = () => (dispatch, getState) => {
                             };
                             if (festivo.tipo === 2) {
                                 object['tipoFestivoDia' + mySplitDia[1]] = 2;
+                            };
+                            if (festivo.tipo === 3) {
+                                object['tipoFestivoDia' + mySplitDia[1]] = 3;
                             };
                         };
                     });
@@ -436,6 +442,9 @@ export const gestionaFestivosInicio = () => (dispatch, getState) => {
                         };
                         if (festivo.tipo === 2) {
                             object['tipoFestivoDia' + mySplitDia[1]] = 2;
+                        };
+                        if (festivo.tipo === 3) {
+                            object['tipoFestivoDia' + mySplitDia[1]] = 3;
                         };
                     };
                 });
@@ -480,6 +489,9 @@ export const gestionaFestivosInicio = () => (dispatch, getState) => {
                     };
                     if (festivo.tipo === 2) {
                         object['tipoFestivoDia' + mySplitDia[1]] = 2;
+                    };
+                    if (festivo.tipo === 3) {
+                        object['tipoFestivoDia' + mySplitDia[1]] = 3;
                     };
                 };
             });
@@ -923,7 +935,6 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
             computo: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].computo,
             excepcion: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].excepcion ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].excepcion : '',
             bloqueado: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].bloqueado ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].bloqueado : 'no',
-            mensualPactado: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].mensualPactado >= 0 ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].mensualPactado : '',
             mensualPactadoInicial: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].mensualPactadoInicial ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].mensualPactadoInicial : '',
             precioHora_L: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_L ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_L : '',
             precioHora_E: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_E ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_E : '',
@@ -979,7 +990,7 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
                 totalFacturado_F: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].totalFacturado_F ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].totalFacturado_F : null,
                 iniciado: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].iniciado,
                 arrayDatosInforme: [],
-                seqSemSiNo: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].seqSemSiNo ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].seqSemSiNo : null
+                seqSemSiNo: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].seqSemSiNo ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].seqSemSiNo : null,
             };
             let elArrayDatosInforme = [...objetoCuadrante.datosInforme.datosInforme];
             elArrayDatosInforme[numeroCuadrante - 1] = objetoDatosInforme;
@@ -1560,8 +1571,8 @@ const procesarDatosCuadrantePromesa = (index, noHayRegistro) => (dispatch, getSt
         if (sumatorioHoras_L2) {
             elObjetoHoras['L2'] = parseFloat(sumatorioHoras_L2);
         };
-        if (sumatorioHoras_R) {
-            elObjetoHoras['R'] = parseFloat(sumatorioHoras_R);
+        if (sumatorioHoras_F) {
+            elObjetoHoras['F'] = parseFloat(sumatorioHoras_F);
         };
         if (hayServiciosFijos) {
             elObjetoServiciosFijos = arrayFinalServiciosFijos
@@ -1885,42 +1896,42 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
             } else {
                 if (informe.precioHora_L) {
                     totalFacturado_L += informe.totalFacturado_L;
-                    totalHoras_L += horas[index]['L'];
+                    horas[index]['L'] ? totalHoras_L += horas[index]['L'] : totalHoras_L = totalHoras_L;
                     precio_L = informe.precioHora_L;
                 };
                 if (informe.precioHora_E) {
                     totalFacturado_E += informe.totalFacturado_E;
-                    totalHoras_E += horas[index]['E'];
+                    horas[index]['E'] ? totalHoras_E += horas[index]['E'] : totalHoras_E = totalHoras_E;
                     precio_E = informe.precioHora_E;
                 };
                 if (informe.precioHora_P) {
                     totalFacturado_P += informe.totalFacturado_P;
-                    totalHoras_P += horas[index]['P'];
+                    horas[index]['P'] ? totalHoras_P += horas[index]['P'] : totalHoras_P = totalHoras_P;
                     precio_P = informe.precioHora_P;
                 };
                 if (informe.precioHora_N) {
                     totalFacturado_N += informe.totalFacturado_N;
-                    totalHoras_N += horas[index]['N'];
+                    horas[index]['N'] ? totalHoras_N += horas[index]['N'] : totalHoras_N = totalHoras_N;
                     precio_N = informe.precioHora_N;
                 };
                 if (informe.precioHora_R) {
                     totalFacturado_R += informe.totalFacturado_R;
-                    totalHoras_R += horas[index]['R'];
+                    horas[index]['R'] ? totalHoras_R += horas[index]['R'] : totalHoras_R = totalHoras_R;                    
                     precio_R = informe.precioHora_R;
                 };
                 if (informe.precioHora_L1) {
                     totalFacturado_L1 += informe.totalFacturado_L1;
-                    totalHoras_L1 += horas[index]['L1'];
+                    horas[index]['L1'] ? totalHoras_L1 += horas[index]['L1'] : totalHoras_L1 = totalHoras_L1;
                     precio_L1 = informe.precioHora_L1;
                 };
                 if (informe.precioHora_L2) {
                     totalFacturado_L2 += informe.totalFacturado_L2;
-                    totalHoras_L2 += horas[index]['L2'];
+                    horas[index]['L2'] ? totalHoras_L2 += horas[index]['L2'] : totalHoras_L2 = totalHoras_L2;
                     precio_L2 = informe.precioHora_L2;
                 };
                 if (informe.precioHora_F) {
                     totalFacturado_F += informe.totalFacturado_F;
-                    totalHoras_F += horas[index]['F'];
+                    horas[index]['F'] ? totalHoras_F += horas[index]['F'] : totalHoras_F = totalHoras_F;
                     precio_F = informe.precioHora_F;
                 };
             };
@@ -2386,11 +2397,7 @@ export const gestionarDocumentosCuadranteAccion = (origen) => (dispatch, getStat
 export const handleGenerarArchivosAccion = () => (dispatch, getState) => {
     const { numeroFactusol } = getState().variablesCuadrantesSetters;
     const { objetoCuadrante } = getState().variablesCuadrantes;
-    if (numeroFactusol) {
-        dispatch(generarArchivosXLSAccion(numeroFactusol, objetoCuadrante.total));
-        dispatch(gestionarDocumentosCuadranteAccion('factura'));
-        dispatch(handleCloseMenuAccion());
-    } else {
+    if (!numeroFactusol) {
         dispatch(setAlertaAccion({
             abierto: true,
             mensaje: "Debes introducir el último número de factura emitida en FACTUSOL para generar los archivos.",
@@ -2398,16 +2405,27 @@ export const handleGenerarArchivosAccion = () => (dispatch, getState) => {
         }));
         return;
     };
+    if (!objetoCuadrante.total.codigo) {
+        dispatch(setAlertaAccion({
+            abierto: true,
+            mensaje: "El centro no dispone de un código Factusol. No puede generarse la factura.",
+            tipo: 'error'
+        }));
+        return;
+    };
+    dispatch(generarArchivosXLSAccion(numeroFactusol, objetoCuadrante.total));
+    dispatch(gestionarDocumentosCuadranteAccion('factura'));
+    dispatch(handleCloseMenuAccion());
 };
 
 export const resetPorCambioSecuenciaAccion = () => (dispatch, getState) => {
-    const { cuadrante } = getState().variablesCuadrantes;     
+    const { cuadrante } = getState().variablesCuadrantes;
     if (cuadrante.length > 0) {
         cuadrante.forEach((trabajadorIterado, index) => {
             setTimeout(
                 function () {
                     dispatch(handleActualizarTrabajadoresAccion(index, trabajadorIterado.tipoTrabajador, trabajadorIterado.idTrabajador))
-                }, index * 1000);            
+                }, index * 1000);
         });
         setTimeout(() => {
             dispatch(setDisableCargandoAccion(false));

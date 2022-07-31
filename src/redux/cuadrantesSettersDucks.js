@@ -248,7 +248,7 @@ export default function cuadrantesSettersReducer(state = dataInicial, action) {
         case SET_MESCONFESTIVOCOMPLETO:
             return { ...state, mesConFestivosCompleto: action.payload.valor }
         case SET_CAMBIOSECUENCIASEMANAS:
-            return { ...state, cambioSecuenciaSemanas: action.payload.objeto }
+            return { ...state, cambioSecuenciaSemanas: action.payload.objeto }       
         default:
             return { ...state }
     }

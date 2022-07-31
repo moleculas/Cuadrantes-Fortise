@@ -1,8 +1,0 @@
-* Filtre treballadors x centre i a l'inrevés
-* Controlar les hores SF
-* Completar fitxa treballadors (x imprimir i PDF) - POSPOSAT
-* Llistat de treballadors x mes quadrants
-
-* Instruccions:  
-    * Diferències de festius en còmput (explicar tipus i com actuen en els quadrants)
-

@@ -44,7 +44,6 @@ const ConfiguracionCuadrante = (props) => {
         computo: props.prItemEditandoConfiguracion.computo || '',
         excepcion: props.prItemEditandoConfiguracion.excepcion || '',
         bloqueado: props.prItemEditandoConfiguracion.bloqueado || '',
-        mensualPactado: props.prItemEditandoConfiguracion.mensualPactado || '',
         mensualPactadoInicial: props.prItemEditandoConfiguracion.mensualPactadoInicial || '',
         precioHora_L: props.prItemEditandoConfiguracion.precioHora_L || '',
         precioHora_E: props.prItemEditandoConfiguracion.precioHora_E || '',
