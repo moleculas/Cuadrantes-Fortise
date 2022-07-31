@@ -5262,9 +5262,17 @@ export const handleRegistrarCambioEnCasillaConfiguracionAccion = (scrollable, cl
         let diaFin = itemEditandoConfiguracion.festivos.fin.getDate();
         let object = { ...stateFestivo };
         for (let i = diaInicio; i <= diaFin; i++) {
-            dispatch(handleChangeFestivoDiaAccion(losDiasDelMes[i - 1][1] + losDiasDelMes[i - 1][0], losDiasDelMes[i - 1][0][0], losDiasDelMes[i - 1][1][0], null, itemEditandoConfiguracion.festivos.tipo, true, null, null))
-            object['estadoFestivoDia' + i] = true;
-            object['tipoFestivoDia' + i] = itemEditandoConfiguracion.festivos.tipo;
+            if (itemEditandoConfiguracion.festivos.tipo === 2) {
+                if (!object['estadoFestivoDia' + i]) {
+                    dispatch(handleChangeFestivoDiaAccion(losDiasDelMes[i - 1][1] + losDiasDelMes[i - 1][0], losDiasDelMes[i - 1][0][0], losDiasDelMes[i - 1][1][0], null, itemEditandoConfiguracion.festivos.tipo, true, null, null))
+                    object['estadoFestivoDia' + i] = true;
+                    object['tipoFestivoDia' + i] = itemEditandoConfiguracion.festivos.tipo;
+                };
+            } else {
+                dispatch(handleChangeFestivoDiaAccion(losDiasDelMes[i - 1][1] + losDiasDelMes[i - 1][0], losDiasDelMes[i - 1][0][0], losDiasDelMes[i - 1][1][0], null, itemEditandoConfiguracion.festivos.tipo, true, null, null))
+                object['estadoFestivoDia' + i] = true;
+                object['tipoFestivoDia' + i] = itemEditandoConfiguracion.festivos.tipo;
+            };
         };
         dispatch(setStateFestivoAccion(object));
         dispatch(setItemEditandoConfiguracionAccion({ ...itemEditandoConfiguracion, festivos: { inicio: null, fin: null, tipo: '' } }));
