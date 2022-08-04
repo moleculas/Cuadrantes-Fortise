@@ -96,7 +96,8 @@ const dataInicial = {
     cambioSecuenciaSemanas: {
         inicial: false,
         gestion: false
-    }
+    },
+    tiempoEsperaLote: false
 };
 
 //types
@@ -149,6 +150,7 @@ const SET_CAMBIOREDIMENSIONCOLUMNA = 'SET_CAMBIOREDIMENSIONCOLUMNA';
 const SET_VALORTABPANTALLACUADRANTES = 'SET_VALORTABPANTALLACUADRANTES';
 const SET_MESCONFESTIVOCOMPLETO = 'SET_MESCONFESTIVOCOMPLETO';
 const SET_CAMBIOSECUENCIASEMANAS = 'SET_CAMBIOSECUENCIASEMANAS';
+const SET_TIEMPOESPERALOTE = 'SET_TIEMPOESPERALOTE';
 
 //reducer
 export default function cuadrantesSettersReducer(state = dataInicial, action) {
@@ -248,13 +250,24 @@ export default function cuadrantesSettersReducer(state = dataInicial, action) {
         case SET_MESCONFESTIVOCOMPLETO:
             return { ...state, mesConFestivosCompleto: action.payload.valor }
         case SET_CAMBIOSECUENCIASEMANAS:
-            return { ...state, cambioSecuenciaSemanas: action.payload.objeto }       
+            return { ...state, cambioSecuenciaSemanas: action.payload.objeto }
+        case SET_TIEMPOESPERALOTE:
+            return { ...state, tiempoEsperaLote: action.payload.valor }
         default:
             return { ...state }
     }
 }
 
 //acciones
+
+export const setTiempoEsperaloteAccion = (valor) => (dispatch, getState) => {
+    dispatch({
+        type: SET_TIEMPOESPERALOTE,
+        payload: {
+            valor: valor
+        }
+    });
+};
 
 export const setCambioSecuenciaSemanasAccion = (objeto) => (dispatch, getState) => {
     dispatch({

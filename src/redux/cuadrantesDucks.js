@@ -59,7 +59,9 @@ const dataInicial = {
     cuadrante: [],
     totalesPeriodicos: {
         total: null,
-        noExisteCuadrante: false
+        noExisteCuadrante: false,
+        totalesHoras: [],
+        totalesServicios: [],
     }
 };
 
@@ -146,7 +148,15 @@ export default function cuadrantesReducer(state = dataInicial, action) {
         case SET_CUADRANTE:
             return { ...state, cuadrante: action.payload.array }
         case SET_TOTALESPERIODICOS:
-            return { ...state, totalesPeriodicos: { total: ((state.noExisteCuadrante || action.payload.noExisteCuadrante) ? 0 : state.totalesPeriodicos.total += action.payload.totales), noExisteCuadrante: action.payload.noExisteCuadrante } }
+            return {
+                ...state,
+                totalesPeriodicos: {
+                    total: ((state.noExisteCuadrante || action.payload.noExisteCuadrante) ? 0 : state.totalesPeriodicos.total += action.payload.totales),
+                    noExisteCuadrante: action.payload.noExisteCuadrante,
+                    totalesHoras: (state.noExisteCuadrante || action.payload.noExisteCuadrante) ? null : action.payload.totalesHoras,
+                    totalesServicios: (state.noExisteCuadrante || action.payload.noExisteCuadrante) ? null : action.payload.totalesServicios,
+                },
+            }
         case RESETEA_TOTALESPERIODICOS:
             return { ...state, totalesPeriodicos: action.payload.objeto }
         default:
@@ -334,7 +344,7 @@ export const cambioEstadoInicioCuadrantesAccion = (estado) => (dispatch, getStat
     });
 }
 
-export const obtenerCuadranteAccion = (objeto, id) => async (dispatch, getState) => {   
+export const obtenerCuadranteAccion = (objeto, id) => async (dispatch, getState) => {
     dispatch({
         type: LOADING_CUADRANTES
     });
@@ -482,7 +492,7 @@ export const obtenerCuadrantesPeriodicosAccion = (objeto, calendarioAGestionar, 
             variableMeses = mes - i;
             arrayNombresCuadrantes.push(anyo + '-' + variableMeses + '-' + idCentro)
         };
-    };    
+    };
     try {
         let totalObjeto = {};
         arrayNombresCuadrantes.forEach(async (cuadrante, index) => {
@@ -500,12 +510,14 @@ export const obtenerCuadrantesPeriodicosAccion = (objeto, calendarioAGestionar, 
                 noExisteCuadrante = true;
             } else {
                 totalObjeto = parse(res.data.total);
-            };           
+            };
             dispatch({
                 type: SET_TOTALESPERIODICOS,
                 payload: {
                     totales: parseFloat(totalObjeto.total),
-                    noExisteCuadrante: noExisteCuadrante
+                    noExisteCuadrante: noExisteCuadrante,
+                    totalesHoras: dispatch(retornaHorasServicios(totalObjeto)),
+                    totalesServicios: dispatch(retornaTotalesServicios(totalObjeto))
                 }
             })
         });
@@ -514,7 +526,247 @@ export const obtenerCuadrantesPeriodicosAccion = (objeto, calendarioAGestionar, 
             type: ERROR_DE_CARGA_CUADRANTES
         })
     }
-}
+};
+
+const retornaHorasServicios = (totalObjeto) => (dispatch, getState) => {
+    const { totalesPeriodicos } = getState().variablesCuadrantes;
+    let objetoRetornoHoras = {};
+    totalObjeto.LH && (objetoRetornoHoras.LH = totalObjeto.LH);
+    totalObjeto.EH && (objetoRetornoHoras.EH = totalObjeto.EH);
+    totalObjeto.PH && (objetoRetornoHoras.PH = totalObjeto.PH);
+    totalObjeto.NH && (objetoRetornoHoras.NH = totalObjeto.NH);
+    totalObjeto.RH && (objetoRetornoHoras.RH = totalObjeto.RH);
+    totalObjeto.L1H && (objetoRetornoHoras.L1H = totalObjeto.L1H);
+    totalObjeto.L2H && (objetoRetornoHoras.L2H = totalObjeto.L2H);
+    totalObjeto.FH && (objetoRetornoHoras.FH = totalObjeto.FH);
+    if (objetoRetornoHoras.LH) {
+        if (totalesPeriodicos.totalesHoras && totalesPeriodicos.totalesHoras.LH) {
+            objetoRetornoHoras.LH += totalesPeriodicos.totalesHoras.LH;
+        };
+    };
+    if (objetoRetornoHoras.EH) {
+        if (totalesPeriodicos.totalesHoras && totalesPeriodicos.totalesHoras.EH) {
+            objetoRetornoHoras.EH += totalesPeriodicos.totalesHoras.EH;
+        };
+    };
+    if (objetoRetornoHoras.PH) {
+        if (totalesPeriodicos.totalesHoras && totalesPeriodicos.totalesHoras.PH) {
+            objetoRetornoHoras.PH += totalesPeriodicos.totalesHoras.PH;
+        };
+    };
+    if (objetoRetornoHoras.NH) {
+        if (totalesPeriodicos.totalesHoras && totalesPeriodicos.totalesHoras.NH) {
+            objetoRetornoHoras.NH += totalesPeriodicos.totalesHoras.NH;
+        };
+    };
+    if (objetoRetornoHoras.RH) {
+        if (totalesPeriodicos.totalesHoras && totalesPeriodicos.totalesHoras.RH) {
+            objetoRetornoHoras.RH += totalesPeriodicos.totalesHoras.RH;
+        };
+    };
+    if (objetoRetornoHoras.L1H) {
+        if (totalesPeriodicos.totalesHoras && totalesPeriodicos.totalesHoras.L1H) {
+            objetoRetornoHoras.L1H += totalesPeriodicos.totalesHoras.L1H;
+        };
+    };
+    if (objetoRetornoHoras.L2H) {
+        if (totalesPeriodicos.totalesHoras && totalesPeriodicos.totalesHoras.L2H) {
+            objetoRetornoHoras.L2H += totalesPeriodicos.totalesHoras.L2H;
+        };
+    };
+    if (objetoRetornoHoras.FH) {
+        if (totalesPeriodicos.totalesHoras && totalesPeriodicos.totalesHoras.FH) {
+            objetoRetornoHoras.FH += totalesPeriodicos.totalesHoras.FH;
+        };
+    };
+    return objetoRetornoHoras;
+};
+
+const retornaTotalesServicios = (totalObjeto) => (dispatch, getState) => {
+    const { totalesPeriodicos } = getState().variablesCuadrantes;
+    let objetoRetornoServicios = {};
+    totalObjeto.MT && (objetoRetornoServicios.MT = totalObjeto.MT);
+    totalObjeto.LT && (objetoRetornoServicios.LT = totalObjeto.LT);
+    totalObjeto.ET && (objetoRetornoServicios.ET = totalObjeto.ET);
+    totalObjeto.PT && (objetoRetornoServicios.PT = totalObjeto.PT);
+    totalObjeto.NT && (objetoRetornoServicios.NT = totalObjeto.NT);
+    totalObjeto.RT && (objetoRetornoServicios.RT = totalObjeto.RT);
+    totalObjeto.L1T && (objetoRetornoServicios.L1T = totalObjeto.L1T);
+    totalObjeto.L2T && (objetoRetornoServicios.L2T = totalObjeto.L2T);
+    totalObjeto.FT && (objetoRetornoServicios.FT = totalObjeto.FT);
+    totalObjeto.TOT && (objetoRetornoServicios.TOT = totalObjeto.TOT);
+    totalObjeto.CRT && (objetoRetornoServicios.CRT = totalObjeto.CRT);
+    totalObjeto.CET && (objetoRetornoServicios.CET = totalObjeto.CET);
+    totalObjeto.CIT && (objetoRetornoServicios.CIT = totalObjeto.CIT);
+    totalObjeto.MOT && (objetoRetornoServicios.MOT = totalObjeto.MOT);
+    totalObjeto.OFT && (objetoRetornoServicios.OFT = totalObjeto.OFT);
+    totalObjeto.ALT && (objetoRetornoServicios.ALT = totalObjeto.ALT);
+    totalObjeto.LAT && (objetoRetornoServicios.LAT = totalObjeto.LAT);
+    totalObjeto.TET && (objetoRetornoServicios.TET = totalObjeto.TET);
+    totalObjeto.FIT && (objetoRetornoServicios.FIT = totalObjeto.FIT);
+    totalObjeto.FET && (objetoRetornoServicios.FET = totalObjeto.FET);
+    totalObjeto.ABT && (objetoRetornoServicios.ABT = totalObjeto.ABT);
+    totalObjeto.MAT && (objetoRetornoServicios.MAT = totalObjeto.MAT);
+    totalObjeto.POT && (objetoRetornoServicios.POT = totalObjeto.POT);
+    totalObjeto.BAT && (objetoRetornoServicios.BAT = totalObjeto.BAT);
+    totalObjeto.FTT && (objetoRetornoServicios.FTT = totalObjeto.FTT);
+    totalObjeto.C3T && (objetoRetornoServicios.C3T = totalObjeto.C3T);
+    totalObjeto.C2T && (objetoRetornoServicios.C2T = totalObjeto.C2T);
+    totalObjeto.EST && (objetoRetornoServicios.EST = totalObjeto.EST);
+    totalObjeto.PAT && (objetoRetornoServicios.PAT = totalObjeto.PAT);
+    totalObjeto.NUMCT && (objetoRetornoServicios.NUMCT = totalObjeto.NUMCT);
+    if (objetoRetornoServicios.MT) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.MT) {
+            objetoRetornoServicios.MT += totalesPeriodicos.totalesServicios.MT;
+        };
+    };
+    if (objetoRetornoServicios.LT) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.LT) {
+            objetoRetornoServicios.LT += totalesPeriodicos.totalesServicios.LT;
+        };
+    };
+    if (objetoRetornoServicios.ET) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.ET) {
+            objetoRetornoServicios.ET += totalesPeriodicos.totalesServicios.ET;
+        };
+    };
+    if (objetoRetornoServicios.PT) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.PT) {
+            objetoRetornoServicios.PT += totalesPeriodicos.totalesServicios.PT;
+        };
+    };
+    if (objetoRetornoServicios.NT) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.NT) {
+            objetoRetornoServicios.NT += totalesPeriodicos.totalesServicios.NT;
+        };
+    };
+    if (objetoRetornoServicios.RT) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.RT) {
+            objetoRetornoServicios.RT += totalesPeriodicos.totalesServicios.RT;
+        };
+    };
+    if (objetoRetornoServicios.L1T) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.L1T) {
+            objetoRetornoServicios.L1T += totalesPeriodicos.totalesServicios.L1T;
+        };
+    };
+    if (objetoRetornoServicios.L2T) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.L2T) {
+            objetoRetornoServicios.L2T += totalesPeriodicos.totalesServicios.L2T;
+        };
+    };
+    if (objetoRetornoServicios.FT) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.FT) {
+            objetoRetornoServicios.FT += totalesPeriodicos.totalesServicios.FT;
+        };
+    };
+    if (objetoRetornoServicios.TOT) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.TOT) {
+            objetoRetornoServicios.TOT += totalesPeriodicos.totalesServicios.TOT;
+        };
+    };
+    if (objetoRetornoServicios.CRT) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.CRT) {
+            objetoRetornoServicios.CRT += totalesPeriodicos.totalesServicios.CRT;
+        };
+    };
+    if (objetoRetornoServicios.CET) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.CET) {
+            objetoRetornoServicios.CET += totalesPeriodicos.totalesServicios.CET;
+        };
+    };
+    if (objetoRetornoServicios.CIT) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.CIT) {
+            objetoRetornoServicios.CIT += totalesPeriodicos.totalesServicios.CIT;
+        };
+    };
+    if (objetoRetornoServicios.MOT) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.MOT) {
+            objetoRetornoServicios.MOT += totalesPeriodicos.totalesServicios.MOT;
+        };
+    };
+    if (objetoRetornoServicios.OFT) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.OFT) {
+            objetoRetornoServicios.OFT += totalesPeriodicos.totalesServicios.OFT;
+        };
+    };
+    if (objetoRetornoServicios.ALT) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.ALT) {
+            objetoRetornoServicios.ALT += totalesPeriodicos.totalesServicios.ALT;
+        };
+    };
+    if (objetoRetornoServicios.LAT) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.LAT) {
+            objetoRetornoServicios.LAT += totalesPeriodicos.totalesServicios.LAT;
+        };
+    };
+    if (objetoRetornoServicios.TET) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.TET) {
+            objetoRetornoServicios.TET += totalesPeriodicos.totalesServicios.TET;
+        };
+    };
+    if (objetoRetornoServicios.FIT) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.FIT) {
+            objetoRetornoServicios.FIT += totalesPeriodicos.totalesServicios.FIT;
+        };
+    };
+    if (objetoRetornoServicios.FET) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.FET) {
+            objetoRetornoServicios.FET += totalesPeriodicos.totalesServicios.FET;
+        };
+    };
+    if (objetoRetornoServicios.ABT) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.ABT) {
+            objetoRetornoServicios.ABT += totalesPeriodicos.totalesServicios.ABT;
+        };
+    };
+    if (objetoRetornoServicios.MAT) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.MAT) {
+            objetoRetornoServicios.MAT += totalesPeriodicos.totalesServicios.MAT;
+        };
+    };
+    if (objetoRetornoServicios.POT) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.POT) {
+            objetoRetornoServicios.POT += totalesPeriodicos.totalesServicios.POT;
+        };
+    };
+    if (objetoRetornoServicios.BAT) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.BAT) {
+            objetoRetornoServicios.BAT += totalesPeriodicos.totalesServicios.BAT;
+        };
+    };
+    if (objetoRetornoServicios.FTT) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.FTT) {
+            objetoRetornoServicios.FTT += totalesPeriodicos.totalesServicios.FTT;
+        };
+    };
+    if (objetoRetornoServicios.C3T) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.C3T) {
+            objetoRetornoServicios.C3T += totalesPeriodicos.totalesServicios.C3T;
+        };
+    };
+    if (objetoRetornoServicios.C2T) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.C2T) {
+            objetoRetornoServicios.C2T += totalesPeriodicos.totalesServicios.C2T;
+        };
+    };
+    if (objetoRetornoServicios.EST) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.EST) {
+            objetoRetornoServicios.EST += totalesPeriodicos.totalesServicios.EST;
+        };
+    };
+    if (objetoRetornoServicios.PAT) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.PAT) {
+            objetoRetornoServicios.PAT += totalesPeriodicos.totalesServicios.PAT;
+        };
+    };
+    if (objetoRetornoServicios.NUMCT) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.NUMCT) {
+            objetoRetornoServicios.NUMCT = totalesPeriodicos.totalesServicios.NUMCT;
+        };
+    };
+    return objetoRetornoServicios;
+};
 
 export const reseteaTotalesPeriodicosAccion = () => (dispatch, getState) => {
     dispatch({
@@ -522,7 +774,9 @@ export const reseteaTotalesPeriodicosAccion = () => (dispatch, getState) => {
         payload: {
             objeto: {
                 total: null,
-                noExisteCuadrante: false
+                noExisteCuadrante: false,
+                totalesHoras: [],
+                totalesServicios: []
             }
         }
     });

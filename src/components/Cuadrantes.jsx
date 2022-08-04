@@ -731,7 +731,7 @@ const Cuadrantes = (props) => {
     useEffect(() => {
         if (exitoGenerarArchivos) {
             setAlert({
-                mensaje: "Archivos para FACTUSOL generados exitosamente, revisa la carpeta de descargas para localizar: FAC.xls y LFA.xls.",
+                mensaje: "Archivos para FACTUSOL generados exitosamente, revisa la carpeta de descargas para localizar: FAC.xlsx y LFA.xlsx.",
                 tipo: 'success'
             })
             setOpenSnack(true);

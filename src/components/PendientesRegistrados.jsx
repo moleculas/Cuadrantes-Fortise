@@ -40,6 +40,7 @@ import { forzarRecargaGraficosCuadrantesAccion } from '../redux/graficosDucks';
 import { emitirArchivosXLSLoteAccion } from '../redux/appDucks';
 import { actualizarCuadrantesIteradosAccion } from '../redux/appDucks';
 import { setValorTabPantallaCuadrantesAccion } from '../redux/cuadrantesSettersDucks';
+import { setTiempoEsperaloteAccion } from '../redux/cuadrantesSettersDucks';
 
 //estilos
 import Clases from "../clases";
@@ -141,19 +142,22 @@ const PendientesRegistrados = (props) => {
     }, [cuadrantesRegistradosArray]);
 
     useEffect(() => {
-        if ((laDataFAC.length > 0) && (laDataFAC.length === arrayCuadrantesDefsParaCheck.length)) {
+        if ((laDataFAC.length > 0) && (laDataFAC.length === arrayCuadrantesDefsParaCheck.length)) {            
             dispatch(actualizarCuadrantesIteradosAccion());
-            setArrayCuadrantesDefsParaCheck([]);
-            dispatch(finalizarArchivosXLSLoteAccion(true));
-            dispatch(emitirArchivosXLSLoteAccion(laDataFAC, laDataLFA));
-            setNumeroFactusolPendientes(null);
-            setExpandedAccordion(false);
-            setHeighCambio({
-                scroller: heighCambio.scroller + 70,
-                accordion: heighCambio.accordion - 0
-            });
-            dispatch(forzarRecargaGraficosCuadrantesAccion(true));
-            dispatch(setValorTabPantallaCuadrantesAccion(2));
+            setTimeout(() => {
+                setArrayCuadrantesDefsParaCheck([]);
+                dispatch(finalizarArchivosXLSLoteAccion(true));
+                dispatch(emitirArchivosXLSLoteAccion(laDataFAC, laDataLFA));
+                setNumeroFactusolPendientes(null);
+                setExpandedAccordion(false);
+                setHeighCambio({
+                    scroller: heighCambio.scroller + 70,
+                    accordion: heighCambio.accordion - 0
+                });
+                dispatch(forzarRecargaGraficosCuadrantesAccion(true));
+                dispatch(setValorTabPantallaCuadrantesAccion(2));
+                dispatch(setTiempoEsperaloteAccion(false));
+            }, 10000);
         };
     }, [laDataFAC]);
 
@@ -276,6 +280,7 @@ const PendientesRegistrados = (props) => {
             });
             setArrayCuadrantesDefsParaCheck(arrayCuadrantesDef);
             dispatch(generarArchivosXLSLoteAccion(numeroFactusolPendientes, arrayCuadrantesDef));
+            dispatch(setTiempoEsperaloteAccion(true));
         } else {
             setAlert({
                 mensaje: "Debes introducir el último número de factura emitida en FACTUSOL para generar los archivos.",
@@ -313,8 +318,8 @@ const PendientesRegistrados = (props) => {
                 key={'listaCuadrantes' + index}
             >
                 <ListItem
-                    className={cuadrante.total.tocaFacturar.valor === 'no' && cuadrante.total.tocaFacturar.razon !== 'gest' ? classes.casillaBajasInicio : 
-                    !cuadrante.total.codigo ? classes.casillaBajasInicio : classes.casilla}
+                    className={cuadrante.total.tocaFacturar.valor === 'no' && cuadrante.total.tocaFacturar.razon !== 'gest' ? classes.casillaBajasInicio :
+                        !cuadrante.total.codigo ? classes.casillaBajasInicio : classes.casilla}
                     style={{ display: 'flex', alignItems: 'flex-start' }}
                 >
                     <Checkbox

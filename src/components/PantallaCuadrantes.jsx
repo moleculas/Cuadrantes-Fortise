@@ -90,6 +90,7 @@ const PantallaCuadrantes = () => {
     const valorTabPantallaCuadrantes = useSelector(store => store.variablesCuadrantesSetters.valorTabPantallaCuadrantes);
     const arrayCuadantes = useSelector(store => store.variablesPendientes.arrayCuadantes);
     const numeroCuadrantesBaja = useSelector(store => store.variablesPendientes.numeroCuadrantesBaja);
+    const tiempoEsperaLote = useSelector(store => store.variablesCuadrantesSetters.tiempoEsperaLote);
 
     //states
 
@@ -159,13 +160,13 @@ const PantallaCuadrantes = () => {
     }, [errorDeCargaCentros, errorDeCargaCuadrantes]);
 
     useEffect(() => {
-        if ((numeroCuadrantesPendientes + numeroCuadrantesRegistrados + numeroCuadrantesFacturados + numeroCuadrantesBaja) < listadoCentros.length) {
+        if (((numeroCuadrantesPendientes + numeroCuadrantesRegistrados + numeroCuadrantesFacturados + numeroCuadrantesBaja) < listadoCentros.length) || tiempoEsperaLote) {
             setOpenLoading(true);
         } else {
             setOpenLoading(false);
             dispatch(setDisableCargandoAccion(false));
         };
-    }, [numeroCuadrantesPendientes, numeroCuadrantesRegistrados, numeroCuadrantesFacturados, numeroCuadrantesBaja]);
+    }, [numeroCuadrantesPendientes, numeroCuadrantesRegistrados, numeroCuadrantesFacturados, numeroCuadrantesBaja, tiempoEsperaLote]);
 
     useEffect(() => {
         if (valorTabPantallaCuadrantes) {
@@ -241,7 +242,7 @@ const PantallaCuadrantes = () => {
                                 </Avatar>
                                 <Tooltip title={valueTab === 0 ? 'Crear Excel listado Cuadrantes PENDIENTES ' + monthLet : valueTab === 1 ? 'Crear Excel listado Cuadrantes REGISTRADOS ' + monthLet : 'Crear Excel listado Cuadrantes FACTURADOS ' + monthLet} placement="top-start" arrow >
                                     <Box
-                                        style={{ marginRight: 6,  marginLeft: 6, cursor: 'pointer' }}
+                                        style={{ marginRight: 6, marginLeft: 6, cursor: 'pointer' }}
                                         onClick={handleGenerarXLSCuadrantes}
                                     >
                                         <DescriptionIcon style={{ color: 'white', marginTop: 5 }} />

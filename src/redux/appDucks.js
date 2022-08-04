@@ -992,83 +992,83 @@ const retornaArrayElementosAccion = (objetoConceptos) => (dispatch, getState) =>
     };
     if (objetoConceptos.TOT) {
         retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'TOT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.TOT, objetoConceptos.TOT, 1]);
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.TOT, objetoConceptos.TOT, objetoConceptos.TOH]);
     };
     if (objetoConceptos.CRT) {
         retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'CRT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.CRT, objetoConceptos.CRT, 1]);
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.CRT, objetoConceptos.CRT, objetoConceptos.CRH]);
     };
     if (objetoConceptos.CET) {
         retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'CET', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.CET, objetoConceptos.CET, 1]);
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.CET, objetoConceptos.CET, objetoConceptos.CEH]);
     };
     if (objetoConceptos.CIT) {
         retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'CIT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.CIT, objetoConceptos.CIT, 1]);
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.CIT, objetoConceptos.CIT, objetoConceptos.CIH]);
     };
     if (objetoConceptos.MOT) {
         retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MOT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.MOT, objetoConceptos.MOT, 1]);
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.MOT, objetoConceptos.MOT, objetoConceptos.MOH]);
     };
     if (objetoConceptos.OFT) {
         retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'OFT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.OFT, objetoConceptos.OFT, 1]);
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.OFT, objetoConceptos.OFT, objetoConceptos.OFH]);
     };
     if (objetoConceptos.ALT) {
         retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'ALT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.ALT, objetoConceptos.ALT, 1]);
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.ALT, objetoConceptos.ALT, objetoConceptos.ALH]);
     };
     if (objetoConceptos.LAT) {
         retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'LAT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.LAT, objetoConceptos.LAT, 1]);
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.LAT, objetoConceptos.LAT, objetoConceptos.LAH]);
     };
     if (objetoConceptos.TET) {
         retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'TET', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.TET, objetoConceptos.TET, 1]);
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.TET, objetoConceptos.TET, objetoConceptos.TEH]);
     };
     if (objetoConceptos.FIT) {
         retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'FIT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.FIT, objetoConceptos.FIT, 1]);
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.FIT, objetoConceptos.FIT, objetoConceptos.FIH]);
     };
     if (objetoConceptos.FET) {
         retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'FET', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.FET, objetoConceptos.FET, 1]);
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.FET, objetoConceptos.FET, objetoConceptos.FEH]);
     };
     if (objetoConceptos.ABT) {
         retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'ABT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.ABT, objetoConceptos.ABT, 1]);
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.ABT, objetoConceptos.ABT, objetoConceptos.ABH]);
     };
     if (objetoConceptos.MAT) {
         retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MAT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.MAT, objetoConceptos.MAT, 1]);
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.MAT, objetoConceptos.MAT, objetoConceptos.MAH]);
     };
     if (objetoConceptos.POT) {
         retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'POT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.POT, objetoConceptos.POT, 1]);
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.POT, objetoConceptos.POT, objetoConceptos.POH]);
     };
     if (objetoConceptos.BAT) {
         retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'BAT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.BAT, objetoConceptos.BAT, 1]);
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.BAT, objetoConceptos.BAT, objetoConceptos.BAH]);
     };
     if (objetoConceptos.FTT) {
         retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'FTT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.FTT, objetoConceptos.FTT, 1]);
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.FTT, objetoConceptos.FTT, objetoConceptos.FTH]);
     };
     if (objetoConceptos.C3T) {
         retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'C3T', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.C3T, objetoConceptos.C3T, 1]);
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.C3T, objetoConceptos.C3T, objetoConceptos.C3H]);
     };
     if (objetoConceptos.C2T) {
         retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'C2T', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.C2T, objetoConceptos.C2T, 1]);
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.C2T, objetoConceptos.C2T, objetoConceptos.C2H]);
     };
     if (objetoConceptos.EST) {
         retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'EST', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.EST, objetoConceptos.EST, 1]);
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.EST, objetoConceptos.EST, objetoConceptos.ESH]);
     };
     if (objetoConceptos.PAT) {
         retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'PAT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.PAT, objetoConceptos.PAT, 1]);
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.PAT, objetoConceptos.PAT, objetoConceptos.PAH]);
     };
     if (objetoConceptos.NUMCT) {
         retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'NUMCT', null));

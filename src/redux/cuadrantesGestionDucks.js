@@ -1788,6 +1788,26 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
     let totalHoras_L1 = 0;
     let totalHoras_L2 = 0;
     let totalHoras_F = 0;
+    let totalHoras_TO = 0;
+    let totalHoras_CR = 0;
+    let totalHoras_CE = 0;
+    let totalHoras_CI = 0;
+    let totalHoras_MO = 0;
+    let totalHoras_OF = 0;
+    let totalHoras_AL = 0;
+    let totalHoras_LA = 0;
+    let totalHoras_TE = 0;
+    let totalHoras_FI = 0;
+    let totalHoras_FE = 0;
+    let totalHoras_AB = 0;
+    let totalHoras_MA = 0;
+    let totalHoras_PO = 0;
+    let totalHoras_BA = 0;
+    let totalHoras_FT = 0;
+    let totalHoras_C3 = 0;
+    let totalHoras_C2 = 0;
+    let totalHoras_ES = 0;
+    let totalHoras_PA = 0;
     let precio_L = 0;
     let precio_E = 0;
     let precio_P = 0;
@@ -1803,63 +1823,163 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
                 if (servicio) {
                     if (servicio.precioHora_TO) {
                         totalFacturado_TO += servicio.totalServicioFijo;
+                        if (totalFacturado_TO === servicio.precioHora_TO) {
+                            totalHoras_TO = 1;
+                        } else {
+                            totalHoras_TO = parseInt(totalFacturado_TO / servicio.precioHora_TO);
+                        };
                     };
                     if (servicio.precioHora_CR) {
                         totalFacturado_CR += servicio.totalServicioFijo;
+                        if (totalFacturado_CR === servicio.precioHora_CR) {
+                            totalHoras_CR = 1;
+                        } else {
+                            totalHoras_CR = parseInt(totalFacturado_CR / servicio.precioHora_CR);
+                        };
                     };
                     if (servicio.precioHora_CE) {
                         totalFacturado_CE += servicio.totalServicioFijo;
+                        if (totalFacturado_CE === servicio.precioHora_CE) {
+                            totalHoras_CE = 1;
+                        } else {
+                            totalHoras_CE = parseInt(totalFacturado_CE / servicio.precioHora_CE);
+                        };
                     };
                     if (servicio.precioHora_CI) {
                         totalFacturado_CI += servicio.totalServicioFijo;
+                        if (totalFacturado_CI === servicio.precioHora_CI) {
+                            totalHoras_CI = 1;
+                        } else {
+                            totalHoras_CI = parseInt(totalFacturado_CI / servicio.precioHora_CI);
+                        };
                     };
                     if (servicio.precioHora_MO) {
                         totalFacturado_MO += servicio.totalServicioFijo;
+                        if (totalFacturado_MO === servicio.precioHora_MO) {
+                            totalHoras_MO = 1;
+                        } else {
+                            totalHoras_MO = parseInt(totalFacturado_MO / servicio.precioHora_MO);
+                        };
                     };
                     if (servicio.precioHora_OF) {
                         totalFacturado_OF += servicio.totalServicioFijo;
+                        if (totalFacturado_OF === servicio.precioHora_OF) {
+                            totalHoras_OF = 1;
+                        } else {
+                            totalHoras_OF = parseInt(totalFacturado_OF / servicio.precioHora_OF);
+                        };
                     };
                     if (servicio.precioHora_AL) {
                         totalFacturado_AL += servicio.totalServicioFijo;
+                        if (totalFacturado_AL === servicio.precioHora_AL) {
+                            totalHoras_AL = 1;
+                        } else {
+                            totalHoras_AL = parseInt(totalFacturado_AL / servicio.precioHora_AL);
+                        };
                     };
                     if (servicio.precioHora_LA) {
                         totalFacturado_LA += servicio.totalServicioFijo;
+                        if (totalFacturado_LA === servicio.precioHora_LA) {
+                            totalHoras_LA = 1;
+                        } else {
+                            totalHoras_LA = parseInt(totalFacturado_LA / servicio.precioHora_LA);
+                        };
                     };
                     if (servicio.precioHora_TE) {
                         totalFacturado_TE += servicio.totalServicioFijo;
+                        if (totalFacturado_TE === servicio.precioHora_TE) {
+                            totalHoras_TE = 1;
+                        } else {
+                            totalHoras_TE = parseInt(totalFacturado_TE / servicio.precioHora_TE);
+                        };
                     };
                     if (servicio.precioHora_FI) {
                         totalFacturado_FI += servicio.totalServicioFijo;
+                        if (totalFacturado_FI === servicio.precioHora_FI) {
+                            totalHoras_FI = 1;
+                        } else {
+                            totalHoras_FI = parseInt(totalFacturado_FI / servicio.precioHora_FI);
+                        };
                     };
                     if (servicio.precioHora_FE) {
                         totalFacturado_FE += servicio.totalServicioFijo;
+                        if (totalFacturado_FE === servicio.precioHora_FE) {
+                            totalHoras_FE = 1;
+                        } else {
+                            totalHoras_FE = parseInt(totalFacturado_FE / servicio.precioHora_FE);
+                        };
                     };
                     if (servicio.precioHora_AB) {
                         totalFacturado_AB += servicio.totalServicioFijo;
+                        if (totalFacturado_AB === servicio.precioHora_AB) {
+                            totalHoras_AB = 1;
+                        } else {
+                            totalHoras_AB = parseInt(totalFacturado_AB / servicio.precioHora_AB);
+                        };
                     };
                     if (servicio.precioHora_MA) {
                         totalFacturado_MA += servicio.totalServicioFijo;
+                        if (totalFacturado_MA === servicio.precioHora_MA) {
+                            totalHoras_MA = 1;
+                        } else {
+                            totalHoras_MA = parseInt(totalFacturado_MA / servicio.precioHora_MA);
+                        };
                     };
                     if (servicio.precioHora_PO) {
                         totalFacturado_PO += servicio.totalServicioFijo;
+                        if (totalFacturado_PO === servicio.precioHora_PO) {
+                            totalHoras_PO = 1;
+                        } else {
+                            totalHoras_PO = parseInt(totalFacturado_PO / servicio.precioHora_PO);
+                        };
                     };
                     if (servicio.precioHora_BA) {
                         totalFacturado_BA += servicio.totalServicioFijo;
+                        if (totalFacturado_BA === servicio.precioHora_BA) {
+                            totalHoras_BA = 1;
+                        } else {
+                            totalHoras_BA = parseInt(totalFacturado_BA / servicio.precioHora_BA);
+                        };
                     };
                     if (servicio.precioHora_FT) {
                         totalFacturado_FT += servicio.totalServicioFijo;
+                        if (totalFacturado_FT === servicio.precioHora_FT) {
+                            totalHoras_FT = 1;
+                        } else {
+                            totalHoras_FT = parseInt(totalFacturado_FT / servicio.precioHora_FT);
+                        };
                     };
                     if (servicio.precioHora_C3) {
                         totalFacturado_C3 += servicio.totalServicioFijo;
+                        if (totalFacturado_C3 === servicio.precioHora_C3) {
+                            totalHoras_C3 = 1;
+                        } else {
+                            totalHoras_C3 = parseInt(totalFacturado_C3 / servicio.precioHora_C3);
+                        };
                     };
                     if (servicio.precioHora_C2) {
                         totalFacturado_C2 += servicio.totalServicioFijo;
+                        if (totalFacturado_C2 === servicio.precioHora_C2) {
+                            totalHoras_C2 = 1;
+                        } else {
+                            totalHoras_C2 = parseInt(totalFacturado_C2 / servicio.precioHora_C2);
+                        };
                     };
                     if (servicio.precioHora_ES) {
                         totalFacturado_ES += servicio.totalServicioFijo;
+                        if (totalFacturado_ES === servicio.precioHora_ES) {
+                            totalHoras_ES = 1;
+                        } else {
+                            totalHoras_ES = parseInt(totalFacturado_ES / servicio.precioHora_ES);
+                        };
                     };
                     if (servicio.precioHora_PA) {
                         totalFacturado_PA += servicio.totalServicioFijo;
+                        if (totalFacturado_PA === servicio.precioHora_PA) {
+                            totalHoras_PA = 1;
+                        } else {
+                            totalHoras_PA = parseInt(totalFacturado_PA / servicio.precioHora_PA);
+                        };
                     };
                 };
             });
@@ -1916,7 +2036,7 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
                 };
                 if (informe.precioHora_R) {
                     totalFacturado_R += informe.totalFacturado_R;
-                    horas[index]['R'] ? totalHoras_R += horas[index]['R'] : totalHoras_R = totalHoras_R;                    
+                    horas[index]['R'] ? totalHoras_R += horas[index]['R'] : totalHoras_R = totalHoras_R;
                     precio_R = informe.precioHora_R;
                 };
                 if (informe.precioHora_L1) {
@@ -2017,63 +2137,83 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
     };
     if (totalFacturado_TO) {
         objetoTotales['TOT'] = totalFacturado_TO;
+        objetoTotales['TOH'] = totalHoras_TO;
     };
     if (totalFacturado_CR) {
         objetoTotales['CRT'] = totalFacturado_CR;
+        objetoTotales['CRH'] = totalHoras_CR;
     };
     if (totalFacturado_CE) {
         objetoTotales['CET'] = totalFacturado_CE;
+        objetoTotales['CEH'] = totalHoras_CE;
     };
     if (totalFacturado_CI) {
         objetoTotales['CIT'] = totalFacturado_CI;
+        objetoTotales['CIH'] = totalHoras_CI;
     };
     if (totalFacturado_MO) {
         objetoTotales['MOT'] = totalFacturado_MO;
+        objetoTotales['MOH'] = totalHoras_MO;
     };
     if (totalFacturado_OF) {
         objetoTotales['OFT'] = totalFacturado_OF;
+        objetoTotales['OFH'] = totalHoras_OF;
     };
     if (totalFacturado_AL) {
         objetoTotales['ALT'] = totalFacturado_AL;
+        objetoTotales['ALH'] = totalHoras_AL;
     };
     if (totalFacturado_LA) {
         objetoTotales['LAT'] = totalFacturado_LA;
+        objetoTotales['LAH'] = totalHoras_LA;
     };
     if (totalFacturado_TE) {
         objetoTotales['TET'] = totalFacturado_TE;
+        objetoTotales['TEH'] = totalHoras_TE;
     };
     if (totalFacturado_FI) {
         objetoTotales['FIT'] = totalFacturado_FI;
+        objetoTotales['FIH'] = totalHoras_FI;
     };
     if (totalFacturado_FE) {
         objetoTotales['FET'] = totalFacturado_FE;
+        objetoTotales['FEH'] = totalHoras_FE;
     };
     if (totalFacturado_AB) {
         objetoTotales['ABT'] = totalFacturado_AB;
+        objetoTotales['ABH'] = totalHoras_AB;
     };
     if (totalFacturado_MA) {
         objetoTotales['MAT'] = totalFacturado_MA;
+        objetoTotales['MAH'] = totalHoras_MA;
     };
     if (totalFacturado_PO) {
         objetoTotales['POT'] = totalFacturado_PO;
+        objetoTotales['POH'] = totalHoras_PO;
     };
     if (totalFacturado_BA) {
         objetoTotales['BAT'] = totalFacturado_BA;
+        objetoTotales['BAH'] = totalHoras_BA;
     };
     if (totalFacturado_FT) {
         objetoTotales['FTT'] = totalFacturado_FT;
+        objetoTotales['FTH'] = totalHoras_FT;
     };
     if (totalFacturado_C3) {
         objetoTotales['C3T'] = totalFacturado_C3;
+        objetoTotales['C3H'] = totalHoras_C3;
     };
     if (totalFacturado_C2) {
         objetoTotales['C2T'] = totalFacturado_C2;
+        objetoTotales['C2H'] = totalHoras_C2;
     };
     if (totalFacturado_ES) {
         objetoTotales['EST'] = totalFacturado_ES;
+        objetoTotales['ESH'] = totalHoras_ES;
     };
     if (totalFacturado_PA) {
         objetoTotales['PAT'] = totalFacturado_PA;
+        objetoTotales['PAH'] = totalHoras_PA;
     };
     if (objetoCentro.activoNumCuenta === 'si') {
         objetoTotales['NUMCT'] = 1;
@@ -2148,6 +2288,272 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
         } else {
             objetoTotales['total'] = parseFloat(objetoTotales['total']) + parseFloat(totalesPeriodicos.total);
             objetoTotales['totalesPeriodicos'] = totalesPeriodicos;
+            if (totalesPeriodicos.totalesHoras.LH) {
+                if (objetoTotales['LH']) {
+                    objetoTotales['LH'] += totalesPeriodicos.totalesHoras.LH;
+                } else {
+                    objetoTotales['LH'] = totalesPeriodicos.totalesHoras.LH;
+                };
+            };
+            if (totalesPeriodicos.totalesHoras.EH) {
+                if (objetoTotales['EH']) {
+                    objetoTotales['EH'] += totalesPeriodicos.totalesHoras.EH;
+                } else {
+                    objetoTotales['EH'] = totalesPeriodicos.totalesHoras.EH;
+                };
+            };
+            if (totalesPeriodicos.totalesHoras.PH) {
+                if (objetoTotales['PH']) {
+                    objetoTotales['PH'] += totalesPeriodicos.totalesHoras.PH;
+                } else {
+                    objetoTotales['PH'] = totalesPeriodicos.totalesHoras.PH;
+                };
+            };
+            if (totalesPeriodicos.totalesHoras.NH) {
+                if (objetoTotales['NH']) {
+                    objetoTotales['NH'] += totalesPeriodicos.totalesHoras.NH;
+                } else {
+                    objetoTotales['NH'] = totalesPeriodicos.totalesHoras.NH;
+                };
+            };
+            if (totalesPeriodicos.totalesHoras.RH) {
+                if (objetoTotales['RH']) {
+                    objetoTotales['RH'] += totalesPeriodicos.totalesHoras.RH;
+                } else {
+                    objetoTotales['RH'] = totalesPeriodicos.totalesHoras.RH;
+                };
+            };
+            if (totalesPeriodicos.totalesHoras.L1H) {
+                if (objetoTotales['L1H']) {
+                    objetoTotales['L1H'] += totalesPeriodicos.totalesHoras.L1H;
+                } else {
+                    objetoTotales['L1H'] = totalesPeriodicos.totalesHoras.L1H;
+                };
+            };
+            if (totalesPeriodicos.totalesHoras.L2H) {
+                if (objetoTotales['L2H']) {
+                    objetoTotales['L2H'] += totalesPeriodicos.totalesHoras.L2H;
+                } else {
+                    objetoTotales['L2H'] = totalesPeriodicos.totalesHoras.L2H;
+                };
+            };
+            if (totalesPeriodicos.totalesHoras.FH) {
+                if (objetoTotales['FH']) {
+                    objetoTotales['FH'] += totalesPeriodicos.totalesHoras.FH;
+                } else {
+                    objetoTotales['FH'] = totalesPeriodicos.totalesHoras.FH;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.MT) {
+                if (objetoTotales['MT']) {
+                    objetoTotales['MT'] += totalesPeriodicos.totalesServicios.MT;
+                } else {
+                    objetoTotales['MT'] = totalesPeriodicos.totalesServicios.MT;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.LT) {
+                if (objetoTotales['LT']) {
+                    objetoTotales['LT'] += totalesPeriodicos.totalesServicios.LT;
+                } else {
+                    objetoTotales['LT'] = totalesPeriodicos.totalesServicios.LT;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.ET) {
+                if (objetoTotales['ET']) {
+                    objetoTotales['ET'] += totalesPeriodicos.totalesServicios.ET;
+                } else {
+                    objetoTotales['ET'] = totalesPeriodicos.totalesServicios.ET;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.PT) {
+                if (objetoTotales['PT']) {
+                    objetoTotales['PT'] += totalesPeriodicos.totalesServicios.PT;
+                } else {
+                    objetoTotales['PT'] = totalesPeriodicos.totalesServicios.PT;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.NT) {
+                if (objetoTotales['NT']) {
+                    objetoTotales['NT'] += totalesPeriodicos.totalesServicios.NT;
+                } else {
+                    objetoTotales['NT'] = totalesPeriodicos.totalesServicios.NT;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.RT) {
+                if (objetoTotales['RT']) {
+                    objetoTotales['RT'] += totalesPeriodicos.totalesServicios.RT;
+                } else {
+                    objetoTotales['RT'] = totalesPeriodicos.totalesServicios.RT;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.L1T) {
+                if (objetoTotales['L1T']) {
+                    objetoTotales['L1T'] += totalesPeriodicos.totalesServicios.L1T;
+                } else {
+                    objetoTotales['L1T'] = totalesPeriodicos.totalesServicios.L1T;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.L2T) {
+                if (objetoTotales['L2T']) {
+                    objetoTotales['L2T'] += totalesPeriodicos.totalesServicios.L2T;
+                } else {
+                    objetoTotales['L2T'] = totalesPeriodicos.totalesServicios.L2T;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.FT) {
+                if (objetoTotales['FT']) {
+                    objetoTotales['FT'] += totalesPeriodicos.totalesServicios.FT;
+                } else {
+                    objetoTotales['FT'] = totalesPeriodicos.totalesServicios.FT;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.TOT) {
+                if (objetoTotales['TOT']) {
+                    objetoTotales['TOT'] += totalesPeriodicos.totalesServicios.TOT;
+                } else {
+                    objetoTotales['TOT'] = totalesPeriodicos.totalesServicios.TOT;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.CRT) {
+                if (objetoTotales['CRT']) {
+                    objetoTotales['CRT'] += totalesPeriodicos.totalesServicios.CRT;
+                } else {
+                    objetoTotales['CRT'] = totalesPeriodicos.totalesServicios.CRT;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.CET) {
+                if (objetoTotales['CET']) {
+                    objetoTotales['CET'] += totalesPeriodicos.totalesServicios.CET;
+                } else {
+                    objetoTotales['CET'] = totalesPeriodicos.totalesServicios.CET;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.CIT) {
+                if (objetoTotales['CIT']) {
+                    objetoTotales['CIT'] += totalesPeriodicos.totalesServicios.CIT;
+                } else {
+                    objetoTotales['CIT'] = totalesPeriodicos.totalesServicios.CIT;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.MOT) {
+                if (objetoTotales['MOT']) {
+                    objetoTotales['MOT'] += totalesPeriodicos.totalesServicios.MOT;
+                } else {
+                    objetoTotales['MOT'] = totalesPeriodicos.totalesServicios.MOT;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.OFT) {
+                if (objetoTotales['OFT']) {
+                    objetoTotales['OFT'] += totalesPeriodicos.totalesServicios.OFT;
+                } else {
+                    objetoTotales['OFT'] = totalesPeriodicos.totalesServicios.OFT;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.ALT) {
+                if (objetoTotales['ALT']) {
+                    objetoTotales['ALT'] += totalesPeriodicos.totalesServicios.ALT;
+                } else {
+                    objetoTotales['ALT'] = totalesPeriodicos.totalesServicios.ALT;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.LAT) {
+                if (objetoTotales['LAT']) {
+                    objetoTotales['LAT'] += totalesPeriodicos.totalesServicios.LAT;
+                } else {
+                    objetoTotales['LAT'] = totalesPeriodicos.totalesServicios.LAT;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.TET) {
+                if (objetoTotales['TET']) {
+                    objetoTotales['TET'] += totalesPeriodicos.totalesServicios.TET;
+                } else {
+                    objetoTotales['TET'] = totalesPeriodicos.totalesServicios.TET;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.FIT) {
+                if (objetoTotales['FIT']) {
+                    objetoTotales['FIT'] += totalesPeriodicos.totalesServicios.FIT;
+                } else {
+                    objetoTotales['FIT'] = totalesPeriodicos.totalesServicios.FIT;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.FET) {
+                if (objetoTotales['FET']) {
+                    objetoTotales['FET'] += totalesPeriodicos.totalesServicios.FET;
+                } else {
+                    objetoTotales['FET'] = totalesPeriodicos.totalesServicios.FET;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.ABT) {
+                if (objetoTotales['ABT']) {
+                    objetoTotales['ABT'] += totalesPeriodicos.totalesServicios.ABT;
+                } else {
+                    objetoTotales['ABT'] = totalesPeriodicos.totalesServicios.ABT;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.MAT) {
+                if (objetoTotales['MAT']) {
+                    objetoTotales['MAT'] += totalesPeriodicos.totalesServicios.MAT;
+                } else {
+                    objetoTotales['MAT'] = totalesPeriodicos.totalesServicios.MAT;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.POT) {
+                if (objetoTotales['POT']) {
+                    objetoTotales['POT'] += totalesPeriodicos.totalesServicios.POT;
+                } else {
+                    objetoTotales['POT'] = totalesPeriodicos.totalesServicios.POT;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.BAT) {
+                if (objetoTotales['BAT']) {
+                    objetoTotales['BAT'] += totalesPeriodicos.totalesServicios.BAT;
+                } else {
+                    objetoTotales['BAT'] = totalesPeriodicos.totalesServicios.BAT;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.FTT) {
+                if (objetoTotales['FTT']) {
+                    objetoTotales['FTT'] += totalesPeriodicos.totalesServicios.FTT;
+                } else {
+                    objetoTotales['FTT'] = totalesPeriodicos.totalesServicios.FTT;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.C3T) {
+                if (objetoTotales['C3T']) {
+                    objetoTotales['C3T'] += totalesPeriodicos.totalesServicios.C3T;
+                } else {
+                    objetoTotales['C3T'] = totalesPeriodicos.totalesServicios.C3T;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.C2T) {
+                if (objetoTotales['C2T']) {
+                    objetoTotales['C2T'] += totalesPeriodicos.totalesServicios.C2T;
+                } else {
+                    objetoTotales['C2T'] = totalesPeriodicos.totalesServicios.C2T;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.EST) {
+                if (objetoTotales['EST']) {
+                    objetoTotales['EST'] += totalesPeriodicos.totalesServicios.EST;
+                } else {
+                    objetoTotales['EST'] = totalesPeriodicos.totalesServicios.EST;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.PAT) {
+                if (objetoTotales['PAT']) {
+                    objetoTotales['PAT'] += totalesPeriodicos.totalesServicios.PAT;
+                } else {
+                    objetoTotales['PAT'] = totalesPeriodicos.totalesServicios.PAT;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.NUMCT) {
+                if (objetoTotales['NUMCT']) {
+                    objetoTotales['NUMCT'] = totalesPeriodicos.totalesServicios.NUMCT;
+                } else {
+                    objetoTotales['NUMCT'] = totalesPeriodicos.totalesServicios.NUMCT;
+                };
+            };
         };
     };
     objetoTotales['totalMasIva'] = ((parseFloat(objetoTotales['total']) * 21) / 100) + parseFloat(objetoTotales['total']);
