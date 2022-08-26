@@ -4347,58 +4347,30 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
     const { cuadranteRegistrado, objetoCuadrante } = getState().variablesCuadrantes;
     let valoresComputoPreciosHoraFijos = true;
     let valoresComputoPreciosHoraIntegrados = false;
-    if ((itemEditandoServiciosFijos.switch.TO && !itemEditandoServiciosFijos.servicios.int_TO && (!itemEditandoServiciosFijos.servicios.variacion_TO || !itemEditandoServiciosFijos.servicios.precioHora_TO)) ||
-        (itemEditandoServiciosFijos.switch.CR && !itemEditandoServiciosFijos.servicios.int_CR && (!itemEditandoServiciosFijos.servicios.variacion_CR || !itemEditandoServiciosFijos.servicios.precioHora_CR)) ||
-        (itemEditandoServiciosFijos.switch.CE && !itemEditandoServiciosFijos.servicios.int_CE && (!itemEditandoServiciosFijos.servicios.variacion_CE || !itemEditandoServiciosFijos.servicios.precioHora_CE)) ||
-        (itemEditandoServiciosFijos.switch.CI && !itemEditandoServiciosFijos.servicios.int_CI && (!itemEditandoServiciosFijos.servicios.variacion_CI || !itemEditandoServiciosFijos.servicios.precioHora_CI)) ||
-        (itemEditandoServiciosFijos.switch.MO && !itemEditandoServiciosFijos.servicios.int_MO && (!itemEditandoServiciosFijos.servicios.variacion_MO || !itemEditandoServiciosFijos.servicios.precioHora_MO)) ||
-        (itemEditandoServiciosFijos.switch.OF && !itemEditandoServiciosFijos.servicios.int_OF && (!itemEditandoServiciosFijos.servicios.variacion_OF || !itemEditandoServiciosFijos.servicios.precioHora_OF)) ||
-        (itemEditandoServiciosFijos.switch.AL && !itemEditandoServiciosFijos.servicios.int_AL && (!itemEditandoServiciosFijos.servicios.variacion_AL || !itemEditandoServiciosFijos.servicios.precioHora_AL)) ||
-        (itemEditandoServiciosFijos.switch.LA && !itemEditandoServiciosFijos.servicios.int_LA && (!itemEditandoServiciosFijos.servicios.variacion_LA || !itemEditandoServiciosFijos.servicios.precioHora_LA)) ||
-        (itemEditandoServiciosFijos.switch.TE && !itemEditandoServiciosFijos.servicios.int_TE && (!itemEditandoServiciosFijos.servicios.variacion_TE || !itemEditandoServiciosFijos.servicios.precioHora_TE)) ||
-        (itemEditandoServiciosFijos.switch.FI && !itemEditandoServiciosFijos.servicios.int_FI && (!itemEditandoServiciosFijos.servicios.variacion_FI || !itemEditandoServiciosFijos.servicios.precioHora_FI)) ||
-        (itemEditandoServiciosFijos.switch.FE && !itemEditandoServiciosFijos.servicios.int_FE && (!itemEditandoServiciosFijos.servicios.variacion_FE || !itemEditandoServiciosFijos.servicios.precioHora_FE)) ||
-        (itemEditandoServiciosFijos.switch.AB && !itemEditandoServiciosFijos.servicios.int_AB && (!itemEditandoServiciosFijos.servicios.variacion_AB || !itemEditandoServiciosFijos.servicios.precioHora_AB)) ||
-        (itemEditandoServiciosFijos.switch.MA && !itemEditandoServiciosFijos.servicios.int_MA && (!itemEditandoServiciosFijos.servicios.variacion_MA || !itemEditandoServiciosFijos.servicios.precioHora_MA)) ||
-        (itemEditandoServiciosFijos.switch.PO && !itemEditandoServiciosFijos.servicios.int_PO && (!itemEditandoServiciosFijos.servicios.variacion_PO || !itemEditandoServiciosFijos.servicios.precioHora_PO)) ||
-        (itemEditandoServiciosFijos.switch.BA && !itemEditandoServiciosFijos.servicios.int_BA && (!itemEditandoServiciosFijos.servicios.variacion_BA || !itemEditandoServiciosFijos.servicios.precioHora_BA)) ||
-        (itemEditandoServiciosFijos.switch.FT && !itemEditandoServiciosFijos.servicios.int_FT && (!itemEditandoServiciosFijos.servicios.variacion_FT || !itemEditandoServiciosFijos.servicios.precioHora_FT)) ||
-        (itemEditandoServiciosFijos.switch.C3 && !itemEditandoServiciosFijos.servicios.int_C3 && (!itemEditandoServiciosFijos.servicios.variacion_C3 || !itemEditandoServiciosFijos.servicios.precioHora_C3)) ||
-        (itemEditandoServiciosFijos.switch.C2 && !itemEditandoServiciosFijos.servicios.int_C2 && (!itemEditandoServiciosFijos.servicios.variacion_C2 || !itemEditandoServiciosFijos.servicios.precioHora_C2)) ||
-        (itemEditandoServiciosFijos.switch.ES && !itemEditandoServiciosFijos.servicios.int_ES && (!itemEditandoServiciosFijos.servicios.variacion_ES || !itemEditandoServiciosFijos.servicios.precioHora_ES)) ||
-        (itemEditandoServiciosFijos.switch.PA && !itemEditandoServiciosFijos.servicios.int_PA && (!itemEditandoServiciosFijos.servicios.variacion_PA || !itemEditandoServiciosFijos.servicios.precioHora_PA))
+    if ((itemEditandoServiciosFijos.switch.TO && !itemEditandoServiciosFijos.servicios.int_TO && !itemEditandoServiciosFijos.servicios.precioHora_TO) ||
+        (itemEditandoServiciosFijos.switch.CR && !itemEditandoServiciosFijos.servicios.int_CR && !itemEditandoServiciosFijos.servicios.precioHora_CR) ||
+        (itemEditandoServiciosFijos.switch.CE && !itemEditandoServiciosFijos.servicios.int_CE && !itemEditandoServiciosFijos.servicios.precioHora_CE) ||
+        (itemEditandoServiciosFijos.switch.CI && !itemEditandoServiciosFijos.servicios.int_CI && !itemEditandoServiciosFijos.servicios.precioHora_CI) ||
+        (itemEditandoServiciosFijos.switch.MO && !itemEditandoServiciosFijos.servicios.int_MO && !itemEditandoServiciosFijos.servicios.precioHora_MO) ||
+        (itemEditandoServiciosFijos.switch.OF && !itemEditandoServiciosFijos.servicios.int_OF && !itemEditandoServiciosFijos.servicios.precioHora_OF) ||
+        (itemEditandoServiciosFijos.switch.AL && !itemEditandoServiciosFijos.servicios.int_AL && !itemEditandoServiciosFijos.servicios.precioHora_AL) ||
+        (itemEditandoServiciosFijos.switch.LA && !itemEditandoServiciosFijos.servicios.int_LA && !itemEditandoServiciosFijos.servicios.precioHora_LA) ||
+        (itemEditandoServiciosFijos.switch.TE && !itemEditandoServiciosFijos.servicios.int_TE && !itemEditandoServiciosFijos.servicios.precioHora_TE) ||
+        (itemEditandoServiciosFijos.switch.FI && !itemEditandoServiciosFijos.servicios.int_FI && !itemEditandoServiciosFijos.servicios.precioHora_FI) ||
+        (itemEditandoServiciosFijos.switch.FE && !itemEditandoServiciosFijos.servicios.int_FE && !itemEditandoServiciosFijos.servicios.precioHora_FE) ||
+        (itemEditandoServiciosFijos.switch.AB && !itemEditandoServiciosFijos.servicios.int_AB && !itemEditandoServiciosFijos.servicios.precioHora_AB) ||
+        (itemEditandoServiciosFijos.switch.MA && !itemEditandoServiciosFijos.servicios.int_MA && !itemEditandoServiciosFijos.servicios.precioHora_MA) ||
+        (itemEditandoServiciosFijos.switch.PO && !itemEditandoServiciosFijos.servicios.int_PO && !itemEditandoServiciosFijos.servicios.precioHora_PO) ||
+        (itemEditandoServiciosFijos.switch.BA && !itemEditandoServiciosFijos.servicios.int_BA && !itemEditandoServiciosFijos.servicios.precioHora_BA) ||
+        (itemEditandoServiciosFijos.switch.FT && !itemEditandoServiciosFijos.servicios.int_FT && !itemEditandoServiciosFijos.servicios.precioHora_FT) ||
+        (itemEditandoServiciosFijos.switch.C3 && !itemEditandoServiciosFijos.servicios.int_C3 && !itemEditandoServiciosFijos.servicios.precioHora_C3) ||
+        (itemEditandoServiciosFijos.switch.C2 && !itemEditandoServiciosFijos.servicios.int_C2 && !itemEditandoServiciosFijos.servicios.precioHora_C2) ||
+        (itemEditandoServiciosFijos.switch.ES && !itemEditandoServiciosFijos.servicios.int_ES && !itemEditandoServiciosFijos.servicios.precioHora_ES) ||
+        (itemEditandoServiciosFijos.switch.PA && !itemEditandoServiciosFijos.servicios.int_PA && !itemEditandoServiciosFijos.servicios.precioHora_PA)
     ) {
         dispatch(setAlertaAccion({
             abierto: true,
-            mensaje: "Has selecionado un tipo de servicio fijo pero no has asignado precio o variación. Revisa el formulario.",
-            tipo: 'error'
-        }));
-        return;
-    };
-    if (((itemEditandoServiciosFijos.servicios.variacion_TO === 1 || itemEditandoServiciosFijos.servicios.variacion_TO === 2) && !itemEditandoServiciosFijos.servicios.diaVariacion_TO) ||
-        ((itemEditandoServiciosFijos.servicios.variacion_CR === 1 || itemEditandoServiciosFijos.servicios.variacion_CR === 2) && !itemEditandoServiciosFijos.servicios.diaVariacion_CR) ||
-        ((itemEditandoServiciosFijos.servicios.variacion_CE === 1 || itemEditandoServiciosFijos.servicios.variacion_CE === 2) && !itemEditandoServiciosFijos.servicios.diaVariacion_CE) ||
-        ((itemEditandoServiciosFijos.servicios.variacion_CI === 1 || itemEditandoServiciosFijos.servicios.variacion_CI === 2) && !itemEditandoServiciosFijos.servicios.diaVariacion_CI) ||
-        ((itemEditandoServiciosFijos.servicios.variacion_MO === 1 || itemEditandoServiciosFijos.servicios.variacion_MO === 2) && !itemEditandoServiciosFijos.servicios.diaVariacion_MO) ||
-        ((itemEditandoServiciosFijos.servicios.variacion_OF === 1 || itemEditandoServiciosFijos.servicios.variacion_OF === 2) && !itemEditandoServiciosFijos.servicios.diaVariacion_OF) ||
-        ((itemEditandoServiciosFijos.servicios.variacion_AL === 1 || itemEditandoServiciosFijos.servicios.variacion_AL === 2) && !itemEditandoServiciosFijos.servicios.diaVariacion_AL) ||
-        ((itemEditandoServiciosFijos.servicios.variacion_LA === 1 || itemEditandoServiciosFijos.servicios.variacion_LA === 2) && !itemEditandoServiciosFijos.servicios.diaVariacion_LA) ||
-        ((itemEditandoServiciosFijos.servicios.variacion_TE === 1 || itemEditandoServiciosFijos.servicios.variacion_TE === 2) && !itemEditandoServiciosFijos.servicios.diaVariacion_TE) ||
-        ((itemEditandoServiciosFijos.servicios.variacion_FI === 1 || itemEditandoServiciosFijos.servicios.variacion_FI === 2) && !itemEditandoServiciosFijos.servicios.diaVariacion_FI) ||
-        ((itemEditandoServiciosFijos.servicios.variacion_FE === 1 || itemEditandoServiciosFijos.servicios.variacion_FE === 2) && !itemEditandoServiciosFijos.servicios.diaVariacion_FE) ||
-        ((itemEditandoServiciosFijos.servicios.variacion_AB === 1 || itemEditandoServiciosFijos.servicios.variacion_AB === 2) && !itemEditandoServiciosFijos.servicios.diaVariacion_AB) ||
-        ((itemEditandoServiciosFijos.servicios.variacion_MA === 1 || itemEditandoServiciosFijos.servicios.variacion_MA === 2) && !itemEditandoServiciosFijos.servicios.diaVariacion_MA) ||
-        ((itemEditandoServiciosFijos.servicios.variacion_PO === 1 || itemEditandoServiciosFijos.servicios.variacion_PO === 2) && !itemEditandoServiciosFijos.servicios.diaVariacion_PO) ||
-        ((itemEditandoServiciosFijos.servicios.variacion_BA === 1 || itemEditandoServiciosFijos.servicios.variacion_BA === 2) && !itemEditandoServiciosFijos.servicios.diaVariacion_BA) ||
-        ((itemEditandoServiciosFijos.servicios.variacion_FT === 1 || itemEditandoServiciosFijos.servicios.variacion_FT === 2) && !itemEditandoServiciosFijos.servicios.diaVariacion_FT) ||
-        ((itemEditandoServiciosFijos.servicios.variacion_C3 === 1 || itemEditandoServiciosFijos.servicios.variacion_C3 === 2) && !itemEditandoServiciosFijos.servicios.diaVariacion_C3) ||
-        ((itemEditandoServiciosFijos.servicios.variacion_C2 === 1 || itemEditandoServiciosFijos.servicios.variacion_C2 === 2) && !itemEditandoServiciosFijos.servicios.diaVariacion_C2) ||
-        ((itemEditandoServiciosFijos.servicios.variacion_ES === 1 || itemEditandoServiciosFijos.servicios.variacion_ES === 2) && !itemEditandoServiciosFijos.servicios.diaVariacion_ES) ||
-        ((itemEditandoServiciosFijos.servicios.variacion_PA === 1 || itemEditandoServiciosFijos.servicios.variacion_PA === 2) && !itemEditandoServiciosFijos.servicios.diaVariacion_PA)
-    ) {
-        dispatch(setAlertaAccion({
-            abierto: true,
-            mensaje: "Debes seleccionar un día de la semana para la variación de servicio fijo elegida. Revisa el formulario.",
+            mensaje: "Has selecionado un tipo de servicio fijo pero no has asignado precio. Revisa el formulario.",
             tipo: 'error'
         }));
         return;
@@ -4586,8 +4558,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'TOL',
                 precioHora_TO: itemEditandoServiciosFijos.servicios.precioHora_TO ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_TO) : null,
-                variacion_TO: itemEditandoServiciosFijos.servicios.variacion_TO ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_TO) : null,
-                diaVariacion_TO: !itemEditandoServiciosFijos.servicios.int_TO ? (itemEditandoServiciosFijos.servicios.variacion_TO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_TO : '') : '',
+                variacion_TO: 3,
+                diaVariacion_TO: '',
                 activo_TO: itemEditandoServiciosFijos.servicios.activo_TO,
                 int_TO: itemEditandoServiciosFijos.servicios.int_TO,
                 trab_TO: itemEditandoServiciosFijos.servicios.trab_TO ? itemEditandoServiciosFijos.servicios.trab_TO : null
@@ -4596,8 +4568,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'TOL',
                 precioHora_TO: itemEditandoServiciosFijos.servicios.precioHora_TO ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_TO) : null,
-                variacion_TO: itemEditandoServiciosFijos.servicios.variacion_TO ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_TO) : null,
-                diaVariacion_TO: !itemEditandoServiciosFijos.servicios.int_TO ? (itemEditandoServiciosFijos.servicios.variacion_TO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_TO : '') : '',
+                variacion_TO: 3,
+                diaVariacion_TO: '',
                 activo_TO: itemEditandoServiciosFijos.servicios.activo_TO,
                 int_TO: itemEditandoServiciosFijos.servicios.int_TO,
                 trab_TO: itemEditandoServiciosFijos.servicios.trab_TO ? itemEditandoServiciosFijos.servicios.trab_TO : null
@@ -4611,8 +4583,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'CRIS',
                 precioHora_CR: itemEditandoServiciosFijos.servicios.precioHora_CR ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CR) : null,
-                variacion_CR: itemEditandoServiciosFijos.servicios.variacion_CR ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_CR) : null,
-                diaVariacion_CR: !itemEditandoServiciosFijos.servicios.int_CR ? (itemEditandoServiciosFijos.servicios.variacion_CR !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CR : '') : '',
+                variacion_CR: 3,
+                diaVariacion_CR: '',
                 activo_CR: itemEditandoServiciosFijos.servicios.activo_CR,
                 int_CR: itemEditandoServiciosFijos.servicios.int_CR,
                 trab_CR: itemEditandoServiciosFijos.servicios.trab_CR ? itemEditandoServiciosFijos.servicios.trab_CR : null
@@ -4621,8 +4593,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'CRIS',
                 precioHora_CR: itemEditandoServiciosFijos.servicios.precioHora_CR ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CR) : null,
-                variacion_CR: itemEditandoServiciosFijos.servicios.variacion_CR ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_CR) : null,
-                diaVariacion_CR: !itemEditandoServiciosFijos.servicios.int_CR ? (itemEditandoServiciosFijos.servicios.variacion_CR !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CR : '') : '',
+                variacion_CR: 3,
+                diaVariacion_CR: '',
                 activo_CR: itemEditandoServiciosFijos.servicios.activo_CR,
                 int_CR: itemEditandoServiciosFijos.servicios.int_CR,
                 trab_CR: itemEditandoServiciosFijos.servicios.trab_CR ? itemEditandoServiciosFijos.servicios.trab_CR : null
@@ -4636,8 +4608,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'CRISE',
                 precioHora_CE: itemEditandoServiciosFijos.servicios.precioHora_CE ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CE) : null,
-                variacion_CE: itemEditandoServiciosFijos.servicios.variacion_CE ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_CE) : null,
-                diaVariacion_CE: !itemEditandoServiciosFijos.servicios.int_CE ? (itemEditandoServiciosFijos.servicios.variacion_CE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CE : '') : '',
+                variacion_CE: 3,
+                diaVariacion_CE: '',
                 activo_CE: itemEditandoServiciosFijos.servicios.activo_CE,
                 int_CE: itemEditandoServiciosFijos.servicios.int_CE,
                 trab_CE: itemEditandoServiciosFijos.servicios.trab_CE ? itemEditandoServiciosFijos.servicios.trab_CE : null
@@ -4646,8 +4618,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'CRISE',
                 precioHora_CE: itemEditandoServiciosFijos.servicios.precioHora_CE ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CE) : null,
-                variacion_CE: itemEditandoServiciosFijos.servicios.variacion_CE ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_CE) : null,
-                diaVariacion_CE: !itemEditandoServiciosFijos.servicios.int_CE ? (itemEditandoServiciosFijos.servicios.variacion_CE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CE : '') : '',
+                variacion_CE: 3,
+                diaVariacion_CE: '',
                 activo_CE: itemEditandoServiciosFijos.servicios.activo_CE,
                 int_CE: itemEditandoServiciosFijos.servicios.int_CE,
                 trab_CE: itemEditandoServiciosFijos.servicios.trab_CE ? itemEditandoServiciosFijos.servicios.trab_CE : null
@@ -4661,8 +4633,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'CRISI',
                 precioHora_CI: itemEditandoServiciosFijos.servicios.precioHora_CI ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CI) : null,
-                variacion_CI: itemEditandoServiciosFijos.servicios.variacion_CI ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_CI) : null,
-                diaVariacion_CI: !itemEditandoServiciosFijos.servicios.int_CI ? (itemEditandoServiciosFijos.servicios.variacion_CI !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CI : '') : '',
+                variacion_CI: 3,
+                diaVariacion_CI: '',
                 activo_CI: itemEditandoServiciosFijos.servicios.activo_CI,
                 int_CI: itemEditandoServiciosFijos.servicios.int_CI,
                 trab_CI: itemEditandoServiciosFijos.servicios.trab_CI ? itemEditandoServiciosFijos.servicios.trab_CI : null
@@ -4671,8 +4643,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'CRISI',
                 precioHora_CI: itemEditandoServiciosFijos.servicios.precioHora_CI ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_CI) : null,
-                variacion_CI: itemEditandoServiciosFijos.servicios.variacion_CI ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_CI) : null,
-                diaVariacion_CI: !itemEditandoServiciosFijos.servicios.int_CI ? (itemEditandoServiciosFijos.servicios.variacion_CI !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CI : '') : '',
+                variacion_CI: 3,
+                diaVariacion_CI: '',
                 activo_CI: itemEditandoServiciosFijos.servicios.activo_CI,
                 int_CI: itemEditandoServiciosFijos.servicios.int_CI,
                 trab_CI: itemEditandoServiciosFijos.servicios.trab_CI ? itemEditandoServiciosFijos.servicios.trab_CI : null
@@ -4686,8 +4658,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'MOQ',
                 precioHora_MO: itemEditandoServiciosFijos.servicios.precioHora_MO ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_MO) : null,
-                variacion_MO: itemEditandoServiciosFijos.servicios.variacion_MO ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_MO) : null,
-                diaVariacion_MO: !itemEditandoServiciosFijos.servicios.int_MO ? (itemEditandoServiciosFijos.servicios.variacion_MO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_MO : '') : '',
+                variacion_MO: 3,
+                diaVariacion_MO: '',
                 activo_MO: itemEditandoServiciosFijos.servicios.activo_MO,
                 int_MO: itemEditandoServiciosFijos.servicios.int_MO,
                 trab_MO: itemEditandoServiciosFijos.servicios.trab_MO ? itemEditandoServiciosFijos.servicios.trab_MO : null
@@ -4696,8 +4668,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'MOQ',
                 precioHora_MO: itemEditandoServiciosFijos.servicios.precioHora_MO ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_MO) : null,
-                variacion_MO: itemEditandoServiciosFijos.servicios.variacion_MO ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_MO) : null,
-                diaVariacion_MO: !itemEditandoServiciosFijos.servicios.int_MO ? (itemEditandoServiciosFijos.servicios.variacion_MO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_MO : '') : '',
+                variacion_MO: 3,
+                diaVariacion_MO: '',
                 activo_MO: itemEditandoServiciosFijos.servicios.activo_MO,
                 int_MO: itemEditandoServiciosFijos.servicios.int_MO,
                 trab_MO: itemEditandoServiciosFijos.servicios.trab_MO ? itemEditandoServiciosFijos.servicios.trab_MO : null
@@ -4711,8 +4683,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'OF',
                 precioHora_OF: itemEditandoServiciosFijos.servicios.precioHora_OF ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_OF) : null,
-                variacion_OF: itemEditandoServiciosFijos.servicios.variacion_OF ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_OF) : null,
-                diaVariacion_OF: !itemEditandoServiciosFijos.servicios.int_OF ? (itemEditandoServiciosFijos.servicios.variacion_OF !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_OF : '') : '',
+                variacion_OF: 3,
+                diaVariacion_OF: '',
                 activo_OF: itemEditandoServiciosFijos.servicios.activo_OF,
                 int_OF: itemEditandoServiciosFijos.servicios.int_OF,
                 trab_OF: itemEditandoServiciosFijos.servicios.trab_OF ? itemEditandoServiciosFijos.servicios.trab_OF : null
@@ -4721,8 +4693,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'OF',
                 precioHora_OF: itemEditandoServiciosFijos.servicios.precioHora_OF ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_OF) : null,
-                variacion_OF: itemEditandoServiciosFijos.servicios.variacion_OF ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_OF) : null,
-                diaVariacion_OF: !itemEditandoServiciosFijos.servicios.int_OF ? (itemEditandoServiciosFijos.servicios.variacion_OF !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_OF : '') : '',
+                variacion_OF: 3,
+                diaVariacion_OF: '',
                 activo_OF: itemEditandoServiciosFijos.servicios.activo_OF,
                 int_OF: itemEditandoServiciosFijos.servicios.int_OF,
                 trab_OF: itemEditandoServiciosFijos.servicios.trab_OF ? itemEditandoServiciosFijos.servicios.trab_OF : null
@@ -4736,8 +4708,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'ALMC',
                 precioHora_AL: itemEditandoServiciosFijos.servicios.precioHora_AL ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_AL) : null,
-                variacion_AL: itemEditandoServiciosFijos.servicios.variacion_AL ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_AL) : null,
-                diaVariacion_AL: !itemEditandoServiciosFijos.servicios.int_AL ? (itemEditandoServiciosFijos.servicios.variacion_AL !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_AL : '') : '',
+                variacion_AL: 3,
+                diaVariacion_AL: '',
                 activo_AL: itemEditandoServiciosFijos.servicios.activo_AL,
                 int_AL: itemEditandoServiciosFijos.servicios.int_AL,
                 trab_AL: itemEditandoServiciosFijos.servicios.trab_AL ? itemEditandoServiciosFijos.servicios.trab_AL : null
@@ -4746,8 +4718,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'ALMC',
                 precioHora_AL: itemEditandoServiciosFijos.servicios.precioHora_AL ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_AL) : null,
-                variacion_AL: itemEditandoServiciosFijos.servicios.variacion_AL ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_AL) : null,
-                diaVariacion_AL: !itemEditandoServiciosFijos.servicios.int_AL ? (itemEditandoServiciosFijos.servicios.variacion_AL !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_AL : '') : '',
+                variacion_AL: 3,
+                diaVariacion_AL: '',
                 activo_AL: itemEditandoServiciosFijos.servicios.activo_AL,
                 int_AL: itemEditandoServiciosFijos.servicios.int_AL,
                 trab_AL: itemEditandoServiciosFijos.servicios.trab_AL ? itemEditandoServiciosFijos.servicios.trab_AL : null
@@ -4761,8 +4733,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'LAB',
                 precioHora_LA: itemEditandoServiciosFijos.servicios.precioHora_LA ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_LA) : null,
-                variacion_LA: itemEditandoServiciosFijos.servicios.variacion_LA ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_LA) : null,
-                diaVariacion_LA: !itemEditandoServiciosFijos.servicios.int_LA ? (itemEditandoServiciosFijos.servicios.variacion_LA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_LA : '') : '',
+                variacion_LA: 3,
+                diaVariacion_LA: '',
                 activo_LA: itemEditandoServiciosFijos.servicios.activo_LA,
                 int_LA: itemEditandoServiciosFijos.servicios.int_LA,
                 trab_LA: itemEditandoServiciosFijos.servicios.trab_LA ? itemEditandoServiciosFijos.servicios.trab_LA : null
@@ -4771,8 +4743,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'LAB',
                 precioHora_LA: itemEditandoServiciosFijos.servicios.precioHora_LA ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_LA) : null,
-                variacion_LA: itemEditandoServiciosFijos.servicios.variacion_LA ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_LA) : null,
-                diaVariacion_LA: !itemEditandoServiciosFijos.servicios.int_LA ? (itemEditandoServiciosFijos.servicios.variacion_LA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_LA : '') : '',
+                variacion_LA: 3,
+                diaVariacion_LA: '',
                 activo_LA: itemEditandoServiciosFijos.servicios.activo_LA,
                 int_LA: itemEditandoServiciosFijos.servicios.int_LA,
                 trab_LA: itemEditandoServiciosFijos.servicios.trab_LA ? itemEditandoServiciosFijos.servicios.trab_LA : null
@@ -4786,8 +4758,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'TELÑ',
                 precioHora_TE: itemEditandoServiciosFijos.servicios.precioHora_TE ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_TE) : null,
-                variacion_TE: itemEditandoServiciosFijos.servicios.variacion_TE ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_TE) : null,
-                diaVariacion_TE: !itemEditandoServiciosFijos.servicios.int_TE ? (itemEditandoServiciosFijos.servicios.variacion_TE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_TE : '') : '',
+                variacion_TE: 3,
+                diaVariacion_TE: '',
                 activo_TE: itemEditandoServiciosFijos.servicios.activo_TE,
                 int_TE: itemEditandoServiciosFijos.servicios.int_TE,
                 trab_TE: itemEditandoServiciosFijos.servicios.trab_TE ? itemEditandoServiciosFijos.servicios.trab_TE : null
@@ -4796,8 +4768,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'TELÑ',
                 precioHora_TE: itemEditandoServiciosFijos.servicios.precioHora_TE ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_TE) : null,
-                variacion_TE: itemEditandoServiciosFijos.servicios.variacion_TE ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_TE) : null,
-                diaVariacion_TE: !itemEditandoServiciosFijos.servicios.int_TE ? (itemEditandoServiciosFijos.servicios.variacion_TE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_TE : '') : '',
+                variacion_TE: 3,
+                diaVariacion_TE: '',
                 activo_TE: itemEditandoServiciosFijos.servicios.activo_TE,
                 int_TE: itemEditandoServiciosFijos.servicios.int_TE,
                 trab_TE: itemEditandoServiciosFijos.servicios.trab_TE ? itemEditandoServiciosFijos.servicios.trab_TE : null
@@ -4811,8 +4783,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'FCH.IN',
                 precioHora_FI: itemEditandoServiciosFijos.servicios.precioHora_FI ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FI) : null,
-                variacion_FI: itemEditandoServiciosFijos.servicios.variacion_FI ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_FI) : null,
-                diaVariacion_FI: !itemEditandoServiciosFijos.servicios.int_FI ? (itemEditandoServiciosFijos.servicios.variacion_FI !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FI : '') : '',
+                variacion_FI: 3,
+                diaVariacion_FI: '',
                 activo_FI: itemEditandoServiciosFijos.servicios.activo_FI,
                 int_FI: itemEditandoServiciosFijos.servicios.int_FI,
                 trab_FI: itemEditandoServiciosFijos.servicios.trab_FI ? itemEditandoServiciosFijos.servicios.trab_FI : null
@@ -4821,8 +4793,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'FCH.IN',
                 precioHora_FI: itemEditandoServiciosFijos.servicios.precioHora_FI ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FI) : null,
-                variacion_FI: itemEditandoServiciosFijos.servicios.variacion_FI ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_FI) : null,
-                diaVariacion_FI: !itemEditandoServiciosFijos.servicios.int_FI ? (itemEditandoServiciosFijos.servicios.variacion_FI !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FI : '') : '',
+                variacion_FI: 3,
+                diaVariacion_FI: '',
                 activo_FI: itemEditandoServiciosFijos.servicios.activo_FI,
                 int_FI: itemEditandoServiciosFijos.servicios.int_FI,
                 trab_FI: itemEditandoServiciosFijos.servicios.trab_FI ? itemEditandoServiciosFijos.servicios.trab_FI : null
@@ -4836,8 +4808,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'FCH.EX',
                 precioHora_FE: itemEditandoServiciosFijos.servicios.precioHora_FE ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FE) : null,
-                variacion_FE: itemEditandoServiciosFijos.servicios.variacion_FE ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_FE) : null,
-                diaVariacion_FE: !itemEditandoServiciosFijos.servicios.int_FE ? (itemEditandoServiciosFijos.servicios.variacion_FE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FE : '') : '',
+                variacion_FE: 3,
+                diaVariacion_FE: '',
                 activo_FE: itemEditandoServiciosFijos.servicios.activo_FE,
                 int_FE: itemEditandoServiciosFijos.servicios.int_FE,
                 trab_FE: itemEditandoServiciosFijos.servicios.trab_FE ? itemEditandoServiciosFijos.servicios.trab_FE : null
@@ -4846,8 +4818,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'FCH.EX',
                 precioHora_FE: itemEditandoServiciosFijos.servicios.precioHora_FE ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FE) : null,
-                variacion_FE: itemEditandoServiciosFijos.servicios.variacion_FE ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_FE) : null,
-                diaVariacion_FE: !itemEditandoServiciosFijos.servicios.int_FE ? (itemEditandoServiciosFijos.servicios.variacion_FE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FE : '') : '',
+                variacion_FE: 3,
+                diaVariacion_FE: '',
                 activo_FE: itemEditandoServiciosFijos.servicios.activo_FE,
                 int_FE: itemEditandoServiciosFijos.servicios.int_FE,
                 trab_FE: itemEditandoServiciosFijos.servicios.trab_FE ? itemEditandoServiciosFijos.servicios.trab_FE : null
@@ -4861,8 +4833,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'ABRLL',
                 precioHora_AB: itemEditandoServiciosFijos.servicios.precioHora_AB ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_AB) : null,
-                variacion_AB: itemEditandoServiciosFijos.servicios.variacion_AB ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_AB) : null,
-                diaVariacion_AB: !itemEditandoServiciosFijos.servicios.int_AB ? (itemEditandoServiciosFijos.servicios.variacion_AB !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_AB : '') : '',
+                variacion_AB: 3,
+                diaVariacion_AB: '',
                 activo_AB: itemEditandoServiciosFijos.servicios.activo_AB,
                 int_AB: itemEditandoServiciosFijos.servicios.int_AB,
                 trab_AB: itemEditandoServiciosFijos.servicios.trab_AB ? itemEditandoServiciosFijos.servicios.trab_AB : null
@@ -4871,8 +4843,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'ABRLL',
                 precioHora_AB: itemEditandoServiciosFijos.servicios.precioHora_AB ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_AB) : null,
-                variacion_AB: itemEditandoServiciosFijos.servicios.variacion_AB ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_AB) : null,
-                diaVariacion_AB: !itemEditandoServiciosFijos.servicios.int_AB ? (itemEditandoServiciosFijos.servicios.variacion_AB !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_AB : '') : '',
+                variacion_AB: 3,
+                diaVariacion_AB: '',
                 activo_AB: itemEditandoServiciosFijos.servicios.activo_AB,
                 int_AB: itemEditandoServiciosFijos.servicios.int_AB,
                 trab_AB: itemEditandoServiciosFijos.servicios.trab_AB ? itemEditandoServiciosFijos.servicios.trab_AB : null
@@ -4886,8 +4858,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'MANT',
                 precioHora_MA: itemEditandoServiciosFijos.servicios.precioHora_MA ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_MA) : null,
-                variacion_MA: itemEditandoServiciosFijos.servicios.variacion_MA ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_MA) : null,
-                diaVariacion_MA: !itemEditandoServiciosFijos.servicios.int_MA ? (itemEditandoServiciosFijos.servicios.variacion_MA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_MA : '') : '',
+                variacion_MA: 3,
+                diaVariacion_MA: '',
                 activo_MA: itemEditandoServiciosFijos.servicios.activo_MA,
                 int_MA: itemEditandoServiciosFijos.servicios.int_MA,
                 trab_MA: itemEditandoServiciosFijos.servicios.trab_MA ? itemEditandoServiciosFijos.servicios.trab_MA : null
@@ -4896,8 +4868,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'MANT',
                 precioHora_MA: itemEditandoServiciosFijos.servicios.precioHora_MA ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_MA) : null,
-                variacion_MA: itemEditandoServiciosFijos.servicios.variacion_MA ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_MA) : null,
-                diaVariacion_MA: !itemEditandoServiciosFijos.servicios.int_MA ? (itemEditandoServiciosFijos.servicios.variacion_MA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_MA : '') : '',
+                variacion_MA: 3,
+                diaVariacion_MA: '',
                 activo_MA: itemEditandoServiciosFijos.servicios.activo_MA,
                 int_MA: itemEditandoServiciosFijos.servicios.int_MA,
                 trab_MA: itemEditandoServiciosFijos.servicios.trab_MA ? itemEditandoServiciosFijos.servicios.trab_MA : null
@@ -4911,8 +4883,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'PORT',
                 precioHora_PO: itemEditandoServiciosFijos.servicios.precioHora_PO ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_PO) : null,
-                variacion_PO: itemEditandoServiciosFijos.servicios.variacion_PO ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_PO) : null,
-                diaVariacion_PO: !itemEditandoServiciosFijos.servicios.int_PO ? (itemEditandoServiciosFijos.servicios.variacion_PO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_PO : '') : '',
+                variacion_PO: 3,
+                diaVariacion_PO: '',
                 activo_PO: itemEditandoServiciosFijos.servicios.activo_PO,
                 int_PO: itemEditandoServiciosFijos.servicios.int_PO,
                 trab_PO: itemEditandoServiciosFijos.servicios.trab_PO ? itemEditandoServiciosFijos.servicios.trab_PO : null
@@ -4921,8 +4893,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'PORT',
                 precioHora_PO: itemEditandoServiciosFijos.servicios.precioHora_PO ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_PO) : null,
-                variacion_PO: itemEditandoServiciosFijos.servicios.variacion_PO ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_PO) : null,
-                diaVariacion_PO: !itemEditandoServiciosFijos.servicios.int_PO ? (itemEditandoServiciosFijos.servicios.variacion_PO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_PO : '') : '',
+                variacion_PO: 3,
+                diaVariacion_PO: '',
                 activo_PO: itemEditandoServiciosFijos.servicios.activo_PO,
                 int_PO: itemEditandoServiciosFijos.servicios.int_PO,
                 trab_PO: itemEditandoServiciosFijos.servicios.trab_PO ? itemEditandoServiciosFijos.servicios.trab_PO : null
@@ -4936,8 +4908,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'BACT',
                 precioHora_BA: itemEditandoServiciosFijos.servicios.precioHora_BA ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_BA) : null,
-                variacion_BA: itemEditandoServiciosFijos.servicios.variacion_BA ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_BA) : null,
-                diaVariacion_BA: !itemEditandoServiciosFijos.servicios.int_BA ? (itemEditandoServiciosFijos.servicios.variacion_BA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_BA : '') : '',
+                variacion_BA: 3,
+                diaVariacion_BA: '',
                 activo_BA: itemEditandoServiciosFijos.servicios.activo_BA,
                 int_BA: itemEditandoServiciosFijos.servicios.int_BA,
                 trab_BA: itemEditandoServiciosFijos.servicios.trab_BA ? itemEditandoServiciosFijos.servicios.trab_BA : null
@@ -4946,8 +4918,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'BACT',
                 precioHora_BA: itemEditandoServiciosFijos.servicios.precioHora_BA ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_BA) : null,
-                variacion_BA: itemEditandoServiciosFijos.servicios.variacion_BA ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_BA) : null,
-                diaVariacion_BA: !itemEditandoServiciosFijos.servicios.int_BA ? (itemEditandoServiciosFijos.servicios.variacion_BA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_BA : '') : '',
+                variacion_BA: 3,
+                diaVariacion_BA: '',
                 activo_BA: itemEditandoServiciosFijos.servicios.activo_BA,
                 int_BA: itemEditandoServiciosFijos.servicios.int_BA,
                 trab_BA: itemEditandoServiciosFijos.servicios.trab_BA ? itemEditandoServiciosFijos.servicios.trab_BA : null
@@ -4961,8 +4933,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'FEST',
                 precioHora_FT: itemEditandoServiciosFijos.servicios.precioHora_FT ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FT) : null,
-                variacion_FT: itemEditandoServiciosFijos.servicios.variacion_FT ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_FT) : null,
-                diaVariacion_FT: !itemEditandoServiciosFijos.servicios.int_FT ? (itemEditandoServiciosFijos.servicios.variacion_FT !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FT : '') : '',
+                variacion_FT: 3,
+                diaVariacion_FT: '',
                 activo_FT: itemEditandoServiciosFijos.servicios.activo_FT,
                 int_FT: itemEditandoServiciosFijos.servicios.int_FT,
                 trab_FT: itemEditandoServiciosFijos.servicios.trab_FT ? itemEditandoServiciosFijos.servicios.trab_FT : null
@@ -4971,8 +4943,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'FEST',
                 precioHora_FT: itemEditandoServiciosFijos.servicios.precioHora_FT ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FT) : null,
-                variacion_FT: itemEditandoServiciosFijos.servicios.variacion_FT ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_FT) : null,
-                diaVariacion_FT: !itemEditandoServiciosFijos.servicios.int_FT ? (itemEditandoServiciosFijos.servicios.variacion_FT !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FT : '') : '',
+                variacion_FT: 3,
+                diaVariacion_FT: '',
                 activo_FT: itemEditandoServiciosFijos.servicios.activo_FT,
                 int_FT: itemEditandoServiciosFijos.servicios.int_FT,
                 trab_FT: itemEditandoServiciosFijos.servicios.trab_FT ? itemEditandoServiciosFijos.servicios.trab_FT : null
@@ -4986,8 +4958,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'CRTRIM',
                 precioHora_C3: itemEditandoServiciosFijos.servicios.precioHora_C3 ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_C3) : null,
-                variacion_C3: itemEditandoServiciosFijos.servicios.variacion_C3 ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_C3) : null,
-                diaVariacion_C3: !itemEditandoServiciosFijos.servicios.int_C3 ? (itemEditandoServiciosFijos.servicios.variacion_C3 !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_C3 : '') : '',
+                variacion_C3: 3,
+                diaVariacion_C3: '',
                 activo_C3: itemEditandoServiciosFijos.servicios.activo_C3,
                 int_C3: itemEditandoServiciosFijos.servicios.int_C3,
                 trab_C3: itemEditandoServiciosFijos.servicios.trab_C3 ? itemEditandoServiciosFijos.servicios.trab_C3 : null
@@ -4996,8 +4968,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'CRTRIM',
                 precioHora_C3: itemEditandoServiciosFijos.servicios.precioHora_C3 ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_C3) : null,
-                variacion_C3: itemEditandoServiciosFijos.servicios.variacion_C3 ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_C3) : null,
-                diaVariacion_C3: !itemEditandoServiciosFijos.servicios.int_C3 ? (itemEditandoServiciosFijos.servicios.variacion_C3 !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_C3 : '') : '',
+                variacion_C3: 3,
+                diaVariacion_C3: '',
                 activo_C3: itemEditandoServiciosFijos.servicios.activo_C3,
                 int_C3: itemEditandoServiciosFijos.servicios.int_C3,
                 trab_C3: itemEditandoServiciosFijos.servicios.trab_C3 ? itemEditandoServiciosFijos.servicios.trab_C3 : null
@@ -5011,8 +4983,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'CRBIM',
                 precioHora_C2: itemEditandoServiciosFijos.servicios.precioHora_C2 ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_C2) : null,
-                variacion_C2: itemEditandoServiciosFijos.servicios.variacion_C2 ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_C2) : null,
-                diaVariacion_C2: !itemEditandoServiciosFijos.servicios.int_C2 ? (itemEditandoServiciosFijos.servicios.variacion_C2 !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_C2 : '') : '',
+                variacion_C2: 3,
+                diaVariacion_C2: '',
                 activo_C2: itemEditandoServiciosFijos.servicios.activo_C2,
                 int_C2: itemEditandoServiciosFijos.servicios.int_C2,
                 trab_C2: itemEditandoServiciosFijos.servicios.trab_C2 ? itemEditandoServiciosFijos.servicios.trab_C2 : null
@@ -5021,8 +4993,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'CRBIM',
                 precioHora_C2: itemEditandoServiciosFijos.servicios.precioHora_C2 ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_C2) : null,
-                variacion_C2: itemEditandoServiciosFijos.servicios.variacion_C2 ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_C2) : null,
-                diaVariacion_C2: !itemEditandoServiciosFijos.servicios.int_C2 ? (itemEditandoServiciosFijos.servicios.variacion_C2 !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_C2 : '') : '',
+                variacion_C2: 3,
+                diaVariacion_C2: '',
                 activo_C2: itemEditandoServiciosFijos.servicios.activo_C2,
                 int_C2: itemEditandoServiciosFijos.servicios.int_C2,
                 trab_C2: itemEditandoServiciosFijos.servicios.trab_C2 ? itemEditandoServiciosFijos.servicios.trab_C2 : null
@@ -5036,8 +5008,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'LIME',
                 precioHora_ES: itemEditandoServiciosFijos.servicios.precioHora_ES ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_ES) : null,
-                variacion_ES: itemEditandoServiciosFijos.servicios.variacion_ES ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_ES) : null,
-                diaVariacion_ES: !itemEditandoServiciosFijos.servicios.int_ES ? (itemEditandoServiciosFijos.servicios.variacion_ES !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_ES : '') : '',
+                variacion_ES: 3,
+                diaVariacion_ES: '',
                 activo_ES: itemEditandoServiciosFijos.servicios.activo_ES,
                 int_ES: itemEditandoServiciosFijos.servicios.int_ES,
                 trab_ES: itemEditandoServiciosFijos.servicios.trab_ES ? itemEditandoServiciosFijos.servicios.trab_ES : null
@@ -5046,8 +5018,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'LIME',
                 precioHora_ES: itemEditandoServiciosFijos.servicios.precioHora_ES ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_ES) : null,
-                variacion_ES: itemEditandoServiciosFijos.servicios.variacion_ES ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_ES) : null,
-                diaVariacion_ES: !itemEditandoServiciosFijos.servicios.int_ES ? (itemEditandoServiciosFijos.servicios.variacion_ES !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_ES : '') : '',
+                variacion_ES: 3,
+                diaVariacion_ES: '',
                 activo_ES: itemEditandoServiciosFijos.servicios.activo_ES,
                 int_ES: itemEditandoServiciosFijos.servicios.int_ES,
                 trab_ES: itemEditandoServiciosFijos.servicios.trab_ES ? itemEditandoServiciosFijos.servicios.trab_ES : null
@@ -5061,8 +5033,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
                 ...objetoServicioActivo,
                 tipoServiciofijo: 'LIMP',
                 precioHora_PA: itemEditandoServiciosFijos.servicios.precioHora_PA ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_PA) : null,
-                variacion_PA: itemEditandoServiciosFijos.servicios.variacion_PA ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_PA) : null,
-                diaVariacion_PA: !itemEditandoServiciosFijos.servicios.int_PA ? (itemEditandoServiciosFijos.servicios.variacion_PA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_PA : '') : '',
+                variacion_PA: 3,
+                diaVariacion_PA: '',
                 activo_PA: itemEditandoServiciosFijos.servicios.activo_PA,
                 int_PA: itemEditandoServiciosFijos.servicios.int_PA,
                 trab_PA: itemEditandoServiciosFijos.servicios.trab_PA ? itemEditandoServiciosFijos.servicios.trab_PA : null
@@ -5071,8 +5043,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
             arrayCuadranteServiciosFijos.push({
                 tipoServiciofijo: 'LIMP',
                 precioHora_PA: itemEditandoServiciosFijos.servicios.precioHora_PA ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_PA) : null,
-                variacion_PA: itemEditandoServiciosFijos.servicios.variacion_PA ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_PA) : null,
-                diaVariacion_PA: !itemEditandoServiciosFijos.servicios.int_PA ? (itemEditandoServiciosFijos.servicios.variacion_PA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_PA : '') : '',
+                variacion_PA: 3,
+                diaVariacion_PA: '',
                 activo_PA: itemEditandoServiciosFijos.servicios.activo_PA,
                 int_PA: itemEditandoServiciosFijos.servicios.int_PA,
                 trab_PA: itemEditandoServiciosFijos.servicios.trab_PA ? itemEditandoServiciosFijos.servicios.trab_PA : null

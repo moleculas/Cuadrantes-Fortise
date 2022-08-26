@@ -2576,57 +2576,29 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 setOpenSnack(true);
                 return;
             };
-            if ((stateSwitchTipoServicioFijoRegistro.TO && !valuesFormRegistro.int_TO && (!valuesFormRegistro.variacion_TO || !valuesFormRegistro.precioHora_TO)) ||
-                (stateSwitchTipoServicioFijoRegistro.CR && !valuesFormRegistro.int_CR && (!valuesFormRegistro.variacion_CR || !valuesFormRegistro.precioHora_CR)) ||
-                (stateSwitchTipoServicioFijoRegistro.CE && !valuesFormRegistro.int_CE && (!valuesFormRegistro.variacion_CE || !valuesFormRegistro.precioHora_CE)) ||
-                (stateSwitchTipoServicioFijoRegistro.CI && !valuesFormRegistro.int_CI && (!valuesFormRegistro.variacion_CI || !valuesFormRegistro.precioHora_CI)) ||
-                (stateSwitchTipoServicioFijoRegistro.MO && !valuesFormRegistro.int_MO && (!valuesFormRegistro.variacion_MO || !valuesFormRegistro.precioHora_MO)) ||
-                (stateSwitchTipoServicioFijoRegistro.OF && !valuesFormRegistro.int_OF && (!valuesFormRegistro.variacion_OF || !valuesFormRegistro.precioHora_OF)) ||
-                (stateSwitchTipoServicioFijoRegistro.AL && !valuesFormRegistro.int_AL && (!valuesFormRegistro.variacion_AL || !valuesFormRegistro.precioHora_AL)) ||
-                (stateSwitchTipoServicioFijoRegistro.LA && !valuesFormRegistro.int_LA && (!valuesFormRegistro.variacion_LA || !valuesFormRegistro.precioHora_LA)) ||
-                (stateSwitchTipoServicioFijoRegistro.TE && !valuesFormRegistro.int_TE && (!valuesFormRegistro.variacion_TE || !valuesFormRegistro.precioHora_TE)) ||
-                (stateSwitchTipoServicioFijoRegistro.FI && !valuesFormRegistro.int_FI && (!valuesFormRegistro.variacion_FI || !valuesFormRegistro.precioHora_FI)) ||
-                (stateSwitchTipoServicioFijoRegistro.FE && !valuesFormRegistro.int_FE && (!valuesFormRegistro.variacion_FE || !valuesFormRegistro.precioHora_FE)) ||
-                (stateSwitchTipoServicioFijoRegistro.AB && !valuesFormRegistro.int_AB && (!valuesFormRegistro.variacion_AB || !valuesFormRegistro.precioHora_AB)) ||
-                (stateSwitchTipoServicioFijoRegistro.MA && !valuesFormRegistro.int_MA && (!valuesFormRegistro.variacion_MA || !valuesFormRegistro.precioHora_MA)) ||
-                (stateSwitchTipoServicioFijoRegistro.PO && !valuesFormRegistro.int_PO && (!valuesFormRegistro.variacion_PO || !valuesFormRegistro.precioHora_PO)) ||
-                (stateSwitchTipoServicioFijoRegistro.BA && !valuesFormRegistro.int_BA && (!valuesFormRegistro.variacion_BA || !valuesFormRegistro.precioHora_BA)) ||
-                (stateSwitchTipoServicioFijoRegistro.FT && !valuesFormRegistro.int_FT && (!valuesFormRegistro.variacion_FT || !valuesFormRegistro.precioHora_FT)) ||
-                (stateSwitchTipoServicioFijoRegistro.C3 && !valuesFormRegistro.int_C3 && (!valuesFormRegistro.variacion_C3 || !valuesFormRegistro.precioHora_C3)) ||
-                (stateSwitchTipoServicioFijoRegistro.C2 && !valuesFormRegistro.int_C2 && (!valuesFormRegistro.variacion_C2 || !valuesFormRegistro.precioHora_C2)) ||
-                (stateSwitchTipoServicioFijoRegistro.ES && !valuesFormRegistro.int_ES && (!valuesFormRegistro.variacion_ES || !valuesFormRegistro.precioHora_ES)) ||
-                (stateSwitchTipoServicioFijoRegistro.PA && !valuesFormRegistro.int_PA && (!valuesFormRegistro.variacion_PA || !valuesFormRegistro.precioHora_PA))
+            if ((stateSwitchTipoServicioFijoRegistro.TO && !valuesFormRegistro.int_TO && !valuesFormRegistro.precioHora_TO) ||
+                (stateSwitchTipoServicioFijoRegistro.CR && !valuesFormRegistro.int_CR && !valuesFormRegistro.precioHora_CR) ||
+                (stateSwitchTipoServicioFijoRegistro.CE && !valuesFormRegistro.int_CE && !valuesFormRegistro.precioHora_CE) ||
+                (stateSwitchTipoServicioFijoRegistro.CI && !valuesFormRegistro.int_CI && !valuesFormRegistro.precioHora_CI) ||
+                (stateSwitchTipoServicioFijoRegistro.MO && !valuesFormRegistro.int_MO && !valuesFormRegistro.precioHora_MO) ||
+                (stateSwitchTipoServicioFijoRegistro.OF && !valuesFormRegistro.int_OF && !valuesFormRegistro.precioHora_OF) ||
+                (stateSwitchTipoServicioFijoRegistro.AL && !valuesFormRegistro.int_AL && !valuesFormRegistro.precioHora_AL) ||
+                (stateSwitchTipoServicioFijoRegistro.LA && !valuesFormRegistro.int_LA && !valuesFormRegistro.precioHora_LA) ||
+                (stateSwitchTipoServicioFijoRegistro.TE && !valuesFormRegistro.int_TE && !valuesFormRegistro.precioHora_TE) ||
+                (stateSwitchTipoServicioFijoRegistro.FI && !valuesFormRegistro.int_FI && !valuesFormRegistro.precioHora_FI) ||
+                (stateSwitchTipoServicioFijoRegistro.FE && !valuesFormRegistro.int_FE && !valuesFormRegistro.precioHora_FE) ||
+                (stateSwitchTipoServicioFijoRegistro.AB && !valuesFormRegistro.int_AB && !valuesFormRegistro.precioHora_AB) ||
+                (stateSwitchTipoServicioFijoRegistro.MA && !valuesFormRegistro.int_MA && !valuesFormRegistro.precioHora_MA) ||
+                (stateSwitchTipoServicioFijoRegistro.PO && !valuesFormRegistro.int_PO && !valuesFormRegistro.precioHora_PO) ||
+                (stateSwitchTipoServicioFijoRegistro.BA && !valuesFormRegistro.int_BA && !valuesFormRegistro.precioHora_BA) ||
+                (stateSwitchTipoServicioFijoRegistro.FT && !valuesFormRegistro.int_FT && !valuesFormRegistro.precioHora_FT) ||
+                (stateSwitchTipoServicioFijoRegistro.C3 && !valuesFormRegistro.int_C3 && !valuesFormRegistro.precioHora_C3) ||
+                (stateSwitchTipoServicioFijoRegistro.C2 && !valuesFormRegistro.int_C2 && !valuesFormRegistro.precioHora_C2) ||
+                (stateSwitchTipoServicioFijoRegistro.ES && !valuesFormRegistro.int_ES && !valuesFormRegistro.precioHora_ES) ||
+                (stateSwitchTipoServicioFijoRegistro.PA && !valuesFormRegistro.int_PA && !valuesFormRegistro.precioHora_PA)
             ) {
                 setAlert({
-                    mensaje: "Has selecionado un tipo de servicio extra pero no has asignado precio o variación. Revisa el formulario.",
-                    tipo: 'error'
-                })
-                setOpenSnack(true);
-                return;
-            };
-            if (((valuesFormRegistro.variacion_TO === 1 || valuesFormRegistro.variacion_TO === 2) && !valuesFormRegistro.diaVariacion_TO) ||
-                ((valuesFormRegistro.variacion_CR === 1 || valuesFormRegistro.variacion_CR === 2) && !valuesFormRegistro.diaVariacion_CR) ||
-                ((valuesFormRegistro.variacion_CE === 1 || valuesFormRegistro.variacion_CE === 2) && !valuesFormRegistro.diaVariacion_CE) ||
-                ((valuesFormRegistro.variacion_CI === 1 || valuesFormRegistro.variacion_CI === 2) && !valuesFormRegistro.diaVariacion_CI) ||
-                ((valuesFormRegistro.variacion_MO === 1 || valuesFormRegistro.variacion_MO === 2) && !valuesFormRegistro.diaVariacion_MO) ||
-                ((valuesFormRegistro.variacion_OF === 1 || valuesFormRegistro.variacion_OF === 2) && !valuesFormRegistro.diaVariacion_OF) ||
-                ((valuesFormRegistro.variacion_AL === 1 || valuesFormRegistro.variacion_AL === 2) && !valuesFormRegistro.diaVariacion_AL) ||
-                ((valuesFormRegistro.variacion_LA === 1 || valuesFormRegistro.variacion_LA === 2) && !valuesFormRegistro.diaVariacion_LA) ||
-                ((valuesFormRegistro.variacion_TE === 1 || valuesFormRegistro.variacion_TE === 2) && !valuesFormRegistro.diaVariacion_TE) ||
-                ((valuesFormRegistro.variacion_FI === 1 || valuesFormRegistro.variacion_FI === 2) && !valuesFormRegistro.diaVariacion_FI) ||
-                ((valuesFormRegistro.variacion_FE === 1 || valuesFormRegistro.variacion_FE === 2) && !valuesFormRegistro.diaVariacion_FE) ||
-                ((valuesFormRegistro.variacion_AB === 1 || valuesFormRegistro.variacion_AB === 2) && !valuesFormRegistro.diaVariacion_AB) ||
-                ((valuesFormRegistro.variacion_MA === 1 || valuesFormRegistro.variacion_MA === 2) && !valuesFormRegistro.diaVariacion_MA) ||
-                ((valuesFormRegistro.variacion_PO === 1 || valuesFormRegistro.variacion_PO === 2) && !valuesFormRegistro.diaVariacion_PO) ||
-                ((valuesFormRegistro.variacion_BA === 1 || valuesFormRegistro.variacion_BA === 2) && !valuesFormRegistro.diaVariacion_BA) ||
-                ((valuesFormRegistro.variacion_FT === 1 || valuesFormRegistro.variacion_FT === 2) && !valuesFormRegistro.diaVariacion_FT) ||
-                ((valuesFormRegistro.variacion_C3 === 1 || valuesFormRegistro.variacion_C3 === 2) && !valuesFormRegistro.diaVariacion_C3) ||
-                ((valuesFormRegistro.variacion_C2 === 1 || valuesFormRegistro.variacion_C2 === 2) && !valuesFormRegistro.diaVariacion_C2) ||
-                ((valuesFormRegistro.variacion_ES === 1 || valuesFormRegistro.variacion_ES === 2) && !valuesFormRegistro.diaVariacion_ES) ||
-                ((valuesFormRegistro.variacion_PA === 1 || valuesFormRegistro.variacion_PA === 2) && !valuesFormRegistro.diaVariacion_PA)
-            ) {
-                setAlert({
-                    mensaje: "Debes seleccionar un día de la semana para la variación de servicio extra elegida. Revisa el formulario.",
+                    mensaje: "Has selecionado un tipo de servicio extra pero no has asignado precio. Revisa el formulario.",
                     tipo: 'error'
                 })
                 setOpenSnack(true);
@@ -3654,7 +3626,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     tipoServiciofijo: 'TOL',
                     precioHora_TO: valuesFormRegistro.precioHora_TO ? parseFloat(valuesFormRegistro.precioHora_TO) : null,
                     variacion_TO: valuesFormRegistro.variacion_TO ? parseFloat(valuesFormRegistro.variacion_TO) : '',
-                    diaVariacion_TO: !valuesFormRegistro.int_TO ? (valuesFormRegistro.variacion_TO !== 3 ? valuesFormRegistro.diaVariacion_TO : '') : '',
+                    diaVariacion_TO: '',
                     activo_TO: valuesFormRegistro.activo_TO,
                     int_TO: valuesFormRegistro.int_TO,
                     trab_TO: valuesFormRegistro.trab_TO ? parseInt(valuesFormRegistro.trab_TO) : null
@@ -3664,8 +3636,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 serviciosFijosRegistro.servicio.push({
                     tipoServiciofijo: 'CRIS',
                     precioHora_CR: valuesFormRegistro.precioHora_CR ? parseFloat(valuesFormRegistro.precioHora_CR) : null,
-                    variacion_CR: valuesFormRegistro.variacion_CR ? parseFloat(valuesFormRegistro.variacion_CR) : '',
-                    diaVariacion_CR: !valuesFormRegistro.int_CR ? (valuesFormRegistro.variacion_CR !== 3 ? valuesFormRegistro.diaVariacion_CR : '') : '',
+                    variacion_CR: 3,
+                    diaVariacion_CR: '',
                     activo_CR: valuesFormRegistro.activo_CR,
                     int_CR: valuesFormRegistro.int_CR,
                     trab_CR: valuesFormRegistro.trab_CR ? parseInt(valuesFormRegistro.trab_CR) : null
@@ -3675,8 +3647,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 serviciosFijosRegistro.servicio.push({
                     tipoServiciofijo: 'CRISE',
                     precioHora_CE: valuesFormRegistro.precioHora_CE ? parseFloat(valuesFormRegistro.precioHora_CE) : null,
-                    variacion_CE: valuesFormRegistro.variacion_CE ? parseFloat(valuesFormRegistro.variacion_CE) : '',
-                    diaVariacion_CE: !valuesFormRegistro.int_CE ? (valuesFormRegistro.variacion_CE !== 3 ? valuesFormRegistro.diaVariacion_CE : '') : '',
+                    variacion_CE: 3,
+                    diaVariacion_CE: '',
                     activo_CE: valuesFormRegistro.activo_CE,
                     int_CE: valuesFormRegistro.int_CE,
                     trab_CE: valuesFormRegistro.trab_CE ? parseInt(valuesFormRegistro.trab_CE) : null
@@ -3686,8 +3658,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 serviciosFijosRegistro.servicio.push({
                     tipoServiciofijo: 'CRISI',
                     precioHora_CI: valuesFormRegistro.precioHora_CI ? parseFloat(valuesFormRegistro.precioHora_CI) : null,
-                    variacion_CI: valuesFormRegistro.variacion_CI ? parseFloat(valuesFormRegistro.variacion_CI) : '',
-                    diaVariacion_CI: !valuesFormRegistro.int_CI ? (valuesFormRegistro.variacion_CI !== 3 ? valuesFormRegistro.diaVariacion_CI : '') : '',
+                    variacion_CI: 3,
+                    diaVariacion_CI: '',
                     activo_CI: valuesFormRegistro.activo_CI,
                     int_CI: valuesFormRegistro.int_CI,
                     trab_CI: valuesFormRegistro.trab_CI ? parseInt(valuesFormRegistro.trab_CI) : null
@@ -3697,8 +3669,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 serviciosFijosRegistro.servicio.push({
                     tipoServiciofijo: 'MOQ',
                     precioHora_MO: valuesFormRegistro.precioHora_MO ? parseFloat(valuesFormRegistro.precioHora_MO) : null,
-                    variacion_MO: valuesFormRegistro.variacion_MO ? parseFloat(valuesFormRegistro.variacion_MO) : '',
-                    diaVariacion_MO: !valuesFormRegistro.int_MO ? (valuesFormRegistro.variacion_MO !== 3 ? valuesFormRegistro.diaVariacion_MO : '') : '',
+                    variacion_MO: 3,
+                    diaVariacion_MO: '',
                     activo_MO: valuesFormRegistro.activo_MO,
                     int_MO: valuesFormRegistro.int_MO,
                     trab_MO: valuesFormRegistro.trab_MO ? parseInt(valuesFormRegistro.trab_MO) : null
@@ -3708,8 +3680,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 serviciosFijosRegistro.servicio.push({
                     tipoServiciofijo: 'OF',
                     precioHora_OF: valuesFormRegistro.precioHora_OF ? parseFloat(valuesFormRegistro.precioHora_OF) : null,
-                    variacion_OF: valuesFormRegistro.variacion_OF ? parseFloat(valuesFormRegistro.variacion_OF) : '',
-                    diaVariacion_OF: !valuesFormRegistro.int_OF ? (valuesFormRegistro.variacion_OF !== 3 ? valuesFormRegistro.diaVariacion_OF : '') : '',
+                    variacion_OF: 3,
+                    diaVariacion_OF: '',
                     activo_OF: valuesFormRegistro.activo_OF,
                     int_OF: valuesFormRegistro.int_OF,
                     trab_OF: valuesFormRegistro.trab_OF ? parseInt(valuesFormRegistro.trab_OF) : null
@@ -3719,8 +3691,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 serviciosFijosRegistro.servicio.push({
                     tipoServiciofijo: 'ALMC',
                     precioHora_AL: valuesFormRegistro.precioHora_AL ? parseFloat(valuesFormRegistro.precioHora_AL) : null,
-                    variacion_AL: valuesFormRegistro.variacion_AL ? parseFloat(valuesFormRegistro.variacion_AL) : '',
-                    diaVariacion_AL: !valuesFormRegistro.int_AL ? (valuesFormRegistro.variacion_AL !== 3 ? valuesFormRegistro.diaVariacion_AL : '') : '',
+                    variacion_AL: 3,
+                    diaVariacion_AL: '',
                     activo_AL: valuesFormRegistro.activo_AL,
                     int_AL: valuesFormRegistro.int_AL,
                     trab_AL: valuesFormRegistro.trab_AL ? parseInt(valuesFormRegistro.trab_AL) : null
@@ -3730,8 +3702,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 serviciosFijosRegistro.servicio.push({
                     tipoServiciofijo: 'LAB',
                     precioHora_LA: valuesFormRegistro.precioHora_LA ? parseFloat(valuesFormRegistro.precioHora_LA) : null,
-                    variacion_LA: valuesFormRegistro.variacion_LA ? parseFloat(valuesFormRegistro.variacion_LA) : '',
-                    diaVariacion_LA: !valuesFormRegistro.int_LA ? (valuesFormRegistro.variacion_LA !== 3 ? valuesFormRegistro.diaVariacion_LA : '') : '',
+                    variacion_LA: 3,
+                    diaVariacion_LA: '',
                     activo_LA: valuesFormRegistro.activo_LA,
                     int_LA: valuesFormRegistro.int_LA,
                     trab_LA: valuesFormRegistro.trab_LA ? parseInt(valuesFormRegistro.trab_LA) : null
@@ -3741,8 +3713,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 serviciosFijosRegistro.servicio.push({
                     tipoServiciofijo: 'TELÑ',
                     precioHora_TE: valuesFormRegistro.precioHora_TE ? parseFloat(valuesFormRegistro.precioHora_TE) : null,
-                    variacion_TE: valuesFormRegistro.variacion_TE ? parseFloat(valuesFormRegistro.variacion_TE) : '',
-                    diaVariacion_TE: !valuesFormRegistro.int_TE ? (valuesFormRegistro.variacion_TE !== 3 ? valuesFormRegistro.diaVariacion_TE : '') : '',
+                    variacion_TE: 3,
+                    diaVariacion_TE: '',
                     activo_TE: valuesFormRegistro.activo_TE,
                     int_TE: valuesFormRegistro.int_TE,
                     trab_TE: valuesFormRegistro.trab_TE ? parseInt(valuesFormRegistro.trab_TE) : null
@@ -3752,8 +3724,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 serviciosFijosRegistro.servicio.push({
                     tipoServiciofijo: 'FCH.IN',
                     precioHora_FI: valuesFormRegistro.precioHora_FI ? parseFloat(valuesFormRegistro.precioHora_FI) : null,
-                    variacion_FI: valuesFormRegistro.variacion_FI ? parseFloat(valuesFormRegistro.variacion_FI) : '',
-                    diaVariacion_FI: !valuesFormRegistro.int_FI ? (valuesFormRegistro.variacion_FI !== 3 ? valuesFormRegistro.diaVariacion_FI : '') : '',
+                    variacion_FI: 3,
+                    diaVariacion_FI: '',
                     activo_FI: valuesFormRegistro.activo_FI,
                     int_FI: valuesFormRegistro.int_FI,
                     trab_FI: valuesFormRegistro.trab_FI ? parseInt(valuesFormRegistro.trab_FI) : null
@@ -3763,8 +3735,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 serviciosFijosRegistro.servicio.push({
                     tipoServiciofijo: 'FCH.EX',
                     precioHora_FE: valuesFormRegistro.precioHora_FE ? parseFloat(valuesFormRegistro.precioHora_FE) : null,
-                    variacion_FE: valuesFormRegistro.variacion_FE ? parseFloat(valuesFormRegistro.variacion_FE) : '',
-                    diaVariacion_FE: !valuesFormRegistro.int_FE ? (valuesFormRegistro.variacion_FE !== 3 ? valuesFormRegistro.diaVariacion_FE : '') : '',
+                    variacion_FE: 3,
+                    diaVariacion_FE: '',
                     activo_FE: valuesFormRegistro.activo_FE,
                     int_FE: valuesFormRegistro.int_FE,
                     trab_FE: valuesFormRegistro.trab_FE ? parseInt(valuesFormRegistro.trab_FE) : null
@@ -3774,8 +3746,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 serviciosFijosRegistro.servicio.push({
                     tipoServiciofijo: 'ABRLL',
                     precioHora_AB: valuesFormRegistro.precioHora_AB ? parseFloat(valuesFormRegistro.precioHora_AB) : null,
-                    variacion_AB: valuesFormRegistro.variacion_AB ? parseFloat(valuesFormRegistro.variacion_AB) : '',
-                    diaVariacion_AB: !valuesFormRegistro.int_AB ? (valuesFormRegistro.variacion_AB !== 3 ? valuesFormRegistro.diaVariacion_AB : '') : '',
+                    variacion_AB: 3,
+                    diaVariacion_AB: '',
                     activo_AB: valuesFormRegistro.activo_AB,
                     int_AB: valuesFormRegistro.int_AB,
                     trab_AB: valuesFormRegistro.trab_AB ? parseInt(valuesFormRegistro.trab_AB) : null
@@ -3785,8 +3757,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 serviciosFijosRegistro.servicio.push({
                     tipoServiciofijo: 'MANT',
                     precioHora_MA: valuesFormRegistro.precioHora_MA ? parseFloat(valuesFormRegistro.precioHora_MA) : null,
-                    variacion_MA: valuesFormRegistro.variacion_MA ? parseFloat(valuesFormRegistro.variacion_MA) : '',
-                    diaVariacion_MA: !valuesFormRegistro.int_MA ? (valuesFormRegistro.variacion_MA !== 3 ? valuesFormRegistro.diaVariacion_MA : '') : '',
+                    variacion_MA: 3,
+                    diaVariacion_MA: '',
                     activo_MA: valuesFormRegistro.activo_MA,
                     int_MA: valuesFormRegistro.int_MA,
                     trab_MA: valuesFormRegistro.trab_MA ? parseInt(valuesFormRegistro.trab_MA) : null
@@ -3796,8 +3768,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 serviciosFijosRegistro.servicio.push({
                     tipoServiciofijo: 'PORT',
                     precioHora_PO: valuesFormRegistro.precioHora_PO ? parseFloat(valuesFormRegistro.precioHora_PO) : null,
-                    variacion_PO: valuesFormRegistro.variacion_PO ? parseFloat(valuesFormRegistro.variacion_PO) : '',
-                    diaVariacion_PO: !valuesFormRegistro.int_PO ? (valuesFormRegistro.variacion_PO !== 3 ? valuesFormRegistro.diaVariacion_PO : '') : '',
+                    variacion_PO: 3,
+                    diaVariacion_PO: '',
                     activo_PO: valuesFormRegistro.activo_PO,
                     int_PO: valuesFormRegistro.int_PO,
                     trab_PO: valuesFormRegistro.trab_PO ? parseInt(valuesFormRegistro.trab_PO) : null
@@ -3807,8 +3779,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 serviciosFijosRegistro.servicio.push({
                     tipoServiciofijo: 'BACT',
                     precioHora_BA: valuesFormRegistro.precioHora_BA ? parseFloat(valuesFormRegistro.precioHora_BA) : null,
-                    variacion_BA: valuesFormRegistro.variacion_BA ? parseFloat(valuesFormRegistro.variacion_BA) : '',
-                    diaVariacion_BA: !valuesFormRegistro.int_BA ? (valuesFormRegistro.variacion_BA !== 3 ? valuesFormRegistro.diaVariacion_BA : '') : '',
+                    variacion_BA: 3,
+                    diaVariacion_BA: '',
                     activo_BA: valuesFormRegistro.activo_BA,
                     int_BA: valuesFormRegistro.int_BA,
                     trab_BA: valuesFormRegistro.trab_BA ? parseInt(valuesFormRegistro.trab_BA) : null
@@ -3818,8 +3790,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 serviciosFijosRegistro.servicio.push({
                     tipoServiciofijo: 'FEST',
                     precioHora_FT: valuesFormRegistro.precioHora_FT ? parseFloat(valuesFormRegistro.precioHora_FT) : null,
-                    variacion_FT: valuesFormRegistro.variacion_FT ? parseFloat(valuesFormRegistro.variacion_FT) : '',
-                    diaVariacion_FT: !valuesFormRegistro.int_FT ? (valuesFormRegistro.variacion_FT !== 3 ? valuesFormRegistro.diaVariacion_FT : '') : '',
+                    variacion_FT: 3,
+                    diaVariacion_FT: '',
                     activo_FT: valuesFormRegistro.activo_FT,
                     int_FT: valuesFormRegistro.int_FT,
                     trab_FT: valuesFormRegistro.trab_FT ? parseInt(valuesFormRegistro.trab_FT) : null
@@ -3829,8 +3801,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 serviciosFijosRegistro.servicio.push({
                     tipoServiciofijo: 'CRTRIM',
                     precioHora_C3: valuesFormRegistro.precioHora_C3 ? parseFloat(valuesFormRegistro.precioHora_C3) : null,
-                    variacion_C3: valuesFormRegistro.variacion_C3 ? parseFloat(valuesFormRegistro.variacion_C3) : '',
-                    diaVariacion_C3: !valuesFormRegistro.int_C3 ? (valuesFormRegistro.variacion_C3 !== 3 ? valuesFormRegistro.diaVariacion_C3 : '') : '',
+                    variacion_C3: 3,
+                    diaVariacion_C3: '',
                     activo_C3: valuesFormRegistro.activo_C3,
                     int_C3: valuesFormRegistro.int_C3,
                     trab_C3: valuesFormRegistro.trab_C3 ? parseInt(valuesFormRegistro.trab_C3) : null
@@ -3840,8 +3812,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 serviciosFijosRegistro.servicio.push({
                     tipoServiciofijo: 'CRBIM',
                     precioHora_C2: valuesFormRegistro.precioHora_C2 ? parseFloat(valuesFormRegistro.precioHora_C2) : null,
-                    variacion_C2: valuesFormRegistro.variacion_C2 ? parseFloat(valuesFormRegistro.variacion_C2) : '',
-                    diaVariacion_C2: !valuesFormRegistro.int_C2 ? (valuesFormRegistro.variacion_C2 !== 3 ? valuesFormRegistro.diaVariacion_C2 : '') : '',
+                    variacion_C2: 3,
+                    diaVariacion_C2: '',
                     activo_C2: valuesFormRegistro.activo_C2,
                     int_C2: valuesFormRegistro.int_C2,
                     trab_C2: valuesFormRegistro.trab_C2 ? parseInt(valuesFormRegistro.trab_C2) : null
@@ -3851,8 +3823,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 serviciosFijosRegistro.servicio.push({
                     tipoServiciofijo: 'LIME',
                     precioHora_ES: valuesFormRegistro.precioHora_ES ? parseFloat(valuesFormRegistro.precioHora_ES) : null,
-                    variacion_ES: valuesFormRegistro.variacion_ES ? parseFloat(valuesFormRegistro.variacion_ES) : '',
-                    diaVariacion_ES: !valuesFormRegistro.int_ES ? (valuesFormRegistro.variacion_ES !== 3 ? valuesFormRegistro.diaVariacion_ES : '') : '',
+                    variacion_ES: 3,
+                    diaVariacion_ES: '',
                     activo_ES: valuesFormRegistro.activo_ES,
                     int_ES: valuesFormRegistro.int_ES,
                     trab_ES: valuesFormRegistro.trab_ES ? parseInt(valuesFormRegistro.trab_ES) : null
@@ -3862,8 +3834,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 serviciosFijosRegistro.servicio.push({
                     tipoServiciofijo: 'LIMP',
                     precioHora_PA: valuesFormRegistro.precioHora_PA ? parseFloat(valuesFormRegistro.precioHora_PA) : null,
-                    variacion_PA: valuesFormRegistro.variacion_PA ? parseFloat(valuesFormRegistro.variacion_PA) : '',
-                    diaVariacion_PA: !valuesFormRegistro.int_PA ? (valuesFormRegistro.variacion_PA !== 3 ? valuesFormRegistro.diaVariacion_PA : '') : '',
+                    variacion_PA: 3,
+                    diaVariacion_PA: '',
                     activo_PA: valuesFormRegistro.activo_PA,
                     int_PA: valuesFormRegistro.int_PA,
                     trab_PA: valuesFormRegistro.trab_PA ? parseInt(valuesFormRegistro.trab_PA) : null
@@ -5555,7 +5527,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 alignItems="center"
                 spacing={1}
                 className={laClase}
-                style={{ height: 165, paddingTop: 5, paddingBottom: 10, paddingRight: 10, paddingLeft: 10, marginBottom: 15 }}
+                style={{ height: 110, paddingTop: 5, paddingBottom: 10, paddingRight: 10, paddingLeft: 10, marginBottom: 15 }}
                 key={'formServicio' + index}
             >
                 <Grid item xs={5}>
@@ -5655,7 +5627,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                 variant="outlined"
                                 className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
                                 size="small"
-                                style={{ marginRight: 10 }}
+                                style={{ marginRight: 10, marginTop: 5 }}
                             >
                                 <InputLabel>Trabajador</InputLabel>
                                 <Select
@@ -5676,64 +5648,6 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                             </MenuItem>
                                         ))
                                     }
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                    </Grid>
-                    <Grid
-                        container
-                        direction="row"
-                        alignItems="center"
-                        spacing={1}
-                    >
-                        <Grid item xs={6}>
-                            <FormControl
-                                variant="outlined"
-                                className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
-                                size="small"
-                                style={{ marginTop: 5 }}
-                                disabled={elValueInt}
-                            >
-                                <InputLabel>Variaciones</InputLabel>
-                                <Select
-                                    fullWidth
-                                    value={elValueVariaciones}
-                                    onChange={handleChangeFormRegistro(laVariacion)}
-                                    helpertext="Selecciona variaciones"
-                                    label="Variaciones"
-                                >
-                                    {variacionesServiciosFijos.map((option) => (
-                                        <MenuItem key={option.value} value={option.value}>
-                                            {option.label}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <FormControl
-                                variant="outlined"
-                                className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
-                                size="small"
-                                style={{ marginRight: 10, marginTop: 5 }}
-                            >
-                                <InputLabel>Día</InputLabel>
-                                <Select
-                                    fullWidth
-                                    value={elValueDia}
-                                    onChange={handleChangeFormRegistro(elDia)}
-                                    helpertext="Selecciona Día"
-                                    label="Día"
-                                    disabled={elValueInt ? elValueInt : desactivadoDia}
-                                >
-                                    <MenuItem value=''>
-                                        <em>No</em>
-                                    </MenuItem>
-                                    {diasSemana.map((option) => (
-                                        <MenuItem key={option.value} value={option.value}>
-                                            {option.label}
-                                        </MenuItem>
-                                    ))}
                                 </Select>
                             </FormControl>
                         </Grid>

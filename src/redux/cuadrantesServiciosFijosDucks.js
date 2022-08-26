@@ -248,8 +248,7 @@ export const setCuadranteServiciosFijosAccion = (array) => (dispatch, getState) 
 };
 
 export const gestionaColumnaServiciosFijosInicioAccion = (servicios) => (dispatch, getState) => {
-    const { losDiasDelMes, stateFestivo, objetoCuadrante } = getState().variablesCuadrantes;
-    const { cuadranteEnUsoCuadrantes, mesConFestivosCompleto } = getState().variablesCuadrantesSetters;
+    const { losDiasDelMes, stateFestivo, cuadranteRegistrado } = getState().variablesCuadrantes;
     let arrayResultante = [];
     let numeroSemana;
     let objetoResultante;
@@ -258,9 +257,15 @@ export const gestionaColumnaServiciosFijosInicioAccion = (servicios) => (dispatc
     let totalServiciosActivosInicial;
     let totalServiciosActivos;
     let totalServiciosRestados;
-    let noBloqueado = true;
-    if (objetoCuadrante.datosServicios.bloqueado && objetoCuadrante.datosServicios.bloqueado[cuadranteEnUsoCuadrantes - 1] === 'si') {
+    //let noBloqueado = true;
+    // if (objetoCuadrante.datosServicios.bloqueado && objetoCuadrante.datosServicios.bloqueado[cuadranteEnUsoCuadrantes - 1] === 'si') {
+    //     noBloqueado = false;
+    // };
+    let noBloqueado;
+    if (cuadranteRegistrado === 'si') {
         noBloqueado = false;
+    } else {
+        noBloqueado = true;
     };
     servicios.forEach((servicio, indexServicio) => {
         if (servicio.totalServiciosActivosInicial) {
@@ -9775,15 +9780,15 @@ export const gestionaColumnaServiciosFijosInicioAccion = (servicios) => (dispatc
 };
 
 export const gestionaColumnaServiciosFijosCambiosAccion = (servicios, casilla) => (dispatch, getState) => {
-    const { losDiasDelMes, objetoCuadrante } = getState().variablesCuadrantes;
-    const { cuadranteEnUsoCuadrantes } = getState().variablesCuadrantesSetters;
+    const { losDiasDelMes } = getState().variablesCuadrantes;
     let arrayResultante = [];
     let objetoResultante;
     let totalServicioFijo;
-    let noBloqueado = true;
-    if (objetoCuadrante.datosServicios.bloqueado && objetoCuadrante.datosServicios.bloqueado[cuadranteEnUsoCuadrantes - 1] === 'si') {
-        noBloqueado = false;
-    };
+    //let noBloqueado = true;
+    // if (objetoCuadrante.datosServicios.bloqueado && objetoCuadrante.datosServicios.bloqueado[cuadranteEnUsoCuadrantes - 1] === 'si') {
+    //     noBloqueado = false;
+    // };
+    let noBloqueado = false;
     let totalServiciosActivos;
     let totalServiciosRestados;
     servicios.forEach((servicio, indexServicio) => {

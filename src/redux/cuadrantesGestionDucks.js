@@ -848,7 +848,8 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
             };
         });
         dispatch(setCuadranteServiciosFijosAccion(dispatch(gestionaColumnaServiciosFijosInicioAccion(objetoCuadrante.datosServicios.datosServicios[numeroCuadrante - 1]))));
-        bloqueadoSF = (objetoCuadrante.datosServicios.bloqueado && objetoCuadrante.datosServicios.bloqueado[numeroCuadrante - 1]) ? objetoCuadrante.datosServicios.bloqueado[numeroCuadrante - 1] : 'no';
+        //bloqueadoSF = (objetoCuadrante.datosServicios.bloqueado && objetoCuadrante.datosServicios.bloqueado[numeroCuadrante - 1]) ? objetoCuadrante.datosServicios.bloqueado[numeroCuadrante - 1] : 'no';
+        bloqueadoSF = 'si';
     };
     if (cuadranteRegistrado === 'no' && !numeroCuadrantesCuadrantes[numeroCuadrante - 1].revisado) {
         if (objetoCuadrante.datosTrabajadoresIniciales.datosTrabajadoresIniciales[numeroCuadrante - 1]) {
@@ -2905,7 +2906,8 @@ export const centroAGestionarInicioAccion = () => (dispatch, getState) => {
                 };
                 if (hayServiciosFijos) {
                     arrayServiciosFijos.push(objetoCentro.serviciosFijos.serviciosFijos[i].servicio);
-                    arrayBloqueoServiciosFijos.push('no');
+                    //arrayBloqueoServiciosFijos.push('no');
+                    arrayBloqueoServiciosFijos.push('si');
                 } else {
                     arrayServiciosFijos.push([]);
                 };

@@ -572,6 +572,11 @@ const Configuracion = (props) => {
                                                                             <ListItemText primary="Tipos de festivos" />
                                                                         </HashLink>
                                                                     </ListItem>
+                                                                    <ListItem button className={classes.nestedIns}>
+                                                                        <HashLink to={'#c9'} scroll={(el) => el.scrollIntoView({ behavior: 'auto', block: 'start' })} className={classes.nestedInsLink}>
+                                                                            <ListItemText primary="Facturación mensual" />
+                                                                        </HashLink>
+                                                                    </ListItem>
                                                                 </List>
                                                             </Collapse>
                                                             <ListItem button onClick={handleClickMenuInstrucciones2}>

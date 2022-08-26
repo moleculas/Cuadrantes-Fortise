@@ -17,7 +17,6 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
 import Checkbox from '@material-ui/core/Checkbox';
-import Box from '@material-ui/core/Box';
 
 //estilos
 import Clases from "../clases";
@@ -631,7 +630,7 @@ const ServiciosFijos = (props) => {
                 alignItems="center"
                 spacing={2}
                 className={laClase}
-                style={{ height: 165, paddingTop: 5, paddingBottom: 10, paddingRight: 10, paddingLeft: 10, marginBottom: 15 }}
+                style={{ height: 110, paddingTop: 5, paddingBottom: 10, paddingRight: 10, paddingLeft: 10, marginBottom: 15 }}
                 key={'formServicio' + index}
             >
                 <Grid item xs={5} >
@@ -751,63 +750,7 @@ const ServiciosFijos = (props) => {
                                 </Select>
                             </FormControl>
                         </Grid>
-                    </Grid>
-                    <Grid
-                        container
-                        direction="row"
-                        alignItems="center"
-                        spacing={1}
-                    >
-                        <Grid item xs={6}>
-                            <FormControl
-                                variant="outlined"
-                                className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
-                                size="small"
-                                disabled={elValueInt}
-                            >
-                                <InputLabel>Variaciones</InputLabel>
-                                <Select
-                                    fullWidth
-                                    value={elValueVariaciones || ''}
-                                    onChange={handleChangeFormConfiguracionServiciosFijos('select', laVariacion)}
-                                    helpertext="Selecciona variaciones"
-                                    label="Variaciones"
-                                >
-                                    {variacionesServiciosFijos.map((option) => (
-                                        <MenuItem key={option.value} value={option.value}>
-                                            {option.label}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <FormControl
-                                variant="outlined"
-                                className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
-                                size="small"
-                            >
-                                <InputLabel>Día</InputLabel>
-                                <Select
-                                    fullWidth
-                                    value={elValueDia || ''}
-                                    onChange={handleChangeFormConfiguracionServiciosFijos('select', elDia)}
-                                    helpertext="Selecciona Día"
-                                    label="Día"
-                                    disabled={elValueInt ? elValueInt : desactivadoDia}
-                                >
-                                    <MenuItem value=''>
-                                        <em>No</em>
-                                    </MenuItem>
-                                    {diasSemana.map((option) => (
-                                        <MenuItem key={option.value} value={option.value}>
-                                            {option.label}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                    </Grid>
+                    </Grid>                   
                 </Grid>
             </Grid>
         )
@@ -817,21 +760,7 @@ const ServiciosFijos = (props) => {
         <div>
             {tiposDeServicio.map((tipo, index) => (
                 retornaTipoServicioFijoCuadrantes(tipo, index)
-            ))}
-            <Box className={clsx(classes.boxChekin, classes.mb20)}>
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            checked={props.prItemEditandoServiciosFijos.bloqueado === 'si' ? true : false}
-                            onChange={handleChangeFormConfiguracionServiciosFijos('check2', 'bloqueado')}
-                            name="checkedBloqueadoSF"
-                            color="secondary"
-                        />
-                    }
-                    label={<Typography className={classes.colorText} style={{ fontSize: '0.9rem' }}>Bloquear cálculo cómputo Servicios Extra.</Typography>}
-                />
-            </Box>
-            {/* {console.log('valoresPreviosServicios: ',valoresPreviosServicios)} */}
+            ))}            
         </div>
     )
 }

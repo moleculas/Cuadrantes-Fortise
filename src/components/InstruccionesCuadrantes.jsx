@@ -31,11 +31,13 @@ import c19 from '../images/instrucciones/cuadrantes/c_19.jpg';
 import c20 from '../images/instrucciones/cuadrantes/c_20.jpg';
 import c21 from '../images/instrucciones/cuadrantes/c_21.jpg';
 import c22 from '../images/instrucciones/cuadrantes/c_22.jpg';
-import c23 from '../images/instrucciones/cuadrantes/c_23.jpg';
 import c24 from '../images/instrucciones/cuadrantes/c_24.jpg';
 import c25 from '../images/instrucciones/cuadrantes/c_25.jpg';
 import c26 from '../images/instrucciones/cuadrantes/c_26.jpg';
 import c27 from '../images/instrucciones/cuadrantes/c_27.jpg';
+import c28 from '../images/instrucciones/cuadrantes/c_28.jpg';
+import c29 from '../images/instrucciones/cuadrantes/c_29.jpg';
+import c30 from '../images/instrucciones/cuadrantes/c_30.jpg';
 
 //carga componentes
 
@@ -155,12 +157,14 @@ const InstruccionesCuadrantes = () => {
                             <Typography component="span" variant="body2"><Typography variant="h5" component="span" className={classes.cercleInstruccions}>{numeracioInstruccions[2]}</Typography> Cuadrantes registrados. La etiqueta muestra el nombre del centro, el ESTADO del cuadrante que será <b>Registrado</b>, la marca horaria del momento en que se registró más el identificador de usuario que lo registró. El indicador de la parte inferior derecha de la etiqueta parpadeará en color naranja.</Typography>
                             <br />
                             <br />
-                            <Alert severity="info"><b>Nota: </b>Cualquier modificación a nivel de configuración de centros en fichas centros (cambios de horario, cambios de trabajadores) o cualquier modificación a nivel de configuración de trabajadores en fichas trabajadores (gestión de bajas), no se verá reflejada en un cuadrante registrado. Para que el cambio aparezca reflejado, se deberán utilizar los procdimientos Actualizar trabajador o Resetear Cuadrante.</Alert>
+                            <Alert severity="info"><b>Nota 1: </b>Cualquier modificación a nivel de configuración de centros en fichas centros (cambios de horario, cambios de trabajadores) o cualquier modificación a nivel de configuración de trabajadores en fichas trabajadores (gestión de bajas), no se verá reflejada en un cuadrante registrado. Para que el cambio aparezca reflejado, se deberán utilizar los procedimientos Actualizar trabajador o Resetear Cuadrante.</Alert>
                             <SRLWrapper options={options}>
                                 <a href={c7}>
                                     <img style={{ marginTop: 25, width: '100%' }} src={c7} alt="c7" />
                                 </a>
                             </SRLWrapper>
+                            <br />
+                            <Alert severity="info"><b>Nota 2: </b>La secuencia de procedimientos que se detallan a continuación solo se llevarán a cabo si el objetivo es facturar de manera individual el cuadrante. Si el propóstito es facturar un lote de cuadrantes, el procedimiento se explica en el apartado <a href="#c9">Facturación mensual</a>.</Alert>
                             <br />
                             <Typography component="span" variant="body2">Si no se efectúan cambios en el cuadrante registrado al desplegar el botón Gestión Cuadrantes los procedimientos activos serán:</Typography>
                             <br />
@@ -355,20 +359,6 @@ const InstruccionesCuadrantes = () => {
                                 </a>
                             </SRLWrapper>
                             <br />
-                            <Typography component="span" variant="body2">Para bloquear el cómputo de horas de los Servicios Extra de un cuadrante:</Typography>
-                            <br />
-                            <Typography component="span" variant="body2"><Typography variant="h5" component="span" className={classes.cercleInstruccionsVer}>{numeracioInstruccions[1]}</Typography> Pulsar el botón <b>Ajustes cuadrante</b>.</Typography>
-                            <br />
-                            <Typography component="span" variant="body2"><Typography variant="h5" component="span" className={classes.cercleInstruccionsVer}>{numeracioInstruccions[2]}</Typography> Seleccionar la casilla <b>Bloquear cálculo cómputo Servicios Extra</b>.</Typography>
-                            <br />
-                            <Typography component="span" variant="body2"><Typography variant="h5" component="span" className={classes.cercleInstruccionsVer}>{numeracioInstruccions[3]}</Typography> Pulsar botón <b>Registrar cambio</b>.</Typography>
-                            <br />
-                            <SRLWrapper options={options}>
-                                <a href={c23}>
-                                    <img style={{ marginTop: 25, width: '100%' }} src={c23} alt="c23" />
-                                </a>
-                            </SRLWrapper>
-                            <br />
                             {/* Elemento 6 */}
                             <div className={classes.tituloInstrucciones} id="c6">
                                 Revertir secuencia semanas
@@ -444,6 +434,65 @@ const InstruccionesCuadrantes = () => {
                             <br />
                             <Typography component="span" variant="body2"><Typography variant="h5" component="span" className={classes.cercleInstruccions}>{numeracioInstruccions[4]}</Typography> CIERRE CENTRO FACTURAR: Al seleccionar esta opción la fila afectada correspondiente al día elegido eliminará los intervalos horarios y ninguna casilla de la fila se podrá editar. Si el cuadrante responde a la configuración <b>precio/hora</b> en el cómputo horario se habrán restado las horas que contemple el día festivo. Si el cuadrante responde a la configuración <b>Mensual pactado</b> el cómputo horario no se verá afectado por las horas que se hayan restado de la correspondiente fila.</Typography>
                             <br />
+                            {/* Elemento 9 */}
+                            <div className={classes.tituloInstrucciones} id="c9">
+                                Facturación mensual
+                                <HashLink to={`#c9`} className={classes.anchorLink} scroll={(el) => el.scrollIntoView({ behavior: 'auto', block: 'start' })}><LinkIcon /></HashLink>
+                            </div>
+                            <Typography component="span" variant="body1"><b>En el programa de Gestión:</b></Typography>
+                            <br />
+                            <br />
+                            <Typography component="span" variant="body2">El procedimiento para facturar en lote una remesa de cuadrantes es el siguiente:</Typography>                            
+                            <br />
+                            <Typography component="span" variant="body2"><Typography variant="h5" component="span" className={classes.cercleInstruccionsVer}>{numeracioInstruccions[1]}</Typography> En la pantalla principal cuadrantes seleccionar la pantalla de cuadrantes <b>Registrados</b>.</Typography>
+                            <br />
+                            <Typography component="span" variant="body2"><Typography variant="h5" component="span" className={classes.cercleInstruccionsVer}>{numeracioInstruccions[2]}</Typography> Desplegar el módulo superior <b>Procesar lote de cuadrantes registrados para facturar</b>.</Typography>
+                            <br />
+                            <Typography component="span" variant="body2"><Typography variant="h5" component="span" className={classes.cercleInstruccionsVer}>{numeracioInstruccions[3]}</Typography> Marcar la casilla <b>Seleccionar todos</b>. De esta manera la aplicación seleccionará todos los cuadrantes de la lista susceptibles de ser facturados el mes correspondiente. (Nótese que no se seleccionarán los cuadrantes contemplados como 'Gestión especial de horas', los cuadrantes que no toque facturar por periodicidad ni los cuadrantes con importe 0 €). Si se desea no incluir algún cuadrante en concreto en el lote de cuadrantes seleccionados, solo habrá que des-seleccionar el cuadrante pulsando la casilla correspondiente.</Typography>
+                            <br />
+                            <Typography component="span" variant="body2"><Typography variant="h5" component="span" className={classes.cercleInstruccionsVer}>{numeracioInstruccions[4]}</Typography> En la casilla Núm. insertar el último número correspondiente a la última factura generada en el programa Factusol. (Debe consultarse previamente en el programa Factusol).</Typography>
+                            <br />
+                            <Typography component="span" variant="body2"><Typography variant="h5" component="span" className={classes.cercleInstruccionsVer}>{numeracioInstruccions[5]}</Typography> Pulsar el botón <b>Procesar lote</b>.</Typography>
+                            <br />
+                            <SRLWrapper options={options}>
+                                <a href={c28}>
+                                    <img style={{ marginTop: 25, width: '90%' }} src={c28} alt="c28" />
+                                </a>
+                            </SRLWrapper>
+                            <br />
+                            <Typography component="span" variant="body2">Una vez procesado el lote de cuadrantes y registrados como tal en la base de datos, los cuadrantes se mostrarán como facturados / emitidos en la pestaña <b>Facturados</b> de la pantalla principal cuadrantes y la aplicación descargará automáticamente 2 archivos Excel: FAC.xlsx y LFA.xlsx en la carpeta <b>Descargas</b> del ordenador.</Typography>    
+                            <br />
+                            <br />
+                            <Alert severity="warning"><b>Atención: </b>Antes de realizar el proceso de Facturación mensual deberá revisarse la carpeta <b>Descargas</b> del ordenador y eliminar los archivos Excel de previas facturaciones, si los hubiera. De no ser así se generaría un conflico de archivos en el programa Factusol.</Alert>
+                            <br />
+                            <Typography component="span" variant="body1"><b>En el programa Factusol:</b></Typography>
+                            <br />
+                            <br />
+                            <Typography component="span" variant="body2">Una vez generados y descargados los archivos Excel: FAC.xlsx y LFA.xlsx, para cargar los datos de facturación mensuales al programa Factusol:</Typography>   
+                            <br />
+                            <Typography component="span" variant="body2"><Typography variant="h5" component="span" className={classes.cercleInstruccionsVer}>{numeracioInstruccions[1]}</Typography> En la pantalla correspondiente al ejercicio anual vigente pulsar la pestaña superior <b>Utilidades</b>.</Typography>
+                            <br />
+                            <Typography component="span" variant="body2"><Typography variant="h5" component="span" className={classes.cercleInstruccionsVer}>{numeracioInstruccions[2]}</Typography> Pulsar el botón <b>Ficheros .XLSX / .XLS</b>.</Typography>
+                            <br />
+                            <SRLWrapper options={options}>
+                                <a href={c29}>
+                                    <img style={{ marginTop: 25 }} src={c29} alt="c29" />
+                                </a>
+                            </SRLWrapper>
+                            <br />
+                            <Typography component="span" variant="body2"><Typography variant="h5" component="span" className={classes.cercleInstruccionsVer}>{numeracioInstruccions[3]}</Typography> En la ventana emergente que aparece, en primer lugar, revisar que la ubicación sea la ubicación donde se han descargado los archivos (Por defecto, la carpeta Descargas / Downloads del ordenador). En caso que no coincida, <b>Examinar</b> para navegar y localizar la carpeta donde se encuentren los archivos Excel.</Typography>
+                            <br />
+                            <Typography component="span" variant="body2"><Typography variant="h5" component="span" className={classes.cercleInstruccionsVer}>{numeracioInstruccions[4]}</Typography> Marcar la opción <b>Comprobar la estructura de todos los ficheros seleccionados antes de la importación</b>.</Typography>
+                            <br />
+                            <Typography component="span" variant="body2"><Typography variant="h5" component="span" className={classes.cercleInstruccionsVer}>{numeracioInstruccions[5]}</Typography> Marcar la opción <b>Facturas</b> en el apartado Ventas.</Typography>
+                            <br />
+                            <Typography component="span" variant="body2"><Typography variant="h5" component="span" className={classes.cercleInstruccionsVer}>{numeracioInstruccions[6]}</Typography> Pulsar el botón <b>Aceptar</b>.</Typography>
+                            <br />
+                            <SRLWrapper options={options}>
+                                <a href={c30}>
+                                    <img style={{ marginTop: 25, width: '90%' }} src={c30} alt="c30" />
+                                </a>
+                            </SRLWrapper>
                         </Fragment>
                     </Box>
                 </Grid>

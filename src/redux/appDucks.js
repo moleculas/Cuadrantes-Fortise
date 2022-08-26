@@ -1092,10 +1092,11 @@ export const generarArchivosXLSAccion = (numFactusol, objetoConceptos) => async 
             total: parseFloat(objetoConceptos.total).toFixed(2),
             totalMasIva: parseFloat(objetoConceptos.totalMasIva).toFixed(2)
         };
-        let dateObj = new Date();
-        let month = dateObj.getUTCMonth() + 1;
-        let day = dateObj.getUTCDate();
-        let year = dateObj.getUTCFullYear();
+        const ahora = new Date();
+        const ultimoDia = new Date(ahora.getFullYear(), ahora.getMonth() + 1, 0);
+        const month = ultimoDia.getMonth() + 1;
+        const day = ultimoDia.getDate();
+        const year = ultimoDia.getFullYear();
         const fechaHoy = day + "/" + month + "/" + year;
         const dataFAC = [[
             1,
