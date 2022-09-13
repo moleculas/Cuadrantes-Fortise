@@ -262,12 +262,16 @@ export const gestionaColumnaServiciosFijosInicioAccion = (servicios) => (dispatc
     //     noBloqueado = false;
     // };
     let noBloqueado;
-    if (cuadranteRegistrado === 'si') {
-        noBloqueado = false;
-    } else {
-        noBloqueado = true;
-    };
     servicios.forEach((servicio, indexServicio) => {
+        if (servicio.tipoServiciofijo === 'FEST') {
+            noBloqueado = true;
+        } else {
+            if (cuadranteRegistrado === 'si') {
+                noBloqueado = false;
+            } else {
+                noBloqueado = true;
+            };
+        };
         if (servicio.totalServiciosActivosInicial) {
             totalServiciosActivosInicial = servicio.totalServiciosActivosInicial;
         } else {
@@ -9788,12 +9792,17 @@ export const gestionaColumnaServiciosFijosCambiosAccion = (servicios, casilla) =
     // if (objetoCuadrante.datosServicios.bloqueado && objetoCuadrante.datosServicios.bloqueado[cuadranteEnUsoCuadrantes - 1] === 'si') {
     //     noBloqueado = false;
     // };
-    let noBloqueado = false;
+    let noBloqueado;
     let totalServiciosActivos;
     let totalServiciosRestados;
     servicios.forEach((servicio, indexServicio) => {
         objetoResultante = servicio;
         totalServicioFijo = servicio.totalServicioFijo;
+        if (servicio.tipoServiciofijo === 'FEST') {
+            noBloqueado = true;
+        } else {
+            noBloqueado = false;
+        };
         if (servicio.totalServiciosActivos) {
             totalServiciosActivos = servicio.totalServiciosActivos;
         } else {

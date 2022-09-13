@@ -932,28 +932,28 @@ const retornaArrayElementosAccion = (objetoConceptos) => (dispatch, getState) =>
     let arrayElementos = [];
     let retornoServicios = [];
     if (objetoConceptos.MT) {
-        if (objetoConceptos.LH) {
+        if (objetoConceptos.LH && !objetoConceptos.LPr) {
             retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', 'LH'));
         };
-        if (objetoConceptos.EH) {
+        if (objetoConceptos.EH && !objetoConceptos.EPr) {
             retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', 'EH'));
         };
-        if (objetoConceptos.PH) {
+        if (objetoConceptos.PH && !objetoConceptos.PPr) {
             retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', 'PH'));
         };
-        if (objetoConceptos.NH) {
+        if (objetoConceptos.NH && !objetoConceptos.NPr) {
             retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', 'NH'));
         };
-        if (objetoConceptos.RH) {
+        if (objetoConceptos.RH && !objetoConceptos.RPr) {
             retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', 'RH'));
         };
-        if (objetoConceptos.L1H) {
+        if (objetoConceptos.L1H && !objetoConceptos.L1Pr) {
             retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', 'L1H'));
         };
-        if (objetoConceptos.L2H) {
+        if (objetoConceptos.L2H && !objetoConceptos.L2Pr) {
             retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', 'L2H'));
         };
-        if (objetoConceptos.FH) {
+        if (objetoConceptos.FH && !objetoConceptos.FPr) {
             retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', 'FH'));
         };
         arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.MT, objetoConceptos.MT, 1]);
@@ -1089,7 +1089,10 @@ export const generarArchivosXLSAccion = (numFactusol, objetoConceptos) => async 
             provincia: objetoConceptos.provincia,
             nif: objetoConceptos.nif,
             formaPago: objetoConceptos.formaPago,
+            telefono: objetoConceptos.telefono,
+            mail: objetoConceptos.mail,
             total: parseFloat(objetoConceptos.total).toFixed(2),
+            totalIva: parseFloat(objetoConceptos.totalIva).toFixed(2),
             totalMasIva: parseFloat(objetoConceptos.totalMasIva).toFixed(2)
         };
         const ahora = new Date();
@@ -1116,7 +1119,7 @@ export const generarArchivosXLSAccion = (numFactusol, objetoConceptos) => async 
             objetoCentroParsear.nif,
             0,
             0,
-            '',
+            objetoCentroParsear.telefono,
             parseFloat(objetoCentroParsear.total),
             '',
             '',
@@ -1144,13 +1147,13 @@ export const generarArchivosXLSAccion = (numFactusol, objetoConceptos) => async 
             '',
             '',
             '',
-            '',
+            parseFloat(objetoCentroParsear.total),
             '',
             '',
             21,
             '',
             '',
-            '',
+            parseFloat(objetoCentroParsear.totalIva),
             '',
             '',
             '',
@@ -1308,13 +1311,17 @@ export const generarArchivosXLSLoteAccion = (numFactusol, arrayCuadrantes) => (d
                 provincia: cuadranteIterado.total.provincia,
                 nif: cuadranteIterado.total.nif,
                 formaPago: cuadranteIterado.total.formaPago,
+                telefono: cuadranteIterado.total.telefono,
+                mail: cuadranteIterado.total.mail,
                 total: parseFloat(cuadranteIterado.total.total).toFixed(2),
+                totalIva: parseFloat(cuadranteIterado.total.totalIva).toFixed(2),
                 totalMasIva: parseFloat(cuadranteIterado.total.totalMasIva).toFixed(2)
             };
-            let dateObj = new Date();
-            let month = dateObj.getUTCMonth() + 1;
-            let day = dateObj.getUTCDate();
-            let year = dateObj.getUTCFullYear();
+            const ahora = new Date();
+            const ultimoDia = new Date(ahora.getFullYear(), ahora.getMonth() + 1, 0);
+            const month = ultimoDia.getMonth() + 1;
+            const day = ultimoDia.getDate();
+            const year = ultimoDia.getFullYear();
             const fechaHoy = day + "/" + month + "/" + year;
             dataFAC.push([
                 1,
@@ -1334,7 +1341,7 @@ export const generarArchivosXLSLoteAccion = (numFactusol, arrayCuadrantes) => (d
                 objetoCentroParsear.nif,
                 0,
                 0,
-                '',
+                objetoCentroParsear.telefono,
                 parseFloat(objetoCentroParsear.total),
                 '',
                 '',
@@ -1362,13 +1369,13 @@ export const generarArchivosXLSLoteAccion = (numFactusol, arrayCuadrantes) => (d
                 '',
                 '',
                 '',
-                '',
+                parseFloat(objetoCentroParsear.total),
                 '',
                 '',
                 21,
                 '',
                 '',
-                '',
+                parseFloat(objetoCentroParsear.totalIva),
                 '',
                 '',
                 '',

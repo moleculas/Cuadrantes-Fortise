@@ -2067,6 +2067,8 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
         provincia: objetoCuadrante.datosCuadrante.provincia,
         nif: objetoCuadrante.datosCuadrante.nif,
         formaPago: objetoCuadrante.datosCuadrante.formaPago,
+        telefono: objetoCuadrante.datosCuadrante.telefono,
+        mail: objetoCuadrante.datosCuadrante.mail,
         tocaFacturar: objetoCuadrante.datosInforme.tocaFacturar
     };
     if (totalFacturado_M) {
@@ -2558,6 +2560,7 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
         };
     };
     objetoTotales['totalMasIva'] = ((parseFloat(objetoTotales['total']) * 21) / 100) + parseFloat(objetoTotales['total']);
+    objetoTotales['totalIva'] = ((parseFloat(objetoTotales['total']) * 21) / 100);
     return objetoTotales
 };
 
@@ -2954,6 +2957,8 @@ export const centroAGestionarInicioAccion = () => (dispatch, getState) => {
                     provincia: objetoCentro.provincia,
                     nif: objetoCentro.nif,
                     formaPago: objetoCentro.formaPago,
+                    telefono: objetoCentro.telefono,
+                    mail: objetoCentro.mail,
                     datosCuadrante: arrayHorario
                 },
                 datosServicios: {

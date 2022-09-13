@@ -68,8 +68,6 @@ const formasDePago = Constantes.FORMA_DE_PAGO;
 const temporizacionDelPago = Constantes.TEMPORIZACION_PAGO;
 const diaDelPago = Constantes.DIA_PAGO;
 const tiposDeServicio = Constantes.TIPO_SERVICIO_FIJO;
-const variacionesServiciosFijos = Constantes.VARIACIONES_SERVICIOS_FIJOS_CENTROS;
-const diasSemana = Constantes.DIAS_SEMANA;
 const excepciones = Constantes.EXCEPCIONES_CENTROS;
 
 const getHeightScrollable = () => (window.innerHeight - 260) || (document.documentElement.clientHeight - 260) || (document.body.clientHeight - 260);

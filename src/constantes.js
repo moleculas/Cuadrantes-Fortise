@@ -176,7 +176,8 @@ const Constantes = {
     COMPUTO_HORAS: [
         { value: 1, label: 'Total mensual pactado' },
         { value: 2, label: 'Precio hora estipulado' },
-        { value: 3, label: 'Gestión especial horas' }
+        { value: 3, label: 'Gestión especial horas' },
+        { value: 4, label: 'Sin coste' }
     ],
     TIPO_SERVICIO: [
         { value: 'LIM', label: 'SERVICIO DE LIMPIEZA' },

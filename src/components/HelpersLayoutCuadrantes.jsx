@@ -32,6 +32,16 @@ const LightTooltip = withStyles((theme) => ({
         height: theme.spacing(3.5)
     },
 }))(Tooltip);
+const LightTooltipFest = withStyles((theme) => ({
+    tooltip: {
+        backgroundColor: '#00bcd4',
+        color: '#ffffff',
+        fontSize: 11,
+        marginLeft: 5,
+        borderRadius: 0,
+        height: theme.spacing(3.5)
+    },
+}))(Tooltip);
 const LightTooltipInt = withStyles((theme) => ({
     tooltip: {
         backgroundColor: '#8bc34a',
@@ -447,7 +457,7 @@ const HelpersLayoutCuadrantes = () => {
         };
     };
 
-    const gestionaClassesColoresServiciosFijosAccion = (dia, hayServicio, integrado) => {
+    const gestionaClassesColoresServiciosFijosAccion = (dia, hayServicio, integrado, tipo) => {
         if (stateFestivo['estadoFestivoDia' + (dia)]) {
             if (stateFestivo['tipoFestivoDia' + (dia)] === 1) {
                 return classes.casillaFestivo;
@@ -463,13 +473,21 @@ const HelpersLayoutCuadrantes = () => {
                 if (integrado) {
                     return classes.casillaSFInt;
                 } else {
-                    return classes.casillaSF;
+                    if (tipo === 'FEST') {
+                        return classes.casillaSFFest;
+                    } else {
+                        return classes.casillaSF;
+                    };
                 };
             } else {
                 if (integrado) {
                     return classes.casillaVaciaSFInt;
                 } else {
-                    return classes.casillaVaciaSF;
+                    if (tipo === 'FEST') {
+                        return classes.casillaVaciaSFFest;
+                    } else {
+                        return classes.casillaVaciaSF;
+                    };
                 };
             };
         }
@@ -1084,7 +1102,11 @@ const HelpersLayoutCuadrantes = () => {
             servicio.int_PA) {
             return classes.cabeceraServiciosInt
         } else {
-            return classes.cabeceraServicios
+            if (servicio.tipoServiciofijo === 'FEST') {
+                return classes.cabeceraServiciosFest;
+            } else {
+                return classes.cabeceraServicios;
+            };
         };
     };
 
@@ -1179,7 +1201,7 @@ const HelpersLayoutCuadrantes = () => {
     };
 
     const retornaServiciosFijosEnLayoutAvatarsAccion = (servicio, index) => {
-        let laClase, elTooltip, laLetra, elAnadidoTooltip, hayBaja, hayInt;
+        let laClase, elTooltip, laLetra, elAnadidoTooltip, hayBaja, hayInt, esFest;
         if (servicio.precioHora_TO || servicio.int_TO) {
             laClase = servicio.activo_TO === 'si' ? servicio.int_TO ? (clsx(classes.conServiciosA2Int, classes.small4)) :
                 (clsx(classes.conServiciosA2, classes.small4)) : (clsx(classes.fondoBaja, classes.small4));
@@ -1188,6 +1210,7 @@ const HelpersLayoutCuadrantes = () => {
             laLetra = 'TO';
             hayBaja = servicio.activo_TO === 'no' ? true : false;
             hayInt = servicio.int_TO ? true : false;
+            esFest = false;
         };
         if (servicio.precioHora_CR || servicio.int_CR) {
             laClase = servicio.activo_CR === 'si' ? servicio.int_CR ? (clsx(classes.conServiciosA2Int, classes.small4)) :
@@ -1197,6 +1220,7 @@ const HelpersLayoutCuadrantes = () => {
             laLetra = 'CR';
             hayBaja = servicio.activo_CR === 'no' ? true : false;
             hayInt = servicio.int_CR ? true : false;
+            esFest = false;
         };
         if (servicio.precioHora_CE || servicio.int_CE) {
             laClase = servicio.activo_CE === 'si' ? servicio.int_CE ? (clsx(classes.conServiciosA2Int, classes.small4)) :
@@ -1206,6 +1230,7 @@ const HelpersLayoutCuadrantes = () => {
             laLetra = 'CE';
             hayBaja = servicio.activo_CE === 'no' ? true : false;
             hayInt = servicio.int_CE ? true : false;
+            esFest = false;
         };
         if (servicio.precioHora_CI || servicio.int_CI) {
             laClase = servicio.activo_CI === 'si' ? servicio.int_CI ? (clsx(classes.conServiciosA2Int, classes.small4)) :
@@ -1215,6 +1240,7 @@ const HelpersLayoutCuadrantes = () => {
             laLetra = 'CI';
             hayBaja = servicio.activo_CI === 'no' ? true : false;
             hayInt = servicio.int_CI ? true : false;
+            esFest = false;
         };
         if (servicio.precioHora_MO || servicio.int_MO) {
             laClase = servicio.activo_MO === 'si' ? servicio.int_MO ? (clsx(classes.conServiciosA2Int, classes.small4)) :
@@ -1224,6 +1250,7 @@ const HelpersLayoutCuadrantes = () => {
             laLetra = 'MO';
             hayBaja = servicio.activo_MO === 'no' ? true : false;
             hayInt = servicio.int_MO ? true : false;
+            esFest = false;
         };
         if (servicio.precioHora_OF || servicio.int_OF) {
             laClase = servicio.activo_OF === 'si' ? servicio.int_OF ? (clsx(classes.conServiciosA2Int, classes.small4)) :
@@ -1233,6 +1260,7 @@ const HelpersLayoutCuadrantes = () => {
             laLetra = 'OF';
             hayBaja = servicio.activo_OF === 'no' ? true : false;
             hayInt = servicio.int_OF ? true : false;
+            esFest = false;
         };
         if (servicio.precioHora_AL || servicio.int_AL) {
             laClase = servicio.activo_AL === 'si' ? servicio.int_AL ? (clsx(classes.conServiciosA2Int, classes.small4)) :
@@ -1242,6 +1270,7 @@ const HelpersLayoutCuadrantes = () => {
             laLetra = 'AL';
             hayBaja = servicio.activo_AL === 'no' ? true : false;
             hayInt = servicio.int_AL ? true : false;
+            esFest = false;
         };
         if (servicio.precioHora_LA || servicio.int_LA) {
             laClase = servicio.activo_LA === 'si' ? servicio.int_LA ? (clsx(classes.conServiciosA2Int, classes.small4)) :
@@ -1251,6 +1280,7 @@ const HelpersLayoutCuadrantes = () => {
             laLetra = 'LA';
             hayBaja = servicio.activo_LA === 'no' ? true : false;
             hayInt = servicio.int_LA ? true : false;
+            esFest = false;
         };
         if (servicio.precioHora_TE || servicio.int_TE) {
             laClase = servicio.activo_TE === 'si' ? servicio.int_TE ? (clsx(classes.conServiciosA2Int, classes.small4)) :
@@ -1260,6 +1290,7 @@ const HelpersLayoutCuadrantes = () => {
             laLetra = 'TE';
             hayBaja = servicio.activo_TE === 'no' ? true : false;
             hayInt = servicio.int_TE ? true : false;
+            esFest = false;
         };
         if (servicio.precioHora_FI || servicio.int_FI) {
             laClase = servicio.activo_FI === 'si' ? servicio.int_FI ? (clsx(classes.conServiciosA2Int, classes.small4)) :
@@ -1269,6 +1300,7 @@ const HelpersLayoutCuadrantes = () => {
             laLetra = 'FI';
             hayBaja = servicio.activo_FI === 'no' ? true : false;
             hayInt = servicio.int_FI ? true : false;
+            esFest = false;
         };
         if (servicio.precioHora_FE || servicio.int_FE) {
             laClase = servicio.activo_FE === 'si' ? servicio.int_FE ? (clsx(classes.conServiciosA2Int, classes.small4)) :
@@ -1278,6 +1310,7 @@ const HelpersLayoutCuadrantes = () => {
             laLetra = 'FE';
             hayBaja = servicio.activo_FE === 'no' ? true : false;
             hayInt = servicio.int_FE ? true : false;
+            esFest = false;
         };
         if (servicio.precioHora_AB || servicio.int_AB) {
             laClase = servicio.activo_AB === 'si' ? servicio.int_AB ? (clsx(classes.conServiciosA2Int, classes.small4)) :
@@ -1287,6 +1320,7 @@ const HelpersLayoutCuadrantes = () => {
             laLetra = 'AB';
             hayBaja = servicio.activo_AB === 'no' ? true : false;
             hayInt = servicio.int_AB ? true : false;
+            esFest = false;
         };
         if (servicio.precioHora_MA || servicio.int_MA) {
             laClase = servicio.activo_MA === 'si' ? servicio.int_MA ? (clsx(classes.conServiciosA2Int, classes.small4)) :
@@ -1296,6 +1330,7 @@ const HelpersLayoutCuadrantes = () => {
             laLetra = 'MA';
             hayBaja = servicio.activo_MA === 'no' ? true : false;
             hayInt = servicio.int_MA ? true : false;
+            esFest = false;
         };
         if (servicio.precioHora_PO || servicio.int_PO) {
             laClase = servicio.activo_PO === 'si' ? servicio.int_PO ? (clsx(classes.conServiciosA2Int, classes.small4)) :
@@ -1305,6 +1340,7 @@ const HelpersLayoutCuadrantes = () => {
             laLetra = 'PO';
             hayBaja = servicio.activo_PO === 'no' ? true : false;
             hayInt = servicio.int_PO ? true : false;
+            esFest = false;
         };
         if (servicio.precioHora_BA || servicio.int_BA) {
             laClase = servicio.activo_BA === 'si' ? servicio.int_BA ? (clsx(classes.conServiciosA2Int, classes.small4)) :
@@ -1314,15 +1350,17 @@ const HelpersLayoutCuadrantes = () => {
             laLetra = 'BA';
             hayBaja = servicio.activo_BA === 'no' ? true : false;
             hayInt = servicio.int_BA ? true : false;
+            esFest = false;
         };
         if (servicio.precioHora_FT || servicio.int_FT) {
             laClase = servicio.activo_FT === 'si' ? servicio.int_FT ? (clsx(classes.conServiciosA2Int, classes.small4)) :
-                (clsx(classes.conServiciosA2, classes.small4)) : (clsx(classes.fondoBaja, classes.small4));
+                (clsx(classes.conServiciosA2Fest, classes.small4)) : (clsx(classes.fondoBaja, classes.small4));
             elTooltip = servicio.int_FT ? 'Servicio de limpieza día festivo incluido en el cómputo' : 'Servicio de limpieza día festivo: ' + servicio.totalServicioFijo + ' €';
             elAnadidoTooltip = servicio.activo_FT === 'si' ? '' : ' (Inactivo)';
             laLetra = 'FT';
             hayBaja = servicio.activo_FT === 'no' ? true : false;
             hayInt = servicio.int_FT ? true : false;
+            esFest = true;
         };
         if (servicio.precioHora_C3 || servicio.int_C3) {
             laClase = servicio.activo_C3 === 'si' ? servicio.int_C3 ? (clsx(classes.conServiciosA2Int, classes.small4)) :
@@ -1332,6 +1370,7 @@ const HelpersLayoutCuadrantes = () => {
             laLetra = 'C3';
             hayBaja = servicio.activo_C3 === 'no' ? true : false;
             hayInt = servicio.int_C3 ? true : false;
+            esFest = false;
         };
         if (servicio.precioHora_C2 || servicio.int_C2) {
             laClase = servicio.activo_C2 === 'si' ? servicio.int_C2 ? (clsx(classes.conServiciosA2Int, classes.small4)) :
@@ -1341,6 +1380,7 @@ const HelpersLayoutCuadrantes = () => {
             laLetra = 'C2';
             hayBaja = servicio.activo_C2 === 'no' ? true : false;
             hayInt = servicio.int_C2 ? true : false;
+            esFest = false;
         };
         if (servicio.precioHora_ES || servicio.int_ES) {
             laClase = servicio.activo_ES === 'si' ? servicio.int_ES ? (clsx(classes.conServiciosA2Int, classes.small4)) :
@@ -1350,6 +1390,7 @@ const HelpersLayoutCuadrantes = () => {
             laLetra = 'ES';
             hayBaja = servicio.activo_ES === 'no' ? true : false;
             hayInt = servicio.int_ES ? true : false;
+            esFest = false;
         };
         if (servicio.precioHora_PA || servicio.int_PA) {
             laClase = servicio.activo_PA === 'si' ? servicio.int_PA ? (clsx(classes.conServiciosA2Int, classes.small4)) :
@@ -1359,6 +1400,7 @@ const HelpersLayoutCuadrantes = () => {
             laLetra = 'PA';
             hayBaja = servicio.activo_PA === 'no' ? true : false;
             hayInt = servicio.int_PA ? true : false;
+            esFest = false;
         };
 
         return (
@@ -1375,13 +1417,19 @@ const HelpersLayoutCuadrantes = () => {
                             <Typography style={{ fontSize: '0.7rem' }}>{laLetra}</Typography>
                         </Avatar>
                     </LightTooltipInt>
+                ) : (esFest ? (
+                    <LightTooltipFest title={elTooltip + elAnadidoTooltip} placement="right" classes={{ tooltip: classes.noMaxWidth }}>
+                        <Avatar variant="square" className={laClase}>
+                            <Typography style={{ fontSize: '0.7rem' }}>{laLetra}</Typography>
+                        </Avatar>
+                    </LightTooltipFest>
                 ) : (
                     <LightTooltip title={elTooltip + elAnadidoTooltip} placement="right" classes={{ tooltip: classes.noMaxWidth }}>
                         <Avatar variant="square" className={laClase}>
                             <Typography style={{ fontSize: '0.7rem' }}>{laLetra}</Typography>
                         </Avatar>
                     </LightTooltip>
-                )
+                ))
                 )}
             </Box>
         )

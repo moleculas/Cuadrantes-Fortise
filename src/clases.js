@@ -1,5 +1,5 @@
 import { makeStyles } from "@material-ui/core";
-import { amber, blueGrey, green, lime, indigo, red, grey, blue, yellow, teal, brown, lightGreen, orange, deepPurple } from '@material-ui/core/colors';
+import { amber, blueGrey, green, lime, indigo, red, grey, blue, yellow, teal, brown, lightGreen, orange, deepPurple, cyan } from '@material-ui/core/colors';
 
 const Clases = makeStyles((theme) => ({
     //loading
@@ -154,6 +154,9 @@ const Clases = makeStyles((theme) => ({
     cabeceraServicios: {
         backgroundColor: `${teal[500]} !important`,
     },
+    cabeceraServiciosFest: {
+        backgroundColor: `${cyan[500]} !important`,
+    },
     cabeceraServiciosInt: {
         backgroundColor: `${lightGreen[500]} !important`,
     },
@@ -174,6 +177,16 @@ const Clases = makeStyles((theme) => ({
     },
     casillaSF: {
         backgroundColor: `${teal[100]} !important`,
+        padding: 9,
+        cursor: 'pointer',
+    },
+    casillaSFFest: {
+        backgroundColor: `${cyan[100]} !important`,
+        padding: 9,
+        cursor: 'pointer',
+    },
+    casillaVaciaSFFest: {
+        backgroundColor: `${cyan[50]} !important`,
         padding: 9,
         cursor: 'pointer',
     },
@@ -744,6 +757,9 @@ const Clases = makeStyles((theme) => ({
     },
     conServiciosA2: {
         backgroundColor: teal[500]
+    },
+    conServiciosA2Fest: {
+        backgroundColor: cyan[500]
     },
     conServiciosA2Int: {
         backgroundColor: lightGreen[500]

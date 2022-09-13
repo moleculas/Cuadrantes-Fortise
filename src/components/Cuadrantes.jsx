@@ -372,8 +372,7 @@ const Cuadrantes = (props) => {
     const itemPrevioEditando = useSelector(store => store.variablesCuadrantesSetters.itemPrevioEditando);
 
     //para test 
-    const bufferSwitchedDiasFestivosCuadrante = useSelector(store => store.variablesCuadrantesSetters.bufferSwitchedDiasFestivosCuadrante);
-
+    
     //helpers
 
     const {
@@ -1086,7 +1085,7 @@ const Cuadrantes = (props) => {
                                 < Box
                                     m={0.3}
                                     p={1.5}
-                                    className={gestionaClassesColoresServiciosFijosAccion(indexDia + 1, hayServicio, integrado) || null}
+                                    className={gestionaClassesColoresServiciosFijosAccion(indexDia + 1, hayServicio, integrado, tipo) || null}
                                     style={{ width: dimensionsColumnaServiciosFijos.width, minHeight: alturaCasilla(), maxHeight: alturaCasilla(), display: 'flex', alignItems: 'center' }}
                                     {...bindTrigger(popupState)}
                                 >

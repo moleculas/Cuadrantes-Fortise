@@ -2668,84 +2668,86 @@ export const handleChangeObservacionesAccion = (index, event) => (dispatch, getS
 
 export const handleChangeTipoServicioAccion = (index, event) => (dispatch, getState) => {
     const { itemPrevioEditando, cuadranteEnUsoCuadrantes } = getState().variablesCuadrantesSetters;
-    const { cuadrante, objetoCuadrante } = getState().variablesCuadrantes;
-    if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo !== 1 && !objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial) {
-        switch (event.target.value) {
-            case 'LIM':
-                if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L) {
-                    dispatch(setAlertaAccion({
-                        abierto: true,
-                        mensaje: "Debe asignarse un precio/hora para SERVICIO DE LIMPIEZA en la configuración del Centro o del Cuadranre para poder computar.",
-                        tipo: 'warning'
-                    }));
-                }
-                break;
-            case 'LIME':
-                if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_E) {
-                    dispatch(setAlertaAccion({
-                        abierto: true,
-                        mensaje: "Debe asignarse un precio/hora para SERVICIO DE LIMPIEZA ESPECIAL en la configuración del Centro o del Cuadrante para poder computar.",
-                        tipo: 'warning'
-                    }));
-                }
-                break;
-            case 'LIMP':
-                if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_P) {
-                    dispatch(setAlertaAccion({
-                        abierto: true,
-                        mensaje: "Debe asignarse un precio/hora para SERVICIO DE LIMPIEZA DEL PARKING en la configuración del Centro o del Cuadrante para poder computar.",
-                        tipo: 'warning'
-                    }));
-                }
-                break;
-            case 'NAVE2':
-                if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_N) {
-                    dispatch(setAlertaAccion({
-                        abierto: true,
-                        mensaje: "Debe asignarse un precio/hora para SERVICIO DE LIMPIEZA NAVE 2 en la configuración del Centro o del Cuadrante para poder computar.",
-                        tipo: 'warning'
-                    }));
-                }
-                break;
-            case 'REFZ':
-                if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_R) {
-                    dispatch(setAlertaAccion({
-                        abierto: true,
-                        mensaje: "Debe asignarse un precio/hora para SERVICIO DE LIMPIEZA REFUERZO en la configuración del Centro o del Cuadrante para poder computar.",
-                        tipo: 'warning'
-                    }));
-                }
-                break;
-            case 'LIM1':
-                if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L1) {
-                    dispatch(setAlertaAccion({
-                        abierto: true,
-                        mensaje: "Debe asignarse un precio/hora para SERVICIO DE LIMPIEZA_1 en la configuración del Centro o del Cuadrante para poder computar.",
-                        tipo: 'warning'
-                    }));
-                }
-                break;
-            case 'LIM2':
-                if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L2) {
-                    dispatch(setAlertaAccion({
-                        abierto: true,
-                        mensaje: "Debe asignarse un precio/hora para SERVICIO DE LIMPIEZA_2 en la configuración del Centro o del Cuadrante para poder computar.",
-                        tipo: 'warning'
-                    }));
-                }
-                break;
-            case 'FEST':
-                if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F) {
-                    dispatch(setAlertaAccion({
-                        abierto: true,
-                        mensaje: "Debe asignarse un precio/hora para SERVICIO DE LIMPIEZA DÍA FESTIVO en la configuración del Centro o del Cuadrante para poder computar.",
-                        tipo: 'warning'
-                    }));
-                }
-                break;
-            default:
-        }
-    };
+    const { cuadrante, objetoCuadrante } = getState().variablesCuadrantes;   
+    if(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo !== 4){
+        if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo !== 1 && !objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial) {
+            switch (event.target.value) {
+                case 'LIM':
+                    if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L) {
+                        dispatch(setAlertaAccion({
+                            abierto: true,
+                            mensaje: "Debe asignarse un precio/hora para SERVICIO DE LIMPIEZA en la configuración del Centro o del Cuadranre para poder computar.",
+                            tipo: 'warning'
+                        }));
+                    }
+                    break;
+                case 'LIME':
+                    if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_E) {
+                        dispatch(setAlertaAccion({
+                            abierto: true,
+                            mensaje: "Debe asignarse un precio/hora para SERVICIO DE LIMPIEZA ESPECIAL en la configuración del Centro o del Cuadrante para poder computar.",
+                            tipo: 'warning'
+                        }));
+                    }
+                    break;
+                case 'LIMP':
+                    if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_P) {
+                        dispatch(setAlertaAccion({
+                            abierto: true,
+                            mensaje: "Debe asignarse un precio/hora para SERVICIO DE LIMPIEZA DEL PARKING en la configuración del Centro o del Cuadrante para poder computar.",
+                            tipo: 'warning'
+                        }));
+                    }
+                    break;
+                case 'NAVE2':
+                    if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_N) {
+                        dispatch(setAlertaAccion({
+                            abierto: true,
+                            mensaje: "Debe asignarse un precio/hora para SERVICIO DE LIMPIEZA NAVE 2 en la configuración del Centro o del Cuadrante para poder computar.",
+                            tipo: 'warning'
+                        }));
+                    }
+                    break;
+                case 'REFZ':
+                    if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_R) {
+                        dispatch(setAlertaAccion({
+                            abierto: true,
+                            mensaje: "Debe asignarse un precio/hora para SERVICIO DE LIMPIEZA REFUERZO en la configuración del Centro o del Cuadrante para poder computar.",
+                            tipo: 'warning'
+                        }));
+                    }
+                    break;
+                case 'LIM1':
+                    if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L1) {
+                        dispatch(setAlertaAccion({
+                            abierto: true,
+                            mensaje: "Debe asignarse un precio/hora para SERVICIO DE LIMPIEZA_1 en la configuración del Centro o del Cuadrante para poder computar.",
+                            tipo: 'warning'
+                        }));
+                    }
+                    break;
+                case 'LIM2':
+                    if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L2) {
+                        dispatch(setAlertaAccion({
+                            abierto: true,
+                            mensaje: "Debe asignarse un precio/hora para SERVICIO DE LIMPIEZA_2 en la configuración del Centro o del Cuadrante para poder computar.",
+                            tipo: 'warning'
+                        }));
+                    }
+                    break;
+                case 'FEST':
+                    if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F) {
+                        dispatch(setAlertaAccion({
+                            abierto: true,
+                            mensaje: "Debe asignarse un precio/hora para SERVICIO DE LIMPIEZA DÍA FESTIVO en la configuración del Centro o del Cuadrante para poder computar.",
+                            tipo: 'warning'
+                        }));
+                    }
+                    break;
+                default:
+            }
+        };
+    };   
     const idSplitted = event.target.name.split("-");
     const key = idSplitted[2];
     let arrayCuadrante = [...cuadrante];

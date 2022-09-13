@@ -68,16 +68,7 @@ const ConfiguracionCuadrante = (props) => {
 
     useEffect(() => {
         gestionItemPrevioEditandoConfiguracion(valoresPreviosConfiguracion);
-        if (props.prItemEditandoConfiguracion.computo === 3 && (
-            !props.prItemEditandoConfiguracion.precioHora_L &&
-            !props.prItemEditandoConfiguracion.precioHora_E &&
-            !props.prItemEditandoConfiguracion.precioHora_P &&
-            !props.prItemEditandoConfiguracion.precioHora_N &&
-            !props.prItemEditandoConfiguracion.precioHora_R &&
-            !props.prItemEditandoConfiguracion.precioHora_L1 &&
-            !props.prItemEditandoConfiguracion.precioHora_L2 &&
-            !props.prItemEditandoConfiguracion.precioHora_F
-        )) {
+        if (props.prItemEditandoConfiguracion.computo === 3 && props.prItemEditandoConfiguracion.mensualPactadoInicial) {
             setEsMensualPactadoGEH(true)
         };
     }, []);
@@ -511,7 +502,7 @@ const ConfiguracionCuadrante = (props) => {
                     </Select>
                 </FormControl>
             </Grid>
-            {/* {console.log(props.prCentro)} */}
+            {/* {console.log(valoresPreviosConfiguracion)} */}
         </div>
     )
 }
