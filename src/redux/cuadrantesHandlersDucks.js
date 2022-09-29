@@ -2800,7 +2800,7 @@ export const handleChangeFormConfiguracionCuadranteAccion = (prop, event) => (di
             [prop]: resultadoChecked
         }));
     };
-    if (prop === "mensualPactadoInicial" ||
+    if (prop === "mensualPactado" ||
         prop === "precioHora_L" ||
         prop === "precioHora_E" ||
         prop === "precioHora_P" ||
@@ -5064,7 +5064,7 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
         ...objetoCuadrante,
         datosServicios: losDatosServicios
     }));
-    dispatch(setCuadranteServiciosFijosAccion(dispatch(gestionaColumnaServiciosFijosInicioAccion(arrayCuadranteServiciosFijos))));
+    dispatch(setCuadranteServiciosFijosAccion(dispatch(gestionaColumnaServiciosFijosInicioAccion(arrayCuadranteServiciosFijos, true))));
     dispatch(setStateSwitchTipoServicioFijoCuadranteAccion(itemEditandoServiciosFijos.switch));
     dispatch(setItemPrevioEditandoServiciosFijosAccion(null));
     dispatch(activarDesactivarCambioAccion(true));
@@ -5175,22 +5175,22 @@ export const handleRegistrarCambioEnCasillaConfiguracionAccion = (scrollable, cl
         }));
         return;
     };
-    if (itemEditandoConfiguracion.computo === 3 && ((
-        itemEditandoConfiguracion.precioHora_L ||
-        itemEditandoConfiguracion.precioHora_E ||
-        itemEditandoConfiguracion.precioHora_P ||
-        itemEditandoConfiguracion.precioHora_N ||
-        itemEditandoConfiguracion.precioHora_R ||
-        itemEditandoConfiguracion.precioHora_L1 ||
-        itemEditandoConfiguracion.precioHora_L2 ||
-        itemEditandoConfiguracion.precioHora_F) && itemEditandoConfiguracion.mensualPactadoInicial)) {
-        dispatch(setAlertaAccion({
-            abierto: true,
-            mensaje: "Revisa el formulario, solo puede haber un tipo de cómputo de horas.",
-            tipo: 'error'
-        }));
-        return;
-    };
+    // if (itemEditandoConfiguracion.computo === 3 && ((
+    //     itemEditandoConfiguracion.precioHora_L ||
+    //     itemEditandoConfiguracion.precioHora_E ||
+    //     itemEditandoConfiguracion.precioHora_P ||
+    //     itemEditandoConfiguracion.precioHora_N ||
+    //     itemEditandoConfiguracion.precioHora_R ||
+    //     itemEditandoConfiguracion.precioHora_L1 ||
+    //     itemEditandoConfiguracion.precioHora_L2 ||
+    //     itemEditandoConfiguracion.precioHora_F) && itemEditandoConfiguracion.mensualPactadoInicial)) {
+    //     dispatch(setAlertaAccion({
+    //         abierto: true,
+    //         mensaje: "Revisa el formulario, solo puede haber un tipo de cómputo de horas.",
+    //         tipo: 'error'
+    //     }));
+    //     return;
+    // };
     if (objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1]) {
         if (itemEditandoConfiguracion.tipoHorario !== objetoCentro.horario.horario[cuadranteEnUsoCuadrantes - 1].tipo) {
             dispatch(setCambiadaConfiguracionGeneralAccion(true));
@@ -5212,6 +5212,7 @@ export const handleRegistrarCambioEnCasillaConfiguracionAccion = (scrollable, cl
         excepcion: itemEditandoConfiguracion.excepcion ? itemEditandoConfiguracion.excepcion : '',
         bloqueado: itemEditandoConfiguracion.bloqueado,
         mensualPactadoInicial: itemEditandoConfiguracion.mensualPactadoInicial ? parseFloat(itemEditandoConfiguracion.mensualPactadoInicial) : null,
+        mensualPactado: itemEditandoConfiguracion.mensualPactado ? parseFloat(itemEditandoConfiguracion.mensualPactado) : null,
         precioHora_L: itemEditandoConfiguracion.precioHora_L ? parseFloat(itemEditandoConfiguracion.precioHora_L) : null,
         precioHora_E: itemEditandoConfiguracion.precioHora_E ? parseFloat(itemEditandoConfiguracion.precioHora_E) : null,
         precioHora_P: itemEditandoConfiguracion.precioHora_P ? parseFloat(itemEditandoConfiguracion.precioHora_P) : null,

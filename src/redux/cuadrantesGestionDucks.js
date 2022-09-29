@@ -847,7 +847,7 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
                 objetoEstadosSwitch.PA = true;
             };
         });
-        dispatch(setCuadranteServiciosFijosAccion(dispatch(gestionaColumnaServiciosFijosInicioAccion(objetoCuadrante.datosServicios.datosServicios[numeroCuadrante - 1]))));
+        dispatch(setCuadranteServiciosFijosAccion(dispatch(gestionaColumnaServiciosFijosInicioAccion(objetoCuadrante.datosServicios.datosServicios[numeroCuadrante - 1], false))));
         //bloqueadoSF = (objetoCuadrante.datosServicios.bloqueado && objetoCuadrante.datosServicios.bloqueado[numeroCuadrante - 1]) ? objetoCuadrante.datosServicios.bloqueado[numeroCuadrante - 1] : 'no';
         bloqueadoSF = 'si';
     };
@@ -937,6 +937,7 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
             excepcion: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].excepcion ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].excepcion : '',
             bloqueado: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].bloqueado ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].bloqueado : 'no',
             mensualPactadoInicial: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].mensualPactadoInicial ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].mensualPactadoInicial : '',
+            mensualPactado: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].mensualPactado ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].mensualPactado : '',
             precioHora_L: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_L ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_L : '',
             precioHora_E: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_E ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_E : '',
             precioHora_P: objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_P ? objetoCuadrante.datosInforme.datosInforme[numeroCuadrante - 1].precioHora_P : '',

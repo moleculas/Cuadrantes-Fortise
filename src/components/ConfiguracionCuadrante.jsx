@@ -45,6 +45,7 @@ const ConfiguracionCuadrante = (props) => {
         excepcion: props.prItemEditandoConfiguracion.excepcion || '',
         bloqueado: props.prItemEditandoConfiguracion.bloqueado || '',
         mensualPactadoInicial: props.prItemEditandoConfiguracion.mensualPactadoInicial || '',
+        mensualPactado: props.prItemEditandoConfiguracion.mensualPactado || '',
         precioHora_L: props.prItemEditandoConfiguracion.precioHora_L || '',
         precioHora_E: props.prItemEditandoConfiguracion.precioHora_E || '',
         precioHora_P: props.prItemEditandoConfiguracion.precioHora_P || '',
@@ -217,6 +218,15 @@ const ConfiguracionCuadrante = (props) => {
                         </FormControl>
                         {props.prItemEditandoConfiguracion.computo === 1 || (props.prItemEditandoConfiguracion.computo === 3 && esMensualPactadoGEH) ? (
                             <Fragment>
+                                <List dense={true} className={classes.mb15}>
+                                    <ListItem
+                                        className={classes.listConfig}
+                                    >
+                                        <ListItemText
+                                            primary={"Mensual pactado inicial: " + props.prItemEditandoConfiguracion.mensualPactadoInicial + "€"}
+                                        />
+                                    </ListItem >
+                                </List>
                                 <FormControl
                                     variant="outlined"
                                     className={classes.form}
@@ -227,8 +237,8 @@ const ConfiguracionCuadrante = (props) => {
                                         className={classes.mb20}
                                         fullWidth
                                         id="form-mensual-pactado-cuadrante"
-                                        value={props.prItemEditandoConfiguracion.mensualPactadoInicial || ''}
-                                        onChange={handleChangeFormConfiguracionCuadrante('mensualPactadoInicial')}
+                                        value={props.prItemEditandoConfiguracion.mensualPactado || ''}
+                                        onChange={handleChangeFormConfiguracionCuadrante('mensualPactado')}
                                         labelWidth={130}
                                         startAdornment={<InputAdornment position="start">€</InputAdornment>}
                                     />

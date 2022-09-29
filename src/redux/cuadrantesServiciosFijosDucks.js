@@ -247,7 +247,7 @@ export const setCuadranteServiciosFijosAccion = (array) => (dispatch, getState) 
     });
 };
 
-export const gestionaColumnaServiciosFijosInicioAccion = (servicios) => (dispatch, getState) => {
+export const gestionaColumnaServiciosFijosInicioAccion = (servicios, activacionServicio) => (dispatch, getState) => {
     const { losDiasDelMes, stateFestivo, cuadranteRegistrado } = getState().variablesCuadrantes;
     let arrayResultante = [];
     let numeroSemana;
@@ -267,7 +267,11 @@ export const gestionaColumnaServiciosFijosInicioAccion = (servicios) => (dispatc
             noBloqueado = true;
         } else {
             if (cuadranteRegistrado === 'si') {
-                noBloqueado = false;
+                if (activacionServicio) {
+                    noBloqueado = true;
+                } else {
+                    noBloqueado = false;
+                };
             } else {
                 noBloqueado = true;
             };

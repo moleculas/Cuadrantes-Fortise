@@ -2399,6 +2399,12 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             totalFacturado_F: (sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) ? ((sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F) : null,
                             mensualPactado: totalMensualPactado,
                         };
+                    }else {
+                        totalMensualPactado = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado;
+                        objetoDatosInforme = {
+                            ...objetoDatosInforme,
+                            mensualPactado: totalMensualPactado,
+                        };
                     };
                     break;
                 case '':
@@ -2439,10 +2445,15 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             ...objetoDatosInforme,
                             mensualPactado: totalMensualPactado,
                         };
-                    }
+                    };
                     break;
                 default:
             };
+            const objetoDatosCuadrante = {
+                ...itemEditandoConfiguracion,
+                 mensualPactado : totalMensualPactado
+            };
+            dispatch(setItemEditandoConfiguracionAccion(objetoDatosCuadrante));
         };
     } else {
         //gestion precio/hora
@@ -2474,11 +2485,11 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
         ...objetoCuadrante.datosInforme,
         datosInforme: elArrayDatosInforme
     };
-    dispatch(setEstamosActualizandoCuadranteSinCargaAccion(true));
+    dispatch(setEstamosActualizandoCuadranteSinCargaAccion(true));   
     dispatch(actualizarObjetoCuadranteAccion({
         ...objetoCuadrante,
         datosInforme: losDatosInforme
-    }));
+    }));    
 };
 
 function calculoDiasTotalesPorMes(month, year) {

@@ -372,6 +372,8 @@ const Cuadrantes = (props) => {
     const itemPrevioEditando = useSelector(store => store.variablesCuadrantesSetters.itemPrevioEditando);
 
     //para test 
+
+
     
     //helpers
 
@@ -2292,7 +2294,7 @@ const Cuadrantes = (props) => {
                 prTituloDialog={tituloDialogCuadrantes5}
                 prDescripcionDialog={descripcionDialogCuadrantes5}
             />
-            {/* {console.log(objetoCuadrante)} */}
+            {/* {console.log(cuadranteServiciosFijos)} */}
         </div >
     )
 }
