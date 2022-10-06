@@ -108,7 +108,7 @@ export const gestionaCuadrantesAccion = () => (dispatch, getState) => {
                     }
                 })
             };
-            if (arrayCuadantes[index].estado === 'facturado') {
+            if (arrayCuadantes[index].estado === 'facturado') {                
                 contadorFacturados++;
                 dispatch({
                     type: OBTENER_CUADRANTE_FACTURADO,

@@ -1077,7 +1077,7 @@ const retornaArrayElementosAccion = (objetoConceptos) => (dispatch, getState) =>
     return arrayElementos
 };
 
-export const generarArchivosXLSAccion = (numFactusol, objetoConceptos) => async (dispatch, getState) => {
+export const generarArchivosXLSAccion = (numFactusol, objetoConceptos, mes) => async (dispatch, getState) => {
     const elNumFactusol = parseInt(numFactusol) + 1;
     try {
         const objetoCentroParsear = {
@@ -1096,8 +1096,8 @@ export const generarArchivosXLSAccion = (numFactusol, objetoConceptos) => async 
             totalMasIva: parseFloat(objetoConceptos.totalMasIva).toFixed(2)
         };
         const ahora = new Date();
-        const ultimoDia = new Date(ahora.getFullYear(), ahora.getMonth() + 1, 0);
-        const month = ultimoDia.getMonth() + 1;
+        const ultimoDia = new Date(ahora.getFullYear(), mes, 0);
+        const month = mes;
         const day = ultimoDia.getDate();
         const year = ultimoDia.getFullYear();
         const fechaHoy = day + "/" + month + "/" + year;
@@ -1293,7 +1293,7 @@ export const actualizarCuadrantesIteradosAccion = () => async (dispatch, getStat
     }
 };
 
-export const generarArchivosXLSLoteAccion = (numFactusol, arrayCuadrantes) => (dispatch, getState) => {
+export const generarArchivosXLSLoteAccion = (numFactusol, arrayCuadrantes, mes) => (dispatch, getState) => {
     dispatch({
         type: PROCESANDO_LOTE
     });
@@ -1318,8 +1318,8 @@ export const generarArchivosXLSLoteAccion = (numFactusol, arrayCuadrantes) => (d
                 totalMasIva: parseFloat(cuadranteIterado.total.totalMasIva).toFixed(2)
             };
             const ahora = new Date();
-            const ultimoDia = new Date(ahora.getFullYear(), ahora.getMonth() + 1, 0);
-            const month = ultimoDia.getMonth() + 1;
+            const ultimoDia = new Date(ahora.getFullYear(), mes, 0);
+            const month = mes;
             const day = ultimoDia.getDate();
             const year = ultimoDia.getFullYear();
             const fechaHoy = day + "/" + month + "/" + year;
@@ -1609,33 +1609,63 @@ export const generaArchivoXLSCuadrantesRegistradosAccion = (mes) => (dispatch, g
     exportarAExcel(elListadoCuadrantesFacturadosImprimir, nombreArchivo);
 };
 
-export const generaArchivoXLSCuadrantesFacturadosAccion = (mes) => (dispatch, getState) => {
+export const generaArchivoXLSCuadrantesFacturadosEmpresasAccion = (mes) => (dispatch, getState) => {
     const { cuadrantesFacturadosArray } = getState().variablesPendientes;
     let cuadrantes = [];
     cuadrantesFacturadosArray.forEach((cuadrante, index) => {
         let objeto = {};
-        objeto['nombreCentro'] = cuadrante.total.nombreCentro;
-        objeto['tocaFacturar'] = cuadrante.total.tocaFacturar.valor;
-        objeto['razon'] = cuadrante.total.tocaFacturar.razon;
-        objeto['procesado'] = cuadrante.total.procesado.valor;
-        if (cuadrante.total.procesado.valor === "si") {
-            if (cuadrante.total.procesado.numF) {
-                objeto['numero'] = "Número factura: " + cuadrante.total.procesado.numF;
-            } else if (cuadrante.total.procesado.numR) {
-                objeto['numero'] = "Número recibo: " + cuadrante.total.procesado.numR;
-            } else {
-                objeto['numero'] = "";
+        if (cuadrante.total.tocaFacturar.valor === 'si') {
+            objeto['nombreCentro'] = cuadrante.total.nombreCentro;
+            objeto['tocaFacturar'] = cuadrante.total.tocaFacturar.valor;
+            objeto['razon'] = cuadrante.total.tocaFacturar.razon;
+            objeto['procesado'] = cuadrante.total.procesado.valor;
+            if (cuadrante.total.procesado.valor === "si") {
+                if (cuadrante.total.procesado.numF) {
+                    objeto['numero'] = "Número factura: " + cuadrante.total.procesado.numF;
+                } else {
+                    objeto['numero'] = "";
+                };
             };
+            objeto['total'] = parseFloat(cuadrante.total.total).toFixed(2) + ' €';
+            objeto['totalMasIva'] = parseFloat(cuadrante.total.totalMasIva).toFixed(2) + ' €';
+            cuadrantes.push(objeto);
         };
-        objeto['total'] = parseFloat(cuadrante.total.total).toFixed(2) + ' €';
-        objeto['totalMasIva'] = parseFloat(cuadrante.total.totalMasIva).toFixed(2) + ' €';
-        cuadrantes.push(objeto);
     });
     cuadrantes.sort((a, b) => a.nombreCentro.localeCompare(b.nombreCentro));
-    const elListadoCuadrantesFacturadosImprimir = [["LISTADO CUADRANTES FACTURADOS MES " + mes], ["CENTRO", "TOCA FACTURAR", "RAZÓN", "EMITIDO", "NÚMERO FACTURA / RECIBO", "TOTAL", "TOTAL + IVA"]];
+    const elListadoCuadrantesFacturadosImprimir = [["LISTADO CUADRANTES FACTURADOS EMPRESAS MES " + mes], ["CENTRO", "TOCA FACTURAR", "RAZÓN", "EMITIDO", "NÚMERO FACTURA", "TOTAL", "TOTAL + IVA"]];
     cuadrantes.forEach((cuadrante) => {
         elListadoCuadrantesFacturadosImprimir.push([cuadrante.nombreCentro, cuadrante.tocaFacturar, cuadrante.razon, cuadrante.procesado, cuadrante.numero, cuadrante.total, cuadrante.totalMasIva]);
     });
-    const nombreArchivo = 'listado_cuadrantes_registrados_' + mes;
+    const nombreArchivo = 'listado_cuadrantes_facturados_empresas_' + mes;
+    exportarAExcel(elListadoCuadrantesFacturadosImprimir, nombreArchivo);
+};
+
+export const generaArchivoXLSCuadrantesFacturadosPisosAccion = (mes) => (dispatch, getState) => {
+    const { cuadrantesFacturadosArray } = getState().variablesPendientes;
+    let cuadrantes = [];
+    cuadrantesFacturadosArray.forEach((cuadrante, index) => {
+        let objeto = {};
+        if (cuadrante.total.tocaFacturar.valor === 'no' && cuadrante.total.tocaFacturar.razon === 'gest') {
+            objeto['nombreCentro'] = cuadrante.total.nombreCentro;
+            objeto['tocaFacturar'] = cuadrante.total.tocaFacturar.valor;
+            objeto['razon'] = cuadrante.total.tocaFacturar.razon;
+            objeto['procesado'] = cuadrante.total.procesado.valor;
+            if (cuadrante.total.procesado.valor === "si") {
+               if (cuadrante.total.procesado.numR) {
+                    objeto['numero'] = "Número recibo: " + cuadrante.total.procesado.numR;
+                } else {
+                    objeto['numero'] = "";
+                };
+            };
+            objeto['total'] = parseFloat(cuadrante.total.total).toFixed(2) + ' €';
+            cuadrantes.push(objeto);
+        };
+    });
+    cuadrantes.sort((a, b) => a.nombreCentro.localeCompare(b.nombreCentro));
+    const elListadoCuadrantesFacturadosImprimir = [["LISTADO CUADRANTES FACTURADOS PISOS MES " + mes], ["CENTRO", "TOCA FACTURAR", "RAZÓN", "EMITIDO", "NÚMERO RECIBO", "TOTAL"]];
+    cuadrantes.forEach((cuadrante) => {
+        elListadoCuadrantesFacturadosImprimir.push([cuadrante.nombreCentro, cuadrante.tocaFacturar, cuadrante.razon, cuadrante.procesado, cuadrante.numero, cuadrante.total]);
+    });
+    const nombreArchivo = 'listado_cuadrantes_facturados_pisos_' + mes;
     exportarAExcel(elListadoCuadrantesFacturadosImprimir, nombreArchivo);
 };

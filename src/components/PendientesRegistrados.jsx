@@ -87,6 +87,7 @@ const PendientesRegistrados = (props) => {
     const laDataFAC = useSelector(store => store.variablesApp.laDataFAC);
     const laDataLFA = useSelector(store => store.variablesApp.laDataLFA);
     const numeroCuadrantesRegistrados = useSelector(store => store.variablesPendientes.numeroCuadrantesRegistrados);
+    const calendarioAGestionar = useSelector(store => store.variablesCuadrantes.calendarioAGestionar);
 
     //states
 
@@ -142,7 +143,7 @@ const PendientesRegistrados = (props) => {
     }, [cuadrantesRegistradosArray]);
 
     useEffect(() => {
-        if ((laDataFAC.length > 0) && (laDataFAC.length === arrayCuadrantesDefsParaCheck.length)) {            
+        if ((laDataFAC.length > 0) && (laDataFAC.length === arrayCuadrantesDefsParaCheck.length)) {
             dispatch(actualizarCuadrantesIteradosAccion());
             setTimeout(() => {
                 setArrayCuadrantesDefsParaCheck([]);
@@ -279,7 +280,9 @@ const PendientesRegistrados = (props) => {
                 }
             });
             setArrayCuadrantesDefsParaCheck(arrayCuadrantesDef);
-            dispatch(generarArchivosXLSLoteAccion(numeroFactusolPendientes, arrayCuadrantesDef));
+            const myMesSplit = calendarioAGestionar.split("-");
+            const mes = myMesSplit[1];
+            dispatch(generarArchivosXLSLoteAccion(numeroFactusolPendientes, arrayCuadrantesDef, mes));
             dispatch(setTiempoEsperaloteAccion(true));
         } else {
             setAlert({

@@ -373,8 +373,6 @@ const Cuadrantes = (props) => {
 
     //para test 
 
-
-    
     //helpers
 
     const {
@@ -814,7 +812,14 @@ const Cuadrantes = (props) => {
     };
 
     const gestionarReciboPDF = async () => {
-        const element = <ReciboPDF objetoReciboPDF={objetoCuadrante.datosInforme.datosGestionEsp} />;
+        dispatch(gestionarDocumentosCuadranteAccion('recibo'));
+        const myMesSplit = objetoCuadrante.nombre.split("-");
+        const mes = myMesSplit[1];
+        const element =
+            <ReciboPDF
+                objetoReciboPDF={objetoCuadrante.datosInforme.datosGestionEsp}
+                mes={mes}
+            />;
         const myPdf = pdf([]);
         myPdf.updateContainer(element);
         const blob = await myPdf.toBlob();
@@ -822,8 +827,7 @@ const Cuadrantes = (props) => {
             let file = new File([blob], 'Recibo-' + objetoCuadrante.nombre + '.pdf', { type: 'application/pdf' });
             const fileURL = URL.createObjectURL(file);
             const pdfWindow = window.open();
-            pdfWindow.location.href = fileURL;
-            dispatch(gestionarDocumentosCuadranteAccion('recibo'));
+            pdfWindow.location.href = fileURL;            
         };
     };
 
@@ -2294,7 +2298,7 @@ const Cuadrantes = (props) => {
                 prTituloDialog={tituloDialogCuadrantes5}
                 prDescripcionDialog={descripcionDialogCuadrantes5}
             />
-            {/* {console.log(cuadranteServiciosFijos)} */}
+            {/* {console.log(objetoCuadrante)} */}
         </div >
     )
 }

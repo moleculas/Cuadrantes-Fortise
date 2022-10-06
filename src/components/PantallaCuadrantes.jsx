@@ -24,6 +24,10 @@ import PendientesFacturados from './PendientesFacturados';
 //estilos
 import Clases from "../clases";
 
+//imágenes
+import iconEmpresas from '../images/app/icon_em.jpg';
+import iconPisos from '../images/app/icon_pi.jpg';
+
 //importaciones acciones
 import { retornaAnoMesCuadranteAccion } from '../redux/appDucks';
 import { obtenerCentrosAccion } from '../redux/centrosDucks';
@@ -36,7 +40,8 @@ import { setValorTabPantallaCuadrantesAccion } from '../redux/cuadrantesSettersD
 import { gestionaCuadrantesAccion } from '../redux/pendientesDucks';
 import { generaArchivoXLSCuadrantesPendientesAccion } from '../redux/appDucks';
 import { generaArchivoXLSCuadrantesRegistradosAccion } from '../redux/appDucks';
-import { generaArchivoXLSCuadrantesFacturadosAccion } from '../redux/appDucks';
+import { generaArchivoXLSCuadrantesFacturadosEmpresasAccion } from '../redux/appDucks';
+import { generaArchivoXLSCuadrantesFacturadosPisosAccion } from '../redux/appDucks';
 
 
 const getHeightContenedoresPeq = () => ((window.innerHeight / 2) - 162) || ((document.documentElement.clientHeight / 2) - 162) || ((document.body.clientHeight / 2) - 162);
@@ -188,7 +193,7 @@ const PantallaCuadrantes = () => {
         setValueTab(newValue)
     };
 
-    const handleGenerarXLSCuadrantes = () => {
+    const handleGenerarXLSCuadrantes = (tipo) => {
         if (valueTab === 0) {
             dispatch(generaArchivoXLSCuadrantesPendientesAccion(monthLet));
         };
@@ -196,7 +201,12 @@ const PantallaCuadrantes = () => {
             dispatch(generaArchivoXLSCuadrantesRegistradosAccion(monthLet));
         };
         if (valueTab === 2) {
-            dispatch(generaArchivoXLSCuadrantesFacturadosAccion(monthLet));
+            if (tipo === 'empresas') {
+                dispatch(generaArchivoXLSCuadrantesFacturadosEmpresasAccion(monthLet));
+            };
+            if (tipo === 'pisos') {
+                dispatch(generaArchivoXLSCuadrantesFacturadosPisosAccion(monthLet));
+            };
         };
     };
 
@@ -240,14 +250,36 @@ const PantallaCuadrantes = () => {
                                                 (numeroCuadrantesFacturados ? numeroCuadrantesFacturados : 0)
                                     }</Typography>
                                 </Avatar>
-                                <Tooltip title={valueTab === 0 ? 'Crear Excel listado Cuadrantes PENDIENTES ' + monthLet : valueTab === 1 ? 'Crear Excel listado Cuadrantes REGISTRADOS ' + monthLet : 'Crear Excel listado Cuadrantes FACTURADOS ' + monthLet} placement="top-start" arrow >
-                                    <Box
-                                        style={{ marginRight: 6, marginLeft: 6, cursor: 'pointer' }}
-                                        onClick={handleGenerarXLSCuadrantes}
-                                    >
-                                        <DescriptionIcon style={{ color: 'white', marginTop: 5 }} />
-                                    </Box>
-                                </Tooltip>
+                                {(valueTab === 0 || valueTab === 1) && (
+                                    <Tooltip title={valueTab === 0 ? 'Crear Excel listado Cuadrantes PENDIENTES ' + monthLet : 'Crear Excel listado Cuadrantes REGISTRADOS ' + monthLet} placement="top-start" arrow >
+                                        <Box
+                                            style={{ marginRight: 6, marginLeft: 6, cursor: 'pointer' }}
+                                            onClick={() => handleGenerarXLSCuadrantes('no')}
+                                        >
+                                            <DescriptionIcon style={{ color: 'white', marginTop: 5 }} />
+                                        </Box>
+                                    </Tooltip>
+                                )}
+                                {valueTab === 2 && (
+                                    <Fragment>
+                                        <Tooltip title={'Crear Excel listado Cuadrantes FACTURADOS EMPRESAS ' + monthLet} placement="top-start" arrow >
+                                            <Box
+                                                style={{ marginRight: 8, marginLeft: 3, cursor: 'pointer' }}
+                                                onClick={() => handleGenerarXLSCuadrantes('empresas')}
+                                            >
+                                                <img style={{ marginTop: 5 }} src={iconEmpresas} alt="iconEmpresas" />
+                                            </Box>
+                                        </Tooltip>
+                                        <Tooltip title={'Crear Excel listado Cuadrantes FACTURADOS PISOS ' + monthLet} placement="top-start" arrow >
+                                            <Box
+                                                style={{ marginRight: 0, marginLeft: 6, cursor: 'pointer' }}
+                                                onClick={() => handleGenerarXLSCuadrantes('pisos')}
+                                            >
+                                                <img style={{ marginTop: 5 }} src={iconPisos} alt="iconPisos" />
+                                            </Box>
+                                        </Tooltip>
+                                    </Fragment>
+                                )}
                             </Box>
                         </AppBar>
                         <TabPanel value={valueTab} index={0}>

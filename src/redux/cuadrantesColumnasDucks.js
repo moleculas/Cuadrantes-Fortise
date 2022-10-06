@@ -2399,7 +2399,7 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             totalFacturado_F: (sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) ? ((sumatorioTotalHorasNormalTra_F + sumatorioTotalHorasNormalSup_F) * objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F) : null,
                             mensualPactado: totalMensualPactado,
                         };
-                    }else {
+                    } else {
                         totalMensualPactado = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado;
                         objetoDatosInforme = {
                             ...objetoDatosInforme,
@@ -2451,7 +2451,7 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
             };
             const objetoDatosCuadrante = {
                 ...itemEditandoConfiguracion,
-                 mensualPactado : totalMensualPactado
+                mensualPactado: totalMensualPactado
             };
             dispatch(setItemEditandoConfiguracionAccion(objetoDatosCuadrante));
         };
@@ -2485,11 +2485,11 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
         ...objetoCuadrante.datosInforme,
         datosInforme: elArrayDatosInforme
     };
-    dispatch(setEstamosActualizandoCuadranteSinCargaAccion(true));   
+    dispatch(setEstamosActualizandoCuadranteSinCargaAccion(true));
     dispatch(actualizarObjetoCuadranteAccion({
         ...objetoCuadrante,
         datosInforme: losDatosInforme
-    }));    
+    }));
 };
 
 function calculoDiasTotalesPorMes(month, year) {
@@ -3154,6 +3154,9 @@ const gestionaColumnaCuadranteInteriorAccion = (
                 const elMesInicio = registroInicioSplitted[0] + '-' + registroInicioSplitted[1];
                 const registroFinSplitted = registro.baja[0].fin.split("-");
                 const elMesFin = registroFinSplitted[0] + '-' + registroFinSplitted[1];
+                const fechaInicio = new Date(elMesInicio);
+                const fechaFin = new Date(elMesFin);
+                const fechaCalendario = new Date(calendarioAGestionar);
                 if (((elMesFin === calendarioAGestionar) && (elMesInicio !== calendarioAGestionar)) ||
                     ((elMesFin !== calendarioAGestionar) && (elMesInicio === calendarioAGestionar)) ||
                     ((elMesFin === calendarioAGestionar) && (elMesInicio === calendarioAGestionar))) {
@@ -3176,12 +3179,12 @@ const gestionaColumnaCuadranteInteriorAccion = (
                     };
                 };
                 if ((elMesFin !== calendarioAGestionar) && (elMesInicio !== calendarioAGestionar)) {
-                    if ((elMesFin > calendarioAGestionar) && (elMesInicio < calendarioAGestionar)) {
+                    if ((fechaFin > fechaCalendario) && (fechaInicio < fechaCalendario)) {
                         arrayRegistrosHistorico.push(registro);
                         columnaAnadir['hayBaja'] = true;
                     };
-                    if (((elMesFin > calendarioAGestionar) && (elMesInicio > calendarioAGestionar)) ||
-                        ((elMesFin < calendarioAGestionar) && (elMesInicio < calendarioAGestionar))) {
+                    if (((fechaFin > fechaCalendario) && (fechaInicio > fechaCalendario)) ||
+                        ((fechaFin < fechaCalendario) && (fechaInicio < fechaCalendario))) {
                         if (hayBajaEnElMes) {
                             columnaAnadir['hayBaja'] = true;
                         } else {

@@ -7,20 +7,6 @@ Font.register({
     src: 'https://fonts.gstatic.com/s/oswald/v13/Y_TKV6o8WovbUd3m_X9aAA.ttf'
 });
 
-function padTo2Digits(num) {
-    return num.toString().padStart(2, '0');
-};
-
-function formatDate(date) {
-    return [
-        padTo2Digits(date.getDate()),
-        padTo2Digits(date.getMonth() + 1),
-        date.getFullYear(),
-    ].join('/');
-};
-
-const fecha = formatDate(new Date());
-
 const styles = StyleSheet.create({
     body: {
         paddingTop: 35,
@@ -125,8 +111,14 @@ const styles = StyleSheet.create({
     },
 });
 
-const ReciboPDF = ({ objetoReciboPDF }) => {
-   
+const ReciboPDF = ({ objetoReciboPDF, mes }) => {
+    const ahora = new Date();
+    const ultimoDia = new Date(ahora.getFullYear(), mes, 0);
+    const month = mes;
+    const day = ultimoDia.getDate();
+    const year = ultimoDia.getFullYear();
+    const fechaHoy = day + "/" + month + "/" + year;
+
     return (
         <Document>
             <Page style={styles.body}>
@@ -139,11 +131,11 @@ const ReciboPDF = ({ objetoReciboPDF }) => {
                     <View style={[styles.gran, styles.ancho40, styles.flexCol]}>
                         <View style={[styles.peq, styles.flexRow]}>
                             <Text style={[styles.ancho50, styles.fondoAzul1, styles.textoGran]}>Nº recibo</Text>
-                            <Text style={[styles.ancho50, styles.fondoBlanco, styles.textoGran]}>{objetoReciboPDF.numeroRecibos}</Text>
+                            <Text style={[styles.ancho50, styles.fondoBlanco, styles.textoGran]}>{objetoReciboPDF.numeroRecibos ? (objetoReciboPDF.numeroRecibos) : "-"}</Text>
                         </View>
                         <View style={[styles.peq, styles.flexRow]}>
                             <Text style={[styles.ancho50, styles.fondoAzul1, styles.textoGran]}>Fecha Emisión</Text>
-                            <Text style={[styles.ancho50, styles.fondoBlanco, styles.textoGran, styles.bordeBotAz1]}>{fecha}</Text>
+                            <Text style={[styles.ancho50, styles.fondoBlanco, styles.textoGran, styles.bordeBotAz1]}>{fechaHoy}</Text>
                         </View>
                     </View>
                     <View style={[styles.ancho100, styles.fondoBlanco, styles.gran]}>

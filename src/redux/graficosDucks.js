@@ -92,17 +92,17 @@ export const obtenerCuadrantesPorAnyoAccion = (objeto) => (dispatch, getState) =
                     mes.forEach((mesInt, index) => {
                         elEstado = mesInt.estado;
                         elObjetoTotal = parse(mesInt.total);
-                        if (elObjetoTotal.tocaFacturar.valor === 'si' && elEstado === 'facturado') {
+                        if (elObjetoTotal.tocaFacturar.valor === 'si' && elEstado === 'facturado' && elObjetoTotal.procesado.valor === 'si') {
                             sumatorioA += elObjetoTotal.total;
                         };
-                        if (elObjetoTotal.tocaFacturar.valor === 'no' && elEstado === 'facturado') {
+                        if (elObjetoTotal.tocaFacturar.valor === 'no' && elEstado === 'facturado' && elObjetoTotal.procesado.valor === 'si') {
                             sumatorioB += elObjetoTotal.total;
                         };
                     });
                     array.push({
                         name: meses[index].substr(0, 3) + '.',
                         Empresas: parseFloat(sumatorioA).toFixed(2),
-                        Pisos: parseFloat(sumatorioB).toFixed(2)                      
+                        Pisos: parseFloat(sumatorioB).toFixed(2)
                     });
                     sumatorioA = 0;
                     sumatorioB = 0;

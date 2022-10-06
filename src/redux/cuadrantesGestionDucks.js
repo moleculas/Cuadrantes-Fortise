@@ -2683,7 +2683,9 @@ const finalizaRegistroCuadrante = (
             }
         };
         if (!objetoCuadrante.datosInforme.datosGestionEsp) {
-            dispatch(actualizarNumeroRecibosAccion('configuracion', parseInt(numeroRecibos) + 1));
+            if (numeroRecibos) {
+                dispatch(actualizarNumeroRecibosAccion('configuracion', parseInt(numeroRecibos) + 1));
+            };
         };
     };
     const losDatosInformeLimpiado = {
@@ -2824,7 +2826,9 @@ export const handleGenerarArchivosAccion = () => (dispatch, getState) => {
         }));
         return;
     };
-    dispatch(generarArchivosXLSAccion(numeroFactusol, objetoCuadrante.total));
+    const myMesSplit = objetoCuadrante.nombre.split("-");
+    const mes = myMesSplit[1];
+    dispatch(generarArchivosXLSAccion(numeroFactusol, objetoCuadrante.total, mes));
     dispatch(gestionarDocumentosCuadranteAccion('factura'));
     dispatch(handleCloseMenuAccion());
 };
