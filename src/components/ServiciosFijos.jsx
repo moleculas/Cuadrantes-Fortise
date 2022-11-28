@@ -51,6 +51,7 @@ const ServiciosFijos = (props) => {
             FT: props.prItemEditandoServiciosFijos.switch.FT || false,
             C3: props.prItemEditandoServiciosFijos.switch.C3 || false,
             C2: props.prItemEditandoServiciosFijos.switch.C2 || false,
+            C4: props.prItemEditandoServiciosFijos.switch.C4 || false,
             ES: props.prItemEditandoServiciosFijos.switch.ES || false,
             PA: props.prItemEditandoServiciosFijos.switch.PA || false
         },
@@ -73,6 +74,7 @@ const ServiciosFijos = (props) => {
             precioHora_FT: props.prItemEditandoServiciosFijos.servicios.precioHora_FT || '',
             precioHora_C3: props.prItemEditandoServiciosFijos.servicios.precioHora_C3 || '',
             precioHora_C2: props.prItemEditandoServiciosFijos.servicios.precioHora_C2 || '',
+            precioHora_C4: props.prItemEditandoServiciosFijos.servicios.precioHora_C4 || '',
             precioHora_ES: props.prItemEditandoServiciosFijos.servicios.precioHora_ES || '',
             precioHora_PA: props.prItemEditandoServiciosFijos.servicios.precioHora_PA || '',
             variacion_TO: props.prItemEditandoServiciosFijos.servicios.variacion_TO || '',
@@ -93,6 +95,7 @@ const ServiciosFijos = (props) => {
             variacion_FT: props.prItemEditandoServiciosFijos.servicios.variacion_FT || '',
             variacion_C3: props.prItemEditandoServiciosFijos.servicios.variacion_C3 || '',
             variacion_C2: props.prItemEditandoServiciosFijos.servicios.variacion_C2 || '',
+            variacion_C4: props.prItemEditandoServiciosFijos.servicios.variacion_C4 || '',
             variacion_ES: props.prItemEditandoServiciosFijos.servicios.variacion_ES || '',
             variacion_PA: props.prItemEditandoServiciosFijos.servicios.variacion_PA || '',
             diaVariacion_TO: props.prItemEditandoServiciosFijos.servicios.diaVariacion_TO || '',
@@ -113,6 +116,7 @@ const ServiciosFijos = (props) => {
             diaVariacion_FT: props.prItemEditandoServiciosFijos.servicios.diaVariacion_FT || '',
             diaVariacion_C3: props.prItemEditandoServiciosFijos.servicios.diaVariacion_C3 || '',
             diaVariacion_C2: props.prItemEditandoServiciosFijos.servicios.diaVariacion_C2 || '',
+            diaVariacion_C4: props.prItemEditandoServiciosFijos.servicios.diaVariacion_C4 || '',
             diaVariacion_ES: props.prItemEditandoServiciosFijos.servicios.diaVariacion_ES || '',
             diaVariacion_PA: props.prItemEditandoServiciosFijos.servicios.diaVariacion_PA || '',
             activo_TO: props.prItemEditandoServiciosFijos.servicios.activo_TO || '',
@@ -133,6 +137,7 @@ const ServiciosFijos = (props) => {
             activo_FT: props.prItemEditandoServiciosFijos.servicios.activo_FT || '',
             activo_C3: props.prItemEditandoServiciosFijos.servicios.activo_C3 || '',
             activo_C2: props.prItemEditandoServiciosFijos.servicios.activo_C2 || '',
+            activo_C4: props.prItemEditandoServiciosFijos.servicios.activo_C4 || '',
             activo_ES: props.prItemEditandoServiciosFijos.servicios.activo_ES || '',
             activo_PA: props.prItemEditandoServiciosFijos.servicios.activo_PA || '',
             int_TO: props.prItemEditandoServiciosFijos.servicios.int_TO || false,
@@ -153,6 +158,7 @@ const ServiciosFijos = (props) => {
             int_FT: props.prItemEditandoServiciosFijos.servicios.int_FT || false,
             int_C3: props.prItemEditandoServiciosFijos.servicios.int_C3 || false,
             int_C2: props.prItemEditandoServiciosFijos.servicios.int_C2 || false,
+            int_C4: props.prItemEditandoServiciosFijos.servicios.int_C4 || false,
             int_ES: props.prItemEditandoServiciosFijos.servicios.int_ES || false,
             int_PA: props.prItemEditandoServiciosFijos.servicios.int_PA || false,
             trab_TO: props.prItemEditandoServiciosFijos.servicios.trab_TO || '',
@@ -173,6 +179,7 @@ const ServiciosFijos = (props) => {
             trab_FT: props.prItemEditandoServiciosFijos.servicios.trab_FT || '',
             trab_C3: props.prItemEditandoServiciosFijos.servicios.trab_C3 || '',
             trab_C2: props.prItemEditandoServiciosFijos.servicios.trab_C2 || '',
+            trab_C4: props.prItemEditandoServiciosFijos.servicios.trab_C4 || '',
             trab_ES: props.prItemEditandoServiciosFijos.servicios.trab_ES || '',
             trab_PA: props.prItemEditandoServiciosFijos.servicios.trab_PA || ''
         },
@@ -578,6 +585,27 @@ const ServiciosFijos = (props) => {
                         classes.fondoInactivoServicioFijo : classes.paper;
                 desactivadoDia = props.prItemEditandoServiciosFijos.servicios.variacion_C2 === 3 ? true : false;
                 break;
+            case 'CRCUA':
+                checkeado = props.prItemEditandoServiciosFijos.switch.C4;
+                laLabelSw = 'LIMPIEZA DE CRISTALES CUATRIMESTRAL';
+                elId = 'form-precio-hora_C4-cuadrantes';
+                elValue = props.prItemEditandoServiciosFijos.servicios.precioHora_C4 || '';
+                elValueVariaciones = props.prItemEditandoServiciosFijos.servicios.variacion_C4 || '';
+                elValueDia = props.prItemEditandoServiciosFijos.servicios.diaVariacion_C4 || '';
+                elValueActivo = props.prItemEditandoServiciosFijos.servicios.activo_C4 || '';
+                elValueInt = props.prItemEditandoServiciosFijos.servicios.int_C4 || false;
+                elValueTrab = props.prItemEditandoServiciosFijos.servicios.trab_C4 || '';
+                elPrecioHora = 'precioHora_C4';
+                laVariacion = 'variacion_C4';
+                elDia = 'diaVariacion_C4';
+                elActivo = 'activo_C4';
+                elInt = 'int_C4';
+                elTrab = 'trab_C4';
+                laClase =
+                    (props.prItemEditandoServiciosFijos.servicios.activo_C4 === 'no') ?
+                        classes.fondoInactivoServicioFijo : classes.paper;
+                desactivadoDia = props.prItemEditandoServiciosFijos.servicios.variacion_C4 === 3 ? true : false;
+                break;
             case 'LIME':
                 checkeado = props.prItemEditandoServiciosFijos.switch.ES;
                 laLabelSw = 'SERVICIO DE LIMPIEZA ESPECIAL';
@@ -726,7 +754,7 @@ const ServiciosFijos = (props) => {
                             <FormControl
                                 variant="outlined"
                                 className={!checkeado ? clsx(classes.displayNone, classes.form) : clsx(classes.displayBlock, classes.form)}
-                                size="small"                               
+                                size="small"
                             >
                                 <InputLabel>Trabajador</InputLabel>
                                 <Select
@@ -750,7 +778,7 @@ const ServiciosFijos = (props) => {
                                 </Select>
                             </FormControl>
                         </Grid>
-                    </Grid>                   
+                    </Grid>
                 </Grid>
             </Grid>
         )
@@ -760,7 +788,7 @@ const ServiciosFijos = (props) => {
         <div>
             {tiposDeServicio.map((tipo, index) => (
                 retornaTipoServicioFijoCuadrantes(tipo, index)
-            ))}            
+            ))}
         </div>
     )
 }

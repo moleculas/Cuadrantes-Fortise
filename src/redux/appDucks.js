@@ -201,8 +201,14 @@ export const retornaAnoMesAccion = (fecha) => {
 
 export const gestionaMaxDateCalendarAccion = (numeroDias) => (dispatch, getState) => {
     let data = new Date();
-    const mes = data.getMonth() + 1 + numeroDias;
-    const any = data.getFullYear();
+    let mesActual = data.getMonth() + 1;
+    let mes = mesActual + numeroDias;
+    let any = data.getFullYear();
+    if (mes > 12) {
+        let diferencia = (12 - mesActual);
+        mes = (numeroDias - diferencia);       
+        any += 1;
+    };   
     const laData = any + '-' + mes;
     return laData;
 };
@@ -795,6 +801,9 @@ export const retornaTextoConceptoServicioAccion = (objetoTotales, servicio, hora
         if (servicio === 'C2T') {
             arrayConceptos.push('CRBIM', 'LIMPIEZA DE CRISTALES BIMENSUAL');
         };
+        if (servicio === 'C4T') {
+            arrayConceptos.push('CRCUA', 'LIMPIEZA DE CRISTALES CUATRIMESTRAL');
+        };
         if (servicio === 'EST') {
             arrayConceptos.push('LIME', 'SERVICIO DE LIMPIEZA ESPECIAL');
         };
@@ -908,6 +917,9 @@ export const retornaTextoConceptoServicioAccion = (objetoTotales, servicio, hora
         };
         if (objetoTotales['C2T']) {
             arrayConceptos.push('LIMPIEZA DE CRISTALES BIMENSUAL');
+        };
+        if (objetoTotales['C4T']) {
+            arrayConceptos.push('LIMPIEZA DE CRISTALES CUATRIMESTRAL');
         };
         if (objetoTotales['EST']) {
             arrayConceptos.push('SERVICIO DE LIMPIEZA ESPECIAL');
@@ -1061,6 +1073,10 @@ const retornaArrayElementosAccion = (objetoConceptos) => (dispatch, getState) =>
     if (objetoConceptos.C2T) {
         retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'C2T', null));
         arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.C2T, objetoConceptos.C2T, objetoConceptos.C2H]);
+    };
+    if (objetoConceptos.C4T) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'C4T', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.C4T, objetoConceptos.C4T, objetoConceptos.C4H]);
     };
     if (objetoConceptos.EST) {
         retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'EST', null));
@@ -1651,7 +1667,7 @@ export const generaArchivoXLSCuadrantesFacturadosPisosAccion = (mes) => (dispatc
             objeto['razon'] = cuadrante.total.tocaFacturar.razon;
             objeto['procesado'] = cuadrante.total.procesado.valor;
             if (cuadrante.total.procesado.valor === "si") {
-               if (cuadrante.total.procesado.numR) {
+                if (cuadrante.total.procesado.numR) {
                     objeto['numero'] = "Número recibo: " + cuadrante.total.procesado.numR;
                 } else {
                     objeto['numero'] = "";

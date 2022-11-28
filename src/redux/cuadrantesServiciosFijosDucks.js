@@ -23,6 +23,7 @@ const dataInicial = {
         FT: false,
         C3: false,
         C2: false,
+        C4: false,
         ES: false,
         PA: false,
     },
@@ -47,6 +48,7 @@ const dataInicial = {
             FT: false,
             C3: false,
             C2: false,
+            C4: false,
             ES: false,
             PA: false
         },
@@ -69,6 +71,7 @@ const dataInicial = {
             precioHora_FT: '',
             precioHora_C3: '',
             precioHora_C2: '',
+            precioHora_C4: '',
             precioHora_ES: '',
             precioHora_PA: '',
             variacion_TO: '',
@@ -89,6 +92,7 @@ const dataInicial = {
             variacion_FT: '',
             variacion_C3: '',
             variacion_C2: '',
+            variacion_C4: '',
             variacion_ES: '',
             variacion_PA: '',
             diaVariacion_TO: '',
@@ -109,6 +113,7 @@ const dataInicial = {
             diaVariacion_FT: '',
             diaVariacion_C3: '',
             diaVariacion_C2: '',
+            diaVariacion_C4: '',
             diaVariacion_ES: '',
             diaVariacion_PA: '',
             activo_TO: 'si',
@@ -129,6 +134,7 @@ const dataInicial = {
             activo_FT: 'si',
             activo_C3: 'si',
             activo_C2: 'si',
+            activo_C4: 'si',
             activo_ES: 'si',
             activo_PA: 'si',
             int_TO: false,
@@ -149,6 +155,7 @@ const dataInicial = {
             int_FT: false,
             int_C3: false,
             int_C2: false,
+            int_C4: false,
             int_ES: false,
             int_PA: false,
             trab_TO: '',
@@ -169,6 +176,7 @@ const dataInicial = {
             trab_FT: '',
             trab_C3: '',
             trab_C2: '',
+            trab_C4: '',
             trab_ES: '',
             trab_PA: ''
         },
@@ -961,6 +969,42 @@ export const gestionaColumnaServiciosFijosInicioAccion = (servicios, activacionS
                                 objetoResultante['int_C2'] = servicio.int_C2;
                                 objetoResultante['trab_C2'] = servicio.trab_C2;
                             };
+                            if (servicio.precioHora_C4 || servicio.int_C4) {
+                                if (!stateFestivo['estadoFestivoDia' + (index + 1)]) {
+                                    if (servicio.activo_C4 === 'si') {
+                                        objetoResultante[dia[1][0] + dia[0][0]] = servicio.precioHora_C4;
+                                        if (tipoVariacion === 'una') {
+                                            if ((totalServiciosActivos + objetoResultante['totalServiciosActivosInicial']) > objetoResultante['totalServiciosActivosInicial']) {
+                                                if (losDiasDelMes.length === dia[0][0] && totalServiciosActivos === objetoResultante['totalServiciosActivosInicial']) {
+                                                    totalServicioFijo = servicio.precioHora_C4;
+                                                    sumatorioDiasActivos = servicio.precioHora_C4;
+                                                } else {
+                                                    totalServicioFijo += servicio.precioHora_C4;
+                                                    sumatorioDiasActivos += servicio.precioHora_C4;
+                                                };
+                                            } else {
+                                                totalServicioFijo = servicio.precioHora_C4;
+                                                sumatorioDiasActivos = servicio.precioHora_C4;
+                                            };
+                                        } else {
+                                            if ((totalServiciosActivos + totalServiciosRestados + objetoResultante['totalServiciosActivosInicial']) >= objetoResultante['totalServiciosActivosInicial']) {
+                                                totalServicioFijo += servicio.precioHora_C4;
+                                                sumatorioDiasActivos += servicio.precioHora_C4;
+                                            } else {
+                                                totalServicioFijo = servicio.precioHora_C4;
+                                                sumatorioDiasActivos = servicio.precioHora_C4;
+                                            };
+                                        };
+                                        objetoResultante['estados']['estadoCasillaDia' + (index + 1)] = true;
+                                    };
+                                };
+                                objetoResultante['precioHora_C4'] = servicio.precioHora_C4;
+                                objetoResultante['diaVariacion_C4'] = servicio.diaVariacion_C4;
+                                objetoResultante['variacion_C4'] = servicio.variacion_C4;
+                                objetoResultante['activo_C4'] = servicio.activo_C4;
+                                objetoResultante['int_C4'] = servicio.int_C4;
+                                objetoResultante['trab_C4'] = servicio.trab_C4;
+                            };
                             if (servicio.precioHora_ES || servicio.int_ES) {
                                 if (!stateFestivo['estadoFestivoDia' + (index + 1)]) {
                                     if (servicio.activo_ES === 'si') {
@@ -1360,6 +1404,24 @@ export const gestionaColumnaServiciosFijosInicioAccion = (servicios, activacionS
                                     objetoResultante['int_C2'] = servicio.int_C2;
                                     objetoResultante['trab_C2'] = servicio.trab_C2;
                                 };
+                                if (servicio.precioHora_C4 && servicio.diaVariacion_C4 === 'lunes') {
+                                    if (!stateFestivo['estadoFestivoDia' + (index + 1)]) {
+                                        if (servicio.activo_C4 === 'si') {
+                                            if (servicio[dia[1][0] + dia[0][0]] !== "anulado") {
+                                                objetoResultante[dia[1][0] + dia[0][0]] = servicio.precioHora_C4;
+                                                totalServicioFijo += servicio.precioHora_C4;
+                                                objetoResultante['estados']['estadoCasillaDia' + (index + 1)] = true;
+                                                totalServiciosActivosInicial += 1;
+                                            };
+                                        };
+                                    };
+                                    objetoResultante['precioHora_C4'] = servicio.precioHora_C4;
+                                    objetoResultante['diaVariacion_C4'] = servicio.diaVariacion_C4;
+                                    objetoResultante['variacion_C4'] = servicio.variacion_C4;
+                                    objetoResultante['activo_C4'] = servicio.activo_C4;
+                                    objetoResultante['int_C4'] = servicio.int_C4;
+                                    objetoResultante['trab_C4'] = servicio.trab_C4;
+                                };
                                 if (servicio.precioHora_ES && servicio.diaVariacion_ES === 'lunes') {
                                     if (!stateFestivo['estadoFestivoDia' + (index + 1)]) {
                                         if (servicio.activo_ES === 'si') {
@@ -1631,6 +1693,19 @@ export const gestionaColumnaServiciosFijosInicioAccion = (servicios, activacionS
                                     objetoResultante['activo_C2'] = servicio.activo_C2;
                                     objetoResultante['int_C2'] = servicio.int_C2;
                                     objetoResultante['trab_C2'] = servicio.trab_C2;
+                                };
+                                if (servicio.precioHora_C4 || servicio.int_C4) {
+                                    if (servicio.activo_C4 === 'si') {
+                                        sumatorioDiasActivos > 0 ? totalServicioFijo = sumatorioDiasActivos : totalServicioFijo = servicio.precioHora_C4
+                                        objetoResultante['estados']['estadoCasillaDia' + (index + 1)] = false;
+                                        totalServiciosActivosInicial = 1;
+                                    };
+                                    objetoResultante['precioHora_C4'] = servicio.precioHora_C4;
+                                    objetoResultante['diaVariacion_C4'] = servicio.diaVariacion_C4;
+                                    objetoResultante['variacion_C4'] = servicio.variacion_C4;
+                                    objetoResultante['activo_C4'] = servicio.activo_C4;
+                                    objetoResultante['int_C4'] = servicio.int_C4;
+                                    objetoResultante['trab_C4'] = servicio.trab_C4;
                                 };
                                 if (servicio.precioHora_ES || servicio.int_ES) {
                                     if (servicio.activo_ES === 'si') {
@@ -2311,6 +2386,42 @@ export const gestionaColumnaServiciosFijosInicioAccion = (servicios, activacionS
                                 objetoResultante['int_C2'] = servicio.int_C2;
                                 objetoResultante['trab_C2'] = servicio.trab_C2;
                             };
+                            if (servicio.precioHora_C4 || servicio.int_C4) {
+                                if (!stateFestivo['estadoFestivoDia' + (index + 1)]) {
+                                    if (servicio.activo_C4 === 'si') {
+                                        objetoResultante[dia[1][0] + dia[0][0]] = servicio.precioHora_C4;
+                                        if (tipoVariacion === 'una') {
+                                            if ((totalServiciosActivos + objetoResultante['totalServiciosActivosInicial']) > objetoResultante['totalServiciosActivosInicial']) {
+                                                if (losDiasDelMes.length === dia[0][0] && totalServiciosActivos === objetoResultante['totalServiciosActivosInicial']) {
+                                                    totalServicioFijo = servicio.precioHora_C4;
+                                                    sumatorioDiasActivos = servicio.precioHora_C4;
+                                                } else {
+                                                    totalServicioFijo += servicio.precioHora_C4;
+                                                    sumatorioDiasActivos += servicio.precioHora_C4;
+                                                };
+                                            } else {
+                                                totalServicioFijo = servicio.precioHora_C4;
+                                                sumatorioDiasActivos = servicio.precioHora_C4;
+                                            };
+                                        } else {
+                                            if ((totalServiciosActivos + totalServiciosRestados + objetoResultante['totalServiciosActivosInicial']) >= objetoResultante['totalServiciosActivosInicial']) {
+                                                totalServicioFijo += servicio.precioHora_C4;
+                                                sumatorioDiasActivos += servicio.precioHora_C4;
+                                            } else {
+                                                totalServicioFijo = servicio.precioHora_C4;
+                                                sumatorioDiasActivos = servicio.precioHora_C4;
+                                            };
+                                        };
+                                        objetoResultante['estados']['estadoCasillaDia' + (index + 1)] = true;
+                                    };
+                                };
+                                objetoResultante['precioHora_C4'] = servicio.precioHora_C4;
+                                objetoResultante['diaVariacion_C4'] = servicio.diaVariacion_C4;
+                                objetoResultante['variacion_C4'] = servicio.variacion_C4;
+                                objetoResultante['activo_C4'] = servicio.activo_C4;
+                                objetoResultante['int_C4'] = servicio.int_C4;
+                                objetoResultante['trab_C4'] = servicio.trab_C4;
+                            };
                             if (servicio.precioHora_ES || servicio.int_ES) {
                                 if (!stateFestivo['estadoFestivoDia' + (index + 1)]) {
                                     if (servicio.activo_ES === 'si') {
@@ -2710,6 +2821,24 @@ export const gestionaColumnaServiciosFijosInicioAccion = (servicios, activacionS
                                     objetoResultante['int_C2'] = servicio.int_C2;
                                     objetoResultante['trab_C2'] = servicio.trab_C2;
                                 };
+                                if (servicio.precioHora_C4 && servicio.diaVariacion_C4 === 'martes') {
+                                    if (!stateFestivo['estadoFestivoDia' + (index + 1)]) {
+                                        if (servicio.activo_C4 === 'si') {
+                                            if (servicio[dia[1][0] + dia[0][0]] !== "anulado") {
+                                                objetoResultante[dia[1][0] + dia[0][0]] = servicio.precioHora_C4;
+                                                totalServicioFijo += servicio.precioHora_C4;
+                                                objetoResultante['estados']['estadoCasillaDia' + (index + 1)] = true;
+                                                totalServiciosActivosInicial += 1;
+                                            };
+                                        };
+                                    };
+                                    objetoResultante['precioHora_C4'] = servicio.precioHora_C4;
+                                    objetoResultante['diaVariacion_C4'] = servicio.diaVariacion_C4;
+                                    objetoResultante['variacion_C4'] = servicio.variacion_C4;
+                                    objetoResultante['activo_C4'] = servicio.activo_C4;
+                                    objetoResultante['int_C4'] = servicio.int_C4;
+                                    objetoResultante['trab_C4'] = servicio.trab_C4;
+                                };
                                 if (servicio.precioHora_ES && servicio.diaVariacion_ES === 'martes') {
                                     if (!stateFestivo['estadoFestivoDia' + (index + 1)]) {
                                         if (servicio.activo_ES === 'si') {
@@ -2981,6 +3110,19 @@ export const gestionaColumnaServiciosFijosInicioAccion = (servicios, activacionS
                                     objetoResultante['activo_C2'] = servicio.activo_C2;
                                     objetoResultante['int_C2'] = servicio.int_C2;
                                     objetoResultante['trab_C2'] = servicio.trab_C2;
+                                };
+                                if (servicio.precioHora_C4 || servicio.int_C4) {
+                                    if (servicio.activo_C4 === 'si') {
+                                        sumatorioDiasActivos > 0 ? totalServicioFijo = sumatorioDiasActivos : totalServicioFijo = servicio.precioHora_C4
+                                        objetoResultante['estados']['estadoCasillaDia' + (index + 1)] = false;
+                                        totalServiciosActivosInicial = 1;
+                                    };
+                                    objetoResultante['precioHora_C4'] = servicio.precioHora_C4;
+                                    objetoResultante['diaVariacion_C4'] = servicio.diaVariacion_C4;
+                                    objetoResultante['variacion_C4'] = servicio.variacion_C4;
+                                    objetoResultante['activo_C4'] = servicio.activo_C4;
+                                    objetoResultante['int_C4'] = servicio.int_C4;
+                                    objetoResultante['trab_C4'] = servicio.trab_C4;
                                 };
                                 if (servicio.precioHora_ES || servicio.int_ES) {
                                     if (servicio.activo_ES === 'si') {
@@ -3661,6 +3803,42 @@ export const gestionaColumnaServiciosFijosInicioAccion = (servicios, activacionS
                                 objetoResultante['int_C2'] = servicio.int_C2;
                                 objetoResultante['trab_C2'] = servicio.trab_C2;
                             };
+                            if (servicio.precioHora_C4 || servicio.int_C4) {
+                                if (!stateFestivo['estadoFestivoDia' + (index + 1)]) {
+                                    if (servicio.activo_C4 === 'si') {
+                                        objetoResultante[dia[1][0] + dia[0][0]] = servicio.precioHora_C4;
+                                        if (tipoVariacion === 'una') {
+                                            if ((totalServiciosActivos + objetoResultante['totalServiciosActivosInicial']) > objetoResultante['totalServiciosActivosInicial']) {
+                                                if (losDiasDelMes.length === dia[0][0] && totalServiciosActivos === objetoResultante['totalServiciosActivosInicial']) {
+                                                    totalServicioFijo = servicio.precioHora_C4;
+                                                    sumatorioDiasActivos = servicio.precioHora_C4;
+                                                } else {
+                                                    totalServicioFijo += servicio.precioHora_C4;
+                                                    sumatorioDiasActivos += servicio.precioHora_C4;
+                                                };
+                                            } else {
+                                                totalServicioFijo = servicio.precioHora_C4;
+                                                sumatorioDiasActivos = servicio.precioHora_C4;
+                                            };
+                                        } else {
+                                            if ((totalServiciosActivos + totalServiciosRestados + objetoResultante['totalServiciosActivosInicial']) >= objetoResultante['totalServiciosActivosInicial']) {
+                                                totalServicioFijo += servicio.precioHora_C4;
+                                                sumatorioDiasActivos += servicio.precioHora_C4;
+                                            } else {
+                                                totalServicioFijo = servicio.precioHora_C4;
+                                                sumatorioDiasActivos = servicio.precioHora_C4;
+                                            };
+                                        };
+                                        objetoResultante['estados']['estadoCasillaDia' + (index + 1)] = true;
+                                    };
+                                };
+                                objetoResultante['precioHora_C4'] = servicio.precioHora_C4;
+                                objetoResultante['diaVariacion_C4'] = servicio.diaVariacion_C4;
+                                objetoResultante['variacion_C4'] = servicio.variacion_C4;
+                                objetoResultante['activo_C4'] = servicio.activo_C4;
+                                objetoResultante['int_C4'] = servicio.int_C4;
+                                objetoResultante['trab_C4'] = servicio.trab_C4;
+                            };
                             if (servicio.precioHora_ES || servicio.int_ES) {
                                 if (!stateFestivo['estadoFestivoDia' + (index + 1)]) {
                                     if (servicio.activo_ES === 'si') {
@@ -4060,6 +4238,24 @@ export const gestionaColumnaServiciosFijosInicioAccion = (servicios, activacionS
                                     objetoResultante['int_C2'] = servicio.int_C2;
                                     objetoResultante['trab_C2'] = servicio.trab_C2;
                                 };
+                                if (servicio.precioHora_C4 && servicio.diaVariacion_C4 === 'miercoles') {
+                                    if (!stateFestivo['estadoFestivoDia' + (index + 1)]) {
+                                        if (servicio.activo_C4 === 'si') {
+                                            if (servicio[dia[1][0] + dia[0][0]] !== "anulado") {
+                                                objetoResultante[dia[1][0] + dia[0][0]] = servicio.precioHora_C4;
+                                                totalServicioFijo += servicio.precioHora_C4;
+                                                objetoResultante['estados']['estadoCasillaDia' + (index + 1)] = true;
+                                                totalServiciosActivosInicial += 1;
+                                            };
+                                        };
+                                    };
+                                    objetoResultante['precioHora_C4'] = servicio.precioHora_C4;
+                                    objetoResultante['diaVariacion_C4'] = servicio.diaVariacion_C4;
+                                    objetoResultante['variacion_C4'] = servicio.variacion_C4;
+                                    objetoResultante['activo_C4'] = servicio.activo_C4;
+                                    objetoResultante['int_C4'] = servicio.int_C4;
+                                    objetoResultante['trab_C4'] = servicio.trab_C4;
+                                };
                                 if (servicio.precioHora_ES && servicio.diaVariacion_ES === 'miercoles') {
                                     if (!stateFestivo['estadoFestivoDia' + (index + 1)]) {
                                         if (servicio.activo_ES === 'si') {
@@ -4331,6 +4527,19 @@ export const gestionaColumnaServiciosFijosInicioAccion = (servicios, activacionS
                                     objetoResultante['activo_C2'] = servicio.activo_C2;
                                     objetoResultante['int_C2'] = servicio.int_C2;
                                     objetoResultante['trab_C2'] = servicio.trab_C2;
+                                };
+                                if (servicio.precioHora_C4 || servicio.int_C4) {
+                                    if (servicio.activo_C4 === 'si') {
+                                        sumatorioDiasActivos > 0 ? totalServicioFijo = sumatorioDiasActivos : totalServicioFijo = servicio.precioHora_C4
+                                        objetoResultante['estados']['estadoCasillaDia' + (index + 1)] = false;
+                                        totalServiciosActivosInicial = 1;
+                                    };
+                                    objetoResultante['precioHora_C4'] = servicio.precioHora_C4;
+                                    objetoResultante['diaVariacion_C4'] = servicio.diaVariacion_C4;
+                                    objetoResultante['variacion_C4'] = servicio.variacion_C4;
+                                    objetoResultante['activo_C4'] = servicio.activo_C4;
+                                    objetoResultante['int_C4'] = servicio.int_C4;
+                                    objetoResultante['trab_C4'] = servicio.trab_C4;
                                 };
                                 if (servicio.precioHora_ES || servicio.int_ES) {
                                     if (servicio.activo_ES === 'si') {
@@ -5011,6 +5220,42 @@ export const gestionaColumnaServiciosFijosInicioAccion = (servicios, activacionS
                                 objetoResultante['int_C2'] = servicio.int_C2;
                                 objetoResultante['trab_C2'] = servicio.trab_C2;
                             };
+                            if (servicio.precioHora_C4 || servicio.int_C4) {
+                                if (!stateFestivo['estadoFestivoDia' + (index + 1)]) {
+                                    if (servicio.activo_C4 === 'si') {
+                                        objetoResultante[dia[1][0] + dia[0][0]] = servicio.precioHora_C4;
+                                        if (tipoVariacion === 'una') {
+                                            if ((totalServiciosActivos + objetoResultante['totalServiciosActivosInicial']) > objetoResultante['totalServiciosActivosInicial']) {
+                                                if (losDiasDelMes.length === dia[0][0] && totalServiciosActivos === objetoResultante['totalServiciosActivosInicial']) {
+                                                    totalServicioFijo = servicio.precioHora_C4;
+                                                    sumatorioDiasActivos = servicio.precioHora_C4;
+                                                } else {
+                                                    totalServicioFijo += servicio.precioHora_C4;
+                                                    sumatorioDiasActivos += servicio.precioHora_C4;
+                                                };
+                                            } else {
+                                                totalServicioFijo = servicio.precioHora_C4;
+                                                sumatorioDiasActivos = servicio.precioHora_C4;
+                                            };
+                                        } else {
+                                            if ((totalServiciosActivos + totalServiciosRestados + objetoResultante['totalServiciosActivosInicial']) >= objetoResultante['totalServiciosActivosInicial']) {
+                                                totalServicioFijo += servicio.precioHora_C4;
+                                                sumatorioDiasActivos += servicio.precioHora_C4;
+                                            } else {
+                                                totalServicioFijo = servicio.precioHora_C4;
+                                                sumatorioDiasActivos = servicio.precioHora_C4;
+                                            };
+                                        };
+                                        objetoResultante['estados']['estadoCasillaDia' + (index + 1)] = true;
+                                    };
+                                };
+                                objetoResultante['precioHora_C4'] = servicio.precioHora_C4;
+                                objetoResultante['diaVariacion_C4'] = servicio.diaVariacion_C4;
+                                objetoResultante['variacion_C4'] = servicio.variacion_C4;
+                                objetoResultante['activo_C4'] = servicio.activo_C4;
+                                objetoResultante['int_C4'] = servicio.int_C4;
+                                objetoResultante['trab_C4'] = servicio.trab_C4;
+                            };
                             if (servicio.precioHora_ES || servicio.int_ES) {
                                 if (!stateFestivo['estadoFestivoDia' + (index + 1)]) {
                                     if (servicio.activo_ES === 'si') {
@@ -5410,6 +5655,24 @@ export const gestionaColumnaServiciosFijosInicioAccion = (servicios, activacionS
                                     objetoResultante['int_C2'] = servicio.int_C2;
                                     objetoResultante['trab_C2'] = servicio.trab_C2;
                                 };
+                                if (servicio.precioHora_C4 && servicio.diaVariacion_C4 === 'jueves') {
+                                    if (!stateFestivo['estadoFestivoDia' + (index + 1)]) {
+                                        if (servicio.activo_C4 === 'si') {
+                                            if (servicio[dia[1][0] + dia[0][0]] !== "anulado") {
+                                                objetoResultante[dia[1][0] + dia[0][0]] = servicio.precioHora_C4;
+                                                totalServicioFijo += servicio.precioHora_C4;
+                                                objetoResultante['estados']['estadoCasillaDia' + (index + 1)] = true;
+                                                totalServiciosActivosInicial += 1;
+                                            };
+                                        };
+                                    };
+                                    objetoResultante['precioHora_C4'] = servicio.precioHora_C4;
+                                    objetoResultante['diaVariacion_C4'] = servicio.diaVariacion_C4;
+                                    objetoResultante['variacion_C4'] = servicio.variacion_C4;
+                                    objetoResultante['activo_C4'] = servicio.activo_C4;
+                                    objetoResultante['int_C4'] = servicio.int_C4;
+                                    objetoResultante['trab_C4'] = servicio.trab_C4;
+                                };
                                 if (servicio.precioHora_ES && servicio.diaVariacion_ES === 'jueves') {
                                     if (!stateFestivo['estadoFestivoDia' + (index + 1)]) {
                                         if (servicio.activo_ES === 'si') {
@@ -5681,6 +5944,19 @@ export const gestionaColumnaServiciosFijosInicioAccion = (servicios, activacionS
                                     objetoResultante['activo_C2'] = servicio.activo_C2;
                                     objetoResultante['int_C2'] = servicio.int_C2;
                                     objetoResultante['trab_C2'] = servicio.trab_C2;
+                                };
+                                if (servicio.precioHora_C4 || servicio.int_C4) {
+                                    if (servicio.activo_C4 === 'si') {
+                                        sumatorioDiasActivos > 0 ? totalServicioFijo = sumatorioDiasActivos : totalServicioFijo = servicio.precioHora_C4
+                                        objetoResultante['estados']['estadoCasillaDia' + (index + 1)] = false;
+                                        totalServiciosActivosInicial = 1;
+                                    };
+                                    objetoResultante['precioHora_C4'] = servicio.precioHora_C4;
+                                    objetoResultante['diaVariacion_C4'] = servicio.diaVariacion_C4;
+                                    objetoResultante['variacion_C4'] = servicio.variacion_C4;
+                                    objetoResultante['activo_C4'] = servicio.activo_C4;
+                                    objetoResultante['int_C4'] = servicio.int_C4;
+                                    objetoResultante['trab_C4'] = servicio.trab_C4;
                                 };
                                 if (servicio.precioHora_ES || servicio.int_ES) {
                                     if (servicio.activo_ES === 'si') {
@@ -6361,6 +6637,42 @@ export const gestionaColumnaServiciosFijosInicioAccion = (servicios, activacionS
                                 objetoResultante['int_C2'] = servicio.int_C2;
                                 objetoResultante['trab_C2'] = servicio.trab_C2;
                             };
+                            if (servicio.precioHora_C4 || servicio.int_C4) {
+                                if (!stateFestivo['estadoFestivoDia' + (index + 1)]) {
+                                    if (servicio.activo_C4 === 'si') {
+                                        objetoResultante[dia[1][0] + dia[0][0]] = servicio.precioHora_C4;
+                                        if (tipoVariacion === 'una') {
+                                            if ((totalServiciosActivos + objetoResultante['totalServiciosActivosInicial']) > objetoResultante['totalServiciosActivosInicial']) {
+                                                if (losDiasDelMes.length === dia[0][0] && totalServiciosActivos === objetoResultante['totalServiciosActivosInicial']) {
+                                                    totalServicioFijo = servicio.precioHora_C4;
+                                                    sumatorioDiasActivos = servicio.precioHora_C4;
+                                                } else {
+                                                    totalServicioFijo += servicio.precioHora_C4;
+                                                    sumatorioDiasActivos += servicio.precioHora_C4;
+                                                };
+                                            } else {
+                                                totalServicioFijo = servicio.precioHora_C4;
+                                                sumatorioDiasActivos = servicio.precioHora_C4;
+                                            };
+                                        } else {
+                                            if ((totalServiciosActivos + totalServiciosRestados + objetoResultante['totalServiciosActivosInicial']) >= objetoResultante['totalServiciosActivosInicial']) {
+                                                totalServicioFijo += servicio.precioHora_C4;
+                                                sumatorioDiasActivos += servicio.precioHora_C4;
+                                            } else {
+                                                totalServicioFijo = servicio.precioHora_C4;
+                                                sumatorioDiasActivos = servicio.precioHora_C4;
+                                            };
+                                        };
+                                        objetoResultante['estados']['estadoCasillaDia' + (index + 1)] = true;
+                                    };
+                                };
+                                objetoResultante['precioHora_C4'] = servicio.precioHora_C4;
+                                objetoResultante['diaVariacion_C4'] = servicio.diaVariacion_C4;
+                                objetoResultante['variacion_C4'] = servicio.variacion_C4;
+                                objetoResultante['activo_C4'] = servicio.activo_C4;
+                                objetoResultante['int_C4'] = servicio.int_C4;
+                                objetoResultante['trab_C4'] = servicio.trab_C4;
+                            };
                             if (servicio.precioHora_ES || servicio.int_ES) {
                                 if (!stateFestivo['estadoFestivoDia' + (index + 1)]) {
                                     if (servicio.activo_ES === 'si') {
@@ -6760,6 +7072,24 @@ export const gestionaColumnaServiciosFijosInicioAccion = (servicios, activacionS
                                     objetoResultante['int_C2'] = servicio.int_C2;
                                     objetoResultante['trab_C2'] = servicio.trab_C2;
                                 };
+                                if (servicio.precioHora_C4 && servicio.diaVariacion_C4 === 'viernes') {
+                                    if (!stateFestivo['estadoFestivoDia' + (index + 1)]) {
+                                        if (servicio.activo_C4 === 'si') {
+                                            if (servicio[dia[1][0] + dia[0][0]] !== "anulado") {
+                                                objetoResultante[dia[1][0] + dia[0][0]] = servicio.precioHora_C4;
+                                                totalServicioFijo += servicio.precioHora_C4;
+                                                objetoResultante['estados']['estadoCasillaDia' + (index + 1)] = true;
+                                                totalServiciosActivosInicial += 1;
+                                            };
+                                        };
+                                    };
+                                    objetoResultante['precioHora_C4'] = servicio.precioHora_C4;
+                                    objetoResultante['diaVariacion_C4'] = servicio.diaVariacion_C4;
+                                    objetoResultante['variacion_C4'] = servicio.variacion_C4;
+                                    objetoResultante['activo_C4'] = servicio.activo_C4;
+                                    objetoResultante['int_C4'] = servicio.int_C4;
+                                    objetoResultante['trab_C4'] = servicio.trab_C4;
+                                };
                                 if (servicio.precioHora_ES && servicio.diaVariacion_ES === 'viernes') {
                                     if (!stateFestivo['estadoFestivoDia' + (index + 1)]) {
                                         if (servicio.activo_ES === 'si') {
@@ -7031,6 +7361,19 @@ export const gestionaColumnaServiciosFijosInicioAccion = (servicios, activacionS
                                     objetoResultante['activo_C2'] = servicio.activo_C2;
                                     objetoResultante['int_C2'] = servicio.int_C2;
                                     objetoResultante['trab_C2'] = servicio.trab_C2;
+                                };
+                                if (servicio.precioHora_C4 || servicio.int_C4) {
+                                    if (servicio.activo_C4 === 'si') {
+                                        sumatorioDiasActivos > 0 ? totalServicioFijo = sumatorioDiasActivos : totalServicioFijo = servicio.precioHora_C4
+                                        objetoResultante['estados']['estadoCasillaDia' + (index + 1)] = false;
+                                        totalServiciosActivosInicial = 1;
+                                    };
+                                    objetoResultante['precioHora_C4'] = servicio.precioHora_C4;
+                                    objetoResultante['diaVariacion_C4'] = servicio.diaVariacion_C4;
+                                    objetoResultante['variacion_C4'] = servicio.variacion_C4;
+                                    objetoResultante['activo_C4'] = servicio.activo_C4;
+                                    objetoResultante['int_C4'] = servicio.int_C4;
+                                    objetoResultante['trab_C4'] = servicio.trab_C4;
                                 };
                                 if (servicio.precioHora_ES || servicio.int_ES) {
                                     if (servicio.activo_ES === 'si') {
@@ -7711,6 +8054,42 @@ export const gestionaColumnaServiciosFijosInicioAccion = (servicios, activacionS
                                 objetoResultante['int_C2'] = servicio.int_C2;
                                 objetoResultante['trab_C2'] = servicio.trab_C2;
                             };
+                            if (servicio.precioHora_C4 || servicio.int_C4) {
+                                if (!stateFestivo['estadoFestivoDia' + (index + 1)]) {
+                                    if (servicio.activo_C4 === 'si') {
+                                        objetoResultante[dia[1][0] + dia[0][0]] = servicio.precioHora_C4;
+                                        if (tipoVariacion === 'una') {
+                                            if ((totalServiciosActivos + objetoResultante['totalServiciosActivosInicial']) > objetoResultante['totalServiciosActivosInicial']) {
+                                                if (losDiasDelMes.length === dia[0][0] && totalServiciosActivos === objetoResultante['totalServiciosActivosInicial']) {
+                                                    totalServicioFijo = servicio.precioHora_C4;
+                                                    sumatorioDiasActivos = servicio.precioHora_C4;
+                                                } else {
+                                                    totalServicioFijo += servicio.precioHora_C4;
+                                                    sumatorioDiasActivos += servicio.precioHora_C4;
+                                                };
+                                            } else {
+                                                totalServicioFijo = servicio.precioHora_C4;
+                                                sumatorioDiasActivos = servicio.precioHora_C4;
+                                            };
+                                        } else {
+                                            if ((totalServiciosActivos + totalServiciosRestados + objetoResultante['totalServiciosActivosInicial']) >= objetoResultante['totalServiciosActivosInicial']) {
+                                                totalServicioFijo += servicio.precioHora_C4;
+                                                sumatorioDiasActivos += servicio.precioHora_C4;
+                                            } else {
+                                                totalServicioFijo = servicio.precioHora_C4;
+                                                sumatorioDiasActivos = servicio.precioHora_C4;
+                                            };
+                                        };
+                                        objetoResultante['estados']['estadoCasillaDia' + (index + 1)] = true;
+                                    };
+                                };
+                                objetoResultante['precioHora_C4'] = servicio.precioHora_C4;
+                                objetoResultante['diaVariacion_C4'] = servicio.diaVariacion_C4;
+                                objetoResultante['variacion_C4'] = servicio.variacion_C4;
+                                objetoResultante['activo_C4'] = servicio.activo_C4;
+                                objetoResultante['int_C4'] = servicio.int_C4;
+                                objetoResultante['trab_C4'] = servicio.trab_C4;
+                            };
                             if (servicio.precioHora_ES || servicio.int_ES) {
                                 if (!stateFestivo['estadoFestivoDia' + (index + 1)]) {
                                     if (servicio.activo_ES === 'si') {
@@ -8110,6 +8489,24 @@ export const gestionaColumnaServiciosFijosInicioAccion = (servicios, activacionS
                                     objetoResultante['int_C2'] = servicio.int_C2;
                                     objetoResultante['trab_C2'] = servicio.trab_C2;
                                 };
+                                if (servicio.precioHora_C4 && servicio.diaVariacion_C4 === 'sabado') {
+                                    if (!stateFestivo['estadoFestivoDia' + (index + 1)]) {
+                                        if (servicio.activo_C4 === 'si') {
+                                            if (servicio[dia[1][0] + dia[0][0]] !== "anulado") {
+                                                objetoResultante[dia[1][0] + dia[0][0]] = servicio.precioHora_C4;
+                                                totalServicioFijo += servicio.precioHora_C4;
+                                                objetoResultante['estados']['estadoCasillaDia' + (index + 1)] = true;
+                                                totalServiciosActivosInicial += 1;
+                                            };
+                                        };
+                                    };
+                                    objetoResultante['precioHora_C4'] = servicio.precioHora_C4;
+                                    objetoResultante['diaVariacion_C4'] = servicio.diaVariacion_C4;
+                                    objetoResultante['variacion_C4'] = servicio.variacion_C4;
+                                    objetoResultante['activo_C4'] = servicio.activo_C4;
+                                    objetoResultante['int_C4'] = servicio.int_C4;
+                                    objetoResultante['trab_C4'] = servicio.trab_C4;
+                                };
                                 if (servicio.precioHora_ES && servicio.diaVariacion_ES === 'sabado') {
                                     if (!stateFestivo['estadoFestivoDia' + (index + 1)]) {
                                         if (servicio.activo_ES === 'si') {
@@ -8381,6 +8778,19 @@ export const gestionaColumnaServiciosFijosInicioAccion = (servicios, activacionS
                                     objetoResultante['activo_C2'] = servicio.activo_C2;
                                     objetoResultante['int_C2'] = servicio.int_C2;
                                     objetoResultante['trab_C2'] = servicio.trab_C2;
+                                };
+                                if (servicio.precioHora_C4 || servicio.int_C4) {
+                                    if (servicio.activo_C4 === 'si') {
+                                        sumatorioDiasActivos > 0 ? totalServicioFijo = sumatorioDiasActivos : totalServicioFijo = servicio.precioHora_C4
+                                        objetoResultante['estados']['estadoCasillaDia' + (index + 1)] = false;
+                                        totalServiciosActivosInicial = 1;
+                                    };
+                                    objetoResultante['precioHora_C4'] = servicio.precioHora_C4;
+                                    objetoResultante['diaVariacion_C4'] = servicio.diaVariacion_C4;
+                                    objetoResultante['variacion_C4'] = servicio.variacion_C4;
+                                    objetoResultante['activo_C4'] = servicio.activo_C4;
+                                    objetoResultante['int_C4'] = servicio.int_C4;
+                                    objetoResultante['trab_C4'] = servicio.trab_C4;
                                 };
                                 if (servicio.precioHora_ES || servicio.int_ES) {
                                     if (servicio.activo_ES === 'si') {
@@ -9061,6 +9471,42 @@ export const gestionaColumnaServiciosFijosInicioAccion = (servicios, activacionS
                                 objetoResultante['int_C2'] = servicio.int_C2;
                                 objetoResultante['trab_C2'] = servicio.trab_C2;
                             };
+                            if (servicio.precioHora_C4 || servicio.int_C4) {
+                                if (!stateFestivo['estadoFestivoDia' + (index + 1)]) {
+                                    if (servicio.activo_C4 === 'si') {
+                                        objetoResultante[dia[1][0] + dia[0][0]] = servicio.precioHora_C4;
+                                        if (tipoVariacion === 'una') {
+                                            if ((totalServiciosActivos + objetoResultante['totalServiciosActivosInicial']) > objetoResultante['totalServiciosActivosInicial']) {
+                                                if (losDiasDelMes.length === dia[0][0] && totalServiciosActivos === objetoResultante['totalServiciosActivosInicial']) {
+                                                    totalServicioFijo = servicio.precioHora_C4;
+                                                    sumatorioDiasActivos = servicio.precioHora_C4;
+                                                } else {
+                                                    totalServicioFijo += servicio.precioHora_C4;
+                                                    sumatorioDiasActivos += servicio.precioHora_C4;
+                                                };
+                                            } else {
+                                                totalServicioFijo = servicio.precioHora_C4;
+                                                sumatorioDiasActivos = servicio.precioHora_C4;
+                                            };
+                                        } else {
+                                            if ((totalServiciosActivos + totalServiciosRestados + objetoResultante['totalServiciosActivosInicial']) >= objetoResultante['totalServiciosActivosInicial']) {
+                                                totalServicioFijo += servicio.precioHora_C4;
+                                                sumatorioDiasActivos += servicio.precioHora_C4;
+                                            } else {
+                                                totalServicioFijo = servicio.precioHora_C4;
+                                                sumatorioDiasActivos = servicio.precioHora_C4;
+                                            };
+                                        };
+                                        objetoResultante['estados']['estadoCasillaDia' + (index + 1)] = true;
+                                    };
+                                };
+                                objetoResultante['precioHora_C4'] = servicio.precioHora_C4;
+                                objetoResultante['diaVariacion_C4'] = servicio.diaVariacion_C4;
+                                objetoResultante['variacion_C4'] = servicio.variacion_C4;
+                                objetoResultante['activo_C4'] = servicio.activo_C4;
+                                objetoResultante['int_C4'] = servicio.int_C4;
+                                objetoResultante['trab_C4'] = servicio.trab_C4;
+                            };
                             if (servicio.precioHora_ES || servicio.int_ES) {
                                 if (!stateFestivo['estadoFestivoDia' + (index + 1)]) {
                                     if (servicio.activo_ES === 'si') {
@@ -9460,6 +9906,24 @@ export const gestionaColumnaServiciosFijosInicioAccion = (servicios, activacionS
                                     objetoResultante['int_C2'] = servicio.int_C2;
                                     objetoResultante['trab_C2'] = servicio.trab_C2;
                                 };
+                                if (servicio.precioHora_C4 && servicio.diaVariacion_C4 === 'domingo') {
+                                    if (!stateFestivo['estadoFestivoDia' + (index + 1)]) {
+                                        if (servicio.activo_C4 === 'si') {
+                                            if (servicio[dia[1][0] + dia[0][0]] !== "anulado") {
+                                                objetoResultante[dia[1][0] + dia[0][0]] = servicio.precioHora_C4;
+                                                totalServicioFijo += servicio.precioHora_C4;
+                                                objetoResultante['estados']['estadoCasillaDia' + (index + 1)] = true;
+                                                totalServiciosActivosInicial += 1;
+                                            };
+                                        };
+                                    };
+                                    objetoResultante['precioHora_C4'] = servicio.precioHora_C4;
+                                    objetoResultante['diaVariacion_C4'] = servicio.diaVariacion_C4;
+                                    objetoResultante['variacion_C4'] = servicio.variacion_C4;
+                                    objetoResultante['activo_C4'] = servicio.activo_C4;
+                                    objetoResultante['int_C4'] = servicio.int_C4;
+                                    objetoResultante['trab_C4'] = servicio.trab_C4;
+                                };
                                 if (servicio.precioHora_ES && servicio.diaVariacion_ES === 'domingo') {
                                     if (!stateFestivo['estadoFestivoDia' + (index + 1)]) {
                                         if (servicio.activo_ES === 'si') {
@@ -9731,6 +10195,19 @@ export const gestionaColumnaServiciosFijosInicioAccion = (servicios, activacionS
                                     objetoResultante['activo_C2'] = servicio.activo_C2;
                                     objetoResultante['int_C2'] = servicio.int_C2;
                                     objetoResultante['trab_C2'] = servicio.trab_C2;
+                                };
+                                if (servicio.precioHora_C4 || servicio.int_C4) {
+                                    if (servicio.activo_C4 === 'si') {
+                                        sumatorioDiasActivos > 0 ? totalServicioFijo = sumatorioDiasActivos : totalServicioFijo = servicio.precioHora_C4
+                                        objetoResultante['estados']['estadoCasillaDia' + (index + 1)] = false;
+                                        totalServiciosActivosInicial = 1;
+                                    };
+                                    objetoResultante['precioHora_C4'] = servicio.precioHora_C4;
+                                    objetoResultante['diaVariacion_C4'] = servicio.diaVariacion_C4;
+                                    objetoResultante['variacion_C4'] = servicio.variacion_C4;
+                                    objetoResultante['activo_C4'] = servicio.activo_C4;
+                                    objetoResultante['int_C4'] = servicio.int_C4;
+                                    objetoResultante['trab_C4'] = servicio.trab_C4;
                                 };
                                 if (servicio.precioHora_ES || servicio.int_ES) {
                                     if (servicio.activo_ES === 'si') {
@@ -10606,6 +11083,49 @@ export const gestionaColumnaServiciosFijosCambiosAccion = (servicios, casilla) =
                                 objetoResultante['trab_C2'] = servicio.trab_C2;
                             };
                         };
+                        if (casilla.dia === (dia[1][0] + dia[0][0]) && casilla.indice === indexServicio && casilla.tipo === 'CRCUA') {
+                            if (servicio.precioHora_C4 || servicio.int_C4) {
+                                if (casilla.valor) {
+                                    objetoResultante[dia[1][0] + dia[0][0]] = servicio.precioHora_C4 ? servicio.precioHora_C4 : 0;
+                                    if (noBloqueado) {
+                                        if (tipoVariacion === 'una') {
+                                            if ((totalServiciosActivos + objetoResultante['totalServiciosActivosInicial']) > objetoResultante['totalServiciosActivosInicial']) {
+                                                totalServicioFijo += servicio.precioHora_C4;
+                                            };
+                                        } else {
+                                            if ((totalServiciosActivos + objetoResultante['totalServiciosActivosInicial']) >= objetoResultante['totalServiciosActivosInicial']) {
+                                                totalServicioFijo += servicio.precioHora_C4;
+                                            };
+                                        };
+                                        totalServiciosActivos += 1;
+                                    };
+                                    objetoResultante['estados']['estadoCasillaDia' + (index + 1)] = true;
+                                } else {
+                                    if (totalServiciosActivos >= objetoResultante['totalServiciosActivosInicial']) {
+                                        totalServiciosActivos -= 1;
+                                    } else {
+                                        totalServiciosRestados += 1;
+                                    };
+                                    if (tipoVariacion === 'una') {
+                                        if ((totalServiciosActivos + objetoResultante['totalServiciosActivosInicial']) > objetoResultante['totalServiciosActivosInicial']) {
+                                            totalServicioFijo -= servicio.precioHora_C4;
+                                        };
+                                    } else {
+                                        if ((totalServiciosActivos + objetoResultante['totalServiciosActivosInicial']) >= objetoResultante['totalServiciosActivosInicial']) {
+                                            totalServicioFijo -= servicio.precioHora_C4;
+                                        };
+                                    };
+                                    objetoResultante[dia[1][0] + dia[0][0]] = 'anulado';
+                                    objetoResultante['estados']['estadoCasillaDia' + (index + 1)] = false;
+                                };
+                                objetoResultante['precioHora_C4'] = servicio.precioHora_C4;
+                                objetoResultante['diaVariacion_C4'] = servicio.diaVariacion_C4;
+                                objetoResultante['variacion_C4'] = servicio.variacion_C4;
+                                objetoResultante['activo_C4'] = servicio.activo_C4;
+                                objetoResultante['int_C4'] = servicio.int_C4;
+                                objetoResultante['trab_C4'] = servicio.trab_C4;
+                            };
+                        };
                         if (casilla.dia === (dia[1][0] + dia[0][0]) && casilla.indice === indexServicio && casilla.tipo === 'LIME') {
                             if (servicio.precioHora_ES || servicio.int_ES) {
                                 if (casilla.valor) {
@@ -11072,6 +11592,27 @@ export const gestionaColumnaServiciosFijosCambiosAccion = (servicios, casilla) =
                                 objetoResultante['activo_C2'] = servicio.activo_C2;
                                 objetoResultante['int_C2'] = servicio.int_C2;
                                 objetoResultante['trab_C2'] = servicio.trab_C2;
+                            };
+                            if (servicio.precioHora_C4 || servicio.int_C4) {
+                                if (!casilla.valor) {
+                                    if (objetoResultante[dia[1][0] + dia[0][0]] === 'buffer') {
+                                        objetoResultante[dia[1][0] + dia[0][0]] = servicio.precioHora_C4 ? servicio.precioHora_C4 : 0;
+                                        totalServicioFijo += servicio.precioHora_C4;
+                                        objetoResultante['estados']['estadoCasillaDia' + (index + 1)] = true;
+                                    };
+                                } else {
+                                    if (objetoResultante[dia[1][0] + dia[0][0]]) {
+                                        objetoResultante[dia[1][0] + dia[0][0]] = 'buffer';
+                                        totalServicioFijo -= servicio.precioHora_C4;
+                                        objetoResultante['estados']['estadoCasillaDia' + (index + 1)] = false;
+                                    };
+                                };
+                                objetoResultante['precioHora_C4'] = servicio.precioHora_C4;
+                                objetoResultante['diaVariacion_C4'] = servicio.diaVariacion_C4;
+                                objetoResultante['variacion_C4'] = servicio.variacion_C4;
+                                objetoResultante['activo_C4'] = servicio.activo_C4;
+                                objetoResultante['int_C4'] = servicio.int_C4;
+                                objetoResultante['trab_C4'] = servicio.trab_C4;
                             };
                             if (servicio.precioHora_ES || servicio.int_ES) {
                                 if (!casilla.valor) {

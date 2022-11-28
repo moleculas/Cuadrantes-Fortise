@@ -1061,6 +1061,13 @@ const HelpersLayoutCuadrantes = () => {
                     return 'Crist. Bim.'
                 };
                 break;
+            case 'CRCUA':
+                if (servicio.int_C4) {
+                    return 'Crist. Cua. (I)'
+                } else {
+                    return 'Crist. Cua.'
+                };
+                break;
             case 'LIME':
                 if (servicio.int_ES) {
                     return 'L. Especial (I)'
@@ -1098,6 +1105,7 @@ const HelpersLayoutCuadrantes = () => {
             servicio.int_FT ||
             servicio.int_C3 ||
             servicio.int_C2 ||
+            servicio.int_C4 ||
             servicio.int_ES ||
             servicio.int_PA) {
             return classes.cabeceraServiciosInt
@@ -1129,6 +1137,7 @@ const HelpersLayoutCuadrantes = () => {
             servicio.activo_FT === 'si' ||
             servicio.activo_C3 === 'si' ||
             servicio.activo_C2 === 'si' ||
+            servicio.activo_C4 === 'si' ||
             servicio.activo_ES === 'si' ||
             servicio.activo_PA === 'si') {
             return (
@@ -1166,6 +1175,7 @@ const HelpersLayoutCuadrantes = () => {
             losServiciosFijos.precioHora_FT || losServiciosFijos.int_FT ||
             losServiciosFijos.precioHora_C3 || losServiciosFijos.int_C3 ||
             losServiciosFijos.precioHora_C2 || losServiciosFijos.int_C2 ||
+            losServiciosFijos.precioHora_C4 || losServiciosFijos.int_C4 ||
             losServiciosFijos.precioHora_ES || losServiciosFijos.int_ES ||
             losServiciosFijos.precioHora_PA || losServiciosFijos.int_PA) {
             hayServicios = true;
@@ -1380,6 +1390,16 @@ const HelpersLayoutCuadrantes = () => {
             laLetra = 'C2';
             hayBaja = servicio.activo_C2 === 'no' ? true : false;
             hayInt = servicio.int_C2 ? true : false;
+            esFest = false;
+        };
+        if (servicio.precioHora_C4 || servicio.int_C4) {
+            laClase = servicio.activo_C4 === 'si' ? servicio.int_C4 ? (clsx(classes.conServiciosA2Int, classes.small4)) :
+                (clsx(classes.conServiciosA2, classes.small4)) : (clsx(classes.fondoBaja, classes.small4));
+            elTooltip = servicio.int_C4 ? 'Limpieza de cristales cuatrimestral incluido en el cómputo' : 'Limpieza de cristales cuatrimestral: ' + servicio.totalServicioFijo + ' €';
+            elAnadidoTooltip = servicio.activo_C4 === 'si' ? '' : ' (Inactivo)';
+            laLetra = 'C4';
+            hayBaja = servicio.activo_C4 === 'no' ? true : false;
+            hayInt = servicio.int_C4 ? true : false;
             esFest = false;
         };
         if (servicio.precioHora_ES || servicio.int_ES) {

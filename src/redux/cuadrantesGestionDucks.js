@@ -534,6 +534,7 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
         precioHora_FT: null,
         precioHora_C3: null,
         precioHora_C2: null,
+        precioHora_C4: null,
         precioHora_ES: null,
         precioHora_PA: null,
         variacion_TO: '',
@@ -554,6 +555,7 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
         variacion_FT: '',
         variacion_C3: '',
         variacion_C2: '',
+        variacion_C4: '',
         variacion_ES: '',
         variacion_PA: '',
         diaVariacion_TO: '',
@@ -574,6 +576,7 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
         diaVariacion_FT: '',
         diaVariacion_C3: '',
         diaVariacion_C2: '',
+        diaVariacion_C4: '',
         diaVariacion_ES: '',
         diaVariacion_PA: '',
         activo_TO: 'si',
@@ -594,6 +597,7 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
         activo_FT: 'si',
         activo_C3: 'si',
         activo_C2: 'si',
+        activo_C4: 'si',
         activo_ES: 'si',
         activo_PA: 'si',
         int_TO: false,
@@ -614,6 +618,7 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
         int_FT: false,
         int_C3: false,
         int_C2: false,
+        int_C4: false,
         int_ES: false,
         int_PA: false,
         trab_TO: '',
@@ -634,6 +639,7 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
         trab_FT: '',
         trab_C3: '',
         trab_C2: '',
+        trab_C4: '',
         trab_ES: '',
         trab_PA: ''
     };
@@ -656,6 +662,7 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
         FT: false,
         C3: false,
         C2: false,
+        C4: false,
         ES: false,
         PA: false
     };
@@ -827,6 +834,15 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
                 myObjetoServiciosFijos.int_C2 = servicio.int_C2;
                 myObjetoServiciosFijos.trab_C2 = servicio.trab_C2 ? servicio.trab_C2 : '';
                 objetoEstadosSwitch.C2 = true;
+            };
+            if (servicio.precioHora_C4 || servicio.int_C4) {
+                myObjetoServiciosFijos.precioHora_C4 = servicio.precioHora_C4;
+                myObjetoServiciosFijos.variacion_C4 = servicio.variacion_C4;
+                myObjetoServiciosFijos.diaVariacion_C4 = servicio.diaVariacion_C4;
+                myObjetoServiciosFijos.activo_C4 = servicio.activo_C4;
+                myObjetoServiciosFijos.int_C4 = servicio.int_C4;
+                myObjetoServiciosFijos.trab_C4 = servicio.trab_C4 ? servicio.trab_C4 : '';
+                objetoEstadosSwitch.C4 = true;
             };
             if (servicio.precioHora_ES || servicio.int_ES) {
                 myObjetoServiciosFijos.precioHora_ES = servicio.precioHora_ES;
@@ -1780,6 +1796,7 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
     let totalFacturado_FT = 0;
     let totalFacturado_C3 = 0;
     let totalFacturado_C2 = 0;
+    let totalFacturado_C4 = 0;
     let totalFacturado_ES = 0;
     let totalFacturado_PA = 0;
     let totalHoras_L = 0;
@@ -1808,6 +1825,7 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
     let totalHoras_FT = 0;
     let totalHoras_C3 = 0;
     let totalHoras_C2 = 0;
+    let totalHoras_C4 = 0;
     let totalHoras_ES = 0;
     let totalHoras_PA = 0;
     let precio_L = 0;
@@ -1965,6 +1983,14 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
                             totalHoras_C2 = 1;
                         } else {
                             totalHoras_C2 = parseInt(totalFacturado_C2 / servicio.precioHora_C2);
+                        };
+                    };
+                    if (servicio.precioHora_C4) {
+                        totalFacturado_C4 += servicio.totalServicioFijo;
+                        if (totalFacturado_C4 === servicio.precioHora_C4) {
+                            totalHoras_C4 = 1;
+                        } else {
+                            totalHoras_C4 = parseInt(totalFacturado_C4 / servicio.precioHora_C4);
                         };
                     };
                     if (servicio.precioHora_ES) {
@@ -2211,6 +2237,10 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
         objetoTotales['C2T'] = totalFacturado_C2;
         objetoTotales['C2H'] = totalHoras_C2;
     };
+    if (totalFacturado_C4) {
+        objetoTotales['C4T'] = totalFacturado_C4;
+        objetoTotales['C4H'] = totalHoras_C4;
+    };
     if (totalFacturado_ES) {
         objetoTotales['EST'] = totalFacturado_ES;
         objetoTotales['ESH'] = totalHoras_ES;
@@ -2249,6 +2279,7 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
     totalFacturado_FT ? totalFacturado_FT = totalFacturado_FT : totalFacturado_FT = 0;
     totalFacturado_C3 ? totalFacturado_C3 = totalFacturado_C3 : totalFacturado_C3 = 0;
     totalFacturado_C2 ? totalFacturado_C2 = totalFacturado_C2 : totalFacturado_C2 = 0;
+    totalFacturado_C4 ? totalFacturado_C4 = totalFacturado_C4 : totalFacturado_C4 = 0;
     totalFacturado_ES ? totalFacturado_ES = totalFacturado_ES : totalFacturado_ES = 0;
     totalFacturado_PA ? totalFacturado_PA = totalFacturado_PA : totalFacturado_PA = 0;
     objetoTotales['total'] =
@@ -2279,6 +2310,7 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
         totalFacturado_FT +
         totalFacturado_C3 +
         totalFacturado_C2 +
+        totalFacturado_C4 +
         totalFacturado_ES +
         totalFacturado_PA;
     objetoTotales['procesado'] = {
@@ -2535,6 +2567,13 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
                     objetoTotales['C2T'] += totalesPeriodicos.totalesServicios.C2T;
                 } else {
                     objetoTotales['C2T'] = totalesPeriodicos.totalesServicios.C2T;
+                };
+            };
+            if (totalesPeriodicos.totalesServicios.C4T) {
+                if (objetoTotales['C4T']) {
+                    objetoTotales['C4T'] += totalesPeriodicos.totalesServicios.C4T;
+                } else {
+                    objetoTotales['C4T'] = totalesPeriodicos.totalesServicios.C4T;
                 };
             };
             if (totalesPeriodicos.totalesServicios.EST) {

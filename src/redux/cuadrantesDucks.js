@@ -612,6 +612,7 @@ const retornaTotalesServicios = (totalObjeto) => (dispatch, getState) => {
     totalObjeto.FTT && (objetoRetornoServicios.FTT = totalObjeto.FTT);
     totalObjeto.C3T && (objetoRetornoServicios.C3T = totalObjeto.C3T);
     totalObjeto.C2T && (objetoRetornoServicios.C2T = totalObjeto.C2T);
+    totalObjeto.C4T && (objetoRetornoServicios.C4T = totalObjeto.C4T);
     totalObjeto.EST && (objetoRetornoServicios.EST = totalObjeto.EST);
     totalObjeto.PAT && (objetoRetornoServicios.PAT = totalObjeto.PAT);
     totalObjeto.NUMCT && (objetoRetornoServicios.NUMCT = totalObjeto.NUMCT);
@@ -748,6 +749,11 @@ const retornaTotalesServicios = (totalObjeto) => (dispatch, getState) => {
     if (objetoRetornoServicios.C2T) {
         if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.C2T) {
             objetoRetornoServicios.C2T += totalesPeriodicos.totalesServicios.C2T;
+        };
+    };
+    if (objetoRetornoServicios.C4T) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.C4T) {
+            objetoRetornoServicios.C4T += totalesPeriodicos.totalesServicios.C4T;
         };
     };
     if (objetoRetornoServicios.EST) {

@@ -1114,6 +1114,17 @@ const Configuracion = (props) => {
                                                             }
                                                         />
                                                     </ListItem >
+                                                    <ListItem>
+                                                        <ListItemText
+                                                            primary="V. 1.19 - 28/11/2022"
+                                                            secondary={
+                                                                <Fragment>
+                                                                    <Typography component="span" variant="body2">1.- Añadido tipo de Servicio Extra: Limpieza de cuadrantes Cuatrimestral.</Typography>
+                                                                    <br />
+                                                                </Fragment>
+                                                            }
+                                                        />
+                                                    </ListItem >
                                                 </List>
                                             </Box>
                                         </Box>

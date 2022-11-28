@@ -3052,6 +3052,99 @@ const gestionaDatosHorarioItem = (
     }
 };
 
+const gestionPrimeraSemana = (
+    losDiasDelMes,
+    elHorarioCuadrante,
+    tipoTrabajador,
+    tipoRegistro,
+    cantidadTrabajadoresCentro,
+    esInicio,
+    posicionTrabajador
+) => {
+    let laPosicion;
+    if (tipoRegistro === 'comun') {
+        laPosicion = posicionTrabajador;
+    } else {
+        if (esInicio) {
+            laPosicion = posicionTrabajador - 1;
+        } else {
+            if (tipoTrabajador === 'trabajador') {
+                if (posicionTrabajador > cantidadTrabajadoresCentro) {
+                    laPosicion = 0;
+                } else {
+                    laPosicion = posicionTrabajador - 1;
+                }
+            } else {
+                if (posicionTrabajador > cantidadTrabajadoresCentro) {
+                    laPosicion = 0;
+                } else {
+                    laPosicion = posicionTrabajador - 1;
+                }
+            }
+        }
+    };
+    const primerDiaMes = losDiasDelMes[0][1][0];
+    let luServicio = false;
+    let maServicio = false;
+    let miServicio = false;
+    let juServicio = false;
+    let viServicio = false;
+    let saServicio = false;
+    let doServicio = false;
+    if (elHorarioCuadrante.tipoRegistroTrabajador[laPosicion]) {
+        elHorarioCuadrante.tipoRegistroTrabajador[laPosicion].lunesTipoServicio && (luServicio = true);
+        elHorarioCuadrante.tipoRegistroTrabajador[laPosicion].martesTipoServicio && (maServicio = true);
+        elHorarioCuadrante.tipoRegistroTrabajador[laPosicion].miercolesTipoServicio && (miServicio = true);
+        elHorarioCuadrante.tipoRegistroTrabajador[laPosicion].juevesTipoServicio && (juServicio = true);
+        elHorarioCuadrante.tipoRegistroTrabajador[laPosicion].viernesTipoServicio && (viServicio = true);
+        elHorarioCuadrante.tipoRegistroTrabajador[laPosicion].sabadoTipoServicio && (saServicio = true);
+        elHorarioCuadrante.tipoRegistroTrabajador[laPosicion].domingoTipoServicio && (doServicio = true);
+    };
+    let primeraSemanaServicio = false;
+    switch (primerDiaMes) {
+        case 'Lunes':
+            (luServicio || maServicio || miServicio || juServicio || viServicio || saServicio || doServicio) && (primeraSemanaServicio = true);
+            break;
+        case 'Martes':
+            (maServicio || miServicio || juServicio || viServicio || saServicio || doServicio) && (primeraSemanaServicio = true);
+            break;
+        case 'Miércoles':
+            (miServicio || juServicio || viServicio || saServicio || doServicio) && (primeraSemanaServicio = true);
+            break;
+        case 'Jueves':
+            (juServicio || viServicio || saServicio || doServicio) && (primeraSemanaServicio = true);
+            break;
+        case 'Viernes':
+            (viServicio || saServicio || doServicio) && (primeraSemanaServicio = true);
+            break;
+        case 'Sábado':
+            (saServicio || doServicio) && (primeraSemanaServicio = true);
+            break;
+        case 'Domingo':
+            (doServicio) && (primeraSemanaServicio = true);
+            break;
+        default:
+    };
+    return primeraSemanaServicio
+};
+
+const numeroSemanaMes = (date) => {
+    const fecha = new Date(date);
+    const startWeekDayIndex = 1; // 1 MonthDay 0 Sundays
+    const firstDate = new Date(fecha.getFullYear(), fecha.getMonth(), 1);
+    const firstDay = firstDate.getDay();
+    let weekNumber = Math.ceil((fecha.getDate() + firstDay) / 7);
+    if (startWeekDayIndex === 1) {
+        if (fecha.getDay() === 0 && fecha.getDate() > 1) {
+            weekNumber -= 1;
+        }
+        if (firstDate.getDate() === 1 && firstDay === 0 && fecha.getDate() > 1) {
+            weekNumber += 1;
+        }
+    }
+    return weekNumber;
+};
+
 const gestionaColumnaCuadranteInteriorAccion = (
     trabajador,
     tipoTrabajador,
@@ -3087,16 +3180,28 @@ const gestionaColumnaCuadranteInteriorAccion = (
     if (bufferSwitchedDiasFestivosCuadrante.length > 0 && !esInicio) {
         arrayBuffer[cuadranteEnUsoCuadrantes - 1] = [...bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1]];
     };
+    const primeraSemanaServicio = gestionPrimeraSemana(
+        losDiasDelMes,
+        elHorarioCuadrante,
+        tipoTrabajador,
+        tipoRegistro,
+        cantidadTrabajadoresCentro,
+        esInicio,
+        posicionTrabajador
+    );
     let priDigSem, segDigSem, terDigSem;
+    let anadido = 0;
     if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].seqSemSiNo === 1 || !objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].seqSemSiNo) {
-        priDigSem = 2;
-        segDigSem = 4;
-        terDigSem = 6;
+        !primeraSemanaServicio && (anadido = 1);
+        priDigSem = 2 + anadido;
+        segDigSem = 4 + anadido;
+        terDigSem = 6 + anadido;
     };
     if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].seqSemSiNo === 2) {
-        priDigSem = 1;
-        segDigSem = 3;
-        terDigSem = 5;
+        !primeraSemanaServicio && (anadido = 1);
+        priDigSem = 1 + anadido;
+        segDigSem = 3 + anadido;
+        terDigSem = 5 + anadido;
     };
     if (trabajador && tipoTrabajador) {
         if (esRevision) {
@@ -3228,11 +3333,15 @@ const gestionaColumnaCuadranteInteriorAccion = (
         columnaAnadir['reducido'] = false;
     };
     let elTipoServicio;
+    let myArrSplitCalendario = calendarioAGestionar.split("-");
+    const mesCalendario = parseInt(myArrSplitCalendario[1]);
+    const anyoCalendario = parseInt(myArrSplitCalendario[0]);
     switch (tipoHorario) {
         case 'rango':
             losDiasDelMes.forEach((dia, index) => {
                 objetoBuffer = {};
-                numeroSemana = Math.ceil((index + 1) / 7);
+                //numeroSemana = Math.ceil((index + 1) / 7);
+                numeroSemana = numeroSemanaMes(`${anyoCalendario}-${mesCalendario}-${dia[0][0]}`);
                 if (dia[1][0] === 'Lunes') {
                     elTipoServicio = gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio');
                 };
@@ -3247,6 +3356,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                 };
                 if (dia[1][0] === 'Viernes') {
                     elTipoServicio = gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'viernesTipoServicio');
+
                 };
                 if (dia[1][0] === 'Sábado') {
                     elTipoServicio = gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'sabadoTipoServicio');
@@ -3315,12 +3425,19 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
+                                if (elHorarioCuadrante.variacion === 'primSemana') {
+                                    if ((primeraSemanaServicio && numeroSemana === 1) || (!primeraSemanaServicio && numeroSemana === 2)) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesInicioRango');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                };
                                 if (elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
                                         bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesInicioRango');
                                         contadorHorasBajasComputables += bajaComputable.cantidad;
                                     };
-                                } else {
+                                };
+                                if (elHorarioCuadrante.variacion === 'todasSemanas') {
                                     bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesInicioRango');
                                     contadorHorasBajasComputables += bajaComputable.cantidad;
                                 };
@@ -3330,7 +3447,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (
+                                        ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                        (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                    ) {
                                         if (dia[1][0] === 'Lunes') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 lunesInicioRango: null,
@@ -3385,7 +3505,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Lunes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             lunesInicioRango: null,
@@ -3445,7 +3568,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Lunes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             lunesInicioRango: null,
@@ -3500,7 +3626,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if (
+                                ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                            ) {
                                 if (dia[1][0] === 'Lunes') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         lunesInicioRango: null,
@@ -3614,12 +3743,19 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
+                                if (elHorarioCuadrante.variacion === 'primSemana') {
+                                    if ((primeraSemanaServicio && numeroSemana === 1) || (!primeraSemanaServicio && numeroSemana === 2)) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesInicioRango');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                };
                                 if (elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
                                         bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesInicioRango');
                                         contadorHorasBajasComputables += bajaComputable.cantidad;
                                     };
-                                } else {
+                                };
+                                if (elHorarioCuadrante.variacion === 'todasSemanas') {
                                     bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesInicioRango');
                                     contadorHorasBajasComputables += bajaComputable.cantidad;
                                 };
@@ -3629,7 +3765,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (
+                                        ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                        (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                    ) {
                                         if (dia[1][0] === 'Martes') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 martesInicioRango: null,
@@ -3684,7 +3823,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Martes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             martesInicioRango: null,
@@ -3744,7 +3886,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Martes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             martesInicioRango: null,
@@ -3799,7 +3944,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if (
+                                ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                            ) {
                                 if (dia[1][0] === 'Martes') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         martesInicioRango: null,
@@ -3913,12 +4061,19 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
+                                if (elHorarioCuadrante.variacion === 'primSemana') {
+                                    if ((primeraSemanaServicio && numeroSemana === 1) || (!primeraSemanaServicio && numeroSemana === 2)) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesInicioRango');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                };
                                 if (elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
                                         bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesInicioRango');
                                         contadorHorasBajasComputables += bajaComputable.cantidad;
                                     };
-                                } else {
+                                };
+                                if (elHorarioCuadrante.variacion === 'todasSemanas') {
                                     bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesInicioRango');
                                     contadorHorasBajasComputables += bajaComputable.cantidad;
                                 };
@@ -3928,7 +4083,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (
+                                        ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                        (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                    ) {
                                         if (dia[1][0] === 'Miércoles') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 miercolesInicioRango: null,
@@ -3983,7 +4141,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Miércoles') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             miercolesInicioRango: null,
@@ -4043,7 +4204,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Miércoles') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             miercolesInicioRango: null,
@@ -4098,7 +4262,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if (
+                                ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                            ) {
                                 if (dia[1][0] === 'Miércoles') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         miercolesInicioRango: null,
@@ -4212,12 +4379,19 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
+                                if (elHorarioCuadrante.variacion === 'primSemana') {
+                                    if ((primeraSemanaServicio && numeroSemana === 1) || (!primeraSemanaServicio && numeroSemana === 2)) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesInicioRango');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                };
                                 if (elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
                                         bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesInicioRango');
                                         contadorHorasBajasComputables += bajaComputable.cantidad;
                                     };
-                                } else {
+                                };
+                                if (elHorarioCuadrante.variacion === 'todasSemanas') {
                                     bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesInicioRango');
                                     contadorHorasBajasComputables += bajaComputable.cantidad;
                                 };
@@ -4227,7 +4401,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (
+                                        ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                        (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                    ) {
                                         if (dia[1][0] === 'Jueves') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 juevesInicioRango: null,
@@ -4282,7 +4459,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Jueves') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             juevesInicioRango: null,
@@ -4342,7 +4522,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Jueves') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             juevesInicioRango: null,
@@ -4397,7 +4580,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if (
+                                ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                            ) {
                                 if (dia[1][0] === 'Jueves') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         juevesInicioRango: null,
@@ -4511,12 +4697,19 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
+                                if (elHorarioCuadrante.variacion === 'primSemana') {
+                                    if ((primeraSemanaServicio && numeroSemana === 1) || (!primeraSemanaServicio && numeroSemana === 2)) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesInicioRango');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                };
                                 if (elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
                                         bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesInicioRango');
                                         contadorHorasBajasComputables += bajaComputable.cantidad;
                                     };
-                                } else {
+                                };
+                                if (elHorarioCuadrante.variacion === 'todasSemanas') {
                                     bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesInicioRango');
                                     contadorHorasBajasComputables += bajaComputable.cantidad;
                                 };
@@ -4526,7 +4719,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (
+                                        ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                        (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                    ) {
                                         if (dia[1][0] === 'Viernes') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 viernesInicioRango: null,
@@ -4581,7 +4777,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Viernes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             viernesInicioRango: null,
@@ -4641,7 +4840,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Viernes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             viernesInicioRango: null,
@@ -4696,7 +4898,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if (
+                                ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                            ) {
                                 if (dia[1][0] === 'Viernes') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         viernesInicioRango: null,
@@ -4810,12 +5015,19 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
+                                if (elHorarioCuadrante.variacion === 'primSemana') {
+                                    if ((primeraSemanaServicio && numeroSemana === 1) || (!primeraSemanaServicio && numeroSemana === 2)) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoInicioRango');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                };
                                 if (elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
                                         bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoInicioRango');
                                         contadorHorasBajasComputables += bajaComputable.cantidad;
                                     };
-                                } else {
+                                };
+                                if (elHorarioCuadrante.variacion === 'todasSemanas') {
                                     bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoInicioRango');
                                     contadorHorasBajasComputables += bajaComputable.cantidad;
                                 };
@@ -4825,7 +5037,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (
+                                        ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                        (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                    ) {
                                         if (dia[1][0] === 'Sábado') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 sabadoInicioRango: null,
@@ -4880,7 +5095,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Sábado') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             sabadoInicioRango: null,
@@ -4940,7 +5158,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Sábado') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             sabadoInicioRango: null,
@@ -4995,7 +5216,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if (
+                                ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                            ) {
                                 if (dia[1][0] === 'Sábado') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         sabadoInicioRango: null,
@@ -5109,12 +5333,19 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
+                                if (elHorarioCuadrante.variacion === 'primSemana') {
+                                    if ((primeraSemanaServicio && numeroSemana === 1) || (!primeraSemanaServicio && numeroSemana === 2)) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoInicioRango');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                };
                                 if (elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
                                         bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoInicioRango');
                                         contadorHorasBajasComputables += bajaComputable.cantidad;
                                     };
-                                } else {
+                                };
+                                if (elHorarioCuadrante.variacion === 'todasSemanas') {
                                     bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoInicioRango');
                                     contadorHorasBajasComputables += bajaComputable.cantidad;
                                 };
@@ -5124,7 +5355,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (
+                                        ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                        (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                    ) {
                                         if (dia[1][0] === 'Domingo') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 domingoInicioRango: null,
@@ -5179,7 +5413,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Domingo') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             domingoInicioRango: null,
@@ -5239,7 +5476,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Domingo') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             domingoInicioRango: null,
@@ -5294,7 +5534,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if (
+                                ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                            ) {
                                 if (dia[1][0] === 'Domingo') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         domingoInicioRango: null,
@@ -5355,7 +5598,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
         case 'rangoDescanso':
             losDiasDelMes.forEach((dia, index) => {
                 objetoBuffer = {};
-                numeroSemana = Math.ceil((index + 1) / 7);
+                //numeroSemana = Math.ceil((index + 1) / 7);
+                numeroSemana = numeroSemanaMes(`${anyoCalendario}-${mesCalendario}-${dia[0][0]}`);
                 if (dia[1][0] === 'Lunes') {
                     elTipoServicio = gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio');
                 };
@@ -5444,12 +5688,19 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
+                                if (elHorarioCuadrante.variacion === 'primSemana') {
+                                    if ((primeraSemanaServicio && numeroSemana === 1) || (!primeraSemanaServicio && numeroSemana === 2)) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesInicio1RangoDescanso');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                };
                                 if (elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
                                         bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesInicio1RangoDescanso');
                                         contadorHorasBajasComputables += bajaComputable.cantidad;
                                     };
-                                } else {
+                                };
+                                if (elHorarioCuadrante.variacion === 'todasSemanas') {
                                     bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesInicio1RangoDescanso');
                                     contadorHorasBajasComputables += bajaComputable.cantidad;
                                 };
@@ -5459,7 +5710,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (
+                                        ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                        (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                    ) {
                                         if (dia[1][0] === 'Lunes') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 lunesInicio1RangoDescanso: null,
@@ -5520,7 +5774,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Lunes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             lunesInicio1RangoDescanso: null,
@@ -5586,7 +5843,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Lunes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             lunesInicio1RangoDescanso: null,
@@ -5647,7 +5907,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if (
+                                ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                            ) {
                                 if (dia[1][0] === 'Lunes') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         lunesInicio1RangoDescanso: null,
@@ -5773,12 +6036,19 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
+                                if (elHorarioCuadrante.variacion === 'primSemana') {
+                                    if ((primeraSemanaServicio && numeroSemana === 1) || (!primeraSemanaServicio && numeroSemana === 2)) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesInicio1RangoDescanso');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                };
                                 if (elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
                                         bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesInicio1RangoDescanso');
                                         contadorHorasBajasComputables += bajaComputable.cantidad;
                                     };
-                                } else {
+                                };
+                                if (elHorarioCuadrante.variacion === 'todasSemanas') {
                                     bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesInicio1RangoDescanso');
                                     contadorHorasBajasComputables += bajaComputable.cantidad;
                                 };
@@ -5788,7 +6058,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (
+                                        ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                        (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                    ) {
                                         if (dia[1][0] === 'Martes') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 martesInicio1RangoDescanso: null,
@@ -5849,7 +6122,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Martes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             martesInicio1RangoDescanso: null,
@@ -5915,7 +6191,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Martes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             martesInicio1RangoDescanso: null,
@@ -5976,7 +6255,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if (
+                                ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                            ) {
                                 if (dia[1][0] === 'Martes') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         martesInicio1RangoDescanso: null,
@@ -6102,12 +6384,19 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
+                                if (elHorarioCuadrante.variacion === 'primSemana') {
+                                    if ((primeraSemanaServicio && numeroSemana === 1) || (!primeraSemanaServicio && numeroSemana === 2)) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesInicio1RangoDescanso');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                };
                                 if (elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
                                         bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesInicio1RangoDescanso');
                                         contadorHorasBajasComputables += bajaComputable.cantidad;
                                     };
-                                } else {
+                                };
+                                if (elHorarioCuadrante.variacion === 'todasSemanas') {
                                     bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesInicio1RangoDescanso');
                                     contadorHorasBajasComputables += bajaComputable.cantidad;
                                 };
@@ -6117,7 +6406,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (
+                                        ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                        (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                    ) {
                                         if (dia[1][0] === 'Miércoles') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 miercolesInicio1RangoDescanso: null,
@@ -6178,7 +6470,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Miércoles') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             miercolesInicio1RangoDescanso: null,
@@ -6244,7 +6539,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Miércoles') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             miercolesInicio1RangoDescanso: null,
@@ -6305,7 +6603,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if (
+                                ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                            ) {
                                 if (dia[1][0] === 'Miércoles') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         miercolesInicio1RangoDescanso: null,
@@ -6431,12 +6732,19 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
+                                if (elHorarioCuadrante.variacion === 'primSemana') {
+                                    if ((primeraSemanaServicio && numeroSemana === 1) || (!primeraSemanaServicio && numeroSemana === 2)) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesInicio1RangoDescanso');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                };
                                 if (elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
                                         bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesInicio1RangoDescanso');
                                         contadorHorasBajasComputables += bajaComputable.cantidad;
                                     };
-                                } else {
+                                };
+                                if (elHorarioCuadrante.variacion === 'todasSemanas') {
                                     bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesInicio1RangoDescanso');
                                     contadorHorasBajasComputables += bajaComputable.cantidad;
                                 };
@@ -6446,7 +6754,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (
+                                        ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                        (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                    ) {
                                         if (dia[1][0] === 'Jueves') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 juevesInicio1RangoDescanso: null,
@@ -6507,7 +6818,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Jueves') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             juevesInicio1RangoDescanso: null,
@@ -6573,7 +6887,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Jueves') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             juevesInicio1RangoDescanso: null,
@@ -6634,7 +6951,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if (
+                                ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                            ) {
                                 if (dia[1][0] === 'Jueves') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         juevesInicio1RangoDescanso: null,
@@ -6760,12 +7080,19 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
+                                if (elHorarioCuadrante.variacion === 'primSemana') {
+                                    if ((primeraSemanaServicio && numeroSemana === 1) || (!primeraSemanaServicio && numeroSemana === 2)) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesInicio1RangoDescanso');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                };
                                 if (elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
                                         bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesInicio1RangoDescanso');
                                         contadorHorasBajasComputables += bajaComputable.cantidad;
                                     };
-                                } else {
+                                };
+                                if (elHorarioCuadrante.variacion === 'todasSemanas') {
                                     bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesInicio1RangoDescanso');
                                     contadorHorasBajasComputables += bajaComputable.cantidad;
                                 };
@@ -6775,7 +7102,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (
+                                        ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                        (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                    ) {
                                         if (dia[1][0] === 'Viernes') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 viernesInicio1RangoDescanso: null,
@@ -6836,7 +7166,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Viernes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             viernesInicio1RangoDescanso: null,
@@ -6902,7 +7235,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Viernes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             viernesInicio1RangoDescanso: null,
@@ -6963,7 +7299,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if (
+                                ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                            ) {
                                 if (dia[1][0] === 'Viernes') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         viernesInicio1RangoDescanso: null,
@@ -7089,12 +7428,19 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
+                                if (elHorarioCuadrante.variacion === 'primSemana') {
+                                    if ((primeraSemanaServicio && numeroSemana === 1) || (!primeraSemanaServicio && numeroSemana === 2)) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoInicio1RangoDescanso');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                };
                                 if (elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
                                         bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoInicio1RangoDescanso');
                                         contadorHorasBajasComputables += bajaComputable.cantidad;
                                     };
-                                } else {
+                                };
+                                if (elHorarioCuadrante.variacion === 'todasSemanas') {
                                     bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoInicio1RangoDescanso');
                                     contadorHorasBajasComputables += bajaComputable.cantidad;
                                 };
@@ -7104,7 +7450,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (
+                                        ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                        (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                    ) {
                                         if (dia[1][0] === 'Sábado') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 sabadoInicio1RangoDescanso: null,
@@ -7165,7 +7514,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Sábado') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             sabadoInicio1RangoDescanso: null,
@@ -7231,7 +7583,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Sábado') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             sabadoInicio1RangoDescanso: null,
@@ -7292,7 +7647,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if (
+                                ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                            ) {
                                 if (dia[1][0] === 'Sábado') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         sabadoInicio1RangoDescanso: null,
@@ -7418,12 +7776,19 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
+                                if (elHorarioCuadrante.variacion === 'primSemana') {
+                                    if ((primeraSemanaServicio && numeroSemana === 1) || (!primeraSemanaServicio && numeroSemana === 2)) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoInicio1RangoDescanso');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                };
                                 if (elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
                                         bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoInicio1RangoDescanso');
                                         contadorHorasBajasComputables += bajaComputable.cantidad;
                                     };
-                                } else {
+                                };
+                                if (elHorarioCuadrante.variacion === 'todasSemanas') {
                                     bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoInicio1RangoDescanso');
                                     contadorHorasBajasComputables += bajaComputable.cantidad;
                                 };
@@ -7433,7 +7798,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (
+                                        ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                        (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                    ) {
                                         if (dia[1][0] === 'Domingo') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 domingoInicio1RangoDescanso: null,
@@ -7494,7 +7862,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Domingo') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             domingoInicio1RangoDescanso: null,
@@ -7560,7 +7931,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Domingo') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             domingoInicio1RangoDescanso: null,
@@ -7621,7 +7995,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if (
+                                ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                            ) {
                                 if (dia[1][0] === 'Domingo') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         domingoInicio1RangoDescanso: null,
@@ -7688,7 +8065,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
         case 'cantidad':
             losDiasDelMes.forEach((dia, index) => {
                 objetoBuffer = {};
-                numeroSemana = Math.ceil((index + 1) / 7);
+                //numeroSemana = Math.ceil((index + 1) / 7);
+                numeroSemana = numeroSemanaMes(`${anyoCalendario}-${mesCalendario}-${dia[0][0]}`);
                 if (dia[1][0] === 'Lunes') {
                     elTipoServicio = gestionaDatosHorarioItem(elHorarioCuadrante, tipoTrabajador, tipoRegistro, cantidadTrabajadoresCentro, esInicio, posicionTrabajador, esLimpieza, 'lunesTipoServicio');
                 };
@@ -7768,12 +8146,19 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
+                                if (elHorarioCuadrante.variacion === 'primSemana') {
+                                    if ((primeraSemanaServicio && numeroSemana === 1) || (!primeraSemanaServicio && numeroSemana === 2)) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesCantidad');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                };
                                 if (elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
                                         bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesCantidad');
                                         contadorHorasBajasComputables += bajaComputable.cantidad;
                                     };
-                                } else {
+                                };
+                                if (elHorarioCuadrante.variacion === 'todasSemanas') {
                                     bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'lunesCantidad');
                                     contadorHorasBajasComputables += bajaComputable.cantidad;
                                 };
@@ -7783,7 +8168,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (
+                                        ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                        (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                    ) {
                                         if (dia[1][0] === 'Lunes') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 lunesCantidad: '',
@@ -7835,7 +8223,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Lunes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             lunesCantidad: '',
@@ -7892,7 +8283,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Lunes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             lunesCantidad: '',
@@ -7944,7 +8338,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if (
+                                ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                            ) {
                                 if (dia[1][0] === 'Lunes') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         lunesCantidad: '',
@@ -8052,12 +8449,19 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
+                                if (elHorarioCuadrante.variacion === 'primSemana') {
+                                    if ((primeraSemanaServicio && numeroSemana === 1) || (!primeraSemanaServicio && numeroSemana === 2)) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesCantidad');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                };
                                 if (elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
                                         bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesCantidad');
                                         contadorHorasBajasComputables += bajaComputable.cantidad;
                                     };
-                                } else {
+                                };
+                                if (elHorarioCuadrante.variacion === 'todasSemanas') {
                                     bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'martesCantidad');
                                     contadorHorasBajasComputables += bajaComputable.cantidad;
                                 };
@@ -8067,7 +8471,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (
+                                        ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                        (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                    ) {
                                         if (dia[1][0] === 'Martes') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 martesCantidad: '',
@@ -8119,7 +8526,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Martes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             martesCantidad: '',
@@ -8176,7 +8586,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Martes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             martesCantidad: '',
@@ -8228,7 +8641,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if (
+                                ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                            ) {
                                 if (dia[1][0] === 'Martes') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         martesCantidad: '',
@@ -8336,12 +8752,19 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
+                                if (elHorarioCuadrante.variacion === 'primSemana') {
+                                    if ((primeraSemanaServicio && numeroSemana === 1) || (!primeraSemanaServicio && numeroSemana === 2)) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesCantidad');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                };
                                 if (elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
                                         bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesCantidad');
                                         contadorHorasBajasComputables += bajaComputable.cantidad;
                                     };
-                                } else {
+                                };
+                                if (elHorarioCuadrante.variacion === 'todasSemanas') {
                                     bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'miercolesCantidad');
                                     contadorHorasBajasComputables += bajaComputable.cantidad;
                                 };
@@ -8351,7 +8774,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (
+                                        ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                        (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                    ) {
                                         if (dia[1][0] === 'Miércoles') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 miercolesCantidad: '',
@@ -8403,7 +8829,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Miércoles') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             miercolesCantidad: '',
@@ -8460,7 +8889,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Miércoles') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             miercolesCantidad: '',
@@ -8512,7 +8944,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if (
+                                ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                            ) {
                                 if (dia[1][0] === 'Miércoles') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         miercolesCantidad: '',
@@ -8620,12 +9055,19 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
+                                if (elHorarioCuadrante.variacion === 'primSemana') {
+                                    if ((primeraSemanaServicio && numeroSemana === 1) || (!primeraSemanaServicio && numeroSemana === 2)) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesCantidad');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                };
                                 if (elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
                                         bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesCantidad');
                                         contadorHorasBajasComputables += bajaComputable.cantidad;
                                     };
-                                } else {
+                                };
+                                if (elHorarioCuadrante.variacion === 'todasSemanas') {
                                     bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'juevesCantidad');
                                     contadorHorasBajasComputables += bajaComputable.cantidad;
                                 };
@@ -8635,7 +9077,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (
+                                        ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                        (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                    ) {
                                         if (dia[1][0] === 'Jueves') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 juevesCantidad: '',
@@ -8687,7 +9132,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Jueves') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             juevesCantidad: '',
@@ -8744,7 +9192,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Jueves') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             juevesCantidad: '',
@@ -8796,7 +9247,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if (
+                                ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                            ) {
                                 if (dia[1][0] === 'Jueves') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         juevesCantidad: '',
@@ -8904,12 +9358,19 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
+                                if (elHorarioCuadrante.variacion === 'primSemana') {
+                                    if ((primeraSemanaServicio && numeroSemana === 1) || (!primeraSemanaServicio && numeroSemana === 2)) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesCantidad');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                };
                                 if (elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
                                         bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesCantidad');
                                         contadorHorasBajasComputables += bajaComputable.cantidad;
                                     };
-                                } else {
+                                };
+                                if (elHorarioCuadrante.variacion === 'todasSemanas') {
                                     bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'viernesCantidad');
                                     contadorHorasBajasComputables += bajaComputable.cantidad;
                                 };
@@ -8919,7 +9380,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (
+                                        ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                        (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                    ) {
                                         if (dia[1][0] === 'Viernes') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 viernesCantidad: '',
@@ -8971,7 +9435,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Viernes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             viernesCantidad: '',
@@ -9028,7 +9495,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Viernes') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             viernesCantidad: '',
@@ -9080,7 +9550,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if (
+                                ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                            ) {
                                 if (dia[1][0] === 'Viernes') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         viernesCantidad: '',
@@ -9188,12 +9661,19 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
+                                if (elHorarioCuadrante.variacion === 'primSemana') {
+                                    if ((primeraSemanaServicio && numeroSemana === 1) || (!primeraSemanaServicio && numeroSemana === 2)) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoCantidad');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                };
                                 if (elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
                                         bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoCantidad');
                                         contadorHorasBajasComputables += bajaComputable.cantidad;
                                     };
-                                } else {
+                                };
+                                if (elHorarioCuadrante.variacion === 'todasSemanas') {
                                     bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'sabadoCantidad');
                                     contadorHorasBajasComputables += bajaComputable.cantidad;
                                 };
@@ -9203,7 +9683,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (
+                                        ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                        (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                    ) {
                                         if (dia[1][0] === 'Sábado') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 sabadoCantidad: '',
@@ -9255,7 +9738,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Sábado') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             sabadoCantidad: '',
@@ -9312,7 +9798,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Sábado') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             sabadoCantidad: '',
@@ -9364,7 +9853,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if (
+                                ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                            ) {
                                 if (dia[1][0] === 'Sábado') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         sabadoCantidad: '',
@@ -9472,12 +9964,19 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     visibleVariaciones: false,
                                     tipoVariacion: ''
                                 };
+                                if (elHorarioCuadrante.variacion === 'primSemana') {
+                                    if ((primeraSemanaServicio && numeroSemana === 1) || (!primeraSemanaServicio && numeroSemana === 2)) {
+                                        bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoCantidad');
+                                        contadorHorasBajasComputables += bajaComputable.cantidad;
+                                    };
+                                };
                                 if (elHorarioCuadrante.variacion === 'semanaSiNo') {
                                     if (numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem) {
                                         bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoCantidad');
                                         contadorHorasBajasComputables += bajaComputable.cantidad;
                                     };
-                                } else {
+                                };
+                                if (elHorarioCuadrante.variacion === 'todasSemanas') {
                                     bajaComputable = gestionaDiasFestivosOBajas(elHorarioCuadrante, tipoRegistro, cantidadTrabajadoresCentro, tipoHorario, posicionTrabajador, 'domingoCantidad');
                                     contadorHorasBajasComputables += bajaComputable.cantidad;
                                 };
@@ -9487,7 +9986,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                                 } else {
-                                    if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                    if (
+                                        ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                        (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                    ) {
                                         if (dia[1][0] === 'Domingo') {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = {
                                                 domingoCantidad: '',
@@ -9539,7 +10041,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     };
                                 };
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Domingo') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             domingoCantidad: '',
@@ -9596,7 +10101,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
                             } else {
-                                if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                                if (
+                                    ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                    (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                                ) {
                                     if (dia[1][0] === 'Domingo') {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = {
                                             domingoCantidad: '',
@@ -9648,7 +10156,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 };
                             };
                         } else {
-                            if ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') {
+                            if (
+                                ((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')
+                            ) {
                                 if (dia[1][0] === 'Domingo') {
                                     columnaAnadir[dia[1][0] + dia[0][0]] = {
                                         domingoCantidad: '',
@@ -9809,7 +10320,10 @@ export const gestionaColumnaCuadranteAccion = (trabajador, tipoTrabajador, esRev
             };
         };
         if (cuadrante[posicionAnterior]) {
-            if (esInicio && (cuadrante[posicionAnterior].idTrabajador === trabajador.id)) {
+            if (
+                esInicio &&
+                (cuadrante[posicionAnterior].idTrabajador === trabajador.id) 
+            ) {
                 return;
             };
         };

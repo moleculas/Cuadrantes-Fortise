@@ -990,6 +990,7 @@ const Cuadrantes = (props) => {
             servicio.int_FT ||
             servicio.int_C3 ||
             servicio.int_C2 ||
+            servicio.int_C4 ||
             servicio.int_ES ||
             servicio.int_PA) {
             integrado = true;
@@ -1051,6 +1052,9 @@ const Cuadrantes = (props) => {
                 if (servicio['precioHora_C2'] || servicio['int_C2']) {
                     trab = servicio['trab_C2'];
                 };
+                if (servicio['precioHora_C4'] || servicio['int_C4']) {
+                    trab = servicio['trab_C4'];
+                };
                 if (servicio['precioHora_ES'] || servicio['int_ES']) {
                     trab = servicio['trab_ES'];
                 };
@@ -1077,6 +1081,7 @@ const Cuadrantes = (props) => {
             servicio.activo_FT === 'si' ||
             servicio.activo_C3 === 'si' ||
             servicio.activo_C2 === 'si' ||
+            servicio.activo_C4 === 'si' ||
             servicio.activo_ES === 'si' ||
             servicio.activo_PA === 'si') {
             return (
@@ -1156,6 +1161,7 @@ const Cuadrantes = (props) => {
                     cuadranteServiciosFijos[0].activo_FT === 'no' ||
                     cuadranteServiciosFijos[0].activo_C3 === 'no' ||
                     cuadranteServiciosFijos[0].activo_C2 === 'no' ||
+                    cuadranteServiciosFijos[0].activo_C4 === 'no' ||
                     cuadranteServiciosFijos[0].activo_ES === 'no' ||
                     cuadranteServiciosFijos[0].activo_PA === 'no'
                 ) {
@@ -1238,6 +1244,7 @@ const Cuadrantes = (props) => {
                     cuadranteServiciosFijos[0].activo_FT === 'si' ||
                     cuadranteServiciosFijos[0].activo_C3 === 'si' ||
                     cuadranteServiciosFijos[0].activo_C2 === 'si' ||
+                    cuadranteServiciosFijos[0].activo_C4 === 'si' ||
                     cuadranteServiciosFijos[0].activo_ES === 'si' ||
                     cuadranteServiciosFijos[0].activo_PA === 'si'
                 ) {
@@ -1268,6 +1275,7 @@ const Cuadrantes = (props) => {
                             cuadranteServiciosFijos[i].activo_FT === 'si' ||
                             cuadranteServiciosFijos[i].activo_C3 === 'si' ||
                             cuadranteServiciosFijos[i].activo_C2 === 'si' ||
+                            cuadranteServiciosFijos[i].activo_C4 === 'si' ||
                             cuadranteServiciosFijos[i].activo_ES === 'si' ||
                             cuadranteServiciosFijos[i].activo_PA === 'si'
                         ) {

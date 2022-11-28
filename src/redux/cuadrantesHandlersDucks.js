@@ -757,6 +757,11 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                         hayAlgunServicioActivo = true;
                     };
                 };
+                if (servicio[prop] && prop === 'precioHora_C4') {
+                    if (servicio.activo_C4 === 'si') {
+                        hayAlgunServicioActivo = true;
+                    };
+                };
                 if (servicio[prop] && prop === 'precioHora_ES') {
                     if (servicio.activo_ES === 'si') {
                         hayAlgunServicioActivo = true;
@@ -3067,6 +3072,17 @@ export const handleChangeFormConfiguracionServiciosFijosAccion = (tipo, prop, ev
             };
             losEstados['C2'] = event.target.checked;
         };
+        if (event.target.name.includes('C4')) {
+            if (!event.target.checked) {
+                losServicios['precioHora_C4'] = '';
+                losServicios['variacion_C4'] = '';
+                losServicios['diaVariacion_C4'] = '';
+                losServicios['activo_C4'] = 'si';
+                losServicios['int_C4'] = false;
+                losServicios['trab_C4'] = '';
+            };
+            losEstados['C4'] = event.target.checked;
+        };
         if (event.target.name.includes('ES')) {
             if (!event.target.checked) {
                 losServicios['precioHora_ES'] = '';
@@ -4367,6 +4383,7 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
         (itemEditandoServiciosFijos.switch.FT && !itemEditandoServiciosFijos.servicios.int_FT && !itemEditandoServiciosFijos.servicios.precioHora_FT) ||
         (itemEditandoServiciosFijos.switch.C3 && !itemEditandoServiciosFijos.servicios.int_C3 && !itemEditandoServiciosFijos.servicios.precioHora_C3) ||
         (itemEditandoServiciosFijos.switch.C2 && !itemEditandoServiciosFijos.servicios.int_C2 && !itemEditandoServiciosFijos.servicios.precioHora_C2) ||
+        (itemEditandoServiciosFijos.switch.C4 && !itemEditandoServiciosFijos.servicios.int_C4 && !itemEditandoServiciosFijos.servicios.precioHora_C4) ||
         (itemEditandoServiciosFijos.switch.ES && !itemEditandoServiciosFijos.servicios.int_ES && !itemEditandoServiciosFijos.servicios.precioHora_ES) ||
         (itemEditandoServiciosFijos.switch.PA && !itemEditandoServiciosFijos.servicios.int_PA && !itemEditandoServiciosFijos.servicios.precioHora_PA)
     ) {
@@ -4395,6 +4412,7 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
         (!itemEditandoServiciosFijos.servicios.precioHora_FT) &&
         (!itemEditandoServiciosFijos.servicios.precioHora_C3) &&
         (!itemEditandoServiciosFijos.servicios.precioHora_C2) &&
+        (!itemEditandoServiciosFijos.servicios.precioHora_C4) &&
         (!itemEditandoServiciosFijos.servicios.precioHora_ES) &&
         (!itemEditandoServiciosFijos.servicios.precioHora_PA)) {
         valoresComputoPreciosHoraFijos = false;
@@ -4417,6 +4435,7 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
         itemEditandoServiciosFijos.servicios.int_FT ||
         itemEditandoServiciosFijos.servicios.int_C3 ||
         itemEditandoServiciosFijos.servicios.int_C2 ||
+        itemEditandoServiciosFijos.servicios.int_C4 ||
         itemEditandoServiciosFijos.servicios.int_ES ||
         itemEditandoServiciosFijos.servicios.int_PA) {
         valoresComputoPreciosHoraIntegrados = true;
@@ -4448,6 +4467,7 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
         precioHora_FT: itemEditandoServiciosFijos.servicios.precioHora_FT ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FT) : null,
         precioHora_C3: itemEditandoServiciosFijos.servicios.precioHora_C3 ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_C3) : null,
         precioHora_C2: itemEditandoServiciosFijos.servicios.precioHora_C2 ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_C2) : null,
+        precioHora_C4: itemEditandoServiciosFijos.servicios.precioHora_C4 ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_C4) : null,
         precioHora_ES: itemEditandoServiciosFijos.servicios.precioHora_ES ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_ES) : null,
         precioHora_PA: itemEditandoServiciosFijos.servicios.precioHora_PA ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_PA) : null,
         variacion_TO: itemEditandoServiciosFijos.servicios.variacion_TO ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_TO) : null,
@@ -4468,7 +4488,7 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
         variacion_FT: itemEditandoServiciosFijos.servicios.variacion_FT ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_FT) : null,
         variacion_C3: itemEditandoServiciosFijos.servicios.variacion_C3 ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_C3) : null,
         variacion_C2: itemEditandoServiciosFijos.servicios.variacion_C2 ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_C2) : null,
-        variacion_ES: itemEditandoServiciosFijos.servicios.variacion_ES ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_ES) : null,
+        variacion_C4: itemEditandoServiciosFijos.servicios.variacion_C4 ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_C4) : null, variacion_ES: itemEditandoServiciosFijos.servicios.variacion_ES ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_ES) : null,
         variacion_PA: itemEditandoServiciosFijos.servicios.variacion_PA ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_PA) : null,
         diaVariacion_TO: itemEditandoServiciosFijos.servicios.variacion_TO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_TO : '',
         diaVariacion_CR: itemEditandoServiciosFijos.servicios.variacion_CR !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CR : '',
@@ -4488,6 +4508,7 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
         diaVariacion_FT: itemEditandoServiciosFijos.servicios.variacion_FT !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FT : '',
         diaVariacion_C3: itemEditandoServiciosFijos.servicios.variacion_C3 !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_C3 : '',
         diaVariacion_C2: itemEditandoServiciosFijos.servicios.variacion_C2 !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_C2 : '',
+        diaVariacion_C4: itemEditandoServiciosFijos.servicios.variacion_C4 !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_C4 : '',
         diaVariacion_ES: itemEditandoServiciosFijos.servicios.variacion_ES !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_ES : '',
         diaVariacion_PA: itemEditandoServiciosFijos.servicios.variacion_PA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_PA : '',
         activo_TO: itemEditandoServiciosFijos.servicios.activo_TO,
@@ -4508,6 +4529,7 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
         activo_FT: itemEditandoServiciosFijos.servicios.activo_FT,
         activo_C3: itemEditandoServiciosFijos.servicios.activo_C3,
         activo_C2: itemEditandoServiciosFijos.servicios.activo_C2,
+        activo_C4: itemEditandoServiciosFijos.servicios.activo_C4,
         activo_ES: itemEditandoServiciosFijos.servicios.activo_ES,
         activo_PA: itemEditandoServiciosFijos.servicios.activo_PA,
         int_TO: itemEditandoServiciosFijos.servicios.int_TO,
@@ -4528,6 +4550,7 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
         int_FT: itemEditandoServiciosFijos.servicios.int_FT,
         int_C3: itemEditandoServiciosFijos.servicios.int_C3,
         int_C2: itemEditandoServiciosFijos.servicios.int_C2,
+        int_C4: itemEditandoServiciosFijos.servicios.int_C4,
         int_ES: itemEditandoServiciosFijos.servicios.int_ES,
         int_PA: itemEditandoServiciosFijos.servicios.int_PA,
         trab_TO: itemEditandoServiciosFijos.servicios.trab_TO ? itemEditandoServiciosFijos.servicios.trab_TO : '',
@@ -4548,6 +4571,7 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
         trab_FT: itemEditandoServiciosFijos.servicios.trab_FT ? itemEditandoServiciosFijos.servicios.trab_FT : '',
         trab_C3: itemEditandoServiciosFijos.servicios.trab_C3 ? itemEditandoServiciosFijos.servicios.trab_C3 : '',
         trab_C2: itemEditandoServiciosFijos.servicios.trab_C2 ? itemEditandoServiciosFijos.servicios.trab_C2 : '',
+        trab_C4: itemEditandoServiciosFijos.servicios.trab_C4 ? itemEditandoServiciosFijos.servicios.trab_C4 : '',
         trab_ES: itemEditandoServiciosFijos.servicios.trab_ES ? itemEditandoServiciosFijos.servicios.trab_ES : '',
         trab_PA: itemEditandoServiciosFijos.servicios.trab_PA ? itemEditandoServiciosFijos.servicios.trab_PA : ''
     }));
@@ -5003,6 +5027,31 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
             });
         };
     };
+    if (itemEditandoServiciosFijos.servicios.precioHora_C4 || itemEditandoServiciosFijos.servicios.int_C4) {
+        objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'CRCUA');
+        if (objetoServicioActivo) {
+            arrayCuadranteServiciosFijos.push({
+                ...objetoServicioActivo,
+                tipoServiciofijo: 'CRCUA',
+                precioHora_C4: itemEditandoServiciosFijos.servicios.precioHora_C4 ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_C4) : null,
+                variacion_C4: 3,
+                diaVariacion_C4: '',
+                activo_C4: itemEditandoServiciosFijos.servicios.activo_C4,
+                int_C4: itemEditandoServiciosFijos.servicios.int_C4,
+                trab_C4: itemEditandoServiciosFijos.servicios.trab_C4 ? itemEditandoServiciosFijos.servicios.trab_C4 : null
+            });
+        } else {
+            arrayCuadranteServiciosFijos.push({
+                tipoServiciofijo: 'CRCUA',
+                precioHora_C4: itemEditandoServiciosFijos.servicios.precioHora_C4 ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_C4) : null,
+                variacion_C4: 3,
+                diaVariacion_C4: '',
+                activo_C4: itemEditandoServiciosFijos.servicios.activo_C4,
+                int_C4: itemEditandoServiciosFijos.servicios.int_C4,
+                trab_C4: itemEditandoServiciosFijos.servicios.trab_C4 ? itemEditandoServiciosFijos.servicios.trab_C4 : null
+            });
+        };
+    };
     if (itemEditandoServiciosFijos.servicios.precioHora_ES || itemEditandoServiciosFijos.servicios.int_ES) {
         objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'LIME');
         if (objetoServicioActivo) {
@@ -5092,6 +5141,7 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
                 servicio.activo_FT === 'si' ||
                 servicio.activo_C3 === 'si' ||
                 servicio.activo_C2 === 'si' ||
+                servicio.activo_C4 === 'si' ||
                 servicio.activo_ES === 'si' ||
                 servicio.activo_PA === 'si') {
                 hayAlgunServicioActivo = true;

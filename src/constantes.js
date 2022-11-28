@@ -130,7 +130,8 @@ const Constantes = {
     ],
     VARIACIONES_HORARIOS_CENTROS: [
         { value: 'todasSemanas', label: 'Todas las semanas' },
-        { value: 'semanaSiNo', label: 'Semana sí, semana no' }
+        { value: 'semanaSiNo', label: 'Semana sí, semana no' },
+        { value: 'primSemana', label: 'Primera semana' }
     ],
     MODO_ENTRADA_HORARIOS: [
         { value: 'rango', label: 'Rango de horas' },
@@ -208,6 +209,7 @@ const Constantes = {
         { value: 'FEST', label: 'SERVICIO DE LIMPIEZA DÍA FESTIVO' },
         { value: 'CRTRIM', label: 'LIMPIEZA DE CRISTALES TRIMESTRAL' },
         { value: 'CRBIM', label: 'LIMPIEZA DE CRISTALES BIMENSUAL' },
+        { value: 'CRCUA', label: 'LIMPIEZA DE CRISTALES CUATRIMESTRAL' },
         { value: 'LIME', label: 'SERVICIO DE LIMPIEZA ESPECIAL' },
         { value: 'LIMP', label: 'SERVICIO DE LIMPIEZA DEL PARKING' }
     ],

@@ -827,7 +827,10 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
         BA: false,
         FT: false,
         C3: false,
-        C2: false
+        C2: false,
+        C4: false,
+        ES: false,
+        PA: false,
     }));
     dispatch({
         type: SET_CUADRANTEVACIO,
@@ -855,7 +858,10 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
             BA: false,
             FT: false,
             C3: false,
-            C2: false
+            C2: false,
+            C4: false,
+            ES: false,
+            PA: false
         },
         servicios: {
             precioHora_TO: '',
@@ -876,6 +882,9 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
             precioHora_FT: '',
             precioHora_C3: '',
             precioHora_C2: '',
+            precioHora_C4: '',
+            precioHora_ES: '',
+            precioHora_PA: '',
             variacion_TO: '',
             variacion_CR: '',
             variacion_CE: '',
@@ -894,6 +903,9 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
             variacion_FT: '',
             variacion_C3: '',
             variacion_C2: '',
+            variacion_C4: '',
+            variacion_ES: '',
+            variacion_PA: '',
             diaVariacion_TO: '',
             diaVariacion_CR: '',
             diaVariacion_CE: '',
@@ -912,6 +924,9 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
             diaVariacion_FT: '',
             diaVariacion_C3: '',
             diaVariacion_C2: '',
+            diaVariacion_C4: '',
+            diaVariacion_ES: '',
+            diaVariacion_PA: '',
             activo_TO: 'si',
             activo_CR: 'si',
             activo_CE: 'si',
@@ -930,6 +945,9 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
             activo_FT: 'si',
             activo_C3: 'si',
             activo_C2: 'si',
+            activo_C4: 'si',
+            activo_ES: 'si',
+            activo_PA: 'si',
             int_TO: false,
             int_CR: false,
             int_CE: false,
@@ -948,6 +966,7 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
             int_FT: false,
             int_C3: false,
             int_C2: false,
+            int_C4: false,
             int_ES: false,
             int_PA: false,
             trab_TO: '',
@@ -968,6 +987,7 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
             trab_FT: '',
             trab_C3: '',
             trab_C2: '',
+            trab_C4: '',
             trab_ES: '',
             trab_PA: ''
         }

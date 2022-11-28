@@ -560,6 +560,16 @@ export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
                         };
                     };
                 };
+                if (servicio[prop] && (prop === 'precioHora_C4' || prop === 'int_C4')) {
+                    if (servicio.activo_C4 === 'si') {
+                        if (servicio.int_C4) {
+                            arrayInforme.push(['Total a facturar por LIMPIEZA DE CRISTALES CUATRIMESTRAL: 0 € (Inculido en cómputo)', 'normal']);
+                        } else {
+                            sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                            arrayInforme.push(['Total a facturar por LIMPIEZA DE CRISTALES CUATRIMESTRAL: ' + parseFloat(servicio.totalServicioFijo).toFixed(2) + ' €', 'normal']);
+                        };
+                    };
+                };
                 if (servicio[prop] && (prop === 'precioHora_ES' || prop === 'int_ES')) {
                     if (servicio.activo_ES === 'si') {
                         if (servicio.int_ES) {
