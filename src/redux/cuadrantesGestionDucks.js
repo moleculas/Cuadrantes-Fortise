@@ -1679,7 +1679,6 @@ export const procesarDatosCuadranteAccion = (source) => (dispatch, getState) => 
     //firmamos
     let fechaHoy = new Date().toLocaleString() + '';
     let laFirmaActualizacion = fechaHoy + ' por ' + usuarioActivo.nombre.charAt(0).toUpperCase() + usuarioActivo.nombre.slice(1);
-    dispatch(setFirmaActualizacionAccion(laFirmaActualizacion));
     let todosRevisados = true;
     numeroCuadrantesCuadrantes.forEach((cuadrante, index) => {
         if (!cuadrante.revisado) {
@@ -1837,6 +1836,7 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
     let precio_L2 = 0;
     let precio_F = 0;
     let objetoTotales;
+    let vueltasSeguridad = 0;
     servicios.forEach((servicioTot) => {
         if (servicioTot) {
             servicioTot.forEach((servicio) => {
@@ -2015,6 +2015,7 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
     });
     informes.forEach((informe, index) => {
         if (informe) {
+            vueltasSeguridad += 1;
             if (informe.mensualPactado) {
                 totalFacturado_M += informe.mensualPactado;
                 if (horas[index]['L']) {
@@ -2601,7 +2602,12 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
     };
     objetoTotales['totalMasIva'] = ((parseFloat(objetoTotales['total']) * 21) / 100) + parseFloat(objetoTotales['total']);
     objetoTotales['totalIva'] = ((parseFloat(objetoTotales['total']) * 21) / 100);
-    return objetoTotales
+    //control seguretat
+    if (informes.length !== vueltasSeguridad) {
+        return null
+    } else {
+        return objetoTotales
+    };
 };
 
 const retornaMesReciboLetra = () => (dispatch, getState) => {
@@ -2673,6 +2679,16 @@ const finalizaRegistroCuadrante = (
         datosCuadrante: elArrayDatosCuadranteLimpiado
     };
     let losDatosTotales = dispatch(calculoTotales(losDatosServiciosFijos.datosServicios, losDatosInforme.datosInforme, losDatosHoras.horas));
+    if (!losDatosTotales) {
+        dispatch(setAlertaAccion({
+            abierto: true,
+            mensaje: "Error en el cálculo de totales vuelve a registrar el cuadrante.",
+            tipo: 'error'
+        }));
+        return;
+    } else {
+        dispatch(setFirmaActualizacionAccion(laFirmaActualizacion));
+    };
     if (parseFloat(losDatosTotales.total) === 0) {
         losDatosInforme = {
             ...losDatosInforme,
