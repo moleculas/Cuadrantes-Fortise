@@ -1837,6 +1837,7 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
     let precio_F = 0;
     let objetoTotales;
     let vueltasSeguridad = 0;
+    let numeroInformes = 0;
     servicios.forEach((servicioTot) => {
         if (servicioTot) {
             servicioTot.forEach((servicio) => {
@@ -2014,6 +2015,7 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
         };
     });
     informes.forEach((informe, index) => {
+        numeroInformes += 1;
         if (informe) {
             vueltasSeguridad += 1;
             if (informe.mensualPactado) {
@@ -2084,6 +2086,8 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
                     precio_F = informe.precioHora_F;
                 };
             };
+        }else{
+            numeroInformes -= 1; 
         };
     });
     objetoTotales = {
@@ -2602,9 +2606,9 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
     };
     objetoTotales['totalMasIva'] = ((parseFloat(objetoTotales['total']) * 21) / 100) + parseFloat(objetoTotales['total']);
     objetoTotales['totalIva'] = ((parseFloat(objetoTotales['total']) * 21) / 100);
-    //control seguretat
-    if (informes.length !== vueltasSeguridad) {
-        return null
+    //control seguretat       
+    if (numeroInformes !== vueltasSeguridad) {
+        return 'error cálculo'
     } else {
         return objetoTotales
     };
@@ -2679,7 +2683,7 @@ const finalizaRegistroCuadrante = (
         datosCuadrante: elArrayDatosCuadranteLimpiado
     };
     let losDatosTotales = dispatch(calculoTotales(losDatosServiciosFijos.datosServicios, losDatosInforme.datosInforme, losDatosHoras.horas));
-    if (!losDatosTotales) {
+    if (losDatosTotales === 'error cálculo') {
         dispatch(setAlertaAccion({
             abierto: true,
             mensaje: "Error en el cálculo de totales vuelve a registrar el cuadrante.",
