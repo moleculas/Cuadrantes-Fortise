@@ -2227,7 +2227,7 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
             switch (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].excepcion) {
                 case 1:
                     if (cuadranteRegistrado === 'no' && !numeroCuadrantesCuadrantes[cuadranteEnUsoCuadrantes - 1].revisado) {
-                        proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial / (totalHorasInicialTra + sumatorioHorasBajasComputablesTra + sumatorioTotalHorasFestivasComputablesTra);
+                        proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial / (totalHorasInicialTra + sumatorioHorasBajasComputablesTra + sumatorioTotalHorasFestivasComputablesTra + sumatorioTotalHorasFestivasComputablesSup);
                         switch (elTipoServicio) {
                             case 'LIM':
                                 elPrecioHora_L = proporcion;
@@ -2280,8 +2280,9 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                     break;
                 case '':
                     if (cuadranteRegistrado === 'no' && !numeroCuadrantesCuadrantes[cuadranteEnUsoCuadrantes - 1].revisado) {
-                        //proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial / (totalHorasInicialTra + sumatorioHorasBajasComputablesTra + (sumatorioTotalHorasFestivasComputablesTra + sumatorioTotalHorasFestivasComputablesSup));
-                        proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial / (totalHorasInicialTra + sumatorioHorasBajasComputablesTra);
+                        proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial / (totalHorasInicialTra + sumatorioHorasBajasComputablesTra + (sumatorioTotalHorasFestivasComputablesTra + sumatorioTotalHorasFestivasComputablesSup));
+                        //proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial / (totalHorasInicialTra + sumatorioHorasBajasComputablesTra);
+                        console.log(proporcion)
                         switch (elTipoServicio) {
                             case 'LIM':
                                 elPrecioHora_L = proporcion;
@@ -10322,7 +10323,7 @@ export const gestionaColumnaCuadranteAccion = (trabajador, tipoTrabajador, esRev
         if (cuadrante[posicionAnterior]) {
             if (
                 esInicio &&
-                (cuadrante[posicionAnterior].idTrabajador === trabajador.id) 
+                (cuadrante[posicionAnterior].idTrabajador === trabajador.id)
             ) {
                 return;
             };
