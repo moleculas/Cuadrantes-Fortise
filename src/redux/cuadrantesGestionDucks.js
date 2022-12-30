@@ -871,7 +871,7 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
         if (objetoCuadrante.datosTrabajadoresIniciales.datosTrabajadoresIniciales[numeroCuadrante - 1]) {
             objetoCuadrante.datosTrabajadoresIniciales.datosTrabajadoresIniciales[numeroCuadrante - 1].trabajadores.forEach((trabajadorIterado, index) => {
                 dispatch(setDisableCargandoAccion(true));
-                setTimeout(
+                const timer = setTimeout(
                     function () {
                         const funcionObtenerTrabajador = () => {
                             if (trabajadorIterado['trabajador_' + (index + 1)]) {
@@ -880,7 +880,7 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
                             return new Promise((resolve, reject) => {
                                 setTimeout(() => {
                                     return resolve({ resuelto: true });
-                                }, 500);
+                                }, 800);
                             });
                         };
                         funcionObtenerTrabajador().then(values => {
@@ -890,10 +890,11 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
                                 };
                             }
                         });
-                    }, index * 1000);
+                    }, index * 1600);   
                 setTimeout(() => {
                     dispatch(setDisableCargandoAccion(false));
-                }, (objetoCuadrante.datosTrabajadoresIniciales.datosTrabajadoresIniciales[numeroCuadrante - 1].trabajadores.length * 1000) + 1000);
+                }, (objetoCuadrante.datosTrabajadoresIniciales.datosTrabajadoresIniciales[numeroCuadrante - 1].trabajadores.length * 1600) + 1600);
+                return () => clearTimeout(timer);
             });
         };
     };
@@ -2086,8 +2087,8 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
                     precio_F = informe.precioHora_F;
                 };
             };
-        }else{
-            numeroInformes -= 1; 
+        } else {
+            numeroInformes -= 1;
         };
     });
     objetoTotales = {
