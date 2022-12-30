@@ -224,8 +224,10 @@ export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
         });
         arrayInforme.push(['divider', 'normal']);
         let textoDiferenciaASumarHorasFestivas = '';
+        let esUnMensualPactado = false;
         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 1 || objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 3) {
             if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial) {
+                esUnMensualPactado = true;
                 sumatorioTotal = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado;
                 let contadorHayMasDeUnMensualPactado = 0;
                 if (sumatorioHoras_L) {
@@ -262,116 +264,135 @@ export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
             sumatorioTotal = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHoraTotal;
         };
         if (sumatorioHoras_L) {
-            if(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 4){
+            if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 4) {
                 arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA: Sin coste', 'normal']);
-            }else{
+            } else {
                 arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L).toFixed(2) + ' €', 'normal']);
-            };            
+            };
             arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA: ' + parseFloat(sumatorioHoras_L).toFixed(2) + ' horas', 'normal']);
             if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L && objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo !== 4) {
                 arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_L).toFixed(2) + ' €', 'error']);
                 arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro para poder computar', 'error']);
             } else {
-                arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_L).toFixed(2) + ' €' + textoDiferenciaASumarHorasFestivas, 'normal']);
-            }
+                if (!esUnMensualPactado) {
+                    arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_L).toFixed(2) + ' €' + textoDiferenciaASumarHorasFestivas, 'normal']);
+                };
+            };
         };
         if (sumatorioHoras_E) {
-            if(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 4){
+            if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 4) {
                 arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA: Sin coste', 'normal']);
-            }else{
+            } else {
                 arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA ESPECIAL: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_E).toFixed(2) + ' €', 'normal']);
-            };              
+            };
             arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA ESPECIAL: ' + parseFloat(sumatorioHoras_E).toFixed(2) + ' horas', 'normal']);
             if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_E && objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo !== 4) {
                 arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA ESPECIAL: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_E).toFixed(2) + ' €', 'error']);
                 arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro o del Cuadrante para poder computar', 'error']);
             } else {
-                arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA ESPECIAL: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_E).toFixed(2) + ' €' + textoDiferenciaASumarHorasFestivas, 'normal']);
-            }
+                if (!esUnMensualPactado) {
+                    arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA ESPECIAL: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_E).toFixed(2) + ' €' + textoDiferenciaASumarHorasFestivas, 'normal']);
+                };
+            };
         };
         if (sumatorioHoras_P) {
-            if(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 4){
+            if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 4) {
                 arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA: Sin coste', 'normal']);
-            }else{
+            } else {
                 arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA DEL PARKING: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_P).toFixed(2) + ' €', 'normal']);
-            };            
+            };
             arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA DEL PARKING: ' + parseFloat(sumatorioHoras_P).toFixed(2) + ' horas', 'normal']);
             if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_P && objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo !== 4) {
                 arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA DEL PARKING: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_P).toFixed(2) + ' €', 'error']);
                 arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro o del Cuadrante para poder computar', 'error']);
             } else {
-                arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA DEL PARKING: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_P).toFixed(2) + ' €' + textoDiferenciaASumarHorasFestivas, 'normal']);
-            }
+                if (!esUnMensualPactado) {
+                    arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA DEL PARKING: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_P).toFixed(2) + ' €' + textoDiferenciaASumarHorasFestivas, 'normal']);
+                };
+            };
         };
         if (sumatorioHoras_N) {
-            if(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 4){
+            if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 4) {
                 arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA: Sin coste', 'normal']);
-            }else{
+            } else {
                 arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA NAVE 2: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_N).toFixed(2) + ' €', 'normal']);
-            };              
+            };
             arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA NAVE 2: ' + parseFloat(sumatorioHoras_N).toFixed(2) + ' horas', 'normal']);
             if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_N && objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo !== 4) {
                 arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA NAVE 2: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_N).toFixed(2) + ' €', 'error']);
                 arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro o del Cuadrante para poder computar', 'error']);
             } else {
-                arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA NAVE 2: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_N).toFixed(2) + ' €' + textoDiferenciaASumarHorasFestivas, 'normal']);
-            }
+                if (!esUnMensualPactado) {
+                    arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA NAVE 2: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_N).toFixed(2) + ' €' + textoDiferenciaASumarHorasFestivas, 'normal']);
+                };
+            };
         };
         if (sumatorioHoras_R) {
-            if(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 4){
+            if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 4) {
                 arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA: Sin coste', 'normal']);
-            }else{
+            } else {
                 arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA REFUERZO: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_R).toFixed(2) + ' €', 'normal']);
-            };            
+            };
             arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA REFUERZO: ' + parseFloat(sumatorioHoras_R).toFixed(2) + ' horas', 'normal']);
             if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_R && objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo !== 4) {
                 arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA REFUERZO: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_R).toFixed(2) + ' €', 'error']);
                 arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro o del Cuadrante para poder computar', 'error']);
             } else {
-                arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA REFUERZO: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_R).toFixed(2) + ' €' + textoDiferenciaASumarHorasFestivas, 'normal']);
-            }
+                if (!esUnMensualPactado) {
+                    arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA REFUERZO: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_R).toFixed(2) + ' €' + textoDiferenciaASumarHorasFestivas, 'normal']);
+                };
+            };
         };
         if (sumatorioHoras_L1) {
-            if(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 4){
+            if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 4) {
                 arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA: Sin coste', 'normal']);
-            }else{
+            } else {
                 arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA_1: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L1).toFixed(2) + ' €', 'normal']);
-            };              
+            };
             arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA_1: ' + parseFloat(sumatorioHoras_L1).toFixed(2) + ' horas', 'normal']);
             if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L1 && objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo !== 4) {
                 arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA_1: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_L1).toFixed(2) + ' €', 'error']);
                 arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro o del Cuadrante para poder computar', 'error']);
             } else {
-                arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA_1: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_L1).toFixed(2) + ' €' + textoDiferenciaASumarHorasFestivas, 'normal']);
-            }
+                if (!esUnMensualPactado) {
+                    arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA_1: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_L1).toFixed(2) + ' €' + textoDiferenciaASumarHorasFestivas, 'normal']);
+                };
+            };
         };
         if (sumatorioHoras_L2) {
-            if(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 4){
+            if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 4) {
                 arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA: Sin coste', 'normal']);
-            }else{
+            } else {
                 arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA_2: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L2).toFixed(2) + ' €', 'normal']);
-            };              
+            };
             arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA_2: ' + parseFloat(sumatorioHoras_L2).toFixed(2) + ' horas', 'normal']);
             if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L2 && objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo !== 4) {
                 arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA_2: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_L2).toFixed(2) + ' €', 'error']);
                 arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro o del Cuadrante para poder computar', 'error']);
             } else {
-                arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA_2: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_L2).toFixed(2) + ' €' + textoDiferenciaASumarHorasFestivas, 'normal']);
-            }
+                if (!esUnMensualPactado) {
+                    arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA_2: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_L2).toFixed(2) + ' €' + textoDiferenciaASumarHorasFestivas, 'normal']);
+                };
+            };
         };
         if (sumatorioHoras_F) {
-            if(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 4){
+            if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 4) {
                 arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA: Sin coste', 'normal']);
-            }else{
+            } else {
                 arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA DÍA FESTIVO: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F).toFixed(2) + ' €', 'normal']);
-            };            
+            };
             arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA DÍA FESTIVO: ' + parseFloat(sumatorioHoras_F).toFixed(2) + ' horas', 'normal']);
             if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F && objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo !== 4) {
                 arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA DÍA FESTIVO: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_F).toFixed(2) + ' €', 'error']);
                 arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro o del Cuadrante para poder computar', 'error']);
             } else {
-                arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + '  SERVICIO DE LIMPIEZA DÍA FESTIVO: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_F).toFixed(2) + ' €' + textoDiferenciaASumarHorasFestivas, 'normal']);
-            }
+                if (!esUnMensualPactado) {
+                    arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + '  SERVICIO DE LIMPIEZA DÍA FESTIVO: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_F).toFixed(2) + ' €' + textoDiferenciaASumarHorasFestivas, 'normal']);
+                };
+            };
+        };
+        if (esUnMensualPactado) {
+            arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ': ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado).toFixed(2) + ' €' + textoDiferenciaASumarHorasFestivas, 'normal']);
         };
     };
     arrayInforme.push(['divider', 'normal']);
@@ -595,7 +616,7 @@ export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
     };
     if (mesConFestivosCompleto) {
         sumatorioServiciosFijos = 0;
-    };    
+    };
     sumatorioTotal += sumatorioServiciosFijos;
     arrayInforme.push(['divider', 'normal']);
     // if (objetoCuadrante.datosServicios.bloqueado.length > 0 && objetoCuadrante.datosServicios.bloqueado[cuadranteEnUsoCuadrantes - 1] === 'si') {

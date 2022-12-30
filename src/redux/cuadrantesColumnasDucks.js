@@ -2282,7 +2282,6 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                     if (cuadranteRegistrado === 'no' && !numeroCuadrantesCuadrantes[cuadranteEnUsoCuadrantes - 1].revisado) {
                         proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial / (totalHorasInicialTra + sumatorioHorasBajasComputablesTra + (sumatorioTotalHorasFestivasComputablesTra + sumatorioTotalHorasFestivasComputablesSup));
                         //proporcion = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial / (totalHorasInicialTra + sumatorioHorasBajasComputablesTra);
-                        console.log(proporcion)
                         switch (elTipoServicio) {
                             case 'LIM':
                                 elPrecioHora_L = proporcion;
