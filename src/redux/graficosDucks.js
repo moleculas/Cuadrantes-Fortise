@@ -56,11 +56,11 @@ export default function graficosReducer(state = dataInicial, action) {
 
 //acciones
 export const obtenerCuadrantesPorAnyoAccion = (objeto) => (dispatch, getState) => {
+    const { calendarioAGestionar } = getState().variablesCuadrantes;
+    const [year] = calendarioAGestionar.split("-");
     dispatch({
         type: LOADING_GRAFICOS
     });
-    const d = new Date();
-    const year = d.getFullYear().toString();
     const arrayMeses = [year + '-1-', year + '-2-', year + '-3-', year + '-4-', year + '-5-', year + '-6-', year + '-7-', year + '-8-', year + '-9-', year + '-10-', year + '-11-', year + '-12-'];
     let apiUrl = rutaApi + "obtener_por_anyo.php";
     const formData = [];

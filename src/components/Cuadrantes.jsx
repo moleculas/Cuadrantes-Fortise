@@ -813,11 +813,11 @@ const Cuadrantes = (props) => {
 
     const gestionarReciboPDF = async () => {
         dispatch(gestionarDocumentosCuadranteAccion('recibo'));
-        const myMesSplit = objetoCuadrante.nombre.split("-");
-        const mes = myMesSplit[1];
+        const [anyo, mes] = objetoCuadrante.nombre.split("-");
         const element =
             <ReciboPDF
                 objetoReciboPDF={objetoCuadrante.datosInforme.datosGestionEsp}
+                anyo={anyo}
                 mes={mes}
             />;
         const myPdf = pdf([]);
@@ -827,7 +827,7 @@ const Cuadrantes = (props) => {
             let file = new File([blob], 'Recibo-' + objetoCuadrante.nombre + '.pdf', { type: 'application/pdf' });
             const fileURL = URL.createObjectURL(file);
             const pdfWindow = window.open();
-            pdfWindow.location.href = fileURL;            
+            pdfWindow.location.href = fileURL;
         };
     };
 

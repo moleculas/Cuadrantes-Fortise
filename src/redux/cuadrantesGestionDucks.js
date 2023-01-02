@@ -2885,10 +2885,9 @@ export const handleGenerarArchivosAccion = () => (dispatch, getState) => {
             tipo: 'error'
         }));
         return;
-    };
-    const myMesSplit = objetoCuadrante.nombre.split("-");
-    const mes = myMesSplit[1];
-    dispatch(generarArchivosXLSAccion(numeroFactusol, objetoCuadrante.total, mes));
+    };   
+    const [anyo, mes] = objetoCuadrante.nombre.split("-");
+    dispatch(generarArchivosXLSAccion(numeroFactusol, objetoCuadrante.total, anyo, mes));
     dispatch(gestionarDocumentosCuadranteAccion('factura'));
     dispatch(handleCloseMenuAccion());
 };

@@ -1093,7 +1093,7 @@ const retornaArrayElementosAccion = (objetoConceptos) => (dispatch, getState) =>
     return arrayElementos
 };
 
-export const generarArchivosXLSAccion = (numFactusol, objetoConceptos, mes) => async (dispatch, getState) => {
+export const generarArchivosXLSAccion = (numFactusol, objetoConceptos, anyo, mes) => async (dispatch, getState) => {
     const elNumFactusol = parseInt(numFactusol) + 1;
     try {
         const objetoCentroParsear = {
@@ -1111,12 +1111,9 @@ export const generarArchivosXLSAccion = (numFactusol, objetoConceptos, mes) => a
             totalIva: parseFloat(objetoConceptos.totalIva).toFixed(2),
             totalMasIva: parseFloat(objetoConceptos.totalMasIva).toFixed(2)
         };
-        const ahora = new Date();
-        const ultimoDia = new Date(ahora.getFullYear(), mes, 0);
-        const month = mes;
-        const day = ultimoDia.getDate();
-        const year = ultimoDia.getFullYear();
-        const fechaHoy = day + "/" + month + "/" + year;
+        const ultimoDia = new Date(anyo, mes, 0);          
+        const day = ultimoDia.getDate();       
+        const fechaHoy = day + "/" + mes + "/" + anyo;
         const dataFAC = [[
             1,
             elNumFactusol,
@@ -1309,7 +1306,7 @@ export const actualizarCuadrantesIteradosAccion = () => async (dispatch, getStat
     }
 };
 
-export const generarArchivosXLSLoteAccion = (numFactusol, arrayCuadrantes, mes) => (dispatch, getState) => {
+export const generarArchivosXLSLoteAccion = (numFactusol, arrayCuadrantes, anyo, mes) => (dispatch, getState) => {
     dispatch({
         type: PROCESANDO_LOTE
     });
@@ -1333,12 +1330,9 @@ export const generarArchivosXLSLoteAccion = (numFactusol, arrayCuadrantes, mes) 
                 totalIva: parseFloat(cuadranteIterado.total.totalIva).toFixed(2),
                 totalMasIva: parseFloat(cuadranteIterado.total.totalMasIva).toFixed(2)
             };
-            const ahora = new Date();
-            const ultimoDia = new Date(ahora.getFullYear(), mes, 0);
-            const month = mes;
+            const ultimoDia = new Date(anyo, mes, 0);           
             const day = ultimoDia.getDate();
-            const year = ultimoDia.getFullYear();
-            const fechaHoy = day + "/" + month + "/" + year;
+            const fechaHoy = day + "/" + mes + "/" + anyo;
             dataFAC.push([
                 1,
                 elNumFactusol + index,

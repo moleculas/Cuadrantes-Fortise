@@ -111,13 +111,10 @@ const styles = StyleSheet.create({
     },
 });
 
-const ReciboPDF = ({ objetoReciboPDF, mes }) => {
-    const ahora = new Date();
-    const ultimoDia = new Date(ahora.getFullYear(), mes, 0);
-    const month = mes;
+const ReciboPDF = ({ objetoReciboPDF, anyo, mes }) => {   
+    const ultimoDia = new Date(anyo, mes, 0);   
     const day = ultimoDia.getDate();
-    const year = ultimoDia.getFullYear();
-    const fechaHoy = day + "/" + month + "/" + year;
+    const fechaHoy = day + "/" + mes + "/" + anyo;
 
     return (
         <Document>

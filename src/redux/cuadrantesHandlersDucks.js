@@ -294,6 +294,7 @@ export const handleChangeSelectCalendarioAccion = (newValue) => (dispatch, getSt
         dispatch(setDisableSelectCentrosAccion(true));
         dispatch(setCalendarioAGestionarAccion(retornaAnoMesAccion(newValue)));
         dispatch(cambioEstadoInicioCuadrantesAccion(true));
+        dispatch(forzarRecargaGraficosCuadrantesAccion(true));
     } else {
         if (!estadoIntervencionCuadranteNuevoRegistrada) {
             dispatch(handleClickOpenDialogCuadrantes2Accion());

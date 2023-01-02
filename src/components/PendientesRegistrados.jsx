@@ -279,10 +279,9 @@ const PendientesRegistrados = (props) => {
                     arrayCuadrantesDef.push(cuadrante)
                 }
             });
-            setArrayCuadrantesDefsParaCheck(arrayCuadrantesDef);
-            const myMesSplit = calendarioAGestionar.split("-");
-            const mes = myMesSplit[1];
-            dispatch(generarArchivosXLSLoteAccion(numeroFactusolPendientes, arrayCuadrantesDef, mes));
+            setArrayCuadrantesDefsParaCheck(arrayCuadrantesDef);           
+            const [anyo, mes] = calendarioAGestionar.split("-");
+            dispatch(generarArchivosXLSLoteAccion(numeroFactusolPendientes, arrayCuadrantesDef, anyo, mes));
             dispatch(setTiempoEsperaloteAccion(true));
         } else {
             setAlert({
