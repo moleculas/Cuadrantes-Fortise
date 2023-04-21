@@ -5,6 +5,7 @@ import { parse } from 'zipson';
 //constantes
 const rutaApi = Constantes.RUTA_API;
 const formaPago = Constantes.FORMA_DE_PAGO;
+const tiposServicioFijo = Constantes.TIPO_SERVICIO_FIJO;
 const dataInicial = {
     loadingCuadrantes: false,
     errorDeCargaCuadrantes: false,
@@ -181,6 +182,9 @@ export const setCuadranteAccion = (array) => (dispatch, getState) => {
         payload: {
             array: array
         }
+    });
+    return new Promise((resolve, reject) => {
+        resolve({ payload: true });
     });
 }
 
@@ -583,7 +587,7 @@ const retornaHorasServicios = (totalObjeto) => (dispatch, getState) => {
 };
 
 const retornaTotalesServicios = (totalObjeto) => (dispatch, getState) => {
-    const { totalesPeriodicos } = getState().variablesCuadrantes;
+    const { totalesPeriodicos } = getState().variablesCuadrantes;   
     let objetoRetornoServicios = {};
     totalObjeto.MT && (objetoRetornoServicios.MT = totalObjeto.MT);
     totalObjeto.LT && (objetoRetornoServicios.LT = totalObjeto.LT);
@@ -615,7 +619,8 @@ const retornaTotalesServicios = (totalObjeto) => (dispatch, getState) => {
     totalObjeto.C4T && (objetoRetornoServicios.C4T = totalObjeto.C4T);
     totalObjeto.EST && (objetoRetornoServicios.EST = totalObjeto.EST);
     totalObjeto.PAT && (objetoRetornoServicios.PAT = totalObjeto.PAT);
-    totalObjeto.NUMCT && (objetoRetornoServicios.NUMCT = totalObjeto.NUMCT);
+    totalObjeto.FRT && (objetoRetornoServicios.FRT = totalObjeto.FRT);
+    totalObjeto.NUMCT && (objetoRetornoServicios.NUMCT = totalObjeto.NUMCT);    
     if (objetoRetornoServicios.MT) {
         if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.MT) {
             objetoRetornoServicios.MT += totalesPeriodicos.totalesServicios.MT;
@@ -766,6 +771,11 @@ const retornaTotalesServicios = (totalObjeto) => (dispatch, getState) => {
             objetoRetornoServicios.PAT += totalesPeriodicos.totalesServicios.PAT;
         };
     };
+    if (objetoRetornoServicios.FRT) {
+        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.FRT) {
+            objetoRetornoServicios.FRT += totalesPeriodicos.totalesServicios.FRT;
+        };
+    };
     if (objetoRetornoServicios.NUMCT) {
         if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.NUMCT) {
             objetoRetornoServicios.NUMCT = totalesPeriodicos.totalesServicios.NUMCT;
@@ -786,4 +796,4 @@ export const reseteaTotalesPeriodicosAccion = () => (dispatch, getState) => {
             }
         }
     });
-}
+};

@@ -1,4 +1,4 @@
-import { makeStyles } from "@material-ui/core";
+import { fade, makeStyles } from "@material-ui/core";
 import { amber, blueGrey, green, lime, indigo, red, grey, blue, yellow, teal, brown, lightGreen, orange, deepPurple, cyan } from '@material-ui/core/colors';
 
 const Clases = makeStyles((theme) => ({
@@ -26,6 +26,12 @@ const Clases = makeStyles((theme) => ({
     },
     root: {
         width: '100%',
+    },
+    rootContenedor: {
+        display: 'flex'
+    },
+    rootNavbar: {
+        flexGrow: 1,
     },
     box20: {
         width: '100%',
@@ -201,12 +207,12 @@ const Clases = makeStyles((theme) => ({
         cursor: 'pointer',
     },
     casillaModificado: {
-        backgroundColor: `${lime[100]} !important`,       
+        backgroundColor: `${lime[100]} !important`,
         cursor: 'pointer',
         padding: 9,
     },
     casillaVariacion1: {
-        backgroundColor: `${orange[100]} !important`,       
+        backgroundColor: `${orange[100]} !important`,
         cursor: 'pointer',
         padding: 9,
     },
@@ -701,7 +707,7 @@ const Clases = makeStyles((theme) => ({
     },
     nestedIns: {
         paddingLeft: theme.spacing(4),
-        height: 45,        
+        height: 45,
     },
     nestedInsLink: {
         textDecoration: 'none',
@@ -851,7 +857,7 @@ const Clases = makeStyles((theme) => ({
         },
     },
     cercleInstruccionsVer: {
-        color: 'red', 
+        color: 'red',
         fontSize: 25,
         position: 'relative',
         top: 3
@@ -861,6 +867,57 @@ const Clases = makeStyles((theme) => ({
         fontSize: 25,
         position: 'relative',
         top: 3
+    },
+    drawer: {
+        width: 200,
+        flexShrink: 0,
+    },
+    drawerPaper: {
+        width: 200,
+    },
+    toolbar: theme.mixins.toolbar,
+    content: {
+        flexGrow: 1,
+        backgroundColor: theme.palette.background.default,
+        padding: theme.spacing(3),
+    },
+    menuButton: {
+        marginRight: theme.spacing(2),
+        [theme.breakpoints.up('sm')]: {
+            display: 'none',
+        },
+    },
+    simpleButton: {
+        marginLeft: theme.spacing(2),
+    },
+    title: {
+        flexGrow: 1,
+        display: 'none',
+        [theme.breakpoints.up('sm')]: {
+            display: 'block',
+        },
+    },
+    appBar: {
+        [theme.breakpoints.up('sm')]: {
+            width: `calc(100% - ${200}px)`,
+            marginLeft: 200,
+        },
+    },
+    logo: {
+        width: '25px'
+    },
+    fonsLogo: {
+        borderRadius: 60,
+        backgroundColor: fade(theme.palette.common.white, 0.55),
+        paddingLeft: 10,
+        paddingRight: 10,
+        paddingTop: 7,
+        paddingBottom: 7,
+        marginRight: 15,
+        display: 'none',
+        [theme.breakpoints.up('sm')]: {
+            display: 'block',
+        },
     }
 }), { index: 1 });
 

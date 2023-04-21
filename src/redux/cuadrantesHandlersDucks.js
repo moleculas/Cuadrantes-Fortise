@@ -32,7 +32,6 @@ import { actualizarObjetoCuadranteAccion } from './cuadrantesDucks';
 import { activarDesactivarCambioBotonActualizarAccion } from './cuadrantesDucks';
 import { registrarIntervencionAccion } from './appDucks';
 import { setCuadranteEnUsoCuadrantesAccion } from './cuadrantesSettersDucks';
-import { gestionaCuadranteIndividualAccion } from './cuadrantesGestionDucks';
 import { setAlertaAccion } from './cuadrantesSettersDucks';
 import { cambiarACuadranteNoRegistradoAccion } from './cuadrantesDucks';
 import { activarDesactivarCambioBotonResetearAccion } from './cuadrantesDucks';
@@ -41,14 +40,11 @@ import { setEsInicioTraAccion } from './cuadrantesSettersDucks';
 import { setEsInicioSupAccion } from './cuadrantesSettersDucks';
 import { setEsCambioTraAccion } from './cuadrantesSettersDucks';
 import { setEsCambioSupAccion } from './cuadrantesSettersDucks';
-import { gestionaColumnaCuadranteAccion } from './cuadrantesColumnasDucks';
-import { cambiarEstadoCuadranteEnUsoRevisadoAccion } from './cuadrantesGestionDucks';
 import { setCuadranteAccion } from './cuadrantesDucks';
 import { setItemPrevioEditandoAccion } from './cuadrantesSettersDucks';
 import { activarDesactivarCambioAccion } from './cuadrantesDucks';
 import { setBufferSwitchedDiasFestivosCuadranteAccion } from './cuadrantesSettersDucks';
 import { setCuadranteServiciosFijosAccion } from './cuadrantesServiciosFijosDucks';
-import { gestionaColumnaServiciosFijosCambiosAccion } from './cuadrantesServiciosFijosDucks';
 import { setStateFestivoAccion } from './cuadrantesDucks';
 import { setColumnaIndiceAGestionarAccion } from './cuadrantesSettersDucks';
 import { setPosicionTrabajadorPrevioACambiarAccion } from './cuadrantesSettersDucks';
@@ -63,7 +59,6 @@ import { setItemPrevioEditandoConfiguracionAccion } from './cuadrantesSettersDuc
 import { setItemEditandoServiciosFijosAccion } from './cuadrantesServiciosFijosDucks';
 import { setItemPrevioEditandoServiciosFijosAccion } from './cuadrantesServiciosFijosDucks';
 import { setLosServiciosFijosAccion } from './cuadrantesServiciosFijosDucks';
-import { gestionaColumnaServiciosFijosInicioAccion } from './cuadrantesServiciosFijosDucks';
 import { setStateSwitchTipoServicioFijoCuadranteAccion } from './cuadrantesServiciosFijosDucks';
 import { setCambiadaConfiguracionGeneralAccion } from './cuadrantesSettersDucks';
 import { setEstamosActualizandoCuadranteSinCargaAccion } from './cuadrantesSettersDucks';
@@ -71,7 +66,6 @@ import { handleClosePopoverGeneralAccion } from './cuadrantesPopoversDucks';
 import { handleClosePopoverServiciosFijosAccion } from './cuadrantesPopoversDucks';
 import { handleClosePopoverConfiguracionAccion } from './cuadrantesPopoversDucks';
 import { obtenerCentroAccion } from './centrosDucks';
-import { gestionarInformeAccion } from '../redux/cuadrantesColumnasDucks';
 import { setDisableCargandoAccion } from '../redux/cuadrantesSettersDucks';
 import { setCambioSFAccion } from '../redux/cuadrantesSettersDucks';
 import { setYaNoEsInicioAccion } from './cuadrantesSettersDucks';
@@ -80,7 +74,27 @@ import { setCambioRedimensionColumnaAccion } from './cuadrantesSettersDucks';
 import { handleClosePopoverDiasAccion } from './cuadrantesPopoversDucks';
 import { setCambioSecuenciaSemanasAccion } from './cuadrantesSettersDucks';
 import { setMesConFestivosCompletoAccion } from './cuadrantesSettersDucks';
-import { gestionaDiasFestivosHandlerAccion } from './cuadrantesColumnasDucks';
+
+//import { cambiarEstadoCuadranteEnUsoRevisadoAccion } from './cuadrantesGestionDucks';
+
+import {
+    gestionaColumnaServiciosFijosInicioAccion,
+    gestionaColumnaServiciosFijosCambiosAccion
+} from '../logica/logicaServiciosFijos';
+import {
+    gestionaCuadranteIndividualAccion,
+    cambiarEstadoCuadranteEnUsoRevisadoAccion
+} from '../logica/logicaGestionCuadrantes';
+import {
+    gestionaColumnaCuadranteAccion
+} from '../logica/logicaColumnasCuadrantes';
+import {
+    retornaMinutosAccionEnCuadrantes
+} from '../logica/logicaApp';
+import {
+    gestionarInformeAccion
+} from '../logica/logicaInformeCuadrantes';
+
 
 //constantes
 const arrayFestivos = Constantes.CALENDARIO_FESTIVOS;
@@ -333,6 +347,7 @@ export const handleChangeSelectCentroAccion = (event) => (dispatch, getState) =>
         dispatch(setCentroAccion(event.target.value));
         dispatch(vaciarDatosCuadrantesAccion());
         dispatch(setVenimosDeCambioCentroSelectAccion(true));
+        dispatch(cambioEstadoInicioCuadrantesAccion(false));
     } else {
         if (!estadoIntervencionCuadranteNuevoRegistrada) {
             dispatch(handleClickOpenDialogCuadrantes2Accion());
@@ -354,27 +369,38 @@ export const handleChangeSelectCentroAccion = (event) => (dispatch, getState) =>
     dispatch(setDisableCargandoAccion(true));
 };
 
-export const goToInicioCuadrantesAccion = () => (dispatch, getState) => {
+export const goToInicioCuadrantesAccion = (origen) => (dispatch, getState) => {
     const { estadoIntervencionCuadranteNuevoRegistrada } = getState().variablesCuadrantes;
     const { estadoIntervencionRegistrada } = getState().variablesApp;
-    if (!estadoIntervencionCuadranteNuevoRegistrada) {
-        dispatch(handleClickOpenDialogCuadrantes2Accion());
-    } else {
-        if (!estadoIntervencionRegistrada) {
-            dispatch(handleClickOpenDialogCuadrantes3Accion());
-            dispatch(setPreValueValorAccion({ valor: null, origen: 'inicio' }));
-        } else {
-            dispatch(reseteaContenidoCuadranteAccion());
-            dispatch(setDisableSelectCentrosAccion(true));
-            dispatch(vaciarDatosCuadrantesAccion());
-            dispatch(cambioEstadoInicioCuadrantesAccion(true));
-            dispatch(setCategoriaAccion(''));
-        }
+    const resetGeneral = () => {
+        Promise.allSettled([
+            dispatch(reseteaContenidoCuadranteAccion()),
+            dispatch(setDisableSelectCentrosAccion(true)),
+            dispatch(vaciarDatosCuadrantesAccion()),
+            dispatch(cambioEstadoInicioCuadrantesAccion(true)),
+            dispatch(setCategoriaAccion(''))
+        ]);
     };
-    dispatch(setAnchorElMenuAccion(null));
-    dispatch(vaciarDatosPendientesAccion());
-    dispatch(forzarRecargaGraficosCuadrantesAccion(true));
-    dispatch(setDisableCargandoAccion(true));
+    if (origen === "effect") {
+        resetGeneral();
+    } else {
+        if (!estadoIntervencionCuadranteNuevoRegistrada) {            
+            dispatch(handleClickOpenDialogCuadrantes2Accion());
+        } else {
+            if (!estadoIntervencionRegistrada) {
+                dispatch(handleClickOpenDialogCuadrantes3Accion());
+                dispatch(setPreValueValorAccion({ valor: null, origen: 'inicio' }));
+            } else {
+                resetGeneral();
+            };
+        };
+    };
+    Promise.allSettled([
+        dispatch(setAnchorElMenuAccion(null)),
+        dispatch(vaciarDatosPendientesAccion()),
+        dispatch(forzarRecargaGraficosCuadrantesAccion(true)),
+        dispatch(setDisableCargandoAccion(true))
+    ]);
 };
 
 export const handleCambioAccordionHeaderAccion = (expandedAccordion, panel, index, scrollable, classes) => (dispatch, getState) => {
@@ -617,7 +643,7 @@ export const configuraStateFestivoAccion = () => (dispatch, getState) => {
                     object['estadoFestivoDia' + i] = false;
                     object['tipoFestivoDia' + i] = 0;
                 };
-            }
+            };            
             dispatch(setStateFestivoAccion(object));
         };
     };
@@ -770,6 +796,11 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                 };
                 if (servicio[prop] && prop === 'precioHora_PA') {
                     if (servicio.activo_PA === 'si') {
+                        hayAlgunServicioActivo = true;
+                    };
+                };
+                if (servicio[prop] && prop === 'precioHora_FR') {
+                    if (servicio.activo_FR === 'si') {
                         hayAlgunServicioActivo = true;
                     };
                 };
@@ -2674,8 +2705,8 @@ export const handleChangeObservacionesAccion = (index, event) => (dispatch, getS
 
 export const handleChangeTipoServicioAccion = (index, event) => (dispatch, getState) => {
     const { itemPrevioEditando, cuadranteEnUsoCuadrantes } = getState().variablesCuadrantesSetters;
-    const { cuadrante, objetoCuadrante } = getState().variablesCuadrantes;   
-    if(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo !== 4){
+    const { cuadrante, objetoCuadrante } = getState().variablesCuadrantes;
+    if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo !== 4) {
         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo !== 1 && !objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactadoInicial) {
             switch (event.target.value) {
                 case 'LIM':
@@ -2753,7 +2784,7 @@ export const handleChangeTipoServicioAccion = (index, event) => (dispatch, getSt
                 default:
             }
         };
-    };   
+    };
     const idSplitted = event.target.name.split("-");
     const key = idSplitted[2];
     let arrayCuadrante = [...cuadrante];
@@ -3105,6 +3136,17 @@ export const handleChangeFormConfiguracionServiciosFijosAccion = (tipo, prop, ev
                 losServicios['trab_PA'] = '';
             };
             losEstados['PA'] = event.target.checked;
+        };
+        if (event.target.name.includes('FR')) {
+            if (!event.target.checked) {
+                losServicios['precioHora_FR'] = '';
+                losServicios['variacion_FR'] = '';
+                losServicios['diaVariacion_FR'] = '';
+                losServicios['activo_FR'] = 'si';
+                losServicios['int_FR'] = false;
+                losServicios['trab_FR'] = '';
+            };
+            losEstados['FR'] = event.target.checked;
         };
         dispatch(setItemEditandoServiciosFijosAccion({ switch: losEstados, servicios: losServicios }));
     };
@@ -4386,7 +4428,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
         (itemEditandoServiciosFijos.switch.C2 && !itemEditandoServiciosFijos.servicios.int_C2 && !itemEditandoServiciosFijos.servicios.precioHora_C2) ||
         (itemEditandoServiciosFijos.switch.C4 && !itemEditandoServiciosFijos.servicios.int_C4 && !itemEditandoServiciosFijos.servicios.precioHora_C4) ||
         (itemEditandoServiciosFijos.switch.ES && !itemEditandoServiciosFijos.servicios.int_ES && !itemEditandoServiciosFijos.servicios.precioHora_ES) ||
-        (itemEditandoServiciosFijos.switch.PA && !itemEditandoServiciosFijos.servicios.int_PA && !itemEditandoServiciosFijos.servicios.precioHora_PA)
+        (itemEditandoServiciosFijos.switch.PA && !itemEditandoServiciosFijos.servicios.int_PA && !itemEditandoServiciosFijos.servicios.precioHora_PA) ||
+        (itemEditandoServiciosFijos.switch.FR && !itemEditandoServiciosFijos.servicios.int_FR && !itemEditandoServiciosFijos.servicios.precioHora_FR)
     ) {
         dispatch(setAlertaAccion({
             abierto: true,
@@ -4415,7 +4458,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
         (!itemEditandoServiciosFijos.servicios.precioHora_C2) &&
         (!itemEditandoServiciosFijos.servicios.precioHora_C4) &&
         (!itemEditandoServiciosFijos.servicios.precioHora_ES) &&
-        (!itemEditandoServiciosFijos.servicios.precioHora_PA)) {
+        (!itemEditandoServiciosFijos.servicios.precioHora_PA) &&
+        (!itemEditandoServiciosFijos.servicios.precioHora_FR)) {
         valoresComputoPreciosHoraFijos = false;
     };
     if (itemEditandoServiciosFijos.servicios.int_TO ||
@@ -4438,7 +4482,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
         itemEditandoServiciosFijos.servicios.int_C2 ||
         itemEditandoServiciosFijos.servicios.int_C4 ||
         itemEditandoServiciosFijos.servicios.int_ES ||
-        itemEditandoServiciosFijos.servicios.int_PA) {
+        itemEditandoServiciosFijos.servicios.int_PA ||
+        itemEditandoServiciosFijos.servicios.int_FR) {
         valoresComputoPreciosHoraIntegrados = true;
     };
     if (cuadranteVacio && !valoresComputoPreciosHoraFijos && valoresComputoPreciosHoraIntegrados) {
@@ -4471,6 +4516,7 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
         precioHora_C4: itemEditandoServiciosFijos.servicios.precioHora_C4 ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_C4) : null,
         precioHora_ES: itemEditandoServiciosFijos.servicios.precioHora_ES ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_ES) : null,
         precioHora_PA: itemEditandoServiciosFijos.servicios.precioHora_PA ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_PA) : null,
+        precioHora_FR: itemEditandoServiciosFijos.servicios.precioHora_FR ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FR) : null,
         variacion_TO: itemEditandoServiciosFijos.servicios.variacion_TO ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_TO) : null,
         variacion_CR: itemEditandoServiciosFijos.servicios.variacion_CR ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_CR) : null,
         variacion_CE: itemEditandoServiciosFijos.servicios.variacion_CE ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_CE) : null,
@@ -4491,6 +4537,7 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
         variacion_C2: itemEditandoServiciosFijos.servicios.variacion_C2 ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_C2) : null,
         variacion_C4: itemEditandoServiciosFijos.servicios.variacion_C4 ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_C4) : null, variacion_ES: itemEditandoServiciosFijos.servicios.variacion_ES ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_ES) : null,
         variacion_PA: itemEditandoServiciosFijos.servicios.variacion_PA ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_PA) : null,
+        variacion_FR: itemEditandoServiciosFijos.servicios.variacion_FR ? parseFloat(itemEditandoServiciosFijos.servicios.variacion_FR) : null,
         diaVariacion_TO: itemEditandoServiciosFijos.servicios.variacion_TO !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_TO : '',
         diaVariacion_CR: itemEditandoServiciosFijos.servicios.variacion_CR !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CR : '',
         diaVariacion_CE: itemEditandoServiciosFijos.servicios.variacion_CE !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_CE : '',
@@ -4512,6 +4559,7 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
         diaVariacion_C4: itemEditandoServiciosFijos.servicios.variacion_C4 !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_C4 : '',
         diaVariacion_ES: itemEditandoServiciosFijos.servicios.variacion_ES !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_ES : '',
         diaVariacion_PA: itemEditandoServiciosFijos.servicios.variacion_PA !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_PA : '',
+        diaVariacion_FR: itemEditandoServiciosFijos.servicios.variacion_FR !== 3 ? itemEditandoServiciosFijos.servicios.diaVariacion_FR : '',
         activo_TO: itemEditandoServiciosFijos.servicios.activo_TO,
         activo_CR: itemEditandoServiciosFijos.servicios.activo_CR,
         activo_CE: itemEditandoServiciosFijos.servicios.activo_CE,
@@ -4533,6 +4581,7 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
         activo_C4: itemEditandoServiciosFijos.servicios.activo_C4,
         activo_ES: itemEditandoServiciosFijos.servicios.activo_ES,
         activo_PA: itemEditandoServiciosFijos.servicios.activo_PA,
+        activo_FR: itemEditandoServiciosFijos.servicios.activo_FR,
         int_TO: itemEditandoServiciosFijos.servicios.int_TO,
         int_CR: itemEditandoServiciosFijos.servicios.int_CR,
         int_CE: itemEditandoServiciosFijos.servicios.int_CE,
@@ -4554,6 +4603,7 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
         int_C4: itemEditandoServiciosFijos.servicios.int_C4,
         int_ES: itemEditandoServiciosFijos.servicios.int_ES,
         int_PA: itemEditandoServiciosFijos.servicios.int_PA,
+        int_FR: itemEditandoServiciosFijos.servicios.int_FR,
         trab_TO: itemEditandoServiciosFijos.servicios.trab_TO ? itemEditandoServiciosFijos.servicios.trab_TO : '',
         trab_CR: itemEditandoServiciosFijos.servicios.trab_CR ? itemEditandoServiciosFijos.servicios.trab_CR : '',
         trab_CE: itemEditandoServiciosFijos.servicios.trab_CE ? itemEditandoServiciosFijos.servicios.trab_CE : '',
@@ -4574,7 +4624,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
         trab_C2: itemEditandoServiciosFijos.servicios.trab_C2 ? itemEditandoServiciosFijos.servicios.trab_C2 : '',
         trab_C4: itemEditandoServiciosFijos.servicios.trab_C4 ? itemEditandoServiciosFijos.servicios.trab_C4 : '',
         trab_ES: itemEditandoServiciosFijos.servicios.trab_ES ? itemEditandoServiciosFijos.servicios.trab_ES : '',
-        trab_PA: itemEditandoServiciosFijos.servicios.trab_PA ? itemEditandoServiciosFijos.servicios.trab_PA : ''
+        trab_PA: itemEditandoServiciosFijos.servicios.trab_PA ? itemEditandoServiciosFijos.servicios.trab_PA : '',
+        trab_FR: itemEditandoServiciosFijos.servicios.trab_FR ? itemEditandoServiciosFijos.servicios.trab_FR : ''
     }));
     let arrayCuadranteServiciosFijos = [];
     let objetoServicioActivo;
@@ -5103,6 +5154,31 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
             });
         };
     };
+    if (itemEditandoServiciosFijos.servicios.precioHora_FR || itemEditandoServiciosFijos.servicios.int_FR) {
+        objetoServicioActivo = cuadranteServiciosFijos.find(servicio => servicio.tipoServiciofijo === 'FRE');
+        if (objetoServicioActivo) {
+            arrayCuadranteServiciosFijos.push({
+                ...objetoServicioActivo,
+                tipoServiciofijo: 'FRE',
+                precioHora_FR: itemEditandoServiciosFijos.servicios.precioHora_FR ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FR) : null,
+                variacion_FR: 3,
+                diaVariacion_FR: '',
+                activo_FR: itemEditandoServiciosFijos.servicios.activo_FR,
+                int_FR: itemEditandoServiciosFijos.servicios.int_FR,
+                trab_FR: itemEditandoServiciosFijos.servicios.trab_FR ? itemEditandoServiciosFijos.servicios.trab_FR : null
+            });
+        } else {
+            arrayCuadranteServiciosFijos.push({
+                tipoServiciofijo: 'FRE',
+                precioHora_FR: itemEditandoServiciosFijos.servicios.precioHora_FR ? parseFloat(itemEditandoServiciosFijos.servicios.precioHora_FR) : null,
+                variacion_FR: 3,
+                diaVariacion_FR: '',
+                activo_FR: itemEditandoServiciosFijos.servicios.activo_FR,
+                int_FR: itemEditandoServiciosFijos.servicios.int_FR,
+                trab_FR: itemEditandoServiciosFijos.servicios.trab_FR ? itemEditandoServiciosFijos.servicios.trab_FR : null
+            });
+        };
+    };
     let elArrayServiciosBloqueados = [...objetoCuadrante.datosServicios.bloqueado];
     elArrayServiciosBloqueados[cuadranteEnUsoCuadrantes - 1] = itemEditandoServiciosFijos.bloqueado;
     const losDatosServicios = {
@@ -5144,7 +5220,8 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
                 servicio.activo_C2 === 'si' ||
                 servicio.activo_C4 === 'si' ||
                 servicio.activo_ES === 'si' ||
-                servicio.activo_PA === 'si') {
+                servicio.activo_PA === 'si' ||
+                servicio.activo_FR === 'si') {
                 hayAlgunServicioActivo = true;
             };
         });
@@ -5393,4 +5470,61 @@ export const handleGestionarTamanoColumnaAccion = (index, accion, scrollable, cl
     };
     dispatch(registrarIntervencionAccion(false));
     dispatch(cambiarEstadoCuadranteEnUsoRevisadoAccion(false));
+};
+
+export const gestionaDiasFestivosHandlerAccion = (
+    tipoHorario,
+    valor1,
+    valor2,
+    valor3,
+    valor4
+) => {
+    let laCantidad;
+    let rango1, rango2;
+    let objetoARetornar;
+    switch (tipoHorario) {
+        case 'rango':
+            if (valor1 && valor2) {
+                laCantidad = retornaMinutosAccionEnCuadrantes(
+                    valor1,
+                    valor2
+                ) / 60;
+            } else {
+                laCantidad = 0;
+            };
+            objetoARetornar = { cantidad: laCantidad };
+            return objetoARetornar
+            break;
+        case 'rangoDescanso':
+            if (valor1 && valor2) {
+                if (valor3) {
+                    rango2 = retornaMinutosAccionEnCuadrantes(
+                        valor3,
+                        valor4
+                    ) / 60;
+                } else {
+                    rango2 = 0;
+                };
+                rango1 = retornaMinutosAccionEnCuadrantes(
+                    valor1,
+                    valor2
+                ) / 60;
+                laCantidad = rango1 + rango2;
+            } else {
+                laCantidad = 0;
+            };
+            objetoARetornar = { cantidad: laCantidad };
+            return objetoARetornar
+            break;
+        case 'cantidad':
+            if (valor1) {
+                laCantidad = valor1 / 60;
+            } else {
+                laCantidad = 0;
+            };
+            objetoARetornar = { cantidad: laCantidad };
+            return objetoARetornar
+            break;
+        default:
+    };
 };

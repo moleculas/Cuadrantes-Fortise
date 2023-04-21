@@ -1,7 +1,7 @@
 import React from 'react';
 import { ThemeProvider } from '@material-ui/core/styles';
 import theme from './temaConfig';
-import Contenedor from './components/Contenedor';
+import Contenedor from './app/Contenedor';
 import { Provider } from 'react-redux';
 import generateStore from './redux/store';
 import { leerUsuarioAccion } from './redux/usuarioDucks';

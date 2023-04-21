@@ -67,78 +67,54 @@ export default function pendientesReducer(state = dataInicial, action) {
 export const gestionaCuadrantesAccion = () => (dispatch, getState) => {
     const { arrayCuadantes } = getState().variablesPendientes;
     const { arrayCentros } = getState().variablesCentros;
-    let contadorPendientes = 0;
-    let contadorRegistrados = 0;
-    let contadorFacturados = 0;
-    let contadorBajas = 0;
-    arrayCentros.forEach((centroIterado, index) => {
-        if (!arrayCuadantes[index]) {
+    let contadorPendientes = 0, contadorRegistrados = 0, contadorFacturados = 0, contadorBajas = 0;
+    for (let i = 0; i < arrayCentros.length; i++) {
+        const centroIterado = arrayCentros[i];
+        const cuadrante = arrayCuadantes[i];
+        if (!cuadrante) {
             if (centroIterado.estado !== 'baja') {
-                contadorPendientes++;
                 dispatch({
                     type: OBTENER_CUADRANTE_PENDIENTE,
                     payload: {
                         elementoArray: centroIterado.id,
-                        contador: contadorPendientes
-                    }
-                })
+                        contador: ++contadorPendientes,
+                    },
+                });
             } else {
-                contadorBajas++;
                 dispatch({
                     type: OBTENER_CUADRANTE_BAJA,
                     payload: {
-                        contador: contadorBajas
-                    }
-                })
+                        contador: ++contadorBajas,
+                    },
+                });
             }
         } else {
-            if (arrayCuadantes[index].estado === 'registrado') {
-                contadorRegistrados++;
-                dispatch({
-                    type: OBTENER_CUADRANTE_REGISTRADO,
-                    payload: {
-                        elementoArray: {
-                            id: arrayCuadantes[index].id,
-                            nombre: arrayCuadantes[index].nombre,
-                            actualizacion: arrayCuadantes[index].actualizacion,
-                            estado: arrayCuadantes[index].estado,
-                            total: parse(arrayCuadantes[index].total)
-                        },
-                        contador: contadorRegistrados
-                    }
-                })
+            const tipoCuadrante = cuadrante.estado === 'registrado' ? 'REGISTRADO' : 'FACTURADO';
+            const contador = tipoCuadrante === 'REGISTRADO' ? ++contadorRegistrados : ++contadorFacturados;
+            const elementoArray = {
+                id: cuadrante.id,
+                nombre: cuadrante.nombre,
+                actualizacion: cuadrante.actualizacion,
+                estado: cuadrante.estado,
+                total: parse(cuadrante.total),
             };
-            if (arrayCuadantes[index].estado === 'facturado') {                
-                contadorFacturados++;
-                dispatch({
-                    type: OBTENER_CUADRANTE_FACTURADO,
-                    payload: {
-                        elementoArray: {
-                            id: arrayCuadantes[index].id,
-                            nombre: arrayCuadantes[index].nombre,
-                            actualizacion: arrayCuadantes[index].actualizacion,
-                            estado: arrayCuadantes[index].estado,
-                            total: parse(arrayCuadantes[index].total)
-                        },
-                        contador: contadorFacturados
-                    }
-                })
-            };
+            dispatch({
+                type: `OBTENER_CUADRANTE_${tipoCuadrante}`,
+                payload: {
+                    elementoArray,
+                    contador,
+                },
+            });
         };
-    });
+    };
 };
 
 export const obtenerCuadrantesAccion = (objeto, mes, arrayCentros) => async (dispatch, getState) => {
     dispatch({
         type: LOADING_PENDIENTES
     });
-    let arraycuadrantesCheck = [];
-    arrayCentros.forEach((centroIterado) => {
-        const nombreCuadrante = mes + '-' + centroIterado.id;
-        arraycuadrantesCheck.push(nombreCuadrante);
-    });
     const datos = {
-        arrayCuadrantes: arraycuadrantesCheck,
+        arrayCuadrantes: arrayCentros.map(centroIterado => `${mes}-${centroIterado.id}`)
     };
     try {
         const losDatos = JSON.stringify(datos);

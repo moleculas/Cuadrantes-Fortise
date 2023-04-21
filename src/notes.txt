@@ -21,3 +21,52 @@ if (!cuadrante[indexColumna][postRef].modificado) {
  boxes.current[ref].classList.add(classes.editando);
 };
 de la funció abrePopoverGeneralAccion perquè en obrir el popover caselles posava l'última casella del mes en blanc.
+
+-Perquè l'aplicació pugui fer npm run start s'ha ud'usar la vesrsió 14.17.1 de node. Per canviar:
+nvm ls (llista les versions)
+nvm use 14.17.1
+nvm use 18.14.2
+
+-Recordar canviar versió de node per treballar:
+    -Llistar versions instal·lades: nvm ls
+    -Canviar nvm use 14.17.1
+    -Per revertir el canvi: nvm use 18.14.2
+
+-SEQÜÈNCIA PER AFEGIR UN SERVEI EXTRA:
+
+-a constantes.js:
+-afegir TIPO_SERVICIO_FIJO
+
+-a appDucks.js
+-agefir servei a funció export const retornaTextoConceptoServicioAccion
+-agefir servei a funció const retornaArrayElementosAccion
+
+-a cuadrantesDucks.js
+-agefir servei a funció const retornaTotalesServicios
+
+-a cuadrantesGestionDucks.js
+-agefir servei a funció const calculoTotales 
+-agefir servei a funció const procesarDatosCuadrantePromesa
+
+-a cuadrantesHandlersDucks.js
+-agefir servei a funció export const handleChangeFestivoDiaAccion
+-agefir servei a funció export const handleChangeFormConfiguracionServiciosFijosAccion
+-agefir servei a funció export const handleRegistrarCambioEnCasillaServiciosFijosAccion
+
+-a cuadrantesSettersDucks.js
+-agefir servei a funció export const reseteaContenidoCentroAccion
+
+-a cuadrantesFacturacionDucks.js
+-agefir servei a funció export const generaInformacionCuadrantesAccion
+
+
+
+
+
+
+
+    
+
+
+
+

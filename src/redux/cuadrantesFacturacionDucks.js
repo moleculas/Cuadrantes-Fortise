@@ -1,12 +1,14 @@
 import { setArrayInformeLineasAccion } from './cuadrantesSettersDucks';
 import { retornaFormaPagoAccion } from './cuadrantesDucks';
-import { procesarDatosCuadranteAccion } from './cuadrantesGestionDucks';
 import { handleCloseMenuAccion } from './cuadrantesHandlersDucks';
 import { setOpenFacturacionAccion } from './cuadrantesSettersDucks';
 import { setOpenFacturacionInteriorAccion } from './cuadrantesSettersDucks';
 import { setNumeroFactusolAccion } from './cuadrantesSettersDucks';
 import { isNumeric } from './appDucks';
 import { setAlertaAccion } from './cuadrantesSettersDucks';
+import {
+    procesarDatosCuadranteAccion
+} from '../logica/logicaGestionCuadrantes';
 
 //constantes
 const dataInicial = {
@@ -77,6 +79,8 @@ export const retornaInfoFabButtonAccion = () => (dispatch, getState) => {
                     parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHoraTotal +
                         sumatorioServiciosFijos).toFixed(2) + ' €' + stringPeriodico;
             };
+        } else {
+            return cuadranteMultiple + 'Horas: 0.00 - Total' + stringBloqueado + ': 0.00 €' + stringPeriodico;
         };
     };
 };
@@ -608,6 +612,16 @@ export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
                         } else {
                             sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
                             arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA DEL PARKING: ' + parseFloat(servicio.totalServicioFijo).toFixed(2) + ' €', 'normal']);
+                        };
+                    };
+                };
+                if (servicio[prop] && (prop === 'precioHora_FR' || prop === 'int_FR')) {
+                    if (servicio.activo_FR === 'si') {
+                        if (servicio.int_FR) {
+                            arrayInforme.push(['Total a facturar por SERVICIO DE FREGADO DE SUELOS: 0 € (Inculido en cómputo)', 'normal']);
+                        } else {
+                            sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                            arrayInforme.push(['Total a facturar por SERVICIO DE FREGADO DE SUELOS: ' + parseFloat(servicio.totalServicioFijo).toFixed(2) + ' €', 'normal']);
                         };
                     };
                 };

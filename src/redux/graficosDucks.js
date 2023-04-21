@@ -56,8 +56,7 @@ export default function graficosReducer(state = dataInicial, action) {
 
 //acciones
 export const obtenerCuadrantesPorAnyoAccion = (objeto) => (dispatch, getState) => {
-    const { calendarioAGestionar } = getState().variablesCuadrantes;
-    const [year] = calendarioAGestionar.split("-");
+    const year = new Date().getFullYear();
     dispatch({
         type: LOADING_GRAFICOS
     });
@@ -76,7 +75,7 @@ export const obtenerCuadrantesPorAnyoAccion = (objeto) => (dispatch, getState) =
             }
         });
         axiosArray.push(newPromise);
-    };
+    };    
     axios
         .all(axiosArray)
         .then(axios.spread((...responses) => {
@@ -86,7 +85,7 @@ export const obtenerCuadrantesPorAnyoAccion = (objeto) => (dispatch, getState) =
             let sumatorioA = 0;
             let sumatorioB = 0;
             let elObjetoTotal;
-            let elEstado;
+            let elEstado;            
             arrayCuadrantes.forEach((mes, index) => {
                 if (mes.length > 0) {
                     mes.forEach((mesInt, index) => {

@@ -206,9 +206,9 @@ export const gestionaMaxDateCalendarAccion = (numeroDias) => (dispatch, getState
     let any = data.getFullYear();
     if (mes > 12) {
         let diferencia = (12 - mesActual);
-        mes = (numeroDias - diferencia);       
+        mes = (numeroDias - diferencia);
         any += 1;
-    };   
+    };
     const laData = any + '-' + mes;
     return laData;
 };
@@ -810,6 +810,9 @@ export const retornaTextoConceptoServicioAccion = (objetoTotales, servicio, hora
         if (servicio === 'PAT') {
             arrayConceptos.push('LIMP', 'SERVICIO DE LIMPIEZA DEL PARKING');
         };
+        if (servicio === 'FRT') {
+            arrayConceptos.push('FRE', 'SERVICIO DE FREGADO DE SUELOS');
+        };
         if (servicio === 'NUMCT') {
             arrayConceptos.push('Nº CUENTA', 'ES96 2100 0804 3102 0076 4493');
         };
@@ -926,6 +929,9 @@ export const retornaTextoConceptoServicioAccion = (objetoTotales, servicio, hora
         };
         if (objetoTotales['PAT']) {
             arrayConceptos.push('SERVICIO DE LIMPIEZA DEL PARKING');
+        };
+        if (objetoTotales['FRT']) {
+            arrayConceptos.push('SERVICIO DE FREGADO DE SUELOS');
         };
         if (objetoTotales['NUMCT']) {
             arrayConceptos.push('ES96 2100 0804 3102 0076 4493');
@@ -1086,6 +1092,10 @@ const retornaArrayElementosAccion = (objetoConceptos) => (dispatch, getState) =>
         retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'PAT', null));
         arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.PAT, objetoConceptos.PAT, objetoConceptos.PAH]);
     };
+    if (objetoConceptos.FRT) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'FRT', null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.FRT, objetoConceptos.FRT, objetoConceptos.FRH]);
+    };
     if (objetoConceptos.NUMCT) {
         retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'NUMCT', null));
         arrayElementos.push([retornoServicios[0], retornoServicios[1], 0, 0, 0]);
@@ -1111,8 +1121,8 @@ export const generarArchivosXLSAccion = (numFactusol, objetoConceptos, anyo, mes
             totalIva: parseFloat(objetoConceptos.totalIva).toFixed(2),
             totalMasIva: parseFloat(objetoConceptos.totalMasIva).toFixed(2)
         };
-        const ultimoDia = new Date(anyo, mes, 0);          
-        const day = ultimoDia.getDate();       
+        const ultimoDia = new Date(anyo, mes, 0);
+        const day = ultimoDia.getDate();
         const fechaHoy = day + "/" + mes + "/" + anyo;
         const dataFAC = [[
             1,
@@ -1296,14 +1306,18 @@ export const actualizarCuadrantesIteradosAccion = () => async (dispatch, getStat
         formData.append("objeto", 'cuadrantes');
         formData.append("datos", losDatos);
         let apiUrl = rutaApi + "actualizar_lote.php";
-        await axios.post(apiUrl, formData, {
+        const res = await axios.post(apiUrl, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
             }
         });
+        if(res.data)
+        return new Promise((resolve, reject) => {
+            resolve({ payload: true });
+        });
     } catch (err) {
         console.error(err)
-    }
+    };
 };
 
 export const generarArchivosXLSLoteAccion = (numFactusol, arrayCuadrantes, anyo, mes) => (dispatch, getState) => {
@@ -1330,7 +1344,7 @@ export const generarArchivosXLSLoteAccion = (numFactusol, arrayCuadrantes, anyo,
                 totalIva: parseFloat(cuadranteIterado.total.totalIva).toFixed(2),
                 totalMasIva: parseFloat(cuadranteIterado.total.totalMasIva).toFixed(2)
             };
-            const ultimoDia = new Date(anyo, mes, 0);           
+            const ultimoDia = new Date(anyo, mes, 0);
             const day = ultimoDia.getDate();
             const fechaHoy = day + "/" + mes + "/" + anyo;
             dataFAC.push([
@@ -1591,7 +1605,7 @@ export const generaArchivoXLSCuadrantesPendientesAccion = (mes) => (dispatch, ge
     const elListadoCuadrantesPendientesImprimir = [["LISTADO CUADRANTES PENDIENTES MES " + mes], ["CENTRO"]];
     arrayCentros.forEach((centro) => {
         if (cuadrantesPendientesArray.includes(centro.id)) {
-            elListadoCuadrantesPendientesImprimir.push([centro.nombre]);
+            elListadoCuadrantesPendientesImprimir.push([centro.sub_nombre ? (centro.nombre + " - " + centro.sub_nombre) : centro.nombre]);
         };
     });
     const nombreArchivo = 'listado_cuadrantes_pendientes_' + mes;
@@ -1603,7 +1617,7 @@ export const generaArchivoXLSCuadrantesRegistradosAccion = (mes) => (dispatch, g
     let cuadrantes = [];
     cuadrantesRegistradosArray.forEach((cuadrante, index) => {
         let objeto = {};
-        objeto['nombreCentro'] = cuadrante.total.nombreCentro;
+        objeto['nombreCentro'] = cuadrante.total.subNombreCentro ? (cuadrante.total.nombreCentro + " - " + cuadrante.total.subNombreCentro) : cuadrante.total.nombreCentro;
         objeto['tocaFacturar'] = cuadrante.total.tocaFacturar.valor;
         objeto['razon'] = cuadrante.total.tocaFacturar.razon;
         objeto['total'] = parseFloat(cuadrante.total.total).toFixed(2) + ' €';
@@ -1625,7 +1639,7 @@ export const generaArchivoXLSCuadrantesFacturadosEmpresasAccion = (mes) => (disp
     cuadrantesFacturadosArray.forEach((cuadrante, index) => {
         let objeto = {};
         if (cuadrante.total.tocaFacturar.valor === 'si') {
-            objeto['nombreCentro'] = cuadrante.total.nombreCentro;
+            objeto['nombreCentro'] = cuadrante.total.subNombreCentro ? (cuadrante.total.nombreCentro + " - " + cuadrante.total.subNombreCentro) : cuadrante.total.nombreCentro;
             objeto['tocaFacturar'] = cuadrante.total.tocaFacturar.valor;
             objeto['razon'] = cuadrante.total.tocaFacturar.razon;
             objeto['procesado'] = cuadrante.total.procesado.valor;
@@ -1656,7 +1670,7 @@ export const generaArchivoXLSCuadrantesFacturadosPisosAccion = (mes) => (dispatc
     cuadrantesFacturadosArray.forEach((cuadrante, index) => {
         let objeto = {};
         if (cuadrante.total.tocaFacturar.valor === 'no' && cuadrante.total.tocaFacturar.razon === 'gest') {
-            objeto['nombreCentro'] = cuadrante.total.nombreCentro;
+            objeto['nombreCentro'] = cuadrante.total.subNombreCentro ? (cuadrante.total.nombreCentro + " - " + cuadrante.total.subNombreCentro) : cuadrante.total.nombreCentro;
             objeto['tocaFacturar'] = cuadrante.total.tocaFacturar.valor;
             objeto['razon'] = cuadrante.total.tocaFacturar.razon;
             objeto['procesado'] = cuadrante.total.procesado.valor;

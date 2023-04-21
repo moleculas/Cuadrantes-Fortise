@@ -11,6 +11,7 @@ const dataInicial = {
     objetoCentro: {
         id: null,
         nombre: '',
+        subNombre: '',
         estado: 'alta',
         categoria: {
             objeto: 'categoria',
@@ -237,6 +238,7 @@ export const vaciarDatosCentroAccion = () => (dispatch, getState) => {
         payload: {
             id: null,
             nombre: '',
+            subNombre: '',
             estado: 'alta',
             categoria: {
                 objeto: 'categoria',
@@ -316,6 +318,7 @@ export const obtenerCentroAccion = (objeto, id) => async (dispatch, getState) =>
             payload: {
                 id: res.data.id,
                 nombre: res.data.nombre,
+                subNombre: res.data.sub_nombre,
                 estado: res.data.estado,
                 categoria: JSON.parse(res.data.categoria),
                 codigo: res.data.codigo,
@@ -429,7 +432,7 @@ export const registrarCentroAccion = (objeto, id, datos) => async (dispatch, get
         dispatch({
             type: ERROR_DE_CARGA_CENTROS
         })
-    }
+    };
 };
 
 export const eliminarCentroAccion = (objeto, id) => async (dispatch, getState) => {

@@ -831,6 +831,7 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
         C4: false,
         ES: false,
         PA: false,
+        FR: false,
     }));
     dispatch({
         type: SET_CUADRANTEVACIO,
@@ -861,7 +862,8 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
             C2: false,
             C4: false,
             ES: false,
-            PA: false
+            PA: false,
+            FR: false
         },
         servicios: {
             precioHora_TO: '',
@@ -885,6 +887,7 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
             precioHora_C4: '',
             precioHora_ES: '',
             precioHora_PA: '',
+            precioHora_FR: '',
             variacion_TO: '',
             variacion_CR: '',
             variacion_CE: '',
@@ -906,6 +909,7 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
             variacion_C4: '',
             variacion_ES: '',
             variacion_PA: '',
+            variacion_FR: '',
             diaVariacion_TO: '',
             diaVariacion_CR: '',
             diaVariacion_CE: '',
@@ -927,6 +931,7 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
             diaVariacion_C4: '',
             diaVariacion_ES: '',
             diaVariacion_PA: '',
+            diaVariacion_FR: '',
             activo_TO: 'si',
             activo_CR: 'si',
             activo_CE: 'si',
@@ -948,6 +953,7 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
             activo_C4: 'si',
             activo_ES: 'si',
             activo_PA: 'si',
+            activo_FR: 'si',
             int_TO: false,
             int_CR: false,
             int_CE: false,
@@ -969,6 +975,7 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
             int_C4: false,
             int_ES: false,
             int_PA: false,
+            int_FR: false,
             trab_TO: '',
             trab_CR: '',
             trab_CE: '',
@@ -989,7 +996,8 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
             trab_C2: '',
             trab_C4: '',
             trab_ES: '',
-            trab_PA: ''
+            trab_PA: '',
+            trab_FR: ''
         }
     }));
     dispatch({
@@ -1105,6 +1113,3 @@ export const reseteaContenidoCuadranteAccion = () => (dispatch) => {
     dispatch(vaciarDatosCentroAccion());
     dispatch(vaciarDatosTrabajadorAccion());
 };
-
-
-

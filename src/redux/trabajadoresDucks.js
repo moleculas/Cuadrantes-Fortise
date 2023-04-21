@@ -239,13 +239,26 @@ export const obtenerTrabajadorAccion = (objeto, id) => async (dispatch, getState
                 datosEstado: res.data.datos_estado ? JSON.parse(res.data.datos_estado) : null,
                 historicoBajas: JSON.parse(res.data.historico_bajas)
             }
-        })
+        });
+        return {
+            trabajador: {
+                id: res.data.id,
+                nombre: res.data.nombre,
+                dni: res.data.dni,
+                segSocial: res.data.seg_social,
+                telefono: res.data.telefono,
+                estado: res.data.estado,
+                categoria: res.data.categoria,
+                datosEstado: res.data.datos_estado ? JSON.parse(res.data.datos_estado) : null,
+                historicoBajas: JSON.parse(res.data.historico_bajas)
+            }
+        }
     } catch (error) {
         dispatch({
             type: ERROR_DE_CARGA_TRABAJADORES
         })
     }
-}
+};
 
 export const obtenerSuplenteAccion = (objeto, id) => async (dispatch, getState) => {
     dispatch({
@@ -255,7 +268,7 @@ export const obtenerSuplenteAccion = (objeto, id) => async (dispatch, getState) 
         if (id !== 999) {
             const formData = new FormData();
             formData.append("objeto", objeto);
-            formData.append("id", id);
+            formData.append("id", id);           
             let apiUrl = rutaApi + "obtener.php";
             const res = await axios.post(apiUrl, formData, {
                 headers: {
@@ -275,7 +288,20 @@ export const obtenerSuplenteAccion = (objeto, id) => async (dispatch, getState) 
                     datosEstado: JSON.parse(res.data.datos_estado),
                     historicoBajas: JSON.parse(res.data.historico_bajas)
                 }
-            })
+            });            
+            return {
+                suplente: {
+                    id: res.data.id,
+                    nombre: res.data.nombre,
+                    dni: res.data.dni,
+                    segSocial: res.data.seg_social,
+                    telefono: res.data.telefono,
+                    estado: res.data.estado,
+                    categoria: res.data.categoria,
+                    datosEstado: JSON.parse(res.data.datos_estado),
+                    historicoBajas: JSON.parse(res.data.historico_bajas)
+                }
+            }
         } else {
             dispatch({
                 type: OBTENER_SUPLENTE_EXITO,
@@ -290,14 +316,29 @@ export const obtenerSuplenteAccion = (objeto, id) => async (dispatch, getState) 
                     datosEstado: null,
                     historicoBajas: null
                 }
-            })
+            });
+            return {
+                suplente: {
+                    id: id,
+                    nombre: 'Suplente',
+                    dni: null,
+                    segSocial: null,
+                    telefono: null,
+                    estado: 'alta',
+                    categoria: 1,
+                    datosEstado: null,
+                    historicoBajas: null
+                }
+            }
         };
     } catch (error) {
         dispatch({
             type: ERROR_DE_CARGA_TRABAJADORES
         })
     }
-}
+};
+
+
 
 export const obtenerCentroVinculadoAccion = (objeto, id_consulta, funcion, tipo) => async (dispatch, getState) => {
     dispatch({
