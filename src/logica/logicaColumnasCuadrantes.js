@@ -407,11 +407,24 @@ const gestionaColumnaCuadranteInteriorAccion = (
 ) => (dispatch, getState) => {
     const { cuadrante, calendarioAGestionar, losDiasDelMes, stateFestivo, objetoCuadrante } = getState().variablesCuadrantes;
     const { bufferSwitchedDiasFestivosCuadrante, cuadranteEnUsoCuadrantes, yaNoEsInicio } = getState().variablesCuadrantesSetters;
+    const { objetoCentro } = getState().variablesCentros;
     //control trabajador repetido
     if (esInicio && trabajador.id !== 999 && cuadrante.some(columna => columna.idTrabajador === trabajador.id)) {
-        return {
-            columnaAnadir: null,
-            hayTrabajador: false
+        const found = {};
+        const haveSameValue = objetoCentro.trabajadores.trabajadores[cuadranteEnUsoCuadrantes - 1].trabajadores.some(obj => {
+            const key = Object.keys(obj)[0];
+            const value = obj[key];
+            if (found[value]) {
+                return true;
+            }
+            found[value] = true;
+            return false;
+        });
+        if (!haveSameValue) {
+            return {
+                columnaAnadir: null,
+                hayTrabajador: false
+            };
         };
     };
     let columnaAnadir, hayTrabajador;
@@ -771,7 +784,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                         if ((tipoTrabajador === 'suplente' &&
                                             cuadrante[posicionAnterior] &&
                                             cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
-                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].lunesInicioRango) ||
+                                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]][horarios[tipoHorario][0]]) ||
                                             (tipoTrabajador === 'suplente' &&
                                                 cuadrante[posicionAnterior] &&
                                                 cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
@@ -794,7 +807,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     if ((tipoTrabajador === 'suplente' &&
                                         cuadrante[posicionAnterior] &&
                                         cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
-                                        cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].lunesInicioRango) ||
+                                        cuadrante[posicionAnterior][dia[1][0] + dia[0][0]][horarios[tipoHorario][0]]) ||
                                         (tipoTrabajador === 'suplente' &&
                                             cuadrante[posicionAnterior] &&
                                             cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
@@ -822,7 +835,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     if ((tipoTrabajador === 'suplente' &&
                                         cuadrante[posicionAnterior] &&
                                         cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
-                                        cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].lunesInicioRango) ||
+                                        cuadrante[posicionAnterior][dia[1][0] + dia[0][0]][horarios[tipoHorario][0]]) ||
                                         (tipoTrabajador === 'suplente' &&
                                             cuadrante[posicionAnterior] &&
                                             cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
@@ -845,7 +858,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 if ((tipoTrabajador === 'suplente' &&
                                     cuadrante[posicionAnterior] &&
                                     cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
-                                    cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].lunesInicioRango) ||
+                                    cuadrante[posicionAnterior][dia[1][0] + dia[0][0]][horarios[tipoHorario][0]]) ||
                                     (tipoTrabajador === 'suplente' &&
                                         cuadrante[posicionAnterior] &&
                                         cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&

@@ -52,16 +52,17 @@ const SelectsTrabajadores = (props) => {
                 return;
             };
         };
-        trabajadores.trabajadores.map((trabajador, index) => {
-            if ((trabajador['trabajador_' + (index + 1)] === e.target.value || trabajador['suplente_' + (index + 1)] === e.target.value) && e.target.value) {
-                setAlert({
-                    mensaje: "Este trabajador ya consta como registrado, selecciona otro.",
-                    tipo: 'error'
-                })
-                setOpenSnack(true);
-                return encontrado = true;
-            };
-        });
+        //és possible duplicar treballadors
+        // trabajadores.trabajadores.map((trabajador, index) => {
+        //     if ((trabajador['trabajador_' + (index + 1)] === e.target.value || trabajador['suplente_' + (index + 1)] === e.target.value) && e.target.value) {
+        //         setAlert({
+        //             mensaje: "Este trabajador ya consta como registrado, selecciona otro.",
+        //             tipo: 'error'
+        //         })
+        //         setOpenSnack(true);
+        //         return encontrado = true;
+        //     };
+        // });
         if (!encontrado) {
             if (tipo === "trabajador") {
                 const arrayTr = valuesForm.datosTrabajadores.map((valor, i) => i === index ? e.target.value : valor);

@@ -298,31 +298,18 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
         return new Promise((resolve) => {
             if (trabajadorIterado['trabajador_' + (index + 1)]) {
                 dispatch(obtenerTrabajadorAccion('trabajadores', trabajadorIterado['trabajador_' + (index + 1)])).then(({ trabajador }) => {
-                    if (!arrayControl.includes(trabajador.id)) {
+                    const foundTrabajador = arrayControl.some(element => element[`trabajador_${index + 1}`] === trabajadorIterado[`trabajador_${index + 1}`] && element[`suplente_${index + 1}`] === trabajadorIterado[`suplente_${index + 1}`]);
+                    if (!foundTrabajador) {
                         dispatch(gestionTrabajadorAccion(trabajador)).then(({ payload }) => {
-                            arrayControl.push(trabajador.id);
+                            arrayControl.push(trabajadorIterado);
                             if (payload) {
                                 if (trabajadorIterado['suplente_' + (index + 1)]) {
                                     dispatch(obtenerSuplenteAccion('trabajadores', trabajadorIterado['suplente_' + (index + 1)])).then(({ suplente }) => {
-                                        if (suplente.id === 999) {
-                                            dispatch(gestionSuplenteAccion(suplente)).then(({ payload }) => {
-                                                arrayControl.push(suplente.id);
-                                                if (payload) {
-                                                    resolve({ payload: { trab: "trabajadorIterado", arrayControl } });
-                                                };
-                                            });
-                                        } else {
-                                            if (!arrayControl.includes(suplente.id)) {
-                                                dispatch(gestionSuplenteAccion(suplente)).then(({ payload }) => {
-                                                    arrayControl.push(suplente.id);
-                                                    if (payload) {
-                                                        resolve({ payload: { trab: "trabajadorIterado", arrayControl } });
-                                                    };
-                                                });
-                                            } else {
+                                        dispatch(gestionSuplenteAccion(suplente)).then(({ payload }) => {
+                                            if (payload) {
                                                 resolve({ payload: { trab: "trabajadorIterado", arrayControl } });
                                             };
-                                        };
+                                        });
                                     });
                                 } else {
                                     resolve({ payload: { trab: "trabajadorIterado", arrayControl } });
@@ -340,7 +327,7 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
         return new Promise((resolve) => {
             if (trabajadorIterado.tipoTrabajador === 'trabajador') {
                 dispatch(obtenerTrabajadorAccion('trabajadores', trabajadorIterado.idTrabajador)).then(({ trabajador }) => {
-                    dispatch(gestionTrabajadorAccion(trabajador)).then(({ payload }) => {                      
+                    dispatch(gestionTrabajadorAccion(trabajador)).then(({ payload }) => {
                         if (payload) {
                             resolve({ payload: { trab: "trabajadorIterado" } });
                         };
@@ -349,7 +336,7 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
             };
             if (trabajadorIterado.tipoTrabajador === 'suplente') {
                 dispatch(obtenerSuplenteAccion('trabajadores', trabajadorIterado.idTrabajador)).then(({ suplente }) => {
-                    dispatch(gestionSuplenteAccion(suplente)).then(({ payload }) => {                   
+                    dispatch(gestionSuplenteAccion(suplente)).then(({ payload }) => {
                         if (payload) {
                             resolve({ payload: { trab: "trabajadorIterado" } });
                         };
