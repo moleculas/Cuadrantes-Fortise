@@ -1286,342 +1286,76 @@ export const procesarDatosCuadranteAccion = (source) => (dispatch, getState) => 
 
 //por revisar
 
-const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
+const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {   
     const { objetoCuadrante, totalesPeriodicos } = getState().variablesCuadrantes;
     const { objetoCentro } = getState().variablesCentros;
-    let totalFacturado_M = 0;
-    let totalFacturado_L = 0;
-    let totalFacturado_E = 0;
-    let totalFacturado_P = 0;
-    let totalFacturado_N = 0;
-    let totalFacturado_R = 0;
-    let totalFacturado_L1 = 0;
-    let totalFacturado_L2 = 0;
-    let totalFacturado_F = 0;
-    let totalFacturado_TO = 0;
-    let totalFacturado_CR = 0;
-    let totalFacturado_CE = 0;
-    let totalFacturado_CI = 0;
-    let totalFacturado_MO = 0;
-    let totalFacturado_OF = 0;
-    let totalFacturado_AL = 0;
-    let totalFacturado_LA = 0;
-    let totalFacturado_TE = 0;
-    let totalFacturado_FI = 0;
-    let totalFacturado_FE = 0;
-    let totalFacturado_AB = 0;
-    let totalFacturado_MA = 0;
-    let totalFacturado_PO = 0;
-    let totalFacturado_BA = 0;
-    let totalFacturado_FT = 0;
-    let totalFacturado_C3 = 0;
-    let totalFacturado_C2 = 0;
-    let totalFacturado_C4 = 0;
-    let totalFacturado_ES = 0;
-    let totalFacturado_PA = 0;
-    let totalFacturado_FR = 0;
-    let totalHoras_L = 0;
-    let totalHoras_E = 0;
-    let totalHoras_P = 0;
-    let totalHoras_N = 0;
-    let totalHoras_R = 0;
-    let totalHoras_L1 = 0;
-    let totalHoras_L2 = 0;
-    let totalHoras_F = 0;
-    let totalHoras_TO = 0;
-    let totalHoras_CR = 0;
-    let totalHoras_CE = 0;
-    let totalHoras_CI = 0;
-    let totalHoras_MO = 0;
-    let totalHoras_OF = 0;
-    let totalHoras_AL = 0;
-    let totalHoras_LA = 0;
-    let totalHoras_TE = 0;
-    let totalHoras_FI = 0;
-    let totalHoras_FE = 0;
-    let totalHoras_AB = 0;
-    let totalHoras_MA = 0;
-    let totalHoras_PO = 0;
-    let totalHoras_BA = 0;
-    let totalHoras_FT = 0;
-    let totalHoras_C3 = 0;
-    let totalHoras_C2 = 0;
-    let totalHoras_C4 = 0;
-    let totalHoras_ES = 0;
-    let totalHoras_PA = 0;
-    let totalHoras_FR = 0;
-    let precio_L = 0;
-    let precio_E = 0;
-    let precio_P = 0;
-    let precio_N = 0;
-    let precio_R = 0;
-    let precio_L1 = 0;
-    let precio_L2 = 0;
-    let precio_F = 0;
-    let objetoTotales;
-    let vueltasSeguridad = 0;
-    let numeroInformes = 0;
-    servicios.forEach((servicioTot) => {
+    const objGeneral = {
+        ...tipoServicio.reduce((acc, curr) => {
+            acc[`totalFacturado_${curr.prefix}`] = 0;
+            acc[`totalHoras_${curr.prefix}`] = 0;
+            acc[`precio_${curr.prefix}`] = 0;
+            return acc;
+        }, {}),
+        ...listadoServiciosFijos.reduce((acc, curr) => {
+            acc[`totalFacturado_${curr.prefix}`] = 0;
+            acc[`totalHoras_${curr.prefix}`] = 0;
+            return acc;
+        }, {
+            totalFacturado_M: 0
+        }),
+    };
+    servicios.forEach(servicioTot => {
         if (servicioTot) {
-            servicioTot.forEach((servicio) => {
+            servicioTot.forEach(servicio => {
                 if (servicio) {
-                    if (servicio.precioHora_TO) {
-                        totalFacturado_TO += servicio.totalServicioFijo;
-                        if (totalFacturado_TO === servicio.precioHora_TO) {
-                            totalHoras_TO = 1;
-                        } else {
-                            totalHoras_TO = parseInt(totalFacturado_TO / servicio.precioHora_TO);
+                    listadoServiciosFijos.forEach(objServ => {
+                        if (servicio[`precioHora_${objServ.prefix}`]) {
+                            objGeneral[`totalFacturado_${objServ.prefix}`] += servicio.totalServicioFijo;
+                            if (objGeneral[`totalFacturado_${objServ.prefix}`] === servicio[`precioHora_${objServ.prefix}`]) {
+                                objGeneral[`totalHoras_${objServ.prefix}`] = 1;
+                            } else {
+                                objGeneral[`totalHoras_${objServ.prefix}`] = parseInt(objGeneral[`totalFacturado_${objServ.prefix}`] / servicio[`precioHora_${objServ.prefix}`]);
+                            };
                         };
-                    };
-                    if (servicio.precioHora_CR) {
-                        totalFacturado_CR += servicio.totalServicioFijo;
-                        if (totalFacturado_CR === servicio.precioHora_CR) {
-                            totalHoras_CR = 1;
-                        } else {
-                            totalHoras_CR = parseInt(totalFacturado_CR / servicio.precioHora_CR);
-                        };
-                    };
-                    if (servicio.precioHora_CE) {
-                        totalFacturado_CE += servicio.totalServicioFijo;
-                        if (totalFacturado_CE === servicio.precioHora_CE) {
-                            totalHoras_CE = 1;
-                        } else {
-                            totalHoras_CE = parseInt(totalFacturado_CE / servicio.precioHora_CE);
-                        };
-                    };
-                    if (servicio.precioHora_CI) {
-                        totalFacturado_CI += servicio.totalServicioFijo;
-                        if (totalFacturado_CI === servicio.precioHora_CI) {
-                            totalHoras_CI = 1;
-                        } else {
-                            totalHoras_CI = parseInt(totalFacturado_CI / servicio.precioHora_CI);
-                        };
-                    };
-                    if (servicio.precioHora_MO) {
-                        totalFacturado_MO += servicio.totalServicioFijo;
-                        if (totalFacturado_MO === servicio.precioHora_MO) {
-                            totalHoras_MO = 1;
-                        } else {
-                            totalHoras_MO = parseInt(totalFacturado_MO / servicio.precioHora_MO);
-                        };
-                    };
-                    if (servicio.precioHora_OF) {
-                        totalFacturado_OF += servicio.totalServicioFijo;
-                        if (totalFacturado_OF === servicio.precioHora_OF) {
-                            totalHoras_OF = 1;
-                        } else {
-                            totalHoras_OF = parseInt(totalFacturado_OF / servicio.precioHora_OF);
-                        };
-                    };
-                    if (servicio.precioHora_AL) {
-                        totalFacturado_AL += servicio.totalServicioFijo;
-                        if (totalFacturado_AL === servicio.precioHora_AL) {
-                            totalHoras_AL = 1;
-                        } else {
-                            totalHoras_AL = parseInt(totalFacturado_AL / servicio.precioHora_AL);
-                        };
-                    };
-                    if (servicio.precioHora_LA) {
-                        totalFacturado_LA += servicio.totalServicioFijo;
-                        if (totalFacturado_LA === servicio.precioHora_LA) {
-                            totalHoras_LA = 1;
-                        } else {
-                            totalHoras_LA = parseInt(totalFacturado_LA / servicio.precioHora_LA);
-                        };
-                    };
-                    if (servicio.precioHora_TE) {
-                        totalFacturado_TE += servicio.totalServicioFijo;
-                        if (totalFacturado_TE === servicio.precioHora_TE) {
-                            totalHoras_TE = 1;
-                        } else {
-                            totalHoras_TE = parseInt(totalFacturado_TE / servicio.precioHora_TE);
-                        };
-                    };
-                    if (servicio.precioHora_FI) {
-                        totalFacturado_FI += servicio.totalServicioFijo;
-                        if (totalFacturado_FI === servicio.precioHora_FI) {
-                            totalHoras_FI = 1;
-                        } else {
-                            totalHoras_FI = parseInt(totalFacturado_FI / servicio.precioHora_FI);
-                        };
-                    };
-                    if (servicio.precioHora_FE) {
-                        totalFacturado_FE += servicio.totalServicioFijo;
-                        if (totalFacturado_FE === servicio.precioHora_FE) {
-                            totalHoras_FE = 1;
-                        } else {
-                            totalHoras_FE = parseInt(totalFacturado_FE / servicio.precioHora_FE);
-                        };
-                    };
-                    if (servicio.precioHora_AB) {
-                        totalFacturado_AB += servicio.totalServicioFijo;
-                        if (totalFacturado_AB === servicio.precioHora_AB) {
-                            totalHoras_AB = 1;
-                        } else {
-                            totalHoras_AB = parseInt(totalFacturado_AB / servicio.precioHora_AB);
-                        };
-                    };
-                    if (servicio.precioHora_MA) {
-                        totalFacturado_MA += servicio.totalServicioFijo;
-                        if (totalFacturado_MA === servicio.precioHora_MA) {
-                            totalHoras_MA = 1;
-                        } else {
-                            totalHoras_MA = parseInt(totalFacturado_MA / servicio.precioHora_MA);
-                        };
-                    };
-                    if (servicio.precioHora_PO) {
-                        totalFacturado_PO += servicio.totalServicioFijo;
-                        if (totalFacturado_PO === servicio.precioHora_PO) {
-                            totalHoras_PO = 1;
-                        } else {
-                            totalHoras_PO = parseInt(totalFacturado_PO / servicio.precioHora_PO);
-                        };
-                    };
-                    if (servicio.precioHora_BA) {
-                        totalFacturado_BA += servicio.totalServicioFijo;
-                        if (totalFacturado_BA === servicio.precioHora_BA) {
-                            totalHoras_BA = 1;
-                        } else {
-                            totalHoras_BA = parseInt(totalFacturado_BA / servicio.precioHora_BA);
-                        };
-                    };
-                    if (servicio.precioHora_FT) {
-                        totalFacturado_FT += servicio.totalServicioFijo;
-                        if (totalFacturado_FT === servicio.precioHora_FT) {
-                            totalHoras_FT = 1;
-                        } else {
-                            totalHoras_FT = parseInt(totalFacturado_FT / servicio.precioHora_FT);
-                        };
-                    };
-                    if (servicio.precioHora_C3) {
-                        totalFacturado_C3 += servicio.totalServicioFijo;
-                        if (totalFacturado_C3 === servicio.precioHora_C3) {
-                            totalHoras_C3 = 1;
-                        } else {
-                            totalHoras_C3 = parseInt(totalFacturado_C3 / servicio.precioHora_C3);
-                        };
-                    };
-                    if (servicio.precioHora_C2) {
-                        totalFacturado_C2 += servicio.totalServicioFijo;
-                        if (totalFacturado_C2 === servicio.precioHora_C2) {
-                            totalHoras_C2 = 1;
-                        } else {
-                            totalHoras_C2 = parseInt(totalFacturado_C2 / servicio.precioHora_C2);
-                        };
-                    };
-                    if (servicio.precioHora_C4) {
-                        totalFacturado_C4 += servicio.totalServicioFijo;
-                        if (totalFacturado_C4 === servicio.precioHora_C4) {
-                            totalHoras_C4 = 1;
-                        } else {
-                            totalHoras_C4 = parseInt(totalFacturado_C4 / servicio.precioHora_C4);
-                        };
-                    };
-                    if (servicio.precioHora_ES) {
-                        totalFacturado_ES += servicio.totalServicioFijo;
-                        if (totalFacturado_ES === servicio.precioHora_ES) {
-                            totalHoras_ES = 1;
-                        } else {
-                            totalHoras_ES = parseInt(totalFacturado_ES / servicio.precioHora_ES);
-                        };
-                    };
-                    if (servicio.precioHora_PA) {
-                        totalFacturado_PA += servicio.totalServicioFijo;
-                        if (totalFacturado_PA === servicio.precioHora_PA) {
-                            totalHoras_PA = 1;
-                        } else {
-                            totalHoras_PA = parseInt(totalFacturado_PA / servicio.precioHora_PA);
-                        };
-                    };
-                    if (servicio.precioHora_FR) {
-                        totalFacturado_FR += servicio.totalServicioFijo;
-                        if (totalFacturado_FR === servicio.precioHora_FR) {
-                            totalHoras_FR = 1;
-                        } else {
-                            totalHoras_FR = parseInt(totalFacturado_FR / servicio.precioHora_FR);
-                        };
-                    };
+                    });
                 };
             });
         };
     });
-    informes.forEach((informe, index) => {
-        numeroInformes += 1;
-        if (informe) {
-            vueltasSeguridad += 1;
-            if (informe.mensualPactado) {
-                totalFacturado_M += informe.mensualPactado;
-                if (horas[index]['L']) {
-                    totalHoras_L += horas[index]['L'];
-                };
-                if (horas[index]['E']) {
-                    totalHoras_E += horas[index]['E'];
-                };
-                if (horas[index]['P']) {
-                    totalHoras_P += horas[index]['P'];
-                };
-                if (horas[index]['N']) {
-                    totalHoras_N += horas[index]['N'];
-                };
-                if (horas[index]['R']) {
-                    totalHoras_R += horas[index]['R'];
-                };
-                if (horas[index]['L1']) {
-                    totalHoras_L1 += horas[index]['L1'];
-                };
-                if (horas[index]['L2']) {
-                    totalHoras_L2 += horas[index]['L2'];
-                };
-                if (horas[index]['F']) {
-                    totalHoras_F += horas[index]['F'];
+    //control seguretat 
+    let vueltasSeguridad = 0;
+    let numeroInformes = 0;
+    let iteracionExitosa = false;
+    while (!iteracionExitosa) {
+        informes.forEach((informe, index) => {
+            numeroInformes += 1;
+            if (informe) {
+                vueltasSeguridad += 1;
+                if (informe.mensualPactado) {
+                    objGeneral.totalFacturado_M += informe.mensualPactado;
+                    tipoServicio.forEach(objServ => {
+                        if (horas[index][objServ.prefix]) {
+                            objGeneral[`totalHoras_${objServ.prefix}`] += horas[index][objServ.prefix];
+                        };
+                    });
+                } else {
+                    tipoServicio.forEach(objServ => {
+                        if (informe[`precioHora_${objServ.prefix}`]) {
+                            objGeneral[`totalFacturado_${objServ.prefix}`] += informe[`totalFacturado_${objServ.prefix}`]
+                            horas[index][objServ.prefix] ? objGeneral[`totalHoras_${objServ.prefix}`] += horas[index][objServ.prefix] : objGeneral[`totalHoras_${objServ.prefix}`] = objGeneral[`totalHoras_${objServ.prefix}`];
+                            objGeneral[`precio_${objServ.prefix}`] = informe[`precioHora__${objServ.prefix}`];
+                        };
+                    });
                 };
             } else {
-                if (informe.precioHora_L) {
-                    totalFacturado_L += informe.totalFacturado_L;
-                    horas[index]['L'] ? totalHoras_L += horas[index]['L'] : totalHoras_L = totalHoras_L;
-                    precio_L = informe.precioHora_L;
-                };
-                if (informe.precioHora_E) {
-                    totalFacturado_E += informe.totalFacturado_E;
-                    horas[index]['E'] ? totalHoras_E += horas[index]['E'] : totalHoras_E = totalHoras_E;
-                    precio_E = informe.precioHora_E;
-                };
-                if (informe.precioHora_P) {
-                    totalFacturado_P += informe.totalFacturado_P;
-                    horas[index]['P'] ? totalHoras_P += horas[index]['P'] : totalHoras_P = totalHoras_P;
-                    precio_P = informe.precioHora_P;
-                };
-                if (informe.precioHora_N) {
-                    totalFacturado_N += informe.totalFacturado_N;
-                    horas[index]['N'] ? totalHoras_N += horas[index]['N'] : totalHoras_N = totalHoras_N;
-                    precio_N = informe.precioHora_N;
-                };
-                if (informe.precioHora_R) {
-                    totalFacturado_R += informe.totalFacturado_R;
-                    horas[index]['R'] ? totalHoras_R += horas[index]['R'] : totalHoras_R = totalHoras_R;
-                    precio_R = informe.precioHora_R;
-                };
-                if (informe.precioHora_L1) {
-                    totalFacturado_L1 += informe.totalFacturado_L1;
-                    horas[index]['L1'] ? totalHoras_L1 += horas[index]['L1'] : totalHoras_L1 = totalHoras_L1;
-                    precio_L1 = informe.precioHora_L1;
-                };
-                if (informe.precioHora_L2) {
-                    totalFacturado_L2 += informe.totalFacturado_L2;
-                    horas[index]['L2'] ? totalHoras_L2 += horas[index]['L2'] : totalHoras_L2 = totalHoras_L2;
-                    precio_L2 = informe.precioHora_L2;
-                };
-                if (informe.precioHora_F) {
-                    totalFacturado_F += informe.totalFacturado_F;
-                    horas[index]['F'] ? totalHoras_F += horas[index]['F'] : totalHoras_F = totalHoras_F;
-                    precio_F = informe.precioHora_F;
-                };
+                numeroInformes -= 1;
             };
-        } else {
-            numeroInformes -= 1;
+        });
+        if (numeroInformes === vueltasSeguridad) {
+            iteracionExitosa = true;
         };
-    });
-    objetoTotales = {
+    };
+    const objetoTotales = {
         nombreCentro: objetoCuadrante.datosCuadrante.nombreCentro,
         subNombreCentro: objetoCuadrante.datosCuadrante.subNombreCentro,
         codigo: objetoCuadrante.datosCuadrante.codigo,
@@ -1635,227 +1369,33 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
         mail: objetoCuadrante.datosCuadrante.mail,
         tocaFacturar: objetoCuadrante.datosInforme.tocaFacturar
     };
-    if (totalFacturado_M) {
-        objetoTotales['MT'] = totalFacturado_M;
-        if (totalHoras_L) {
-            objetoTotales['LH'] = totalHoras_L;
+    if (objGeneral.totalFacturado_M > 0) {
+        objetoTotales['MT'] = objGeneral.totalFacturado_M;
+        tipoServicio.forEach(objServ => {
+            if (objGeneral[`totalHoras_${objServ.prefix}`]) {
+                objetoTotales[`${objServ.prefix}H`] = objGeneral[`totalHoras_${objServ.prefix}`];
+            };
+        });
+    };
+    tipoServicio.forEach(objServ => {
+        if (objGeneral[`totalFacturado_${objServ.prefix}`] > 0) {
+            objetoTotales[`${objServ.prefix}T`] = objGeneral[`totalFacturado_${objServ.prefix}`];
+            objetoTotales[`${objServ.prefix}H`] = objGeneral[`totalHoras_${objServ.prefix}`];
+            objetoTotales[`${objServ.prefix}Pr`] = objGeneral[`precio_${objServ.prefix}`];
         };
-        if (totalHoras_E) {
-            objetoTotales['EH'] = totalHoras_E;
+    });
+    listadoServiciosFijos.forEach(objServ => {
+        if (objGeneral[`totalFacturado_${objServ.prefix}`] > 0) {
+            objetoTotales[`${objServ.prefix}T`] = objGeneral[`totalFacturado_${objServ.prefix}`];
+            objetoTotales[`${objServ.prefix}H`] = objGeneral[`totalHoras_${objServ.prefix}`];
         };
-        if (totalHoras_P) {
-            objetoTotales['PH'] = totalHoras_P;
-        };
-        if (totalHoras_N) {
-            objetoTotales['NH'] = totalHoras_N;
-        };
-        if (totalHoras_R) {
-            objetoTotales['RH'] = totalHoras_R;
-        };
-        if (totalHoras_L1) {
-            objetoTotales['L1H'] = totalHoras_L1;
-        };
-        if (totalHoras_L2) {
-            objetoTotales['L2H'] = totalHoras_L2;
-        };
-        if (totalHoras_F) {
-            objetoTotales['FH'] = totalHoras_F;
-        };
-    };
-    if (totalFacturado_L) {
-        objetoTotales['LT'] = totalFacturado_L;
-        objetoTotales['LH'] = totalHoras_L;
-        objetoTotales['LPr'] = precio_L;
-    };
-    if (totalFacturado_E) {
-        objetoTotales['ET'] = totalFacturado_E;
-        objetoTotales['EH'] = totalHoras_E;
-        objetoTotales['EPr'] = precio_E;
-    };
-    if (totalFacturado_P) {
-        objetoTotales['PT'] = totalFacturado_P;
-        objetoTotales['PH'] = totalHoras_P;
-        objetoTotales['PPr'] = precio_P;
-    };
-    if (totalFacturado_N) {
-        objetoTotales['NT'] = totalFacturado_N;
-        objetoTotales['NH'] = totalHoras_N;
-        objetoTotales['NPr'] = precio_N;
-    };
-    if (totalFacturado_R) {
-        objetoTotales['RT'] = totalFacturado_R;
-        objetoTotales['RH'] = totalHoras_R;
-        objetoTotales['RPr'] = precio_R;
-    };
-    if (totalFacturado_L1) {
-        objetoTotales['L1T'] = totalFacturado_L1;
-        objetoTotales['L1H'] = totalHoras_L1;
-        objetoTotales['L1Pr'] = precio_L1;
-    };
-    if (totalFacturado_L2) {
-        objetoTotales['L2T'] = totalFacturado_L2;
-        objetoTotales['L2H'] = totalHoras_L2;
-        objetoTotales['L2Pr'] = precio_L2;
-    };
-    if (totalFacturado_F) {
-        objetoTotales['FT'] = totalFacturado_F;
-        objetoTotales['FH'] = totalHoras_F;
-        objetoTotales['FPr'] = precio_F;
-    };
-    if (totalFacturado_TO) {
-        objetoTotales['TOT'] = totalFacturado_TO;
-        objetoTotales['TOH'] = totalHoras_TO;
-    };
-    if (totalFacturado_CR) {
-        objetoTotales['CRT'] = totalFacturado_CR;
-        objetoTotales['CRH'] = totalHoras_CR;
-    };
-    if (totalFacturado_CE) {
-        objetoTotales['CET'] = totalFacturado_CE;
-        objetoTotales['CEH'] = totalHoras_CE;
-    };
-    if (totalFacturado_CI) {
-        objetoTotales['CIT'] = totalFacturado_CI;
-        objetoTotales['CIH'] = totalHoras_CI;
-    };
-    if (totalFacturado_MO) {
-        objetoTotales['MOT'] = totalFacturado_MO;
-        objetoTotales['MOH'] = totalHoras_MO;
-    };
-    if (totalFacturado_OF) {
-        objetoTotales['OFT'] = totalFacturado_OF;
-        objetoTotales['OFH'] = totalHoras_OF;
-    };
-    if (totalFacturado_AL) {
-        objetoTotales['ALT'] = totalFacturado_AL;
-        objetoTotales['ALH'] = totalHoras_AL;
-    };
-    if (totalFacturado_LA) {
-        objetoTotales['LAT'] = totalFacturado_LA;
-        objetoTotales['LAH'] = totalHoras_LA;
-    };
-    if (totalFacturado_TE) {
-        objetoTotales['TET'] = totalFacturado_TE;
-        objetoTotales['TEH'] = totalHoras_TE;
-    };
-    if (totalFacturado_FI) {
-        objetoTotales['FIT'] = totalFacturado_FI;
-        objetoTotales['FIH'] = totalHoras_FI;
-    };
-    if (totalFacturado_FE) {
-        objetoTotales['FET'] = totalFacturado_FE;
-        objetoTotales['FEH'] = totalHoras_FE;
-    };
-    if (totalFacturado_AB) {
-        objetoTotales['ABT'] = totalFacturado_AB;
-        objetoTotales['ABH'] = totalHoras_AB;
-    };
-    if (totalFacturado_MA) {
-        objetoTotales['MAT'] = totalFacturado_MA;
-        objetoTotales['MAH'] = totalHoras_MA;
-    };
-    if (totalFacturado_PO) {
-        objetoTotales['POT'] = totalFacturado_PO;
-        objetoTotales['POH'] = totalHoras_PO;
-    };
-    if (totalFacturado_BA) {
-        objetoTotales['BAT'] = totalFacturado_BA;
-        objetoTotales['BAH'] = totalHoras_BA;
-    };
-    if (totalFacturado_FT) {
-        objetoTotales['FTT'] = totalFacturado_FT;
-        objetoTotales['FTH'] = totalHoras_FT;
-    };
-    if (totalFacturado_C3) {
-        objetoTotales['C3T'] = totalFacturado_C3;
-        objetoTotales['C3H'] = totalHoras_C3;
-    };
-    if (totalFacturado_C2) {
-        objetoTotales['C2T'] = totalFacturado_C2;
-        objetoTotales['C2H'] = totalHoras_C2;
-    };
-    if (totalFacturado_C4) {
-        objetoTotales['C4T'] = totalFacturado_C4;
-        objetoTotales['C4H'] = totalHoras_C4;
-    };
-    if (totalFacturado_ES) {
-        objetoTotales['EST'] = totalFacturado_ES;
-        objetoTotales['ESH'] = totalHoras_ES;
-    };
-    if (totalFacturado_PA) {
-        objetoTotales['PAT'] = totalFacturado_PA;
-        objetoTotales['PAH'] = totalHoras_PA;
-    };
-    if (totalFacturado_FR) {
-        objetoTotales['FRT'] = totalFacturado_FR;
-        objetoTotales['FRH'] = totalHoras_FR;
-    };
+    });
     if (objetoCentro.activoNumCuenta === 'si') {
         objetoTotales['NUMCT'] = 1;
     };
-    totalFacturado_M ? totalFacturado_M = totalFacturado_M : totalFacturado_M = 0;
-    totalFacturado_L ? totalFacturado_L = totalFacturado_L : totalFacturado_L = 0;
-    totalFacturado_E ? totalFacturado_E = totalFacturado_E : totalFacturado_E = 0;
-    totalFacturado_P ? totalFacturado_P = totalFacturado_P : totalFacturado_P = 0;
-    totalFacturado_N ? totalFacturado_N = totalFacturado_N : totalFacturado_N = 0;
-    totalFacturado_R ? totalFacturado_R = totalFacturado_R : totalFacturado_R = 0;
-    totalFacturado_L1 ? totalFacturado_L1 = totalFacturado_L1 : totalFacturado_L1 = 0;
-    totalFacturado_L2 ? totalFacturado_L2 = totalFacturado_L2 : totalFacturado_L2 = 0;
-    totalFacturado_F ? totalFacturado_F = totalFacturado_F : totalFacturado_F = 0;
-    totalFacturado_TO ? totalFacturado_TO = totalFacturado_TO : totalFacturado_TO = 0;
-    totalFacturado_CR ? totalFacturado_CR = totalFacturado_CR : totalFacturado_CR = 0;
-    totalFacturado_CE ? totalFacturado_CE = totalFacturado_CE : totalFacturado_CE = 0;
-    totalFacturado_CI ? totalFacturado_CI = totalFacturado_CI : totalFacturado_CI = 0;
-    totalFacturado_MO ? totalFacturado_MO = totalFacturado_MO : totalFacturado_MO = 0;
-    totalFacturado_OF ? totalFacturado_OF = totalFacturado_OF : totalFacturado_OF = 0;
-    totalFacturado_AL ? totalFacturado_AL = totalFacturado_AL : totalFacturado_AL = 0;
-    totalFacturado_LA ? totalFacturado_LA = totalFacturado_LA : totalFacturado_LA = 0;
-    totalFacturado_TE ? totalFacturado_TE = totalFacturado_TE : totalFacturado_TE = 0;
-    totalFacturado_FI ? totalFacturado_FI = totalFacturado_FI : totalFacturado_FI = 0;
-    totalFacturado_FE ? totalFacturado_FE = totalFacturado_FE : totalFacturado_FE = 0;
-    totalFacturado_AB ? totalFacturado_AB = totalFacturado_AB : totalFacturado_AB = 0;
-    totalFacturado_MA ? totalFacturado_MA = totalFacturado_MA : totalFacturado_MA = 0;
-    totalFacturado_PO ? totalFacturado_PO = totalFacturado_PO : totalFacturado_PO = 0;
-    totalFacturado_BA ? totalFacturado_BA = totalFacturado_BA : totalFacturado_BA = 0;
-    totalFacturado_FT ? totalFacturado_FT = totalFacturado_FT : totalFacturado_FT = 0;
-    totalFacturado_C3 ? totalFacturado_C3 = totalFacturado_C3 : totalFacturado_C3 = 0;
-    totalFacturado_C2 ? totalFacturado_C2 = totalFacturado_C2 : totalFacturado_C2 = 0;
-    totalFacturado_C4 ? totalFacturado_C4 = totalFacturado_C4 : totalFacturado_C4 = 0;
-    totalFacturado_ES ? totalFacturado_ES = totalFacturado_ES : totalFacturado_ES = 0;
-    totalFacturado_PA ? totalFacturado_PA = totalFacturado_PA : totalFacturado_PA = 0;
-    totalFacturado_FR ? totalFacturado_FR = totalFacturado_FR : totalFacturado_FR = 0;
-    objetoTotales['total'] =
-        totalFacturado_M +
-        totalFacturado_L +
-        totalFacturado_E +
-        totalFacturado_P +
-        totalFacturado_N +
-        totalFacturado_R +
-        totalFacturado_L1 +
-        totalFacturado_L2 +
-        totalFacturado_F +
-        totalFacturado_TO +
-        totalFacturado_CR +
-        totalFacturado_CE +
-        totalFacturado_CI +
-        totalFacturado_MO +
-        totalFacturado_OF +
-        totalFacturado_AL +
-        totalFacturado_LA +
-        totalFacturado_TE +
-        totalFacturado_FI +
-        totalFacturado_FE +
-        totalFacturado_AB +
-        totalFacturado_MA +
-        totalFacturado_PO +
-        totalFacturado_BA +
-        totalFacturado_FT +
-        totalFacturado_C3 +
-        totalFacturado_C2 +
-        totalFacturado_C4 +
-        totalFacturado_ES +
-        totalFacturado_PA +
-        totalFacturado_FR;
+    objetoTotales['total'] = Object.keys(objGeneral)
+        .filter(key => key.startsWith('totalFacturado_'))
+        .reduce((total, key) => total + objGeneral[key], 0);
     objetoTotales['procesado'] = {
         valor: 'no',
         numR: null,
@@ -1867,62 +1407,6 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
         } else {
             objetoTotales['total'] = parseFloat(objetoTotales['total']) + parseFloat(totalesPeriodicos.total);
             objetoTotales['totalesPeriodicos'] = totalesPeriodicos;
-            if (totalesPeriodicos.totalesHoras.LH) {
-                if (objetoTotales['LH']) {
-                    objetoTotales['LH'] += totalesPeriodicos.totalesHoras.LH;
-                } else {
-                    objetoTotales['LH'] = totalesPeriodicos.totalesHoras.LH;
-                };
-            };
-            if (totalesPeriodicos.totalesHoras.EH) {
-                if (objetoTotales['EH']) {
-                    objetoTotales['EH'] += totalesPeriodicos.totalesHoras.EH;
-                } else {
-                    objetoTotales['EH'] = totalesPeriodicos.totalesHoras.EH;
-                };
-            };
-            if (totalesPeriodicos.totalesHoras.PH) {
-                if (objetoTotales['PH']) {
-                    objetoTotales['PH'] += totalesPeriodicos.totalesHoras.PH;
-                } else {
-                    objetoTotales['PH'] = totalesPeriodicos.totalesHoras.PH;
-                };
-            };
-            if (totalesPeriodicos.totalesHoras.NH) {
-                if (objetoTotales['NH']) {
-                    objetoTotales['NH'] += totalesPeriodicos.totalesHoras.NH;
-                } else {
-                    objetoTotales['NH'] = totalesPeriodicos.totalesHoras.NH;
-                };
-            };
-            if (totalesPeriodicos.totalesHoras.RH) {
-                if (objetoTotales['RH']) {
-                    objetoTotales['RH'] += totalesPeriodicos.totalesHoras.RH;
-                } else {
-                    objetoTotales['RH'] = totalesPeriodicos.totalesHoras.RH;
-                };
-            };
-            if (totalesPeriodicos.totalesHoras.L1H) {
-                if (objetoTotales['L1H']) {
-                    objetoTotales['L1H'] += totalesPeriodicos.totalesHoras.L1H;
-                } else {
-                    objetoTotales['L1H'] = totalesPeriodicos.totalesHoras.L1H;
-                };
-            };
-            if (totalesPeriodicos.totalesHoras.L2H) {
-                if (objetoTotales['L2H']) {
-                    objetoTotales['L2H'] += totalesPeriodicos.totalesHoras.L2H;
-                } else {
-                    objetoTotales['L2H'] = totalesPeriodicos.totalesHoras.L2H;
-                };
-            };
-            if (totalesPeriodicos.totalesHoras.FH) {
-                if (objetoTotales['FH']) {
-                    objetoTotales['FH'] += totalesPeriodicos.totalesHoras.FH;
-                } else {
-                    objetoTotales['FH'] = totalesPeriodicos.totalesHoras.FH;
-                };
-            };
             if (totalesPeriodicos.totalesServicios.MT) {
                 if (objetoTotales['MT']) {
                     objetoTotales['MT'] += totalesPeriodicos.totalesServicios.MT;
@@ -1930,216 +1414,31 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
                     objetoTotales['MT'] = totalesPeriodicos.totalesServicios.MT;
                 };
             };
-            if (totalesPeriodicos.totalesServicios.LT) {
-                if (objetoTotales['LT']) {
-                    objetoTotales['LT'] += totalesPeriodicos.totalesServicios.LT;
-                } else {
-                    objetoTotales['LT'] = totalesPeriodicos.totalesServicios.LT;
+            tipoServicio.forEach(objServ => {
+                if (totalesPeriodicos.totalesHoras[`${objServ.prefix}H`]) {
+                    if (objetoTotales[`${objServ.prefix}H`]) {
+                        objetoTotales[`${objServ.prefix}H`] += totalesPeriodicos.totalesHoras[`${objServ.prefix}H`];
+                    } else {
+                        objetoTotales[`${objServ.prefix}H`] = totalesPeriodicos.totalesHoras[`${objServ.prefix}H`];
+                    };
                 };
-            };
-            if (totalesPeriodicos.totalesServicios.ET) {
-                if (objetoTotales['ET']) {
-                    objetoTotales['ET'] += totalesPeriodicos.totalesServicios.ET;
-                } else {
-                    objetoTotales['ET'] = totalesPeriodicos.totalesServicios.ET;
+                if (totalesPeriodicos.totalesServicios[`${objServ.prefix}T`]) {
+                    if (objetoTotales[`${objServ.prefix}T`]) {
+                        objetoTotales[`${objServ.prefix}T`] += totalesPeriodicos.totalesServicios[`${objServ.prefix}T`];
+                    } else {
+                        objetoTotales[`${objServ.prefix}T`] = totalesPeriodicos.totalesServicios[`${objServ.prefix}T`];
+                    };
                 };
-            };
-            if (totalesPeriodicos.totalesServicios.PT) {
-                if (objetoTotales['PT']) {
-                    objetoTotales['PT'] += totalesPeriodicos.totalesServicios.PT;
-                } else {
-                    objetoTotales['PT'] = totalesPeriodicos.totalesServicios.PT;
+            });
+            listadoServiciosFijos.forEach(objServ => {
+                if (totalesPeriodicos.totalesServicios[`${objServ.prefix}T`]) {
+                    if (objetoTotales[`${objServ.prefix}T`]) {
+                        objetoTotales[`${objServ.prefix}T`] += totalesPeriodicos.totalesServicios[`${objServ.prefix}T`];
+                    } else {
+                        objetoTotales[`${objServ.prefix}T`] = totalesPeriodicos.totalesServicios[`${objServ.prefix}T`];
+                    };
                 };
-            };
-            if (totalesPeriodicos.totalesServicios.NT) {
-                if (objetoTotales['NT']) {
-                    objetoTotales['NT'] += totalesPeriodicos.totalesServicios.NT;
-                } else {
-                    objetoTotales['NT'] = totalesPeriodicos.totalesServicios.NT;
-                };
-            };
-            if (totalesPeriodicos.totalesServicios.RT) {
-                if (objetoTotales['RT']) {
-                    objetoTotales['RT'] += totalesPeriodicos.totalesServicios.RT;
-                } else {
-                    objetoTotales['RT'] = totalesPeriodicos.totalesServicios.RT;
-                };
-            };
-            if (totalesPeriodicos.totalesServicios.L1T) {
-                if (objetoTotales['L1T']) {
-                    objetoTotales['L1T'] += totalesPeriodicos.totalesServicios.L1T;
-                } else {
-                    objetoTotales['L1T'] = totalesPeriodicos.totalesServicios.L1T;
-                };
-            };
-            if (totalesPeriodicos.totalesServicios.L2T) {
-                if (objetoTotales['L2T']) {
-                    objetoTotales['L2T'] += totalesPeriodicos.totalesServicios.L2T;
-                } else {
-                    objetoTotales['L2T'] = totalesPeriodicos.totalesServicios.L2T;
-                };
-            };
-            if (totalesPeriodicos.totalesServicios.FT) {
-                if (objetoTotales['FT']) {
-                    objetoTotales['FT'] += totalesPeriodicos.totalesServicios.FT;
-                } else {
-                    objetoTotales['FT'] = totalesPeriodicos.totalesServicios.FT;
-                };
-            };
-            if (totalesPeriodicos.totalesServicios.TOT) {
-                if (objetoTotales['TOT']) {
-                    objetoTotales['TOT'] += totalesPeriodicos.totalesServicios.TOT;
-                } else {
-                    objetoTotales['TOT'] = totalesPeriodicos.totalesServicios.TOT;
-                };
-            };
-            if (totalesPeriodicos.totalesServicios.CRT) {
-                if (objetoTotales['CRT']) {
-                    objetoTotales['CRT'] += totalesPeriodicos.totalesServicios.CRT;
-                } else {
-                    objetoTotales['CRT'] = totalesPeriodicos.totalesServicios.CRT;
-                };
-            };
-            if (totalesPeriodicos.totalesServicios.CET) {
-                if (objetoTotales['CET']) {
-                    objetoTotales['CET'] += totalesPeriodicos.totalesServicios.CET;
-                } else {
-                    objetoTotales['CET'] = totalesPeriodicos.totalesServicios.CET;
-                };
-            };
-            if (totalesPeriodicos.totalesServicios.CIT) {
-                if (objetoTotales['CIT']) {
-                    objetoTotales['CIT'] += totalesPeriodicos.totalesServicios.CIT;
-                } else {
-                    objetoTotales['CIT'] = totalesPeriodicos.totalesServicios.CIT;
-                };
-            };
-            if (totalesPeriodicos.totalesServicios.MOT) {
-                if (objetoTotales['MOT']) {
-                    objetoTotales['MOT'] += totalesPeriodicos.totalesServicios.MOT;
-                } else {
-                    objetoTotales['MOT'] = totalesPeriodicos.totalesServicios.MOT;
-                };
-            };
-            if (totalesPeriodicos.totalesServicios.OFT) {
-                if (objetoTotales['OFT']) {
-                    objetoTotales['OFT'] += totalesPeriodicos.totalesServicios.OFT;
-                } else {
-                    objetoTotales['OFT'] = totalesPeriodicos.totalesServicios.OFT;
-                };
-            };
-            if (totalesPeriodicos.totalesServicios.ALT) {
-                if (objetoTotales['ALT']) {
-                    objetoTotales['ALT'] += totalesPeriodicos.totalesServicios.ALT;
-                } else {
-                    objetoTotales['ALT'] = totalesPeriodicos.totalesServicios.ALT;
-                };
-            };
-            if (totalesPeriodicos.totalesServicios.LAT) {
-                if (objetoTotales['LAT']) {
-                    objetoTotales['LAT'] += totalesPeriodicos.totalesServicios.LAT;
-                } else {
-                    objetoTotales['LAT'] = totalesPeriodicos.totalesServicios.LAT;
-                };
-            };
-            if (totalesPeriodicos.totalesServicios.TET) {
-                if (objetoTotales['TET']) {
-                    objetoTotales['TET'] += totalesPeriodicos.totalesServicios.TET;
-                } else {
-                    objetoTotales['TET'] = totalesPeriodicos.totalesServicios.TET;
-                };
-            };
-            if (totalesPeriodicos.totalesServicios.FIT) {
-                if (objetoTotales['FIT']) {
-                    objetoTotales['FIT'] += totalesPeriodicos.totalesServicios.FIT;
-                } else {
-                    objetoTotales['FIT'] = totalesPeriodicos.totalesServicios.FIT;
-                };
-            };
-            if (totalesPeriodicos.totalesServicios.FET) {
-                if (objetoTotales['FET']) {
-                    objetoTotales['FET'] += totalesPeriodicos.totalesServicios.FET;
-                } else {
-                    objetoTotales['FET'] = totalesPeriodicos.totalesServicios.FET;
-                };
-            };
-            if (totalesPeriodicos.totalesServicios.ABT) {
-                if (objetoTotales['ABT']) {
-                    objetoTotales['ABT'] += totalesPeriodicos.totalesServicios.ABT;
-                } else {
-                    objetoTotales['ABT'] = totalesPeriodicos.totalesServicios.ABT;
-                };
-            };
-            if (totalesPeriodicos.totalesServicios.MAT) {
-                if (objetoTotales['MAT']) {
-                    objetoTotales['MAT'] += totalesPeriodicos.totalesServicios.MAT;
-                } else {
-                    objetoTotales['MAT'] = totalesPeriodicos.totalesServicios.MAT;
-                };
-            };
-            if (totalesPeriodicos.totalesServicios.POT) {
-                if (objetoTotales['POT']) {
-                    objetoTotales['POT'] += totalesPeriodicos.totalesServicios.POT;
-                } else {
-                    objetoTotales['POT'] = totalesPeriodicos.totalesServicios.POT;
-                };
-            };
-            if (totalesPeriodicos.totalesServicios.BAT) {
-                if (objetoTotales['BAT']) {
-                    objetoTotales['BAT'] += totalesPeriodicos.totalesServicios.BAT;
-                } else {
-                    objetoTotales['BAT'] = totalesPeriodicos.totalesServicios.BAT;
-                };
-            };
-            if (totalesPeriodicos.totalesServicios.FTT) {
-                if (objetoTotales['FTT']) {
-                    objetoTotales['FTT'] += totalesPeriodicos.totalesServicios.FTT;
-                } else {
-                    objetoTotales['FTT'] = totalesPeriodicos.totalesServicios.FTT;
-                };
-            };
-            if (totalesPeriodicos.totalesServicios.C3T) {
-                if (objetoTotales['C3T']) {
-                    objetoTotales['C3T'] += totalesPeriodicos.totalesServicios.C3T;
-                } else {
-                    objetoTotales['C3T'] = totalesPeriodicos.totalesServicios.C3T;
-                };
-            };
-            if (totalesPeriodicos.totalesServicios.C2T) {
-                if (objetoTotales['C2T']) {
-                    objetoTotales['C2T'] += totalesPeriodicos.totalesServicios.C2T;
-                } else {
-                    objetoTotales['C2T'] = totalesPeriodicos.totalesServicios.C2T;
-                };
-            };
-            if (totalesPeriodicos.totalesServicios.C4T) {
-                if (objetoTotales['C4T']) {
-                    objetoTotales['C4T'] += totalesPeriodicos.totalesServicios.C4T;
-                } else {
-                    objetoTotales['C4T'] = totalesPeriodicos.totalesServicios.C4T;
-                };
-            };
-            if (totalesPeriodicos.totalesServicios.EST) {
-                if (objetoTotales['EST']) {
-                    objetoTotales['EST'] += totalesPeriodicos.totalesServicios.EST;
-                } else {
-                    objetoTotales['EST'] = totalesPeriodicos.totalesServicios.EST;
-                };
-            };
-            if (totalesPeriodicos.totalesServicios.PAT) {
-                if (objetoTotales['PAT']) {
-                    objetoTotales['PAT'] += totalesPeriodicos.totalesServicios.PAT;
-                } else {
-                    objetoTotales['PAT'] = totalesPeriodicos.totalesServicios.PAT;
-                };
-            };
-            if (totalesPeriodicos.totalesServicios.FRT) {
-                if (objetoTotales['FRT']) {
-                    objetoTotales['FRT'] += totalesPeriodicos.totalesServicios.FRT;
-                } else {
-                    objetoTotales['FRT'] = totalesPeriodicos.totalesServicios.FRT;
-                };
-            };
+            });
             if (totalesPeriodicos.totalesServicios.NUMCT) {
                 if (objetoTotales['NUMCT']) {
                     objetoTotales['NUMCT'] = totalesPeriodicos.totalesServicios.NUMCT;
@@ -2150,13 +1449,8 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
         };
     };
     objetoTotales['totalMasIva'] = ((parseFloat(objetoTotales['total']) * 21) / 100) + parseFloat(objetoTotales['total']);
-    objetoTotales['totalIva'] = ((parseFloat(objetoTotales['total']) * 21) / 100);
-    //control seguretat    
-    if (numeroInformes !== vueltasSeguridad) {
-        return 'error cálculo'
-    } else {
-        return objetoTotales
-    };
+    objetoTotales['totalIva'] = ((parseFloat(objetoTotales['total']) * 21) / 100);    
+    return objetoTotales
 };
 
 const retornaMesReciboLetra = () => (dispatch, getState) => {
@@ -2228,16 +1522,7 @@ const finalizaRegistroCuadrante = (
         datosCuadrante: elArrayDatosCuadranteLimpiado
     };
     let losDatosTotales = dispatch(calculoTotales(losDatosServiciosFijos.datosServicios, losDatosInforme.datosInforme, losDatosHoras.horas));
-    if (losDatosTotales === 'error cálculo') {
-        dispatch(setAlertaAccion({
-            abierto: true,
-            mensaje: "Error en el cálculo de totales vuelve a registrar el cuadrante.",
-            tipo: 'error'
-        }));
-        return;
-    } else {
-        dispatch(setFirmaActualizacionAccion(laFirmaActualizacion));
-    };
+    dispatch(setFirmaActualizacionAccion(laFirmaActualizacion));
     if (parseFloat(losDatosTotales.total) === 0) {
         losDatosInforme = {
             ...losDatosInforme,

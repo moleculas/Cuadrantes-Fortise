@@ -300,17 +300,22 @@ const gestionaDatosHorarioItem = (
             return comillas ? '' : null;
         };
     } else {
-        if (posicionTrabajador > cantidadTrabajadoresCentro || tipoTrabajador !== 'trabajador') {
+        if (posicionTrabajador > cantidadTrabajadoresCentro && tipoTrabajador === 'trabajador') {
             if (esLimpieza) {
                 return comillas ? '' : null;
             } else {
                 return elHorarioCuadrante.tipoRegistroTrabajador[0][item] || (comillas ? '' : null);
             };
-        } else {
+        }
+        if (tipoTrabajador === 'suplente') {
             if (esLimpieza) {
                 return comillas ? '' : null;
             } else {
-                return elHorarioCuadrante.tipoRegistroTrabajador[posicionTrabajador - 1][item] || (comillas ? '' : null);
+                let indice = posicionTrabajador - 1;
+                while (elHorarioCuadrante.tipoRegistroTrabajador[indice] === undefined) {
+                    indice--;
+                };
+                return elHorarioCuadrante.tipoRegistroTrabajador[indice][item] || (comillas ? '' : null);
             };
         };
     };
