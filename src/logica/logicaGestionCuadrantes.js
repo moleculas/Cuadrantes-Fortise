@@ -1286,42 +1286,27 @@ export const procesarDatosCuadranteAccion = (source) => (dispatch, getState) => 
 
 //por revisar
 
-const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {   
+const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
     const { objetoCuadrante, totalesPeriodicos } = getState().variablesCuadrantes;
     const { objetoCentro } = getState().variablesCentros;
-    const objGeneral = {
-        ...tipoServicio.reduce((acc, curr) => {
-            acc[`totalFacturado_${curr.prefix}`] = 0;
-            acc[`totalHoras_${curr.prefix}`] = 0;
-            acc[`precio_${curr.prefix}`] = 0;
-            return acc;
-        }, {}),
-        ...listadoServiciosFijos.reduce((acc, curr) => {
-            acc[`totalFacturado_${curr.prefix}`] = 0;
-            acc[`totalHoras_${curr.prefix}`] = 0;
-            return acc;
-        }, {
-            totalFacturado_M: 0
-        }),
+    const reseteaObjGeneral = () => {
+        return {
+            ...tipoServicio.reduce((acc, curr) => {
+                acc[`totalFacturado_${curr.prefix}`] = 0;
+                acc[`totalHoras_${curr.prefix}`] = 0;
+                acc[`precio_${curr.prefix}`] = 0;
+                return acc;
+            }, {}),
+            ...listadoServiciosFijos.reduce((acc, curr) => {
+                acc[`totalFacturado_${curr.prefix}`] = 0;
+                acc[`totalHoras_${curr.prefix}`] = 0;
+                return acc;
+            }, {
+                totalFacturado_M: 0
+            }),
+        }
     };
-    servicios.forEach(servicioTot => {
-        if (servicioTot) {
-            servicioTot.forEach(servicio => {
-                if (servicio) {
-                    listadoServiciosFijos.forEach(objServ => {
-                        if (servicio[`precioHora_${objServ.prefix}`]) {
-                            objGeneral[`totalFacturado_${objServ.prefix}`] += servicio.totalServicioFijo;
-                            if (objGeneral[`totalFacturado_${objServ.prefix}`] === servicio[`precioHora_${objServ.prefix}`]) {
-                                objGeneral[`totalHoras_${objServ.prefix}`] = 1;
-                            } else {
-                                objGeneral[`totalHoras_${objServ.prefix}`] = parseInt(objGeneral[`totalFacturado_${objServ.prefix}`] / servicio[`precioHora_${objServ.prefix}`]);
-                            };
-                        };
-                    });
-                };
-            });
-        };
-    });
+    let objGeneral = reseteaObjGeneral();
     //control seguretat 
     let vueltasSeguridad = 0;
     let numeroInformes = 0;
@@ -1353,8 +1338,28 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
         });
         if (numeroInformes === vueltasSeguridad) {
             iteracionExitosa = true;
+        } else {
+            objGeneral = reseteaObjGeneral();
         };
     };
+    servicios.forEach(servicioTot => {
+        if (servicioTot) {
+            servicioTot.forEach(servicio => {
+                if (servicio) {
+                    listadoServiciosFijos.forEach(objServ => {
+                        if (servicio[`precioHora_${objServ.prefix}`]) {
+                            objGeneral[`totalFacturado_${objServ.prefix}`] += servicio.totalServicioFijo;
+                            if (objGeneral[`totalFacturado_${objServ.prefix}`] === servicio[`precioHora_${objServ.prefix}`]) {
+                                objGeneral[`totalHoras_${objServ.prefix}`] = 1;
+                            } else {
+                                objGeneral[`totalHoras_${objServ.prefix}`] = parseInt(objGeneral[`totalFacturado_${objServ.prefix}`] / servicio[`precioHora_${objServ.prefix}`]);
+                            };
+                        };
+                    });
+                };
+            });
+        };
+    });
     const objetoTotales = {
         nombreCentro: objetoCuadrante.datosCuadrante.nombreCentro,
         subNombreCentro: objetoCuadrante.datosCuadrante.subNombreCentro,
@@ -1449,7 +1454,7 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
         };
     };
     objetoTotales['totalMasIva'] = ((parseFloat(objetoTotales['total']) * 21) / 100) + parseFloat(objetoTotales['total']);
-    objetoTotales['totalIva'] = ((parseFloat(objetoTotales['total']) * 21) / 100);    
+    objetoTotales['totalIva'] = ((parseFloat(objetoTotales['total']) * 21) / 100);
     return objetoTotales
 };
 
