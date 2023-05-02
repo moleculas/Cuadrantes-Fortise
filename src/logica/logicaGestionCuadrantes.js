@@ -1328,7 +1328,7 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
                         if (informe[`precioHora_${objServ.prefix}`]) {
                             objGeneral[`totalFacturado_${objServ.prefix}`] += informe[`totalFacturado_${objServ.prefix}`]
                             horas[index][objServ.prefix] ? objGeneral[`totalHoras_${objServ.prefix}`] += horas[index][objServ.prefix] : objGeneral[`totalHoras_${objServ.prefix}`] = objGeneral[`totalHoras_${objServ.prefix}`];
-                            objGeneral[`precio_${objServ.prefix}`] = informe[`precioHora__${objServ.prefix}`];
+                            objGeneral[`precio_${objServ.prefix}`] = informe[`precioHora_${objServ.prefix}`];
                         };
                     });
                 };
@@ -1454,7 +1454,7 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
         };
     };
     objetoTotales['totalMasIva'] = ((parseFloat(objetoTotales['total']) * 21) / 100) + parseFloat(objetoTotales['total']);
-    objetoTotales['totalIva'] = ((parseFloat(objetoTotales['total']) * 21) / 100);
+    objetoTotales['totalIva'] = ((parseFloat(objetoTotales['total']) * 21) / 100);    
     return objetoTotales
 };
 
