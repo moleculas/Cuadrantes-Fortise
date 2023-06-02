@@ -4,8 +4,13 @@ import * as XLSX from "xlsx";
 import { stringify } from 'zipson';
 
 //constantes
-const rutaApi = Constantes.RUTA_API;
-const meses = Constantes.MESES;
+const {
+    TIPO_SERVICIO_FIJO: listadoServiciosFijos,
+    TIPO_SERVICIO: tipoServicio,
+    RUTA_API: rutaApi,
+    MESES: meses,
+    NUMERO_CUENTA_FORTISE: numeroCuentaFortise
+} = Constantes;
 const fileExtension = ".xlsx";
 
 const dataInicial = {
@@ -281,178 +286,12 @@ export const onEstemAccion = (lloc) => (dispatch, getState) => {
 };
 
 export const abreObjetoDialogAccion = (numero) => (dispatch, getState) => {
-    let arrayDialogs = [];
-    switch (numero) {
-        case '1':
-            arrayDialogs[0] = true;
-            arrayDialogs[1] = false;
-            arrayDialogs[2] = false;
-            arrayDialogs[3] = false;
-            arrayDialogs[4] = false;
-            arrayDialogs[5] = false;
-            arrayDialogs[6] = false;
-            arrayDialogs[7] = false;
-            arrayDialogs[8] = false;
-            arrayDialogs[9] = false;
-            arrayDialogs[10] = false;
-            arrayDialogs[11] = false;
-            break;
-        case '2':
-            arrayDialogs[0] = false;
-            arrayDialogs[1] = true;
-            arrayDialogs[2] = false;
-            arrayDialogs[3] = false;
-            arrayDialogs[4] = false;
-            arrayDialogs[5] = false;
-            arrayDialogs[6] = false;
-            arrayDialogs[7] = false;
-            arrayDialogs[8] = false;
-            arrayDialogs[9] = false;
-            arrayDialogs[10] = false;
-            arrayDialogs[11] = false;
-            break;
-        case '3':
-            arrayDialogs[0] = false;
-            arrayDialogs[1] = false;
-            arrayDialogs[2] = true;
-            arrayDialogs[3] = false;
-            arrayDialogs[4] = false;
-            arrayDialogs[5] = false;
-            arrayDialogs[6] = false;
-            arrayDialogs[7] = false;
-            arrayDialogs[8] = false;
-            arrayDialogs[9] = false;
-            arrayDialogs[10] = false;
-            arrayDialogs[11] = false;
-            break;
-        case '4':
-            arrayDialogs[0] = false;
-            arrayDialogs[1] = false;
-            arrayDialogs[2] = false;
-            arrayDialogs[3] = true;
-            arrayDialogs[4] = false;
-            arrayDialogs[5] = false;
-            arrayDialogs[6] = false;
-            arrayDialogs[7] = false;
-            arrayDialogs[8] = false;
-            arrayDialogs[9] = false;
-            arrayDialogs[10] = false;
-            arrayDialogs[11] = false;
-            break;
-        case '5':
-            arrayDialogs[0] = false;
-            arrayDialogs[1] = false;
-            arrayDialogs[2] = false;
-            arrayDialogs[3] = false;
-            arrayDialogs[4] = true;
-            arrayDialogs[5] = false;
-            arrayDialogs[6] = false;
-            arrayDialogs[7] = false;
-            arrayDialogs[8] = false;
-            arrayDialogs[9] = false;
-            arrayDialogs[10] = false;
-            arrayDialogs[11] = false;
-            break;
-        case '6':
-            arrayDialogs[0] = false;
-            arrayDialogs[1] = false;
-            arrayDialogs[2] = false;
-            arrayDialogs[3] = false;
-            arrayDialogs[4] = false;
-            arrayDialogs[5] = true;
-            arrayDialogs[6] = false;
-            arrayDialogs[7] = false;
-            arrayDialogs[8] = false;
-            arrayDialogs[9] = false;
-            arrayDialogs[10] = false;
-            arrayDialogs[11] = false;
-            break;
-        case '7':
-            arrayDialogs[0] = false;
-            arrayDialogs[1] = false;
-            arrayDialogs[2] = false;
-            arrayDialogs[3] = false;
-            arrayDialogs[4] = false;
-            arrayDialogs[5] = false;
-            arrayDialogs[6] = true;
-            arrayDialogs[7] = false;
-            arrayDialogs[8] = false;
-            arrayDialogs[9] = false;
-            arrayDialogs[10] = false;
-            arrayDialogs[11] = false;
-            break;
-        case '8':
-            arrayDialogs[0] = false;
-            arrayDialogs[1] = false;
-            arrayDialogs[2] = false;
-            arrayDialogs[3] = false;
-            arrayDialogs[4] = false;
-            arrayDialogs[5] = false;
-            arrayDialogs[6] = false;
-            arrayDialogs[7] = true;
-            arrayDialogs[8] = false;
-            arrayDialogs[9] = false;
-            arrayDialogs[10] = false;
-            arrayDialogs[11] = false;
-            break;
-        case '9':
-            arrayDialogs[0] = false;
-            arrayDialogs[1] = false;
-            arrayDialogs[2] = false;
-            arrayDialogs[3] = false;
-            arrayDialogs[4] = false;
-            arrayDialogs[5] = false;
-            arrayDialogs[6] = false;
-            arrayDialogs[7] = false;
-            arrayDialogs[8] = true;
-            arrayDialogs[9] = false;
-            arrayDialogs[10] = false;
-            arrayDialogs[11] = false;
-            break;
-        case '10':
-            arrayDialogs[0] = false;
-            arrayDialogs[1] = false;
-            arrayDialogs[2] = false;
-            arrayDialogs[3] = false;
-            arrayDialogs[4] = false;
-            arrayDialogs[5] = false;
-            arrayDialogs[6] = false;
-            arrayDialogs[7] = false;
-            arrayDialogs[8] = false;
-            arrayDialogs[9] = true;
-            arrayDialogs[10] = false;
-            arrayDialogs[11] = false;
-            break;
-        case '11':
-            arrayDialogs[0] = false;
-            arrayDialogs[1] = false;
-            arrayDialogs[2] = false;
-            arrayDialogs[3] = false;
-            arrayDialogs[4] = false;
-            arrayDialogs[5] = false;
-            arrayDialogs[6] = false;
-            arrayDialogs[7] = false;
-            arrayDialogs[8] = false;
-            arrayDialogs[9] = false;
-            arrayDialogs[10] = true;
-            arrayDialogs[11] = false;
-            break;
-        case '12':
-            arrayDialogs[0] = false;
-            arrayDialogs[1] = false;
-            arrayDialogs[2] = false;
-            arrayDialogs[3] = false;
-            arrayDialogs[4] = false;
-            arrayDialogs[5] = false;
-            arrayDialogs[6] = false;
-            arrayDialogs[7] = false;
-            arrayDialogs[8] = false;
-            arrayDialogs[9] = false;
-            arrayDialogs[10] = false;
-            arrayDialogs[11] = true;
-            break;
-        default:
-    }
+    //numeració a pujar si s'afegeix un dialog
+    const totalDialogs = 12;
+    let arrayDialogs = Array(totalDialogs).fill(false);
+    if (numero >= 1 && numero <= totalDialogs) {
+        arrayDialogs[numero - 1] = true;
+    };
     dispatch({
         type: ABIERTO_DIALOG,
         payload: {
@@ -640,19 +479,14 @@ export const obtenerObjetoPorIdAccion = (listado, id) => (dispatch, getState) =>
     listado.map((elemento) => {
         if (elemento.id === id) {
             aDevolver = elemento.nombre
-        }
+        };
     });
     return aDevolver
 };
 
 export const validarMailAccion = (mail) => (dispatch, getState) => {
-    let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
-    if (regex.test(mail)) {
-        return true;
-    }
-    else {
-        return false;
-    }
+    const regex = /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/;
+    return regex.test(mail);
 };
 
 export const obtenerUltimasIntervencionesAccion = () => async (dispatch, getState) => {
@@ -698,404 +532,85 @@ export const retornaTextoConceptoServicioAccion = (objetoTotales, servicio, hora
     let arrayConceptos = [];
     if (servicio) {
         if (servicio === 'MT') {
-            if (horas === 'LH') {
-                arrayConceptos.push('LIM', 'SERVICIO DE LIMPIEZA');
+            tipoServicio.forEach(serv => {
+                if (horas === `${serv.prefix}H`) {
+                    arrayConceptos.push(serv.value, serv.label);
+                };
+            });
+        };
+        tipoServicio.forEach(serv => {
+            if (servicio === `${serv.prefix}T`) {
+                arrayConceptos.push(serv.value, serv.label);
             };
-            if (horas === 'EH') {
-                arrayConceptos.push('LIME', 'SERVICIO DE LIMPIEZA ESPECIAL');
+        });
+        listadoServiciosFijos.forEach(servF => {
+            if (servicio === `${servF.prefix}T`) {
+                arrayConceptos.push(servF.value, servF.label);
             };
-            if (horas === 'PH') {
-                arrayConceptos.push('LIMP', 'SERVICIO DE LIMPIEZA DEL PARKING');
-            };
-            if (horas === 'NH') {
-                arrayConceptos.push('NAVE2', 'SERVICIO DE LIMPIEZA NAVE 2');
-            };
-            if (horas === 'RH') {
-                arrayConceptos.push('REFZ', 'SERVICIO DE LIMPIEZA REFUERZO');
-            };
-            if (horas === 'L1H') {
-                arrayConceptos.push('LIM1', 'SERVICIO DE LIMPIEZA_1');
-            };
-            if (horas === 'L2H') {
-                arrayConceptos.push('LIM2', 'SERVICIO DE LIMPIEZA_2');
-            };
-            if (horas === 'FH') {
-                arrayConceptos.push('FEST', 'SERVICIO DE LIMPIEZA DÍA FESTIVO');
-            };
-        };
-        if (servicio === 'LT') {
-            arrayConceptos.push('LIM', 'SERVICIO DE LIMPIEZA');
-        };
-        if (servicio === 'ET') {
-            arrayConceptos.push('LIME', 'SERVICIO DE LIMPIEZA ESPECIAL');
-        };
-        if (servicio === 'PT') {
-            arrayConceptos.push('LIMP', 'SERVICIO DE LIMPIEZA DEL PARKING');
-        };
-        if (servicio === 'NT') {
-            arrayConceptos.push('NAVE2', 'SERVICIO DE LIMPIEZA NAVE 2');
-        };
-        if (servicio === 'RT') {
-            arrayConceptos.push('REFZ', 'SERVICIO DE LIMPIEZA REFUERZO');
-        };
-        if (servicio === 'L1T') {
-            arrayConceptos.push('LIM1', 'SERVICIO DE LIMPIEZA_1');
-        };
-        if (servicio === 'L2T') {
-            arrayConceptos.push('LIM2', 'SERVICIO DE LIMPIEZA_2');
-        };
-        if (servicio === 'FT') {
-            arrayConceptos.push('FEST', 'SERVICIO DE LIMPIEZA DÍA FESTIVO');
-        };
-        if (servicio === 'TOT') {
-            arrayConceptos.push('TOL', 'SERVICIO DE LIMPIEZA DE TOLDOS');
-        };
-        if (servicio === 'CRT') {
-            arrayConceptos.push('CRIS', 'SERVICIO DE LIMPIEZA DE CRISTALES');
-        };
-        if (servicio === 'CET') {
-            arrayConceptos.push('CRISE', 'LIMPIEZA CRISTALES EXTERIORES');
-        };
-        if (servicio === 'CIT') {
-            arrayConceptos.push('CRISI', 'LIMPIEZA CRISTALES INTERIORES');
-        };
-        if (servicio === 'MOT') {
-            arrayConceptos.push('MOQ', 'SERVICIO DE LIMPIEZA MOQUETA');
-        };
-        if (servicio === 'OFT') {
-            arrayConceptos.push('OF', 'SERVICIO DE LIMPIEZA OFICINAS');
-        };
-        if (servicio === 'ALT') {
-            arrayConceptos.push('ALMC', 'SERVICIO DE LIMPIEZA ALMACENES');
-        };
-        if (servicio === 'LAT') {
-            arrayConceptos.push('LAB', 'SERVICIO DE LIMPIEZA LABORATORIO');
-        };
-        if (servicio === 'TET') {
-            arrayConceptos.push('TELÑ', 'SERVICIO DE LIMPIEZA TELARAÑAS');
-        };
-        if (servicio === 'FIT') {
-            arrayConceptos.push('FCH.IN', 'SERVICIO DE LIMPIEZA FACHADA INTERIOR');
-        };
-        if (servicio === 'FET') {
-            arrayConceptos.push('FCH.EX', 'SERVICIO DE LIMPIEZA FACHADA EXTERIOR');
-        };
-        if (servicio === 'ABT') {
-            arrayConceptos.push('ABRLL', 'SERVICIO DE LIMPIEZA ABRILLANTADO');
-        };
-        if (servicio === 'MAT') {
-            arrayConceptos.push('MANT', 'SERVICIO DE MANTENIMIENTO MÁQUINA');
-        };
-        if (servicio === 'POT') {
-            arrayConceptos.push('PORT', 'SERVICIO DE LIMPIEZA PORTERÍA');
-        };
-        if (servicio === 'BAT') {
-            arrayConceptos.push('BACT', 'BOT. NOUBACT');
-        };
-        if (servicio === 'FTT') {
-            arrayConceptos.push('FEST', 'SERVICIO DE LIMPIEZA DÍA FESTIVO');
-        };
-        if (servicio === 'C3T') {
-            arrayConceptos.push('CRTRIM', 'LIMPIEZA DE CRISTALES TRIMESTRAL');
-        };
-        if (servicio === 'C2T') {
-            arrayConceptos.push('CRBIM', 'LIMPIEZA DE CRISTALES BIMENSUAL');
-        };
-        if (servicio === 'C4T') {
-            arrayConceptos.push('CRCUA', 'LIMPIEZA DE CRISTALES CUATRIMESTRAL');
-        };
-        if (servicio === 'EST') {
-            arrayConceptos.push('LIME', 'SERVICIO DE LIMPIEZA ESPECIAL');
-        };
-        if (servicio === 'PAT') {
-            arrayConceptos.push('LIMP', 'SERVICIO DE LIMPIEZA DEL PARKING');
-        };
-        if (servicio === 'FRT') {
-            arrayConceptos.push('FRE', 'SERVICIO DE FREGADO DE SUELOS');
-        };
+        });
         if (servicio === 'NUMCT') {
-            arrayConceptos.push('Nº CUENTA', 'ES96 2100 0804 3102 0076 4493');
+            arrayConceptos.push('Nº CUENTA', numeroCuentaFortise);
         };
     } else {
         if (objetoTotales['MT']) {
-            if (objetoTotales['LH']) {
-                arrayConceptos.push('SERVICIO DE LIMPIEZA');
+            tipoServicio.forEach(serv => {
+                if (objetoTotales[`${serv.prefix}H`]) {
+                    arrayConceptos.push(serv.label);
+                };
+            });
+        };
+        tipoServicio.forEach(serv => {
+            if (objetoTotales[`${serv.prefix}T`]) {
+                arrayConceptos.push(serv.label);
             };
-            if (objetoTotales['EH']) {
-                arrayConceptos.push('SERVICIO DE LIMPIEZA ESPECIAL');
+        });
+        listadoServiciosFijos.forEach(servF => {
+            if (objetoTotales[`${servF.prefix}T`]) {
+                arrayConceptos.push(servF.label);
             };
-            if (objetoTotales['PH']) {
-                arrayConceptos.push('SERVICIO DE LIMPIEZA DEL PARKING');
-            };
-            if (objetoTotales['NH']) {
-                arrayConceptos.push('SERVICIO DE LIMPIEZA NAVE 2');
-            };
-            if (objetoTotales['RH']) {
-                arrayConceptos.push('SERVICIO DE LIMPIEZA REFUERZO');
-            };
-            if (objetoTotales['L1H']) {
-                arrayConceptos.push('SERVICIO DE LIMPIEZA_1');
-            };
-            if (objetoTotales['L2H']) {
-                arrayConceptos.push('SERVICIO DE LIMPIEZA_2');
-            };
-            if (objetoTotales['FH']) {
-                arrayConceptos.push('SERVICIO DE LIMPIEZA DÍA FESTIVO');
-            };
-        };
-        if (objetoTotales['LT']) {
-            arrayConceptos.push('SERVICIO DE LIMPIEZA');
-        };
-        if (objetoTotales['ET']) {
-            arrayConceptos.push('SERVICIO DE LIMPIEZA ESPECIAL');
-        };
-        if (objetoTotales['PT']) {
-            arrayConceptos.push('SERVICIO DE LIMPIEZA DEL PARKING');
-        };
-        if (objetoTotales['NT']) {
-            arrayConceptos.push('SERVICIO DE LIMPIEZA NAVE 2');
-        };
-        if (objetoTotales['RT']) {
-            arrayConceptos.push('SERVICIO DE LIMPIEZA REFUERZO');
-        };
-        if (objetoTotales['L1T']) {
-            arrayConceptos.push('SERVICIO DE LIMPIEZA_1');
-        };
-        if (objetoTotales['L2T']) {
-            arrayConceptos.push('SERVICIO DE LIMPIEZA_2');
-        };
-        if (objetoTotales['FT']) {
-            arrayConceptos.push('SERVICIO DE LIMPIEZA DÍA FESTIVO');
-        };
-        if (objetoTotales['TOT']) {
-            arrayConceptos.push('SERVICIO DE LIMPIEZA DE TOLDOS');
-        };
-        if (objetoTotales['CRT']) {
-            arrayConceptos.push('SERVICIO DE LIMPIEZA DE CRISTALES');
-        };
-        if (objetoTotales['CET']) {
-            arrayConceptos.push('LIMPIEZA CRISTALES EXTERIORES');
-        };
-        if (objetoTotales['CIT']) {
-            arrayConceptos.push('LIMPIEZA CRISTALES INTERIORES');
-        };
-        if (objetoTotales['MOT']) {
-            arrayConceptos.push('SERVICIO DE LIMPIEZA MOQUETA');
-        };
-        if (objetoTotales['OFT']) {
-            arrayConceptos.push('SERVICIO DE LIMPIEZA OFICINAS');
-        };
-        if (objetoTotales['ALT']) {
-            arrayConceptos.push('SERVICIO DE LIMPIEZA ALMACENES');
-        };
-        if (objetoTotales['LAT']) {
-            arrayConceptos.push('SERVICIO DE LIMPIEZA LABORATORIO');
-        };
-        if (objetoTotales['TET']) {
-            arrayConceptos.push('SERVICIO DE LIMPIEZA TELARAÑAS');
-        };
-        if (objetoTotales['FIT']) {
-            arrayConceptos.push('SERVICIO DE LIMPIEZA FACHADA INTERIOR');
-        };
-        if (objetoTotales['FET']) {
-            arrayConceptos.push('SERVICIO DE LIMPIEZA FACHADA EXTERIOR');
-        };
-        if (objetoTotales['ABT']) {
-            arrayConceptos.push('SERVICIO DE LIMPIEZA ABRILLANTADO');
-        };
-        if (objetoTotales['MAT']) {
-            arrayConceptos.push('SERVICIO DE MANTENIMIENTO MÁQUINA');
-        };
-        if (objetoTotales['POT']) {
-            arrayConceptos.push('SERVICIO DE LIMPIEZA PORTERÍA');
-        };
-        if (objetoTotales['BAT']) {
-            arrayConceptos.push('BOT. NOUBACT');
-        };
-        if (objetoTotales['FTT']) {
-            arrayConceptos.push('SERVICIO DE LIMPIEZA DÍA FESTIVO');
-        };
-        if (objetoTotales['C3T']) {
-            arrayConceptos.push('LIMPIEZA DE CRISTALES TRIMESTRAL');
-        };
-        if (objetoTotales['C2T']) {
-            arrayConceptos.push('LIMPIEZA DE CRISTALES BIMENSUAL');
-        };
-        if (objetoTotales['C4T']) {
-            arrayConceptos.push('LIMPIEZA DE CRISTALES CUATRIMESTRAL');
-        };
-        if (objetoTotales['EST']) {
-            arrayConceptos.push('SERVICIO DE LIMPIEZA ESPECIAL');
-        };
-        if (objetoTotales['PAT']) {
-            arrayConceptos.push('SERVICIO DE LIMPIEZA DEL PARKING');
-        };
-        if (objetoTotales['FRT']) {
-            arrayConceptos.push('SERVICIO DE FREGADO DE SUELOS');
-        };
+        });
         if (objetoTotales['NUMCT']) {
-            arrayConceptos.push('ES96 2100 0804 3102 0076 4493');
+            arrayConceptos.push(numeroCuentaFortise);
         };
     };
-    let retornoConcepto;
-    if (servicio) {
-        retornoConcepto = arrayConceptos;
-    } else {
-        retornoConcepto = arrayConceptos.join(', ');
-    };
-    return retornoConcepto
+    return servicio ? arrayConceptos : arrayConceptos.join(', ');
 };
 
 const retornaArrayElementosAccion = (objetoConceptos) => (dispatch, getState) => {
     let arrayElementos = [];
     let retornoServicios = [];
+    //verificar si quadrant és doble i té mensual pactat als 2 i serveis diferents
+    const contadorComplejo = Object.keys(objetoConceptos).filter(clave => /^M\d/.test(clave)).length;
+    if (contadorComplejo > 0) {
+        for (let i = 0; i <= contadorComplejo - 1; i++) {
+            tipoServicio.forEach(serv => {
+                if (objetoConceptos[`M${i}${serv.prefix}T`] && objetoConceptos[`${serv.prefix}H`] && !objetoConceptos[`${serv.prefix}Pr`]) {
+                    retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', `${serv.prefix}H`));
+                    arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos[`M${i}${serv.prefix}T`], objetoConceptos[`M${i}${serv.prefix}T`], 1]);
+                };
+            });
+        };
+    };
     if (objetoConceptos.MT) {
-        if (objetoConceptos.LH && !objetoConceptos.LPr) {
-            retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', 'LH'));
-        };
-        if (objetoConceptos.EH && !objetoConceptos.EPr) {
-            retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', 'EH'));
-        };
-        if (objetoConceptos.PH && !objetoConceptos.PPr) {
-            retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', 'PH'));
-        };
-        if (objetoConceptos.NH && !objetoConceptos.NPr) {
-            retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', 'NH'));
-        };
-        if (objetoConceptos.RH && !objetoConceptos.RPr) {
-            retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', 'RH'));
-        };
-        if (objetoConceptos.L1H && !objetoConceptos.L1Pr) {
-            retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', 'L1H'));
-        };
-        if (objetoConceptos.L2H && !objetoConceptos.L2Pr) {
-            retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', 'L2H'));
-        };
-        if (objetoConceptos.FH && !objetoConceptos.FPr) {
-            retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', 'FH'));
-        };
+        tipoServicio.forEach(serv => {
+            if (objetoConceptos[`${serv.prefix}H`] && !objetoConceptos[`${serv.prefix}Pr`]) {
+                retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', `${serv.prefix}H`));
+            };
+        });
         arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.MT, objetoConceptos.MT, 1]);
     };
-    if (objetoConceptos.LT) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'LT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.LT, objetoConceptos.LPr, objetoConceptos.LH]);
-    };
-    if (objetoConceptos.ET) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'ET', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.ET, objetoConceptos.EPr, objetoConceptos.EH]);
-    };
-    if (objetoConceptos.PT) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'PT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.PT, objetoConceptos.PPr, objetoConceptos.PH]);
-    };
-    if (objetoConceptos.NT) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'NT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.NT, objetoConceptos.NPr, objetoConceptos.NH]);
-    };
-    if (objetoConceptos.RT) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'RT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.RT, objetoConceptos.RPr, objetoConceptos.RH]);
-    };
-    if (objetoConceptos.L1T) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'L1T', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.L1T, objetoConceptos.L1Pr, objetoConceptos.L1H]);
-    };
-    if (objetoConceptos.L2T) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'L2T', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.L2T, objetoConceptos.L2Pr, objetoConceptos.L2H]);
-    };
-    if (objetoConceptos.FT) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'FT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.FT, objetoConceptos.FPr, objetoConceptos.FH]);
-    };
-    if (objetoConceptos.TOT) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'TOT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.TOT, objetoConceptos.TOT, objetoConceptos.TOH]);
-    };
-    if (objetoConceptos.CRT) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'CRT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.CRT, objetoConceptos.CRT, objetoConceptos.CRH]);
-    };
-    if (objetoConceptos.CET) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'CET', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.CET, objetoConceptos.CET, objetoConceptos.CEH]);
-    };
-    if (objetoConceptos.CIT) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'CIT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.CIT, objetoConceptos.CIT, objetoConceptos.CIH]);
-    };
-    if (objetoConceptos.MOT) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MOT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.MOT, objetoConceptos.MOT, objetoConceptos.MOH]);
-    };
-    if (objetoConceptos.OFT) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'OFT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.OFT, objetoConceptos.OFT, objetoConceptos.OFH]);
-    };
-    if (objetoConceptos.ALT) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'ALT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.ALT, objetoConceptos.ALT, objetoConceptos.ALH]);
-    };
-    if (objetoConceptos.LAT) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'LAT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.LAT, objetoConceptos.LAT, objetoConceptos.LAH]);
-    };
-    if (objetoConceptos.TET) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'TET', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.TET, objetoConceptos.TET, objetoConceptos.TEH]);
-    };
-    if (objetoConceptos.FIT) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'FIT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.FIT, objetoConceptos.FIT, objetoConceptos.FIH]);
-    };
-    if (objetoConceptos.FET) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'FET', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.FET, objetoConceptos.FET, objetoConceptos.FEH]);
-    };
-    if (objetoConceptos.ABT) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'ABT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.ABT, objetoConceptos.ABT, objetoConceptos.ABH]);
-    };
-    if (objetoConceptos.MAT) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MAT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.MAT, objetoConceptos.MAT, objetoConceptos.MAH]);
-    };
-    if (objetoConceptos.POT) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'POT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.POT, objetoConceptos.POT, objetoConceptos.POH]);
-    };
-    if (objetoConceptos.BAT) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'BAT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.BAT, objetoConceptos.BAT, objetoConceptos.BAH]);
-    };
-    if (objetoConceptos.FTT) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'FTT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.FTT, objetoConceptos.FTT, objetoConceptos.FTH]);
-    };
-    if (objetoConceptos.C3T) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'C3T', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.C3T, objetoConceptos.C3T, objetoConceptos.C3H]);
-    };
-    if (objetoConceptos.C2T) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'C2T', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.C2T, objetoConceptos.C2T, objetoConceptos.C2H]);
-    };
-    if (objetoConceptos.C4T) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'C4T', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.C4T, objetoConceptos.C4T, objetoConceptos.C4H]);
-    };
-    if (objetoConceptos.EST) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'EST', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.EST, objetoConceptos.EST, objetoConceptos.ESH]);
-    };
-    if (objetoConceptos.PAT) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'PAT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.PAT, objetoConceptos.PAT, objetoConceptos.PAH]);
-    };
-    if (objetoConceptos.FRT) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'FRT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.FRT, objetoConceptos.FRT, objetoConceptos.FRH]);
-    };
+    tipoServicio.forEach(serv => {
+        if (objetoConceptos[`${serv.prefix}T`]) {
+            retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, `${serv.prefix}T`, null));
+            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos[`${serv.prefix}T`], objetoConceptos[`${serv.prefix}Pr`], objetoConceptos[`${serv.prefix}H`]]);
+        };
+    });
+    listadoServiciosFijos.forEach(servF => {
+        if (objetoConceptos[`${servF.prefix}T`]) {
+            retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, `${servF.prefix}T`, null));
+            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos[`${servF.prefix}T`], objetoConceptos[`${servF.prefix}T`], objetoConceptos[`${servF.prefix}H`]]);
+        };
+    });
     if (objetoConceptos.NUMCT) {
         retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'NUMCT', null));
         arrayElementos.push([retornoServicios[0], retornoServicios[1], 0, 0, 0]);
@@ -1311,10 +826,10 @@ export const actualizarCuadrantesIteradosAccion = () => async (dispatch, getStat
                 "Content-Type": "multipart/form-data",
             }
         });
-        if(res.data)
-        return new Promise((resolve, reject) => {
-            resolve({ payload: true });
-        });
+        if (res.data)
+            return new Promise((resolve, reject) => {
+                resolve({ payload: true });
+            });
     } catch (err) {
         console.error(err)
     };

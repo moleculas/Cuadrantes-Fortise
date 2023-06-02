@@ -69,7 +69,8 @@ const devuelveFestivos = () => {
         retornaDiaMes(viernesSanto),
         retornaDiaMes(lunesPascua),
         '1-5',
-        retornaDiaMes(segundaPascua),
+        //retornaDiaMes(segundaPascua),
+        '5-6',
         '24-6',
         '15-8',
         '11-9',
@@ -290,5 +291,6 @@ const Constantes = {
     ],
     MESES: meses,
     NUMERACIO_INSTRUCCIONS: numeracioInstruccions,
+    NUMERO_CUENTA_FORTISE: "ES96 2100 0804 3102 0076 4493"
 };
 export default Constantes;

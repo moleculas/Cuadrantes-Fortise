@@ -1070,7 +1070,7 @@ const HorarioCentros = (props) => {
     };
     if (tipo === 'rango') {
         return (
-            <Box m={0.5} key={'boxRango' + index}>
+            <Box m={0.5} key={'boxRango' + index}>              
                 <Accordion
                     expanded={expandedRango === 'panelRango' + index} onChange={handleChangeAccordion('panelRango' + index, tipo)}
                 >
@@ -1189,7 +1189,7 @@ const HorarioCentros = (props) => {
     };
     if (tipo === 'cantidad') {
         return (
-            <Box m={0.5} key={'boxCantidad' + index}>
+            <Box m={0.5} key={'boxCantidad' + index}>                 
                 <Accordion
                     expanded={expandedCantidad === 'panelCantidad' + index} onChange={handleChangeAccordion('panelCantidad' + index, tipo)}
                 >

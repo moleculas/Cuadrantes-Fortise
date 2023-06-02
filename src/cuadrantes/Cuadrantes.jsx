@@ -90,7 +90,7 @@ const Cuadrantes = (props) => {
     //funciones  
 
     return (
-        <div>          
+        <div>
             <Backdrop className={classes.loading} open={openLoading}>
                 <CircularProgress disableShrink color="inherit" />
             </Backdrop>
@@ -101,7 +101,7 @@ const Cuadrantes = (props) => {
                     {esInicioCuadrantes ?
                         <PantallaCuadrantes /> :
                         <CuadranteCompleto />}
-                </Grid> 
+                </Grid>
             </Grid>
         </div >
     )

@@ -98,7 +98,7 @@ const ItemListTime = (props) => {
     };
 
     return (
-        <div>
+        <div>      
             {props.prTipo === 'rango' ? (
                 <ListItem button className={classes.cursorDefault} style={retornaEstiloItem('rango')} disabled={props.prDisabledItem}>
                     <Grid

@@ -1146,7 +1146,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             if (cuadranteAGestionar.horario.tipo === "cantidad") {
                 const arrayValoresTimePicker1 = cuadranteAGestionar.horario.tipoRegistroTrabajador.map(registro => (
                     diasSemana.reduce((acc, dia) => {
-                        acc[`${dia.value}`] = (registro[`${dia.value}Cantidad`] ? generaFecha(registro[`${dia.value}Cantidad`]) : '');
+                        acc[`${dia.value}`] = (registro[`${dia.value}Cantidad`] ? registro[`${dia.value}Cantidad`] : '');
                         return acc;
                     }, {})
                 ));

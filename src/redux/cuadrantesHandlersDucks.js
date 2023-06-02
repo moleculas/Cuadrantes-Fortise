@@ -384,7 +384,7 @@ export const goToInicioCuadrantesAccion = (origen) => (dispatch, getState) => {
     if (origen === "effect") {
         resetGeneral();
     } else {
-        if (!estadoIntervencionCuadranteNuevoRegistrada) {            
+        if (!estadoIntervencionCuadranteNuevoRegistrada) {
             dispatch(handleClickOpenDialogCuadrantes2Accion());
         } else {
             if (!estadoIntervencionRegistrada) {
@@ -643,7 +643,7 @@ export const configuraStateFestivoAccion = () => (dispatch, getState) => {
                     object['estadoFestivoDia' + i] = false;
                     object['tipoFestivoDia' + i] = 0;
                 };
-            };            
+            };
             dispatch(setStateFestivoAccion(object));
         };
     };
@@ -2310,15 +2310,10 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
             arrayBuffer[cuadranteEnUsoCuadrantes - 1][indexABorrar] = objetoBuffer;
         };
     };
-    if (cuadranteRegistrado === 'no') {
-        //control mes completo vacaciones
-        let contadorDias = 0;
-        arrayBuffer[cuadranteEnUsoCuadrantes - 1].forEach((festivo, index) => {
-            festivo.activo && (contadorDias++);
-        });
-        if (losDiasDelMes.length === contadorDias) {
-            dispatch(setMesConFestivosCompletoAccion(true));
-        };
+    //control mes completo vacaciones
+    const contadorDias = arrayBuffer[cuadranteEnUsoCuadrantes - 1].filter(festivo => festivo.activo).length;
+    if (losDiasDelMes.length === contadorDias) {
+        dispatch(setMesConFestivosCompletoAccion(true));
     };
     dispatch(setBufferSwitchedDiasFestivosCuadranteAccion(arrayBuffer));
     if (event) {

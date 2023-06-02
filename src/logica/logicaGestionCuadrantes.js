@@ -1284,8 +1284,6 @@ export const procesarDatosCuadranteAccion = (source) => (dispatch, getState) => 
     };
 };
 
-//por revisar
-
 const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
     const { objetoCuadrante, totalesPeriodicos } = getState().variablesCuadrantes;
     const { objetoCentro } = getState().variablesCentros;
@@ -1311,13 +1309,42 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
     let vueltasSeguridad = 0;
     let numeroInformes = 0;
     let iteracionExitosa = false;
+    const verificarIteracionCompleja = () => {
+        if (informes.length >= 2) {
+            const informesMensualPactado = informes.filter(objeto => objeto.mensualPactado > 0);
+            if (informesMensualPactado.length >= 2) {
+                const propiedades = tipoServicio.map(objServ => `totalFacturado_${objServ.prefix}`);
+                for (let i = 0; i < informesMensualPactado.length - 1; i++) {
+                    const primerObjeto = informesMensualPactado[i];
+                    for (let j = i + 1; j < informesMensualPactado.length; j++) {
+                        const segundoObjeto = informesMensualPactado[j];
+                        const cumpleCondicion = propiedades.some(propiedad =>
+                            (primerObjeto[propiedad] === null && segundoObjeto[propiedad] > 0) ||
+                            (primerObjeto[propiedad] > 0 && segundoObjeto[propiedad] === null)
+                        );
+                        if (cumpleCondicion) {
+                            return true;
+                        };
+                    };
+                };
+            };
+        };
+        return false;
+    };
+    //verificar si quadrant és doble i té mensual pactat als 2 i serveis diferents
+    const iteracionCompleja = verificarIteracionCompleja();
     while (!iteracionExitosa) {
         informes.forEach((informe, index) => {
             numeroInformes += 1;
             if (informe) {
                 vueltasSeguridad += 1;
                 if (informe.mensualPactado) {
-                    objGeneral.totalFacturado_M += informe.mensualPactado;
+                    if (iteracionCompleja) {
+                        const servicio = tipoServicio.find(objServ => horas[index][objServ.prefix])?.prefix;
+                        objGeneral[`totalFacturado_M${index}${servicio}`] = informe.mensualPactado;
+                    } else {
+                        objGeneral.totalFacturado_M += informe.mensualPactado;
+                    };
                     tipoServicio.forEach(objServ => {
                         if (horas[index][objServ.prefix]) {
                             objGeneral[`totalHoras_${objServ.prefix}`] += horas[index][objServ.prefix];
@@ -1374,13 +1401,26 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
         mail: objetoCuadrante.datosCuadrante.mail,
         tocaFacturar: objetoCuadrante.datosInforme.tocaFacturar
     };
-    if (objGeneral.totalFacturado_M > 0) {
-        objetoTotales['MT'] = objGeneral.totalFacturado_M;
-        tipoServicio.forEach(objServ => {
-            if (objGeneral[`totalHoras_${objServ.prefix}`]) {
-                objetoTotales[`${objServ.prefix}H`] = objGeneral[`totalHoras_${objServ.prefix}`];
-            };
-        });
+    if (iteracionCompleja) {
+        for (let i = 0; i <= informes.length - 1; i++) {            
+            tipoServicio.forEach(objServ => {
+                if(objGeneral[`totalFacturado_M${i}${objServ.prefix}`]){
+                    objetoTotales[`M${i}${objServ.prefix}T`] = objGeneral[`totalFacturado_M${i}${objServ.prefix}`];
+                };
+                if (objGeneral[`totalHoras_${objServ.prefix}`]) {
+                    objetoTotales[`${objServ.prefix}H`] = objGeneral[`totalHoras_${objServ.prefix}`];
+                };
+            });
+        };
+    } else {
+        if (objGeneral.totalFacturado_M > 0) {
+            objetoTotales['MT'] = objGeneral.totalFacturado_M;
+            tipoServicio.forEach(objServ => {
+                if (objGeneral[`totalHoras_${objServ.prefix}`]) {
+                    objetoTotales[`${objServ.prefix}H`] = objGeneral[`totalHoras_${objServ.prefix}`];
+                };
+            });
+        };
     };
     tipoServicio.forEach(objServ => {
         if (objGeneral[`totalFacturado_${objServ.prefix}`] > 0) {
@@ -1454,7 +1494,7 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
         };
     };
     objetoTotales['totalMasIva'] = ((parseFloat(objetoTotales['total']) * 21) / 100) + parseFloat(objetoTotales['total']);
-    objetoTotales['totalIva'] = ((parseFloat(objetoTotales['total']) * 21) / 100);    
+    objetoTotales['totalIva'] = ((parseFloat(objetoTotales['total']) * 21) / 100);
     return objetoTotales
 };
 

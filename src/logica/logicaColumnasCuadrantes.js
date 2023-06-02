@@ -921,8 +921,9 @@ export const gestionaColumnaCuadranteAccion = (
     let posicionTrabajador;
     if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].tipoRegistro === 'individual') {
         if (tipoTrabajador === 'trabajador') {
-            posicionTrabajador = posicionTrabajadorPrevioACambiar || (esAnadirColumna ? cuadrante.length + 1 : trabajador.laPosicionDelTrabajador);
+            posicionTrabajador = posicionTrabajadorPrevioACambiar || (esAnadirColumna ? cuadrante.length + 1 : trabajador.laPosicionDelTrabajador || cuadrante.length);
             posicionTrabajadorPrevioACambiar && dispatch(setPosicionTrabajadorPrevioACambiarAccion(null));
+            dispatch(setPosicionTrabajadorPrevioACambiarAccion(null));
         } else if (tipoTrabajador === 'suplente') {
             posicionTrabajador = posicionSuplentePrevioACambiar || (esAnadirColumna ? columna + 1 : esInicio ? trabajador.laPosicionDelTrabajador : cuadrante.length);
             posicionSuplentePrevioACambiar && dispatch(setPosicionSuplentePrevioACambiarAccion(null));
