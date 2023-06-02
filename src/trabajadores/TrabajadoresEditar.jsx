@@ -545,16 +545,27 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                             setOpenSnack(true);
                             return;
                         };
-
-                        if (valuesFormEdicion.estado === 'baja' || valuesFormEdicion.estado === 'vacaciones' || valuesFormEdicion.estado === 'excedencia' || valuesFormEdicion.estado === 'personales') {
+                        const estadosDoble = ['vacaciones', 'excedencia', 'personales'];
+                        if (estadosDoble.includes(valuesFormEdicion.estado)) {
                             if (!valueDatePickerInicioEdicion && !valueDatePickerFinEdicion) {
                                 setAlert({
-                                    mensaje: "El rango de fechas del estado laboral está incompleto.",
+                                    mensaje: 'El rango de fechas del estado laboral está incompleto.',
                                     tipo: 'error'
-                                })
+                                });
                                 setOpenSnack(true);
                                 return;
-                            }
+                            };
+                        };
+                        const estadosInicio = ['bajaIT', 'bajaACCTE', 'bajaCIA', 'permisoRET', 'ausenciaINJ'];
+                        if (estadosInicio.includes(valuesFormEdicion.estado)) {
+                            if (!valueDatePickerInicioEdicion) {
+                                setAlert({
+                                    mensaje: 'El rango de fechas del estado laboral está incompleto.',
+                                    tipo: 'error'
+                                });
+                                setOpenSnack(true);
+                                return;
+                            };
                         };
                         let losDatosEstadoRevisado = {};
                         let hayDatosEstado = false;
@@ -576,7 +587,6 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                         };
                         if (datosEstadoEdicion.inicioBajaCIA) {
                             hayDatosEstado = true;
-
                             losDatosEstadoRevisado = {
                                 inicioBajaCIA: datosEstadoEdicion.inicioBajaCIA,
                                 finBajaCIA: datosEstadoEdicion.finBajaCIA,
@@ -1064,24 +1074,26 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
                                         onChange={handleChangeObservacionesBaja()}
                                         disabled={valueDatePickerInicioEdicion ? false : true}
                                     />
-                                    <MuiPickersUtilsProvider locale={es} utils={DateFnsUtils}>
-                                        <KeyboardDatePicker
-                                            inputVariant="outlined"
-                                            className={classes.mb20}
-                                            fullWidth
-                                            label={`Fecha fin ` + valuesFormEdicion.estado}
-                                            format="dd/MM/yyyy"
-                                            clearable={true}
-                                            cancelLabel="Cancelar"
-                                            clearLabel="Borrar"
-                                            value={valueDatePickerFinEdicion}
-                                            disabled={valueDatePickerInicioEdicion ? false : true}
-                                            onChange={(newValue) => {
-                                                handleChangeDatePickerFinEdicion(newValue);
-                                            }}
-                                            size="small"
-                                        />
-                                    </MuiPickersUtilsProvider>
+                                    {valuesFormEdicion.estado !== 'bajaCIA' && (
+                                        <MuiPickersUtilsProvider locale={es} utils={DateFnsUtils}>
+                                            <KeyboardDatePicker
+                                                inputVariant="outlined"
+                                                className={classes.mb20}
+                                                fullWidth
+                                                label={`Fecha fin ` + valuesFormEdicion.estado}
+                                                format="dd/MM/yyyy"
+                                                clearable={true}
+                                                cancelLabel="Cancelar"
+                                                clearLabel="Borrar"
+                                                value={valueDatePickerFinEdicion}
+                                                disabled={valueDatePickerInicioEdicion ? false : true}
+                                                onChange={(newValue) => {
+                                                    handleChangeDatePickerFinEdicion(newValue);
+                                                }}
+                                                size="small"
+                                            />
+                                        </MuiPickersUtilsProvider>
+                                    )}
                                 </Fragment>
                             ) : null}
                         </Box>
