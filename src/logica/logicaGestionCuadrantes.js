@@ -1311,7 +1311,7 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
     let iteracionExitosa = false;
     const verificarIteracionCompleja = () => {
         if (informes.length >= 2) {
-            const informesMensualPactado = informes.filter(objeto => objeto.mensualPactado > 0);
+            const informesMensualPactado = informes.filter(objeto => objeto.mensualPactado > 0);           
             if (informesMensualPactado.length >= 2) {
                 const propiedades = tipoServicio.map(objServ => `totalFacturado_${objServ.prefix}`);
                 for (let i = 0; i < informesMensualPactado.length - 1; i++) {
@@ -1319,8 +1319,8 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
                     for (let j = i + 1; j < informesMensualPactado.length; j++) {
                         const segundoObjeto = informesMensualPactado[j];
                         const cumpleCondicion = propiedades.some(propiedad =>
-                            (primerObjeto[propiedad] === null && segundoObjeto[propiedad] > 0) ||
-                            (primerObjeto[propiedad] > 0 && segundoObjeto[propiedad] === null)
+                            (primerObjeto[propiedad] === null && segundoObjeto[propiedad] !== null) ||
+                            (primerObjeto[propiedad] !== null && segundoObjeto[propiedad] === null)
                         );
                         if (cumpleCondicion) {
                             return true;
@@ -1332,7 +1332,7 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
         return false;
     };
     //verificar si quadrant és doble i té mensual pactat als 2 i serveis diferents
-    const iteracionCompleja = verificarIteracionCompleja();
+    const iteracionCompleja = verificarIteracionCompleja(); 
     while (!iteracionExitosa) {
         informes.forEach((informe, index) => {
             numeroInformes += 1;
