@@ -273,7 +273,8 @@ const gestionaDatosHorarioItem = (
     esInicio,
     posicionTrabajador,
     esLimpieza,
-    item
+    item,
+    esActualizacion
 ) => {
     const itemOptions = [
         'lunesTipoServicio', 'martesTipoServicio', 'miercolesTipoServicio',
@@ -300,11 +301,15 @@ const gestionaDatosHorarioItem = (
             return comillas ? '' : null;
         };
     } else {
-        if (posicionTrabajador > cantidadTrabajadoresCentro && tipoTrabajador === 'trabajador') {
+        if (posicionTrabajador >= cantidadTrabajadoresCentro && tipoTrabajador === 'trabajador') {
             if (esLimpieza) {
                 return comillas ? '' : null;
             } else {
-                return elHorarioCuadrante.tipoRegistroTrabajador[0][item] || (comillas ? '' : null);
+                if (esActualizacion) {
+                    return elHorarioCuadrante.tipoRegistroTrabajador[posicionTrabajador - 1][item] || (comillas ? '' : null);
+                } else {
+                    return elHorarioCuadrante.tipoRegistroTrabajador[0][item] || (comillas ? '' : null);
+                };
             };
         }
         if (tipoTrabajador === 'suplente') {
@@ -608,7 +613,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     esInicio,
                                     posicionTrabajador,
                                     esLimpieza,
-                                    horarios.rango[0]
+                                    horarios.rango[0],
+                                    esActualizacion
                                 ),
                                 [horarios.rango[1]]: gestionaDatosHorarioItem(
                                     elHorarioCuadrante,
@@ -618,7 +624,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     esInicio,
                                     posicionTrabajador,
                                     esLimpieza,
-                                    horarios.rango[1]
+                                    horarios.rango[1],
+                                    esActualizacion
                                 ),
                             }),
                             ...(tipoHorario === 'rangoDescanso' && {
@@ -630,7 +637,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     esInicio,
                                     posicionTrabajador,
                                     esLimpieza,
-                                    horarios.rangoDescanso[0]
+                                    horarios.rangoDescanso[0],
+                                    esActualizacion
                                 ),
                                 [horarios.rangoDescanso[1]]: gestionaDatosHorarioItem(
                                     elHorarioCuadrante,
@@ -640,7 +648,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     esInicio,
                                     posicionTrabajador,
                                     esLimpieza,
-                                    horarios.rangoDescanso[1]
+                                    horarios.rangoDescanso[1],
+                                    esActualizacion
                                 ),
                                 [horarios.rangoDescanso[2]]: gestionaDatosHorarioItem(
                                     elHorarioCuadrante,
@@ -650,7 +659,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     esInicio,
                                     posicionTrabajador,
                                     esLimpieza,
-                                    horarios.rangoDescanso[2]
+                                    horarios.rangoDescanso[2],
+                                    esActualizacion
                                 ),
                                 [horarios.rangoDescanso[3]]: gestionaDatosHorarioItem(
                                     elHorarioCuadrante,
@@ -660,7 +670,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     esInicio,
                                     posicionTrabajador,
                                     esLimpieza,
-                                    horarios.rangoDescanso[3]
+                                    horarios.rangoDescanso[3],
+                                    esActualizacion
                                 ),
                             }),
                             ...(tipoHorario === 'cantidad' && {
@@ -672,7 +683,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     esInicio,
                                     posicionTrabajador,
                                     esLimpieza,
-                                    horarios.cantidad[0]
+                                    horarios.cantidad[0],
+                                    esActualizacion
                                 ),
                             }),
                             tipoServicio: elTipoServicio
@@ -691,7 +703,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
                     esInicio,
                     posicionTrabajador,
                     esLimpieza,
-                    `${diaObj.value}TipoServicio`
+                    `${diaObj.value}TipoServicio`,
+                    esActualizacion
                 );
             };
             if (elTipoServicio) {
@@ -730,7 +743,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             esInicio,
                                             posicionTrabajador,
                                             esLimpieza,
-                                            nombreHorario
+                                            nombreHorario,
+                                            esActualizacion
                                         )
                                     )
                                 ];

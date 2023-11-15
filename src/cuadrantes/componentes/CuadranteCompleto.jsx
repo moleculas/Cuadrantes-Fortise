@@ -313,7 +313,7 @@ const CuadranteCompleto = (props) => {
     }, [cambioSecuenciaSemanas.inicial]);
 
     useEffect(() => {
-        if (esCambioTra || esCambioSup) {
+        if (esCambioTra || esCambioSup) {           
             dispatch(esCambioTra ? gestionTrabajadorAccion() : gestionSuplenteAccion());
         };
     }, [trabajadorAGestionar, suplenteAGestionar]);

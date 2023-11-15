@@ -587,7 +587,7 @@ export const gestionTrabajadorAccion = (objetoTrabajadorInicio) => (dispatch, ge
             });
         };
     }
-    if (esCambioTra) {
+    if (esCambioTra) {       
         arrayTr = [...trabajadoresEnCuadrante];
         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].tipoRegistro === 'individual') {
             objetoTrabajador['laPosicionDelTrabajador'] = posicionTrabajadorPrevioACambiar;
