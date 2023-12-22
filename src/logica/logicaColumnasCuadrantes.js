@@ -301,17 +301,21 @@ const gestionaDatosHorarioItem = (
             return comillas ? '' : null;
         };
     } else {
-        if (posicionTrabajador >= cantidadTrabajadoresCentro && tipoTrabajador === 'trabajador') {
+        if (tipoTrabajador === 'trabajador') {
             if (esLimpieza) {
                 return comillas ? '' : null;
             } else {
                 if (esActualizacion) {
                     return elHorarioCuadrante.tipoRegistroTrabajador[posicionTrabajador - 1][item] || (comillas ? '' : null);
                 } else {
-                    return elHorarioCuadrante.tipoRegistroTrabajador[0][item] || (comillas ? '' : null);
+                    //modificador: Al actualitzar i carregar les baixes com que posicionTrabajador >= cantidadTrabajadoresCentro estava posat al principi de l'if no donava dades
+                    //s'ha posat aqui.
+                    if (posicionTrabajador >= cantidadTrabajadoresCentro) {
+                        return elHorarioCuadrante.tipoRegistroTrabajador[0][item] || (comillas ? '' : null);
+                    };
                 };
             };
-        }
+        };
         if (tipoTrabajador === 'suplente') {
             if (esLimpieza) {
                 return comillas ? '' : null;
