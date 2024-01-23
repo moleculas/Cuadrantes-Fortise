@@ -1001,7 +1001,7 @@ const HorarioCentros = (props) => {
                 arrayValoresSelect[idIndex]['jueves'] = e.target.value;
                 arrayValoresHorario[idIndex]['juevesCantidad'] = e.target.value;
                 break;
-            case 'selectCantidad-edicion-viernes':
+            case 'selectCantidad-viernes':
                 arrayValoresSelect[idIndex]['viernes'] = e.target.value;
                 arrayValoresHorario[idIndex]['viernesCantidad'] = e.target.value;
                 break;
@@ -1251,7 +1251,7 @@ const HorarioCentros = (props) => {
                             prTipo={'cantidad'}
                             prDisabledItem={disabledItem}
                             prDia={'Viernes'}
-                            prIdCantidad={'selectCantidad-edicion-viernes-' + index}
+                            prIdCantidad={'selectCantidad-viernes-' + index}
                             prValueCantidadHoras={valueCantidadHoras[index].viernes}
                             prHandleChangeSelectCantidad={handleChangeSelectCantidad}
                             prIdTipoServicio={'selectTipoServicio-viernes-' + index}
