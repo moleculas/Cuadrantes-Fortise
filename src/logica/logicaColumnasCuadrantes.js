@@ -900,6 +900,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
     columnaAnadir['horasFestivasComputables'] = !objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].excepcion ? 0 :
         objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].excepcion === 1 ? contadorHorasFestivosComputables :
             null;
+    //modificador: parche per quan el total hores es 0 pq coincideix un únic registre amb festiu
+    columnaAnadir['horasFestivasComputablesExcepcion'] = contadorHorasFestivosComputables;
     columnaAnadir['horasBajasComputables'] = contadorHorasBajasComputables > 0 ? contadorHorasBajasComputables : 0;
     if (bufferSwitchedDiasFestivosCuadrante.length > 0) {
         if (hayTrabajador && !esInicio) {

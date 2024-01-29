@@ -418,7 +418,7 @@ const CentrosEditar = forwardRef((props, ref) => {
             dispatch(activarDesactivarActualizarCentroAccion(false));
             return;
         };
-        if (prop === "excepcion") {
+        if (prop === "excepcion") {           
             setValuesFormEdicion({ ...valuesFormEdicion, [prop]: e.target.value });
             setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, excepcion: e.target.value });
             dispatch(activarDesactivarActualizarCentroAccion(false));

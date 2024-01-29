@@ -269,13 +269,20 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                         condicion2 ? informe.mensualPactado : null;
                     break;
                 case '':
+                    let totalHorasGeneral = (totalHorasInicialTra +
+                        (sumatorioTotales[`sumatorioHorasBajasComputablesTra`] || 0) +
+                        (sumatorioTotales[`sumatorioTotalHorasFestivasComputablesTra`] || 0) +
+                        (sumatorioTotales[`sumatorioTotalHorasFestivasComputablesSup`] || 0)
+                    );
+                    //modificador: parche per quan el total hores es 0 pq coincideix un únic registre amb festiu
+                    if (totalHorasGeneral === 0) {
+                        const totalHorasFestivasComputablesExcepcion = cuadrante.reduce((total, objeto) =>
+                            total + (objeto.horasFestivasComputablesExcepcion || 0), 0);
+                        totalHorasGeneral = totalHorasFestivasComputablesExcepcion;
+                    };
                     proporcion = condicion1
                         ? cantidadMensualPactadoInicial /
-                        (totalHorasInicialTra +
-                            (sumatorioTotales[`sumatorioHorasBajasComputablesTra`] || 0) +
-                            (sumatorioTotales[`sumatorioTotalHorasFestivasComputablesTra`] || 0) +
-                            (sumatorioTotales[`sumatorioTotalHorasFestivasComputablesSup`] || 0)
-                        )
+                        totalHorasGeneral
                         : condicion2 ? informe.proporcion : null;
                     objPreciosHora = condicion1
                         ? retornaPreciosHora(proporcion, "cnd1")
