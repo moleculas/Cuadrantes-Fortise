@@ -579,12 +579,17 @@ export const retornaTextoConceptoServicioAccion = (objetoTotales, servicio, hora
 const retornaArrayElementosAccion = (objetoConceptos) => (dispatch, getState) => {
     let arrayElementos = [];
     let retornoServicios = [];
-    //verificar si quadrant és doble i té mensual pactat als 2 i serveis diferents
+    //verificar si quadrant és doble i complejo
     const contadorComplejo = Object.keys(objetoConceptos).filter(clave => /^M\d/.test(clave)).length;
     if (contadorComplejo > 0) {
         for (let i = 0; i <= contadorComplejo - 1; i++) {
             tipoServicio.forEach(serv => {
                 if (objetoConceptos[`M${i}${serv.prefix}T`] && objetoConceptos[`${serv.prefix}H`] && !objetoConceptos[`${serv.prefix}Pr`]) {
+                    //verificar si quadrant és doble i té mensual pactat als 2 i serveis diferents
+                    retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', `${serv.prefix}H`));
+                    arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos[`M${i}${serv.prefix}T`], objetoConceptos[`M${i}${serv.prefix}T`], 1]);
+                } else if (objetoConceptos[`M${i}${serv.prefix}T`] && objetoConceptos[`${serv.prefix}H`] && objetoConceptos[`${serv.prefix}Pr`]) {
+                    //verificar si quadrant és doble i té 1 mensual pactat, 1 precio / hora i mateixos serveis
                     retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', `${serv.prefix}H`));
                     arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos[`M${i}${serv.prefix}T`], objetoConceptos[`M${i}${serv.prefix}T`], 1]);
                 };
