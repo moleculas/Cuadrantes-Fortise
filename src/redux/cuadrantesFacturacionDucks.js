@@ -1,18 +1,24 @@
-import { setArrayInformeLineasAccion } from './cuadrantesSettersDucks';
+import Constantes from "../constantes";
+import {
+    setArrayInformeLineasAccion,
+    setOpenFacturacionAccion,
+    setOpenFacturacionInteriorAccion,
+    setNumeroFactusolAccion,
+    setAlertaAccion
+} from './cuadrantesSettersDucks';
 import { retornaFormaPagoAccion } from './cuadrantesDucks';
 import { handleCloseMenuAccion } from './cuadrantesHandlersDucks';
-import { setOpenFacturacionAccion } from './cuadrantesSettersDucks';
-import { setOpenFacturacionInteriorAccion } from './cuadrantesSettersDucks';
-import { setNumeroFactusolAccion } from './cuadrantesSettersDucks';
 import { isNumeric } from './appDucks';
-import { setAlertaAccion } from './cuadrantesSettersDucks';
-import {
-    procesarDatosCuadranteAccion
-} from '../logica/logicaGestionCuadrantes';
+import { procesarDatosCuadranteAccion } from '../logica/logicaGestionCuadrantes';
+import { existePrefixSF } from '../logica/logicaServiciosFijos';
 
 //constantes
 const dataInicial = {
 };
+const {
+    TIPO_SERVICIO_FIJO: tiposServicioFijo,
+    TIPO_SERVICIO: tipoServicio
+} = Constantes;
 
 //types
 
@@ -29,7 +35,12 @@ export default function cuadrantesFacturacionReducer(state = dataInicial, action
 export const retornaInfoFabButtonAccion = () => (dispatch, getState) => {
     const { objetoCuadrante, totalesPeriodicos } = getState().variablesCuadrantes;
     const { objetoCentro } = getState().variablesCentros;
-    const { numeroCuadrantesCuadrantes, cuadranteEnUsoCuadrantes, cuadranteVacio, mesConFestivosCompleto } = getState().variablesCuadrantesSetters;
+    const {
+        numeroCuadrantesCuadrantes,
+        cuadranteEnUsoCuadrantes,
+        cuadranteVacio,
+        mesConFestivosCompleto
+    } = getState().variablesCuadrantesSetters;
     const { cuadranteServiciosFijos } = getState().variablesCuadrantesServiciosFijos;
     let cuadranteMultiple = "";
     if (numeroCuadrantesCuadrantes.length > 1) {
@@ -91,14 +102,11 @@ export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
     const { cuadranteServiciosFijos } = getState().variablesCuadrantesServiciosFijos;
     const { objetoCentro } = getState().variablesCentros;
     const { intervencionRegistrada } = getState().variablesApp;
-    let sumatorioHoras_L = 0;
-    let sumatorioHoras_E = 0;
-    let sumatorioHoras_P = 0;
-    let sumatorioHoras_N = 0;
-    let sumatorioHoras_R = 0;
-    let sumatorioHoras_L1 = 0;
-    let sumatorioHoras_L2 = 0;
-    let sumatorioHoras_F = 0;
+    const sumatorioHoras = {};
+    tipoServicio.forEach(servicio => {
+        const prefix = servicio.prefix;
+        sumatorioHoras[`sumatorioHoras_${prefix}`] = 0;
+    });
     let sumatorioTotal = 0;
     let stringBloqueado = '';
     let stringPeriodico = '';
@@ -145,86 +153,24 @@ export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
                 nombreTrabajador = 'Trabajador por determinar';
             };
             arrayInforme.push([nombreTrabajador + ' ' + elTipo, 'normal']);
-            if (dato.totalHorasExtra_L || dato.totalHorasNormal_L) {
-                if (dato.totalHorasExtra_L && dato.totalHorasNormal_L) {
-                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA: ' + parseFloat(dato.totalHorasNormal_L).toFixed(2) + ' horas + ' + parseFloat(dato.totalHorasExtra_L).toFixed(2) + ' horas extra', 'normal']);
-                } else if (!dato.totalHorasExtra_L && dato.totalHorasNormal_L) {
-                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA: ' + parseFloat(dato.totalHorasNormal_L).toFixed(2) + ' horas', 'normal']);
-                } else {
-                    arrayInforme.push(['Total horas extra trabajadas en concepto de SERVICIO DE LIMPIEZA: ' + parseFloat(dato.totalHorasExtra_L).toFixed(2) + ' horas extra', 'normal']);
-                };
-                sumatorioHoras_L += (dato.totalHorasNormal_L + dato.totalHorasExtra_L);
-            };
-            if (dato.totalHorasExtra_E || dato.totalHorasNormal_E) {
-                if (dato.totalHorasExtra_E && dato.totalHorasNormal_E) {
-                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA ESPECIAL: ' + parseFloat(dato.totalHorasNormal_E).toFixed(2) + ' horas + ' + parseFloat(dato.totalHorasExtra_E).toFixed(2) + ' horas extra', 'normal']);
-                } else if (!dato.totalHorasExtra_E && dato.totalHorasNormal_E) {
-                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA ESPECIAL: ' + parseFloat(dato.totalHorasNormal_E).toFixed(2) + ' horas', 'normal']);
-                } else {
-                    arrayInforme.push(['Total horas extra trabajadas en concepto de SERVICIO DE LIMPIEZA ESPECIAL: ' + parseFloat(dato.totalHorasExtra_E).toFixed(2) + ' horas extra', 'normal']);
-                };
-                sumatorioHoras_E += (dato.totalHorasNormal_E + dato.totalHorasExtra_E);
-            };
-            if (dato.totalHorasExtra_P || dato.totalHorasNormal_P) {
-                if (dato.totalHorasExtra_P && dato.totalHorasNormal_P) {
-                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA DEL PARKING: ' + parseFloat(dato.totalHorasNormal_P).toFixed(2) + ' horas + ' + parseFloat(dato.totalHorasExtra_P).toFixed(2) + ' horas extra', 'normal']);
-                } else if (!dato.totalHorasExtra_P && dato.totalHorasNormal_P) {
-                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA DEL PARKING: ' + parseFloat(dato.totalHorasNormal_P).toFixed(2) + ' horas', 'normal']);
-                } else {
-                    arrayInforme.push(['Total horas extra trabajadas en concepto de SERVICIO DE LIMPIEZA DEL PARKING: ' + parseFloat(dato.totalHorasExtra_P).toFixed(2) + ' horas extra', 'normal']);
-                };
-                sumatorioHoras_P += (dato.totalHorasNormal_P + dato.totalHorasExtra_P);
-            };
-            if (dato.totalHorasExtra_N || dato.totalHorasNormal_N) {
-                if (dato.totalHorasExtra_N && dato.totalHorasNormal_N) {
-                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA NAVE 2: ' + parseFloat(dato.totalHorasNormal_N).toFixed(2) + ' horas + ' + parseFloat(dato.totalHorasExtra_N).toFixed(2) + ' horas extra', 'normal']);
-                } else if (!dato.totalHorasExtra_N && dato.totalHorasNormal_N) {
-                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA NAVE 2: ' + parseFloat(dato.totalHorasNormal_N).toFixed(2) + ' horas', 'normal']);
-                } else {
-                    arrayInforme.push(['Total horas extra trabajadas en concepto de SERVICIO DE LIMPIEZA NAVE 2: ' + parseFloat(dato.totalHorasExtra_N).toFixed(2) + ' horas extra', 'normal']);
-                };
-                sumatorioHoras_N += (dato.totalHorasNormal_N + dato.totalHorasExtra_N);
-            };
-            if (dato.totalHorasExtra_R || dato.totalHorasNormal_R) {
-                if (dato.totalHorasExtra_R && dato.totalHorasNormal_R) {
-                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA REFUERZO: ' + parseFloat(dato.totalHorasNormal_R).toFixed(2) + ' horas + ' + parseFloat(dato.totalHorasExtra_R).toFixed(2) + ' horas extra', 'normal']);
-                } else if (!dato.totalHorasExtra_R && dato.totalHorasNormal_R) {
-                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA REFUERZO: ' + parseFloat(dato.totalHorasNormal_R).toFixed(2) + ' horas', 'normal']);
-                } else {
-                    arrayInforme.push(['Total horas extra trabajadas en concepto de SERVICIO DE LIMPIEZA REFUERZO: ' + parseFloat(dato.totalHorasExtra_R).toFixed(2) + ' horas extra', 'normal']);
-                };
-                sumatorioHoras_R += (dato.totalHorasNormal_R + dato.totalHorasExtra_R);
-            };
-            if (dato.totalHorasExtra_L1 || dato.totalHorasNormal_L1) {
-                if (dato.totalHorasExtra_L1 && dato.totalHorasNormal_L1) {
-                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA_1: ' + parseFloat(dato.totalHorasNormal_L1).toFixed(2) + ' horas + ' + parseFloat(dato.totalHorasExtra_L1).toFixed(2) + ' horas extra', 'normal']);
-                } else if (!dato.totalHorasExtra_L1 && dato.totalHorasNormal_L1) {
-                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA_1: ' + parseFloat(dato.totalHorasNormal_L1).toFixed(2) + ' horas', 'normal']);
-                } else {
-                    arrayInforme.push(['Total horas extra trabajadas en concepto de SERVICIO DE LIMPIEZA_1: ' + parseFloat(dato.totalHorasExtra_L1).toFixed(2) + ' horas extra', 'normal']);
-                };
-                sumatorioHoras_L1 += (dato.totalHorasNormal_L1 + dato.totalHorasExtra_L1);
-            };
-            if (dato.totalHorasExtra_L2 || dato.totalHorasNormal_L2) {
-                if (dato.totalHorasExtra_L2 && dato.totalHorasNormal_L2) {
-                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA_2: ' + parseFloat(dato.totalHorasNormal_L2).toFixed(2) + ' horas + ' + parseFloat(dato.totalHorasExtra_L2).toFixed(2) + ' horas extra', 'normal']);
-                } else if (!dato.totalHorasExtra_L2 && dato.totalHorasNormal_L2) {
-                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA_2: ' + parseFloat(dato.totalHorasNormal_L2).toFixed(2) + ' horas', 'normal']);
-                } else {
-                    arrayInforme.push(['Total horas extra trabajadas en concepto de SERVICIO DE LIMPIEZA_2: ' + parseFloat(dato.totalHorasExtra_L2).toFixed(2) + ' horas extra', 'normal']);
-                };
-                sumatorioHoras_L2 += (dato.totalHorasNormal_L2 + dato.totalHorasExtra_L2);
-            };
-            if (dato.totalHorasExtra_F || dato.totalHorasNormal_F) {
-                if (dato.totalHorasExtra_F && dato.totalHorasNormal_F) {
-                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA DÍA FESTIVO: ' + parseFloat(dato.totalHorasNormal_F).toFixed(2) + ' horas + ' + parseFloat(dato.totalHorasExtra_F).toFixed(2) + ' horas extra', 'normal']);
-                } else if (!dato.totalHorasExtra_F && dato.totalHorasNormal_F) {
-                    arrayInforme.push(['Total horas trabajadas en concepto de SERVICIO DE LIMPIEZA DÍA FESTIVO: ' + parseFloat(dato.totalHorasNormal_F).toFixed(2) + ' horas', 'normal']);
-                } else {
-                    arrayInforme.push(['Total horas extra trabajadas en concepto de SERVICIO DE LIMPIEZA DÍA FESTIVO: ' + parseFloat(dato.totalHorasExtra_F).toFixed(2) + ' horas extra', 'normal']);
-                };
-                sumatorioHoras_F += (dato.totalHorasNormal_F + dato.totalHorasExtra_F);
-            };
+            tipoServicio.forEach(servicio => {
+                const prefix = servicio.prefix;
+                const label = servicio.label;
+                const totalHorasNormal = dato[`totalHorasNormal_${prefix}`];
+                const totalHorasExtra = dato[`totalHorasExtra_${prefix}`];
+                if (totalHorasNormal || totalHorasExtra) {
+                    let mensaje = `Total horas trabajadas en concepto de ${label}: `;
+                    if (totalHorasNormal && totalHorasExtra) {
+                        mensaje += `${parseFloat(totalHorasNormal).toFixed(2)} horas + ${parseFloat(totalHorasExtra).toFixed(2)} horas extra`;
+                    } else if (totalHorasNormal) {
+                        mensaje += `${parseFloat(totalHorasNormal).toFixed(2)} horas`;
+                    } else {
+                        mensaje = `Total horas extra trabajadas en concepto de ${label}: ${parseFloat(totalHorasExtra).toFixed(2)} horas extra`;
+                    }
+                    arrayInforme.push([mensaje, 'normal']);
+                    sumatorioHoras[`sumatorioHoras_${prefix}`] += (totalHorasNormal || 0) + (totalHorasExtra || 0);
+                }
+            });
         });
         arrayInforme.push(['divider', 'normal']);
         let textoDiferenciaASumarHorasFestivas = '';
@@ -234,30 +180,13 @@ export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
                 esUnMensualPactado = true;
                 sumatorioTotal = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado;
                 let contadorHayMasDeUnMensualPactado = 0;
-                if (sumatorioHoras_L) {
-                    contadorHayMasDeUnMensualPactado += 1;
-                };
-                if (sumatorioHoras_E) {
-                    contadorHayMasDeUnMensualPactado += 1;
-                };
-                if (sumatorioHoras_P) {
-                    contadorHayMasDeUnMensualPactado += 1;
-                };
-                if (sumatorioHoras_N) {
-                    contadorHayMasDeUnMensualPactado += 1;
-                };
-                if (sumatorioHoras_R) {
-                    contadorHayMasDeUnMensualPactado += 1;
-                };
-                if (sumatorioHoras_L1) {
-                    contadorHayMasDeUnMensualPactado += 1;
-                };
-                if (sumatorioHoras_L2) {
-                    contadorHayMasDeUnMensualPactado += 1;
-                };
-                if (sumatorioHoras_F) {
-                    contadorHayMasDeUnMensualPactado += 1;
-                };
+                tipoServicio.forEach(servicio => {
+                    const prefix = servicio.prefix;
+                    const sumatorioKey = `sumatorioHoras_${prefix}`;
+                    if (sumatorioHoras[sumatorioKey]) {
+                        contadorHayMasDeUnMensualPactado += 1;
+                    }
+                });
                 if (contadorHayMasDeUnMensualPactado !== 1) {
                     textoDiferenciaASumarHorasFestivas = ' + diferencia Horas Festivas'
                 };
@@ -267,134 +196,29 @@ export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
         } else {
             sumatorioTotal = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHoraTotal;
         };
-        if (sumatorioHoras_L) {
-            if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 4) {
-                arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA: Sin coste', 'normal']);
-            } else {
-                arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L).toFixed(2) + ' €', 'normal']);
-            };
-            arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA: ' + parseFloat(sumatorioHoras_L).toFixed(2) + ' horas', 'normal']);
-            if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L && objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo !== 4) {
-                arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_L).toFixed(2) + ' €', 'error']);
-                arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro para poder computar', 'error']);
-            } else {
-                if (!esUnMensualPactado) {
-                    arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_L).toFixed(2) + ' €' + textoDiferenciaASumarHorasFestivas, 'normal']);
-                };
-            };
-        };
-        if (sumatorioHoras_E) {
-            if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 4) {
-                arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA: Sin coste', 'normal']);
-            } else {
-                arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA ESPECIAL: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_E).toFixed(2) + ' €', 'normal']);
-            };
-            arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA ESPECIAL: ' + parseFloat(sumatorioHoras_E).toFixed(2) + ' horas', 'normal']);
-            if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_E && objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo !== 4) {
-                arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA ESPECIAL: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_E).toFixed(2) + ' €', 'error']);
-                arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro o del Cuadrante para poder computar', 'error']);
-            } else {
-                if (!esUnMensualPactado) {
-                    arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA ESPECIAL: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_E).toFixed(2) + ' €' + textoDiferenciaASumarHorasFestivas, 'normal']);
-                };
-            };
-        };
-        if (sumatorioHoras_P) {
-            if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 4) {
-                arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA: Sin coste', 'normal']);
-            } else {
-                arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA DEL PARKING: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_P).toFixed(2) + ' €', 'normal']);
-            };
-            arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA DEL PARKING: ' + parseFloat(sumatorioHoras_P).toFixed(2) + ' horas', 'normal']);
-            if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_P && objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo !== 4) {
-                arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA DEL PARKING: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_P).toFixed(2) + ' €', 'error']);
-                arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro o del Cuadrante para poder computar', 'error']);
-            } else {
-                if (!esUnMensualPactado) {
-                    arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA DEL PARKING: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_P).toFixed(2) + ' €' + textoDiferenciaASumarHorasFestivas, 'normal']);
-                };
-            };
-        };
-        if (sumatorioHoras_N) {
-            if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 4) {
-                arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA: Sin coste', 'normal']);
-            } else {
-                arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA NAVE 2: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_N).toFixed(2) + ' €', 'normal']);
-            };
-            arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA NAVE 2: ' + parseFloat(sumatorioHoras_N).toFixed(2) + ' horas', 'normal']);
-            if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_N && objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo !== 4) {
-                arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA NAVE 2: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_N).toFixed(2) + ' €', 'error']);
-                arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro o del Cuadrante para poder computar', 'error']);
-            } else {
-                if (!esUnMensualPactado) {
-                    arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA NAVE 2: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_N).toFixed(2) + ' €' + textoDiferenciaASumarHorasFestivas, 'normal']);
-                };
-            };
-        };
-        if (sumatorioHoras_R) {
-            if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 4) {
-                arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA: Sin coste', 'normal']);
-            } else {
-                arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA REFUERZO: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_R).toFixed(2) + ' €', 'normal']);
-            };
-            arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA REFUERZO: ' + parseFloat(sumatorioHoras_R).toFixed(2) + ' horas', 'normal']);
-            if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_R && objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo !== 4) {
-                arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA REFUERZO: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_R).toFixed(2) + ' €', 'error']);
-                arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro o del Cuadrante para poder computar', 'error']);
-            } else {
-                if (!esUnMensualPactado) {
-                    arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA REFUERZO: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_R).toFixed(2) + ' €' + textoDiferenciaASumarHorasFestivas, 'normal']);
-                };
-            };
-        };
-        if (sumatorioHoras_L1) {
-            if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 4) {
-                arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA: Sin coste', 'normal']);
-            } else {
-                arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA_1: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L1).toFixed(2) + ' €', 'normal']);
-            };
-            arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA_1: ' + parseFloat(sumatorioHoras_L1).toFixed(2) + ' horas', 'normal']);
-            if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L1 && objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo !== 4) {
-                arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA_1: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_L1).toFixed(2) + ' €', 'error']);
-                arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro o del Cuadrante para poder computar', 'error']);
-            } else {
-                if (!esUnMensualPactado) {
-                    arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA_1: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_L1).toFixed(2) + ' €' + textoDiferenciaASumarHorasFestivas, 'normal']);
-                };
-            };
-        };
-        if (sumatorioHoras_L2) {
-            if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 4) {
-                arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA: Sin coste', 'normal']);
-            } else {
-                arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA_2: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L2).toFixed(2) + ' €', 'normal']);
-            };
-            arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA_2: ' + parseFloat(sumatorioHoras_L2).toFixed(2) + ' horas', 'normal']);
-            if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_L2 && objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo !== 4) {
-                arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA_2: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_L2).toFixed(2) + ' €', 'error']);
-                arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro o del Cuadrante para poder computar', 'error']);
-            } else {
-                if (!esUnMensualPactado) {
-                    arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA_2: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_L2).toFixed(2) + ' €' + textoDiferenciaASumarHorasFestivas, 'normal']);
-                };
-            };
-        };
-        if (sumatorioHoras_F) {
-            if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo === 4) {
-                arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA: Sin coste', 'normal']);
-            } else {
-                arrayInforme.push(['Cómputo de horas ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA DÍA FESTIVO: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F).toFixed(2) + ' €', 'normal']);
-            };
-            arrayInforme.push(['Total horas mes cuadrante en concepto de SERVICIO DE LIMPIEZA DÍA FESTIVO: ' + parseFloat(sumatorioHoras_F).toFixed(2) + ' horas', 'normal']);
-            if (!objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHora_F && objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo !== 4) {
-                arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ' SERVICIO DE LIMPIEZA DÍA FESTIVO: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_F).toFixed(2) + ' €', 'error']);
-                arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro o del Cuadrante para poder computar', 'error']);
-            } else {
-                if (!esUnMensualPactado) {
-                    arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + '  SERVICIO DE LIMPIEZA DÍA FESTIVO: ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].totalFacturado_F).toFixed(2) + ' €' + textoDiferenciaASumarHorasFestivas, 'normal']);
-                };
-            };
-        };
+        tipoServicio.forEach(servicio => {
+            const prefix = servicio.prefix;
+            const label = servicio.label;
+            if (sumatorioHoras[`sumatorioHoras_${prefix}`]) {
+                const precioHora = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1][`precioHora_${prefix}`];
+                const totalFacturado = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1][`totalFacturado_${prefix}`];
+                const computo = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo;
+                if (computo === 4) {
+                    arrayInforme.push([`Cómputo de horas ${stringTipoComputo} ${label}: Sin coste`, 'normal']);
+                } else {
+                    arrayInforme.push([`Cómputo de horas ${stringTipoComputo} ${label}: ${parseFloat(precioHora).toFixed(2)} €`, 'normal']);
+                }
+                arrayInforme.push([`Total horas mes cuadrante en concepto de ${label}: ${parseFloat(sumatorioHoras[`sumatorioHoras_${prefix}`]).toFixed(2)} horas`, 'normal']);
+                if (!precioHora && computo !== 4) {
+                    arrayInforme.push([`Total a facturar según cómputo ${stringTipoComputo} ${label}: ${parseFloat(totalFacturado).toFixed(2)} €`, 'error']);
+                    arrayInforme.push(['*Debe asignarse un precio/hora en la configuración del Centro o del Cuadrante para poder computar', 'error']);
+                } else {
+                    if (!esUnMensualPactado) {
+                        arrayInforme.push([`Total a facturar según cómputo ${stringTipoComputo} ${label}: ${parseFloat(totalFacturado).toFixed(2)} €${textoDiferenciaASumarHorasFestivas}`, 'normal']);
+                    }
+                }
+            }
+        });
         if (esUnMensualPactado) {
             arrayInforme.push(['Total a facturar según cómputo ' + stringTipoComputo + ': ' + parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado).toFixed(2) + ' €' + textoDiferenciaASumarHorasFestivas, 'normal']);
         };
@@ -404,228 +228,34 @@ export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
     if (cuadranteServiciosFijos.length > 0) {
         arrayInforme.push(['Servicios extra:', 'normal']);
         cuadranteServiciosFijos.forEach((servicio) => {
-            for (const prop in servicio) {
-                if (servicio[prop] && (prop === 'precioHora_TO' || prop === 'int_TO')) {
-                    if (servicio.activo_TO === 'si') {
-                        if (servicio.int_TO) {
-                            arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA DE TOLDOS: 0 € (Inculido en cómputo)', 'normal']);
+            const { propiedad, existePrefix } = existePrefixSF(servicio);
+            if (existePrefix) {
+                tiposServicioFijo.forEach((tipo) => {
+                    const prefix = tipo.prefix;
+                    const label = tipo.label;
+                    if (servicio[`precioHora_${prefix}`] || servicio[`int_${prefix}`]) {
+                        if (servicio[`activo_${prefix}`] === 'si') {
+                            if (servicio[`int_${prefix}`]) {
+                                arrayInforme.push([`Total a facturar por ${label}: 0 € (Incluido en cómputo)`, 'normal']);
+                            } else {
+                                sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                                arrayInforme.push([`Total a facturar por ${label}: ${parseFloat(servicio.totalServicioFijo).toFixed(2)} €`, 'normal']);
+                            }
+                        }
+                    }
+                });
+            } else {
+                if (servicio[`precioHora_${propiedad}`] || servicio[`int_${propiedad}`]) {
+                    if (servicio[`activo_${propiedad}`] === 'si') {
+                        if (servicio[`int_${propiedad}`]) {
+                            arrayInforme.push([`Total a facturar por ${servicio[`tipoServiciofijo`].toUpperCase()}: 0 € (Incluido en cómputo)`, 'normal']);
                         } else {
                             sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
-                            arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA DE TOLDOS: ' + parseFloat(servicio.totalServicioFijo).toFixed(2) + ' €', 'normal']);
-                        };
-                    };
-                };
-                if (servicio[prop] && (prop === 'precioHora_CR' || prop === 'int_CR')) {
-                    if (servicio.activo_CR === 'si') {
-                        if (servicio.int_CR) {
-                            arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA DE CRISTALES: 0 € (Inculido en cómputo)', 'normal']);
-                        } else {
-                            sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
-                            arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA DE CRISTALES: ' + parseFloat(servicio.totalServicioFijo).toFixed(2) + ' €', 'normal']);
-                        };
-                    };
-                };
-                if (servicio[prop] && (prop === 'precioHora_CE' || prop === 'int_CE')) {
-                    if (servicio.activo_CE === 'si') {
-                        if (servicio.int_CE) {
-                            arrayInforme.push(['Total a facturar por LIMPIEZA CRISTALES EXTERIORES: 0 € (Inculido en cómputo)', 'normal']);
-                        } else {
-                            sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
-                            arrayInforme.push(['Total a facturar por LIMPIEZA CRISTALES EXTERIORES: ' + parseFloat(servicio.totalServicioFijo).toFixed(2) + ' €', 'normal']);
-                        };
-                    };
-                };
-                if (servicio[prop] && (prop === 'precioHora_CI' || prop === 'int_CI')) {
-                    if (servicio.activo_CI === 'si') {
-                        if (servicio.int_CI) {
-                            arrayInforme.push(['Total a facturar por LIMPIEZA CRISTALES INTERIORES: 0 € (Inculido en cómputo)', 'normal']);
-                        } else {
-                            sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
-                            arrayInforme.push(['Total a facturar por LIMPIEZA CRISTALES INTERIORES: ' + parseFloat(servicio.totalServicioFijo).toFixed(2) + ' €', 'normal']);
-                        };
-                    };
-                };
-                if (servicio[prop] && (prop === 'precioHora_MO' || prop === 'int_MO')) {
-                    if (servicio.activo_MO === 'si') {
-                        if (servicio.int_MO) {
-                            arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA DE TOLDOS: 0 € (Inculido en cómputo)', 'normal']);
-                        } else {
-                            sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
-                            arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA MOQUETA: ' + parseFloat(servicio.totalServicioFijo).toFixed(2) + ' €', 'normal']);
-                        };
-                    };
-                };
-                if (servicio[prop] && (prop === 'precioHora_OF' || prop === 'int_OF')) {
-                    if (servicio.activo_OF === 'si') {
-                        if (servicio.int_OF) {
-                            arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA OFICINAS: 0 € (Inculido en cómputo)', 'normal']);
-                        } else {
-                            sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
-                            arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA OFICINAS: ' + parseFloat(servicio.totalServicioFijo).toFixed(2) + ' €', 'normal']);
-                        };
-                    };
-                };
-                if (servicio[prop] && (prop === 'precioHora_AL' || prop === 'int_AL')) {
-                    if (servicio.activo_AL === 'si') {
-                        if (servicio.int_AL) {
-                            arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA ALMACENES: 0 € (Inculido en cómputo)', 'normal']);
-                        } else {
-                            sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
-                            arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA ALMACENES: ' + parseFloat(servicio.totalServicioFijo).toFixed(2) + ' €', 'normal']);
-                        };
-                    };
-                };
-                if (servicio[prop] && (prop === 'precioHora_LA' || prop === 'int_LA')) {
-                    if (servicio.activo_LA === 'si') {
-                        if (servicio.int_LA) {
-                            arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA LABORATORIO: 0 € (Inculido en cómputo)', 'normal']);
-                        } else {
-                            sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
-                            arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA LABORATORIO: ' + parseFloat(servicio.totalServicioFijo).toFixed(2) + ' €', 'normal']);
-                        };
-                    };
-                };
-                if (servicio[prop] && (prop === 'precioHora_TE' || prop === 'int_TE')) {
-                    if (servicio.activo_TE === 'si') {
-                        if (servicio.int_TE) {
-                            arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA TELARAÑAS: 0 € (Inculido en cómputo)', 'normal']);
-                        } else {
-                            sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
-                            arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA TELARAÑAS: ' + parseFloat(servicio.totalServicioFijo).toFixed(2) + ' €', 'normal']);
-                        };
-                    };
-                };
-                if (servicio[prop] && (prop === 'precioHora_FI' || prop === 'int_FI')) {
-                    if (servicio.activo_FI === 'si') {
-                        if (servicio.int_FI) {
-                            arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA FACHADA INTERIOR: 0 € (Inculido en cómputo)', 'normal']);
-                        } else {
-                            sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
-                            arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA FACHADA INTERIOR: ' + parseFloat(servicio.totalServicioFijo).toFixed(2) + ' €', 'normal']);
-                        };
-                    };
-                };
-                if (servicio[prop] && (prop === 'precioHora_FE' || prop === 'int_FE')) {
-                    if (servicio.activo_FE === 'si') {
-                        if (servicio.int_FE) {
-                            arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA FACHADA EXTERIOR: 0 € (Inculido en cómputo)', 'normal']);
-                        } else {
-                            sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
-                            arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA FACHADA EXTERIOR: ' + parseFloat(servicio.totalServicioFijo).toFixed(2) + ' €', 'normal']);
-                        };
-                    };
-                };
-                if (servicio[prop] && (prop === 'precioHora_AB' || prop === 'int_AB')) {
-                    if (servicio.activo_AB === 'si') {
-                        if (servicio.int_AB) {
-                            arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA ABRILLANTADO: 0 € (Inculido en cómputo)', 'normal']);
-                        } else {
-                            sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
-                            arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA ABRILLANTADO: ' + parseFloat(servicio.totalServicioFijo).toFixed(2) + ' €', 'normal']);
-                        };
-                    };
-                };
-                if (servicio[prop] && (prop === 'precioHora_MA' || prop === 'int_MA')) {
-                    if (servicio.activo_MA === 'si') {
-                        if (servicio.int_MA) {
-                            arrayInforme.push(['Total a facturar por SERVICIO DE MANTENIMIENTO MÁQUINA: 0 € (Inculido en cómputo)', 'normal']);
-                        } else {
-                            sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
-                            arrayInforme.push(['Total a facturar por SERVICIO DE MANTENIMIENTO MÁQUINA: ' + parseFloat(servicio.totalServicioFijo).toFixed(2) + ' €', 'normal']);
-                        };
-                    };
-                };
-                if (servicio[prop] && (prop === 'precioHora_PO' || prop === 'int_PO')) {
-                    if (servicio.activo_PO === 'si') {
-                        if (servicio.int_PO) {
-                            arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA PORTERÍA: 0 € (Inculido en cómputo)', 'normal']);
-                        } else {
-                            sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
-                            arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA PORTERÍA: ' + parseFloat(servicio.totalServicioFijo).toFixed(2) + ' €', 'normal']);
-                        };
-                    };
-                };
-                if (servicio[prop] && (prop === 'precioHora_BA' || prop === 'int_BA')) {
-                    if (servicio.activo_BA === 'si') {
-                        if (servicio.int_BA) {
-                            arrayInforme.push(['Total a facturar por BOT. NOUBACT: 0 € (Inculido en cómputo)', 'normal']);
-                        } else {
-                            sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
-                            arrayInforme.push(['Total a facturar por BOT. NOUBACT: ' + parseFloat(servicio.totalServicioFijo).toFixed(2) + ' €', 'normal']);
-                        };
-                    };
-                };
-                if (servicio[prop] && (prop === 'precioHora_FT' || prop === 'int_FT')) {
-                    if (servicio.activo_FT === 'si') {
-                        if (servicio.int_FT) {
-                            arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA DÍA FESTIVO: 0 € (Inculido en cómputo)', 'normal']);
-                        } else {
-                            sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
-                            arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA DÍA FESTIVO: ' + parseFloat(servicio.totalServicioFijo).toFixed(2) + ' €', 'normal']);
-                        };
-                    };
-                };
-                if (servicio[prop] && (prop === 'precioHora_C3' || prop === 'int_C3')) {
-                    if (servicio.activo_C3 === 'si') {
-                        if (servicio.int_C3) {
-                            arrayInforme.push(['Total a facturar por LIMPIEZA DE CRISTALES TRIMESTRAL: 0 € (Inculido en cómputo)', 'normal']);
-                        } else {
-                            sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
-                            arrayInforme.push(['Total a facturar por LIMPIEZA DE CRISTALES TRIMESTRAL: ' + parseFloat(servicio.totalServicioFijo).toFixed(2) + ' €', 'normal']);
-                        };
-                    };
-                };
-                if (servicio[prop] && (prop === 'precioHora_C2' || prop === 'int_C2')) {
-                    if (servicio.activo_C2 === 'si') {
-                        if (servicio.int_C2) {
-                            arrayInforme.push(['Total a facturar por LIMPIEZA DE CRISTALES BIMENSUAL: 0 € (Inculido en cómputo)', 'normal']);
-                        } else {
-                            sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
-                            arrayInforme.push(['Total a facturar por LIMPIEZA DE CRISTALES BIMENSUAL: ' + parseFloat(servicio.totalServicioFijo).toFixed(2) + ' €', 'normal']);
-                        };
-                    };
-                };
-                if (servicio[prop] && (prop === 'precioHora_C4' || prop === 'int_C4')) {
-                    if (servicio.activo_C4 === 'si') {
-                        if (servicio.int_C4) {
-                            arrayInforme.push(['Total a facturar por LIMPIEZA DE CRISTALES CUATRIMESTRAL: 0 € (Inculido en cómputo)', 'normal']);
-                        } else {
-                            sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
-                            arrayInforme.push(['Total a facturar por LIMPIEZA DE CRISTALES CUATRIMESTRAL: ' + parseFloat(servicio.totalServicioFijo).toFixed(2) + ' €', 'normal']);
-                        };
-                    };
-                };
-                if (servicio[prop] && (prop === 'precioHora_ES' || prop === 'int_ES')) {
-                    if (servicio.activo_ES === 'si') {
-                        if (servicio.int_ES) {
-                            arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA ESPECIAL: 0 € (Inculido en cómputo)', 'normal']);
-                        } else {
-                            sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
-                            arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA ESPECIAL: ' + parseFloat(servicio.totalServicioFijo).toFixed(2) + ' €', 'normal']);
-                        };
-                    };
-                };
-                if (servicio[prop] && (prop === 'precioHora_PA' || prop === 'int_PA')) {
-                    if (servicio.activo_PA === 'si') {
-                        if (servicio.int_PA) {
-                            arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA DEL PARKING: 0 € (Inculido en cómputo)', 'normal']);
-                        } else {
-                            sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
-                            arrayInforme.push(['Total a facturar por SERVICIO DE LIMPIEZA DEL PARKING: ' + parseFloat(servicio.totalServicioFijo).toFixed(2) + ' €', 'normal']);
-                        };
-                    };
-                };
-                if (servicio[prop] && (prop === 'precioHora_FR' || prop === 'int_FR')) {
-                    if (servicio.activo_FR === 'si') {
-                        if (servicio.int_FR) {
-                            arrayInforme.push(['Total a facturar por SERVICIO DE FREGADO DE SUELOS: 0 € (Inculido en cómputo)', 'normal']);
-                        } else {
-                            sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
-                            arrayInforme.push(['Total a facturar por SERVICIO DE FREGADO DE SUELOS: ' + parseFloat(servicio.totalServicioFijo).toFixed(2) + ' €', 'normal']);
-                        };
-                    };
-                };
-            };
+                            arrayInforme.push([`Total a facturar por ${servicio[`tipoServiciofijo`].toUpperCase()}: ${parseFloat(servicio.totalServicioFijo).toFixed(2)} €`, 'normal']);
+                        }
+                    }
+                }
+            }
         });
     };
     if (mesConFestivosCompleto) {

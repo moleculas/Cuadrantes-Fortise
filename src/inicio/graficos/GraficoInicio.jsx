@@ -17,20 +17,20 @@ import Clases from "../../clases";
 import { 
     obtenerCuadrantesPorAnyoAccion,
     forzarRecargaGraficosCuadrantesAccion,
-    obtenerNominasPorAnyoAccion,
-    forzarRecargaGraficosNominasAccion
+    //obtenerNominasPorAnyoAccion,
+    //forzarRecargaGraficosNominasAccion
  } from '../../redux/graficosDucks';
 
 const GraficoCuadrantes = (props) => {
     const classes = Clases();
     const dispatch = useDispatch();
     const cuadrantesPorAnyoGraficos = useSelector(store => store.variablesGraficos.cuadrantesPorAnyoGraficos);
-    const nominasPorAnyoGraficos = useSelector(store => store.variablesGraficos.nominasPorAnyoGraficos);
+    //const nominasPorAnyoGraficos = useSelector(store => store.variablesGraficos.nominasPorAnyoGraficos);
     const errorDeCargaGraficosCuadrantes = useSelector(store => store.variablesGraficos.errorDeCargaGraficosCuadrantes);
-    const errorDeCargaGraficosNominas = useSelector(store => store.variablesGraficos.errorDeCargaGraficosNominas);
+    //const errorDeCargaGraficosNominas = useSelector(store => store.variablesGraficos.errorDeCargaGraficosNominas);
     const openLoadingGraficos = useSelector(store => store.variablesGraficos.loadingGraficos);
     const forzarRecargaGraficosCuadrantes = useSelector(store => store.variablesGraficos.forzarRecargaGraficosCuadrantes);
-    const forzarRecargaGraficosNominas = useSelector(store => store.variablesGraficos.forzarRecargaGraficosNominas);
+   // const forzarRecargaGraficosNominas = useSelector(store => store.variablesGraficos.forzarRecargaGraficosNominas);
 
     //states
 
@@ -41,12 +41,12 @@ const GraficoCuadrantes = (props) => {
 
     //useEffect
 
-    useEffect(() => {
-        if (forzarRecargaGraficosNominas) {
-            dispatch(obtenerNominasPorAnyoAccion('nominas'));
-            dispatch(forzarRecargaGraficosNominasAccion(false));
-        };
-    }, [forzarRecargaGraficosNominas]);
+    // useEffect(() => {
+    //     if (forzarRecargaGraficosNominas) {
+    //         dispatch(obtenerNominasPorAnyoAccion('nominas'));
+    //         dispatch(forzarRecargaGraficosNominasAccion(false));
+    //     };
+    // }, [forzarRecargaGraficosNominas]);
 
     useEffect(() => {
         if (forzarRecargaGraficosCuadrantes) {
@@ -55,8 +55,28 @@ const GraficoCuadrantes = (props) => {
         };
     }, [forzarRecargaGraficosCuadrantes]);
 
+    // useEffect(() => {
+    //     if (cuadrantesPorAnyoGraficos.length === 12 && nominasPorAnyoGraficos.length === 12) {
+    //         let array = [];
+    //         let objeto;
+    //         for (let i = 0; i < 12; i++) {    
+    //             let empresas = 0;
+    //             let pisos = 0;
+    //             cuadrantesPorAnyoGraficos[i].Empresas && (empresas = cuadrantesPorAnyoGraficos[i].Empresas);
+    //             cuadrantesPorAnyoGraficos[i].Pisos && (pisos = cuadrantesPorAnyoGraficos[i].Pisos);               
+    //             objeto = {
+    //                 name: cuadrantesPorAnyoGraficos[i].name,
+    //                 Ingresos: cuadrantesPorAnyoGraficos[i].Empresas || cuadrantesPorAnyoGraficos[i].Pisos ? +parseFloat(empresas).toFixed(2) + +parseFloat(pisos).toFixed(2) : 0,
+    //                 Gastos: nominasPorAnyoGraficos[i].Gastos
+    //             };
+    //             array.push(objeto);
+    //         };
+    //         setDataGraficosInicio(array);
+    //     };
+    // }, [cuadrantesPorAnyoGraficos, nominasPorAnyoGraficos]);
+
     useEffect(() => {
-        if (cuadrantesPorAnyoGraficos.length === 12 && nominasPorAnyoGraficos.length === 12) {
+        if (cuadrantesPorAnyoGraficos.length === 12 ) {
             let array = [];
             let objeto;
             for (let i = 0; i < 12; i++) {    
@@ -67,23 +87,33 @@ const GraficoCuadrantes = (props) => {
                 objeto = {
                     name: cuadrantesPorAnyoGraficos[i].name,
                     Ingresos: cuadrantesPorAnyoGraficos[i].Empresas || cuadrantesPorAnyoGraficos[i].Pisos ? +parseFloat(empresas).toFixed(2) + +parseFloat(pisos).toFixed(2) : 0,
-                    Gastos: nominasPorAnyoGraficos[i].Gastos
+                    Gastos: [] //TODO
                 };
                 array.push(objeto);
             };
             setDataGraficosInicio(array);
         };
-    }, [cuadrantesPorAnyoGraficos, nominasPorAnyoGraficos]);
+    }, [cuadrantesPorAnyoGraficos]);
+
+    // useEffect(() => {
+    //     if (errorDeCargaGraficosCuadrantes || errorDeCargaGraficosNominas) {
+    //         setAlert({
+    //             mensaje: "Error de conexión con la base de datos.",
+    //             tipo: 'error'
+    //         })
+    //         setOpenSnack(true);
+    //     };
+    // }, [errorDeCargaGraficosCuadrantes, errorDeCargaGraficosNominas]);
 
     useEffect(() => {
-        if (errorDeCargaGraficosCuadrantes || errorDeCargaGraficosNominas) {
+        if (errorDeCargaGraficosCuadrantes) {
             setAlert({
                 mensaje: "Error de conexión con la base de datos.",
                 tipo: 'error'
             })
             setOpenSnack(true);
         };
-    }, [errorDeCargaGraficosCuadrantes, errorDeCargaGraficosNominas]);
+    }, [errorDeCargaGraficosCuadrantes]);
 
     useEffect(() => {
         if (!openLoadingGraficos) {

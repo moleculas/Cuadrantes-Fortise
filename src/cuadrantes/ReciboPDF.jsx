@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     },
 });
 
-const ReciboPDF = ({ objetoReciboPDF, anyo, mes }) => {   
+const ReciboPDF = ({ objetoReciboPDF, anyo, mes, numRecibo }) => {   
     const ultimoDia = new Date(anyo, mes, 0);   
     const day = ultimoDia.getDate();
     const fechaHoy = day + "/" + mes + "/" + anyo;
@@ -128,7 +128,7 @@ const ReciboPDF = ({ objetoReciboPDF, anyo, mes }) => {
                     <View style={[styles.gran, styles.ancho40, styles.flexCol]}>
                         <View style={[styles.peq, styles.flexRow]}>
                             <Text style={[styles.ancho50, styles.fondoAzul1, styles.textoGran]}>Nº recibo</Text>
-                            <Text style={[styles.ancho50, styles.fondoBlanco, styles.textoGran]}>{objetoReciboPDF.numeroRecibos ? (objetoReciboPDF.numeroRecibos) : "-"}</Text>
+                            <Text style={[styles.ancho50, styles.fondoBlanco, styles.textoGran]}>{numRecibo ? numRecibo : "-"}</Text>
                         </View>
                         <View style={[styles.peq, styles.flexRow]}>
                             <Text style={[styles.ancho50, styles.fondoAzul1, styles.textoGran]}>Fecha Emisión</Text>

@@ -88,6 +88,8 @@ const {
     DIAS_SEMANA: diasSemana
 } = Constantes;
 
+
+
 const CentrosEditar = forwardRef((props, ref) => {
     const classes = Clases();
     const dispatch = useDispatch();
@@ -418,7 +420,7 @@ const CentrosEditar = forwardRef((props, ref) => {
             dispatch(activarDesactivarActualizarCentroAccion(false));
             return;
         };
-        if (prop === "excepcion") {           
+        if (prop === "excepcion") {
             setValuesFormEdicion({ ...valuesFormEdicion, [prop]: e.target.value });
             setHorarioIntervencionEdicion({ ...horarioIntervencionEdicion, excepcion: e.target.value });
             dispatch(activarDesactivarActualizarCentroAccion(false));
@@ -710,7 +712,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                     eliminarCentro();
                     break;
                 case 'procesarDatosEdicion':
-                    const procesarDatosEdicion = () => {
+                    const procesarDatosEdicion = () => {                  
                         let centroAGuardar;
                         let objCategorias = null;
                         let objHorario = null;
@@ -1348,6 +1350,7 @@ const CentrosEditar = forwardRef((props, ref) => {
 
     return (
         <div>
+            {/* {console.log(horarioIntervencionEdicion)} */}
             <Backdrop className={classes.loading} open={openLoading}>
                 <CircularProgress color="inherit" />
             </Backdrop>
@@ -1422,7 +1425,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                 className={classes.mb15}
                                                 id="form-cuadrante-no-edicion"
                                                 label="Número Cuadrante"
-                                                value={cuadranteEnUsoEdicion}
+                                                value={cuadranteEnUsoEdicion || ''}//modificat: select
                                                 onChange={handleChangeCuadranteCentroEdicion}
                                                 helpertext="Selecciona nº cuadrante"
                                             >
@@ -1471,12 +1474,15 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                         </IconButton>
                                                     )}
                                                     <Tooltip title="Añadir cuadrante al centro" placement="top-end" arrow >
-                                                        <IconButton
-                                                            className={classes.paper}
-                                                            onClick={handleAnadirCuadranteCentroEdicion}
-                                                        >
-                                                            <LibraryAdd />
-                                                        </IconButton>
+                                                        <span>
+                                                            <IconButton
+                                                                className={classes.paper}
+                                                                onClick={handleAnadirCuadranteCentroEdicion}
+                                                                disabled={numeroCuadrantesEdicion.length > 1}
+                                                            >
+                                                                <LibraryAdd />
+                                                            </IconButton>
+                                                        </span>
                                                     </Tooltip>
                                                 </Fragment>
                                             )}
@@ -1510,7 +1516,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         className={classes.mb15}
                                         fullWidth
                                         id="form-subNombre-centro-edicion"
-                                        value={valuesFormEdicionGenerales.subNombre}
+                                        value={valuesFormEdicionGenerales.subNombre || ''}//modificat: select
                                         onChange={handleChangeFormEdicionGenerales('subNombre')}
                                         labelWidth={95}
                                         disabled={disabledItem}
@@ -1770,7 +1776,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         {trabajadoresEdicion.cantidad !== '' && (
                                             <SelectsTrabajadores
                                                 trabajadores={trabajadoresEdicion}
-                                                valuesForm={valuesFormEdicion}
+                                                valuesForm={valuesFormEdicion || ''}//modificat: select
                                                 setValuesForm={setValuesFormEdicion}
                                                 setTrabajadores={setTrabajadoresEdicion}
                                             />
@@ -1824,7 +1830,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                 className={classes.mb15}
                                                 id="form-variaciones-edicion"
                                                 label="Variaciones"
-                                                value={valuesFormEdicion.variacion}
+                                                value={valuesFormEdicion.variacion || ''}//modificat: select
                                                 onChange={handleChangeFormEdicion('variacion')}
                                                 helpertext="Selecciona variaciones"
                                                 disabled={disabledItem}
@@ -1850,7 +1856,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                 className={classes.mb25}
                                                 id="form-excepciones-edicion"
                                                 label="Excepciones"
-                                                value={valuesFormEdicion.excepcion}
+                                                value={valuesFormEdicion.excepcion || ''}//modificat: select
                                                 onChange={handleChangeFormEdicion('excepcion')}
                                                 helpertext="Selecciona excepciones"
                                                 disabled={disabledItem}
@@ -2036,7 +2042,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                     onChange={handleChangeFormEdicionGenerales('gestionEspSF')}
                                                     name="checkedGestEsp-edicion"
                                                     color="secondary"
-                                                    disabled={disabledItem}
+                                                    disabled={disabledItem || Object.values(stateSwitchTipoServicioFijoEdicion).every(value => value === false)}
                                                 />
                                             }
                                             label={<Typography className={classes.colorText} style={{ fontSize: '0.9rem' }}>Gestión especial horas para Servicios Extra.</Typography>}

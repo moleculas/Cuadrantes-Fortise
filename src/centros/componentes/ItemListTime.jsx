@@ -78,7 +78,7 @@ const ItemListTime = (props) => {
                     id="form-tipo-servicio-edicion"
                     name={name}
                     label="Tipo servicio"
-                    value={value}
+                    value={value || ''}//modificat: select
                     onChange={handleChangeSelectTipoServicio}
                     helpertext="Selecciona tipo de servicio"
                 >
@@ -171,7 +171,7 @@ const ItemListTime = (props) => {
                                         fullWidth
                                         name={props.prIdCantidad}
                                         label="Cantidad horas"
-                                        value={props.prValueCantidadHoras}
+                                        value={props.prValueCantidadHoras || ''}//modificat: select
                                         onChange={handleChangeSelectCantidad}
                                         helpertext="Cantidad horas"
                                     >

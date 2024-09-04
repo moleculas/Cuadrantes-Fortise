@@ -156,7 +156,7 @@ const ItemCuadrante = (props) => {
                     id="form-tipo-servicio-cuadrante"
                     name={props.prTipo === 'rango' ? ('tipoServicioSelect-' + props.prIdInicio) : props.prTipo === 'rangoDescanso' ? ('tipoServicioSelect-' + props.prIdInicio1) : ('tipoServicioSelect-' + props.prIdCantidad)}
                     label={esDesktop ? 'Tipo Servicio' : 'Servicio'}
-                    value={props.prValueTipoServicio}
+                    value={props.prValueTipoServicio || ''}//modificat: select
                     onChange={handleChangeTipoServicio(props.prIndex)}
                     helpertext="Selecciona tipo de servicio"
                 >
@@ -297,7 +297,7 @@ const ItemCuadrante = (props) => {
                                 name={props.prIdCantidad}
                                 label={esDesktop ? 'Cantidad horas' : 'Horas'}
                                 id={props.prIdCantidad}
-                                value={props.prValueCantidadHoras}
+                                value={props.prValueCantidadHoras || ''}//modificat: select
                                 onChange={handleChangeSelectCantidad(props.prIndex)}
                                 helpertext="Cantidad horas"
                             >

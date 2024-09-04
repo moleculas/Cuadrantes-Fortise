@@ -1,4 +1,4 @@
-import {  Fragment } from 'react';
+import { Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Constantes from "../../constantes";
 import {
@@ -14,13 +14,13 @@ import {
     Tooltip,
     Avatar,
     IconButton,
-    ButtonGroup,    
+    ButtonGroup,
 } from '@material-ui/core';
 import {
     ExpandMore as ExpandMoreIcon,
     PersonAdd as PersonAddIcon,
     Delete as DeleteIcon,
-    Cached as CachedIcon,   
+    Cached as CachedIcon,
     RemoveCircleOutline as RemoveCircleOutlineIcon,
     KeyboardTab as KeyboardTabIcon
 } from '@material-ui/icons';
@@ -107,6 +107,7 @@ const CuadranteDer = (props) => {
             ref={scrollable}
             style={{ height: heightScrollable }}
         >
+            {/* {console.log(cuadranteServiciosFijos)} */}
             <Box
                 p={0}
                 mt={0}
@@ -170,13 +171,25 @@ const CuadranteDer = (props) => {
                                                     <AccordionSummary1
                                                         expandIcon={<ExpandMoreIcon className={classes.blanc} />}
                                                     >
-                                                        <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{columnaCabecera.reducido ? '' : columnaCabecera.nombreTrabajador !== 'Suplente' ? retornaNombreTrabajador(columnaCabecera.nombreTrabajador) : ''}</Typography>
+                                                        <Typography
+                                                            variant='body2'
+                                                            className={classes.truncate}
+                                                            style={{ color: 'secondary.contrastText' }}
+                                                        >
+                                                            {columnaCabecera.reducido ? '' : columnaCabecera.nombreTrabajador !== 'Suplente' ? retornaNombreTrabajador(columnaCabecera.nombreTrabajador) : ''}
+                                                        </Typography>
                                                     </AccordionSummary1>
                                                 ) : (
                                                     <AccordionSummary2
                                                         expandIcon={<ExpandMoreIcon className={classes.blanc} />}
                                                     >
-                                                        <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{columnaCabecera.reducido ? '' : columnaCabecera.nombreTrabajador !== 'Suplente' ? retornaNombreTrabajador(columnaCabecera.nombreTrabajador) : ''}</Typography>
+                                                        <Typography
+                                                            variant='body2'
+                                                            className={classes.truncate}
+                                                            style={{ color: 'secondary.contrastText' }}
+                                                        >
+                                                            {columnaCabecera.reducido ? '' : columnaCabecera.nombreTrabajador !== 'Suplente' ? retornaNombreTrabajador(columnaCabecera.nombreTrabajador) : ''}
+                                                        </Typography>
                                                     </AccordionSummary2>
                                                 ))}
                                             <AccordionDetails
@@ -333,24 +346,29 @@ const CuadranteDer = (props) => {
                     </Box>
                     {visibleCuadranteServiciosFijos ? (
                         cuadranteServiciosFijos.length > 0 ? (
-                            cuadranteServiciosFijos.map((servicio, indexColSF) => (
-                                <Box
-                                    key={'box' + indexColSF}
-                                    style={!esDesktop ? { marginTop: 10 } : null}
-                                >
-                                    {losDiasDelMes.map((dia, indexDia) => (
-                                        <CasillaServiciosFijos
-                                            key={"casillaServiciosFijos-" + indexDia}
-                                            dia={dia}
-                                            indexDia={indexDia}
-                                            servicio={servicio}
-                                            indice={indexColSF}
-                                            esDesktop={esDesktop}
-                                            ampleColumnaServiciosFijos={ampleColumnaServiciosFijos}
-                                        />
-                                    ))}
-                                </Box>
-                            ))
+                            cuadranteServiciosFijos.map((servicio, indexColSF) => {                                                       
+                                const trabajador = Object.keys(servicio)
+                                    .find(key => key.startsWith('trab_')) ? servicio[Object.keys(servicio).find(key => key.startsWith('trab_'))] : null;
+                                return (
+                                    <Box
+                                        key={'box' + indexColSF}
+                                        style={!esDesktop ? { marginTop: 10 } : null}
+                                    >
+                                        {losDiasDelMes.map((dia, indexDia) => (
+                                            <CasillaServiciosFijos
+                                                key={"casillaServiciosFijos-" + indexDia}
+                                                dia={dia}
+                                                indexDia={indexDia}                                         
+                                                servicio={servicio}
+                                                indice={indexColSF}
+                                                esDesktop={esDesktop}
+                                                ampleColumnaServiciosFijos={ampleColumnaServiciosFijos}
+                                                trabajador={trabajador}
+                                            />
+                                        ))}
+                                    </Box>
+                                );
+                            })
                         ) : null
                     ) : null}
                     {visibleCuadrante ? (

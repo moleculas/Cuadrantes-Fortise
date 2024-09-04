@@ -25,6 +25,7 @@ import {
     LightTooltipInt,
     LightTooltipInactivo
 } from './logicaApp';
+import { existePrefixSF } from './logicaServiciosFijos';
 
 //estilos
 import Clases from "../clases";
@@ -32,7 +33,9 @@ import Clases from "../clases";
 //constantes
 const {
     TIPO_SERVICIO_FIJO: tiposServicioFijo,
-    VARIACIONES_CUADRANTES: variaciones
+    VARIACIONES_CUADRANTES: variaciones,
+    TIPO_SERVICIO: tipoServicio,
+    DIAS_SEMANA: diasSemana
 } = Constantes;
 
 function LogicaLayoutCuadrantes() {
@@ -44,342 +47,88 @@ function LogicaLayoutCuadrantes() {
     const objetoCuadrante = useSelector(store => store.variablesCuadrantes.objetoCuadrante);
     const intervencionRegistrada = useSelector(store => store.variablesApp.estadoIntervencionRegistrada);
     const arrayTrabajadoresSubcategoria = useSelector(store => store.variablesTrabajadores.arrayTrabajadoresSubcategoria);
+    const { cuadranteServiciosFijos } = useSelector(store => store.variablesCuadrantesServiciosFijos);
 
-    const gestionaTextoCasillasServiciosFijosAccion = (indexDia, trab, activo) => {
-        let textoSF = '';
+    const gestionaTextoCasillasServiciosFijosAccion = (indexDia, trab, activo, horas) => {
+        //modificador: control horas servicios fijos
+        if (stateFestivo[`estadoFestivoDia${indexDia}`]) {
+            const tipoFestivo = stateFestivo[`tipoFestivoDia${indexDia}`];
+            return tipoFestivo === 1 ? 'Día festivo' :
+                tipoFestivo === 2 ? 'Cierre centro' :
+                    tipoFestivo === 3 ? 'Cierre centro facturar' : '';
+        }
         if (activo) {
-            if (trab) {
-                let nombreTrabajador = dispatch(obtenerObjetoPorIdAccion(arrayTrabajadoresSubcategoria, trab));
-                const longitudTrunc = 20;
-                if (nombreTrabajador.length >= longitudTrunc) {
-                    textoSF = nombreTrabajador.substring(0, longitudTrunc) + "…";
-                } else {
-                    textoSF = nombreTrabajador;
-                };
-            } else {
-                textoSF = 'Sin trabajador';
-            };
-        };
-        if (stateFestivo['estadoFestivoDia' + (indexDia)]) {
-            if (stateFestivo['tipoFestivoDia' + (indexDia)] === 1) {
-                return 'Día festivo'
-            };
-            if (stateFestivo['tipoFestivoDia' + (indexDia)] === 2) {
-                return 'Cierre centro'
-            };
-            if (stateFestivo['tipoFestivoDia' + (indexDia)] === 3) {
-                return 'Cierre centro facturar'
-            };
-        } else {
-            return textoSF;
-        };
+            const nombreTrabajador = trab ? dispatch(obtenerObjetoPorIdAccion(arrayTrabajadoresSubcategoria, trab)) : 'Sin trabajador';
+            if (!horas) {
+                return nombreTrabajador;
+            }
+            return `De ${horas.inicio} a ${horas.fin} - ${nombreTrabajador}`;
+        }
+        return '';
     };
 
     const gestionaTextoCasillasAccion = (indexDia, dia, columna, diaSemana) => {
-        if (stateFestivo['estadoFestivoDia' + (indexDia)]) {
-            if (stateFestivo['tipoFestivoDia' + (indexDia)] === 1) {
-                return 'Día festivo'
+        const diaSemanaValor = diasSemana.find(d => d.label === diaSemana)?.value;
+        if (stateFestivo['estadoFestivoDia' + indexDia]) {
+            const tipoFestivo = stateFestivo['tipoFestivoDia' + indexDia];
+            const festivos = {
+                1: 'Día festivo',
+                2: 'Cierre centro',
+                3: 'Cierre centro facturar',
             };
-            if (stateFestivo['tipoFestivoDia' + (indexDia)] === 2) {
-                return 'Cierre centro'
+            return festivos[tipoFestivo] || '';
+        }
+        if (columna[dia]?.baja) {
+            const bajas = {
+                bajaIT: 'Baja IT',
+                bajaACCTE: 'Baja ACCTE',
+                bajaCIA: 'Baja CIA',
+                vacaciones: 'Vacaciones',
+                excedencia: 'Excedencia',
+                personales: 'Motivos personales',
+                permisoRET: 'Permiso RET',
+                ausenciaINJ: 'Ausencia INJ',
             };
-            if (stateFestivo['tipoFestivoDia' + (indexDia)] === 3) {
-                return 'Cierre centro facturar'
-            };
-        } else if (columna[dia].baja) {
-            switch (columna[dia].tipoBaja) {
-                case 'bajaIT':
-                    return 'Baja IT'
-                case 'bajaACCTE':
-                    return 'Baja ACCTE'
-                case 'bajaCIA':
-                    return 'Baja CIA'
-                case 'vacaciones':
-                    return 'Vacaciones'
-                case 'excedencia':
-                    return 'Excedencia'
-                case 'personales':
-                    return 'Motivos personales'
-                case 'permisoRET':
-                    return 'Permiso RET'
-                case 'ausenciaINJ':
-                    return 'Ausencia INJ'
-                default:
-            };
-        } else {
-            let myDatoSplitted1, myDatoSplitted2, myDatoSplitted3, myDatoSplitted4;
-            switch (columna.tipoHorario) {
-                case 'rango':
-                    switch (diaSemana) {
-                        case 'Lunes':
-                            if (columna[dia].lunesInicioRango && columna[dia].lunesFinRango) {
-                                myDatoSplitted1 = columna[dia].lunesInicioRango.split(":");
-                                myDatoSplitted2 = columna[dia].lunesFinRango.split(":");
-                            };
-                            if (columna[dia].lunesInicioRango && columna[dia].lunesFinRango && IsNumeric(myDatoSplitted1[0]) && IsNumeric(myDatoSplitted2[0])) {
-                                return 'De ' + columna[dia].lunesInicioRango + ' a ' + columna[dia].lunesFinRango;
-                            } else {
-                                return '';
-                            };
-                        case 'Martes':
-                            if (columna[dia].martesInicioRango && columna[dia].martesFinRango) {
-                                myDatoSplitted1 = columna[dia].martesInicioRango.split(":");
-                                myDatoSplitted2 = columna[dia].martesFinRango.split(":");
-                            };
-                            if (columna[dia].martesInicioRango && columna[dia].martesFinRango && IsNumeric(myDatoSplitted1[0]) && IsNumeric(myDatoSplitted2[0])) {
-                                return 'De ' + columna[dia].martesInicioRango + ' a ' + columna[dia].martesFinRango;
-                            } else {
-                                return '';
-                            };
-                        case 'Miércoles':
-                            if (columna[dia].miercolesInicioRango && columna[dia].miercolesFinRango) {
-                                myDatoSplitted1 = columna[dia].miercolesInicioRango.split(":");
-                                myDatoSplitted2 = columna[dia].miercolesFinRango.split(":");
-                            };
-                            if (columna[dia].miercolesInicioRango && columna[dia].miercolesFinRango && IsNumeric(myDatoSplitted1[0]) && IsNumeric(myDatoSplitted2[0])) {
-                                return 'De ' + columna[dia].miercolesInicioRango + ' a ' + columna[dia].miercolesFinRango;
-                            } else {
-                                return '';
-                            };
-                        case 'Jueves':
-                            if (columna[dia].juevesInicioRango && columna[dia].juevesFinRango) {
-                                myDatoSplitted1 = columna[dia].juevesInicioRango.split(":");
-                                myDatoSplitted2 = columna[dia].juevesFinRango.split(":");
-                            };
-                            if (columna[dia].juevesInicioRango && columna[dia].juevesFinRango && IsNumeric(myDatoSplitted1[0]) && IsNumeric(myDatoSplitted2[0])) {
-                                return 'De ' + columna[dia].juevesInicioRango + ' a ' + columna[dia].juevesFinRango;
-                            } else {
-                                return '';
-                            };
-                        case 'Viernes':
-                            if (columna[dia].viernesInicioRango && columna[dia].viernesFinRango) {
-                                myDatoSplitted1 = columna[dia].viernesInicioRango.split(":");
-                                myDatoSplitted2 = columna[dia].viernesFinRango.split(":");
-                            };
-                            if (columna[dia].viernesInicioRango && columna[dia].viernesFinRango && IsNumeric(myDatoSplitted1[0]) && IsNumeric(myDatoSplitted2[0])) {
-                                return 'De ' + columna[dia].viernesInicioRango + ' a ' + columna[dia].viernesFinRango;
-                            } else {
-                                return '';
-                            };
-                        case 'Sábado':
-                            if (columna[dia].sabadoInicioRango && columna[dia].sabadoFinRango) {
-                                myDatoSplitted1 = columna[dia].sabadoInicioRango.split(":");
-                                myDatoSplitted2 = columna[dia].sabadoFinRango.split(":");
-                            };
-                            if (columna[dia].sabadoInicioRango && columna[dia].sabadoFinRango && IsNumeric(myDatoSplitted1[0]) && IsNumeric(myDatoSplitted2[0])) {
-                                return 'De ' + columna[dia].sabadoInicioRango + ' a ' + columna[dia].sabadoFinRango;
-                            } else {
-                                return '';
-                            };
-                        case 'Domingo':
-                            if (columna[dia].domingoInicioRango && columna[dia].domingoFinRango) {
-                                myDatoSplitted1 = columna[dia].domingoInicioRango.split(":");
-                                myDatoSplitted2 = columna[dia].domingoFinRango.split(":");
-                            };
-                            if (columna[dia].domingoInicioRango && columna[dia].domingoFinRango && IsNumeric(myDatoSplitted1[0]) && IsNumeric(myDatoSplitted2[0])) {
-                                return 'De ' + columna[dia].domingoInicioRango + ' a ' + columna[dia].domingoFinRango;
-                            } else {
-                                return '';
-                            };
-                        default:
-                    }
-                    break;
-                case 'rangoDescanso':
-                    switch (diaSemana) {
-                        case 'Lunes':
-                            if (columna[dia].lunesInicio1RangoDescanso && columna[dia].lunesFin1RangoDescanso) {
-                                myDatoSplitted1 = columna[dia].lunesInicio1RangoDescanso.split(":");
-                                myDatoSplitted2 = columna[dia].lunesFin1RangoDescanso.split(":");
-                            };
-                            if (columna[dia].lunesInicio2RangoDescanso && columna[dia].lunesFin2RangoDescanso) {
-                                myDatoSplitted3 = columna[dia].lunesInicio2RangoDescanso.split(":");
-                                myDatoSplitted4 = columna[dia].lunesFin2RangoDescanso.split(":");
-                            };
-                            if (columna[dia].lunesInicio1RangoDescanso && columna[dia].lunesFin1RangoDescanso && IsNumeric(myDatoSplitted1[0]) && IsNumeric(myDatoSplitted2[0])) {
-                                let subRetorno;
-                                if (columna[dia].lunesInicio2RangoDescanso && columna[dia].lunesFin2RangoDescanso && IsNumeric(myDatoSplitted3[0]) && IsNumeric(myDatoSplitted4[0])) {
-                                    subRetorno = ' y de ' + columna[dia].lunesInicio2RangoDescanso + ' a ' + columna[dia].lunesFin2RangoDescanso;
-                                } else {
-                                    subRetorno = ''
-                                }
-                                return 'De ' + columna[dia].lunesInicio1RangoDescanso + ' a ' + columna[dia].lunesFin1RangoDescanso + subRetorno;
-                            } else {
-                                return '';
-                            };
-                        case 'Martes':
-                            if (columna[dia].martesInicio1RangoDescanso && columna[dia].martesFin1RangoDescanso) {
-                                myDatoSplitted1 = columna[dia].martesInicio1RangoDescanso.split(":");
-                                myDatoSplitted2 = columna[dia].martesFin1RangoDescanso.split(":");
-                            };
-                            if (columna[dia].martesInicio2RangoDescanso && columna[dia].martesFin2RangoDescanso) {
-                                myDatoSplitted3 = columna[dia].martesInicio2RangoDescanso.split(":");
-                                myDatoSplitted4 = columna[dia].martesFin2RangoDescanso.split(":");
-                            };
-                            if (columna[dia].martesInicio1RangoDescanso && columna[dia].martesFin1RangoDescanso && IsNumeric(myDatoSplitted1[0]) && IsNumeric(myDatoSplitted2[0])) {
-                                let subRetorno;
-                                if (columna[dia].martesInicio2RangoDescanso && columna[dia].martesFin2RangoDescanso && IsNumeric(myDatoSplitted3[0]) && IsNumeric(myDatoSplitted4[0])) {
-                                    subRetorno = ' y de ' + columna[dia].martesInicio2RangoDescanso + ' a ' + columna[dia].martesFin2RangoDescanso;
-                                } else {
-                                    subRetorno = ''
-                                }
-                                return 'De ' + columna[dia].martesInicio1RangoDescanso + ' a ' + columna[dia].martesFin1RangoDescanso + subRetorno;
-                            } else {
-                                return '';
-                            };
-                        case 'Miércoles':
-                            if (columna[dia].miercolesInicio1RangoDescanso && columna[dia].miercolesFin1RangoDescanso) {
-                                myDatoSplitted1 = columna[dia].miercolesInicio1RangoDescanso.split(":");
-                                myDatoSplitted2 = columna[dia].miercolesFin1RangoDescanso.split(":");
-                            };
-                            if (columna[dia].miercolesInicio2RangoDescanso && columna[dia].miercolesFin2RangoDescanso) {
-                                myDatoSplitted3 = columna[dia].miercolesInicio2RangoDescanso.split(":");
-                                myDatoSplitted4 = columna[dia].miercolesFin2RangoDescanso.split(":");
-                            };
-                            if (columna[dia].miercolesInicio1RangoDescanso && columna[dia].miercolesFin1RangoDescanso && IsNumeric(myDatoSplitted1[0]) && IsNumeric(myDatoSplitted2[0])) {
-                                let subRetorno;
-                                if (columna[dia].miercolesInicio2RangoDescanso && columna[dia].miercolesFin2RangoDescanso && IsNumeric(myDatoSplitted3[0]) && IsNumeric(myDatoSplitted4[0])) {
-                                    subRetorno = ' y de ' + columna[dia].miercolesInicio2RangoDescanso + ' a ' + columna[dia].miercolesFin2RangoDescanso;
-                                } else {
-                                    subRetorno = ''
-                                }
-                                return 'De ' + columna[dia].miercolesInicio1RangoDescanso + ' a ' + columna[dia].miercolesFin1RangoDescanso + subRetorno;
-                            } else {
-                                return '';
-                            };
-                        case 'Jueves':
-                            if (columna[dia].juevesInicio1RangoDescanso && columna[dia].juevesFin1RangoDescanso) {
-                                myDatoSplitted1 = columna[dia].juevesInicio1RangoDescanso.split(":");
-                                myDatoSplitted2 = columna[dia].juevesFin1RangoDescanso.split(":");
-                            };
-                            if (columna[dia].juevesInicio2RangoDescanso && columna[dia].juevesFin2RangoDescanso) {
-                                myDatoSplitted3 = columna[dia].juevesInicio2RangoDescanso.split(":");
-                                myDatoSplitted4 = columna[dia].juevesFin2RangoDescanso.split(":");
-                            };
-                            if (columna[dia].juevesInicio1RangoDescanso && columna[dia].juevesFin1RangoDescanso && IsNumeric(myDatoSplitted1[0]) && IsNumeric(myDatoSplitted2[0])) {
-                                let subRetorno;
-                                if (columna[dia].juevesInicio2RangoDescanso && columna[dia].juevesFin2RangoDescanso && IsNumeric(myDatoSplitted3[0]) && IsNumeric(myDatoSplitted4[0])) {
-                                    subRetorno = ' y de ' + columna[dia].juevesInicio2RangoDescanso + ' a ' + columna[dia].juevesFin2RangoDescanso;
-                                } else {
-                                    subRetorno = ''
-                                }
-                                return 'De ' + columna[dia].juevesInicio1RangoDescanso + ' a ' + columna[dia].juevesFin1RangoDescanso + subRetorno;
-                            } else {
-                                return '';
-                            };
-                        case 'Viernes':
-                            if (columna[dia].viernesInicio1RangoDescanso && columna[dia].viernesFin1RangoDescanso) {
-                                myDatoSplitted1 = columna[dia].viernesInicio1RangoDescanso.split(":");
-                                myDatoSplitted2 = columna[dia].viernesFin1RangoDescanso.split(":");
-                            };
-                            if (columna[dia].viernesInicio2RangoDescanso && columna[dia].viernesFin2RangoDescanso) {
-                                myDatoSplitted3 = columna[dia].viernesInicio2RangoDescanso.split(":");
-                                myDatoSplitted4 = columna[dia].viernesFin2RangoDescanso.split(":");
-                            };
-                            if (columna[dia].viernesInicio1RangoDescanso && columna[dia].viernesFin1RangoDescanso && IsNumeric(myDatoSplitted1[0]) && IsNumeric(myDatoSplitted2[0])) {
-                                let subRetorno;
-                                if (columna[dia].viernesInicio2RangoDescanso && columna[dia].viernesFin2RangoDescanso && IsNumeric(myDatoSplitted3[0]) && IsNumeric(myDatoSplitted4[0])) {
-                                    subRetorno = ' y de ' + columna[dia].viernesInicio2RangoDescanso + ' a ' + columna[dia].viernesFin2RangoDescanso;
-                                } else {
-                                    subRetorno = ''
-                                }
-                                return 'De ' + columna[dia].viernesInicio1RangoDescanso + ' a ' + columna[dia].viernesFin1RangoDescanso + subRetorno;
-                            } else {
-                                return '';
-                            };
-                        case 'Sábado':
-                            if (columna[dia].sabadoInicio1RangoDescanso && columna[dia].sabadoFin1RangoDescanso) {
-                                myDatoSplitted1 = columna[dia].sabadoInicio1RangoDescanso.split(":");
-                                myDatoSplitted2 = columna[dia].sabadoFin1RangoDescanso.split(":");
-                            };
-                            if (columna[dia].sabadoInicio2RangoDescanso && columna[dia].sabadoFin2RangoDescanso) {
-                                myDatoSplitted3 = columna[dia].sabadoInicio2RangoDescanso.split(":");
-                                myDatoSplitted4 = columna[dia].sabadoFin2RangoDescanso.split(":");
-                            };
-                            if (columna[dia].sabadoInicio1RangoDescanso && columna[dia].sabadoFin1RangoDescanso && IsNumeric(myDatoSplitted1[0]) && IsNumeric(myDatoSplitted2[0])) {
-                                let subRetorno;
-                                if (columna[dia].sabadoInicio2RangoDescanso && columna[dia].sabadoFin2RangoDescanso && IsNumeric(myDatoSplitted3[0]) && IsNumeric(myDatoSplitted4[0])) {
-                                    subRetorno = ' y de ' + columna[dia].sabadoInicio2RangoDescanso + ' a ' + columna[dia].sabadoFin2RangoDescanso;
-                                } else {
-                                    subRetorno = ''
-                                }
-                                return 'De ' + columna[dia].sabadoInicio1RangoDescanso + ' a ' + columna[dia].sabadoFin1RangoDescanso + subRetorno;
-                            } else {
-                                return '';
-                            };
-                        case 'Domingo':
-                            if (columna[dia].domingoInicio1RangoDescanso && columna[dia].domingoFin1RangoDescanso) {
-                                myDatoSplitted1 = columna[dia].domingoInicio1RangoDescanso.split(":");
-                                myDatoSplitted2 = columna[dia].domingoFin1RangoDescanso.split(":");
-                            };
-                            if (columna[dia].domingoInicio2RangoDescanso && columna[dia].domingoFin2RangoDescanso) {
-                                myDatoSplitted3 = columna[dia].domingoInicio2RangoDescanso.split(":");
-                                myDatoSplitted4 = columna[dia].domingoFin2RangoDescanso.split(":");
-                            };
-                            if (columna[dia].domingoInicio1RangoDescanso && columna[dia].domingoFin1RangoDescanso && IsNumeric(myDatoSplitted1[0]) && IsNumeric(myDatoSplitted2[0])) {
-                                let subRetorno;
-                                if (columna[dia].domingoInicio2RangoDescanso && columna[dia].domingoFin2RangoDescanso && IsNumeric(myDatoSplitted3[0]) && IsNumeric(myDatoSplitted4[0])) {
-                                    subRetorno = ' y de ' + columna[dia].domingoInicio2RangoDescanso + ' a ' + columna[dia].domingoFin2RangoDescanso;
-                                } else {
-                                    subRetorno = ''
-                                }
-                                return 'De ' + columna[dia].domingoInicio1RangoDescanso + ' a ' + columna[dia].domingoFin1RangoDescanso + subRetorno;
-                            } else {
-                                return '';
-                            };
-                        default:
-                    }
-                    break;
-                case 'cantidad':
-                    switch (diaSemana) {
-                        case 'Lunes':
-                            if (columna[dia].lunesCantidad) {
-                                return parseFloat(columna[dia].lunesCantidad / 60).toFixed(2) + ' horas';
-                            } else {
-                                return '';
-                            };
-                        case 'Martes':
-                            if (columna[dia].martesCantidad) {
-                                return parseFloat(columna[dia].martesCantidad / 60).toFixed(2) + ' horas';
-                            } else {
-                                return '';
-                            };
-                        case 'Miércoles':
-                            if (columna[dia].miercolesCantidad) {
-                                return parseFloat(columna[dia].miercolesCantidad / 60).toFixed(2) + ' horas';
-                            } else {
-                                return '';
-                            };
-                        case 'Jueves':
-                            if (columna[dia].juevesCantidad) {
-                                return parseFloat(columna[dia].juevesCantidad / 60).toFixed(2) + ' horas';
-                            } else {
-                                return '';
-                            };
-                        case 'Viernes':
-                            if (columna[dia].viernesCantidad) {
-                                return parseFloat(columna[dia].viernesCantidad / 60).toFixed(2) + ' horas';
-                            } else {
-                                return '';
-                            };
-                        case 'Sábado':
-                            if (columna[dia].sabadoCantidad) {
-                                return parseFloat(columna[dia].sabadoCantidad / 60).toFixed(2) + ' horas';
-                            } else {
-                                return '';
-                            };
-                        case 'Domingo':
-                            if (columna[dia].domingoCantidad) {
-                                return parseFloat(columna[dia].domingoCantidad / 60).toFixed(2) + ' horas';
-                            } else {
-                                return '';
-                            };
-                        default:
-                    }
-                    break;
-                default:
-            }
+            return bajas[columna[dia]?.tipoBaja] || '';
+        }
+        const horarios = {
+            rango: (inicio, fin) => (
+                inicio && fin && IsNumeric(inicio[0]) && IsNumeric(fin[0])
+                    ? `De ${inicio.join(':')} a ${fin.join(':')}`
+                    : ''
+            ),
+            rangoDescanso: (inicio1, fin1, inicio2, fin2) => {
+                if (!inicio1 || !fin1) return '';
+                let subRetorno = (inicio2 && fin2 && IsNumeric(inicio2[0]) && IsNumeric(fin2[0]))
+                    ? ` y de ${inicio2.join(':')} a ${fin2.join(':')}`
+                    : '';
+                return (IsNumeric(inicio1[0]) && IsNumeric(fin1[0]))
+                    ? `De ${inicio1.join(':')} a ${fin1.join(':')}${subRetorno}`
+                    : '';
+            },
+            cantidad: (cantidad) => cantidad ? `${parseFloat(cantidad / 60).toFixed(2)} horas` : '',
         };
+        const { tipoHorario } = columna;
+        let inicio1, fin1, inicio2, fin2;
+        switch (tipoHorario) {
+            case 'rango':
+                inicio1 = columna[dia][`${diaSemanaValor}InicioRango`]?.split(':');
+                fin1 = columna[dia][`${diaSemanaValor}FinRango`]?.split(':');
+                return horarios.rango(inicio1, fin1);
+            case 'rangoDescanso':
+                inicio1 = columna[dia][`${diaSemanaValor}Inicio1RangoDescanso`]?.split(':');
+                fin1 = columna[dia][`${diaSemanaValor}Fin1RangoDescanso`]?.split(':');
+                inicio2 = columna[dia][`${diaSemanaValor}Inicio2RangoDescanso`]?.split(':');
+                fin2 = columna[dia][`${diaSemanaValor}Fin2RangoDescanso`]?.split(':');
+                return horarios.rangoDescanso(inicio1, fin1, inicio2, fin2);
+            case 'cantidad':
+                const cantidad = columna[dia][`${diaSemanaValor}Cantidad`];
+                return horarios.cantidad(cantidad);
+            default:
+                return '';
+        }
     };
+
 
     const gestionaClassesColoresGeneralAccion = (dia, trabajadorDiaDeBaja, modificado, nombreTrabajador, tipoBaja, tipoVariacion) => {
         if (stateFestivo['estadoFestivoDia' + (dia)]) {
@@ -474,430 +223,93 @@ function LogicaLayoutCuadrantes() {
     };
 
     const retornaIconoTipoServicioAccion = (tipo) => {
-        switch (tipo) {
-            case 'LIM':
-                return (
-                    <Tooltip title="Servicio de limpieza" placement="top-end" arrow>
-                        <Avatar className={clsx(classes.tipoServ1, classes.small2)}>L</Avatar>
-                    </Tooltip>
-                )
-                break;
-            case 'LIME':
-                return (
-                    <Tooltip title="Servicio de limpieza especial" placement="top-end" arrow>
-                        <Avatar className={clsx(classes.tipoServ2, classes.small2)}>E</Avatar>
-                    </Tooltip>
-                )
-                break;
-            case 'LIMP':
-                return (
-                    <Tooltip title="Limpieza de limpieza del párking" placement="top-end" arrow>
-                        <Avatar className={clsx(classes.tipoServ3, classes.small2)}>P</Avatar>
-                    </Tooltip>
-                )
-                break;
-            case 'NAVE2':
-                return (
-                    <Tooltip title="Limpieza de limpieza de nave 2" placement="top-end" arrow>
-                        <Avatar className={clsx(classes.tipoServ4, classes.small2)}>N</Avatar>
-                    </Tooltip>
-                )
-                break;
-            case 'REFZ':
-                return (
-                    <Tooltip title="Servicio de limpieza de refuerzo" placement="top-end" arrow>
-                        <Avatar className={clsx(classes.tipoServ5, classes.small2)}>R</Avatar>
-                    </Tooltip>
-                )
-                break;
-            case 'LIM1':
-                return (
-                    <Tooltip title="Servicio de limpieza 1" placement="top-end" arrow>
-                        <Avatar className={clsx(classes.tipoServ6, classes.small2)}>1</Avatar>
-                    </Tooltip>
-                )
-                break;
-            case 'LIM2':
-                return (
-                    <Tooltip title="Servicio de limpieza 2" placement="top-end" arrow>
-                        <Avatar className={clsx(classes.tipoServ6, classes.small2)}>2</Avatar>
-                    </Tooltip>
-                )
-                break;
-            case 'FEST':
-                return (
-                    <Tooltip title="Servicio de limpieza día festivo" placement="top-end" arrow>
-                        <Avatar className={clsx(classes.tipoServ7, classes.small2)}>F</Avatar>
-                    </Tooltip>
-                )
-                break;
-            default:
-        }
+        const tipoClases = {
+            'LIM': classes.tipoServ1,
+            'LIME': classes.tipoServ2,
+            'LIMP': classes.tipoServ3,
+            'NAVE2': classes.tipoServ4,
+            'REFZ': classes.tipoServ5,
+            'LIM1': classes.tipoServ6,
+            'LIM2': classes.tipoServ6,
+            'FEST': classes.tipoServ7,
+        };
+        const servicio = tipoServicio.find(servicio => servicio.value === tipo);
+        if (!servicio) return null;
+        const clase = tipoClases[tipo];
+        return (
+            <Tooltip title={servicio.label} placement="top-end" arrow>
+                <Avatar className={clsx(clase, classes.small2)}>
+                    {servicio.prefix}
+                </Avatar>
+            </Tooltip>
+        );
     };
 
     const retornaIconoVariacionAccion = (columna, postRef, diaSemana) => {
-        const aRetornarIcono =
-            <Tooltip title={variaciones[columna[postRef].tipoVariacion - 1].label} placement="top-end" arrow >
-                <TimerIcon
-                    className={classes.colorText}
-                    style={{ marginLeft: 3 }}
-                />
-            </Tooltip>;
-        switch (columna.tipoHorario) {
-            case 'rango':
-                switch (diaSemana) {
-                    case 'Lunes':
-                        if (columna[postRef].lunesInicioRango) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Martes':
-                        if (columna[postRef].martesInicioRango) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Miércoles':
-                        if (columna[postRef].miercolesInicioRango) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Jueves':
-                        if (columna[postRef].juevesInicioRango) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Viernes':
-                        if (columna[postRef].viernesInicioRango) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Sábado':
-                        if (columna[postRef].sabadoInicioRango) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Domingo':
-                        if (columna[postRef].domingoInicioRango) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    default:
-                }
-                break;
-            case 'rangoDescanso':
-                switch (diaSemana) {
-                    case 'Lunes':
-                        if (columna[postRef].lunesInicio1RangoDescanso) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Martes':
-                        if (columna[postRef].martesInicio1RangoDescanso) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Miércoles':
-                        if (columna[postRef].miercolesInicio1RangoDescanso) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Jueves':
-                        if (columna[postRef].juevesInicio1RangoDescanso) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Viernes':
-                        if (columna[postRef].viernesInicio1RangoDescanso) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Sábado':
-                        if (columna[postRef].sabadoInicio1RangoDescanso) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Domingo':
-                        if (columna[postRef].domingoInicio1RangoDescanso) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    default:
-                }
-                break;
-            case 'cantidad':
-                switch (diaSemana) {
-                    case 'Lunes':
-                        if (columna[postRef].lunesCantidad) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Martes':
-                        if (columna[postRef].martesCantidad) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Miércoles':
-                        if (columna[postRef].miercolesCantidad) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Jueves':
-                        if (columna[postRef].juevesCantidad) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Viernes':
-                        if (columna[postRef].viernesCantidad) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Sábado':
-                        if (columna[postRef].sabadoCantidad) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    case 'Domingo':
-                        if (columna[postRef].domingoCantidad) {
-                            return aRetornarIcono;
-                        } else {
-                            return '';
-                        };
-                    default:
-                }
-                break;
-            default:
+        const diaSemanaValor = diasSemana.find(d => d.label === diaSemana)?.value;
+        const aRetornarIcono = (
+            <Tooltip title={variaciones[columna[postRef].tipoVariacion - 1]?.label} placement="top-end" arrow>
+                <TimerIcon className={classes.colorText} style={{ marginLeft: 3 }} />
+            </Tooltip>
+        );
+        const tipoHorarioMap = {
+            rango: `${diaSemanaValor}InicioRango`,
+            rangoDescanso: `${diaSemanaValor}Inicio1RangoDescanso`,
+            cantidad: `${diaSemanaValor}Cantidad`
+        };
+        const propiedad = tipoHorarioMap[columna.tipoHorario];
+        if (propiedad && columna[postRef][propiedad]) {
+            return aRetornarIcono;
         }
+        return '';
     };
 
     const gestionaValoresCasillasAccion = (indexDia, dia, columna, diaSemana, casilla) => {
-        if (columna[dia].baja || stateFestivo['estadoFestivoDia' + (indexDia - 1)]) {
-            if (columna.tipoHorario === 'cantidad') {
-                return '';
-            } else {
-                return null;
-            }
-        } else {
-            switch (columna.tipoHorario) {
-                case 'rango':
-                    switch (diaSemana) {
-                        case 'Lunes':
-                            if (casilla === 1) {
-                                return columna[dia].lunesInicioRango ? dispatch(generaFechaAccion(columna[dia].lunesInicioRango)) : null;
-                            }
-                            if (casilla === 2) {
-                                return columna[dia].lunesFinRango ? dispatch(generaFechaAccion(columna[dia].lunesFinRango)) : null;
-                            }
-                        case 'Martes':
-                            if (casilla === 1) {
-                                return columna[dia].martesInicioRango ? dispatch(generaFechaAccion(columna[dia].martesInicioRango)) : null;
-                            }
-                            if (casilla === 2) {
-                                return columna[dia].martesFinRango ? dispatch(generaFechaAccion(columna[dia].martesFinRango)) : null;
-                            }
-                        case 'Miércoles':
-                            if (casilla === 1) {
-                                return columna[dia].miercolesInicioRango ? dispatch(generaFechaAccion(columna[dia].miercolesInicioRango)) : null;
-                            }
-                            if (casilla === 2) {
-                                return columna[dia].miercolesFinRango ? dispatch(generaFechaAccion(columna[dia].miercolesFinRango)) : null;
-                            }
-                        case 'Jueves':
-                            if (casilla === 1) {
-                                return columna[dia].juevesInicioRango ? dispatch(generaFechaAccion(columna[dia].juevesInicioRango)) : null;
-                            }
-                            if (casilla === 2) {
-                                return columna[dia].juevesFinRango ? dispatch(generaFechaAccion(columna[dia].juevesFinRango)) : null;
-                            }
-                        case 'Viernes':
-                            if (casilla === 1) {
-                                return columna[dia].viernesInicioRango ? dispatch(generaFechaAccion(columna[dia].viernesInicioRango)) : null;
-                            }
-                            if (casilla === 2) {
-                                return columna[dia].viernesFinRango ? dispatch(generaFechaAccion(columna[dia].viernesFinRango)) : null;
-                            }
-                        case 'Sábado':
-                            if (casilla === 1) {
-                                return columna[dia].sabadoInicioRango ? dispatch(generaFechaAccion(columna[dia].sabadoInicioRango)) : null;
-                            }
-                            if (casilla === 2) {
-                                return columna[dia].sabadoFinRango ? dispatch(generaFechaAccion(columna[dia].sabadoFinRango)) : null;
-                            }
-                        case 'Domingo':
-                            if (casilla === 1) {
-                                return columna[dia].domingoInicioRango ? dispatch(generaFechaAccion(columna[dia].domingoInicioRango)) : null;
-                            }
-                            if (casilla === 2) {
-                                return columna[dia].domingoFinRango ? dispatch(generaFechaAccion(columna[dia].domingoFinRango)) : null;
-                            }
-                        default:
-                    }
-                    break;
-                case 'rangoDescanso':
-                    switch (diaSemana) {
-                        case 'Lunes':
-                            if (casilla === 1) {
-                                return columna[dia].lunesInicio1RangoDescanso ? dispatch(generaFechaAccion(columna[dia].lunesInicio1RangoDescanso)) : null;
-                            }
-                            if (casilla === 2) {
-                                return columna[dia].lunesFin1RangoDescanso ? dispatch(generaFechaAccion(columna[dia].lunesFin1RangoDescanso)) : null;
-                            }
-                            if (casilla === 3) {
-                                return columna[dia].lunesInicio2RangoDescanso ? dispatch(generaFechaAccion(columna[dia].lunesInicio2RangoDescanso)) : null;
-                            }
-                            if (casilla === 4) {
-                                return columna[dia].lunesFin2RangoDescanso ? dispatch(generaFechaAccion(columna[dia].lunesFin2RangoDescanso)) : null;
-                            }
-                        case 'Martes':
-                            if (casilla === 1) {
-                                return columna[dia].martesInicio1RangoDescanso ? dispatch(generaFechaAccion(columna[dia].martesInicio1RangoDescanso)) : null;
-                            }
-                            if (casilla === 2) {
-                                return columna[dia].martesFin1RangoDescanso ? dispatch(generaFechaAccion(columna[dia].martesFin1RangoDescanso)) : null;
-                            }
-                            if (casilla === 3) {
-                                return columna[dia].martesInicio2RangoDescanso ? dispatch(generaFechaAccion(columna[dia].martesInicio2RangoDescanso)) : null;
-                            }
-                            if (casilla === 4) {
-                                return columna[dia].martesFin2RangoDescanso ? dispatch(generaFechaAccion(columna[dia].martesFin2RangoDescanso)) : null;
-                            }
-                        case 'Miércoles':
-                            if (casilla === 1) {
-                                return columna[dia].miercolesInicio1RangoDescanso ? dispatch(generaFechaAccion(columna[dia].miercolesInicio1RangoDescanso)) : null;
-                            }
-                            if (casilla === 2) {
-                                return columna[dia].miercolesFin1RangoDescanso ? dispatch(generaFechaAccion(columna[dia].miercolesFin1RangoDescanso)) : null;
-                            }
-                            if (casilla === 3) {
-                                return columna[dia].miercolesInicio2RangoDescanso ? dispatch(generaFechaAccion(columna[dia].miercolesInicio2RangoDescanso)) : null;
-                            }
-                            if (casilla === 4) {
-                                return columna[dia].miercolesFin2RangoDescanso ? dispatch(generaFechaAccion(columna[dia].miercolesFin2RangoDescanso)) : null;
-                            }
-                        case 'Jueves':
-                            if (casilla === 1) {
-                                return columna[dia].juevesInicio1RangoDescanso ? dispatch(generaFechaAccion(columna[dia].juevesInicio1RangoDescanso)) : null;
-                            }
-                            if (casilla === 2) {
-                                return columna[dia].juevesFin1RangoDescanso ? dispatch(generaFechaAccion(columna[dia].juevesFin1RangoDescanso)) : null;
-                            }
-                            if (casilla === 3) {
-                                return columna[dia].juevesInicio2RangoDescanso ? dispatch(generaFechaAccion(columna[dia].juevesInicio2RangoDescanso)) : null;
-                            }
-                            if (casilla === 4) {
-                                return columna[dia].juevesFin2RangoDescanso ? dispatch(generaFechaAccion(columna[dia].juevesFin2RangoDescanso)) : null;
-                            }
-                        case 'Viernes':
-                            if (casilla === 1) {
-                                return columna[dia].viernesInicio1RangoDescanso ? dispatch(generaFechaAccion(columna[dia].viernesInicio1RangoDescanso)) : null;
-                            }
-                            if (casilla === 2) {
-                                return columna[dia].viernesFin1RangoDescanso ? dispatch(generaFechaAccion(columna[dia].viernesFin1RangoDescanso)) : null;
-                            }
-                            if (casilla === 3) {
-                                return columna[dia].viernesInicio2RangoDescanso ? dispatch(generaFechaAccion(columna[dia].viernesInicio2RangoDescanso)) : null;
-                            }
-                            if (casilla === 4) {
-                                return columna[dia].viernesFin2RangoDescanso ? dispatch(generaFechaAccion(columna[dia].viernesFin2RangoDescanso)) : null;
-                            }
-                        case 'Sábado':
-                            if (casilla === 1) {
-                                return columna[dia].sabadoInicio1RangoDescanso ? dispatch(generaFechaAccion(columna[dia].sabadoInicio1RangoDescanso)) : null;
-                            }
-                            if (casilla === 2) {
-                                return columna[dia].sabadoFin1RangoDescanso ? dispatch(generaFechaAccion(columna[dia].sabadoFin1RangoDescanso)) : null;
-                            }
-                            if (casilla === 3) {
-                                return columna[dia].sabadoInicio2RangoDescanso ? dispatch(generaFechaAccion(columna[dia].sabadoInicio2RangoDescanso)) : null;
-                            }
-                            if (casilla === 4) {
-                                return columna[dia].sabadoFin2RangoDescanso ? dispatch(generaFechaAccion(columna[dia].sabadoFin2RangoDescanso)) : null;
-                            }
-                        case 'Domingo':
-                            if (casilla === 1) {
-                                return columna[dia].domingoInicio1RangoDescanso ? dispatch(generaFechaAccion(columna[dia].domingoInicio1RangoDescanso)) : null;
-                            }
-                            if (casilla === 2) {
-                                return columna[dia].domingoFin1RangoDescanso ? dispatch(generaFechaAccion(columna[dia].domingoFin1RangoDescanso)) : null;
-                            }
-                            if (casilla === 3) {
-                                return columna[dia].domingoInicio2RangoDescanso ? dispatch(generaFechaAccion(columna[dia].domingoInicio2RangoDescanso)) : null;
-                            }
-                            if (casilla === 4) {
-                                return columna[dia].domingoFin2RangoDescanso ? dispatch(generaFechaAccion(columna[dia].domingoFin2RangoDescanso)) : null;
-                            }
-                        default:
-                    }
-                    break;
-                case 'cantidad':
-                    switch (diaSemana) {
-                        case 'Lunes':
-                            if (casilla === 1) {
-                                return columna[dia].lunesCantidad ? columna[dia].lunesCantidad : '';
-                            }
-                        case 'Martes':
-                            if (casilla === 1) {
-                                return columna[dia].martesCantidad ? columna[dia].martesCantidad : '';
-                            }
-                        case 'Miércoles':
-                            if (casilla === 1) {
-                                return columna[dia].miercolesCantidad ? columna[dia].miercolesCantidad : '';
-                            }
-                        case 'Jueves':
-                            if (casilla === 1) {
-                                return columna[dia].juevesCantidad ? columna[dia].juevesCantidad : '';
-                            }
-                        case 'Viernes':
-                            if (casilla === 1) {
-                                return columna[dia].viernesCantidad ? columna[dia].viernesCantidad : '';
-                            }
-                        case 'Sábado':
-                            if (casilla === 1) {
-                                return columna[dia].sabadoCantidad ? columna[dia].sabadoCantidad : '';
-                            }
-                        case 'Domingo':
-                            if (casilla === 1) {
-                                return columna[dia].domingoCantidad ? columna[dia].domingoCantidad : '';
-                            }
-                        default:
-                    }
-                    break;
-                default:
-            }
+        const diaSemanaValor = diasSemana.find(d => d.label === diaSemana)?.value;
+        if (columna[dia]?.baja || stateFestivo['estadoFestivoDia' + (indexDia - 1)]) {
+            return columna.tipoHorario === 'cantidad' ? '' : null;
         }
+        const dispatchAction = (key) => columna[dia][key] ? dispatch(generaFechaAccion(columna[dia][key])) : null;
+        const acciones = {
+            rango: () => {
+                const inicioKey = `${diaSemanaValor}InicioRango`;
+                const finKey = `${diaSemanaValor}FinRango`;
+                return casilla === 1 ? dispatchAction(inicioKey) : casilla === 2 ? dispatchAction(finKey) : null;
+            },
+            rangoDescanso: () => {
+                const inicio1Key = `${diaSemanaValor}Inicio1RangoDescanso`;
+                const fin1Key = `${diaSemanaValor}Fin1RangoDescanso`;
+                const inicio2Key = `${diaSemanaValor}Inicio2RangoDescanso`;
+                const fin2Key = `${diaSemanaValor}Fin2RangoDescanso`;
+                if (casilla === 1) return dispatchAction(inicio1Key);
+                if (casilla === 2) return dispatchAction(fin1Key);
+                if (casilla === 3) return dispatchAction(inicio2Key);
+                if (casilla === 4) return dispatchAction(fin2Key);
+                return null;
+            },
+            cantidad: () => {
+                const cantidadKey = `${diaSemanaValor}Cantidad`;
+                return casilla === 1 ? (columna[dia][cantidadKey] || '') : null;
+            }
+        };
+        return acciones[columna.tipoHorario]?.() || null;
     };
 
     const gestionaCabeceraServiciosFijos = (servicio) => {
-        const serObj = tiposServicioFijo.find(obj => obj.value === servicio.tipoServiciofijo);
-        const cabeceraServFijo = serObj ? `${serObj.cab}${servicio[`int_${serObj.prefix}`] ? ' (I)' : ''}` : null;
+        //modificador: servicios fijos personalizados
+        const { propiedad, existePrefix } = existePrefixSF(servicio);
+        const cabeceraServFijo = existePrefix
+            ? tiposServicioFijo.find(obj => obj.value === servicio.tipoServiciofijo)?.cab + (servicio[`int_${tiposServicioFijo.find(obj => obj.value === servicio.tipoServiciofijo)?.prefix}`] ? ' (I)' : '') || null
+            : servicio.tipoServiciofijo.charAt(0).toUpperCase() + servicio.tipoServiciofijo.slice(1) + (servicio[`int_${propiedad}`] ? ' (I)' : '');
         return cabeceraServFijo
     };
 
     const gestionaColorCabeceraServiciosFijos = (servicio) => {
-        const servicioFijoInt = tiposServicioFijo.some(serObj => {
-            return (
-                (servicio[`int_${serObj.prefix}`])
-            );
-        });
+        //modificador: servicios fijos personalizados
+        const { propiedad, existePrefix } = existePrefixSF(servicio);
+        const servicioFijoInt = existePrefix
+            ? tiposServicioFijo.some(serObj => servicio[`int_${serObj.prefix}`])
+            : servicio[`int_${propiedad}`] === true;
         if (servicioFijoInt) {
             return classes.cabeceraServiciosInt
         } else {
@@ -910,11 +322,11 @@ function LogicaLayoutCuadrantes() {
     };
 
     const retornaHeaderServiciosFijosAccion = (servicio, index, ancho, alto) => {
-        const servicioFijoAct = tiposServicioFijo.some(serObj => {
-            return (
-                (servicio[`activo_${serObj.prefix}`] === 'si')
-            );
-        });
+        //modificador: servicios fijos personalizados
+        const { propiedad, existePrefix } = existePrefixSF(servicio);
+        const servicioFijoAct = existePrefix
+            ? tiposServicioFijo.some(serObj => servicio[`activo_${serObj.prefix}`] === 'si')
+            : servicio[`activo_${propiedad}`] === 'si';
         if (servicioFijoAct) {
             return (
                 <Box
@@ -931,10 +343,15 @@ function LogicaLayoutCuadrantes() {
         };
     };
 
-    const retornoServiciosFijosEnLayoutAccion = (elemento, losServiciosFijos) => {
+    const retornoServiciosFijosEnLayoutAccion = (elemento, cuadranteServiciosFijos) => {
+        //modificador: servicios fijos personalizados
         const hayServicios = tiposServicioFijo.some(serObj => {
-            return (
-                (losServiciosFijos[`precioHora_${serObj.prefix}`] || losServiciosFijos[`int_${serObj.prefix}`])
+            return cuadranteServiciosFijos.some(obj =>
+                obj[`precioHora_${serObj.prefix}`] || obj[`int_${serObj.prefix}`]
+            );
+        }) || cuadranteServiciosFijos.some(obj => {
+            return Object.keys(obj).some(key =>
+                key.startsWith("activo_") && /P\d+$/.test(key)
             );
         });
         if (elemento === 'grid') {
@@ -969,17 +386,31 @@ function LogicaLayoutCuadrantes() {
 
     const retornaServiciosFijosEnLayoutAvatarsAccion = (servicio, index) => {
         let elTooltip, laLetra, elAnadidoTooltip, hayBaja, hayInt, esFest;
-        tiposServicioFijo.forEach(serObj => {
-            if (servicio[`precioHora_${serObj.prefix}`] || servicio[`int_${serObj.prefix}`]) {
-                const etiqueta = serObj.label.charAt(0) + serObj.label.slice(1).toLowerCase();
-                elTooltip = servicio[`int_${serObj.prefix}`] ? `${etiqueta} incluido en el cómputo` : `${etiqueta}: ${servicio.totalServicioFijo} €`;
-                elAnadidoTooltip = servicio[`activo_${serObj.prefix}`] === 'si' ? '' : ' (Inactivo)';
-                laLetra = serObj.prefix;
-                hayBaja = servicio[`activo_${serObj.prefix}`] === 'no' ? true : false;
-                hayInt = servicio[`int_${serObj.prefix}`] ? true : false;
-                esFest = serObj.prefix === "FT" || false;
+        //modificador: servicios fijos personalizados
+        const { propiedad, existePrefix } = existePrefixSF(servicio);
+        if (existePrefix) {
+            tiposServicioFijo.forEach(serObj => {
+                if (servicio[`precioHora_${serObj.prefix}`] || servicio[`int_${serObj.prefix}`]) {
+                    const etiqueta = serObj.label.charAt(0) + serObj.label.slice(1).toLowerCase();
+                    elTooltip = servicio[`int_${serObj.prefix}`] ? `${etiqueta} incluido en el cómputo` : `${etiqueta}: ${servicio.totalServicioFijo} €`;
+                    elAnadidoTooltip = servicio[`activo_${serObj.prefix}`] === 'si' ? '' : ' (Inactivo)';
+                    laLetra = serObj.prefix;
+                    hayBaja = servicio[`activo_${serObj.prefix}`] === 'no' ? true : false;
+                    hayInt = servicio[`int_${serObj.prefix}`] ? true : false;
+                    esFest = serObj.prefix === "FT" || false;
+                };
+            });
+        } else {
+            if (servicio[`precioHora_${propiedad}`] || servicio[`int_${propiedad}`]) {
+                const etiqueta = servicio.tipoServiciofijo;
+                elTooltip = servicio[`int_${propiedad}`] ? `${etiqueta} incluido en el cómputo` : `${etiqueta}: ${servicio.totalServicioFijo} €`;
+                elAnadidoTooltip = servicio[`activo_${propiedad}`] === 'si' ? '' : ' (Inactivo)';
+                laLetra = propiedad;
+                hayBaja = servicio[`activo_${propiedad}`] === 'no' ? true : false;
+                hayInt = servicio[`int_${propiedad}`] ? true : false;
+                esFest = false;
             };
-        });
+        };
         return (
             <Box style={{ paddingTop: 5 }} key={'avatar' + index}>
                 {hayBaja ? (
@@ -1051,7 +482,11 @@ function LogicaLayoutCuadrantes() {
                 objetoCuadrante.estado === 'facturado' &&
                 objetoCuadrante.total &&
                 objetoCuadrante.total.procesado.valor === 'si') {
-                estado = ' - Estado: Emitido el ' + firmaActualizacion;
+                if (objetoCuadrante.total.mailEnviado === "si") {
+                    estado = ' - Estado: Emitido y mail enviado el ' + firmaActualizacion;
+                } else {
+                    estado = ' - Estado: Emitido el ' + firmaActualizacion;
+                };
             };
             return 'Centro: ' + (objetoCentro.subNombre ? (objetoCentro.nombre + " - " + objetoCentro.subNombre) : objetoCentro.nombre) + estado
         } else {
@@ -1066,7 +501,11 @@ function LogicaLayoutCuadrantes() {
                 objetoCuadrante.total &&
                 objetoCuadrante.total.procesado.valor === 'si') {
                 if (intervencionRegistrada) {
-                    color = classes.conServicios;
+                    if (objetoCuadrante.total.mailEnviado === "si") {
+                        color = classes.headerMailing;
+                    } else {
+                        color = classes.conServicios;
+                    };
                 };
             };
             if (objetoCuadrante.estado === 'registrado') {

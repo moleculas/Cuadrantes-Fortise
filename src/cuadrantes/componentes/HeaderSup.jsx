@@ -39,7 +39,7 @@ const HeaderSup = () => {
                     classes={{
                         badge:
                             firmaActualizacion && objetoCentro.nombre && intervencionRegistrada && objetoCuadrante.estado === 'facturado' ?
-                                classes.badgeVerd :
+                            objetoCuadrante.total.mailEnviado === 'si' ? classes.badgeBlau : classes.badgeVerd :                               
                                 firmaActualizacion && objetoCentro.nombre && intervencionRegistrada && objetoCuadrante.estado === 'registrado' ?
                                     classes.badgeTaronja :
                                     firmaActualizacion && objetoCentro.nombre && !intervencionRegistrada ?

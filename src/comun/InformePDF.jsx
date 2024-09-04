@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     },
 });
 
-const InformePDF = ({ objetoInformePDF }) => {
+const InformePDF = ({ objetoInformePDF, titulo }) => {
 
     return (
         <Document>
@@ -71,7 +71,7 @@ const InformePDF = ({ objetoInformePDF }) => {
                 <Text style={styles.header} fixed>
                     ~ Gestión de cuadrantes de Servicio Fortise S.L. ~
                 </Text>
-                <Text style={styles.title}>Informe Cuadrante de Servicio</Text>
+                <Text style={styles.title}>{titulo}</Text>
                 {objetoInformePDF.map((linea, index) => {
                     if (linea[0] === 'divider') {
                         return <Text key={'divider' + index} style={styles.mb25}></Text>

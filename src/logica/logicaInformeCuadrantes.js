@@ -54,8 +54,11 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
     const { cuadranteEnUsoCuadrantes, itemEditandoConfiguracion, numeroCuadrantesCuadrantes, cambioSecuenciaSemanas } = getState().variablesCuadrantesSetters;
     const { objetoCentro } = getState().variablesCentros;
     const informe = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1];
-    const cantidadMensualPactadoInicial = parseFloat(informe.mensualPactadoInicial);
-    const esMensualPactado = cantidadMensualPactadoInicial >= 0;
+    const cantidadMensualPactadoInicial = parseFloat(informe?.mensualPactadoInicial);
+    const cantidadMensualPactado = parseFloat(informe?.mensualPactado) || null;
+    //modificador: correcció error canvis en configuració
+    const esMensualPactado = (informe.computo === 1 || informe.computo === 3) &&
+        (cambioConf ? cantidadMensualPactado >= 0 : cantidadMensualPactadoInicial >= 0);
     const arrayResultante = [];
     let elTipoServicio;
     let sumatorioTotalHorasVariacion = 0;
@@ -280,10 +283,18 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                             total + (objeto.horasFestivasComputablesExcepcion || 0), 0);
                         totalHorasGeneral = totalHorasFestivasComputablesExcepcion;
                     };
-                    proporcion = condicion1
-                        ? cantidadMensualPactadoInicial /
-                        totalHorasGeneral
-                        : condicion2 ? informe.proporcion : null;
+                    //modificador: correcció error canvis en configuració
+                    if (cambioConf) {
+                        proporcion = condicion1
+                            ? (cantidadMensualPactadoInicial ? cantidadMensualPactadoInicial : cantidadMensualPactado) /
+                            totalHorasGeneral
+                            : condicion2 ? informe.proporcion : null;
+                    } else {
+                        proporcion = condicion1
+                            ? cantidadMensualPactadoInicial /
+                            totalHorasGeneral
+                            : condicion2 ? informe.proporcion : null;
+                    };
                     objPreciosHora = condicion1
                         ? retornaPreciosHora(proporcion, "cnd1")
                         : condicion2 ? retornaPreciosHora(proporcion, "cnd2") : null;
@@ -303,6 +314,8 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                 iniciado: resultadoIniciado,
                 proporcion: proporcion,
                 mensualPactado: totalMensualPactado,
+                //modificador: correcció error canvis en configuració
+                mensualPactadoInicial: cambioConf ? cantidadMensualPactadoInicial ? cantidadMensualPactadoInicial : cantidadMensualPactado : objetoDatosInforme.mensualPactadoInicial,
                 ...tipoServicio.reduce((acc, curr) => {
                     acc[`precioHora_${curr.prefix}`] = objPreciosHora[`elPrecioHora_${curr.prefix}`];
                     acc[`totalFacturado_${curr.prefix}`] =

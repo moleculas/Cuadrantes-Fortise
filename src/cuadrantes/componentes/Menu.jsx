@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     Box,
@@ -10,7 +11,9 @@ import {
     ListItemText,
     Collapse,
     InputAdornment,
-    TextField
+    TextField,
+    Backdrop,
+    CircularProgress,
 } from '@material-ui/core';
 import {
     Assignment as AssignmentIcon,
@@ -39,11 +42,13 @@ import {
     handleClickFacturarReciboCuadranteAccion
 } from '../../redux/cuadrantesFacturacionDucks';
 import { StyledMenu } from '../../logica/logicaApp';
-import {   
+import {
     gestionarDocumentosCuadranteAccion,
     handleGenerarArchivosAccion,
     procesarDatosCuadranteAccion
 } from '../../logica/logicaGestionCuadrantes';
+import { gestionarMailingIndividualAccion } from '../../redux/cuadrantesMailingDucks';
+import { obtenerNumeracionAccion } from '../../redux/appDucks';
 
 //estilos
 import Clases from "../../clases";
@@ -51,6 +56,9 @@ import Clases from "../../clases";
 //pdf
 import { pdf } from "@react-pdf/renderer";
 import ReciboPDF from "../ReciboPDF";
+
+//carga componentes
+import CustomSnack from '../../comun/CustomSnack';
 
 const Menu = () => {
     const classes = Clases();
@@ -72,36 +80,101 @@ const Menu = () => {
         cuadranteBloqueado,
         disableCargando
     } = useSelector(store => store.variablesCuadrantesSetters);
+    const {
+        loadingMailing: openLoadingMailing,
+        errorEnviarMail,
+        exitoEnviarMail
+    } = useSelector(store => store.variablesCuadrantesMailing);
+    const [alert, setAlert] = useState({});
+    const [openSnack, setOpenSnack] = useState(false);
+    const [openLoading, setOpenLoading] = useState(false);
+
+    //useEffect
+
+    useEffect(() => {
+        if (errorEnviarMail) {
+            setAlert({
+                mensaje: "Error de conexión con la base de datos.",
+                tipo: 'error'
+            })
+            setOpenSnack(true);
+        }
+    }, [errorEnviarMail]);
+
+    useEffect(() => {
+        if (exitoEnviarMail) {
+            setAlert({
+                mensaje: "Factura enviada por email correctamente.",
+                tipo: 'success'
+            })
+            setOpenSnack(true);
+        }
+    }, [exitoEnviarMail]);
+
+    useEffect(() => {
+        if (!openLoadingMailing) {
+            setOpenLoading(false)
+        } else {
+            setOpenLoading(true)
+        }
+    }, [openLoadingMailing]);
 
     //funciones
 
     const gestionarReciboPDF = async () => {
-        dispatch(gestionarDocumentosCuadranteAccion('recibo'));
-        const [anyo, mes] = objetoCuadrante.nombre.split("-");
-        const element =
-            <ReciboPDF
-                objetoReciboPDF={objetoCuadrante.datosInforme.datosGestionEsp}
-                anyo={anyo}
-                mes={mes}
-            />;
-        const myPdf = pdf([]);
-        myPdf.updateContainer(element);
-        const blob = await myPdf.toBlob();
-        if (blob) {
-            let file = new File([blob], 'Recibo-' + objetoCuadrante.nombre + '.pdf', { type: 'application/pdf' });
-            const fileURL = URL.createObjectURL(file);
-            const pdfWindow = window.open();
-            pdfWindow.location.href = fileURL;
+        try {
+            const numRecibo = objetoCuadrante.total.procesado.numR || await dispatch(obtenerNumeracionAccion('numero_recibo'));
+            if (!numRecibo) {
+                console.error('Error: No se pudo obtener el número de recibo');
+                return;
+            }
+            dispatch(gestionarDocumentosCuadranteAccion('recibo', numRecibo));
+            const [anyo, mes] = objetoCuadrante.nombre.split("-");
+            const element = (
+                <ReciboPDF
+                    objetoReciboPDF={objetoCuadrante.datosInforme.datosGestionEsp}
+                    anyo={anyo}
+                    mes={mes}
+                    numRecibo={numRecibo}
+                />
+            );
+            const myPdf = pdf([]);
+            myPdf.updateContainer(element);
+            const blob = await myPdf.toBlob();
+            if (blob) {
+                const file = new File([blob], `Recibo-${objetoCuadrante.nombre}.pdf`, { type: 'application/pdf' });
+                const fileURL = URL.createObjectURL(file);
+                const pdfWindow = window.open();
+                pdfWindow.location.href = fileURL;
+            }
+        } catch (error) {
+            console.error('Error al obtener el número de recibo:', error);
         };
+    };
+
+    const handleClickEnviarMail = () => {
+        if (!objetoCuadrante.total.mail) {
+            setAlert({
+                mensaje: `El centro ${objetoCuadrante.total.nombreCentro} no tiene asignado un mail para enviar factura.`,
+                tipo: 'error'
+            })
+            setOpenSnack(true);
+            return;
+        };
+        dispatch(gestionarMailingIndividualAccion(objetoCuadrante));
     };
 
     return (
         <Grid item xs={3}>
+            {/* {console.log(objetoCuadrante.total)} */}
+            <Backdrop className={classes.loading} open={openLoading}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Box className={classes.alignRight}>
                 <FormControl
                     className={classes.form}>
                     <Button
-                        disabled={esInicioCuadrantes ? true : false}                        
+                        disabled={esInicioCuadrantes ? true : false}
                         style={{ marginRight: 20, width: 250 }}
                         variant="contained"
                         color='primary'
@@ -128,8 +201,8 @@ const Menu = () => {
                         </MenuItem>
                         <MenuItem
                             onClick={() => dispatch(procesarDatosCuadranteAccion('normal'))}
-                            disabled={(cuadranteBloqueado || objetoCuadrante.estado === 'facturado') ? true : 
-                            cuadranteRegistrado === 'si' ? disabledItemBotonActualizar : disabledItemBotonRegistrar}
+                            disabled={(cuadranteBloqueado || objetoCuadrante.estado === 'facturado') ? true :
+                                cuadranteRegistrado === 'si' ? disabledItemBotonActualizar : disabledItemBotonRegistrar}
                         >
                             <ListItemIcon>
                                 {cuadranteRegistrado === 'si' ? <SystemUpdateAltIcon fontSize="small" /> : <SaveIcon fontSize="small" />}
@@ -147,7 +220,7 @@ const Menu = () => {
                             {openFacturacion ? <ExpandLess /> : <ExpandMore />}
                         </MenuItem>
                         <Collapse in={openFacturacion} timeout="auto" unmountOnExit>
-                            {((objetoCentro.nombre !== '' && objetoCentro.horario.horario[0] && objetoCentro.horario.horario[0].computo === 3) || (objetoCentro.nombre !== '' && objetoCentro.serviciosFijos.gestionEspSF)) ? (
+                            {((objetoCentro.nombre !== '' && objetoCentro?.horario?.horario?.some(item => item?.computo === 3)) || (objetoCentro.nombre !== '' && objetoCentro.serviciosFijos.gestionEspSF)) ? (
                                 <MenuItem
                                     className={classes.nested}
                                     onClick={() => dispatch(handleClickFacturarReciboCuadranteAccion())}
@@ -169,11 +242,11 @@ const Menu = () => {
                                 onClick={() => dispatch(handleClickFacturacionInteriorMenuAccion())}
                                 disabled={objetoCuadrante.estado === 'facturado' && disabledItemBotonActualizar ? false : true}
                             >
-                                <ListItemText primary={((objetoCentro.nombre !== '' && objetoCentro.horario.horario[0] && objetoCentro.horario.horario[0].computo === 3) || (objetoCentro.nombre !== '' && objetoCentro.serviciosFijos.gestionEspSF)) ? "Generar Recibo" : "Generar Archivos"} />
+                                <ListItemText primary={((objetoCentro.nombre !== '' && objetoCentro?.horario?.horario?.some(item => item?.computo === 3)) || (objetoCentro.nombre !== '' && objetoCentro.serviciosFijos.gestionEspSF)) ? "Generar Recibo" : "Generar Archivos"} />
                                 {openFacturacionInterior ? <ExpandLess /> : <ExpandMore />}
                             </MenuItem>
                             <Collapse in={openFacturacionInterior} timeout="auto" unmountOnExit>
-                                {((objetoCentro.nombre !== '' && objetoCentro.horario.horario[0] && objetoCentro.horario.horario[0].computo === 3) || (objetoCentro.nombre !== '' && objetoCentro.serviciosFijos.gestionEspSF)) ? (
+                                {((objetoCentro.nombre !== '' && objetoCentro?.horario?.horario?.some(item => item?.computo === 3)) || (objetoCentro.nombre !== '' && objetoCentro.serviciosFijos.gestionEspSF)) ? (
                                     objetoCuadrante.estado === 'facturado' ? (
                                         <MenuItem
                                             className={classes.nested}
@@ -212,6 +285,14 @@ const Menu = () => {
                                     </MenuItem>
                                 )}
                             </Collapse>
+                            <MenuItem
+                                className={classes.nested}
+                                onClick={() => handleClickEnviarMail()}
+                                disabled={!objetoCuadrante?.total?.procesado?.numF}
+                                style={{ cursor: objetoCuadrante?.total?.procesado?.numF && !objetoCuadrante?.total?.mail ? 'not-allowed' : 'pointer' }}
+                            >
+                                <ListItemText primary="Enviar mail Factura" />
+                            </MenuItem>
                         </Collapse>
                         <MenuItem
                             onClick={() => dispatch(handleClickOpenDialogCuadrantes1Accion())}
@@ -225,6 +306,13 @@ const Menu = () => {
                     </StyledMenu>
                 </FormControl>
             </Box>
+            <CustomSnack
+                open={openSnack}
+                message={alert.mensaje}
+                severity={alert.tipo}
+                tipoCuadrante={false}
+                setOpenSnack={setOpenSnack}
+            />
         </Grid>
     );
 };

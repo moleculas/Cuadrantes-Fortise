@@ -123,7 +123,7 @@ const PendientesRegistrados = (props) => {
     }, [cuadrantesRegistradosArray]);
 
     useEffect(() => {
-        if ((laDataFAC.length > 0) && (laDataFAC.length === arrayCuadrantesDefsParaCheck.length)) {
+        if ((laDataFAC.length > 0) && (laDataFAC.length === arrayCuadrantesDefsParaCheck.length)) {           
             dispatch(actualizarCuadrantesIteradosAccion()).then(({ payload }) => {
                 if (payload) {
                     setArrayCuadrantesDefsParaCheck([]);
@@ -158,56 +158,31 @@ const PendientesRegistrados = (props) => {
         dispatch(venimosDeRegistradosAccion(true));
     };
 
-    const retornaCantidadChecked = () => {
-        let contador = 0;
-        for (const prop in checked) {
-            if (checked[prop]) {
-                contador++;
-            }
-        };
-        return contador
-    };
+    const retornaCantidadChecked = () => Object.values(checked).filter(Boolean).length;
 
-    const retornaDisabledChecked = () => {
-        let arrayRespuestas = [];
-        for (const prop in checked) {
-            if (checked[prop]) {
-                arrayRespuestas.push(true);
-            } else {
-                arrayRespuestas.push(false);
-            }
-        };
-        if (arrayRespuestas.includes(true)) {
-            return false;
-        } else {
-            return true;
-        };
-    };
+    const retornaDisabledChecked = () => !Object.values(checked).includes(true);
 
     const selectAllChecked = () => {
-        let object = {};
-        for (let i = 0; i < cuadrantesRegistradosArray.length; i++) {
-            if (cuadrantesRegistradosArray[i].total.tocaFacturar.valor === 'si') {
-                if (cuadrantesRegistradosArray[i].total.codigo) {
-                    if (!cuadrantesRegistradosArray[i].total.totalesPeriodicos) {
-                        object['checked-' + cuadrantesRegistradosArray[i]['id']] = true;
-                    } else {
-                        if (!cuadrantesRegistradosArray[i].total.totalesPeriodicos.noExisteCuadrante) {
-                            object['checked-' + cuadrantesRegistradosArray[i]['id']] = true;
-                        };
-                    };
-                };
-            };
-        };
+        const object = cuadrantesRegistradosArray.reduce((acc, cuadrante) => {
+            const { total, id } = cuadrante;
+            if (
+                total.tocaFacturar.valor === 'si' &&
+                total.codigo &&
+                (!total.totalesPeriodicos || !total.totalesPeriodicos.noExisteCuadrante)
+            ) {
+                acc[`checked-${id}`] = true;
+            }
+            return acc;
+        }, {});
         setChecked(object);
         setMarcarTodosVisible(false);
     };
 
     const selectNoneChecked = () => {
-        let object = {};
-        for (let i = 0; i < cuadrantesRegistradosArray.length; i++) {
-            object['checked-' + cuadrantesRegistradosArray[i]['id']] = false;
-        }
+        const object = cuadrantesRegistradosArray.reduce((acc, cuadrante) => {
+            acc[`checked-${cuadrante.id}`] = false;
+            return acc;
+        }, {});
         setChecked(object);
         setMarcarTodosVisible(true);
     };
@@ -267,25 +242,13 @@ const PendientesRegistrados = (props) => {
         };
     };
 
-    const retornaDisabledCheched = (total) => {
-        if (total.tocaFacturar.valor === 'si') {
-            if (!total.codigo) {
-                return true
-            };
-            if (!total.totalesPeriodicos) {
-                return false
-            } else {
-                if (!total.totalesPeriodicos.noExisteCuadrante) {
-                    return false
-                } else {
-                    return true
-                };
-            };
-        } else {
-            return true
-        };
+    const retornaDisabledCheckedItem = (total) => {
+        if (total.tocaFacturar.valor !== 'si') return true;
+        if (!total.codigo) return true;
+        if (!total.totalesPeriodicos) return false;
+        return total.totalesPeriodicos.noExisteCuadrante || false;
     };
-
+    
     //retorno componentes
 
     const retornaCuadranteRegistrado = (cuadrante, index) => {
@@ -304,7 +267,7 @@ const PendientesRegistrados = (props) => {
                         name={'checked-' + cuadrante.id}
                         onChange={handleChangeChecked}
                         style={{ marginTop: -3 }}
-                        disabled={retornaDisabledCheched(cuadrante.total)}
+                        disabled={retornaDisabledCheckedItem(cuadrante.total)}
                     />
                     <ListItemText
                         primary={cuadrante.total.subNombreCentro ? (cuadrante.nombreCentro + " - " + cuadrante.total.subNombreCentro) : cuadrante.nombreCentro}
@@ -389,7 +352,7 @@ const PendientesRegistrados = (props) => {
                         <CircularProgress />
                     </Box>
                 ) : (numeroCuadrantesRegistrados < 1 ? (
-                    <Box p={3} style={{ width: '100%', minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra }}>
+                    <Box p={3} style={{ width: '100%', minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra, marginTop: 0, marginLeft: 0 }}>
                         <Alert severity="info">No hay cuadrantes registrados por gestionar.</Alert>
                     </Box>
                 ) : (

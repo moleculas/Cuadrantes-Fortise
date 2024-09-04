@@ -255,7 +255,7 @@ export const vaciarDatosCentroAccion = () => (dispatch, getState) => {
             telefono: '',
             telefono2: '',
             formaPago: '',
-            tempPago: '',
+            tempPago: '',          
             diaPago: '',
             activoNumCuenta: false,
             horario: {
@@ -332,7 +332,7 @@ export const obtenerCentroAccion = (objeto, id) => async (dispatch, getState) =>
                 telefono: res.data.telefono,
                 telefono2: res.data.telefono_2,
                 formaPago: res.data.forma_pago,
-                tempPago: res.data.temp_pago,
+                tempPago: res.data.temp_pago,                
                 diaPago: res.data.dia_pago,
                 activoNumCuenta: res.data.activo_num_cuenta,
                 horario: JSON.parse(res.data.horario),

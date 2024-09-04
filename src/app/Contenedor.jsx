@@ -19,7 +19,7 @@ import Inicio from '../inicio/Inicio';
 import Login from '../login/Login';
 import Cuadrantes from '../cuadrantes/Cuadrantes';
 import Trabajadores from '../trabajadores/Trabajadores';
-import Nominas from '../nominas/Nominas';
+import HorasTrabajadores from '../nominas/HorasTrabajadores';
 import Configuracion from '../configuracion/Configuracion';
 import Centros from '../centros/Centros';
 import NotFoundPage from './NotFoundPage';
@@ -122,8 +122,8 @@ const Contenedor = () => {
                             <Route path="/centros" >
                                 <Centros />
                             </Route>
-                            <Route path="/nominas" >
-                                <Nominas />
+                            <Route path="/horasTrabajadores" >
+                                <HorasTrabajadores />
                             </Route>
                             <Route path="/configuracion" >
                                 <Configuracion />

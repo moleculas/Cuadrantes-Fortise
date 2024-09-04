@@ -1,9 +1,9 @@
 import Constantes from "../constantes";
 import {
     setCuadranteServiciosFijosAccion,
-    setLosServiciosFijosAccion,
     setStateSwitchTipoServicioFijoCuadranteAccion,
-    setItemEditandoServiciosFijosAccion
+    setItemEditandoServiciosFijosAccion,
+    setServiciosFijosPersonalizadosAccion
 } from '../redux/cuadrantesServiciosFijosDucks';
 import { obtenerCategoriaPorCentroAccion } from '../redux/centrosDucks';
 import { retornaTextoConceptoServicioAccion } from '../redux/appDucks';
@@ -24,7 +24,8 @@ import {
     setStateFestivoAccion,
     registrarCuadranteAccion,
     cambiarACuadranteRegistradoAccion,
-    actualizarCuadranteAccion
+    actualizarCuadranteAccion,
+    setProcesoHorasTrabajadoresAccion
 } from '../redux/cuadrantesDucks';
 import {
     setTrabajadoresEnCuadranteAccion,
@@ -51,13 +52,14 @@ import {
     setControladorDeEstadoAccion
 } from '../redux/cuadrantesSettersDucks';
 import {
-    obtenerNumeroRecibosAccion,
     registrarIntervencionAccion,
-    actualizarNumeroRecibosAccion,
-    generarArchivosXLSAccion
+    generarArchivosXLSAccion,
+    retornaMinutosAccion
 } from '../redux/appDucks';
+import { setTrabajadoresInicioAccion } from '../redux/horasTrabajadoresDucks';
 import {
-    gestionaColumnaServiciosFijosInicioAccion
+    gestionaColumnaServiciosFijosInicioAccion,
+    existePrefixSF
 } from './logicaServiciosFijos';
 import {
     gestionaColumnaCuadranteAccion,
@@ -68,7 +70,7 @@ import { limpiarCuadranteInformeAccion } from './logicaInformeCuadrantes';
 import { stringify } from 'zipson';
 
 const {
-    TIPO_SERVICIO_FIJO: listadoServiciosFijos,
+    TIPO_SERVICIO_FIJO: tiposServicioFijo,
     DIAS_SEMANA: diasSemana,
     TIPO_SERVICIO: tipoServicio,
 } = Constantes;
@@ -84,20 +86,9 @@ export const cambiarEstadoCuadranteEnUsoRevisadoAccion = (estado) => (dispatch, 
     dispatch(setNumeroCuadrantesCuadrantesAccion(arrayNumeroCuadrantes));
 };
 
-const obtenerDatosGestionEspecialAccion = () => (dispatch, getState) => {
-    const { objetoCentro } = getState().variablesCentros;
-    const { objetoCuadrante } = getState().variablesCuadrantes;
-    if (objetoCuadrante.total && objetoCuadrante.total.procesado && !objetoCuadrante.total.procesado.numR) {
-        if ((objetoCentro.horario.horario[0] && parseInt(objetoCentro.horario.horario[0].computo) === 3) || objetoCentro.serviciosFijos.gestionEspSF) {
-            dispatch(obtenerNumeroRecibosAccion('configuracion'));
-        };
-    };
-};
-
 export const centroAGestionarInicioAccion = () => (dispatch, getState) => {
     const { objetoCentro } = getState().variablesCentros;
     const { cuadranteRegistrado, objetoCuadrante, calendarioAGestionar } = getState().variablesCuadrantes;
-    const { numeroRecibos } = getState().variablesApp;
     dispatch(setOpenLoadingAccion(true));
     if (objetoCentro.nombre !== '') {
         if (cuadranteRegistrado === 'no') {
@@ -180,7 +171,6 @@ export const centroAGestionarInicioAccion = () => (dispatch, getState) => {
                 );
                 arrayHoras.push(null);
             };
-            const objetoRetornoDatosGestionEspecial = numeroRecibos ? { numeroRecibos, cantidadTexto: '' } : null;
             dispatch(actualizarObjetoCuadranteAccion({
                 ...objetoCuadrante,
                 nombre: calendarioAGestionar + '-' + objetoCentro.id,
@@ -198,6 +188,8 @@ export const centroAGestionarInicioAccion = () => (dispatch, getState) => {
                     formaPago: objetoCentro.formaPago,
                     telefono: objetoCentro.telefono,
                     mail: objetoCentro.mail,
+                    mail2: objetoCentro.mail2 || null,
+                    diaPago: objetoCentro.diaPago || null,
                     datosCuadrante: arrayHorario
                 },
                 datosServicios: {
@@ -208,7 +200,8 @@ export const centroAGestionarInicioAccion = () => (dispatch, getState) => {
                 datosInforme: {
                     objeto: 'informe',
                     tocaFacturar: dispatch(calculaTocaFacturacionAccion()),
-                    datosInforme: arrayInforme
+                    datosInforme: arrayInforme,
+                    mailEnviado: 'no'
                 },
                 datosTrabajadoresIniciales: {
                     objeto: 'trabajadores',
@@ -228,27 +221,35 @@ const calculaTocaFacturacionAccion = () => (dispatch, getState) => {
     const { calendarioAGestionar, totalesPeriodicos } = getState().variablesCuadrantes;
     const { objetoCentro } = getState().variablesCentros;
     const mes = parseInt(calendarioAGestionar.split("-")[1]);
-    let objetoRetornoCalculo = {};
-    if (objetoCentro.tempPago === 'bimensual' && (mes % 2 === 1)) {
+    const { tempPago, horario, serviciosFijos } = objetoCentro;
+    const horarioCentro = horario?.horario || [];
+    let objetoRetornoCalculo = { valor: 'si', razon: '' };
+    if (tempPago === 'bimensual' && mes % 2 === 1) {
         objetoRetornoCalculo = { valor: 'no', razon: 'temp' };
-    } else if (objetoCentro.tempPago === 'bimensual' && (mes % 2 === 0)) {
-        objetoRetornoCalculo = { valor: 'si', razon: '' };
+    } else if (tempPago === 'bimensual' && mes % 2 === 0) {
         if (!totalesPeriodicos.total) {
             dispatch(obtenerCuadrantesPeriodicosAccion('cuadrantes', calendarioAGestionar, 'bimensual', objetoCentro.id));
-        };
-    } else if (objetoCentro.tempPago === 'trimestral' && (mes % 3 !== 0)) {
+        }
+    } else if (tempPago === 'trimestral' && mes % 3 !== 0) {
         objetoRetornoCalculo = { valor: 'no', razon: 'temp' };
-    } else if (objetoCentro.tempPago === 'trimestral' && (mes % 3 === 0)) {
-        objetoRetornoCalculo = { valor: 'si', razon: '' };
+    } else if (tempPago === 'trimestral' && mes % 3 === 0) {
         if (!totalesPeriodicos.total) {
             dispatch(obtenerCuadrantesPeriodicosAccion('cuadrantes', calendarioAGestionar, 'trimestral', objetoCentro.id));
-        };
-    } else if ((objetoCentro.horario.horario[0] && objetoCentro.horario.horario[0].computo === 3) || objetoCentro.serviciosFijos.gestionEspSF) {
-        objetoRetornoCalculo = { valor: 'no', razon: 'gest' };
-    } else {
-        objetoRetornoCalculo = { valor: 'si', razon: '' };
+        }
+    } else if (horarioCentro.length === 1) {
+        const computo = horarioCentro[0]?.computo;
+        if ([3].includes(computo) || serviciosFijos.gestionEspSF) {
+            objetoRetornoCalculo = { valor: 'no', razon: 'gest' };
+        }
+    } else if (horarioCentro.length > 1) {
+        const hasValidComputo = horarioCentro.some(hor => [1, 2].includes(hor?.computo)) &&
+            horarioCentro.every(hor => hor?.computo !== 3) &&
+            !serviciosFijos.gestionEspSF;
+        if (!hasValidComputo) {
+            objetoRetornoCalculo = { valor: 'no', razon: 'gest' };
+        }
     };
-    return objetoRetornoCalculo
+    return objetoRetornoCalculo;
 };
 
 export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (dispatch, getState) => {
@@ -263,7 +264,8 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
     dispatch(setFirmaActualizacionAccion(objetoCuadrante.actualizacion));
     const myObjetoServiciosFijos = {};
     const objetoEstadosSwitch = {};
-    listadoServiciosFijos.forEach(prefixObj => {
+    const arrTrabajadoresInicio = [];
+    tiposServicioFijo.forEach(prefixObj => {
         myObjetoServiciosFijos[`precioHora_${prefixObj.prefix}`] = null;
         myObjetoServiciosFijos[`variacion_${prefixObj.prefix}`] = '';
         myObjetoServiciosFijos[`diaVariacion_${prefixObj.prefix}`] = '';
@@ -279,7 +281,17 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
     };
     if (datosServicios) {
         datosServicios.forEach((servicio) => {
-            listadoServiciosFijos.forEach(prefixObj => {
+            //modificador: control horas servicios fijos
+            if (cuadranteRegistrado === 'si' || (cuadranteRegistrado === 'no' && numeroCuadrantesCuadrantes[numeroCuadrante - 1].revisado)) {
+                if (servicio.hasOwnProperty('horas')) {
+                    Object.keys(servicio).forEach(key => {
+                        if (key.startsWith('trab_') && servicio[key]) {
+                            arrTrabajadoresInicio.push(servicio[key]);
+                        }
+                    });
+                };
+            };
+            tiposServicioFijo.forEach(prefixObj => {
                 if (servicio[`precioHora_${prefixObj.prefix}`] || servicio[`int_${prefixObj.prefix}`]) {
                     myObjetoServiciosFijos[`precioHora_${prefixObj.prefix}`] = servicio[`precioHora_${prefixObj.prefix}`];
                     myObjetoServiciosFijos[`variacion_${prefixObj.prefix}`] = servicio[`variacion_${prefixObj.prefix}`];
@@ -294,6 +306,26 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
         dispatch(setCuadranteServiciosFijosAccion(dispatch(gestionaColumnaServiciosFijosInicioAccion(objetoCuadrante.datosServicios.datosServicios[numeroCuadrante - 1], false))));
         bloqueadoSF = 'si';
     };
+    //modificador: servicios fijos personalizados
+    if (cuadranteRegistrado === 'si' || (cuadranteRegistrado === 'no' && numeroCuadrantesCuadrantes[numeroCuadrante - 1].revisado)) {
+        if (datosServicios) {
+            const arrServiciosFijosPersonalizados = datosServicios.reduce((acc, servicio) => {
+                const { propiedad, existePrefix } = existePrefixSF(servicio);
+                if (!existePrefix) {
+                    const obj = ['variacion', 'diaVariacion', 'activo', 'int', 'trab', 'precioHora'].reduce((o, key) => {
+                        o[`${key}_${propiedad}`] = servicio[`${key}_${propiedad}`];
+                        return o;
+                    }, {});
+                    obj[`descripcion_${propiedad}`] = servicio[`tipoServiciofijo`];
+                    acc.push(obj);
+                }
+                return acc;
+            }, []);
+            if (arrServiciosFijosPersonalizados.length > 0) {
+                dispatch(setServiciosFijosPersonalizadosAccion(arrServiciosFijosPersonalizados));
+            }
+        };
+    };
     const obtenElementoTrabajadorInicio = async (trabajadorIterado, index, arrayControl) => {
         return new Promise((resolve) => {
             if (trabajadorIterado['trabajador_' + (index + 1)]) {
@@ -303,7 +335,7 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
                         dispatch(gestionTrabajadorAccion(trabajador)).then(({ payload }) => {
                             arrayControl.push(trabajadorIterado);
                             if (payload) {
-                                if (trabajadorIterado['suplente_' + (index + 1)]) {
+                                if (trabajadorIterado['suplente_' + (index + 1)]) {                                   
                                     dispatch(obtenerSuplenteAccion('trabajadores', trabajadorIterado['suplente_' + (index + 1)])).then(({ suplente }) => {
                                         dispatch(gestionSuplenteAccion(suplente)).then(({ payload }) => {
                                             if (payload) {
@@ -348,14 +380,14 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
         });
     };
     if (cuadranteRegistrado === 'no' && !numeroCuadrantesCuadrantes[numeroCuadrante - 1].revisado) {
-        if (objetoCuadrante.datosTrabajadoresIniciales.datosTrabajadoresIniciales[numeroCuadrante - 1]) {
+        if (objetoCuadrante.datosTrabajadoresIniciales.datosTrabajadoresIniciales[numeroCuadrante - 1]) {           
             async function forEachAsync(array) {
                 dispatch(setDisableCargandoAccion(true));
                 const arrayControl = [];
                 for (let index = 0; index < array.length; index++) {
                     const trabajadorIterado = array[index];
                     let valido = false;
-                    while (!valido) {
+                    while (!valido) {                     
                         const result = await obtenElementoTrabajadorInicio(trabajadorIterado, index, arrayControl);
                         if (result.payload.trab === "trabajadorIterado") {
                             valido = true;
@@ -374,6 +406,8 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
                 dispatch(setDisableCargandoAccion(true));
                 for (let index = 0; index < array.length; index++) {
                     const trabajadorIterado = array[index];
+                    //modificador: control horas servicios fijos
+                    arrTrabajadoresInicio.push(trabajadorIterado.idTrabajador);
                     let valido = false;
                     while (!valido) {
                         const result = await obtenElementoTrabajadorRegistrado(trabajadorIterado);
@@ -387,8 +421,8 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
                 dispatch(setDisableCargandoAccion(false));
             });
         };
+        dispatch(setTrabajadoresInicioAccion(arrTrabajadoresInicio));
     };
-    dispatch(setLosServiciosFijosAccion(myObjetoServiciosFijos));
     dispatch(setStateSwitchTipoServicioFijoCuadranteAccion(objetoEstadosSwitch));
     dispatch(setItemEditandoServiciosFijosAccion({
         switch: objetoEstadosSwitch,
@@ -436,6 +470,19 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
         }
     };
     dispatch(setItemEditandoConfiguracionAccion(objetoDatosCuadrante));
+    // async function obtenerDatosGestionEspecialInterna() {
+    //     if (objetoCuadrante.total && objetoCuadrante.total.procesado && !objetoCuadrante.total.procesado.numR) {
+    //         if ((objetoCentro.horario.horario[0] && parseInt(objetoCentro.horario.horario[0].computo) === 3) || objetoCentro.serviciosFijos.gestionEspSF) {
+    //             const numRecibo = await dispatch(obtenerNumeracionAccion('numero_recibo'));
+    //             if (numRecibo) {
+    //                 return numRecibo
+    //             } else {
+    //                 return false
+    //             }
+    //         };
+    //     };
+    //     return false;
+    // };  
     if (cuadranteRegistrado === 'si' || (cuadranteRegistrado === 'no' && numeroCuadrantesCuadrantes[numeroCuadrante - 1].revisado)) {
         let losDatosInforme;
         if (datosCuadrante.arrayCuadrante.length > 0) {
@@ -487,7 +534,11 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
                         datosInforme: losDatosInforme
                     }));
                 };
-                objetoCentro.nombre !== '' && dispatch(obtenerDatosGestionEspecialAccion());
+                //objetoCentro.nombre !== '' && dispatch(obtenerDatosGestionEspecialAccion());              
+                // obtenerDatosGestionEspecialInterna().then((numRecibo) => {
+                //     console.log(numRecibo)
+                //     dispatch(setNumeracion(numRecibo));
+                // });
             } else {
                 dispatch(setEstamosActualizandoCuadranteSinCargaAccion(true));
                 dispatch(actualizarObjetoCuadranteAccion({
@@ -497,7 +548,10 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
             };
         } else {
             if (cuadranteRegistrado === 'si') {
-                objetoCentro.nombre !== '' && dispatch(obtenerDatosGestionEspecialAccion());
+                //objetoCentro.nombre !== '' && dispatch(obtenerDatosGestionEspecialAccion());          
+                // obtenerDatosGestionEspecialInterna().then((numRecibo) => {
+                //     dispatch(setNumeracion(numRecibo));
+                // });
                 objetoCuadrante.total.totalesPeriodicos
                     ? (() => {
                         losDatosInforme = { ...objetoCuadrante.datosInforme };
@@ -546,7 +600,7 @@ export const gestionTrabajadorAccion = (objetoTrabajadorInicio) => (dispatch, ge
     let arrayTr = [];
     if (esInicioTra) {
         arrayTr = [...trabajadoresEnCuadrante];
-        if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].tipoRegistro === 'individual') {
+        if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1]?.tipoRegistro === 'individual') {
             objetoTrabajadorInicio['laPosicionDelTrabajador'] = arrayTr.length + 1;
         };
         if (cuadranteRegistrado === 'no' && !numeroCuadrantesCuadrantes[cuadranteEnUsoCuadrantes - 1].revisado) {
@@ -588,6 +642,8 @@ export const gestionTrabajadorAccion = (objetoTrabajadorInicio) => (dispatch, ge
         };
     }
     if (esCambioTra) {
+         //modificador: control horas trabajadores    
+        dispatch(gestionCambioTrabajadorHorasTrabajadores(valorPrevioAccordionAbierto));
         arrayTr = [...trabajadoresEnCuadrante];
         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].tipoRegistro === 'individual') {
             objetoTrabajador['laPosicionDelTrabajador'] = posicionTrabajadorPrevioACambiar;
@@ -637,7 +693,11 @@ export const gestionTrabajadorAccion = (objetoTrabajadorInicio) => (dispatch, ge
 };
 
 export const gestionSuplenteAccion = (objetoSuplenteInicio) => (dispatch, getState) => {
-    const { cuadranteRegistrado, objetoCuadrante, cuadrante } = getState().variablesCuadrantes;
+    const {
+        cuadranteRegistrado,
+        objetoCuadrante,
+        cuadrante
+    } = getState().variablesCuadrantes;
     const {
         trabajadoresEnCuadrante,
         suplentesEnCuadrante,
@@ -698,6 +758,8 @@ export const gestionSuplenteAccion = (objetoSuplenteInicio) => (dispatch, getSta
         };
     };
     if (esCambioSup) {
+         //modificador: control horas trabajadores    
+        dispatch(gestionCambioTrabajadorHorasTrabajadores(valorPrevioAccordionAbierto));
         arraySu = [...suplentesEnCuadrante];
         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].tipoRegistro === 'individual') {
             objetoSuplente['laPosicionDelTrabajador'] = posicionSuplentePrevioACambiar;
@@ -743,6 +805,28 @@ export const gestionSuplenteAccion = (objetoSuplenteInicio) => (dispatch, getSta
             dispatch(setEsUnaActualizacionTrabajadorAccion(false));
         };
     };
+};
+
+const gestionCambioTrabajadorHorasTrabajadores = (valorPrevioAccordionAbierto) => (dispatch, getState) => {
+    const { trabajadoresInicio } = getState().variablesHorasTrabajadores;
+    const { cuadranteRegistrado, procesoHorasTrabajadores } = getState().variablesCuadrantes;
+    let horasTrabajadores = procesoHorasTrabajadores?.horasTrabajadores;
+    let trabajadoresIniciales = [...trabajadoresInicio];
+    if (horasTrabajadores && horasTrabajadores.length > 0) {
+        horasTrabajadores = horasTrabajadores.filter(
+            (trabajador) => trabajador.trabajadorId !== valorPrevioAccordionAbierto
+        );
+        dispatch(setProcesoHorasTrabajadoresAccion({
+            ...procesoHorasTrabajadores,
+            horasTrabajadores
+        }));
+    };
+    if (trabajadoresIniciales && trabajadoresIniciales.length > 0 && cuadranteRegistrado === "no") {
+        trabajadoresIniciales = trabajadoresIniciales.filter(
+            (trabajador) => trabajador !== valorPrevioAccordionAbierto
+        );
+        dispatch(setTrabajadoresInicioAccion(trabajadoresIniciales));
+    }
 };
 
 const numeroALetras = (function () {
@@ -1002,8 +1086,14 @@ const calculoTotalHoras = () => (dispatch, getState) => {
 
 const procesarDatosCuadrantePromesa = (index, noHayRegistro) => (dispatch, getState) => {
     const { cuadranteServiciosFijos } = getState().variablesCuadrantesServiciosFijos;
-    const { cuadrante, objetoCuadrante, cuadranteRegistrado } = getState().variablesCuadrantes;
+    const {
+        cuadrante,
+        objetoCuadrante,
+        cuadranteRegistrado,
+        procesoHorasTrabajadores
+    } = getState().variablesCuadrantes;
     const { cuadranteEnUsoCuadrantes, mesConFestivosCompleto } = getState().variablesCuadrantesSetters;
+    const { arrayTrabajadores: listadoTrabajadores } = getState().variablesTrabajadores;
     //revisamos que el cuadrante no esté a 0
     const informe = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1];
     const informeIn = objetoCuadrante.datosInforme.datosInforme[index];
@@ -1013,26 +1103,41 @@ const procesarDatosCuadrantePromesa = (index, noHayRegistro) => (dispatch, getSt
     const arrayTrabajadoresInicialesCuadrante = cuadranteRegistrado === 'no'
         ? [...objetoCuadrante.datosTrabajadoresIniciales.datosTrabajadoresIniciales]
         : [];
-
-    let hayServiciosFijos = false;
     let arrayFinalServiciosFijos = [];
     let sumatorioServiciosFijos = 0;
+    //modificador: servicios fijos personalizados
+    let hayServiciosFijos = false;
     cuadranteServiciosFijos.forEach((servicio) => {
-        listadoServiciosFijos.forEach(prefixObj => {
-            if (servicio.tipoServiciofijo === prefixObj.value) {
-                if (servicio.totalServicioFijo !== null) {
-                    if (mesConFestivosCompleto) {
-                        sumatorioServiciosFijos = 0;
-                        servicio.totalServicioFijo = 0;
-                    } else {
-                        sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+        const { existePrefix } = existePrefixSF(servicio);
+        if (existePrefix) {
+            tiposServicioFijo.forEach(prefixObj => {
+                if (servicio.tipoServiciofijo === prefixObj.value) {
+                    if (servicio.totalServicioFijo !== null) {
+                        if (mesConFestivosCompleto) {
+                            sumatorioServiciosFijos = 0;
+                            servicio.totalServicioFijo = 0;
+                        } else {
+                            sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                        };
                     };
+                    delete servicio.estados;
+                    arrayFinalServiciosFijos.push({ ...servicio });
+                    hayServiciosFijos = true;
                 };
-                delete servicio.estados;
-                arrayFinalServiciosFijos.push({ ...servicio });
-                hayServiciosFijos = true;
+            });
+        } else {
+            if (servicio.totalServicioFijo !== null) {
+                if (mesConFestivosCompleto) {
+                    sumatorioServiciosFijos = 0;
+                    servicio.totalServicioFijo = 0;
+                } else {
+                    sumatorioServiciosFijos += parseFloat(servicio.totalServicioFijo);
+                };
             };
-        });
+            delete servicio.estados;
+            arrayFinalServiciosFijos.push({ ...servicio });
+            hayServiciosFijos = true;
+        };
     });
     if (sumatorioHoras < 1 && !hayServiciosFijos) {
         // detectar que un cuadrante está a 0, deactivado.
@@ -1083,6 +1188,7 @@ const procesarDatosCuadrantePromesa = (index, noHayRegistro) => (dispatch, getSt
         computo: informeIn.computo,
         excepcion: informeIn.excepcion,
         bloqueado: informeIn.bloqueado,
+        mailEnviado: informeIn.mailEnviado,
         tipoRegistro: informeIn.tipoRegistro,
         ...(informeIn.mensualPactadoInicial ? {
             mensualPactado: parseFloat(informeIn.mensualPactado),
@@ -1108,6 +1214,63 @@ const procesarDatosCuadrantePromesa = (index, noHayRegistro) => (dispatch, getSt
         }, { ...(informeIn.mensualPactado && { M: 1 }) })
         : null;
     const elObjetoServiciosFijos = tieneCuadrante ? (hayServiciosFijos ? arrayFinalServiciosFijos : null) : arrayFinalServiciosFijos;
+    //modificador: control horas trabajadores     
+    const datosInforme = objetoCuadrante?.datosInforme?.datosInforme;
+    if (
+        (datosInforme && datosInforme.some(registro => registro !== null) && procesoHorasTrabajadores) ||
+        (cuadranteServiciosFijos.length > 0 && procesoHorasTrabajadores)
+    ) {
+        const centro = objetoCuadrante.nombre.split("-").pop();
+        let horasTrabajadoresSF = [];
+        if (cuadranteServiciosFijos.length > 0) {
+            horasTrabajadoresSF = cuadranteServiciosFijos
+                .map(registro => {
+                    const { propiedad, existePrefix } = existePrefixSF(registro);
+                    const trabajadorClave = Object.keys(registro).find(key => key.startsWith("trab_"));
+                    if (registro?.horas && trabajadorClave) {
+                        const horas = dispatch(retornaMinutosAccion(registro.horas.inicio, registro.horas.fin)) / 60;
+                        const keyHoras = existePrefix
+                            ? `totalHorasSF_${registro.tipoServiciofijo}`
+                            : `totalHorasSF_${propiedad}_${registro.tipoServiciofijo}`;
+                        return {
+                            tipo: "trabajadorSF",
+                            [keyHoras]: horas,
+                            totalHoras: horas,
+                            cuadrante: cuadranteEnUsoCuadrantes,
+                            centro,
+                            trabajadorId: registro[trabajadorClave]
+                        };
+                    }
+                    return null;
+                })
+                .filter(Boolean);
+        };
+        const procesado = {
+            valor: procesoHorasTrabajadores.cuadrantesProcesados.includes(cuadranteEnUsoCuadrantes),
+            cuadrante: cuadranteEnUsoCuadrantes
+        };
+        const arrayHorasTrabajadores = procesarHorasTrabajadoresAccion(
+            datosInforme,
+            procesoHorasTrabajadores.horasTrabajadores,
+            cuadranteEnUsoCuadrantes,
+            listadoTrabajadores,
+            centro,
+            procesado,
+            horasTrabajadoresSF
+        );
+        const hayTrabajadoresNull = arrayHorasTrabajadores.some(obj => obj.trabajadorId === 999);
+        if (hayTrabajadoresNull) {
+            return {
+                error: true
+            };
+        };
+        dispatch(setProcesoHorasTrabajadoresAccion({
+            horasTrabajadores: arrayHorasTrabajadores,
+            cuadrantesProcesados: procesoHorasTrabajadores.cuadrantesProcesados.includes(cuadranteEnUsoCuadrantes)
+                ? procesoHorasTrabajadores.cuadrantesProcesados
+                : [...procesoHorasTrabajadores.cuadrantesProcesados, cuadranteEnUsoCuadrantes]
+        }));
+    };
     return ({
         cuadranteDevuelto: elObjetoDatosCuadrante,
         informeDevuelto: elObjetoDatosInforme,
@@ -1115,6 +1278,55 @@ const procesarDatosCuadrantePromesa = (index, noHayRegistro) => (dispatch, getSt
         horasDevuelto: elObjetoHoras,
         trabajadoresDevuelto: arrayTrabajadoresInicialesCuadrante
     });
+};
+
+//modificador: control horas trabajadores 
+const procesarHorasTrabajadoresAccion = (
+    datosInforme,
+    horasTrabajadores,
+    cuadranteEnUsoCuadrantes,
+    listadoTrabajadores,
+    centro,
+    procesado,
+    horasTrabajadoresSF
+) => {
+    const nuevosRegistros = [];
+    datosInforme.forEach(informe => {
+        if (informe?.arrayDatosInforme && informe?.arrayDatosInforme?.length > 0) {
+            informe.arrayDatosInforme.forEach(registro => {
+                if (registro.totalHoras === 0) {
+                    return;
+                }
+                const registroLimpio = Object.entries(registro).reduce((acc, [key, value]) => {
+                    if (key === 'trabajador' || key === 'tipo' || key === 'totalHoras' || (typeof value === 'number' && value !== 0)) {
+                        if (key === 'trabajador') {
+                            const trabajador = listadoTrabajadores.find(t => t.nombre === value);
+                            acc['trabajadorId'] = trabajador ? trabajador.id : 999;
+                        } else {
+                            acc[key] = value;
+                        }
+                    }
+                    return acc;
+                }, {});
+                registroLimpio.cuadrante = cuadranteEnUsoCuadrantes;
+                registroLimpio.centro = centro;
+                nuevosRegistros.push(registroLimpio);
+            });
+        }
+    });
+    nuevosRegistros.push(...horasTrabajadoresSF);
+    const aplicarReemplazoCondicional = (array) => {
+        if (procesado.valor && procesado.cuadrante === cuadranteEnUsoCuadrantes) {
+            const registrosNoCoinciden = array.filter(registro => registro.cuadrante !== cuadranteEnUsoCuadrantes);
+            array.length = 0;
+            array.push(...registrosNoCoinciden, ...nuevosRegistros);
+        } else {
+            array.push(...nuevosRegistros);
+        }
+    };
+    aplicarReemplazoCondicional(horasTrabajadores);
+    aplicarReemplazoCondicional(horasTrabajadoresSF);
+    return horasTrabajadores;
 };
 
 export const procesarCambioCuadranteAccion = (target) => (dispatch, getState) => {
@@ -1127,13 +1339,22 @@ export const procesarCambioCuadranteAccion = (target) => (dispatch, getState) =>
         horas,
         datosTrabajadoresIniciales
     } = objetoCuadrante;
+    const resultado = dispatch(procesarDatosCuadrantePromesa(cuadranteEnUsoCuadrantes - 1, true));
+    if (resultado.error) {
+        dispatch(setAlertaAccion({
+            abierto: true,
+            mensaje: "Falta seleccionar trabajador correspondiente a alguna de las columnas de trabajadores con cómputo de horas.",
+            tipo: 'error'
+        }));
+        return;
+    }
     const {
         cuadranteDevuelto,
         informeDevuelto,
         serviciosFijosDevuelto,
         horasDevuelto,
         trabajadoresDevuelto
-    } = dispatch(procesarDatosCuadrantePromesa(cuadranteEnUsoCuadrantes - 1, true));
+    } = resultado;
     const losDatosCuadrante = {
         ...datosCuadrante,
         datosCuadrante: [
@@ -1190,7 +1411,6 @@ export const procesarCambioCuadranteAccion = (target) => (dispatch, getState) =>
 export const procesarDatosCuadranteAccion = (source) => (dispatch, getState) => {
     const { cuadranteRegistrado, objetoCuadrante } = getState().variablesCuadrantes;
     const { numeroCuadrantesCuadrantes, cuadranteEnUsoCuadrantes, bufferSwitchedDiasFestivosCuadrante } = getState().variablesCuadrantesSetters;
-    const { usuarioActivo } = getState().variablesUsuario;
     dispatch(handleCloseMenuAccion());
     //revisamos que no sea cuadrante múltiple
     if (cuadranteRegistrado === 'no') {
@@ -1206,9 +1426,8 @@ export const procesarDatosCuadranteAccion = (source) => (dispatch, getState) => 
             return;
         };
     };
-    //firmamos
-    const fechaHoy = new Date().toLocaleString() + '';
-    const laFirmaActualizacion = fechaHoy + ' por ' + usuarioActivo.nombre.charAt(0).toUpperCase() + usuarioActivo.nombre.slice(1);
+    //firmamos   
+    const laFirmaActualizacion = dispatch(obtenerFirmaActualizacion());
     const todosRevisados = numeroCuadrantesCuadrantes.every(cuadrante => cuadrante.revisado);
     const losDatosBuffer = bufferSwitchedDiasFestivosCuadrante.length > 0 ?
         { ...objetoCuadrante.datosBuffer, datosBuffer: bufferSwitchedDiasFestivosCuadrante } :
@@ -1222,7 +1441,21 @@ export const procesarDatosCuadranteAccion = (source) => (dispatch, getState) => 
     let losDatosServiciosFijos = {};
     let losDatosHoras = {};
     if (!todosRevisados) {
-        const { cuadranteDevuelto, informeDevuelto, serviciosFijosDevuelto, horasDevuelto } = dispatch(procesarDatosCuadrantePromesa(cuadranteEnUsoCuadrantes - 1, false));
+        const resultado = dispatch(procesarDatosCuadrantePromesa(cuadranteEnUsoCuadrantes - 1, false));
+        if (resultado.error) {
+            dispatch(setAlertaAccion({
+                abierto: true,
+                mensaje: "Falta seleccionar trabajador correspondiente a alguna de las columnas de trabajadores con cómputo de horas.",
+                tipo: 'error'
+            }));
+            return;
+        }
+        const {
+            cuadranteDevuelto,
+            informeDevuelto,
+            serviciosFijosDevuelto,
+            horasDevuelto,
+        } = resultado;
         elArrayDatosCuadrante[cuadranteEnUsoCuadrantes - 1] = cuadranteDevuelto;
         elArrayDatosInforme[cuadranteEnUsoCuadrantes - 1] = informeDevuelto;
         elArrayDatosServiciosFijos[cuadranteEnUsoCuadrantes - 1] = serviciosFijosDevuelto;
@@ -1288,21 +1521,27 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
     const { objetoCuadrante, totalesPeriodicos } = getState().variablesCuadrantes;
     const { objetoCentro } = getState().variablesCentros;
     const reseteaObjGeneral = () => {
+        const inicializarPropiedades = (acc, prefix, propiedades) => {
+            propiedades.forEach(propiedad => {
+                acc[`${propiedad}_${prefix}`] = 0;
+            });
+            return acc;
+        };
+        const serviciosAplanados = servicios.filter(arr => arr !== null).flat();
+        const objServiciosFijosPersonalizados = serviciosAplanados.reduce((acc, servicio) => {
+            const { propiedad, existePrefix } = existePrefixSF(servicio);
+            if (!existePrefix) {
+                acc = inicializarPropiedades(acc, propiedad, ['totalFacturado', 'totalHoras']);
+            }
+            return acc;
+        }, {});
         return {
-            ...tipoServicio.reduce((acc, curr) => {
-                acc[`totalFacturado_${curr.prefix}`] = 0;
-                acc[`totalHoras_${curr.prefix}`] = 0;
-                acc[`precio_${curr.prefix}`] = 0;
-                return acc;
-            }, {}),
-            ...listadoServiciosFijos.reduce((acc, curr) => {
-                acc[`totalFacturado_${curr.prefix}`] = 0;
-                acc[`totalHoras_${curr.prefix}`] = 0;
-                return acc;
-            }, {
+            ...tipoServicio.reduce((acc, curr) => inicializarPropiedades(acc, curr.prefix, ['totalFacturado', 'totalHoras', 'precio']), {}),
+            ...tiposServicioFijo.reduce((acc, curr) => inicializarPropiedades(acc, curr.prefix, ['totalFacturado', 'totalHoras']), {
                 totalFacturado_M: 0
             }),
-        }
+            ...objServiciosFijosPersonalizados
+        };
     };
     let objGeneral = reseteaObjGeneral();
     //control seguretat 
@@ -1311,7 +1550,8 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
     let iteracionExitosa = false;
     const verificarIteracionCompleja = () => {
         if (informes.length >= 2) {
-            const informesMensualPactado = informes.filter(objeto => objeto.mensualPactado > 0);
+            //verificar que hi ha algun mensualPactado, si no hi ha cap retorna array buit pq si no dona error
+            const informesMensualPactado = informes.every(objeto => objeto && 'mensualPactado' in objeto) ? informes.filter(objeto => objeto.mensualPactado > 0) : [];
             if (informesMensualPactado.length >= 2) {
                 //2 quadrants amb mensual pactat
                 const propiedadesPriCond = tipoServicio.map(objServ => `totalFacturado_${objServ.prefix}`);
@@ -1330,22 +1570,29 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
                     };
                 };
             } else if (informesMensualPactado.length === 1) {
-                //1 quadrant amb mensual pactat i l'altre precio/hora
-                const propiedadesSegCond = tipoServicio.map(objServ => `precioHora_${objServ.prefix}`);
-                const primerObjeto = informesMensualPactado[0];
-                const segundoObjeto = informes.find(informe => informe.mensualPactado === null);
-                //condicionPrimera = verificar si quadrant és doble i té 1 mensual pactat, 1 precio/hora i mateixos serveis
-                const cumpleCondicionSegunda = propiedadesSegCond.some(propiedad =>
-                    primerObjeto[propiedad] !== null && segundoObjeto[propiedad] !== null
-                );
-                if (cumpleCondicionSegunda) {
-                    return "segunda";
+                const computosCuadrantes = informes.map(obj => obj.computo);
+                if (computosCuadrantes.includes(2) || computosCuadrantes.includes(3)) {
+                    //1 quadrant amb mensual pactat i l'altre precio/hora o gestion especial horas
+                    const propiedadesSegCond = tipoServicio.map(objServ => `precioHora_${objServ.prefix}`);
+                    const primerObjeto = informesMensualPactado[0];
+                    const segundoObjeto = informes.find(informe => informe.mensualPactado === null);
+                    //condicionPrimera = verificar si quadrant és doble i té 1 mensual pactat, 1 precio/hora i mateixos serveis
+                    const cumpleCondicionSegunda = propiedadesSegCond.some(propiedad =>
+                        primerObjeto[propiedad] !== null && segundoObjeto[propiedad] !== null
+                    );
+                    if (cumpleCondicionSegunda) {
+                        return "segunda";
+                    };
+                } else if (computosCuadrantes.includes(4)) {
+                    //1 quadrant amb mensual pactat i l'altre sin coste
+                    return false;
                 };
+            } else {
+                return false;
             };
         };
         return false;
     };
-
     const iteracionCompleja = verificarIteracionCompleja();
     while (!iteracionExitosa) {
         informes.forEach((informe, index) => {
@@ -1385,23 +1632,31 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
             objGeneral = reseteaObjGeneral();
         };
     };
-    servicios.forEach(servicioTot => {
-        if (servicioTot) {
-            servicioTot.forEach(servicio => {
-                if (servicio) {
-                    listadoServiciosFijos.forEach(objServ => {
-                        if (servicio[`precioHora_${objServ.prefix}`]) {
-                            objGeneral[`totalFacturado_${objServ.prefix}`] += servicio.totalServicioFijo;
-                            if (objGeneral[`totalFacturado_${objServ.prefix}`] === servicio[`precioHora_${objServ.prefix}`]) {
-                                objGeneral[`totalHoras_${objServ.prefix}`] = 1;
-                            } else {
-                                objGeneral[`totalHoras_${objServ.prefix}`] = parseInt(objGeneral[`totalFacturado_${objServ.prefix}`] / servicio[`precioHora_${objServ.prefix}`]);
-                            };
-                        };
-                    });
-                };
-            });
+    servicios.flatMap(servicioTot => servicioTot || []).forEach(servicio => {
+        if (!servicio) return;
+        const { propiedad, existePrefix } = existePrefixSF(servicio);
+        const calcularTotales = (prefix, totalServicioFijo, precioHora) => {
+            objGeneral[`totalFacturado_${prefix}`] += totalServicioFijo;
+            objGeneral[`totalHoras_${prefix}`] = precioHora
+                ? parseInt(objGeneral[`totalFacturado_${prefix}`] / precioHora)
+                : 0;
+            if (objGeneral[`totalFacturado_${prefix}`] === precioHora) {
+                objGeneral[`totalHoras_${prefix}`] = 1;
+            }
         };
+        if (existePrefix) {
+            tiposServicioFijo.forEach(({ prefix }) => {
+                const precioHora = servicio[`precioHora_${prefix}`];
+                if (precioHora) {
+                    calcularTotales(prefix, servicio.totalServicioFijo, precioHora);
+                }
+            });
+        } else {
+            const precioHora = servicio[`precioHora_${propiedad}`];
+            if (precioHora) {
+                calcularTotales(propiedad, servicio.totalServicioFijo, precioHora);
+            }
+        }
     });
     const objetoTotales = {
         nombreCentro: objetoCuadrante.datosCuadrante.nombreCentro,
@@ -1415,7 +1670,10 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
         formaPago: objetoCuadrante.datosCuadrante.formaPago,
         telefono: objetoCuadrante.datosCuadrante.telefono,
         mail: objetoCuadrante.datosCuadrante.mail,
-        tocaFacturar: objetoCuadrante.datosInforme.tocaFacturar
+        mail2: objetoCuadrante.datosCuadrante.mail2,
+        diaPago: objetoCuadrante.datosCuadrante.diaPago,
+        tocaFacturar: objetoCuadrante.datosInforme.tocaFacturar,
+        mailEnviado: objetoCuadrante.datosInforme.mailEnviado
     };
     if (iteracionCompleja === "primera" || iteracionCompleja === "segunda") {
         for (let i = 0; i <= informes.length - 1; i++) {
@@ -1445,10 +1703,22 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
             objetoTotales[`${objServ.prefix}Pr`] = objGeneral[`precio_${objServ.prefix}`];
         };
     });
-    listadoServiciosFijos.forEach(objServ => {
-        if (objGeneral[`totalFacturado_${objServ.prefix}`] > 0) {
-            objetoTotales[`${objServ.prefix}T`] = objGeneral[`totalFacturado_${objServ.prefix}`];
-            objetoTotales[`${objServ.prefix}H`] = objGeneral[`totalHoras_${objServ.prefix}`];
+    servicios.flatMap(servicioTot => servicioTot || []).forEach(servicio => {
+        if (!servicio) return;
+        const { propiedad, existePrefix } = existePrefixSF(servicio);
+        if (existePrefix) {
+            tiposServicioFijo.forEach(objServ => {
+                if (objGeneral[`totalFacturado_${objServ.prefix}`] > 0) {
+                    objetoTotales[`${objServ.prefix}T`] = objGeneral[`totalFacturado_${objServ.prefix}`];
+                    objetoTotales[`${objServ.prefix}H`] = objGeneral[`totalHoras_${objServ.prefix}`];
+                };
+            });
+        } else {
+            if (objGeneral[`totalFacturado_${propiedad}`] > 0) {
+                objetoTotales[`${propiedad}T`] = objGeneral[`totalFacturado_${propiedad}`];
+                objetoTotales[`${propiedad}H`] = objGeneral[`totalHoras_${propiedad}`];
+                objetoTotales[`${propiedad}N`] = servicio[`tipoServiciofijo`];
+            };
         };
     });
     if (objetoCentro.activoNumCuenta === 'si') {
@@ -1491,12 +1761,26 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
                     };
                 };
             });
-            listadoServiciosFijos.forEach(objServ => {
-                if (totalesPeriodicos.totalesServicios[`${objServ.prefix}T`]) {
-                    if (objetoTotales[`${objServ.prefix}T`]) {
-                        objetoTotales[`${objServ.prefix}T`] += totalesPeriodicos.totalesServicios[`${objServ.prefix}T`];
-                    } else {
-                        objetoTotales[`${objServ.prefix}T`] = totalesPeriodicos.totalesServicios[`${objServ.prefix}T`];
+            servicios.flatMap(servicioTot => servicioTot || []).forEach(servicio => {
+                if (!servicio) return;
+                const { propiedad, existePrefix } = existePrefixSF(servicio);
+                if (existePrefix) {
+                    tiposServicioFijo.forEach(objServ => {
+                        if (totalesPeriodicos.totalesServicios[`${objServ.prefix}T`]) {
+                            if (objetoTotales[`${objServ.prefix}T`]) {
+                                objetoTotales[`${objServ.prefix}T`] += totalesPeriodicos.totalesServicios[`${objServ.prefix}T`];
+                            } else {
+                                objetoTotales[`${objServ.prefix}T`] = totalesPeriodicos.totalesServicios[`${objServ.prefix}T`];
+                            };
+                        };
+                    });
+                } else {
+                    if (totalesPeriodicos.totalesServicios[`${propiedad}T`]) {
+                        if (objetoTotales[`${propiedad}T`]) {
+                            objetoTotales[`${propiedad}T`] += totalesPeriodicos.totalesServicios[`${propiedad}T`];
+                        } else {
+                            objetoTotales[`${propiedad}T`] = totalesPeriodicos.totalesServicios[`${propiedad}T`];
+                        };
                     };
                 };
             });
@@ -1508,7 +1792,7 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
                 };
             };
         };
-    };
+    };   
     objetoTotales['totalMasIva'] = ((parseFloat(objetoTotales['total']) * 21) / 100) + parseFloat(objetoTotales['total']);
     objetoTotales['totalIva'] = ((parseFloat(objetoTotales['total']) * 21) / 100);
     return objetoTotales
@@ -1558,6 +1842,53 @@ const retornaMesReciboLetra = () => (dispatch, getState) => {
     };
 };
 
+//modificador: control horas trabajadores 
+const procesarHorasTrabajadores = (objetoCuadrante, procesoHorasTrabajadores, laFirmaActualizacion, trabajadoresInicio) => {
+    const centro = objetoCuadrante.nombre.split("-").pop();
+    const [anyo, mes] = objetoCuadrante.nombre.split("-");
+    const mesAnyo = `${anyo}-${mes}`;
+    const trabajadoresMap = {};
+    procesoHorasTrabajadores.horasTrabajadores.forEach(trabajador => {
+        const { trabajadorId, ...datosHoraTrabajador } = trabajador;
+        if (!trabajadoresMap[trabajadorId]) {
+            trabajadoresMap[trabajadorId] = {
+                nombre: `${mesAnyo}-${trabajadorId}`,
+                actualizacion: laFirmaActualizacion,
+                trabajador_id: trabajadorId,
+                datos_hora_trabajador: { ...datosHoraTrabajador },
+            };
+        } else {
+            //treballador duplicat
+            const registroExistente = trabajadoresMap[trabajadorId].datos_hora_trabajador;
+            if (registroExistente.cuadrante !== datosHoraTrabajador.cuadrante) {
+                registroExistente.cuadrante = `${registroExistente.cuadrante}-${datosHoraTrabajador.cuadrante}`;
+            }
+            if (registroExistente.tipo !== datosHoraTrabajador.tipo) {
+                registroExistente.tipo = `${registroExistente.tipo}-${datosHoraTrabajador.tipo}`;
+            }
+            for (let key in datosHoraTrabajador) {
+                if (key.startsWith('totalHorasNormal_') || key.startsWith('totalHorasExtra_') || key.startsWith('totalHorasSF_')) {
+                    registroExistente[key] = (registroExistente[key] || 0) + datosHoraTrabajador[key];
+                }
+            }
+            registroExistente.totalHoras += datosHoraTrabajador.totalHoras;
+        }
+    });
+    //modificador: control horas trabajadores; comprobació final registres esborrats
+    const trabajadoresGestionados = Object.values(trabajadoresMap);
+    const idsGestionados = new Set(trabajadoresGestionados.map(t => t.trabajador_id));
+    const arrIdsNoCoincidentes = trabajadoresInicio
+        .filter(id => !idsGestionados.has(id))
+        .map(id => ({
+            nombre: `${mesAnyo}-${id}`,
+            actualizacion: laFirmaActualizacion,
+            trabajador_id: id,
+            datos_hora_trabajador: { centro, totalHoras: 0 }
+        }));
+    trabajadoresGestionados.push(...arrIdsNoCoincidentes);
+    return trabajadoresGestionados;
+};
+
 const finalizaRegistroCuadrante = (
     source,
     faltaActualizar,
@@ -1568,9 +1899,11 @@ const finalizaRegistroCuadrante = (
     losDatosHoras,
     losDatosBuffer
 ) => (dispatch, getState) => {
-    const { objetoCuadrante, cuadranteRegistrado } = getState().variablesCuadrantes;
+    const { objetoCuadrante, cuadranteRegistrado, procesoHorasTrabajadores } = getState().variablesCuadrantes;
     const { cuadranteEnUsoCuadrantes } = getState().variablesCuadrantesSetters;
-    const { numeroRecibos } = getState().variablesApp;
+    const { trabajadoresInicio } = getState().variablesHorasTrabajadores;
+    //modificador: control horas trabajadores 
+    const horasTrabajadoresRegistro = procesarHorasTrabajadores(objetoCuadrante, procesoHorasTrabajadores, laFirmaActualizacion, trabajadoresInicio);  
     let elArrayDatosCuadranteLimpiado = [];
     losDatosCuadrante.datosCuadrante.forEach((cuadranteIterado) => {
         elArrayDatosCuadranteLimpiado.push({
@@ -1625,17 +1958,11 @@ const finalizaRegistroCuadrante = (
         losDatosInforme = {
             ...losDatosInforme,
             datosGestionEsp: {
-                numeroRecibos: numeroRecibos,
                 totalLetra: numeroALetras(parseFloat(losDatosTotales.total).toFixed(2)),
                 centro: objetoCuadrante.datosCuadrante.nombreCentro,
-                concepto: dispatch(retornaTextoConceptoServicioAccion(losDatosTotales, null, null)) + dispatch(retornaMesReciboLetra()),
+                concepto: dispatch(retornaTextoConceptoServicioAccion(losDatosTotales, null, null, null)) + dispatch(retornaMesReciboLetra()),
                 total: parseFloat(losDatosTotales.total).toFixed(2)
             }
-        };
-        if (!objetoCuadrante.datosInforme.datosGestionEsp) {
-            if (numeroRecibos) {
-                dispatch(actualizarNumeroRecibosAccion('configuracion', parseInt(numeroRecibos) + 1));
-            };
         };
     };
     const losDatosInformeLimpiado = {
@@ -1687,20 +2014,36 @@ const finalizaRegistroCuadrante = (
         }));
     };
     if (cuadranteRegistrado === 'no') {
-        dispatch(registrarCuadranteAccion('cuadrantes', cuadranteAGuardar.id, cuadranteAGuardar));
+        dispatch(
+            registrarCuadranteAccion(
+                'cuadrantes',
+                cuadranteAGuardar.id,
+                cuadranteAGuardar,
+                horasTrabajadoresRegistro.length === 0 ? null : horasTrabajadoresRegistro
+            )
+        );
         dispatch(cambiarACuadranteRegistradoAccion());
         dispatch(activarDesactivarCambioBotonActualizarAccion(true));
         //dispatch(registrarIntervencionAccion(false));
         dispatch(setCuadranteEnUsoCuadrantesAccion(cuadranteEnUsoCuadrantes));
         dispatch(reseteaContenidoCentroAccion(true));
-        dispatch(gestionaCuadranteIndividualAccion(cuadranteEnUsoCuadrantes, true));
+        //esborrat perquè ja es fa al useEffect de CaudranteCompleto.jsx
+        //dispatch(gestionaCuadranteIndividualAccion(cuadranteEnUsoCuadrantes, true));
         dispatch(obtenerCategoriaPorCentroAccion('centros', objetoCuadrante.datosCuadrante.centro, cuadranteEnUsoCuadrantes - 1));
     };
     if (cuadranteRegistrado === 'si') {
         if (source === 'informe') {
             dispatch(setControladorDeEstadoAccion('venimosDeInforme'));
         };
-        dispatch(actualizarCuadranteAccion('cuadrantes', cuadranteAGuardar.id, cuadranteAGuardar));
+        dispatch(
+            actualizarCuadranteAccion(
+                'cuadrantes',
+                cuadranteAGuardar.id,
+                cuadranteAGuardar,
+                true,
+                horasTrabajadoresRegistro.length === 0 ? null : horasTrabajadoresRegistro
+            )
+        );
         dispatch(activarDesactivarCambioBotonActualizarAccion(true));
         //dispatch(registrarIntervencionAccion(false));
         dispatch(setCuadranteEnUsoCuadrantesAccion(cuadranteEnUsoCuadrantes));
@@ -1711,20 +2054,25 @@ const finalizaRegistroCuadrante = (
     dispatch(registrarIntervencionAccion(true));
 };
 
-export const gestionarDocumentosCuadranteAccion = (origen) => (dispatch, getState) => {
+const obtenerFirmaActualizacion = () => (dispatch, getState) => {
+    const { usuarioActivo } = getState().variablesUsuario;
+    const fechaHoy = new Date().toLocaleString();
+    const laFirmaActualizacion = fechaHoy + ' por ' + usuarioActivo.nombre.charAt(0).toUpperCase() + usuarioActivo.nombre.slice(1);
+    return laFirmaActualizacion;
+};
+
+export const gestionarDocumentosCuadranteAccion = (origen, numeroDocumento) => (dispatch, getState) => {
     const { objetoCuadrante } = getState().variablesCuadrantes;
     const { cuadranteEnUsoCuadrantes, numeroFactusol } = getState().variablesCuadrantesSetters;
-    const { usuarioActivo } = getState().variablesUsuario;
-    //firmamos
-    let fechaHoy = new Date().toLocaleString() + '';
-    let laFirmaActualizacion = fechaHoy + ' por ' + usuarioActivo.nombre.charAt(0).toUpperCase() + usuarioActivo.nombre.slice(1);
+    //firmamos   
+    const laFirmaActualizacion = dispatch(obtenerFirmaActualizacion());
     dispatch(setFirmaActualizacionAccion(laFirmaActualizacion));
     if (objetoCuadrante.total.procesado.valor === 'no') {
         let objetoTotales = {
             ...objetoCuadrante.total,
             procesado: {
                 valor: 'si',
-                numR: origen === 'recibo' ? objetoCuadrante.datosInforme.datosGestionEsp.numeroRecibos : null,
+                numR: origen === 'recibo' ? numeroDocumento : null,
                 numF: origen === 'factura' ? parseInt(numeroFactusol) + 1 : null
             }
         };
@@ -1746,7 +2094,7 @@ export const gestionarDocumentosCuadranteAccion = (origen) => (dispatch, getStat
             total: objetoTotales
         }));
         dispatch(setControladorDeEstadoAccion('venimosDeInforme'));
-        dispatch(actualizarCuadranteAccion('cuadrantes', cuadranteAGuardar.id, cuadranteAGuardar));
+        dispatch(actualizarCuadranteAccion('cuadrantes', cuadranteAGuardar.id, cuadranteAGuardar, true, null));
         dispatch(activarDesactivarCambioBotonActualizarAccion(true));
         //dispatch(registrarIntervencionAccion(false));
         dispatch(setCuadranteEnUsoCuadrantesAccion(cuadranteEnUsoCuadrantes));
@@ -1778,7 +2126,7 @@ export const handleGenerarArchivosAccion = () => (dispatch, getState) => {
     };
     const [anyo, mes] = objetoCuadrante.nombre.split("-");
     dispatch(generarArchivosXLSAccion(numeroFactusol, objetoCuadrante.total, anyo, mes));
-    dispatch(gestionarDocumentosCuadranteAccion('factura'));
+    dispatch(gestionarDocumentosCuadranteAccion('factura', null));
     dispatch(handleCloseMenuAccion());
 };
 

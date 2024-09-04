@@ -1,11 +1,9 @@
 import axios from 'axios';
 import Constantes from "../constantes";
 import { parse } from 'zipson';
+import { obtenerServiciosPersonalizados } from './appDucks';
 
 //constantes
-const rutaApi = Constantes.RUTA_API;
-const formaPago = Constantes.FORMA_DE_PAGO;
-const tiposServicioFijo = Constantes.TIPO_SERVICIO_FIJO;
 const dataInicial = {
     loadingCuadrantes: false,
     errorDeCargaCuadrantes: false,
@@ -63,8 +61,18 @@ const dataInicial = {
         noExisteCuadrante: false,
         totalesHoras: [],
         totalesServicios: [],
+    },
+    procesoHorasTrabajadores: {
+        horasTrabajadores: [],
+        cuadrantesProcesados: []
     }
 };
+const {
+    TIPO_SERVICIO_FIJO: tiposServicioFijo,
+    TIPO_SERVICIO: tipoServicio,
+    RUTA_API: rutaApi,
+    FORMA_DE_PAGO: formaPago
+} = Constantes;
 
 //types
 const LOADING_CUADRANTES = 'LOADING_CUADRANTES';
@@ -94,6 +102,7 @@ const SET_STATE_FESTIVO = 'SET_STATE_FESTIVO';
 const SET_CUADRANTE = 'SET_CUADRANTE';
 const SET_TOTALESPERIODICOS = 'SET_TOTALESPERIODICOS';
 const RESETEA_TOTALESPERIODICOS = 'RESETEA_TOTALESPERIODICOS';
+const SET_PROCESOHORASTRABAJADORES = 'SET_PROCESOHORASTRABAJADORES';
 
 //reducer
 export default function cuadrantesReducer(state = dataInicial, action) {
@@ -160,12 +169,23 @@ export default function cuadrantesReducer(state = dataInicial, action) {
             }
         case RESETEA_TOTALESPERIODICOS:
             return { ...state, totalesPeriodicos: action.payload.objeto }
+        case SET_PROCESOHORASTRABAJADORES:
+            return { ...state, procesoHorasTrabajadores: action.payload.objeto }
         default:
             return { ...state }
     }
 }
 
 //acciones
+
+export const setProcesoHorasTrabajadoresAccion = (objeto) => (dispatch, getState) => {
+    dispatch({
+        type: SET_PROCESOHORASTRABAJADORES,
+        payload: {
+            objeto: objeto
+        }
+    });
+}
 
 export const setLosDiasDelMesAccion = (array) => (dispatch, getState) => {
     dispatch({
@@ -390,7 +410,7 @@ export const obtenerCuadranteAccion = (objeto, id) => async (dispatch, getState)
     };
 }
 
-export const actualizarCuadranteAccion = (objeto, id, datos) => async (dispatch, getState) => {
+export const actualizarCuadranteAccion = (objeto, id, datos, mensaje, datosTrabajadores) => async (dispatch, getState) => {
     dispatch({
         type: LOADING_CUADRANTES
     });
@@ -400,26 +420,34 @@ export const actualizarCuadranteAccion = (objeto, id, datos) => async (dispatch,
         formData.append("objeto", objeto);
         formData.append("id", id);
         formData.append("datos", losDatos);
+        if (datosTrabajadores) {
+            const losDatosTrabajadores = JSON.stringify(datosTrabajadores);
+            formData.append("datosTrabajadores", losDatosTrabajadores);
+        }
         let apiUrl = rutaApi + "actualizar.php";
         await axios.post(apiUrl, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
             }
         });
-        dispatch({
-            type: ACTUALIZAR_CUADRANTE_EXITO
-        });
+        if (mensaje) {
+            dispatch({
+                type: ACTUALIZAR_CUADRANTE_EXITO
+            });
+        };
         dispatch({
             type: RESETEA_EXITO_CUADRANTES
         });
     } catch (error) {
-        dispatch({
-            type: ERROR_DE_CARGA_CUADRANTES
-        })
+        if (mensaje) {
+            dispatch({
+                type: ERROR_DE_CARGA_CUADRANTES
+            });
+        };
     }
 }
 
-export const registrarCuadranteAccion = (objeto, id, datos) => async (dispatch, getState) => {
+export const registrarCuadranteAccion = (objeto, id, datos, datosTrabajadores) => async (dispatch, getState) => {
     dispatch({
         type: LOADING_CUADRANTES
     });
@@ -429,6 +457,10 @@ export const registrarCuadranteAccion = (objeto, id, datos) => async (dispatch, 
         formData.append("objeto", objeto);
         formData.append("id", id);
         formData.append("datos", losDatos);
+        if (datosTrabajadores) {
+            const losDatosTrabajadores = JSON.stringify(datosTrabajadores);
+            formData.append("datosTrabajadores", losDatosTrabajadores);
+        }
         let apiUrl = rutaApi + "registrar.php";
         const res = await axios.post(apiUrl, formData, {
             headers: {
@@ -535,251 +567,40 @@ export const obtenerCuadrantesPeriodicosAccion = (objeto, calendarioAGestionar, 
 const retornaHorasServicios = (totalObjeto) => (dispatch, getState) => {
     const { totalesPeriodicos } = getState().variablesCuadrantes;
     let objetoRetornoHoras = {};
-    totalObjeto.LH && (objetoRetornoHoras.LH = totalObjeto.LH);
-    totalObjeto.EH && (objetoRetornoHoras.EH = totalObjeto.EH);
-    totalObjeto.PH && (objetoRetornoHoras.PH = totalObjeto.PH);
-    totalObjeto.NH && (objetoRetornoHoras.NH = totalObjeto.NH);
-    totalObjeto.RH && (objetoRetornoHoras.RH = totalObjeto.RH);
-    totalObjeto.L1H && (objetoRetornoHoras.L1H = totalObjeto.L1H);
-    totalObjeto.L2H && (objetoRetornoHoras.L2H = totalObjeto.L2H);
-    totalObjeto.FH && (objetoRetornoHoras.FH = totalObjeto.FH);
-    if (objetoRetornoHoras.LH) {
-        if (totalesPeriodicos.totalesHoras && totalesPeriodicos.totalesHoras.LH) {
-            objetoRetornoHoras.LH += totalesPeriodicos.totalesHoras.LH;
-        };
-    };
-    if (objetoRetornoHoras.EH) {
-        if (totalesPeriodicos.totalesHoras && totalesPeriodicos.totalesHoras.EH) {
-            objetoRetornoHoras.EH += totalesPeriodicos.totalesHoras.EH;
-        };
-    };
-    if (objetoRetornoHoras.PH) {
-        if (totalesPeriodicos.totalesHoras && totalesPeriodicos.totalesHoras.PH) {
-            objetoRetornoHoras.PH += totalesPeriodicos.totalesHoras.PH;
-        };
-    };
-    if (objetoRetornoHoras.NH) {
-        if (totalesPeriodicos.totalesHoras && totalesPeriodicos.totalesHoras.NH) {
-            objetoRetornoHoras.NH += totalesPeriodicos.totalesHoras.NH;
-        };
-    };
-    if (objetoRetornoHoras.RH) {
-        if (totalesPeriodicos.totalesHoras && totalesPeriodicos.totalesHoras.RH) {
-            objetoRetornoHoras.RH += totalesPeriodicos.totalesHoras.RH;
-        };
-    };
-    if (objetoRetornoHoras.L1H) {
-        if (totalesPeriodicos.totalesHoras && totalesPeriodicos.totalesHoras.L1H) {
-            objetoRetornoHoras.L1H += totalesPeriodicos.totalesHoras.L1H;
-        };
-    };
-    if (objetoRetornoHoras.L2H) {
-        if (totalesPeriodicos.totalesHoras && totalesPeriodicos.totalesHoras.L2H) {
-            objetoRetornoHoras.L2H += totalesPeriodicos.totalesHoras.L2H;
-        };
-    };
-    if (objetoRetornoHoras.FH) {
-        if (totalesPeriodicos.totalesHoras && totalesPeriodicos.totalesHoras.FH) {
-            objetoRetornoHoras.FH += totalesPeriodicos.totalesHoras.FH;
-        };
-    };
+    tipoServicio.forEach(({ prefix }) => {
+        const key = `${prefix}H`;
+        if (totalObjeto[key]) {
+            objetoRetornoHoras[key] = totalObjeto[key];
+            if (totalesPeriodicos.totalesHoras && totalesPeriodicos.totalesHoras[key]) {
+                objetoRetornoHoras[key] += totalesPeriodicos.totalesHoras[key];
+            }
+        }
+    });
     return objetoRetornoHoras;
 };
 
 const retornaTotalesServicios = (totalObjeto) => (dispatch, getState) => {
-    const { totalesPeriodicos } = getState().variablesCuadrantes;   
+    const { totalesPeriodicos } = getState().variablesCuadrantes;
     let objetoRetornoServicios = {};
-    totalObjeto.MT && (objetoRetornoServicios.MT = totalObjeto.MT);
-    totalObjeto.LT && (objetoRetornoServicios.LT = totalObjeto.LT);
-    totalObjeto.ET && (objetoRetornoServicios.ET = totalObjeto.ET);
-    totalObjeto.PT && (objetoRetornoServicios.PT = totalObjeto.PT);
-    totalObjeto.NT && (objetoRetornoServicios.NT = totalObjeto.NT);
-    totalObjeto.RT && (objetoRetornoServicios.RT = totalObjeto.RT);
-    totalObjeto.L1T && (objetoRetornoServicios.L1T = totalObjeto.L1T);
-    totalObjeto.L2T && (objetoRetornoServicios.L2T = totalObjeto.L2T);
-    totalObjeto.FT && (objetoRetornoServicios.FT = totalObjeto.FT);
-    totalObjeto.TOT && (objetoRetornoServicios.TOT = totalObjeto.TOT);
-    totalObjeto.CRT && (objetoRetornoServicios.CRT = totalObjeto.CRT);
-    totalObjeto.CET && (objetoRetornoServicios.CET = totalObjeto.CET);
-    totalObjeto.CIT && (objetoRetornoServicios.CIT = totalObjeto.CIT);
-    totalObjeto.MOT && (objetoRetornoServicios.MOT = totalObjeto.MOT);
-    totalObjeto.OFT && (objetoRetornoServicios.OFT = totalObjeto.OFT);
-    totalObjeto.ALT && (objetoRetornoServicios.ALT = totalObjeto.ALT);
-    totalObjeto.LAT && (objetoRetornoServicios.LAT = totalObjeto.LAT);
-    totalObjeto.TET && (objetoRetornoServicios.TET = totalObjeto.TET);
-    totalObjeto.FIT && (objetoRetornoServicios.FIT = totalObjeto.FIT);
-    totalObjeto.FET && (objetoRetornoServicios.FET = totalObjeto.FET);
-    totalObjeto.ABT && (objetoRetornoServicios.ABT = totalObjeto.ABT);
-    totalObjeto.MAT && (objetoRetornoServicios.MAT = totalObjeto.MAT);
-    totalObjeto.POT && (objetoRetornoServicios.POT = totalObjeto.POT);
-    totalObjeto.BAT && (objetoRetornoServicios.BAT = totalObjeto.BAT);
-    totalObjeto.FTT && (objetoRetornoServicios.FTT = totalObjeto.FTT);
-    totalObjeto.C3T && (objetoRetornoServicios.C3T = totalObjeto.C3T);
-    totalObjeto.C2T && (objetoRetornoServicios.C2T = totalObjeto.C2T);
-    totalObjeto.C4T && (objetoRetornoServicios.C4T = totalObjeto.C4T);
-    totalObjeto.EST && (objetoRetornoServicios.EST = totalObjeto.EST);
-    totalObjeto.PAT && (objetoRetornoServicios.PAT = totalObjeto.PAT);
-    totalObjeto.FRT && (objetoRetornoServicios.FRT = totalObjeto.FRT);
-    totalObjeto.NUMCT && (objetoRetornoServicios.NUMCT = totalObjeto.NUMCT);    
-    if (objetoRetornoServicios.MT) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.MT) {
-            objetoRetornoServicios.MT += totalesPeriodicos.totalesServicios.MT;
-        };
-    };
-    if (objetoRetornoServicios.LT) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.LT) {
-            objetoRetornoServicios.LT += totalesPeriodicos.totalesServicios.LT;
-        };
-    };
-    if (objetoRetornoServicios.ET) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.ET) {
-            objetoRetornoServicios.ET += totalesPeriodicos.totalesServicios.ET;
-        };
-    };
-    if (objetoRetornoServicios.PT) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.PT) {
-            objetoRetornoServicios.PT += totalesPeriodicos.totalesServicios.PT;
-        };
-    };
-    if (objetoRetornoServicios.NT) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.NT) {
-            objetoRetornoServicios.NT += totalesPeriodicos.totalesServicios.NT;
-        };
-    };
-    if (objetoRetornoServicios.RT) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.RT) {
-            objetoRetornoServicios.RT += totalesPeriodicos.totalesServicios.RT;
-        };
-    };
-    if (objetoRetornoServicios.L1T) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.L1T) {
-            objetoRetornoServicios.L1T += totalesPeriodicos.totalesServicios.L1T;
-        };
-    };
-    if (objetoRetornoServicios.L2T) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.L2T) {
-            objetoRetornoServicios.L2T += totalesPeriodicos.totalesServicios.L2T;
-        };
-    };
-    if (objetoRetornoServicios.FT) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.FT) {
-            objetoRetornoServicios.FT += totalesPeriodicos.totalesServicios.FT;
-        };
-    };
-    if (objetoRetornoServicios.TOT) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.TOT) {
-            objetoRetornoServicios.TOT += totalesPeriodicos.totalesServicios.TOT;
-        };
-    };
-    if (objetoRetornoServicios.CRT) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.CRT) {
-            objetoRetornoServicios.CRT += totalesPeriodicos.totalesServicios.CRT;
-        };
-    };
-    if (objetoRetornoServicios.CET) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.CET) {
-            objetoRetornoServicios.CET += totalesPeriodicos.totalesServicios.CET;
-        };
-    };
-    if (objetoRetornoServicios.CIT) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.CIT) {
-            objetoRetornoServicios.CIT += totalesPeriodicos.totalesServicios.CIT;
-        };
-    };
-    if (objetoRetornoServicios.MOT) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.MOT) {
-            objetoRetornoServicios.MOT += totalesPeriodicos.totalesServicios.MOT;
-        };
-    };
-    if (objetoRetornoServicios.OFT) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.OFT) {
-            objetoRetornoServicios.OFT += totalesPeriodicos.totalesServicios.OFT;
-        };
-    };
-    if (objetoRetornoServicios.ALT) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.ALT) {
-            objetoRetornoServicios.ALT += totalesPeriodicos.totalesServicios.ALT;
-        };
-    };
-    if (objetoRetornoServicios.LAT) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.LAT) {
-            objetoRetornoServicios.LAT += totalesPeriodicos.totalesServicios.LAT;
-        };
-    };
-    if (objetoRetornoServicios.TET) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.TET) {
-            objetoRetornoServicios.TET += totalesPeriodicos.totalesServicios.TET;
-        };
-    };
-    if (objetoRetornoServicios.FIT) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.FIT) {
-            objetoRetornoServicios.FIT += totalesPeriodicos.totalesServicios.FIT;
-        };
-    };
-    if (objetoRetornoServicios.FET) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.FET) {
-            objetoRetornoServicios.FET += totalesPeriodicos.totalesServicios.FET;
-        };
-    };
-    if (objetoRetornoServicios.ABT) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.ABT) {
-            objetoRetornoServicios.ABT += totalesPeriodicos.totalesServicios.ABT;
-        };
-    };
-    if (objetoRetornoServicios.MAT) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.MAT) {
-            objetoRetornoServicios.MAT += totalesPeriodicos.totalesServicios.MAT;
-        };
-    };
-    if (objetoRetornoServicios.POT) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.POT) {
-            objetoRetornoServicios.POT += totalesPeriodicos.totalesServicios.POT;
-        };
-    };
-    if (objetoRetornoServicios.BAT) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.BAT) {
-            objetoRetornoServicios.BAT += totalesPeriodicos.totalesServicios.BAT;
-        };
-    };
-    if (objetoRetornoServicios.FTT) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.FTT) {
-            objetoRetornoServicios.FTT += totalesPeriodicos.totalesServicios.FTT;
-        };
-    };
-    if (objetoRetornoServicios.C3T) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.C3T) {
-            objetoRetornoServicios.C3T += totalesPeriodicos.totalesServicios.C3T;
-        };
-    };
-    if (objetoRetornoServicios.C2T) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.C2T) {
-            objetoRetornoServicios.C2T += totalesPeriodicos.totalesServicios.C2T;
-        };
-    };
-    if (objetoRetornoServicios.C4T) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.C4T) {
-            objetoRetornoServicios.C4T += totalesPeriodicos.totalesServicios.C4T;
-        };
-    };
-    if (objetoRetornoServicios.EST) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.EST) {
-            objetoRetornoServicios.EST += totalesPeriodicos.totalesServicios.EST;
-        };
-    };
-    if (objetoRetornoServicios.PAT) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.PAT) {
-            objetoRetornoServicios.PAT += totalesPeriodicos.totalesServicios.PAT;
-        };
-    };
-    if (objetoRetornoServicios.FRT) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.FRT) {
-            objetoRetornoServicios.FRT += totalesPeriodicos.totalesServicios.FRT;
-        };
-    };
-    if (objetoRetornoServicios.NUMCT) {
-        if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios.NUMCT) {
-            objetoRetornoServicios.NUMCT = totalesPeriodicos.totalesServicios.NUMCT;
-        };
+    const servicios = tiposServicioFijo.map(servicio => servicio.prefix).concat('NUMC');
+    servicios.forEach(servicio => {
+        if (totalObjeto[`${servicio}T`]) {
+            objetoRetornoServicios[`${servicio}T`] = totalObjeto[`${servicio}T`];
+            if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios[`${servicio}T`]) {
+                objetoRetornoServicios[`${servicio}T`] += totalesPeriodicos.totalesServicios[`${servicio}T`];
+            }
+        }
+    });
+    const serviciosPersonalizados = obtenerServiciosPersonalizados(totalObjeto);
+    if (serviciosPersonalizados.length > 0) {
+        serviciosPersonalizados.forEach(servicioPersonalizado => {
+            if (totalObjeto[`${servicioPersonalizado}T`]) {
+                objetoRetornoServicios[`${servicioPersonalizado}T`] = totalObjeto[`${servicioPersonalizado}T`];
+                if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios[`${servicioPersonalizado}T`]) {
+                    objetoRetornoServicios[`${servicioPersonalizado}T`] += totalesPeriodicos.totalesServicios[`${servicioPersonalizado}T`];
+                }
+            }
+        });
     };
     return objetoRetornoServicios;
 };

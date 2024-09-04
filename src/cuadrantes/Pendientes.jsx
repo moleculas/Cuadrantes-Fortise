@@ -26,12 +26,13 @@ const Alert = (props) => {
 }
 
 const Pendientes = (props) => {
-
     const classes = Clases();
     const dispatch = useDispatch();
     const listadoCentros = useSelector(store => store.variablesCentros.arrayCentros);
-    const cuadrantesPendientesArray = useSelector(store => store.variablesPendientes.cuadrantesPendientesArray);
-    const numeroCuadrantesPendientes = useSelector(store => store.variablesPendientes.numeroCuadrantesPendientes);
+    const {
+        cuadrantesPendientesArray,
+        numeroCuadrantesPendientes
+    } = useSelector(store => store.variablesPendientes);
 
     //funciones
 
@@ -56,8 +57,22 @@ const Pendientes = (props) => {
                 >
                     <ListItem
                         className={classes.casilla}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            overflow: 'hidden',
+                            width: '100%',
+                            paddingRight: '40px',
+                            boxSizing: 'border-box'
+                        }}
                     >
                         <ListItemText
+                            className={classes.truncate}
+                            style={{
+                                flex: 1,
+                                minWidth: 0,
+                                marginRight: '8px'
+                            }}
                             primary={centro.sub_nombre ? (centro.nombre + " - " + centro.sub_nombre) : centro.nombre}
                         />
                         <ListItemSecondaryAction>
@@ -72,7 +87,7 @@ const Pendientes = (props) => {
     };
 
     return (
-        <div>
+        <div>           
             <Grid
                 spacing={1}
                 container
@@ -90,7 +105,7 @@ const Pendientes = (props) => {
                         <CircularProgress />
                     </Box>
                 ) : (numeroCuadrantesPendientes < 1 ? (
-                    <Box p={3} style={{ width: '100%', minHeight: props.prHeightContenedores, maxHeight: props.prHeightContenedores }}>
+                    <Box p={3} style={{ width: '100%', minHeight: props.prHeightContenedores, maxHeight: props.prHeightContenedores, marginTop: 0, marginLeft: 0 }}>
                         <Alert severity="info">No quedan cuadrantes pendientes por gestionar.</Alert>
                     </Box>
                 ) : (

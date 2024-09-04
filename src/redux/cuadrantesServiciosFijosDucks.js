@@ -1,7 +1,6 @@
 //constantes
 const dataInicial = {
     cuadranteServiciosFijos: [],
-    losServiciosFijos: {},
     stateSwitchTipoServicioFijoCuadrante: {
         TO: false,
         CR: false,
@@ -188,34 +187,58 @@ const dataInicial = {
         },
         bloqueado: ''
     },
+    serviciosFijosPersonalizados: [],
+    servicioFijoPersonalizadoEliminado: null,
 };
 
 //types
 const SET_CUADRANTE_SERVICIOS_FIJOS = 'SET_CUADRANTE_SERVICIOS_FIJOS';
-const SET_LOSSERVICIOSFIJOS = 'SET_LOSSERVICIOSFIJOS';
 const SET_STATESWITCHTIPOSERVICIOFIJOCUADRANTE = 'SET_STATESWITCHTIPOSERVICIOFIJOCUADRANTE';
 const SET_ITEMPREVIOEDITANDOSERVICIOSFIJOS = 'SET_ITEMPREVIOEDITANDOSERVICIOSFIJOS';
 const SET_ITEMEDITANDOSERVICIOSFIJOS = 'SET_ITEMEDITANDOSERVICIOSFIJOS';
+const SET_SERVICIOSFIJOSPERSONALIZADOS = 'SET_SERVICIOSFIJOSPERSONALIZADOS';
+const SET_SERVICIOSFIJOPERSONALIZADOELIMINADO = 'SET_SERVICIOSFIJOPERSONALIZADOELIMINADO';
 
 //reducer
 export default function cuadrantesServiciosFijosReducer(state = dataInicial, action) {
     switch (action.type) {
         case SET_CUADRANTE_SERVICIOS_FIJOS:
             return { ...state, cuadranteServiciosFijos: action.payload.array }
-        case SET_LOSSERVICIOSFIJOS:
-            return { ...state, losServiciosFijos: action.payload.objeto }
         case SET_STATESWITCHTIPOSERVICIOFIJOCUADRANTE:
             return { ...state, stateSwitchTipoServicioFijoCuadrante: action.payload.objeto }
         case SET_ITEMPREVIOEDITANDOSERVICIOSFIJOS:
             return { ...state, itemPrevioEditandoServiciosFijos: action.payload.objeto }
         case SET_ITEMEDITANDOSERVICIOSFIJOS:
             return { ...state, itemEditandoServiciosFijos: action.payload.objeto }
+        case SET_SERVICIOSFIJOSPERSONALIZADOS:
+            return { ...state, serviciosFijosPersonalizados: action.payload.array }
+        case SET_SERVICIOSFIJOPERSONALIZADOELIMINADO:
+            return { ...state, servicioFijoPersonalizadoEliminado: action.payload.objeto }     
         default:
             return { ...state }
     }
 }
 
 //acciones
+
+export const setservicioFijoPersonalizadoEliminadoAccion = (objeto) => (dispatch, getState) => {
+    dispatch({
+        type: SET_SERVICIOSFIJOPERSONALIZADOELIMINADO,
+        payload: {
+            objeto: objeto
+        }
+    });
+};
+
+export const setServiciosFijosPersonalizadosAccion = (array) => (dispatch, getState) => {
+    dispatch({
+        type: SET_SERVICIOSFIJOSPERSONALIZADOS,
+        payload: {
+            array: array
+        }
+    });
+};
+
 export const setItemPrevioEditandoServiciosFijosAccion = (objeto) => (dispatch, getState) => {
     dispatch({
         type: SET_ITEMPREVIOEDITANDOSERVICIOSFIJOS,
@@ -237,15 +260,6 @@ export const setItemEditandoServiciosFijosAccion = (objeto) => (dispatch, getSta
 export const setStateSwitchTipoServicioFijoCuadranteAccion = (objeto) => (dispatch, getState) => {
     dispatch({
         type: SET_STATESWITCHTIPOSERVICIOFIJOCUADRANTE,
-        payload: {
-            objeto: objeto
-        }
-    });
-};
-
-export const setLosServiciosFijosAccion = (objeto) => (dispatch, getState) => {
-    dispatch({
-        type: SET_LOSSERVICIOSFIJOS,
         payload: {
             objeto: objeto
         }

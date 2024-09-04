@@ -25,7 +25,7 @@ import clsx from 'clsx';
 import Clases from "../clases";
 
 //constantes
-const listadoServiciosFijos = Constantes.TIPO_SERVICIO_FIJO;
+const tiposServicioFijo = Constantes.TIPO_SERVICIO_FIJO;
 
 const TipoServicioFijo = (props) => {
     const {
@@ -61,7 +61,7 @@ const TipoServicioFijo = (props) => {
                 ? classes.fondoInactivoServicioFijo
                 : classes.paper;
     let checkeado, laLabelSw, laLabelIn, elId, elValue, laLabelWi, elPrecioHora, laClase, elValueVariaciones, laVariacion, elValueDia, elDia, elValueActivo, elActivo, desactivadoDia, elValueInt, elInt, elValueTrab, elTrab;
-    listadoServiciosFijos.forEach(servicio => {
+    tiposServicioFijo.forEach(servicio => {
         if (tipo.value === servicio.value) {
             checkeado = stateSwitchTipoServicioFijo[servicio.prefix];
             laLabelSw = servicio.label;
@@ -202,7 +202,7 @@ const TipoServicioFijo = (props) => {
                                 fullWidth
                                 id="form-trabajadorSF"
                                 label="Trabajador"
-                                value={elValueTrab}
+                                value={elValueTrab || ''}//modificat: select
                                 onChange={formato === "cuadrantes" ? handleChangeForm('select', elTrab) : handleChangeForm(elTrab)}
                                 helpertext="Selecciona trabajador"
                             >

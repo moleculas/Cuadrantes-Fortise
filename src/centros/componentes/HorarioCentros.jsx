@@ -71,7 +71,7 @@ const HorarioCentros = (props) => {
         };
     };
 
-    const handleChangeTimePickerInicio = (id, hora) => {
+    const handleChangeTimePickerInicio = (id, hora) => {       
         const idSplitted = id.split("-");
         const idCaso = idSplitted[0] + "-" + idSplitted[1];
         const idIndex = idSplitted[2];
@@ -232,7 +232,7 @@ const HorarioCentros = (props) => {
                 //     })
                 //     setOpenSnack(true);
                 //     return;
-                // };
+                // };    
                 arrayValoresTimePicker = [...valueTimePickerInicioDescanso1];
                 arrayValoresHorario = [...horarioIntervencion.tipoRegistroTrabajador];
                 if (hora) {
@@ -245,7 +245,7 @@ const HorarioCentros = (props) => {
                 setValueTimePickerInicioDescanso1(arrayValoresTimePicker);
                 setHorarioIntervencion({ ...horarioIntervencion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
-            case 'timePickerInicio2Descanso-edicion-lunes':
+            case 'timePickerInicio2Descanso-lunes':
                 // if (valueTimePickerFinDescanso2[idIndex].lunes !== null && (retornaMinutos(dispatch(retornaHoraRangoAccion(hora)), retornaHoraRango(valueTimePickerFinDescanso2[idIndex].lunes))) < 0) {
                 //     setAlert({
                 //         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
@@ -287,7 +287,7 @@ const HorarioCentros = (props) => {
                 setValueTimePickerInicioDescanso1(arrayValoresTimePicker);
                 setHorarioIntervencion({ ...horarioIntervencion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
-            case 'timePickerInicio2Descanso-edicion-martes':
+            case 'timePickerInicio2Descanso-martes':
                 // if (valueTimePickerFinDescanso2[idIndex].martes !== null && (retornaMinutos(dispatch(retornaHoraRangoAccion(hora)), retornaHoraRango(valueTimePickerFinDescanso2[idIndex].martes))) < 0) {
                 //     setAlert({
                 //         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
@@ -329,7 +329,7 @@ const HorarioCentros = (props) => {
                 setValueTimePickerInicioDescanso1(arrayValoresTimePicker);
                 setHorarioIntervencion({ ...horarioIntervencion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
-            case 'timePickerInicio2Descanso-edicion-miercoles':
+            case 'timePickerInicio2Descanso-miercoles':
                 // if (valueTimePickerFinDescanso2[idIndex].miercoles !== null && (retornaMinutos(dispatch(retornaHoraRangoAccion(hora)), retornaHoraRango(valueTimePickerFinDescanso2[idIndex].miercoles))) < 0) {
                 //     setAlert({
                 //         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
@@ -371,7 +371,7 @@ const HorarioCentros = (props) => {
                 setValueTimePickerInicioDescanso1(arrayValoresTimePicker);
                 setHorarioIntervencion({ ...horarioIntervencion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
-            case 'timePickerInicio2Descanso-edicion-jueves':
+            case 'timePickerInicio2Descanso-jueves':
                 // if (valueTimePickerFinDescanso2[idIndex].jueves !== null && (retornaMinutos(dispatch(retornaHoraRangoAccion(hora)), retornaHoraRango(valueTimePickerFinDescanso2[idIndex].jueves))) < 0) {
                 //     setAlert({
                 //         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
@@ -413,7 +413,7 @@ const HorarioCentros = (props) => {
                 setValueTimePickerInicioDescanso1(arrayValoresTimePicker);
                 setHorarioIntervencion({ ...horarioIntervencion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
-            case 'timePickerInicio2Descanso-edicion-viernes':
+            case 'timePickerInicio2Descanso-viernes':
                 // if (valueTimePickerFinDescanso2[idIndex].viernes !== null && (retornaMinutos(dispatch(retornaHoraRangoAccion(hora)), retornaHoraRango(valueTimePickerFinDescanso2[idIndex].viernes))) < 0) {
                 //     setAlert({
                 //         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
@@ -455,7 +455,7 @@ const HorarioCentros = (props) => {
                 setValueTimePickerInicioDescanso1(arrayValoresTimePicker);
                 setHorarioIntervencion({ ...horarioIntervencion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
-            case 'timePickerInicio2Descanso-edicion-sabado':
+            case 'timePickerInicio2Descanso-sabado':
                 // if (valueTimePickerFinDescanso2[idIndex].sabado !== null && (retornaMinutos(dispatch(retornaHoraRangoAccion(hora)), retornaHoraRango(valueTimePickerFinDescanso2[idIndex].sabado))) < 0) {
                 //     setAlert({
                 //         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
@@ -497,7 +497,7 @@ const HorarioCentros = (props) => {
                 setValueTimePickerInicioDescanso1(arrayValoresTimePicker);
                 setHorarioIntervencion({ ...horarioIntervencion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
-            case 'timePickerInicio2Descanso-edicion-domingo':
+            case 'timePickerInicio2Descanso-domingo':
                 // if (valueTimePickerFinDescanso2[idIndex].domingo !== null && (retornaMinutos(dispatch(retornaHoraRangoAccion(hora)), retornaHoraRango(valueTimePickerFinDescanso2[idIndex].domingo))) < 0) {
                 //     setAlert({
                 //         mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
@@ -698,7 +698,7 @@ const HorarioCentros = (props) => {
                 setValueTimePickerFinDescanso1(arrayValoresTimePicker);
                 setHorarioIntervencion({ ...horarioIntervencion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
-            case 'timePickerFin2Descanso-edicion-lunes':
+            case 'timePickerFin2Descanso-lunes':
                 // if (valueTimePickerInicioDescanso2[idIndex].lunes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2[idIndex].lunes), dispatch(retornaHoraRangoAccion(hora)))) < 0) {
                 //     setAlert({
                 //         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
@@ -740,7 +740,7 @@ const HorarioCentros = (props) => {
                 setValueTimePickerFinDescanso1(arrayValoresTimePicker);
                 setHorarioIntervencion({ ...horarioIntervencion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
-            case 'timePickerFin2Descanso-edicion-martes':
+            case 'timePickerFin2Descanso-martes':
                 // if (valueTimePickerInicioDescanso2[idIndex].martes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2[idIndex].martes), dispatch(retornaHoraRangoAccion(hora)))) < 0) {
                 //     setAlert({
                 //         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
@@ -782,7 +782,7 @@ const HorarioCentros = (props) => {
                 setValueTimePickerFinDescanso1(arrayValoresTimePicker);
                 setHorarioIntervencion({ ...horarioIntervencion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
-            case 'timePickerFin2Descanso-edicion-miercoles':
+            case 'timePickerFin2Descanso-miercoles':
                 // if (valueTimePickerInicioDescanso2[idIndex].miercoles !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2[idIndex].miercoles), dispatch(retornaHoraRangoAccion(hora)))) < 0) {
                 //     setAlert({
                 //         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
@@ -824,7 +824,7 @@ const HorarioCentros = (props) => {
                 setValueTimePickerFinDescanso1(arrayValoresTimePicker);
                 setHorarioIntervencion({ ...horarioIntervencion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
-            case 'timePickerFin2Descanso-edicion-jueves':
+            case 'timePickerFin2Descanso-jueves':
                 // if (valueTimePickerInicioDescanso2[idIndex].jueves !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2[idIndex].jueves), dispatch(retornaHoraRangoAccion(hora)))) < 0) {
                 //     setAlert({
                 //         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
@@ -866,7 +866,7 @@ const HorarioCentros = (props) => {
                 setValueTimePickerFinDescanso1(arrayValoresTimePicker);
                 setHorarioIntervencion({ ...horarioIntervencion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
-            case 'timePickerFin2Descanso-edicion-viernes':
+            case 'timePickerFin2Descanso-viernes':
                 // if (valueTimePickerInicioDescanso2[idIndex].viernes !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2[idIndex].viernes), dispatch(retornaHoraRangoAccion(hora)))) < 0) {
                 //     setAlert({
                 //         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
@@ -908,7 +908,7 @@ const HorarioCentros = (props) => {
                 setValueTimePickerFinDescanso1(arrayValoresTimePicker);
                 setHorarioIntervencion({ ...horarioIntervencion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
-            case 'timePickerFin2Descanso-edicion-sabado':
+            case 'timePickerFin2Descanso-sabado':
                 // if (valueTimePickerInicioDescanso2[idIndex].sabado !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2[idIndex].sabado), dispatch(retornaHoraRangoAccion(hora)))) < 0) {
                 //     setAlert({
                 //         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
@@ -950,7 +950,7 @@ const HorarioCentros = (props) => {
                 setValueTimePickerFinDescanso1(arrayValoresTimePicker);
                 setHorarioIntervencion({ ...horarioIntervencion, tipoRegistroTrabajador: arrayValoresHorario });
                 break;
-            case 'timePickerFin2Descanso-edicion-domingo':
+            case 'timePickerFin2Descanso-domingo':
                 // if (valueTimePickerInicioDescanso2[idIndex].domingo !== null && (retornaMinutos(retornaHoraRango(valueTimePickerInicioDescanso2[idIndex].domingo), dispatch(retornaHoraRangoAccion(hora)))) < 0) {
                 //     setAlert({
                 //         mensaje: "La hora de salida no puede ser inferior a la hora de entrada.",
@@ -980,6 +980,7 @@ const HorarioCentros = (props) => {
     const handleChangeSelectCantidad = (e) => {
         const idSplitted = e.target.name.split("-");
         const idCaso = idSplitted[0] + "-" + idSplitted[1];
+        
         const idIndex = idSplitted[2];
         let arrayValoresSelect, arrayValoresHorario;
         arrayValoresSelect = [...valueCantidadHoras];
@@ -1308,8 +1309,8 @@ const HorarioCentros = (props) => {
                             prDia={'Lun.'}
                             prIdInicio1={'timePickerInicio1Descanso-lunes-' + index}
                             prIdFin1={'timePickerFin1Descanso-lunes-' + index}
-                            prIdInicio2={'timePickerInicio2Descanso-edicion-lunes-' + index}
-                            prIdFin2={'timePickerFin2Descanso-edicion-lunes-' + index}
+                            prIdInicio2={'timePickerInicio2Descanso-lunes-' + index}
+                            prIdFin2={'timePickerFin2Descanso-lunes-' + index}
                             prValueTimePickerInicio1={valueTimePickerInicioDescanso1[index].lunes}
                             prValueTimePickerFin1={valueTimePickerFinDescanso1[index].lunes}
                             prValueTimePickerInicio2={valueTimePickerInicioDescanso2[index].lunes}
@@ -1326,8 +1327,8 @@ const HorarioCentros = (props) => {
                             prDia={'Mar.'}
                             prIdInicio1={'timePickerInicio1Descanso-martes-' + index}
                             prIdFin1={'timePickerFin1Descanso-martes-' + index}
-                            prIdInicio2={'timePickerInicio2Descanso-edicion-martes-' + index}
-                            prIdFin2={'timePickerFin2Descanso-edicion-martes-' + index}
+                            prIdInicio2={'timePickerInicio2Descanso-martes-' + index}
+                            prIdFin2={'timePickerFin2Descanso-martes-' + index}
                             prValueTimePickerInicio1={valueTimePickerInicioDescanso1[index].martes}
                             prValueTimePickerFin1={valueTimePickerFinDescanso1[index].martes}
                             prValueTimePickerInicio2={valueTimePickerInicioDescanso2[index].martes}
@@ -1344,8 +1345,8 @@ const HorarioCentros = (props) => {
                             prDia={'Mié.'}
                             prIdInicio1={'timePickerInicio1Descanso-miercoles-' + index}
                             prIdFin1={'timePickerFin1Descanso-miercoles-' + index}
-                            prIdInicio2={'timePickerInicio2Descanso-edicion-miercoles-' + index}
-                            prIdFin2={'timePickerFin2Descanso-edicion-miercoles-' + index}
+                            prIdInicio2={'timePickerInicio2Descanso-miercoles-' + index}
+                            prIdFin2={'timePickerFin2Descanso-miercoles-' + index}
                             prValueTimePickerInicio1={valueTimePickerInicioDescanso1[index].miercoles}
                             prValueTimePickerFin1={valueTimePickerFinDescanso1[index].miercoles}
                             prValueTimePickerInicio2={valueTimePickerInicioDescanso2[index].miercoles}
@@ -1362,8 +1363,8 @@ const HorarioCentros = (props) => {
                             prDia={'Jue.'}
                             prIdInicio1={'timePickerInicio1Descanso-jueves-' + index}
                             prIdFin1={'timePickerFin1Descanso-jueves-' + index}
-                            prIdInicio2={'timePickerInicio2Descanso-edicion-jueves-' + index}
-                            prIdFin2={'timePickerFin2Descanso-edicion-jueves-' + index}
+                            prIdInicio2={'timePickerInicio2Descanso-jueves-' + index}
+                            prIdFin2={'timePickerFin2Descanso-jueves-' + index}
                             prValueTimePickerInicio1={valueTimePickerInicioDescanso1[index].jueves}
                             prValueTimePickerFin1={valueTimePickerFinDescanso1[index].jueves}
                             prValueTimePickerInicio2={valueTimePickerInicioDescanso2[index].jueves}
@@ -1380,8 +1381,8 @@ const HorarioCentros = (props) => {
                             prDia={'Vie.'}
                             prIdInicio1={'timePickerInicio1Descanso-viernes-' + index}
                             prIdFin1={'timePickerFin1Descanso-viernes-' + index}
-                            prIdInicio2={'timePickerInicio2Descanso-edicion-viernes-' + index}
-                            prIdFin2={'timePickerFin2Descanso-edicion-viernes-' + index}
+                            prIdInicio2={'timePickerInicio2Descanso-viernes-' + index}
+                            prIdFin2={'timePickerFin2Descanso-viernes-' + index}
                             prValueTimePickerInicio1={valueTimePickerInicioDescanso1[index].viernes}
                             prValueTimePickerFin1={valueTimePickerFinDescanso1[index].viernes}
                             prValueTimePickerInicio2={valueTimePickerInicioDescanso2[index].viernes}
@@ -1398,8 +1399,8 @@ const HorarioCentros = (props) => {
                             prDia={'Sáb.'}
                             prIdInicio1={'timePickerInicio1Descanso-sabado-' + index}
                             prIdFin1={'timePickerFin1Descanso-sabado-' + index}
-                            prIdInicio2={'timePickerInicio2Descanso-edicion-sabado-' + index}
-                            prIdFin2={'timePickerFin2Descanso-edicion-sabado-' + index}
+                            prIdInicio2={'timePickerInicio2Descanso-sabado-' + index}
+                            prIdFin2={'timePickerFin2Descanso-sabado-' + index}
                             prValueTimePickerInicio1={valueTimePickerInicioDescanso1[index].sabado}
                             prValueTimePickerFin1={valueTimePickerFinDescanso1[index].sabado}
                             prValueTimePickerInicio2={valueTimePickerInicioDescanso2[index].sabado}
@@ -1416,8 +1417,8 @@ const HorarioCentros = (props) => {
                             prDia={'Dom.'}
                             prIdInicio1={'timePickerInicio1Descanso-domingo-' + index}
                             prIdFin1={'timePickerFin1Descanso-domingo-' + index}
-                            prIdInicio2={'timePickerInicio2Descanso-edicion-domingo-' + index}
-                            prIdFin2={'timePickerFin2Descanso-edicion-domingo-' + index}
+                            prIdInicio2={'timePickerInicio2Descanso-domingo-' + index}
+                            prIdFin2={'timePickerFin2Descanso-domingo-' + index}
                             prValueTimePickerInicio1={valueTimePickerInicioDescanso1[index].domingo}
                             prValueTimePickerFin1={valueTimePickerFinDescanso1[index].domingo}
                             prValueTimePickerInicio2={valueTimePickerInicioDescanso2[index].domingo}

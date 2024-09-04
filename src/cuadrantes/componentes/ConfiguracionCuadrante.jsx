@@ -499,7 +499,7 @@ const ConfiguracionCuadrante = (props) => {
                     <Select
                         id="form-tipoFestivo-configuracion"
                         label="Tipo festivo"
-                        value={props.prItemEditandoConfiguracion.festivos.tipo}
+                        value={props.prItemEditandoConfiguracion.festivos.tipo || ''}//modificat: select
                         onChange={handleChangeFormConfiguracionCuadrante('festivosTipo')}
                         helpertext="Selecciona Tipo Festivo"
                     >

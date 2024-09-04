@@ -1,22 +1,31 @@
-import { retornaAnoMesAccion } from './appDucks';
-import { setCuadranteAccion } from './cuadrantesDucks';
-import { setVariablesPopoverDiasAccion } from './cuadrantesPopoversDucks';
-import { setVariablesPopoverGeneralAccion } from './cuadrantesPopoversDucks';
-import { setCentroAccion } from './cuadrantesDucks';
-import { setLosServiciosFijosAccion } from './cuadrantesServiciosFijosDucks';
-import { setStateSwitchTipoServicioFijoCuadranteAccion } from './cuadrantesServiciosFijosDucks';
-import { setItemPrevioEditandoServiciosFijosAccion } from './cuadrantesServiciosFijosDucks';
-import { setItemEditandoServiciosFijosAccion } from './cuadrantesServiciosFijosDucks';
-import { setStateFestivoAccion } from './cuadrantesDucks';
-import { vaciarDatosCuadranteRegistradoAccion } from './cuadrantesDucks';
-import { activarDesactivarCambioBotonRegistrarAccion } from './cuadrantesDucks';
-import { activarDesactivarCambioAccion } from './cuadrantesDucks';
-import { reseteaTotalesPeriodicosAccion } from './cuadrantesDucks';
-import { activarDesactivarCambioBotonActualizarAccion } from './cuadrantesDucks';
-import { setCuadranteServiciosFijosAccion } from './cuadrantesServiciosFijosDucks';
+import {
+    retornaAnoMesAccion
+} from './appDucks';
+import {
+    setCuadranteAccion,
+    setCentroAccion,
+    setStateFestivoAccion,
+    vaciarDatosCuadranteRegistradoAccion,
+    activarDesactivarCambioBotonRegistrarAccion,
+    activarDesactivarCambioAccion,
+    reseteaTotalesPeriodicosAccion,
+    activarDesactivarCambioBotonActualizarAccion,
+    setProcesoHorasTrabajadoresAccion
+} from './cuadrantesDucks';
+import {
+    setVariablesPopoverDiasAccion,
+    setVariablesPopoverGeneralAccion
+} from './cuadrantesPopoversDucks';
+import { 
+    setStateSwitchTipoServicioFijoCuadranteAccion,
+    setItemPrevioEditandoServiciosFijosAccion,
+    setItemEditandoServiciosFijosAccion,
+    setCuadranteServiciosFijosAccion,
+    setServiciosFijosPersonalizadosAccion
+} from './cuadrantesServiciosFijosDucks';
 import { vaciarDatosCentroAccion } from './centrosDucks';
 import { vaciarDatosTrabajadorAccion } from './trabajadoresDucks';
-import { resetarNumeroRecibosAccion } from './appDucks';
+import { setTrabajadoresInicioAccion } from './horasTrabajadoresDucks';
 
 //constantes
 const dataInicial = {
@@ -97,7 +106,11 @@ const dataInicial = {
         inicial: false,
         gestion: false
     },
-    tiempoEsperaLote: false
+    tiempoEsperaLote: false,
+    procesoHorasTrabajadores: {
+        horasTrabajadores: [],
+        cuadrantesProcesados: []
+    }
 };
 
 //types
@@ -807,8 +820,7 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
         payload: {
             array: []
         }
-    });
-    dispatch(setLosServiciosFijosAccion({}));
+    });   
     dispatch(setStateSwitchTipoServicioFijoCuadranteAccion({
         TO: false,
         CR: false,
@@ -999,7 +1011,7 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
             trab_PA: '',
             trab_FR: ''
         }
-    }));
+    }));   
     dispatch({
         type: SET_ITEMPREVIOEDITANDOCONFIGURACION,
         payload: {
@@ -1038,7 +1050,7 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
         }
     });
     if (!excepciones) {
-        //cambio cuadrante total
+        //cambio cuadrante total (afecta als 2 quadrants)
         dispatch({
             type: SET_NUMEROFACTUSOL,
             payload: {
@@ -1070,7 +1082,6 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
         //dispatch(registrarIntervencionCuadranteNuevoAccion(true));
         dispatch(activarDesactivarCambioAccion(true));
         dispatch(activarDesactivarCambioBotonActualizarAccion(true));
-        dispatch(resetarNumeroRecibosAccion());
         dispatch({
             type: SET_NUMEROCUADRANTESCUADRANTES,
             payload: {
@@ -1083,6 +1094,11 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
                 valor: 1
             }
         });
+        //modificador: control horas trabajadores 
+        dispatch(setProcesoHorasTrabajadoresAccion({
+            horasTrabajadores: [],
+            cuadrantesProcesados: []
+        }));
     } else {
         //dispatch(registrarIntervencionCuadranteNuevoAccion(false));
     };
@@ -1093,6 +1109,8 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
         }
     });
     dispatch(setCuadranteServiciosFijosAccion([]));
+    dispatch(setServiciosFijosPersonalizadosAccion([]));
+    dispatch(setTrabajadoresInicioAccion([]));
     dispatch({
         type: SET_VISIBLECUADRANTE,
         payload: {

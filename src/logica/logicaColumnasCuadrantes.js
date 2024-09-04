@@ -13,6 +13,7 @@ import {
     setCuadranteAccion
 } from '../redux/cuadrantesDucks';
 import { retornaMinutosAccionEnCuadrantes } from './logicaApp';
+import { setTrabajadoresInicioAccion } from '../redux/horasTrabajadoresDucks';
 
 const diasSemana = Constantes.DIAS_SEMANA;
 
@@ -419,8 +420,9 @@ const gestionaColumnaCuadranteInteriorAccion = (
     tipoHorario,
     esActualizacion
 ) => (dispatch, getState) => {
-    const { cuadrante, calendarioAGestionar, losDiasDelMes, stateFestivo, objetoCuadrante } = getState().variablesCuadrantes;
-    const { bufferSwitchedDiasFestivosCuadrante, cuadranteEnUsoCuadrantes, yaNoEsInicio } = getState().variablesCuadrantesSetters;
+    const { cuadrante, calendarioAGestionar, losDiasDelMes, stateFestivo, objetoCuadrante, cuadranteRegistrado } = getState().variablesCuadrantes;
+    const { bufferSwitchedDiasFestivosCuadrante, cuadranteEnUsoCuadrantes, yaNoEsInicio, numeroCuadrantesCuadrantes } = getState().variablesCuadrantesSetters;
+    const { trabajadoresInicio } = getState().variablesHorasTrabajadores;
     const { objetoCentro } = getState().variablesCentros;
     //control trabajador repetido
     if (esInicio && trabajador.id !== 999 && cuadrante.some(columna => columna.idTrabajador === trabajador.id)) {
@@ -441,6 +443,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
             };
         };
     };
+    //modificador: control horas servicios fijos    
+    if (cuadranteRegistrado === 'no' && !numeroCuadrantesCuadrantes[cuadranteEnUsoCuadrantes - 1].revisado && trabajador) {            
+        dispatch(setTrabajadoresInicioAccion([...trabajadoresInicio, trabajador.id]));
+    };   
     let columnaAnadir, hayTrabajador;
     let arrayBaja1 = [], arrayBaja2 = [], arrayBaja = [], arrayRegistrosHistorico = [];
     const tipoRegistro = elHorarioCuadrante.tipoRegistro;
@@ -482,14 +488,14 @@ const gestionaColumnaCuadranteInteriorAccion = (
             permisoRET: () => periodoBajaTrabajadorAccion(calendarioAGestionar, trabajador.datosEstado.inicioPermiso, trabajador.datosEstado.finPermiso, losDiasDelMes.length),
             ausenciaINJ: () => periodoBajaTrabajadorAccion(calendarioAGestionar, trabajador.datosEstado.inicioAusencia, trabajador.datosEstado.finAusencia, losDiasDelMes.length),
         };
-        if (trabajador.estado !== 'alta') {
+        if (trabajador.estado !== 'alta') {            
             const bajaFunc = periodoBajaFuncs[trabajador.estado];
             arrayBaja1 = bajaFunc();
             columnaAnadir['hayBaja'] = true;
         } else {
             columnaAnadir['hayBaja'] = false;
         };
-        if (trabajador.historicoBajas) {
+        if (trabajador.historicoBajas) {          
             let hayBajaEnElMes = false;
             trabajador.historicoBajas.meses.forEach((registro, index) => {
                 const registroInicioSplitted = registro.baja[0].inicio.split("-");
@@ -498,7 +504,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                 const elMesFin = registroFinSplitted[0] + '-' + registroFinSplitted[1];
                 const fechaInicio = new Date(elMesInicio);
                 const fechaFin = new Date(elMesFin);
-                const fechaCalendario = new Date(calendarioAGestionar);
+                const fechaCalendario = new Date(calendarioAGestionar);               
                 if (((elMesFin === calendarioAGestionar) && (elMesInicio !== calendarioAGestionar)) ||
                     ((elMesFin !== calendarioAGestionar) && (elMesInicio === calendarioAGestionar)) ||
                     ((elMesFin === calendarioAGestionar) && (elMesInicio === calendarioAGestionar))) {
@@ -926,7 +932,7 @@ export const gestionaColumnaCuadranteAccion = (
     esLimpieza,
     tipoHorario,
     esActualizacion
-) => (dispatch, getState) => {
+) => (dispatch, getState) => {   
     const { objetoCentro } = getState().variablesCentros;
     const { cuadrante, objetoCuadrante } = getState().variablesCuadrantes;
     const {
@@ -952,7 +958,7 @@ export const gestionaColumnaCuadranteAccion = (
         posicionTrabajador = 0;
     };
     if (cuadrante.length > 0) {
-        const trabajadorAnterior = cuadrante[posicionAnterior];
+        const trabajadorAnterior = cuadrante[posicionAnterior];       
         if (trabajadorAnterior && tipoTrabajador === 'suplente' && !trabajadorAnterior.hayBaja && !esRevision) {
             return;
         };

@@ -16,7 +16,7 @@ const dataInicial = {
     numeroCuadrantesBaja: null,
     estadoVenimosDePendientes: false,
     estadoVenimosDeRegistrados: false,
-    arrayCuadantes: []
+    arrayCuadantes: null
 };
 
 //types
@@ -48,7 +48,7 @@ export default function pendientesReducer(state = dataInicial, action) {
         case VENIMOS_DE_PENDIENTES:
             return { ...state, estadoVenimosDePendientes: action.payload.estado }
         case VACIAR_DATOS_PENDIENTES:
-            return { ...state, arrayCuadantes: [], cuadrantesPendientesArray: [], cuadrantesRegistradosArray: [], cuadrantesFacturadosArray: [], numeroCuadrantesPendientes: null, numeroCuadrantesRegistrados: null, numeroCuadrantesFacturados: null }
+            return { ...state, arrayCuadantes: null, cuadrantesPendientesArray: [], cuadrantesRegistradosArray: [], cuadrantesFacturadosArray: [], numeroCuadrantesPendientes: null, numeroCuadrantesRegistrados: null, numeroCuadrantesFacturados: null }
         case CLOSE_LOADING_PENDIENTES:
             return { ...state, loadingPendientes: false }
         case VENIMOS_DE_REGISTRADOS:
@@ -68,15 +68,39 @@ export const gestionaCuadrantesAccion = () => (dispatch, getState) => {
     const { arrayCuadantes } = getState().variablesPendientes;
     const { arrayCentros } = getState().variablesCentros;
     let contadorPendientes = 0, contadorRegistrados = 0, contadorFacturados = 0, contadorBajas = 0;
-    for (let i = 0; i < arrayCentros.length; i++) {
-        const centroIterado = arrayCentros[i];
-        const cuadrante = arrayCuadantes[i];
-        if (!cuadrante) {
-            if (centroIterado.estado !== 'baja') {
+    arrayCentros.forEach(centro => {
+        const cuadranteEncontrado = arrayCuadantes.find(cuadrante => {
+            if (cuadrante && cuadrante.total && centro.estado !== "baja") {
+                const totalDeserializado = parse(cuadrante.total);
+                if (totalDeserializado.nombreCentro === centro.nombre && totalDeserializado?.subNombreCentro === centro?.sub_nombre) {
+                    return cuadrante;
+                }
+            }
+            return undefined;
+        });
+        if (cuadranteEncontrado) {
+            const tipoCuadrante = cuadranteEncontrado.estado === 'registrado' ? 'REGISTRADO' : 'FACTURADO';
+            const contador = tipoCuadrante === 'REGISTRADO' ? ++contadorRegistrados : ++contadorFacturados;
+            const elementoArray = {
+                id: cuadranteEncontrado.id,
+                nombre: cuadranteEncontrado.nombre,
+                actualizacion: cuadranteEncontrado.actualizacion,
+                estado: cuadranteEncontrado.estado,
+                total: parse(cuadranteEncontrado.total),
+            };
+            dispatch({
+                type: `OBTENER_CUADRANTE_${tipoCuadrante}`,
+                payload: {
+                    elementoArray,
+                    contador,
+                },
+            });
+        } else {
+            if (centro.estado !== 'baja') {
                 dispatch({
                     type: OBTENER_CUADRANTE_PENDIENTE,
                     payload: {
-                        elementoArray: centroIterado.id,
+                        elementoArray: centro.id,
                         contador: ++contadorPendientes,
                     },
                 });
@@ -88,39 +112,18 @@ export const gestionaCuadrantesAccion = () => (dispatch, getState) => {
                     },
                 });
             }
-        } else {
-            const tipoCuadrante = cuadrante.estado === 'registrado' ? 'REGISTRADO' : 'FACTURADO';
-            const contador = tipoCuadrante === 'REGISTRADO' ? ++contadorRegistrados : ++contadorFacturados;
-            const elementoArray = {
-                id: cuadrante.id,
-                nombre: cuadrante.nombre,
-                actualizacion: cuadrante.actualizacion,
-                estado: cuadrante.estado,
-                total: parse(cuadrante.total),
-            };
-            dispatch({
-                type: `OBTENER_CUADRANTE_${tipoCuadrante}`,
-                payload: {
-                    elementoArray,
-                    contador,
-                },
-            });
-        };
-    };
+        }
+    });
 };
 
-export const obtenerCuadrantesAccion = (objeto, mes, arrayCentros) => async (dispatch, getState) => {
+export const obtenerCuadrantesAccion = (objeto, mes) => async (dispatch, getState) => {
     dispatch({
         type: LOADING_PENDIENTES
     });
-    const datos = {
-        arrayCuadrantes: arrayCentros.map(centroIterado => `${mes}-${centroIterado.id}`)
-    };
     try {
-        const losDatos = JSON.stringify(datos);
         const formData = new FormData();
-        formData.append("objeto", 'cuadrantes');
-        formData.append("datos", losDatos);
+        formData.append("objeto", objeto);
+        formData.append("datos", mes);
         let apiUrl = rutaApi + "obtener_pendientes.php";
         const res = await axios.post(apiUrl, formData, {
             headers: {

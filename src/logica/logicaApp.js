@@ -7,8 +7,10 @@ import {
     AccordionDetails as MuiAccordionDetails,
     Tooltip,
     Menu,
+    Checkbox
 } from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
+import { orange } from '@material-ui/core/colors';
 
 export const AccordionCen = withStyles({
     root: {
@@ -237,7 +239,7 @@ export const Alert = (props) => {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
 };
 
-export const alturaCasilla = (esDesktop) => {    
+export const alturaCasilla = (esDesktop) => {
     return esDesktop ? 38 : 48;
 };
 
@@ -255,3 +257,20 @@ export const retornaMinutosAccionEnCuadrantes = (primeraHora, segundaHora) => {
         return diff;
     };
 };
+
+export const controlActualizacionesPorFecha = (fechaActualizacionString, calendarioAGestionar) => {
+    const [aniofechaActualizacion, mesfechaActualizacion] = fechaActualizacionString.split('-').map(Number);
+    const [aniofechaCalendarioAGestionar, mesfechaCalendarioAGestionar] = calendarioAGestionar.split('-').map(Number);
+    return aniofechaCalendarioAGestionar > aniofechaActualizacion || 
+           (aniofechaCalendarioAGestionar === aniofechaActualizacion && mesfechaCalendarioAGestionar >= mesfechaActualizacion);
+};
+
+export const OrangeCheckbox = withStyles({
+    root: {
+      color: orange[400],
+      '&$checked': {
+        color: orange[600],
+      },
+    },
+    checked: {},
+  })((props) => <Checkbox color="default" {...props} />);

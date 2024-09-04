@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     CircularProgress,   
@@ -12,20 +12,22 @@ import Clases from "../../clases";
 
 //importaciones acciones
 import {
-    obtenerNominasPorAnyoAccion,
-    forzarRecargaGraficosNominasAccion
+    obtenerHorasTrabajadoresPorAnyoAccion,
+    forzarRecargaGraficosHorasTrabajadoresAccion
 } from '../../redux/graficosDucks';
 
 //carga componentes
 import CustomSnack from '../../comun/CustomSnack';
 
-const GraficoNominas = (props) => {
+const GraficoHorasTrabjadores = (props) => {
     const classes = Clases();
     const dispatch = useDispatch();
-    const nominasPorAnyoGraficos = useSelector(store => store.variablesGraficos.nominasPorAnyoGraficos);
-    const errorDeCargaGraficosNominas = useSelector(store => store.variablesGraficos.errorDeCargaGraficosNominas);
-    const openLoadingGraficosNominas = useSelector(store => store.variablesGraficos.loadingGraficos);
-    const forzarRecargaGraficosNominas = useSelector(store => store.variablesGraficos.forzarRecargaGraficosNominas);
+    const {
+        horasTrabajadoresPorAnyoGraficos,
+        errorDeCargaGraficosHorasTrabajadores,
+        loadingGraficos: openLoadingGraficosHorasTrabajadores,
+        forzarRecargaGraficosHorasTrabajadores
+    } = useSelector(store => store.variablesGraficos);
 
     //states
 
@@ -36,29 +38,29 @@ const GraficoNominas = (props) => {
     //useEffect
 
     useEffect(() => {
-        if (forzarRecargaGraficosNominas) {
-            dispatch(obtenerNominasPorAnyoAccion('nominas'));
-            dispatch(forzarRecargaGraficosNominasAccion(false));
+        if (forzarRecargaGraficosHorasTrabajadores) {
+            dispatch(obtenerHorasTrabajadoresPorAnyoAccion('horas_trabajadores'));
+            dispatch(forzarRecargaGraficosHorasTrabajadoresAccion(false));
         }
-    }, [forzarRecargaGraficosNominas]);
+    }, [forzarRecargaGraficosHorasTrabajadores]);
 
     useEffect(() => {
-        if (errorDeCargaGraficosNominas) {
+        if (errorDeCargaGraficosHorasTrabajadores) {
             setAlert({
                 mensaje: "Error de conexión con la base de datos.",
                 tipo: 'error'
             })
             setOpenSnack(true);
         }
-    }, [errorDeCargaGraficosNominas]);
+    }, [errorDeCargaGraficosHorasTrabajadores]);
 
     useEffect(() => {
-        if (!openLoadingGraficosNominas) {
+        if (!openLoadingGraficosHorasTrabajadores) {
             setOpenLoading(false)
         } else {
             setOpenLoading(true)
         }
-    }, [openLoadingGraficosNominas]);
+    }, [openLoadingGraficosHorasTrabajadores]);
 
     return (
         <div>
@@ -79,10 +81,10 @@ const GraficoNominas = (props) => {
                         <CircularProgress />
                     </Box>
                 ) : (
-                    <LineChart
+                    <BarChart
                         width={props.prWidthContenedores}
                         height={props.prHeightContenedores}
-                        data={nominasPorAnyoGraficos}
+                        data={horasTrabajadoresPorAnyoGraficos}
                         margin={{
                             top: 20,
                             right: 30,
@@ -95,9 +97,8 @@ const GraficoNominas = (props) => {
                         <YAxis style={{ fontSize: '0.7rem' }} />
                         <Tooltip />
                         {/* <Legend /> */}
-                        <Line type="monotone" dataKey="Gastos" stroke="#ff9800" activeDot={{ r: 4 }} />
-                        <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-                    </LineChart>
+                        <Bar type="monotone" dataKey="Horas" fill="#ffa726" stackId="a" />                  
+                    </BarChart>
                 )}
                 <CustomSnack
                     open={openSnack}
@@ -112,4 +113,4 @@ const GraficoNominas = (props) => {
     )
 }
 
-export default GraficoNominas
+export default GraficoHorasTrabjadores

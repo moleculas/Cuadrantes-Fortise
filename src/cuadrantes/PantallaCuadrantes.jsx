@@ -60,20 +60,28 @@ import {
 const PantallaCuadrantes = () => {
     const classes = Clases();
     const dispatch = useDispatch();
-    const numeroCuadrantesPendientes = useSelector(store => store.variablesPendientes.numeroCuadrantesPendientes);
-    const numeroCuadrantesRegistrados = useSelector(store => store.variablesPendientes.numeroCuadrantesRegistrados);
-    const numeroCuadrantesFacturados = useSelector(store => store.variablesPendientes.numeroCuadrantesFacturados);
-    const calendarioAGestionar = useSelector(store => store.variablesCuadrantes.calendarioAGestionar);
-    const listadoTrabajadoresBaja = useSelector(store => store.variablesTrabajadores.arrayTrabajadoresBaja);
-    const errorDeCargaCentros = useSelector(store => store.variablesCentros.errorDeCargaCentros);
-    const errorDeCargaCuadrantes = useSelector(store => store.variablesCuadrantes.errorDeCargaCuadrantes);
-    const listadoCentros = useSelector(store => store.variablesCentros.arrayCentros);
-    const cuadrantesPendientesArray = useSelector(store => store.variablesPendientes.cuadrantesPendientesArray);
-    const finalizandoLoteEstado = useSelector(store => store.variablesApp.finalizandoLoteEstado);
-    const valorTabPantallaCuadrantes = useSelector(store => store.variablesCuadrantesSetters.valorTabPantallaCuadrantes);
-    const arrayCuadantes = useSelector(store => store.variablesPendientes.arrayCuadantes);
-    const numeroCuadrantesBaja = useSelector(store => store.variablesPendientes.numeroCuadrantesBaja);
-    const tiempoEsperaLote = useSelector(store => store.variablesCuadrantesSetters.tiempoEsperaLote);
+    const {
+        numeroCuadrantesPendientes,
+        numeroCuadrantesRegistrados,
+        numeroCuadrantesFacturados,
+        cuadrantesPendientesArray,
+        arrayCuadantes,
+        numeroCuadrantesBaja
+    } = useSelector(store => store.variablesPendientes);
+    const {
+        calendarioAGestionar,
+        errorDeCargaCuadrantes
+    } = useSelector(store => store.variablesCuadrantes);
+    const { arrayTrabajadoresBaja: listadoTrabajadoresBaja } = useSelector(store => store.variablesTrabajadores);
+    const {
+        errorDeCargaCentros,
+        arrayCentros: listadoCentros
+    } = useSelector(store => store.variablesCentros);
+    const { finalizandoLoteEstado } = useSelector(store => store.variablesApp);
+    const {
+        valorTabPantallaCuadrantes,
+        tiempoEsperaLote
+    } = useSelector(store => store.variablesCuadrantesSetters);
 
     //states
 
@@ -111,24 +119,32 @@ const PantallaCuadrantes = () => {
         if (finalizandoLoteEstado) {
             dispatch(finalizarArchivosXLSLoteAccion(false));
             dispatch(forzarRecargaGraficosCuadrantesAccion(false));
-        };
+        }
     }, [calendarioAGestionar, finalizandoLoteEstado]);
 
     useEffect(() => {
-        if (listadoCentros.length > 0) {
+        if (listadoCentros.length > 0 && finalizandoLoteEstado) {
             if (cuadrantesPendientesArray.length === 0) {
                 const { monthNum, year } = dispatch(retornaAnoMesCuadranteAccion(calendarioAGestionar));
                 const anyoMes = year + '-' + monthNum;
-                dispatch(obtenerCuadrantesAccion('cuadrantes', anyoMes, listadoCentros));
+                dispatch(obtenerCuadrantesAccion('cuadrantes', anyoMes));
             }
         }
     }, [listadoCentros, calendarioAGestionar, finalizandoLoteEstado]);
 
     useEffect(() => {
-        if (arrayCuadantes.length > 0) {
-            if (arrayCuadantes.length === listadoCentros.length) {
-                dispatch(gestionaCuadrantesAccion());
-            };
+        if (listadoCentros.length > 0 && !finalizandoLoteEstado) {
+            if (cuadrantesPendientesArray.length === 0) {
+                const { monthNum, year } = dispatch(retornaAnoMesCuadranteAccion(calendarioAGestionar));
+                const anyoMes = year + '-' + monthNum;
+                dispatch(obtenerCuadrantesAccion('cuadrantes', anyoMes));
+            }
+        }
+    }, [listadoCentros, calendarioAGestionar]);
+
+    useEffect(() => {
+        if (arrayCuadantes?.length >= 0) {
+            dispatch(gestionaCuadrantesAccion());
         };
     }, [arrayCuadantes]);
 
@@ -308,7 +324,7 @@ const PantallaCuadrantes = () => {
                                     style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra }}
                                 >
                                     <Fragment>
-                                        <PendientesFacturados prHeightContenedores={heightContenedoresGra} prWidthContenedores={widthContenedores} prOpenLoading={openLoading} />
+                                        <PendientesFacturados prWidthContenedores={widthContenedores} prOpenLoading={openLoading} prMes={monthLet} />
                                     </Fragment>
                                 </Grid>
                             </Paper>

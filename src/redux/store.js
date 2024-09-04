@@ -11,14 +11,13 @@ import cuadrantesReducer from './cuadrantesDucks';
 import pendientesReducer from './pendientesDucks';
 import graficosReducer from './graficosDucks';
 import nominasReducer from './nominasDucks';
-import faltantesReducer from './faltantesDucks';
-//import cuadrantesGestionReducer from './cuadrantesGestionDucks';
 import cuadrantesSettersReducer from './cuadrantesSettersDucks';
 import cuadrantesServiciosFijosReducer from './cuadrantesServiciosFijosDucks';
 import cuadrantesPopoversReducer from './cuadrantesPopoversDucks';
 import cuadrantesHandlersReducer from './cuadrantesHandlersDucks';
-//import cuadrantesColumnasReducer from './cuadrantesColumnasDucks';
 import cuadrantesFacturacionReducer from './cuadrantesFacturacionDucks';
+import cuadrantesMailingReducer from './cuadrantesMailingDucks';
+import horasTrabajadoresReducer from './horasTrabajadoresDucks';
 
 const rootReducer = combineReducers({
     variablesCentros: centrosReducer,
@@ -29,14 +28,13 @@ const rootReducer = combineReducers({
     variablesPendientes: pendientesReducer,
     variablesGraficos: graficosReducer,
     variablesNominas: nominasReducer,
-    variablesFaltantes: faltantesReducer,
-    //variablesCuadrantesGestion: cuadrantesGestionReducer,
     variablesCuadrantesSetters: cuadrantesSettersReducer,
     variablesCuadrantesServiciosFijos: cuadrantesServiciosFijosReducer,
     variablesCuadrantesPopovers: cuadrantesPopoversReducer,
     variablesCuadrantesHandlers: cuadrantesHandlersReducer,
-   //variablesCuadrantesColumnas: cuadrantesColumnasReducer,
-    variablesCuadrantesFacturacion: cuadrantesFacturacionReducer
+    variablesCuadrantesFacturacion: cuadrantesFacturacionReducer,
+    variablesCuadrantesMailing: cuadrantesMailingReducer,
+    variablesHorasTrabajadores: horasTrabajadoresReducer
 })
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;

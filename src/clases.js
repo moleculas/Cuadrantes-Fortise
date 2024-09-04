@@ -201,6 +201,11 @@ const Clases = makeStyles((theme) => ({
         padding: 9,
         cursor: 'pointer',
     },
+    casillaTrabSFPopover: {
+        backgroundColor: `${teal[100]} !important`,
+        padding: '9px 9px 9px 12px',
+        marginBottom: 15
+    },
     casillaSFInt: {
         backgroundColor: `${lightGreen[100]} !important`,
         padding: 9,
@@ -290,6 +295,17 @@ const Clases = makeStyles((theme) => ({
     },
     gris: {
         color: grey[400]
+    },
+    taronjaHT: {
+        color: orange[400]
+    },
+    boxTotalHT: {
+        backgroundColor: grey[100],
+        padding: 10,
+    },
+    bgHTTaronja: {
+        backgroundColor: orange[400],
+        color: 'rgba(0, 0, 0, 0.87)'
     },
     vermell: {
         color: red[500]
@@ -467,6 +483,23 @@ const Clases = makeStyles((theme) => ({
             content: '""',
         },
     },
+    badgeBlau: {
+        backgroundColor: `${blue[400]} !important`,
+        color: `${blue[400]} !important`,
+        boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+        right: '1%',
+        '&::after': {
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            width: '100%',
+            height: '100%',
+            borderRadius: '50%',
+            animation: '$ripple 1.2s infinite ease-in-out',
+            border: '1px solid currentColor',
+            content: '""',
+        },
+    },
     badgeVermell: {
         backgroundColor: theme.palette.error.dark,
         color: theme.palette.error.dark,
@@ -601,6 +634,20 @@ const Clases = makeStyles((theme) => ({
             backgroundColor: `${red[100]} !important`,
         },
     },
+    casillaBajasHorasTrabajadores: {
+        cursor: 'pointer',
+        backgroundColor: `${orange[50]} !important`,
+        marginBottom: 5,
+        marginRight: 10,
+        paddingRight: 10,
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        "&:hover": {
+            backgroundColor: `${orange[100]} !important`,
+        },
+    },
     casillaProcesados: {
         cursor: 'pointer',
         backgroundColor: `${green[50]} !important`,
@@ -613,6 +660,20 @@ const Clases = makeStyles((theme) => ({
         justifyContent: "center",
         "&:hover": {
             backgroundColor: `${green[100]} !important`,
+        },
+    },
+    casillaProcesadosMailing: {
+        cursor: 'pointer',
+        backgroundColor: `${blue[50]} !important`,
+        marginBottom: 5,
+        marginRight: 10,
+        paddingRight: 10,
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        "&:hover": {
+            backgroundColor: `${blue[100]} !important`,
         },
     },
     red: {
@@ -717,6 +778,9 @@ const Clases = makeStyles((theme) => ({
     colorText: {
         color: 'rgba(0, 0, 0, 0.54)',
     },
+    colorTextNegre: {
+        color: 'rgba(0, 0, 0, 0.87)',
+    },
     tabsStl: {
         minHeight: 40,
         maxHeight: 40
@@ -735,12 +799,22 @@ const Clases = makeStyles((theme) => ({
         paddingTop: 8,
         paddingLeft: 12,
     },
+    boxStl3: {
+        minHeight: 50,
+        maxHeight: 50,
+        paddingLeft: 12,
+        paddingRight: 12,
+    },
     fondoBaja: {
         backgroundColor: '#ffcdd2',
         color: 'rgba(0, 0, 0, 0.87)'
     },
     fondoInactivoServicioFijo: {
         backgroundColor: '#ffebee',
+        color: 'rgba(0, 0, 0, 0.87)'
+    },
+    fondoServicioFijoPersonalizado: {
+        backgroundColor: green[50],
         color: 'rgba(0, 0, 0, 0.87)'
     },
     fondoAlta: {
@@ -754,6 +828,9 @@ const Clases = makeStyles((theme) => ({
     },
     conServicios: {
         backgroundColor: green[100]
+    },
+    headerMailing: {
+        backgroundColor: blue[100]
     },
     sinServicios: {
         backgroundColor: amber[100]
@@ -918,6 +995,12 @@ const Clases = makeStyles((theme) => ({
         [theme.breakpoints.up('sm')]: {
             display: 'block',
         },
+    },
+    truncate: {
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        width: '100%',
     }
 }), { index: 1 });
 

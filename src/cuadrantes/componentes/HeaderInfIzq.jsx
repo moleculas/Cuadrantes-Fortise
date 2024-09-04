@@ -90,7 +90,7 @@ const HeaderInfIzq = () => {
                         <InputLabel>Categoria Centro</InputLabel>
                         <Select
                             id="form-categorias"
-                            value={categoria}
+                            value={categoria || ''}//modificat: select
                             onChange={(event) => dispatch(handleChangeSelectCategoriaAccion(event))}
                             input={
                                 <OutlinedInput

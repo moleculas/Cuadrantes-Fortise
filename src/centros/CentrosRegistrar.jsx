@@ -1294,7 +1294,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                 className={classes.mb15}
                                                 id="form-cuadrante-no-registro"
                                                 label="Número Cuadrante"
-                                                value={cuadranteEnUsoRegistro}
+                                                value={cuadranteEnUsoRegistro || ''}//modificat: select
                                                 onChange={handleChangeCuadranteCentroRegistro}
                                                 helpertext="Selecciona nº cuadrante"
                                             >
@@ -1319,12 +1319,15 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                         </IconButton>
                                                     </Tooltip>
                                                     <Tooltip title="Añadir cuadrante al centro" placement="top-end" arrow >
-                                                        <IconButton
-                                                            className={classes.paper}
-                                                            onClick={handleAnadirCuadranteCentroRegistro}
-                                                        >
-                                                            <LibraryAdd />
-                                                        </IconButton>
+                                                        <span>
+                                                            <IconButton
+                                                                className={classes.paper}
+                                                                onClick={handleAnadirCuadranteCentroRegistro}
+                                                                disabled={numeroCuadrantesRegistro.length > 1}
+                                                            >
+                                                                <LibraryAdd />
+                                                            </IconButton>
+                                                        </span>
                                                     </Tooltip>
                                                 </Fragment>
                                             ) : (
@@ -1619,7 +1622,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         {trabajadoresRegistro.cantidad !== '' && (
                                             <SelectsTrabajadores
                                                 trabajadores={trabajadoresRegistro}
-                                                valuesForm={valuesFormRegistro}
+                                                valuesForm={valuesFormRegistro || ''}//modificat: select
                                                 setValuesForm={setValuesFormRegistro}
                                                 setTrabajadores={setTrabajadoresRegistro}
                                             />
@@ -1672,7 +1675,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                 className={classes.mb15}
                                                 id="form-variaciones-registro"
                                                 label="Variaciones"
-                                                value={valuesFormRegistro.variacion}
+                                                value={valuesFormRegistro.variacion || ''}//modificat: select
                                                 onChange={handleChangeFormRegistro('variacion')}
                                                 helpertext="Selecciona variaciones"
                                             >
@@ -1697,7 +1700,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                 className={classes.mb25}
                                                 id="form-excepciones-registro"
                                                 label="Excepciones"
-                                                value={valuesFormRegistro.excepcion}
+                                                value={valuesFormRegistro.excepcion || ''}//modificat: select
                                                 onChange={handleChangeFormRegistro('excepcion')}
                                                 helpertext="Selecciona excepciones"
                                             >
@@ -1880,6 +1883,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                     onChange={handleChangeFormRegistroGenerales('gestionEspSF')}
                                                     name="checkedGestEsp-registro"
                                                     color="secondary"
+                                                    disabled={Object.values(stateSwitchTipoServicioFijoRegistro).every(value => value === false)}
                                                 />
                                             }
                                             label={<Typography className={classes.colorText} style={{ fontSize: '0.9rem' }}>Gestión especial horas para Servicios Extra.</Typography>}

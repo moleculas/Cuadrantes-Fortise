@@ -125,7 +125,8 @@ const CuadranteCompleto = (props) => {
         editando: classes.editando
     });
     const [dimensionsColumna, setDimensionsColumna] = useState({ width: 350 });
-    const [dimensionsColumnaServiciosFijos, setDimensionsColumnaServiciosFijos] = useState({ width: 165 });
+    //const [dimensionsColumnaServiciosFijos, setDimensionsColumnaServiciosFijos] = useState({ width: 165 });
+    const [dimensionsColumnaServiciosFijos, setDimensionsColumnaServiciosFijos] = useState({ width: 350 });
     const [heightScrollable, setHeightScrollable] = useState(getHeightScrollable(217));
     const [openSnack, setOpenSnack] = useState(false);
     const [alert, setAlert] = useState({});
@@ -234,7 +235,7 @@ const CuadranteCompleto = (props) => {
         };
         if (objetoCuadrante.datosCuadrante.centro) {
             if (!venimosBorrarCuadrante) {
-                if (!estamosActualizandoCuadranteSinCarga) {
+                if (!estamosActualizandoCuadranteSinCarga) {                  
                     dispatch(gestionaCuadranteIndividualAccion(cuadranteEnUsoCuadrantes, false));
                 } else {
                     dispatch(setEstamosActualizandoCuadranteSinCargaAccion(false));
@@ -313,7 +314,7 @@ const CuadranteCompleto = (props) => {
     }, [cambioSecuenciaSemanas.inicial]);
 
     useEffect(() => {
-        if (esCambioTra || esCambioSup) {           
+        if (esCambioTra || esCambioSup) {
             dispatch(esCambioTra ? gestionTrabajadorAccion() : gestionSuplenteAccion());
         };
     }, [trabajadorAGestionar, suplenteAGestionar]);
@@ -360,7 +361,8 @@ const CuadranteCompleto = (props) => {
             cuadranteServiciosFijos.forEach((servicio) => {
                 for (const prop in servicio) {
                     if (prop.includes('activo') && servicio[prop] === 'si') {
-                        dimServiciosAnadir += 165;
+                        // dimServiciosAnadir += 165;
+                        dimServiciosAnadir += 350;
                         serviciosActivos += 1;
                     };
                 };
@@ -383,15 +385,26 @@ const CuadranteCompleto = (props) => {
             setDimensionsColumna({ width: (((ampleAGestionar - (45 * cuadrantesActivosReducidos)) / (serviciosActivos + cuadrantesActivos)) - 5) });
             setDimensionsColumnaServiciosFijos({ width: (((ampleAGestionar - (45 * cuadrantesActivosReducidos)) / (serviciosActivos + cuadrantesActivos)) - 5) });
         } else {
+            // if (dimensionsColumna.width < 350) {
+            //     if (((dimCuadrante + dimServiciosAnadir) - 5) < ampleAGestionar) {
+            //         setDimensionsColumna({ width: 350 });
+            //         setDimensionsColumnaServiciosFijos({ width: 165 });
+            //     }
+            // };
+            // if (dimensionsColumnaServiciosFijos.width < 165) {
+            //     if (((dimCuadrante + dimServiciosAnadir) - 5) < ampleAGestionar) {
+            //         setDimensionsColumnaServiciosFijos({ width: 165 });
+            //     };
+            // };
             if (dimensionsColumna.width < 350) {
                 if (((dimCuadrante + dimServiciosAnadir) - 5) < ampleAGestionar) {
                     setDimensionsColumna({ width: 350 });
-                    setDimensionsColumnaServiciosFijos({ width: 165 });
+                    setDimensionsColumnaServiciosFijos({ width: 350 });
                 }
             };
-            if (dimensionsColumnaServiciosFijos.width < 165) {
+            if (dimensionsColumnaServiciosFijos.width < 350) {
                 if (((dimCuadrante + dimServiciosAnadir) - 5) < ampleAGestionar) {
-                    setDimensionsColumnaServiciosFijos({ width: 165 });
+                    setDimensionsColumnaServiciosFijos({ width: 350 });
                 };
             };
         };
@@ -399,6 +412,7 @@ const CuadranteCompleto = (props) => {
 
     return (
         <>
+            {/* {console.log(objetoCuadrante)}  */}
             <Grid container
                 direction="row"
                 justifycontent="flex-start"

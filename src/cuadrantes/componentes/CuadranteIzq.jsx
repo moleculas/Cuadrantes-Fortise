@@ -33,7 +33,7 @@ import {
 import Clases from "../../clases";
 
 //constantes
-const listadoServiciosFijos = Constantes.TIPO_SERVICIO_FIJO;
+const tiposServicioFijo = Constantes.TIPO_SERVICIO_FIJO;
 
 const CuadranteIzq = (props) => {
     const {
@@ -47,15 +47,12 @@ const CuadranteIzq = (props) => {
         objetoCuadrante,
         cuadrante,
     } = useSelector(store => store.variablesCuadrantes);
+    const { cuadranteServiciosFijos } = useSelector(store => store.variablesCuadrantesServiciosFijos);
     const {
-        cuadranteServiciosFijos,
-        losServiciosFijos
-    } = useSelector(store => store.variablesCuadrantesServiciosFijos);
-    const { 
         cuadranteEnUsoCuadrantes,
         visibleCuadranteServiciosFijos,
         visibleCuadrante
-     } = useSelector(store => store.variablesCuadrantesSetters);
+    } = useSelector(store => store.variablesCuadrantesSetters);
 
     //funciones    
 
@@ -80,12 +77,12 @@ const CuadranteIzq = (props) => {
         if (type === 'SF') {
             mostramos = isCuadranteNotEmpty && visibleCuadrante && (
                 cuadranteServiciosFijos.length > 1 ||
-                cuadranteServiciosFijos.some(item => listadoServiciosFijos.some(prefixObj => item[`activo_${prefixObj.prefix}`] === 'si'))
+                cuadranteServiciosFijos.some(item => tiposServicioFijo.some(prefixObj => item[`activo_${prefixObj.prefix}`] === 'si'))
             );
         } else {
             mostramos = isCuadranteNotEmpty && visibleCuadranteServiciosFijos && (
                 cuadranteServiciosFijos.length > 1 ||
-                listadoServiciosFijos.every(prefixObj => cuadranteServiciosFijos[0][`activo_${prefixObj.prefix}`] !== 'no')
+                tiposServicioFijo.every(prefixObj => cuadranteServiciosFijos[0][`activo_${prefixObj.prefix}`] !== 'no')
             );
         };
         const VisibilityComponent = isVisible ? VisibilityIcon : VisibilityOffIcon;
@@ -154,16 +151,16 @@ const CuadranteIzq = (props) => {
             </Grid>
             <Grid item
                 style={esDesktop ? { width: 40, marginRight: 4, marginTop: 6, paddingTop: 5, height: heightScrollable - 47 - 128 } : { width: 40, marginRight: 4, marginTop: 6, paddingTop: 5, height: heightScrollable - 47 - 128 - 10 }}
-                className={retornoServiciosFijosEnLayoutAccion('grid', losServiciosFijos)}
+                className={retornoServiciosFijosEnLayoutAccion('grid', cuadranteServiciosFijos)}
             >
                 <Box style={{ padding: 4 }}>
-                    <Tooltip title={retornoServiciosFijosEnLayoutAccion('tooltip', losServiciosFijos)} placement="right" arrow>
+                    <Tooltip title={retornoServiciosFijosEnLayoutAccion('tooltip', cuadranteServiciosFijos)} placement="right" arrow>
                         <Avatar
                             style={{ cursor: 'pointer' }}
-                            className={retornoServiciosFijosEnLayoutAccion('avatar', losServiciosFijos)}
+                            className={retornoServiciosFijosEnLayoutAccion('avatar', cuadranteServiciosFijos)}
                             onClick={(event) => dispatch(abrePopoverServiciosFijosAccion(event, scrollable, classes))}
                         >
-                            {retornoServiciosFijosEnLayoutAccion('icon', losServiciosFijos)}
+                            {retornoServiciosFijosEnLayoutAccion('icon', cuadranteServiciosFijos)}
                         </Avatar>
                     </Tooltip>
                 </Box>

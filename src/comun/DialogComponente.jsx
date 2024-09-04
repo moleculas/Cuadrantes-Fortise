@@ -11,7 +11,7 @@ import Box from '@material-ui/core/Box';
 
 //pdf
 import { pdf } from "@react-pdf/renderer";
-import InformePDF from "../cuadrantes/InformePDF";
+import InformePDF from "../comun/InformePDF";
 
 const DialogComponente = (props) => {
 
@@ -23,8 +23,8 @@ const DialogComponente = (props) => {
         props.prHandleCloseDialogBotones(respuesta);
     };
 
-    const gestionarInformePDF = async () => {
-        const element = <InformePDF objetoInformePDF={arrayInformeLineas} />;
+    const gestionarInformePDF = async () => {  
+        const element = <InformePDF objetoInformePDF={arrayInformeLineas} titulo="Informe Cuadrante de Servicio" />;
         const myPdf = pdf([]);
         myPdf.updateContainer(element);
         const blob = await myPdf.toBlob();

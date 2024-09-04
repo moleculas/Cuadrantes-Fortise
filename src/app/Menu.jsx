@@ -53,7 +53,7 @@ import {
     setCalendarioAGestionarNominasAccion 
  } from '../redux/nominasDucks';
 import { vaciarDatosPendientesAccion } from '../redux/pendientesDucks';
-import { vaciarDatosFaltantesAccion } from '../redux/faltantesDucks';
+import { vaciarDatosHorasTrabajadoresAccion } from '../redux/horasTrabajadoresDucks';
 import { 
     reseteaContenidoCuadranteAccion,
     setDisableSelectCentrosAccion,
@@ -97,7 +97,7 @@ const Menu = (props) => {
         dispatch(vaciarDatosPendientesAccion());
         dispatch(setCalendarioAGestionarAccion(retornaAnoMesAccion()));
         //gestión faltantes
-        dispatch(vaciarDatosFaltantesAccion());
+        dispatch(vaciarDatosHorasTrabajadoresAccion());
         dispatch(setCalendarioAGestionarNominasAccion(retornaAnoMesAccion()));
         //
         dispatch(activarDesactivarAccion(true));
@@ -194,7 +194,7 @@ const Menu = (props) => {
                     }
                 }
                 break;
-            case '/nominas':
+            case '/horasTrabajadores':
                 if (!cuadranteNuevoRegistrado) {
                     handleClickOpenDialogMenu2();
                 } else {
@@ -203,7 +203,7 @@ const Menu = (props) => {
                         handleClickOpenDialogMenu1();
                     } else {
                         limpiezaGeneral();
-                        props.history.push('/nominas');
+                        props.history.push('/horasTrabajadores');
                     }
                 }
                 break;
@@ -315,14 +315,14 @@ const Menu = (props) => {
                         </ListItem>
                         <ListItem
                             button
-                            //disabled={onEstem === 'nominas' ? true : false}
-                            disabled={true}
-                            onClick={() => handleClick('/nominas')}
+                            disabled={onEstem === 'horasTrabajadores' ? true : false}
+                            //disabled={true}
+                            onClick={() => handleClick('/horasTrabajadores')}
                         >
                             <ListItemIcon>
                                 <AssignmentIndIcon />
                             </ListItemIcon>
-                            <ListItemText primary='Nóminas' />
+                            <ListItemText primary='Control Horario' />
                         </ListItem>
                         <Divider />
                     </List>

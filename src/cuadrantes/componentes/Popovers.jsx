@@ -9,10 +9,14 @@ import {
     FormControl,
     MenuItem,
     Select,
-    Popover
+    Popover,
+    Typography
 } from '@material-ui/core';
 import clsx from 'clsx';
-import { Save as SaveIcon } from '@material-ui/icons';
+import {
+    Save as SaveIcon,
+    AddToPhotos as AddToPhotosIcon
+} from '@material-ui/icons';
 
 //carga componentes
 import ItemCuadrante from './ItemCuadrante';
@@ -46,6 +50,7 @@ import {
     handleResetearCasillaAccion
 } from '../../redux/cuadrantesHandlersDucks';
 import logicaLayoutCuadrantes from '../../logica/logicaLayoutCuadrantes';
+import { setServiciosFijosPersonalizadosAccion } from '../../redux/cuadrantesServiciosFijosDucks';
 
 //estilos
 import Clases from "../../clases";
@@ -69,7 +74,10 @@ const Popovers = (props) => {
         stateFestivo,
         cuadrante
     } = useSelector(store => store.variablesCuadrantes);
-    const { itemEditandoServiciosFijos } = useSelector(store => store.variablesCuadrantesServiciosFijos);
+    const {
+        itemEditandoServiciosFijos,
+        serviciosFijosPersonalizados
+    } = useSelector(store => store.variablesCuadrantesServiciosFijos);
     const {
         cuadranteVacio,
         itemEditandoConfiguracion
@@ -90,6 +98,21 @@ const Popovers = (props) => {
     //funciones
 
     const { gestionaValoresCasillasAccion } = logicaLayoutCuadrantes();
+
+    const agregarServicioPersonalizado = () => {
+        //modificador: servicios fijos personalizados
+        const nuevoServicioSufijo = `P${serviciosFijosPersonalizados.length + 1}`;
+        const nuevoServicio =
+        {
+            [`variacion_${nuevoServicioSufijo}`]: 3,
+            [`diaVariacion_${nuevoServicioSufijo}`]: '',
+            [`activo_${nuevoServicioSufijo}`]: 'si',
+            [`int_${nuevoServicioSufijo}`]: false,
+            [`trab_${nuevoServicioSufijo}`]: '',
+            [`descripcion_${nuevoServicioSufijo}`]: ''
+        };
+        dispatch(setServiciosFijosPersonalizadosAccion([...serviciosFijosPersonalizados, nuevoServicio]));
+    };
 
     return (
         <>
@@ -264,15 +287,26 @@ const Popovers = (props) => {
                     <Box
                         m={0.5}
                         color="secondary.contrastText"
-                        className={clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
+                        className={clsx(classes.fondoAlta, classes.boxStl3, classes.mb20)}
+                        style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
                     >
-                        Configuración servicios extra
+                        <Typography variant="body1">Configuración servicios extra</Typography>
+                        <Button
+                            size="small"
+                            color="secondary"
+                            variant="contained"
+                            startIcon={<AddToPhotosIcon />}
+                            onClick={agregarServicioPersonalizado}
+                        >
+                            Servicio Personalizado
+                        </Button>
                     </Box>
                     <Box style={{ height: heightScrollable - 150, marginRight: -5, paddingRight: 25 }} className={classes.scrollable} >
                         <ServiciosFijos
-                            prItemEditandoServiciosFijos={itemEditandoServiciosFijos}
+                            itemEditandoServiciosFijos={itemEditandoServiciosFijos}
                             prHandleChangeFormConfiguracionServiciosFijos={(tipo, prop, event) => dispatch(handleChangeFormConfiguracionServiciosFijosAccion(tipo, prop, event))}
                             prGestionItemPrevioEditandoServiciosFijos={(valores) => dispatch(gestionItemPrevioEditandoServiciosFijosAccion(valores))}
+                            serviciosFijosPersonalizados={serviciosFijosPersonalizados.length > 0 ? serviciosFijosPersonalizados : null}
                         />
                     </Box>
                     <Box px={0.5}>

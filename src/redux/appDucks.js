@@ -2,6 +2,7 @@ import axios from 'axios';
 import Constantes from "../constantes";
 import * as XLSX from "xlsx";
 import { stringify } from 'zipson';
+import { gestionArrayHorasTrabajadoresAccion } from './horasTrabajadoresDucks';
 
 //constantes
 const {
@@ -19,8 +20,6 @@ const dataInicial = {
     estadoIntervencionRegistrada: true,
     onEstem: '',
     openDialog: [false, false, false, false, false, false, false, false, false, false, false, false],
-    exitoEnviarMail: false,
-    errorEnviarMail: false,
     errorDeCargaConfiguracion: false,
     objetoConfiguracion: {
         precioHoraNormal: null,
@@ -36,7 +35,7 @@ const dataInicial = {
             numeroCuenta: ''
         },
     },
-    numeroRecibos: null,
+    numeracion: null,
     exitoActualizacionConfiguracion: false,
     arrayUltimasIntervenciones: [],
     errorDeCargaUltimasIntervenciones: false,
@@ -56,8 +55,6 @@ const INTERVENCION_REGISTRADA = 'INTERVENCION_REGISTRADA';
 const ON_ESTEM = 'ON_ESTEM';
 const ABIERTO_DIALOG = 'ABIERTO_DIALOG';
 const CERRADO_DIALOG = 'CERRADO_DIALOG';
-const EXITO_ENVIAR_MAIL = 'EXITO_ENVIAR_MAIL';
-const ERROR_ENVIAR_MAIL = 'ERROR_ENVIAR_MAIL';
 const OBTENER_CONFIGURACION_EXITO = 'OBTENER_CONFIGURACION_EXITO';
 const ERROR_DE_CARGA_CONFIGURACION = 'ERROR_DE_CARGA_CONFIGURACION';
 const VACIAR_DATOS_CONFIGURACION = 'VACIAR_DATOS_CONFIGURACION';
@@ -70,10 +67,9 @@ const GENERAR_ARCHIVOS_EXITO = 'GENERAR_ARCHIVOS_EXITO';
 const PROCESANDO_LOTE = 'PROCESANDO_LOTE';
 const ITERACION_XLS_EXITO = 'ITERACION_XLS_EXITO';
 const FINALIZANDO_LOTE = 'FINALIZANDO_LOTE';
-const OBTENER_NUMERO_RECIBOS_EXITO = 'OBTENER_NUMERO_RECIBOS_EXITO';
-const RESETEA_NUMERO_RECIBOS = 'RESETEA_NUMERO_RECIBOS';
 const SET_NEWCONTROLLER = 'SET_NEWCONTROLLER';
 const SET_CUADRANTESITERADOSACTUALIZAR = 'SET_CUADRANTESITERADOSACTUALIZAR';
+const SET_NUMERACION = 'SET_NUMERACION';
 
 //reducer
 export default function appReducer(state = dataInicial, action) {
@@ -90,16 +86,12 @@ export default function appReducer(state = dataInicial, action) {
             return { ...state, openDialog: action.payload.array }
         case CERRADO_DIALOG:
             return { ...state, openDialog: dataInicial.openDialog }
-        case EXITO_ENVIAR_MAIL:
-            return { ...state, exitoEnviarMail: true, loadingApp: false }
-        case ERROR_ENVIAR_MAIL:
-            return { ...state, errorEnviarMail: true, loadingApp: false }
         case OBTENER_CONFIGURACION_EXITO:
-            return { ...state, objetoConfiguracion: action.payload.objeto, numeroRecibos: action.payload.numeroRecibos, errorDeCargaConfiguracion: false, loadingApp: false }
+            return { ...state, objetoConfiguracion: action.payload.objeto, errorDeCargaConfiguracion: false, loadingApp: false }
         case ERROR_DE_CARGA_CONFIGURACION:
             return { ...state, errorDeCargaConfiguracion: true, loadingApp: false }
         case VACIAR_DATOS_CONFIGURACION:
-            return { ...state, objetoConfiguracion: action.payload.objetoConfiguracion, numeroRecibos: action.payload.numeroRecibos }
+            return { ...state, objetoConfiguracion: action.payload.objetoConfiguracion }
         case ACTUALIZAR_CONFIGURACION_EXITO:
             return { ...state, errorDeCargaConfiguracion: false, loadingApp: false, exitoActualizacionConfiguracion: true }
         case RESETEA_EXITO_CONFIGURACION:
@@ -118,10 +110,8 @@ export default function appReducer(state = dataInicial, action) {
             return { ...state, finalizandoLoteEstado: action.payload.estado }
         case ITERACION_XLS_EXITO:
             return { ...state, laDataFAC: [...state.laDataFAC, action.payload.elementoArray1], laDataLFA: [...state.laDataLFA, action.payload.elementoArray2] }
-        case OBTENER_NUMERO_RECIBOS_EXITO:
-            return { ...state, numeroRecibos: action.payload.numeroRecibos }
-        case RESETEA_NUMERO_RECIBOS:
-            return { ...state, numeroRecibos: null }
+        case SET_NUMERACION:
+            return { ...state, numeracion: action.payload.estado }
         case SET_NEWCONTROLLER:
             return { ...state, controladores: action.payload.array }
         case SET_CUADRANTESITERADOSACTUALIZAR:
@@ -171,16 +161,11 @@ export const retornaHoraRangoAccion = (laHora) => (dispatch, getState) => {
 
 export const retornaMinutosAccion = (primeraHora, segundaHora) => (dispatch, getState) => {
     if (primeraHora && segundaHora) {
-        let myArrSplit1 = primeraHora.split(":");
-        const horasPrimeraHora = parseInt(myArrSplit1[0]);
-        const minutosPrimeraHora = parseInt(myArrSplit1[1]);
-        const minutosTotalesPrimeraHora = (horasPrimeraHora * 60) + minutosPrimeraHora;
-        let myArrSplit2 = segundaHora.split(":");
-        const horasSegundaHora = parseInt(myArrSplit2[0]);
-        const minutosSegundaHora = parseInt(myArrSplit2[1]);
-        const minutosTotalesSegundaHora = (horasSegundaHora * 60) + minutosSegundaHora;
-        const diff = minutosTotalesSegundaHora - minutosTotalesPrimeraHora;
-        return diff;
+        const [horasPrimeraHora, minutosPrimeraHora] = primeraHora.split(":").map(Number);
+        const [horasSegundaHora, minutosSegundaHora] = segundaHora.split(":").map(Number);
+        const minutosTotalesPrimeraHora = horasPrimeraHora * 60 + minutosPrimeraHora;
+        const minutosTotalesSegundaHora = horasSegundaHora * 60 + minutosSegundaHora;
+        return minutosTotalesSegundaHora - minutosTotalesPrimeraHora;
     }
 };
 
@@ -306,33 +291,6 @@ export const cierraObjetoDialogAccion = () => (dispatch, getState) => {
     });
 };
 
-export const enviarMailAccion = (from, email, file) => async (dispatch, getState) => {
-    dispatch({
-        type: LOADING_APP
-    });
-    try {
-        const formData = new FormData();
-        formData.append("from", from);
-        formData.append("email", email);
-        formData.append("file", file);
-        let apiUrl = rutaApi + "enviar_mail.php";
-        const res = await axios.post(apiUrl, formData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            }
-        });
-        const respuesta = res.data;
-        dispatch({
-            type: EXITO_ENVIAR_MAIL
-        })
-
-    } catch (error) {
-        dispatch({
-            type: ERROR_ENVIAR_MAIL
-        })
-    }
-};
-
 export const obtenerConfiguracionAccion = (objeto, id) => async (dispatch, getState) => {
     dispatch({
         type: LOADING_APP
@@ -350,8 +308,7 @@ export const obtenerConfiguracionAccion = (objeto, id) => async (dispatch, getSt
         dispatch({
             type: OBTENER_CONFIGURACION_EXITO,
             payload: {
-                objeto: JSON.parse(res.data.datos_configuracion),
-                numeroRecibos: res.data.numero_recibos
+                objeto: JSON.parse(res.data.datos_configuracion)
             }
         });
     } catch (error) {
@@ -361,64 +318,30 @@ export const obtenerConfiguracionAccion = (objeto, id) => async (dispatch, getSt
     }
 };
 
-export const obtenerNumeroRecibosAccion = (objeto) => async (dispatch, getState) => {
-    dispatch({
-        type: LOADING_APP
-    });
+export const obtenerNumeracionAccion = (objeto) => async (dispatch, getState) => {
     try {
         const formData = new FormData();
         formData.append("objeto", objeto);
-        formData.append("id", 1);
-        let apiUrl = rutaApi + "obtener_numero_recibos.php";
+        let apiUrl = rutaApi + "obtener_numeracion.php";
         const res = await axios.post(apiUrl, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
             }
         });
-        dispatch({
-            type: OBTENER_NUMERO_RECIBOS_EXITO,
-            payload: {
-                numeroRecibos: res.data.numero_recibos
-            }
-        });
+        const numeroFactura = res.data;
+        return numeroFactura;
     } catch (error) {
-        dispatch({
-            type: ERROR_DE_CARGA_CONFIGURACION
-        })
+        console.error('Error al obtener el número de factura:', error);
+        throw error;
     }
 };
 
-export const actualizarNumeroRecibosAccion = (objeto, numero) => async (dispatch, getState) => {
+export const setNumeracion = (estado) => (dispatch, getState) => {
     dispatch({
-        type: LOADING_APP
-    });
-    try {
-        const formData = new FormData();
-        formData.append("objeto", objeto);
-        formData.append("id", 1);
-        formData.append("numero", numero);
-        let apiUrl = rutaApi + "actualizar_numero_recibos.php";
-        await axios.post(apiUrl, formData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            }
-        });
-        dispatch({
-            type: ACTUALIZAR_CONFIGURACION_EXITO,
-        });
-        dispatch({
-            type: RESETEA_EXITO_CONFIGURACION
-        });
-    } catch (error) {
-        dispatch({
-            type: ERROR_DE_CARGA_CONFIGURACION
-        })
-    }
-};
-
-export const resetarNumeroRecibosAccion = () => async (dispatch, getState) => {
-    dispatch({
-        type: RESETEA_NUMERO_RECIBOS
+        type: SET_NUMERACION,
+        payload: {
+            estado: estado
+        }
     });
 };
 
@@ -468,8 +391,7 @@ export const vaciarDatosConfiguracionAccion = () => (dispatch, getState) => {
                     digitosControl: '',
                     numeroCuenta: ''
                 },
-            },
-            numeroRecibos: null
+            }
         }
     });
 };
@@ -522,13 +444,24 @@ export const vaciarDatosUltimasIntervencionesAccion = () => (dispatch, getState)
     });
 };
 
-const exportarAExcel = (apiData, fileName) => {
+export const exportarAExcel = (apiData, fileName) => {
     const ws = XLSX.utils.aoa_to_sheet(apiData);
     const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
     XLSX.writeFile(wb, fileName + fileExtension)
 };
 
-export const retornaTextoConceptoServicioAccion = (objetoTotales, servicio, horas) => (dispatch, getState) => {
+export const obtenerServiciosPersonalizados = (objetoConceptos) => {
+    const serviciosPersonalizados = [];
+    const regex = /^P\d+T$/;
+    Object.keys(objetoConceptos).forEach(key => {
+        if (regex.test(key)) {
+            serviciosPersonalizados.push(key.match(/^P\d+/)[0]);
+        }
+    });
+    return serviciosPersonalizados;
+};
+
+export const retornaTextoConceptoServicioAccion = (objetoTotales, servicio, horas, nombreServicioFijoPersonalizado) => (dispatch, getState) => {
     let arrayConceptos = [];
     if (servicio) {
         if (servicio === 'MT') {
@@ -548,6 +481,17 @@ export const retornaTextoConceptoServicioAccion = (objetoTotales, servicio, hora
                 arrayConceptos.push(servF.value, servF.label);
             };
         });
+        //modificador: servicios fijos personalizados
+        if (objetoTotales && /^P\d+/.test(servicio)) {  
+            const serviciosPersonalizados = obtenerServiciosPersonalizados(objetoTotales);
+            if (serviciosPersonalizados.length > 0) {
+                serviciosPersonalizados.forEach(servicioPersonalizado => {
+                    if (servicio === `${servicioPersonalizado}T`) {
+                        arrayConceptos.push(servicioPersonalizado, nombreServicioFijoPersonalizado.toUpperCase());
+                    };
+                });
+            };
+        };
         if (servicio === 'NUMCT') {
             arrayConceptos.push('Nº CUENTA', numeroCuentaFortise);
         };
@@ -576,7 +520,7 @@ export const retornaTextoConceptoServicioAccion = (objetoTotales, servicio, hora
     return servicio ? arrayConceptos : arrayConceptos.join(', ');
 };
 
-const retornaArrayElementosAccion = (objetoConceptos) => (dispatch, getState) => {
+export const retornaArrayElementosAccion = (objetoConceptos) => (dispatch, getState) => {
     let arrayElementos = [];
     let retornoServicios = [];
     //verificar si quadrant és doble i complejo
@@ -586,11 +530,11 @@ const retornaArrayElementosAccion = (objetoConceptos) => (dispatch, getState) =>
             tipoServicio.forEach(serv => {
                 if (objetoConceptos[`M${i}${serv.prefix}T`] && objetoConceptos[`${serv.prefix}H`] && !objetoConceptos[`${serv.prefix}Pr`]) {
                     //verificar si quadrant és doble i té mensual pactat als 2 i serveis diferents
-                    retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', `${serv.prefix}H`));
+                    retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', `${serv.prefix}H`, null));
                     arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos[`M${i}${serv.prefix}T`], objetoConceptos[`M${i}${serv.prefix}T`], 1]);
                 } else if (objetoConceptos[`M${i}${serv.prefix}T`] && objetoConceptos[`${serv.prefix}H`] && objetoConceptos[`${serv.prefix}Pr`]) {
                     //verificar si quadrant és doble i té 1 mensual pactat, 1 precio / hora i mateixos serveis
-                    retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', `${serv.prefix}H`));
+                    retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', `${serv.prefix}H`, null));
                     arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos[`M${i}${serv.prefix}T`], objetoConceptos[`M${i}${serv.prefix}T`], 1]);
                 };
             });
@@ -599,27 +543,35 @@ const retornaArrayElementosAccion = (objetoConceptos) => (dispatch, getState) =>
     if (objetoConceptos.MT) {
         tipoServicio.forEach(serv => {
             if (objetoConceptos[`${serv.prefix}H`] && !objetoConceptos[`${serv.prefix}Pr`]) {
-                retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', `${serv.prefix}H`));
+                retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'MT', `${serv.prefix}H`, null));
             };
         });
         arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos.MT, objetoConceptos.MT, 1]);
     };
     tipoServicio.forEach(serv => {
         if (objetoConceptos[`${serv.prefix}T`]) {
-            retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, `${serv.prefix}T`, null));
+            retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, `${serv.prefix}T`, null, null));
             arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos[`${serv.prefix}T`], objetoConceptos[`${serv.prefix}Pr`], objetoConceptos[`${serv.prefix}H`]]);
         };
     });
     listadoServiciosFijos.forEach(servF => {
         if (objetoConceptos[`${servF.prefix}T`]) {
-            retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, `${servF.prefix}T`, null));
+            retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, `${servF.prefix}T`, null, null));
             arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos[`${servF.prefix}T`], objetoConceptos[`${servF.prefix}T`], objetoConceptos[`${servF.prefix}H`]]);
         };
     });
-    if (objetoConceptos.NUMCT) {
-        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'NUMCT', null));
-        arrayElementos.push([retornoServicios[0], retornoServicios[1], 0, 0, 0]);
+    //modificador: servicios fijos personalizados
+    const serviciosPersonalizados = obtenerServiciosPersonalizados(objetoConceptos);
+    if (serviciosPersonalizados.length > 0) {
+        serviciosPersonalizados.forEach(servicio => {
+            retornoServicios = dispatch(retornaTextoConceptoServicioAccion(objetoConceptos, `${servicio}T`, null, objetoConceptos[`${servicio}N`]));
+            arrayElementos.push([retornoServicios[0], retornoServicios[1], objetoConceptos[`${servicio}T`], objetoConceptos[`${servicio}T`], objetoConceptos[`${servicio}H`]]);
+        });
     };
+    if (objetoConceptos.NUMCT) {
+        retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'NUMCT', null, null));
+        arrayElementos.push([retornoServicios[0], retornoServicios[1], 0, 0, 0]);
+    }
     return arrayElementos
 };
 
@@ -640,7 +592,7 @@ export const generarArchivosXLSAccion = (numFactusol, objetoConceptos, anyo, mes
             total: parseFloat(objetoConceptos.total).toFixed(2),
             totalIva: parseFloat(objetoConceptos.totalIva).toFixed(2),
             totalMasIva: parseFloat(objetoConceptos.totalMasIva).toFixed(2)
-        };
+        };   
         const ultimoDia = new Date(anyo, mes, 0);
         const day = ultimoDia.getDate();
         const fechaHoy = day + "/" + mes + "/" + anyo;
@@ -1212,4 +1164,21 @@ export const generaArchivoXLSCuadrantesFacturadosPisosAccion = (mes) => (dispatc
     });
     const nombreArchivo = 'listado_cuadrantes_facturados_pisos_' + mes;
     exportarAExcel(elListadoCuadrantesFacturadosImprimir, nombreArchivo);
+};
+
+export const generaArchivoXLSHorasTrabajadoresAccion = (mes) => (dispatch, getState) => {
+    const horasTrabajadoresGestionadas = dispatch(gestionArrayHorasTrabajadoresAccion());
+    const horasTrabajadores = horasTrabajadoresGestionadas.map(horaTrabajador => ({
+        trabajadorNombre: horaTrabajador.trabajadorNombre,
+        totalHoras: horaTrabajador.totalHoras.toFixed(2)
+    }));
+    const sumaTotalHoras = horasTrabajadores.reduce((sum, { totalHoras }) => sum + parseFloat(totalHoras), 0);
+    const elListadoHorasTrabajadoresImprimir = [["LISTADO HORAS TRABAJADORES MES " + mes], ["TRABAJADOR", "HORAS"]];
+    horasTrabajadores.forEach((horaTrabajador) => {
+        elListadoHorasTrabajadoresImprimir.push([horaTrabajador.trabajadorNombre, horaTrabajador.totalHoras]);
+    });
+    elListadoHorasTrabajadoresImprimir.push(["", ""]);
+    elListadoHorasTrabajadoresImprimir.push([`TOTAL HORAS: ${sumaTotalHoras.toFixed(2)}`]);
+    const nombreArchivo = 'listado_horas_trabajadores_' + mes;
+    exportarAExcel(elListadoHorasTrabajadoresImprimir, nombreArchivo);
 };

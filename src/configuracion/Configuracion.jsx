@@ -42,6 +42,8 @@ import InstruccionesCuadrantes from './InstruccionesCuadrantes';
 import InstruccionesCentros from './InstruccionesCentros';
 import InstruccionesTrabajadores from './InstruccionesTrabajadores';
 import InstruccionesVarios from './InstruccionesVarios';
+import InstruccionesControlHorario from './InstruccionesControlHorario';
+import InstruccionesServiciosFijos from './InstruccionesServiciosFijos';
 import CustomSnack from '../comun/CustomSnack';
 
 //estilos
@@ -75,7 +77,6 @@ const Configuracion = (props) => {
     const openDialog1 = useSelector(store => store.variablesApp.openDialog[0]);
     const openLoadingConfiguracion = useSelector(store => store.variablesApp.loadingApp);
     const objetoConfiguracion = useSelector(store => store.variablesApp.objetoConfiguracion);
-    const numeroRecibos = useSelector(store => store.variablesApp.numeroRecibos);
     const errorDeCargaConfiguracion = useSelector(store => store.variablesApp.errorDeCargaConfiguracion);
     const exitoActualizacionConfiguracion = useSelector(store => store.variablesApp.exitoActualizacionConfiguracion);
     const usuarioActivo = useSelector(store => store.variablesUsuario.usuarioActivo);
@@ -101,8 +102,7 @@ const Configuracion = (props) => {
             oficina: '',
             digitosControl: '',
             numeroCuenta: ''
-        },
-        numeroRecibos: null
+        }
     });
     const [valuesHerramientasParseador, setValuesHerramientasParseador] = useState({
         parsePorParsear: {},
@@ -115,6 +115,8 @@ const Configuracion = (props) => {
     const [openMenu2, setOpenMenu2] = useState(false);
     const [openMenu3, setOpenMenu3] = useState(false);
     const [openMenu4, setOpenMenu4] = useState(false);
+    const [openMenu5, setOpenMenu5] = useState(false);
+    const [openMenu6, setOpenMenu6] = useState(false);
 
     //useEffect
 
@@ -187,7 +189,6 @@ const Configuracion = (props) => {
                     digitosControl: objetoConfiguracion.cuenta1.digitosControl,
                     numeroCuenta: objetoConfiguracion.cuenta1.numeroCuenta
                 },
-                numeroRecibos: numeroRecibos
             })
         }
     }, [objetoConfiguracion]);
@@ -199,6 +200,8 @@ const Configuracion = (props) => {
         setOpenMenu2(false);
         setOpenMenu3(false);
         setOpenMenu4(false);
+        setOpenMenu5(false);
+        setOpenMenu6(false);
     };
 
     const handleClickMenuInstrucciones2 = () => {
@@ -206,6 +209,8 @@ const Configuracion = (props) => {
         setOpenMenu1(false);
         setOpenMenu3(false);
         setOpenMenu4(false);
+        setOpenMenu5(false);
+        setOpenMenu6(false);
     };
 
     const handleClickMenuInstrucciones3 = () => {
@@ -213,6 +218,8 @@ const Configuracion = (props) => {
         setOpenMenu2(false);
         setOpenMenu1(false);
         setOpenMenu4(false);
+        setOpenMenu5(false);
+        setOpenMenu6(false);
     };
 
     const handleClickMenuInstrucciones4 = () => {
@@ -220,6 +227,26 @@ const Configuracion = (props) => {
         setOpenMenu2(false);
         setOpenMenu1(false);
         setOpenMenu3(false);
+        setOpenMenu5(false);
+        setOpenMenu6(false);
+    };
+
+    const handleClickMenuInstrucciones5 = () => {
+        setOpenMenu5(!openMenu5);
+        setOpenMenu2(false);
+        setOpenMenu1(false);
+        setOpenMenu3(false);
+        setOpenMenu4(false);
+        setOpenMenu6(false);
+    };
+
+    const handleClickMenuInstrucciones6 = () => {
+        setOpenMenu6(!openMenu6);
+        setOpenMenu2(false);
+        setOpenMenu1(false);
+        setOpenMenu3(false);
+        setOpenMenu4(false);
+        setOpenMenu5(false);
     };
 
     const handleClickMenu = (e) => {
@@ -273,11 +300,6 @@ const Configuracion = (props) => {
             };
             setValuesFormConfiguracion({ ...valuesFormConfiguracion, cuenta1: objetoCuenta });
         };
-        if (prop === "numeroRecibos") {
-            if (IsNumeric(e.target.value)) {
-                setValuesFormConfiguracion({ ...valuesFormConfiguracion, [prop]: e.target.value });
-            };
-        }
         dispatch(activarDesactivarAccion(false));
         dispatch(registrarIntervencionAccion(false));
     };
@@ -324,8 +346,7 @@ const Configuracion = (props) => {
             valuesFormConfiguracion.mensajeMailCentros === '' ||
             valuesFormConfiguracion.cuenta1.iban === '' ||
             valuesFormConfiguracion.cuenta1.bic === '' ||
-            valuesFormConfiguracion.cuenta1.nombreBanco === '' ||
-            !valuesFormConfiguracion.numeroRecibos) {
+            valuesFormConfiguracion.cuenta1.nombreBanco === '') {
             setAlert({
                 mensaje: "Faltan datos por completar. Revisa el formulario.",
                 tipo: 'error'
@@ -357,8 +378,7 @@ const Configuracion = (props) => {
         }
         //actualizamos
         const configuracionAGuardar = {
-            datos_configuracion: JSON.stringify(objetoConfiguracion),
-            numero_recibos: parseInt(valuesFormConfiguracion.numeroRecibos)
+            datos_configuracion: JSON.stringify(objetoConfiguracion)
         };
         dispatch(actualizarConfiguracionAccion('configuracion', 1, configuracionAGuardar));
         dispatch(registrarIntervencionAccion(true));
@@ -578,16 +598,49 @@ const Configuracion = (props) => {
                                                                     </ListItem>
                                                                 </List>
                                                             </Collapse>
+                                                            <ListItem button onClick={handleClickMenuInstrucciones5}>
+                                                                <ListItemText primary="Gestión Control Horario" />
+                                                                {openMenu5 ? <ExpandLess /> : <ExpandMore />}
+                                                            </ListItem>
+                                                            <Collapse in={openMenu5} timeout="auto" unmountOnExit>
+                                                                <List component="div" disablePadding>
+                                                                    <ListItem button className={classes.nestedIns}>
+                                                                        <HashLink to={'#h1'} scroll={(el) => el.scrollIntoView({ behavior: 'auto', block: 'end' })} className={classes.nestedInsLink}>
+                                                                            <ListItemText primary="Gestión horas trabajadores" />
+                                                                        </HashLink>
+                                                                    </ListItem>
+                                                                </List>
+                                                            </Collapse>
+                                                            <ListItem button onClick={handleClickMenuInstrucciones6}>
+                                                                <ListItemText primary="Gestión Horas servicios Fijos" />
+                                                                {openMenu6 ? <ExpandLess /> : <ExpandMore />}
+                                                            </ListItem>
+                                                            <Collapse in={openMenu6} timeout="auto" unmountOnExit>
+                                                                <List component="div" disablePadding>
+                                                                    <ListItem button className={classes.nestedIns}>
+                                                                        <HashLink to={'#sf1'} scroll={(el) => el.scrollIntoView({ behavior: 'auto', block: 'end' })} className={classes.nestedInsLink}>
+                                                                            <ListItemText primary="Gestión horas Servicios Extra" />
+                                                                        </HashLink>
+                                                                    </ListItem>
+                                                                    <ListItem button className={classes.nestedIns}>
+                                                                        <HashLink to={'#sf2'} scroll={(el) => el.scrollIntoView({ behavior: 'auto', block: 'end' })} className={classes.nestedInsLink}>
+                                                                            <ListItemText primary="Gestión Servicios Extra personalizados" />
+                                                                        </HashLink>
+                                                                    </ListItem>
+                                                                </List>
+                                                            </Collapse>
                                                         </List>
                                                     </Box>
                                                 </Grid>
                                             </Grid>
                                             <Grid item lg={9} sm={9} xs={9}>
                                                 <SimpleReactLightbox>
-                                                    {openMenu1 || (!openMenu1 && !openMenu2 && !openMenu3 && !openMenu4) ? (<InstruccionesCuadrantes />) : null}
+                                                    {openMenu1 || (!openMenu1 && !openMenu2 && !openMenu3 && !openMenu4 && !openMenu5 && !openMenu6) ? (<InstruccionesCuadrantes />) : null}
                                                     {openMenu2 ? (<InstruccionesCentros />) : null}
                                                     {openMenu3 ? (<InstruccionesTrabajadores />) : null}
                                                     {openMenu4 ? (<InstruccionesVarios />) : null}
+                                                    {openMenu5 ? (<InstruccionesControlHorario />) : null}
+                                                    {openMenu6 ? (<InstruccionesServiciosFijos />) : null}
                                                 </SimpleReactLightbox>
                                             </Grid>
                                         </Grid>
@@ -642,29 +695,6 @@ const Configuracion = (props) => {
                                                     onChange={handleChangeFormConfiguracion('precioHoraExtra')}
                                                     labelWidth={130}
                                                     startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                                                />
-                                            </FormControl>
-                                            <Box
-                                                m={0.5}
-                                                bgcolor="secondary.light"
-                                                color="secondary.contrastText"
-                                                className={clsx(classes.boxStl2, classes.mb20)}
-                                            >
-                                                Configuración numeración recibos
-                                            </Box>
-                                            <FormControl
-                                                variant="outlined"
-                                                className={classes.form}
-                                                size="small"
-                                            >
-                                                <InputLabel>Último número recibos</InputLabel>
-                                                <OutlinedInput
-                                                    className={classes.mb25}
-                                                    fullWidth
-                                                    id="form-configuracion-hora-normal"
-                                                    value={valuesFormConfiguracion.numeroRecibos || ''}
-                                                    onChange={handleChangeFormConfiguracion('numeroRecibos')}
-                                                    labelWidth={175}
                                                 />
                                             </FormControl>
                                         </Box>
@@ -1078,6 +1108,32 @@ const Configuracion = (props) => {
                                                                     <Typography component="span" variant="body2">1.- Añadido tipo de Servicio Extra: Fregado de suelos.</Typography>
                                                                     <br />
                                                                     <Typography component="span" variant="body2">2.- Añadido campo Identificador en objeto Centros para diferenciar centros con el mismo nombre en Factusol.</Typography>
+                                                                    <br />
+                                                                </Fragment>
+                                                            }
+                                                        />
+                                                    </ListItem >
+                                                    <ListItem>
+                                                        <ListItemText
+                                                            primary="V. 2.01 - 31/05/2024"
+                                                            secondary={
+                                                                <Fragment>
+                                                                    <Typography component="span" variant="body2">1.- Implementada funcionalidad para enviar por mail facturas de clientes en formato PDF desde cuadrante.</Typography>
+                                                                    <br />
+                                                                    <Typography component="span" variant="body2">2.- Implementada funcionalidad para enviar lotes de mails desde pantalla cuadrantes.</Typography>
+                                                                    <br />
+                                                                </Fragment>
+                                                            }
+                                                        />
+                                                    </ListItem >
+                                                    <ListItem>
+                                                        <ListItemText
+                                                            primary="V. 2.02 - 03/09/2024"
+                                                            secondary={
+                                                                <Fragment>
+                                                                    <Typography component="span" variant="body2">1.- Programada enteramente sección CONTROL HORARIO para gestión integral de horas trabajadas por trabajador centro (Horas servicios y Horas servicios extra).</Typography>
+                                                                    <br />
+                                                                    <Typography component="span" variant="body2">2.- Implementada funcionalidad gestionar horas trabajadas en trabajadores Servicios extra.</Typography>
                                                                     <br />
                                                                 </Fragment>
                                                             }

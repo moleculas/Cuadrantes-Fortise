@@ -12,26 +12,28 @@ import {
     Tooltip,
 } from '@material-ui/core';
 import clsx from 'clsx';
+import DescriptionIcon from '@material-ui/icons/Description';
 
 //carga componentes
-import Faltantes from './Faltantes';
+import ListadoHorasTrabajadores from './ListadoHorasTrabajadores';
 import Bajas from '../comun/Bajas';
-import GraficoNominas from './graficos/GraficoNominas';
-import FaltantesRegistrados from './FaltantesRegistrados';
-import FaltantesEmitidos from './FaltantesEmitidos';
+import GraficoHorasTrabjadores from './graficos/GraficoHorasTrabjadores';
 import CustomSnack from '../comun/CustomSnack';
 
 //estilos
 import Clases from "../clases";
 
 //importaciones acciones
-import { retornaAnoMesCuadranteAccion } from '../redux/appDucks';
 import {
-    obtenerNominasFaltantesAccion,
-    obtenerNominasRegistradasEmitidasAccion,
-    vaciarDatosFaltantesAccion
-} from '../redux/faltantesDucks';
+    retornaAnoMesCuadranteAccion,
+    generaArchivoXLSHorasTrabajadoresAccion
+} from '../redux/appDucks';
 import { obtenerTrabajadoresAccion } from '../redux/trabajadoresDucks';
+import {
+    obtenerHorasTrabajadoresAccion,
+    vaciarDatosHorasTrabajadoresAccion
+} from '../redux/horasTrabajadoresDucks';
+
 import {
     TabPanelInicio as TabPanel,
     a11yProps,
@@ -40,22 +42,25 @@ import {
     getWidthContenedores
 } from '../logica/logicaApp';
 
-const PantallaNominas = () => {
+const PantallaHorasTrabajadores = () => {
     const classes = Clases();
     const dispatch = useDispatch();
-    const calendarioAGestionarNominas = useSelector(store => store.variablesNominas.calendarioAGestionarNominas);
-    const listadoTrabajadoresBaja = useSelector(store => store.variablesTrabajadores.arrayTrabajadoresBaja);
-    const numeroNominasFaltantes = useSelector(store => store.variablesFaltantes.numeroNominasFaltantes);
-    const numeroNominasRegistradas = useSelector(store => store.variablesFaltantes.numeroNominasRegistradas);
-    const numeroNominasEmitidas = useSelector(store => store.variablesFaltantes.numeroNominasEmitidas);
-    const errorDeCargaNominas = useSelector(store => store.variablesNominas.errorDeCargaNominas);
-    const errorDeCargaTrabajadores = useSelector(store => store.variablesTrabajadores.errorDeCargaTrabajadores);
-    const listadoTrabajadores = useSelector(store => store.variablesTrabajadores.arrayTrabajadores);
-    const nominasFaltantesArray = useSelector(store => store.variablesFaltantes.nominasFaltantesArray);
+
+    const {
+        calendarioAGestionarHorasTrabajadores,
+        errorDeCargaHorasTrabajadores,
+        arrayHorasTrabajadores
+    } = useSelector(store => store.variablesHorasTrabajadores);
+
+    const {
+        arrayTrabajadores: listadoTrabajadores,
+        arrayTrabajadoresBaja: listadoTrabajadoresBaja,
+        errorDeCargaTrabajadores
+    } = useSelector(store => store.variablesTrabajadores);
 
     //states
 
-    const { monthLet } = dispatch(retornaAnoMesCuadranteAccion(calendarioAGestionarNominas));
+    const { monthLet } = dispatch(retornaAnoMesCuadranteAccion(calendarioAGestionarHorasTrabajadores));
     const [heightContenedoresPeq, setHeightContenedoresPeq] = useState(getHeightContenedoresPeq(162));
     const [heightContenedoresGra, setHeightContenedoresGra] = useState(getHeightContenedoresGra(264));
     const [widthContenedores, setWidthContenedores] = useState(getWidthContenedores(300));
@@ -85,37 +90,36 @@ const PantallaNominas = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        dispatch(vaciarDatosFaltantesAccion());
-    }, [calendarioAGestionarNominas]);
+        dispatch(vaciarDatosHorasTrabajadoresAccion());
+    }, [calendarioAGestionarHorasTrabajadores]);
 
     useEffect(() => {
         if (listadoTrabajadores.length > 0) {
-            if (nominasFaltantesArray.length === 0) {
-                const { monthNum, year } = dispatch(retornaAnoMesCuadranteAccion(calendarioAGestionarNominas));
+            if (!arrayHorasTrabajadores) {
+                const { monthNum, year } = dispatch(retornaAnoMesCuadranteAccion(calendarioAGestionarHorasTrabajadores));
                 const anyoMes = year + '-' + monthNum;
-                dispatch(obtenerNominasFaltantesAccion('nominas', anyoMes, listadoTrabajadores));
-                dispatch(obtenerNominasRegistradasEmitidasAccion('nominas', anyoMes, listadoTrabajadores));
+                dispatch(obtenerHorasTrabajadoresAccion('horasTrabajadores', anyoMes, listadoTrabajadores));
             }
         }
-    }, [listadoTrabajadores, calendarioAGestionarNominas]);
+    }, [listadoTrabajadores, calendarioAGestionarHorasTrabajadores, arrayHorasTrabajadores]);
 
     useEffect(() => {
-        if (errorDeCargaTrabajadores || errorDeCargaNominas) {
+        if (errorDeCargaTrabajadores || errorDeCargaHorasTrabajadores) {
             setAlert({
                 mensaje: "Error de conexión con la base de datos.",
                 tipo: 'error'
             })
             setOpenSnack(true);
         }
-    }, [errorDeCargaTrabajadores, errorDeCargaNominas]);
+    }, [errorDeCargaTrabajadores, errorDeCargaHorasTrabajadores]);
 
     useEffect(() => {
-        if ((numeroNominasFaltantes + numeroNominasRegistradas + numeroNominasEmitidas) < listadoTrabajadores.length) {
+        if (!arrayHorasTrabajadores) {
             setOpenLoading(true)
         } else {
             setOpenLoading(false)
         };
-    }, [numeroNominasFaltantes, numeroNominasRegistradas, numeroNominasEmitidas]);
+    }, [arrayHorasTrabajadores]);
 
     //funciones    
 
@@ -140,28 +144,28 @@ const PantallaNominas = () => {
                             color="secondary"
                         >
                             <Tabs value={valueTab} onChange={handleChangeTab} className={classes.tabsStl}>
-                                <Tooltip title={'Nóminas del mes de ' + monthLet + ' pendientes de gestionar'} placement="top-start" arrow>
-                                    <Tab label={'Pendientes'} {...a11yProps(0)} style={{ paddingBottom: 10 }} />
-                                </Tooltip>
-                                <Tooltip title={'Nóminas del mes de ' + monthLet + ' registradas'} placement="top-start" arrow>
-                                    <Tab label={'Registradas'} {...a11yProps(1)} style={{ paddingBottom: 10 }} />
-                                </Tooltip>
-                                <Tooltip title={'Nóminas del mes de ' + monthLet + ' emitidas'} placement="top-start" arrow>
-                                    <Tab label={'Emitidas'} {...a11yProps(2)} style={{ paddingBottom: 10 }} />
+                                <Tooltip title={'Cómputo de horas trabajadores del mes de ' + monthLet + ' pendientes de gestionar'} placement="top-start" arrow>
+                                    <Tab label={'Trabajadores'} {...a11yProps(0)} style={{ paddingBottom: 10 }} />
                                 </Tooltip>
                             </Tabs>
-                            <Avatar
-                                className={clsx(classes.small3, valueTab === 0 ? classes.red : valueTab === 1 ? classes.orange : classes.green)}
-                                style={{ marginRight: 8 }}
-                            >
-                                <Typography variant='body2'>{
-                                    valueTab === 0 ?
-                                        (numeroNominasFaltantes ? numeroNominasFaltantes : 0) :
-                                        valueTab === 1 ?
-                                            (numeroNominasRegistradas ? numeroNominasRegistradas : 0) :
-                                            (numeroNominasEmitidas ? numeroNominasEmitidas : 0)
-                                }</Typography>
-                            </Avatar>
+                            <Box className={classes.alignRight}>
+                                <Avatar
+                                    className={clsx(classes.small, valueTab === 0 && classes.bgHTTaronja)}
+                                    style={{ marginRight: 8, marginTop: 2 }}
+                                >
+                                    <Typography variant='body2'>{
+                                        valueTab === 0 && (arrayHorasTrabajadores?.length || 0)
+                                    }</Typography>
+                                </Avatar>
+                                <Tooltip title={'Crear Excel listado horas Trabajadores'} placement="top-start" arrow >
+                                    <Box
+                                        style={{ marginRight: 6, cursor: 'pointer' }}
+                                        onClick={() => dispatch(generaArchivoXLSHorasTrabajadoresAccion(monthLet))}
+                                    >
+                                        <DescriptionIcon style={{ color: 'white', marginTop: 5 }} />
+                                    </Box>
+                                </Tooltip>
+                            </Box>
                         </AppBar>
                         <TabPanel value={valueTab} index={0}>
                             <Paper
@@ -178,47 +182,7 @@ const PantallaNominas = () => {
                                     style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra }}
                                 >
                                     <Fragment>
-                                        <Faltantes prHeightContenedores={heightContenedoresGra} prWidthContenedores={widthContenedores} prOpenLoading={openLoading} />
-                                    </Fragment>
-                                </Grid>
-                            </Paper>
-                        </TabPanel>
-                        <TabPanel value={valueTab} index={1}>
-                            <Paper
-                                elevation={1}
-                                style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra, marginTop: -20, marginLeft: -24, marginRight: -24 }}
-                            >
-                                <Grid
-                                    spacing={1}
-                                    container
-                                    direction="column"
-                                    justifycontent="flex-start"
-                                    alignItems="flex-start"
-                                    p={0}
-                                    style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra }}
-                                >
-                                    <Fragment>
-                                        <FaltantesRegistrados prWidthContenedores={widthContenedores} prOpenLoading={openLoading} />
-                                    </Fragment>
-                                </Grid>
-                            </Paper>
-                        </TabPanel>
-                        <TabPanel value={valueTab} index={2}>
-                            <Paper
-                                elevation={1}
-                                style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra, marginTop: -20, marginLeft: -24, marginRight: -24 }}
-                            >
-                                <Grid
-                                    spacing={1}
-                                    container
-                                    direction="column"
-                                    justifycontent="flex-start"
-                                    alignItems="flex-start"
-                                    p={0}
-                                    style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra }}
-                                >
-                                    <Fragment>
-                                        <FaltantesEmitidos prHeightContenedores={heightContenedoresGra} prWidthContenedores={widthContenedores} prOpenLoading={openLoading} />
+                                        <ListadoHorasTrabajadores prHeightContenedores={heightContenedoresGra} prWidthContenedores={widthContenedores} prOpenLoading={openLoading} />
                                     </Fragment>
                                 </Grid>
                             </Paper>
@@ -233,13 +197,13 @@ const PantallaNominas = () => {
                             bgcolor="secondary.main"
                             className={clsx(classes.sombraBox, classes.boxStl)}
                         >
-                            <Typography variant="body2">Cómputo de gastos anual</Typography>
+                            <Typography variant="body2">Cómputo de horas anual</Typography>
                         </Box>
                         <Paper
                             elevation={1}
                             style={{ minHeight: heightContenedoresPeq, maxHeight: heightContenedoresPeq, margin: 8 }}
                         >
-                            <GraficoNominas prHeightContenedores={heightContenedoresPeq} prWidthContenedores={widthContenedores} />
+                            <GraficoHorasTrabjadores prHeightContenedores={heightContenedoresPeq} prWidthContenedores={widthContenedores} />
                         </Paper>
                     </Grid>
                     <Grid>
@@ -277,9 +241,8 @@ const PantallaNominas = () => {
                 tipoCuadrante={false}
                 setOpenSnack={setOpenSnack}
             />
-            {/* {console.log(numeroNominasFaltantes)} */}
         </div>
     )
 }
 
-export default PantallaNominas
+export default PantallaHorasTrabajadores

@@ -383,7 +383,8 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
             };
             const myFechaInicioRango = dispatch(retornaFechaEnBaseAAnoMesDiaAccion(inicioRango));
             const myFechaFinRango = dispatch(retornaFechaEnBaseAAnoMesDiaAccion(finRango));
-            myFechaFinRango.setDate(myFechaFinRango.getDate() + 1);
+            //modificador: canvi per problema detecta vacances al mes següent          
+            myFechaFinRango.setDate(myFechaFinRango.getDate());
             if (myFechaInicioRango >= myFechaFinRango) {
                 setAlert({
                     mensaje: "La fecha de final no puede ser anterior a la fecha de inicio.",
@@ -744,8 +745,8 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
         const textoInicioRango = myFechaInicioRango.toLocaleDateString("es-ES", options);
         const myFechaFinRango = dispatch(retornaFechaEnBaseAAnoMesDiaAccion(linea.fin));
         let myFechaFinRangoFinal = new Date(myFechaFinRango).getTime();
-        let dia = 1 * 24 * 60 * 60;
-        let fechaResultado = new Date(myFechaFinRangoFinal - dia);
+        //modificador: canvi per problema detecta vacances al mes següent         
+        let fechaResultado = new Date(myFechaFinRangoFinal);
         const textoFinRango = fechaResultado.toLocaleDateString("es-ES", options);
         switch (linea.tipo) {
             case 'bajaIT':

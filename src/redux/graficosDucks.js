@@ -11,10 +11,10 @@ const dataInicial = {
     estadoVenimosDeGraficosCuadrantes: false,
     forzarRecargaGraficosCuadrantes: false,
     cuadrantesPorAnyoGraficos: [],
-    errorDeCargaGraficosNominas: false,
-    estadoVenimosDeGraficosNominas: false,
-    forzarRecargaGraficosNominas: false,
-    nominasPorAnyoGraficos: [],
+    errorDeCargaGraficosHorasTrabajadores: false,
+    estadoVenimosDeGraficosHorasTrabajadores: false,
+    forzarRecargaGraficosHorasTrabajadores: false,
+    horasTrabajadoresPorAnyoGraficos: [],
 };
 
 //types
@@ -23,10 +23,10 @@ const ERROR_DE_CARGA_GRAFICOS_CUADRANTES = 'ERROR_DE_CARGA_GRAFICOS_CUADRANTES';
 const VENIMOS_DE_GRAFICOS_CUADRANTES = 'VENIMOS_DE_GRAFICOS_CUADRANTES';
 const FORZAR_RECARGA_GRAFICOS_CUADRANTES = 'FORZAR_RECARGA_GRAFICOS_CUADRANTES';
 const OBTENER_CUADRANTES_POR_ANYO_GRAFICOS_EXITO = 'OBTENER_CUADRANTES_POR_ANYO_GRAFICOS_EXITO';
-const ERROR_DE_CARGA_GRAFICOS_NOMINAS = 'ERROR_DE_CARGA_GRAFICOS_NOMINAS';
-const VENIMOS_DE_GRAFICOS_NOMINAS = 'VENIMOS_DE_GRAFICOS_NOMINAS';
-const FORZAR_RECARGA_GRAFICOS_NOMINAS = 'FORZAR_RECARGA_GRAFICOS_NOMINAS';
-const OBTENER_NOMINAS_POR_ANYO_GRAFICOS_EXITO = 'OBTENER_NOMINAS_POR_ANYO_GRAFICOS_EXITO';
+const ERROR_DE_CARGA_GRAFICOS_HORAS_TRABAJADORES = 'ERROR_DE_CARGA_GRAFICOS_HORAS_TRABAJADORES';
+const VENIMOS_DE_GRAFICOS_HORAS_TRABAJADORES = 'VENIMOS_DE_GRAFICOS_HORAS_TRABAJADORES';
+const FORZAR_RECARGA_GRAFICOS_HORAS_TRABAJADORES = 'FORZAR_RECARGA_GRAFICOS_HORAS_TRABAJADORES';
+const OBTENER_HORAS_TRABAJADORES_POR_ANYO_GRAFICOS_EXITO = 'OBTENER_HORAS_TRABAJADORES_POR_ANYO_GRAFICOS_EXITO';
 
 //reducer
 export default function graficosReducer(state = dataInicial, action) {
@@ -41,14 +41,14 @@ export default function graficosReducer(state = dataInicial, action) {
             return { ...state, forzarRecargaGraficosCuadrantes: action.payload.estado, cuadrantesPorAnyoGraficos: [] }
         case OBTENER_CUADRANTES_POR_ANYO_GRAFICOS_EXITO:
             return { ...state, cuadrantesPorAnyoGraficos: action.payload.elementoArray, loadingGraficos: false }
-        case ERROR_DE_CARGA_GRAFICOS_NOMINAS:
-            return { ...state, errorDeCargaGraficosNominas: true, loadingGraficos: false }
-        case VENIMOS_DE_GRAFICOS_NOMINAS:
-            return { ...state, estadoVenimosDeGraficosNominas: action.payload.estado }
-        case FORZAR_RECARGA_GRAFICOS_NOMINAS:
-            return { ...state, forzarRecargaGraficosNominas: action.payload.estado, nominasPorAnyoGraficos: [] }
-        case OBTENER_NOMINAS_POR_ANYO_GRAFICOS_EXITO:
-            return { ...state, nominasPorAnyoGraficos: action.payload.elementoArray, loadingGraficos: false }
+        case ERROR_DE_CARGA_GRAFICOS_HORAS_TRABAJADORES:
+            return { ...state, errorDeCargaGraficosHorasTrabajadores: true, loadingGraficos: false }
+        case VENIMOS_DE_GRAFICOS_HORAS_TRABAJADORES:
+            return { ...state, estadoVenimosDeGraficosHorasTrabajadores: action.payload.estado }
+        case FORZAR_RECARGA_GRAFICOS_HORAS_TRABAJADORES:
+            return { ...state, forzarRecargaGraficosHorasTrabajadores: action.payload.estado, horasTrabajadoresPorAnyoGraficos: [] }
+        case OBTENER_HORAS_TRABAJADORES_POR_ANYO_GRAFICOS_EXITO:
+            return { ...state, horasTrabajadoresPorAnyoGraficos: action.payload.elementoArray, loadingGraficos: false }
         default:
             return { ...state }
     }
@@ -75,7 +75,7 @@ export const obtenerCuadrantesPorAnyoAccion = (objeto) => (dispatch, getState) =
             }
         });
         axiosArray.push(newPromise);
-    };    
+    };
     axios
         .all(axiosArray)
         .then(axios.spread((...responses) => {
@@ -85,7 +85,7 @@ export const obtenerCuadrantesPorAnyoAccion = (objeto) => (dispatch, getState) =
             let sumatorioA = 0;
             let sumatorioB = 0;
             let elObjetoTotal;
-            let elEstado;            
+            let elEstado;
             arrayCuadrantes.forEach((mes, index) => {
                 if (mes.length > 0) {
                     mes.forEach((mesInt, index) => {
@@ -126,7 +126,7 @@ export const obtenerCuadrantesPorAnyoAccion = (objeto) => (dispatch, getState) =
         });
 }
 
-export const obtenerNominasPorAnyoAccion = (objeto) => (dispatch, getState) => {
+export const obtenerHorasTrabajadoresPorAnyoAccion = (objeto) => (dispatch, getState) => {
     dispatch({
         type: LOADING_GRAFICOS
     });
@@ -136,7 +136,7 @@ export const obtenerNominasPorAnyoAccion = (objeto) => (dispatch, getState) => {
     let apiUrl = rutaApi + "obtener_por_anyo.php";
     const formData = [];
     const axiosArray = [];
-    const arrayNominas = [];
+    const arrayHorasTrabajadores = [];
     for (let i = 0; i < arrayMeses.length; i++) {
         formData[i] = new FormData();
         formData[i].append("objeto", objeto);
@@ -151,34 +151,23 @@ export const obtenerNominasPorAnyoAccion = (objeto) => (dispatch, getState) => {
     axios
         .all(axiosArray)
         .then(axios.spread((...responses) => {
-            responses.forEach(res => arrayNominas.push(res.data))
+            responses.forEach(res => arrayHorasTrabajadores.push(res.data))
             //finished all queries
-            let array = [];
-            let sumatorio = 0;
-            let elObjetoTotal;
-            arrayNominas.forEach((mes, index) => {
-                if (mes.length > 0) {
-                    mes.forEach((mesInt, index) => {
-                        if (mesInt.total) {
-                            elObjetoTotal = parse(mesInt.total.total);
-                            console.log(elObjetoTotal)
-                            sumatorio += parseFloat(elObjetoTotal.total);
-                        }
-                    });
-                    array.push({
-                        name: meses[index].substr(0, 3) + '.',
-                        Gastos: sumatorio,
-                    });
-                    sumatorio = 0;
-                } else {
-                    array.push({
-                        name: meses[index].substr(0, 3) + '.',
-                        Gastos: 0,
-                    })
-                }
+            const array = arrayHorasTrabajadores.map((mes, index) => {
+                const Horas = mes.reduce((sum, mesInt) => {
+                    if (mesInt.datos_hora_trabajador) {
+                        const arrDatosHorasTrabajador = JSON.parse(mesInt.datos_hora_trabajador);
+                        return sum + arrDatosHorasTrabajador.reduce((s, obj) => s + obj.totalHoras, 0);
+                    }
+                    return sum;
+                }, 0);
+                return {
+                    name: meses[index].substr(0, 3) + '.',
+                    Horas: parseFloat(Horas.toFixed(2))
+                };
             });
             dispatch({
-                type: OBTENER_NOMINAS_POR_ANYO_GRAFICOS_EXITO,
+                type: OBTENER_HORAS_TRABAJADORES_POR_ANYO_GRAFICOS_EXITO,
                 payload: {
                     elementoArray: array,
                 }
@@ -186,7 +175,7 @@ export const obtenerNominasPorAnyoAccion = (objeto) => (dispatch, getState) => {
         }))
         .catch(errors => {
             dispatch({
-                type: ERROR_DE_CARGA_GRAFICOS_NOMINAS
+                type: ERROR_DE_CARGA_GRAFICOS_HORAS_TRABAJADORES
             })
         });
 }
@@ -209,18 +198,18 @@ export const forzarRecargaGraficosCuadrantesAccion = (estado) => (dispatch, getS
     });
 }
 
-export const venimosDeGraficosNominasAccion = (estado) => (dispatch, getState) => {
+export const venimosDeGraficosHorasTrabajadoresAccion = (estado) => (dispatch, getState) => {
     dispatch({
-        type: VENIMOS_DE_GRAFICOS_NOMINAS,
+        type: VENIMOS_DE_GRAFICOS_HORAS_TRABAJADORES,
         payload: {
             estado: estado
         }
     });
 }
 
-export const forzarRecargaGraficosNominasAccion = (estado) => (dispatch, getState) => {
+export const forzarRecargaGraficosHorasTrabajadoresAccion = (estado) => (dispatch, getState) => {
     dispatch({
-        type: FORZAR_RECARGA_GRAFICOS_NOMINAS,
+        type: FORZAR_RECARGA_GRAFICOS_HORAS_TRABAJADORES,
         payload: {
             estado: estado
         }

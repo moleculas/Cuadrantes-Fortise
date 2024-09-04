@@ -44,7 +44,7 @@ import { obtenerCentrosInicioAccion } from '../redux/centrosDucks';
 import { obtenerTrabajadoresAccion } from '../redux/trabajadoresDucks';
 import {
     forzarRecargaGraficosCuadrantesAccion,
-    forzarRecargaGraficosNominasAccion
+    forzarRecargaGraficosHorasTrabajadoresAccion
 } from '../redux/graficosDucks';
 import {
     getHeightContenedoresPeq,
@@ -97,7 +97,7 @@ const Inicio = (props) => {
             dispatch(obtenerTrabajadoresAccion('trabajadores'));
         };
         dispatch(forzarRecargaGraficosCuadrantesAccion(true));
-        dispatch(forzarRecargaGraficosNominasAccion(true));
+        dispatch(forzarRecargaGraficosHorasTrabajadoresAccion(true));
         dispatch(obtenerUltimasIntervencionesAccion());
     }, [dispatch]);
 

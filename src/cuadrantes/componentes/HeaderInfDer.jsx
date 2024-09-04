@@ -56,7 +56,7 @@ const HeaderInfDer = (props) => {
                     <InputLabel>Cuadrante</InputLabel>
                     <Select
                         id="form-numero-cuadrantes"
-                        value={cuadranteEnUsoCuadrantes}
+                        value={cuadranteEnUsoCuadrantes || ''}//modificat: select
                         onChange={handleChangeSelectNumeroCuadrante}
                         input={
                             <OutlinedInput
