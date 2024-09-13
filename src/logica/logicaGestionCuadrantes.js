@@ -335,7 +335,7 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
                         dispatch(gestionTrabajadorAccion(trabajador)).then(({ payload }) => {
                             arrayControl.push(trabajadorIterado);
                             if (payload) {
-                                if (trabajadorIterado['suplente_' + (index + 1)]) {                                   
+                                if (trabajadorIterado['suplente_' + (index + 1)]) {
                                     dispatch(obtenerSuplenteAccion('trabajadores', trabajadorIterado['suplente_' + (index + 1)])).then(({ suplente }) => {
                                         dispatch(gestionSuplenteAccion(suplente)).then(({ payload }) => {
                                             if (payload) {
@@ -380,14 +380,14 @@ export const gestionaCuadranteIndividualAccion = (numeroCuadrante, cambio) => (d
         });
     };
     if (cuadranteRegistrado === 'no' && !numeroCuadrantesCuadrantes[numeroCuadrante - 1].revisado) {
-        if (objetoCuadrante.datosTrabajadoresIniciales.datosTrabajadoresIniciales[numeroCuadrante - 1]) {           
+        if (objetoCuadrante.datosTrabajadoresIniciales.datosTrabajadoresIniciales[numeroCuadrante - 1]) {
             async function forEachAsync(array) {
                 dispatch(setDisableCargandoAccion(true));
                 const arrayControl = [];
                 for (let index = 0; index < array.length; index++) {
                     const trabajadorIterado = array[index];
                     let valido = false;
-                    while (!valido) {                     
+                    while (!valido) {
                         const result = await obtenElementoTrabajadorInicio(trabajadorIterado, index, arrayControl);
                         if (result.payload.trab === "trabajadorIterado") {
                             valido = true;
@@ -642,7 +642,7 @@ export const gestionTrabajadorAccion = (objetoTrabajadorInicio) => (dispatch, ge
         };
     }
     if (esCambioTra) {
-         //modificador: control horas trabajadores    
+        //modificador: control horas trabajadores    
         dispatch(gestionCambioTrabajadorHorasTrabajadores(valorPrevioAccordionAbierto));
         arrayTr = [...trabajadoresEnCuadrante];
         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].tipoRegistro === 'individual') {
@@ -758,7 +758,7 @@ export const gestionSuplenteAccion = (objetoSuplenteInicio) => (dispatch, getSta
         };
     };
     if (esCambioSup) {
-         //modificador: control horas trabajadores    
+        //modificador: control horas trabajadores    
         dispatch(gestionCambioTrabajadorHorasTrabajadores(valorPrevioAccordionAbierto));
         arraySu = [...suplentesEnCuadrante];
         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].tipoRegistro === 'individual') {
@@ -1792,7 +1792,7 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
                 };
             };
         };
-    };   
+    };
     objetoTotales['totalMasIva'] = ((parseFloat(objetoTotales['total']) * 21) / 100) + parseFloat(objetoTotales['total']);
     objetoTotales['totalIva'] = ((parseFloat(objetoTotales['total']) * 21) / 100);
     return objetoTotales
@@ -1902,8 +1902,22 @@ const finalizaRegistroCuadrante = (
     const { objetoCuadrante, cuadranteRegistrado, procesoHorasTrabajadores } = getState().variablesCuadrantes;
     const { cuadranteEnUsoCuadrantes } = getState().variablesCuadrantesSetters;
     const { trabajadoresInicio } = getState().variablesHorasTrabajadores;
-    //modificador: control horas trabajadores 
-    const horasTrabajadoresRegistro = procesarHorasTrabajadores(objetoCuadrante, procesoHorasTrabajadores, laFirmaActualizacion, trabajadoresInicio);  
+    //modificador: control horas trabajadores   
+    const horasTrabajadoresRegistro = procesarHorasTrabajadores(objetoCuadrante, procesoHorasTrabajadores, laFirmaActualizacion, trabajadoresInicio);
+    let trabajadorNuloEnRegistro = false;
+    horasTrabajadoresRegistro.forEach((registro, index) => {
+        if (registro.trabajador_id === null) {
+            trabajadorNuloEnRegistro = true;
+        }
+    });
+    if (trabajadorNuloEnRegistro) {
+        dispatch(setAlertaAccion({
+            abierto: true,
+            mensaje: "Falta asignar trabajador a algún Servicio con Control Horario. Revisa el cuadrante.",
+            tipo: 'error'
+        }));
+        return;
+    };
     let elArrayDatosCuadranteLimpiado = [];
     losDatosCuadrante.datosCuadrante.forEach((cuadranteIterado) => {
         elArrayDatosCuadranteLimpiado.push({

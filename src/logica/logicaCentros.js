@@ -75,6 +75,23 @@ export const procesarDatosPromesa = (
             setOpenSnack(true);
             return;
         };
+        //modificador: control horas servicios fijos
+        let serviciosExtraSinTrabajador = { estado: false, servicio: null };
+        tiposServicioFijo.forEach(servicio => {
+            const precioHoraKey = `precioHora_${servicio.prefix}`;
+            const trabKey = `trab_${servicio.prefix}`;
+            if (valuesForm[precioHoraKey] !== null && (!valuesForm[trabKey] || valuesForm[trabKey].trim() === "")) {
+                serviciosExtraSinTrabajador = { estado: true, servicio: servicio.label }
+            }
+        });
+        if (serviciosExtraSinTrabajador.estado) {
+            setAlert({
+                mensaje: `Falta seleccionar un trabajador para el Servicio extra ${serviciosExtraSinTrabajador.servicio}. Revisa el formulario.`,
+                tipo: 'error'
+            })
+            setOpenSnack(true);
+            return;
+        };
         const hayPrecioHoraS = tipoServicio.some(servicio => valuesForm[`precioHora_${servicio.prefix}`]);
         const hayHorario = !(valuesForm.computo === '' && !valuesForm.mensualPactado && !hayPrecioHoraS);
         let valoresCorrectosComputo = false;
