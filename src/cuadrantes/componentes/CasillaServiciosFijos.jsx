@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Constantes from "../../constantes";
 import {
@@ -9,10 +9,12 @@ import {
     Button,
     Tooltip,
     IconButton,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem
 } from '@material-ui/core';
 import PopupState, { bindTrigger, bindPopover } from 'material-ui-popup-state';
-import DateFnsUtils from '@date-io/date-fns';
-import { MuiPickersUtilsProvider, KeyboardTimePicker } from '@material-ui/pickers';
 import {
     Save as SaveIcon,
     RemoveCircleOutline as RemoveCircleOutlineIcon
@@ -22,20 +24,20 @@ import clsx from 'clsx';
 //importaciones acciones
 import { handleChangeSFCasillasAccion } from '../../redux/cuadrantesHandlersDucks';
 import { setTrabajadoresInicioAccion } from '../../redux/horasTrabajadoresDucks';
-import {
-    alturaCasilla,
-    retornaAnchoColumna
-} from '../../logica/logicaApp';
+import { alturaCasilla } from '../../logica/logicaApp';
 import logicaLayoutCuadrantes from '../../logica/logicaLayoutCuadrantes';
 import { setAlertaAccion } from '../../redux/cuadrantesSettersDucks';
-import { generaFechaAccion } from '../../redux/appDucks';
+import { retornaMinutosAccion } from '../../redux/appDucks';
 import { existePrefixSF } from '../../logica/logicaServiciosFijos';
 
 //estilos
 import Clases from "../../clases";
 
 //constantes
-const listadoServiciosFijos = Constantes.TIPO_SERVICIO_FIJO;
+const {
+    CANTIDAD_HORAS_CENTROS: cantidadHoras,
+    TIPO_SERVICIO_FIJO: tiposServicioFijo,
+} = Constantes;
 
 const CasillaServiciosFijos = (props) => {
     //modificador: control horas servicios fijos
@@ -60,13 +62,13 @@ const CasillaServiciosFijos = (props) => {
     let trab = '';
     const { propiedad, existePrefix } = existePrefixSF(servicio);
     const integrado = existePrefix
-        ? listadoServiciosFijos.some(prefixObj => servicio[`int_${prefixObj.prefix}`])
+        ? tiposServicioFijo.some(prefixObj => servicio[`int_${prefixObj.prefix}`])
         : servicio[`int_${propiedad}`] || false;
     for (const prop in servicio) {
         if (prop === postRef && servicio[prop] !== 'anulado') {
             hayServicio = true;
             if (integrado) {
-                listadoServiciosFijos.forEach(prefixObj => {
+                tiposServicioFijo.forEach(prefixObj => {
                     if (servicio[`precioHora_${prefixObj.prefix}`] || servicio[`int_${prefixObj.prefix}`]) {
                         trab = servicio[`trab_${prefixObj.prefix}`];
                     };
@@ -79,20 +81,20 @@ const CasillaServiciosFijos = (props) => {
         };
     };
     const isActive = existePrefix
-        ? listadoServiciosFijos.some(prefixObj => servicio[`activo_${prefixObj.prefix}`] === 'si')
+        ? tiposServicioFijo.some(prefixObj => servicio[`activo_${prefixObj.prefix}`] === 'si')
         : servicio[`activo_${propiedad}`] === 'si';
     const [disabledRegistrar, setDisabledRegistrar] = useState(true);
-    const [valoresTimePicker, setValoresTimePicker] = useState({ inicio: null, fin: null });
+    const [valorSelect, setValorSelect] = useState("");
 
     //useEffect
 
     useEffect(() => {
-        if (valoresTimePicker.inicio && valoresTimePicker.fin) {
+        if (valorSelect !== "") {
             setDisabledRegistrar(false);
         } else {
             setDisabledRegistrar(true);
         }
-    }, [valoresTimePicker]);
+    }, [valorSelect]);
 
     useEffect(() => {
         if (
@@ -101,10 +103,20 @@ const CasillaServiciosFijos = (props) => {
             cuadranteServiciosFijos[indice][`${dia[1]}${dia[0]}`] &&
             cuadranteServiciosFijos[indice]['tipoServiciofijo'] === servicio.tipoServiciofijo
         ) {
-            const { inicio, fin } = cuadranteServiciosFijos[indice]['horas'];
-            setValoresTimePicker({ inicio: dispatch(generaFechaAccion(inicio)), fin: dispatch(generaFechaAccion(fin)) });
+            //modificador: temporal evitar quadrants antics horesSF
+            if (cuadranteServiciosFijos[indice]['horas']['inicio']) {
+                const horas = dispatch(retornaMinutosAccion(cuadranteServiciosFijos[indice]['horas']['inicio'], cuadranteServiciosFijos[indice]['horas']['fin']));
+                setValorSelect(horas);
+            } else {
+                if (Array.isArray(cuadranteServiciosFijos[indice]['horas'])) {     
+                    const horas = cuadranteServiciosFijos[indice]['horas'].find(hora => hora.dia === postRef)?.horas || "";
+                    setValorSelect(horas);
+                } else {
+                    setValorSelect(cuadranteServiciosFijos[indice]['horas']);
+                }
+            }
         } else {
-            setValoresTimePicker({ inicio: null, fin: null });
+            setValorSelect("");
         }
     }, [cuadranteServiciosFijos, indice]);
 
@@ -115,19 +127,15 @@ const CasillaServiciosFijos = (props) => {
         gestionaClassesColoresServiciosFijosAccion
     } = logicaLayoutCuadrantes();
 
-    const handleTimeChange = (time, name) => {
-        setValoresTimePicker(prevState => ({
-            ...prevState,
-            [name]: time
-        }));
+    const handleTimeChange = (event) => {
+        setValorSelect(event.target.value)
     };
 
     const handleRegistrar = (postRef, indice, tipo, popupState) => {
-        const { inicio, fin } = valoresTimePicker;
-        if (inicio >= fin) {
+        if (!trabajador) {
             dispatch(setAlertaAccion({
                 abierto: true,
-                mensaje: "La hora de entrada no puede ser superior a la hora de salida.",
+                mensaje: "Falta asignar un trabajador al Control Horario del Servicio Extra. No es posible registrar datos.",
                 tipo: 'error'
             }));
             return;
@@ -136,12 +144,12 @@ const CasillaServiciosFijos = (props) => {
         if (!trabajadoresInicio.includes(trabajador)) {
             dispatch(setTrabajadoresInicioAccion([...trabajadoresInicio, trabajador]));
         };
-        dispatch(handleChangeSFCasillasAccion(postRef, indice, tipo, true, popupState, valoresTimePicker))
+        dispatch(handleChangeSFCasillasAccion(postRef, indice, tipo, true, popupState, valorSelect))
     };
 
     const handleReset = (postRef, indice, tipo, popupState) => {
-        setValoresTimePicker({ inicio: null, fin: null });
-        dispatch(handleChangeSFCasillasAccion(postRef, indice, tipo, false, popupState, { inicio: null, fin: null }))
+        setValorSelect("");
+        dispatch(handleChangeSFCasillasAccion(postRef, indice, tipo, false, popupState, ""))
     };
 
     if (isActive) {
@@ -171,7 +179,8 @@ const CasillaServiciosFijos = (props) => {
                                             indexDia + 1,
                                             trab,
                                             cuadranteServiciosFijos[indice]['estados']['estadoCasillaDia' + (indexDia + 1)],
-                                            cuadranteServiciosFijos[indice]['horas'] ? cuadranteServiciosFijos[indice]['horas'] : null
+                                            cuadranteServiciosFijos[indice]['horas'] ? cuadranteServiciosFijos[indice]['horas'] : null,
+                                            postRef
                                         )}
                                     </Typography>
                                 )}
@@ -195,11 +204,16 @@ const CasillaServiciosFijos = (props) => {
                                         display: 'flex',
                                         flexDirection: 'column',
                                         justifyContent: 'flex-start',
-                                        alignItems: 'flex-end',
                                         width: ampleColumnaServiciosFijos
                                     }}
                                 >
-                                    <Box className={classes.mb5}>
+                                    <Box
+                                        className={classes.mb5}
+                                        style={{
+                                            display: 'flex',
+                                            justifyContent: 'flex-end'
+                                        }}
+                                    >
                                         <Tooltip title={disabledRegistrar ? "" : "Resetear casilla"} placement="top-end" arrow>
                                             <span>
                                                 <IconButton
@@ -227,38 +241,30 @@ const CasillaServiciosFijos = (props) => {
                                             {listadoTrabajadores.find(trab => trab.id === trabajador)?.nombre || 'Sin trabajador'}
                                         </Typography>
                                     </Box>
-                                    <Box style={esDesktop ? { display: 'flex', flexDirection: 'row', justifycontent: 'flex-start', alignItems: 'flex-start' } : { display: 'flex', flexDirection: 'column', justifycontent: 'flex-start', alignItems: 'flex-start' }}>
-                                        <Grid item xs={esDesktop ? 6 : 12}>
-                                            <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                                                <KeyboardTimePicker
-                                                    className="calendarioOculto"
-                                                    size="small"
-                                                    inputVariant="outlined"
-                                                    fullWidth
-                                                    style={!esDesktop ? { minWidth: ampleColumnaServiciosFijos - 33 } : null}
-                                                    label={esDesktop ? 'Hora inicio' : 'Inicio'}
-                                                    ampm={false}
-                                                    value={valoresTimePicker.inicio}
-                                                    onChange={(time) => handleTimeChange(time, 'inicio')}
-
-                                                />
-                                            </MuiPickersUtilsProvider>
-                                        </Grid>
-                                        <Grid item xs={esDesktop ? 6 : 12} style={esDesktop ? { marginLeft: 10 } : { marginTop: 15 }}>
-                                            <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                                                <KeyboardTimePicker
-                                                    className="calendarioOculto"
-                                                    size="small"
-                                                    inputVariant="outlined"
-                                                    fullWidth
-                                                    style={!esDesktop ? { minWidth: ampleColumnaServiciosFijos - 33 } : null}
-                                                    label={esDesktop ? 'Hora fin' : 'Fin'}
-                                                    ampm={false}
-                                                    value={valoresTimePicker.fin}
-                                                    onChange={(time) => handleTimeChange(time, 'fin')}
-                                                />
-                                            </MuiPickersUtilsProvider>
-                                        </Grid>
+                                    <Box style={{ display: 'flex', flexDirection: 'column', justifycontent: 'flex-start', alignItems: 'flex-start' }}>
+                                        <FormControl
+                                            variant="outlined"
+                                            size="small"
+                                            fullWidth
+                                        >
+                                            <InputLabel>{esDesktop ? 'Cantidad horas' : 'Horas'}</InputLabel>
+                                            <Select
+                                                style={!esDesktop ? { minWidth: ampleColumnaServiciosFijos - 33 } : null}
+                                                label={esDesktop ? 'Cantidad horas' : 'Horas'}
+                                                value={valorSelect || ''}//modificat: select
+                                                onChange={handleTimeChange}
+                                                helpertext="Cantidad horas"
+                                            >
+                                                <MenuItem value=''>
+                                                    <em>No</em>
+                                                </MenuItem>
+                                                {cantidadHoras.map((option) => (
+                                                    <MenuItem key={option.value} value={option.value}>
+                                                        {option.label}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
                                     </Box>
                                     <Button
                                         className={classes.mt15}

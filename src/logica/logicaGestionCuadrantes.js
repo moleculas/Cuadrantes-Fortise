@@ -1228,14 +1228,14 @@ const procesarDatosCuadrantePromesa = (index, noHayRegistro) => (dispatch, getSt
                     const { propiedad, existePrefix } = existePrefixSF(registro);
                     const trabajadorClave = Object.keys(registro).find(key => key.startsWith("trab_"));
                     if (registro?.horas && trabajadorClave) {
-                        const horas = dispatch(retornaMinutosAccion(registro.horas.inicio, registro.horas.fin)) / 60;
+                        const totalHoras = (registro.horas.reduce((total, current) => total + current.horas, 0) / 60).toFixed(2);                      
                         const keyHoras = existePrefix
                             ? `totalHorasSF_${registro.tipoServiciofijo}`
                             : `totalHorasSF_${propiedad}_${registro.tipoServiciofijo}`;
                         return {
                             tipo: "trabajadorSF",
-                            [keyHoras]: horas,
-                            totalHoras: horas,
+                            [keyHoras]: totalHoras,
+                            totalHoras: totalHoras,
                             cuadrante: cuadranteEnUsoCuadrantes,
                             centro,
                             trabajadorId: registro[trabajadorClave]
@@ -1902,22 +1902,8 @@ const finalizaRegistroCuadrante = (
     const { objetoCuadrante, cuadranteRegistrado, procesoHorasTrabajadores } = getState().variablesCuadrantes;
     const { cuadranteEnUsoCuadrantes } = getState().variablesCuadrantesSetters;
     const { trabajadoresInicio } = getState().variablesHorasTrabajadores;
-    //modificador: control horas trabajadores   
+    //modificador: control horas trabajadores       
     const horasTrabajadoresRegistro = procesarHorasTrabajadores(objetoCuadrante, procesoHorasTrabajadores, laFirmaActualizacion, trabajadoresInicio);
-    let trabajadorNuloEnRegistro = false;
-    horasTrabajadoresRegistro.forEach((registro, index) => {
-        if (registro.trabajador_id === null) {
-            trabajadorNuloEnRegistro = true;
-        }
-    });
-    if (trabajadorNuloEnRegistro) {
-        dispatch(setAlertaAccion({
-            abierto: true,
-            mensaje: "Falta asignar trabajador a algún Servicio con Control Horario. Revisa el cuadrante.",
-            tipo: 'error'
-        }));
-        return;
-    };
     let elArrayDatosCuadranteLimpiado = [];
     losDatosCuadrante.datosCuadrante.forEach((cuadranteIterado) => {
         elArrayDatosCuadranteLimpiado.push({

@@ -412,7 +412,7 @@ const CuadranteCompleto = (props) => {
 
     return (
         <>
-            {/* {console.log(objetoCuadrante)}  */}
+            {console.log(cuadranteServiciosFijos)} 
             <Grid container
                 direction="row"
                 justifycontent="flex-start"

@@ -47,9 +47,8 @@ function LogicaLayoutCuadrantes() {
     const objetoCuadrante = useSelector(store => store.variablesCuadrantes.objetoCuadrante);
     const intervencionRegistrada = useSelector(store => store.variablesApp.estadoIntervencionRegistrada);
     const arrayTrabajadoresSubcategoria = useSelector(store => store.variablesTrabajadores.arrayTrabajadoresSubcategoria);
-    const { cuadranteServiciosFijos } = useSelector(store => store.variablesCuadrantesServiciosFijos);
 
-    const gestionaTextoCasillasServiciosFijosAccion = (indexDia, trab, activo, horas) => {
+    const gestionaTextoCasillasServiciosFijosAccion = (indexDia, trab, activo, horas, postRef) => {
         //modificador: control horas servicios fijos
         if (stateFestivo[`estadoFestivoDia${indexDia}`]) {
             const tipoFestivo = stateFestivo[`tipoFestivoDia${indexDia}`];
@@ -62,7 +61,16 @@ function LogicaLayoutCuadrantes() {
             if (!horas) {
                 return nombreTrabajador;
             }
-            return `De ${horas.inicio} a ${horas.fin} - ${nombreTrabajador}`;
+            //modificador: temporal evitar quadrants antics horesSF
+            if (horas.inicio) {
+                return `De ${horas.inicio} a ${horas.fin} - ${nombreTrabajador}`;
+            } else {
+                if (Array.isArray(horas)) {
+                    return `${parseFloat((horas.find(hora => hora.dia === postRef).horas) / 60).toFixed(2)} horas - ${nombreTrabajador}`;
+                } else {
+                    return `${parseFloat(horas / 60).toFixed(2)} horas - ${nombreTrabajador}`;
+                }
+            }
         }
         return '';
     };

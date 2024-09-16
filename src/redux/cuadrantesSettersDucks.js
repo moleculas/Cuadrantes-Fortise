@@ -1107,7 +1107,7 @@ export const reseteaContenidoCentroAccion = (excepciones) => (dispatch) => {
         payload: {
             estado: false
         }
-    });
+    });    
     dispatch(setCuadranteServiciosFijosAccion([]));
     dispatch(setServiciosFijosPersonalizadosAccion([]));
     dispatch(setTrabajadoresInicioAccion([]));

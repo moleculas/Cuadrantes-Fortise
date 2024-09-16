@@ -896,17 +896,16 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
     };
 };
 
-export const handleChangeSFCasillasAccion = (postRef, indice, tipo, event, popupState, valoresTimePicker) => (dispatch, getState) => {
+export const handleChangeSFCasillasAccion = (postRef, indice, tipo, event, popupState, valorSelect) => (dispatch, getState) => {
     //modificador: control horas servicios fijos 
     const { cuadranteRegistrado } = getState().variablesCuadrantes;
-    const { cuadranteServiciosFijos } = getState().variablesCuadrantesServiciosFijos;
-    const [horaInicio, horaFin] = ['inicio', 'fin'].map(key => dispatch(retornaHoraRangoAccion(valoresTimePicker[key])));
+    const { cuadranteServiciosFijos } = getState().variablesCuadrantesServiciosFijos;  
     let casilla = {
         dia: postRef,
         valor: event,
         indice: indice,
         tipo: tipo,
-        horas: { inicio: horaInicio, fin: horaFin }
+        horas: valorSelect
     };
     dispatch(setCuadranteServiciosFijosAccion(dispatch(gestionaColumnaServiciosFijosCambiosAccion(cuadranteServiciosFijos, casilla))));
     if (cuadranteRegistrado === 'si') {
@@ -1107,7 +1106,7 @@ export const handleChangeTimePickerFinCuadranteAccion = (id, index, horaPareja, 
     dispatch(activarDesactivarCambioAccion(false));
 };
 
-export const handleChangeSelectCantidadAccion = (index, event) => (dispatch, getState) => {
+export const handleChangeSelectCantidadAccion = (index, event) => (dispatch, getState) => {    
     const { itemPrevioEditando } = getState().variablesCuadrantesSetters;
     const { cuadrante } = getState().variablesCuadrantes;
     const idSplitted = event.target.name.split("-");
@@ -2023,7 +2022,7 @@ export const handleRegistrarCambioEnCasillaConfiguracionAccion = (scrollable, cl
     let cambioEnConf = false;
     if (itemEditandoConfiguracion?.mensualPactadoInicial !== objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1]?.mensualPactadoInicial) {
         cambioEnConf = true;
-    };    
+    };
     if (itemEditandoConfiguracion.festivos.inicio) {
         let diaInicio = itemEditandoConfiguracion.festivos.inicio.getDate();
         let diaFin = itemEditandoConfiguracion.festivos.fin.getDate();
@@ -2055,7 +2054,7 @@ export const handleRegistrarCambioEnCasillaConfiguracionAccion = (scrollable, cl
         ...objetoCuadrante.datosCuadrante,
         datosCuadrante: elArrayDatosCuadrante
     };
-    dispatch(setEstamosActualizandoCuadranteSinCargaAccion(true));    
+    dispatch(setEstamosActualizandoCuadranteSinCargaAccion(true));
     dispatch(actualizarObjetoCuadranteAccion({
         ...objetoCuadrante,
         datosCuadrante: losDatosCuadrante,

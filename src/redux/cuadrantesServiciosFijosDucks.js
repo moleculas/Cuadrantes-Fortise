@@ -266,7 +266,7 @@ export const setStateSwitchTipoServicioFijoCuadranteAccion = (objeto) => (dispat
     });
 };
 
-export const setCuadranteServiciosFijosAccion = (array) => (dispatch, getState) => {
+export const setCuadranteServiciosFijosAccion = (array) => (dispatch, getState) => {   
     dispatch({
         type: SET_CUADRANTE_SERVICIOS_FIJOS,
         payload: {

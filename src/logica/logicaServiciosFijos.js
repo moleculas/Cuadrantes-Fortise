@@ -229,7 +229,9 @@ const procesarServicioFijoCambio = (
                         totalServiciosActivos += 1;
                     }
                     objetoResultante['estados']['estadoCasillaDia' + (index + 1)] = true;
-                    objetoResultante['horas'] = casilla.horas;
+                    objetoResultante['horas'] = objetoResultante['horas'] || [];
+                    const indexHoras = objetoResultante['horas'].findIndex(hora => hora.dia === casilla.dia);
+                    indexHoras !== -1 ? objetoResultante['horas'][indexHoras].horas = casilla.horas : objetoResultante['horas'].push({ dia: casilla.dia, horas: casilla.horas });
                 } else {
                     totalServiciosActivos >= objetoResultante['totalServiciosActivosInicial'] ? totalServiciosActivos -= 1 : totalServiciosRestados += 1;
                     tipoVariacion === 'una'
@@ -239,7 +241,9 @@ const procesarServicioFijoCambio = (
                         (totalServicioFijo -= servicio[`precioHora_${propiedad}`]);
                     objetoResultante[dia[1][0] + dia[0][0]] = 'anulado';
                     objetoResultante['estados']['estadoCasillaDia' + (index + 1)] = false;
-                    objetoResultante['horas'] = null;
+                    if (objetoResultante['horas'] && objetoResultante['horas'].length > 0) {
+                        objetoResultante['horas'] = objetoResultante['horas'].filter(hora => hora.dia !== casilla.dia);
+                    }
                 }
                 objetoResultante = actualizarObjetoResultante(objetoResultante, propiedad, servicio);
             }

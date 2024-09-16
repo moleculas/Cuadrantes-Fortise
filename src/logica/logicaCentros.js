@@ -79,8 +79,8 @@ export const procesarDatosPromesa = (
         let serviciosExtraSinTrabajador = { estado: false, servicio: null };
         tiposServicioFijo.forEach(servicio => {
             const precioHoraKey = `precioHora_${servicio.prefix}`;
-            const trabKey = `trab_${servicio.prefix}`;
-            if (valuesForm[precioHoraKey] !== null && (!valuesForm[trabKey] || valuesForm[trabKey].trim() === "")) {
+            const trabKey = `trab_${servicio.prefix}`;        
+            if (valuesForm[precioHoraKey] !== null && !valuesForm[trabKey]) {
                 serviciosExtraSinTrabajador = { estado: true, servicio: servicio.label }
             }
         });
