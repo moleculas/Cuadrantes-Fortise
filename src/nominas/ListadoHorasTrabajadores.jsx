@@ -152,7 +152,7 @@ const ListadoHorasTrabajadores = (props) => {
                         disabled={horaTrabajador.totalHoras === 0}
                     />
                     <ListItemText
-                        primary={`${horaTrabajador.trabajadorNombre} - Total horas: ${Number.isInteger(horaTrabajador.totalHoras) ? horaTrabajador.totalHoras : horaTrabajador.totalHoras.toFixed(2)} h.`}
+                        primary={`${horaTrabajador.trabajadorNombre} - Total horas: ${Number.isInteger(horaTrabajador?.totalHoras) ? horaTrabajador.totalHoras : horaTrabajador.totalHoras.toFixed(2)} h.`}
                         secondary={
                             <Typography
                                 component="span"

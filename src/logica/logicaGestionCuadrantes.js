@@ -1228,14 +1228,14 @@ const procesarDatosCuadrantePromesa = (index, noHayRegistro) => (dispatch, getSt
                     const { propiedad, existePrefix } = existePrefixSF(registro);
                     const trabajadorClave = Object.keys(registro).find(key => key.startsWith("trab_"));
                     if (registro?.horas && trabajadorClave) {
-                        const totalHoras = (registro.horas.reduce((total, current) => total + current.horas, 0) / 60).toFixed(2);                      
+                        const totalHoras = (registro.horas.reduce((total, current) => total + current.horas, 0) / 60).toFixed(2);
                         const keyHoras = existePrefix
                             ? `totalHorasSF_${registro.tipoServiciofijo}`
                             : `totalHorasSF_${propiedad}_${registro.tipoServiciofijo}`;
                         return {
                             tipo: "trabajadorSF",
-                            [keyHoras]: totalHoras,
-                            totalHoras: totalHoras,
+                            [keyHoras]: Number(totalHoras),
+                            totalHoras: Number(totalHoras),
                             cuadrante: cuadranteEnUsoCuadrantes,
                             centro,
                             trabajadorId: registro[trabajadorClave]
@@ -1303,7 +1303,7 @@ const procesarHorasTrabajadoresAccion = (
                             const trabajador = listadoTrabajadores.find(t => t.nombre === value);
                             acc['trabajadorId'] = trabajador ? trabajador.id : 999;
                         } else {
-                            acc[key] = value;
+                            acc[key] = typeof acc[key] === 'number' ? Number.isInteger(value) ? value : Number(value).toFixed(2) : value;
                         }
                     }
                     return acc;

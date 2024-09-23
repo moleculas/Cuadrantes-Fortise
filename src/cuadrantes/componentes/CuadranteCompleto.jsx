@@ -146,7 +146,7 @@ const CuadranteCompleto = (props) => {
     //mediaQueries
     const esDesktop = useMediaQuery(theme => theme.breakpoints.up('desktop'));
 
-    //per test
+    //per test    
 
     //useEffect
 
@@ -235,7 +235,7 @@ const CuadranteCompleto = (props) => {
         };
         if (objetoCuadrante.datosCuadrante.centro) {
             if (!venimosBorrarCuadrante) {
-                if (!estamosActualizandoCuadranteSinCarga) {                  
+                if (!estamosActualizandoCuadranteSinCarga) {
                     dispatch(gestionaCuadranteIndividualAccion(cuadranteEnUsoCuadrantes, false));
                 } else {
                     dispatch(setEstamosActualizandoCuadranteSinCargaAccion(false));
@@ -412,7 +412,7 @@ const CuadranteCompleto = (props) => {
 
     return (
         <>
-            {console.log(cuadranteServiciosFijos)} 
+            {/* {console.log(procesoHorasTrabajadores)} */}
             <Grid container
                 direction="row"
                 justifycontent="flex-start"

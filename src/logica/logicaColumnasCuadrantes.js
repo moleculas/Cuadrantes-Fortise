@@ -739,10 +739,10 @@ const gestionaColumnaCuadranteInteriorAccion = (
                     columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('festivo');
                     if (stateFestivo['estadoFestivoDia' + (index + 1)]) {
                         if (arrayBuffer.length > 0 && !esInicio) {
-                            const indiceObjeto = arrayBuffer[cuadranteEnUsoCuadrantes - 1].findIndex(dia => dia[elDia] !== undefined);
-                            if (indiceObjeto >= 0) {
-                                objetoBuffer[dia[1][0] + dia[0][0]] = [...arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto][elDia]];
-                                const posicionACambiar = objetoBuffer[dia[1][0] + dia[0][0]][0][0] === 'SF' ? cuadrante.length : cuadrante.length - 1;
+                            const indiceObjeto = arrayBuffer[cuadranteEnUsoCuadrantes - 1].findIndex(dia => dia[elDia] !== undefined);                           
+                            if (indiceObjeto >= 0) {                              
+                                objetoBuffer[dia[1][0] + dia[0][0]] = [...arrayBuffer[cuadranteEnUsoCuadrantes - 1][indiceObjeto][elDia]];                               
+                                const posicionACambiar = objetoBuffer[dia[1][0] + dia[0][0]][0][0] === 'SF' ? cuadrante.length : cuadrante.length - 1;  
                                 objetoBuffer[dia[1][0] + dia[0][0]][posicionACambiar] = [
                                     ...horarios[tipoHorario].map((nombreHorario) =>
                                         gestionaDatosHorarioItem(
