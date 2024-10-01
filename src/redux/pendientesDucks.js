@@ -165,7 +165,7 @@ export const venimosDeRegistradosAccion = (estado) => (dispatch, getState) => {
     });
 };
 
-export const vaciarDatosPendientesAccion = () => (dispatch, getState) => {
+export const vaciarDatosPendientesAccion = () => (dispatch, getState) => {   
     dispatch({
         type: VACIAR_DATOS_PENDIENTES,
     });

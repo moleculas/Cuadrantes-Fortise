@@ -51,8 +51,7 @@ import {
     abreObjetoDialogAccion,
     cierraObjetoDialogAccion,
     registrarIntervencionAccion,
-    retornaHoraRangoAccion,
-    isNumeric
+    retornaHoraRangoAccion
 } from './appDucks';
 import {
     vaciarDatosCentroAccion,
@@ -102,7 +101,8 @@ import {
     gestionaColumnaCuadranteAccion
 } from '../logica/logicaColumnasCuadrantes';
 import {
-    retornaMinutosAccionEnCuadrantes
+    retornaMinutosAccionEnCuadrantes,
+    IsNumeric
 } from '../logica/logicaApp';
 import {
     gestionarInformeAccion
@@ -1530,7 +1530,7 @@ export const handleChangeFormConfiguracionCuadranteAccion = (prop, event) => (di
         prop === "precioHora_L2" ||
         prop === "precioHora_F"
     ) {
-        if (isNumeric(event.target.value)) {
+        if (IsNumeric(event.target.value)) {
             dispatch(setItemEditandoConfiguracionAccion({ ...itemEditandoConfiguracion, [prop]: event.target.value }));
         };
     };
@@ -1605,9 +1605,12 @@ export const handleChangeFormConfiguracionServiciosFijosAccion = (tipo, prop, ev
             losEstados[codigo] = event.target.checked;
         }
         dispatch(setItemEditandoServiciosFijosAccion({ switch: losEstados, servicios: losServicios }));
-    } else if (tipo === "input") {
-        losServicios[prop] = Number(event.target.value);
-        dispatch(setItemEditandoServiciosFijosAccion({ ...itemEditandoServiciosFijos, servicios: losServicios }));
+    } else if (tipo === "input") {      
+        if (IsNumeric(event.target.value)) {
+            losServicios[prop] = event.target.value;
+            dispatch(setItemEditandoServiciosFijosAccion({ ...itemEditandoServiciosFijos, servicios: losServicios }));
+        };
+        return;
     } else if (tipo === "select" || tipo === "radio") {
         if (prop.startsWith("trab_")) {
             const trabajadorSeleccionado = arrayTrabajadoresSubcategoria.find(trabajador => trabajador.id === Number(event.target.value));
@@ -2098,7 +2101,7 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
                 if (!trabRellenado) {
                     dispatch(setAlertaAccion({
                         abierto: true,
-                        mensaje: "Debe especificar el trabajo del servicio.",
+                        mensaje: "Debe especificar el trabajajador del servicio.",
                         tipo: 'error'
                     }));
                     return;

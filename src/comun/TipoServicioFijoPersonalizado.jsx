@@ -32,6 +32,7 @@ import {
 import { activarDesactivarCambioAccion } from '../redux/cuadrantesDucks';
 import { existePrefixSF } from '../logica/logicaServiciosFijos';
 import { setAlertaAccion } from '../redux/cuadrantesSettersDucks';
+import { IsNumeric } from '../logica/logicaApp';
 
 const TipoServicioFijoPersonalizado = (props) => {
     //modificador: servicios fijos personalizados
@@ -65,20 +66,24 @@ const TipoServicioFijoPersonalizado = (props) => {
             let value;
             if (prop === 'int') {
                 value = event.target.checked;
-            } else if (prop === 'precioHora') {
-                value = Number(event.target.value);
+            } else if (prop === 'precioHora') {               
+                if (IsNumeric(event.target.value)) {                 
+                    value = event.target.value;
+                }else{
+                    return;
+                }              
             } else {
-                value = event.target.value;                
+                value = event.target.value;
             }
             if (prop === 'trab') {
-                const trabajadorSeleccionado = arrayTrabajadoresSubcategoria.find(trabajador => trabajador.id === Number(value));                
+                const trabajadorSeleccionado = arrayTrabajadoresSubcategoria.find(trabajador => trabajador.id === Number(value));
                 if (trabajadorSeleccionado && trabajadorSeleccionado.estado !== "alta" || trabajadorSeleccionado.estado === "reserva") {
                     dispatch(setAlertaAccion({
                         abierto: true,
                         mensaje: "Este trabajador se encuentra de baja o está en reserva, selecciona otro.",
                         tipo: 'error'
                     }));
-                    return; 
+                    return;
                 }
             }
             if (prop === 'descripcion' && value.includes('_')) {

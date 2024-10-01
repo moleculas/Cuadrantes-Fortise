@@ -125,7 +125,7 @@ const PendientesRegistrados = (props) => {
     useEffect(() => {
         if ((laDataFAC.length > 0) && (laDataFAC.length === arrayCuadrantesDefsParaCheck.length)) {           
             dispatch(actualizarCuadrantesIteradosAccion()).then(({ payload }) => {
-                if (payload) {
+                if (payload) {                  
                     setArrayCuadrantesDefsParaCheck([]);
                     dispatch(finalizarArchivosXLSLoteAccion(true));
                     dispatch(emitirArchivosXLSLoteAccion(laDataFAC, laDataLFA));
@@ -134,10 +134,10 @@ const PendientesRegistrados = (props) => {
                     setHeighCambio({
                         scroller: heighCambio.scroller + 70,
                         accordion: heighCambio.accordion - 0
-                    });
+                    });                   
                     dispatch(forzarRecargaGraficosCuadrantesAccion(true));
                     dispatch(setValorTabPantallaCuadrantesAccion(2));
-                    dispatch(setTiempoEsperaloteAccion(false));
+                    dispatch(setTiempoEsperaloteAccion(false));                    
                 };
             });
         };

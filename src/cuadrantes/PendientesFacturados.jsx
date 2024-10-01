@@ -318,7 +318,7 @@ const PendientesFacturados = (props) => {
 
     return (
         <div>
-            {/* {console.log(cuadrantesFacturadosArray)} */}
+            {/* {console.log(props.prOpenLoading)}  */}
             <Grid
                 spacing={1}
                 container

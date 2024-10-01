@@ -116,21 +116,21 @@ const PantallaCuadrantes = () => {
 
     useEffect(() => {
         dispatch(vaciarDatosPendientesAccion());
-        if (finalizandoLoteEstado) {
-            dispatch(finalizarArchivosXLSLoteAccion(false));
+        if (finalizandoLoteEstado) {  
             dispatch(forzarRecargaGraficosCuadrantesAccion(false));
         }
     }, [calendarioAGestionar, finalizandoLoteEstado]);
 
-    useEffect(() => {
+    useEffect(() => {       
         if (listadoCentros.length > 0 && finalizandoLoteEstado) {
             if (cuadrantesPendientesArray.length === 0) {
+                dispatch(finalizarArchivosXLSLoteAccion(false));
                 const { monthNum, year } = dispatch(retornaAnoMesCuadranteAccion(calendarioAGestionar));
                 const anyoMes = year + '-' + monthNum;
                 dispatch(obtenerCuadrantesAccion('cuadrantes', anyoMes));
             }
         }
-    }, [listadoCentros, calendarioAGestionar, finalizandoLoteEstado]);
+    }, [listadoCentros, finalizandoLoteEstado, cuadrantesPendientesArray]);
 
     useEffect(() => {
         if (listadoCentros.length > 0 && !finalizandoLoteEstado) {

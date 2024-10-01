@@ -8,7 +8,7 @@ import {
 } from './cuadrantesSettersDucks';
 import { retornaFormaPagoAccion } from './cuadrantesDucks';
 import { handleCloseMenuAccion } from './cuadrantesHandlersDucks';
-import { isNumeric } from './appDucks';
+import { IsNumeric } from '../logica/logicaApp';
 import { procesarDatosCuadranteAccion } from '../logica/logicaGestionCuadrantes';
 import { existePrefixSF } from '../logica/logicaServiciosFijos';
 
@@ -348,7 +348,7 @@ export const handleClickFacturacionInteriorMenuAccion = () => (dispatch, getStat
 };
 
 export const handleChangeFormNumumeroFactusolAccion = (event) => (dispatch) => {
-    if (isNumeric(event.target.value)) {
+    if (IsNumeric(event.target.value)) {
         dispatch(setNumeroFactusolAccion(event.target.value));
     };
 };

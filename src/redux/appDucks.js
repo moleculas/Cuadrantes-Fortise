@@ -1017,10 +1017,6 @@ export const emitirArchivosXLSLoteAccion = (laDataFAC, laDataLFA) => (dispatch, 
     });
 };
 
-export const isNumeric = (num) => {
-    return (num >= 0 || num < 0);
-};
-
 export const generaArchivoXLSCentrosAccion = () => (dispatch, getState) => {
     const { arrayCentros } = getState().variablesCentros;
     let elListadoCentros = [];
