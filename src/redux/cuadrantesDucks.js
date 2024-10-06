@@ -59,8 +59,9 @@ const dataInicial = {
     totalesPeriodicos: {
         total: null,
         noExisteCuadrante: false,
-        totalesHoras: [],
-        totalesServicios: [],
+        totalesServicios: {},
+        totalesServiciosFijos: {},
+        periodo: null
     },
     procesoHorasTrabajadores: {
         horasTrabajadores: [],
@@ -163,8 +164,9 @@ export default function cuadrantesReducer(state = dataInicial, action) {
                 totalesPeriodicos: {
                     total: ((state.noExisteCuadrante || action.payload.noExisteCuadrante) ? 0 : state.totalesPeriodicos.total += action.payload.totales),
                     noExisteCuadrante: action.payload.noExisteCuadrante,
-                    totalesHoras: (state.noExisteCuadrante || action.payload.noExisteCuadrante) ? null : action.payload.totalesHoras,
                     totalesServicios: (state.noExisteCuadrante || action.payload.noExisteCuadrante) ? null : action.payload.totalesServicios,
+                    totalesServiciosFijos: (state.noExisteCuadrante || action.payload.noExisteCuadrante) ? null : action.payload.totalesServiciosFijos,
+                    periodo: (state.noExisteCuadrante || action.payload.noExisteCuadrante) ? null : action.payload.periodo
                 },
             }
         case RESETEA_TOTALESPERIODICOS:
@@ -510,7 +512,7 @@ export const resetearCuadranteAccion = (objeto, id) => async (dispatch, getState
     }
 }
 
-export const obtenerCuadrantesPeriodicosAccion = (objeto, calendarioAGestionar, periodo, idCentro) => (dispatch, getState) => {
+export const obtenerCuadrantesPeriodicosAccion = (objeto, calendarioAGestionar, periodo, idCentro) => (dispatch, getState) => { 
     dispatch({
         type: LOADING_CUADRANTES
     });
@@ -552,8 +554,9 @@ export const obtenerCuadrantesPeriodicosAccion = (objeto, calendarioAGestionar, 
                 payload: {
                     totales: parseFloat(totalObjeto.total),
                     noExisteCuadrante: noExisteCuadrante,
-                    totalesHoras: dispatch(retornaHorasServicios(totalObjeto)),
-                    totalesServicios: dispatch(retornaTotalesServicios(totalObjeto))
+                    totalesServicios: dispatch(retornaTotalesServicios(totalObjeto)),
+                    totalesServiciosFijos: dispatch(retornaTotalesServiciosFijos(totalObjeto)),
+                    periodo
                 }
             })
         });
@@ -564,30 +567,43 @@ export const obtenerCuadrantesPeriodicosAccion = (objeto, calendarioAGestionar, 
     }
 };
 
-const retornaHorasServicios = (totalObjeto) => (dispatch, getState) => {
+const retornaTotalesServicios = (totalObjeto) => (dispatch, getState) => {     
     const { totalesPeriodicos } = getState().variablesCuadrantes;
-    let objetoRetornoHoras = {};
-    tipoServicio.forEach(({ prefix }) => {
-        const key = `${prefix}H`;
-        if (totalObjeto[key]) {
-            objetoRetornoHoras[key] = totalObjeto[key];
-            if (totalesPeriodicos.totalesHoras && totalesPeriodicos.totalesHoras[key]) {
-                objetoRetornoHoras[key] += totalesPeriodicos.totalesHoras[key];
-            }
+    let objetoRetornoServicios = { ...totalesPeriodicos.totalesServicios };
+    if(totalObjeto['MT']){
+        if (objetoRetornoServicios['MT']) {
+            objetoRetornoServicios['MT'] += totalObjeto['MT'];
+        } else {
+            objetoRetornoServicios['MT'] = totalObjeto['MT'];
         }
+    }
+    tipoServicio.forEach(({ prefix }) => {
+        ['H', 'T'].forEach(sufijo => {
+            const key = `${prefix}${sufijo}`;
+            if (totalObjeto[key]) {
+                if (objetoRetornoServicios[key]) {
+                    objetoRetornoServicios[key] += totalObjeto[key];
+                } else {
+                    objetoRetornoServicios[key] = totalObjeto[key];
+                }
+                if (totalesPeriodicos.totalesHoras && totalesPeriodicos.totalesServicios[key]) {
+                    objetoRetornoServicios[key] += totalesPeriodicos.totalesServicios[key];
+                }
+            }
+        });
     });
-    return objetoRetornoHoras;
+    return objetoRetornoServicios;
 };
 
-const retornaTotalesServicios = (totalObjeto) => (dispatch, getState) => {
+const retornaTotalesServiciosFijos = (totalObjeto) => (dispatch, getState) => {
     const { totalesPeriodicos } = getState().variablesCuadrantes;
-    let objetoRetornoServicios = {};
+    let objetoRetornoServiciosFijos = { ...totalesPeriodicos.totalesServiciosFijos };
     const servicios = tiposServicioFijo.map(servicio => servicio.prefix).concat('NUMC');
     servicios.forEach(servicio => {
         if (totalObjeto[`${servicio}T`]) {
-            objetoRetornoServicios[`${servicio}T`] = totalObjeto[`${servicio}T`];
-            if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios[`${servicio}T`]) {
-                objetoRetornoServicios[`${servicio}T`] += totalesPeriodicos.totalesServicios[`${servicio}T`];
+            objetoRetornoServiciosFijos[`${servicio}T`] = totalObjeto[`${servicio}T`];
+            if (totalesPeriodicos.totalesServiciosFijos && totalesPeriodicos.totalesServiciosFijos[`${servicio}T`]) {
+                objetoRetornoServiciosFijos[`${servicio}T`] += totalesPeriodicos.totalesServiciosFijos[`${servicio}T`];
             }
         }
     });
@@ -595,14 +611,15 @@ const retornaTotalesServicios = (totalObjeto) => (dispatch, getState) => {
     if (serviciosPersonalizados.length > 0) {
         serviciosPersonalizados.forEach(servicioPersonalizado => {
             if (totalObjeto[`${servicioPersonalizado}T`]) {
-                objetoRetornoServicios[`${servicioPersonalizado}T`] = totalObjeto[`${servicioPersonalizado}T`];
-                if (totalesPeriodicos.totalesServicios && totalesPeriodicos.totalesServicios[`${servicioPersonalizado}T`]) {
-                    objetoRetornoServicios[`${servicioPersonalizado}T`] += totalesPeriodicos.totalesServicios[`${servicioPersonalizado}T`];
+                objetoRetornoServiciosFijos[`${servicioPersonalizado}T`] = totalObjeto[`${servicioPersonalizado}T`];
+                objetoRetornoServiciosFijos[`${servicioPersonalizado}N`] = totalObjeto[`${servicioPersonalizado}N`];
+                if (totalesPeriodicos.totalesServiciosFijos && totalesPeriodicos.totalesServiciosFijos[`${servicioPersonalizado}T`]) {
+                    objetoRetornoServiciosFijos[`${servicioPersonalizado}T`] += totalesPeriodicos.totalesServiciosFijos[`${servicioPersonalizado}T`];
                 }
             }
         });
     };
-    return objetoRetornoServicios;
+    return objetoRetornoServiciosFijos;
 };
 
 export const reseteaTotalesPeriodicosAccion = () => (dispatch, getState) => {
@@ -612,8 +629,9 @@ export const reseteaTotalesPeriodicosAccion = () => (dispatch, getState) => {
             objeto: {
                 total: null,
                 noExisteCuadrante: false,
-                totalesHoras: [],
-                totalesServicios: []
+                totalesServicios: {},
+                totalesServiciosFijos: {},
+                periodo: null
             }
         }
     });

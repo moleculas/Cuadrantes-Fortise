@@ -482,7 +482,7 @@ export const retornaTextoConceptoServicioAccion = (objetoTotales, servicio, hora
             };
         });
         //modificador: servicios fijos personalizados
-        if (objetoTotales && /^P\d+/.test(servicio)) {  
+        if (objetoTotales && /^P\d+/.test(servicio)) {
             const serviciosPersonalizados = obtenerServiciosPersonalizados(objetoTotales);
             if (serviciosPersonalizados.length > 0) {
                 serviciosPersonalizados.forEach(servicioPersonalizado => {
@@ -523,6 +523,8 @@ export const retornaTextoConceptoServicioAccion = (objetoTotales, servicio, hora
 export const retornaArrayElementosAccion = (objetoConceptos) => (dispatch, getState) => {
     let arrayElementos = [];
     let retornoServicios = [];
+    //determinar si es periòdic per afegir sufixe a ítem
+    const periodo = objetoConceptos?.totalesPeriodicos?.periodo ?? null;
     //verificar si quadrant és doble i complejo
     const contadorComplejo = Object.keys(objetoConceptos).filter(clave => /^M\d/.test(clave)).length;
     if (contadorComplejo > 0) {
@@ -572,6 +574,17 @@ export const retornaArrayElementosAccion = (objetoConceptos) => (dispatch, getSt
         retornoServicios = dispatch(retornaTextoConceptoServicioAccion(null, 'NUMCT', null, null));
         arrayElementos.push([retornoServicios[0], retornoServicios[1], 0, 0, 0]);
     }
+    if (periodo) {
+        switch (periodo) {
+            case "bimensual":
+                arrayElementos.push([null, "Periodo facturación: BIMENSUAL"]);
+                break;
+            case "trimestral":
+                arrayElementos.push([null, "Periodo facturación: TRIMESTRAL"]);
+                break;
+            default:
+        }
+    }
     return arrayElementos
 };
 
@@ -592,7 +605,7 @@ export const generarArchivosXLSAccion = (numFactusol, objetoConceptos, anyo, mes
             total: parseFloat(objetoConceptos.total).toFixed(2),
             totalIva: parseFloat(objetoConceptos.totalIva).toFixed(2),
             totalMasIva: parseFloat(objetoConceptos.totalMasIva).toFixed(2)
-        };   
+        };
         const ultimoDia = new Date(anyo, mes, 0);
         const day = ultimoDia.getDate();
         const fechaHoy = day + "/" + mes + "/" + anyo;

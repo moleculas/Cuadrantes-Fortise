@@ -1636,7 +1636,7 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
         if (!servicio) return;
         const { propiedad, existePrefix } = existePrefixSF(servicio);
         const calcularTotales = (prefix, totalServicioFijo, precioHora) => {
-            objGeneral[`totalFacturado_${prefix}`] += totalServicioFijo;
+            objGeneral[`totalFacturado_${prefix}`] += Number(totalServicioFijo);
             objGeneral[`totalHoras_${prefix}`] = precioHora
                 ? parseInt(objGeneral[`totalFacturado_${prefix}`] / precioHora)
                 : 0;
@@ -1715,7 +1715,7 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
             });
         } else {
             if (objGeneral[`totalFacturado_${propiedad}`] > 0) {
-                objetoTotales[`${propiedad}T`] = objGeneral[`totalFacturado_${propiedad}`];
+                objetoTotales[`${propiedad}T`] = Number(objGeneral[`totalFacturado_${propiedad}`]);
                 objetoTotales[`${propiedad}H`] = objGeneral[`totalHoras_${propiedad}`];
                 objetoTotales[`${propiedad}N`] = servicio[`tipoServiciofijo`];
             };
@@ -1743,52 +1743,42 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
                     objetoTotales['MT'] += totalesPeriodicos.totalesServicios.MT;
                 } else {
                     objetoTotales['MT'] = totalesPeriodicos.totalesServicios.MT;
-                };
+                }
             };
             tipoServicio.forEach(objServ => {
-                if (totalesPeriodicos.totalesHoras[`${objServ.prefix}H`]) {
-                    if (objetoTotales[`${objServ.prefix}H`]) {
-                        objetoTotales[`${objServ.prefix}H`] += totalesPeriodicos.totalesHoras[`${objServ.prefix}H`];
-                    } else {
-                        objetoTotales[`${objServ.prefix}H`] = totalesPeriodicos.totalesHoras[`${objServ.prefix}H`];
-                    };
-                };
-                if (totalesPeriodicos.totalesServicios[`${objServ.prefix}T`]) {
-                    if (objetoTotales[`${objServ.prefix}T`]) {
-                        objetoTotales[`${objServ.prefix}T`] += totalesPeriodicos.totalesServicios[`${objServ.prefix}T`];
-                    } else {
-                        objetoTotales[`${objServ.prefix}T`] = totalesPeriodicos.totalesServicios[`${objServ.prefix}T`];
-                    };
-                };
-            });
-            servicios.flatMap(servicioTot => servicioTot || []).forEach(servicio => {
-                if (!servicio) return;
-                const { propiedad, existePrefix } = existePrefixSF(servicio);
-                if (existePrefix) {
-                    tiposServicioFijo.forEach(objServ => {
-                        if (totalesPeriodicos.totalesServicios[`${objServ.prefix}T`]) {
-                            if (objetoTotales[`${objServ.prefix}T`]) {
-                                objetoTotales[`${objServ.prefix}T`] += totalesPeriodicos.totalesServicios[`${objServ.prefix}T`];
-                            } else {
-                                objetoTotales[`${objServ.prefix}T`] = totalesPeriodicos.totalesServicios[`${objServ.prefix}T`];
-                            };
-                        };
-                    });
-                } else {
-                    if (totalesPeriodicos.totalesServicios[`${propiedad}T`]) {
-                        if (objetoTotales[`${propiedad}T`]) {
-                            objetoTotales[`${propiedad}T`] += totalesPeriodicos.totalesServicios[`${propiedad}T`];
+                if (totalesPeriodicos.totalesServicios && Object.keys(totalesPeriodicos.totalesServicios).length > 0) {
+                    if (totalesPeriodicos.totalesServicios[`${objServ.prefix}H`]) {
+                        if (objetoTotales[`${objServ.prefix}H`]) {
+                            objetoTotales[`${objServ.prefix}H`] += totalesPeriodicos.totalesServicios[`${objServ.prefix}H`];
                         } else {
-                            objetoTotales[`${propiedad}T`] = totalesPeriodicos.totalesServicios[`${propiedad}T`];
-                        };
-                    };
-                };
+                            objetoTotales[`${objServ.prefix}H`] = totalesPeriodicos.totalesServicios[`${objServ.prefix}H`];
+                        }
+                    }
+                    if (totalesPeriodicos.totalesServicios[`${objServ.prefix}T`]) {
+                        if (objetoTotales[`${objServ.prefix}T`]) {
+                            objetoTotales[`${objServ.prefix}T`] += totalesPeriodicos.totalesServicios[`${objServ.prefix}T`];
+                        } else {
+                            objetoTotales[`${objServ.prefix}T`] = totalesPeriodicos.totalesServicios[`${objServ.prefix}T`];
+                        }
+                    }
+                }
             });
-            if (totalesPeriodicos.totalesServicios.NUMCT) {
+            if (totalesPeriodicos.totalesServiciosFijos && Object.keys(totalesPeriodicos.totalesServiciosFijos).length > 0) {
+                Object.entries(totalesPeriodicos.totalesServiciosFijos).map(([clave, valor]) => {
+                    if (objetoTotales.hasOwnProperty(clave)) {
+                        objetoTotales[clave] += valor;
+                    } else {
+                        objetoTotales[clave] = valor;
+                    }
+                    const claveHoras = clave.slice(0, -1) + 'H';
+                    objetoTotales[claveHoras] = 1;
+                });
+            }
+            if (totalesPeriodicos.totalesServiciosFijos.NUMCT) {
                 if (objetoTotales['NUMCT']) {
-                    objetoTotales['NUMCT'] = totalesPeriodicos.totalesServicios.NUMCT;
+                    objetoTotales['NUMCT'] = totalesPeriodicos.totalesServiciosFijos.NUMCT;
                 } else {
-                    objetoTotales['NUMCT'] = totalesPeriodicos.totalesServicios.NUMCT;
+                    objetoTotales['NUMCT'] = totalesPeriodicos.totalesServiciosFijos.NUMCT;
                 };
             };
         };

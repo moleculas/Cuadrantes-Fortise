@@ -165,17 +165,17 @@ export const gestionarMailingIndividualAccion = (objetoCuadrante) => async (disp
         myPdf.updateContainer(element);
         const blob = await myPdf.toBlob();
         //modificador: check per test 
-        if (blob) {
-            const file = new File([blob], `Recibo-${objetoCuadrante.nombre}.pdf`, { type: 'application/pdf' });
-            const fileURL = URL.createObjectURL(file);
-            const pdfWindow = window.open();
-            pdfWindow.location.href = fileURL;
-        }
         // if (blob) {
-        //     let file = new File([blob], `${objetoFacturaPDF.numero}.pdf`, { type: 'application/pdf' });
-        //     await dispatch(handleClickEnviarMailAccion(objetoFacturaPDF.mail, file, mes, anyo, true, objetoCuadrante, false));
-        //     objetoFacturaPDF.mail2 && (await dispatch(handleClickEnviarMailAccion(objetoFacturaPDF.mail2, file, mes, anyo, true, objetoCuadrante, true)));
+        //     const file = new File([blob], `Recibo-${objetoCuadrante.nombre}.pdf`, { type: 'application/pdf' });
+        //     const fileURL = URL.createObjectURL(file);
+        //     const pdfWindow = window.open();
+        //     pdfWindow.location.href = fileURL;
         // }
+        if (blob) {
+            let file = new File([blob], `${objetoFacturaPDF.numero}.pdf`, { type: 'application/pdf' });
+            await dispatch(handleClickEnviarMailAccion(objetoFacturaPDF.mail, file, mes, anyo, true, objetoCuadrante, false));
+            objetoFacturaPDF.mail2 && (await dispatch(handleClickEnviarMailAccion(objetoFacturaPDF.mail2, file, mes, anyo, true, objetoCuadrante, true)));
+        }
     } catch (error) {
         console.error('Error al gestionar la factura PDF:', error);
     };
