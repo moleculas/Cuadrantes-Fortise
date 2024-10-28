@@ -110,6 +110,7 @@ const Constantes = {
         { value: 105, label: '1 hora 45 min.' },
         { value: 120, label: '2 horas' },
         { value: 135, label: '2 horas 15 min.' },
+        { value: 140, label: '2 horas 20 min.' },
         { value: 150, label: '2 horas 30 min.' },
         { value: 165, label: '2 horas 45 min.' },
         { value: 180, label: '3 horas' },

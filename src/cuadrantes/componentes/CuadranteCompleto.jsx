@@ -412,7 +412,6 @@ const CuadranteCompleto = (props) => {
 
     return (
         <>
-            {/* {console.log(procesoHorasTrabajadores)} */}
             <Grid container
                 direction="row"
                 justifycontent="flex-start"

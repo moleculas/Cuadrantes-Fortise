@@ -58,7 +58,7 @@ const PantallaHoraTrabajador = (props) => {
 
     useEffect(() => {
         if (listadoCentros.length === 0) {
-            dispatch(obtenerCentrosAccion('centros', true));
+            dispatch(obtenerCentrosAccion('centros', false)); //sense filtrar les baixes
         };
     }, [dispatch, listadoCentros.length]);
 

@@ -171,7 +171,7 @@ export const gestionarMailingIndividualAccion = (objetoCuadrante) => async (disp
         //     const pdfWindow = window.open();
         //     pdfWindow.location.href = fileURL;
         // }
-        if (blob) {
+        if (blob) {           
             let file = new File([blob], `${objetoFacturaPDF.numero}.pdf`, { type: 'application/pdf' });
             await dispatch(handleClickEnviarMailAccion(objetoFacturaPDF.mail, file, mes, anyo, true, objetoCuadrante, false));
             objetoFacturaPDF.mail2 && (await dispatch(handleClickEnviarMailAccion(objetoFacturaPDF.mail2, file, mes, anyo, true, objetoCuadrante, true)));
@@ -202,7 +202,7 @@ const handleClickEnviarMailAccion = (mail, file, mes, anyo, individual, objetoCu
             headers: {
                 "Content-Type": "multipart/form-data",
             }
-        });
+        });        
         if (res.data.status !== "success") {
             if (individual) {
                 dispatch({
@@ -214,7 +214,7 @@ const handleClickEnviarMailAccion = (mail, file, mes, anyo, individual, objetoCu
                     payload: {
                         objeto: {
                             centro: objetoCuadrante.total.nombreCentro,
-                            mail: objetoCuadrante.total.mail,
+                            mail: segundoMail ? objetoCuadrante.total.mail2 : objetoCuadrante.total.mail,
                             estado: "error"
                         }
                     }
@@ -225,7 +225,7 @@ const handleClickEnviarMailAccion = (mail, file, mes, anyo, individual, objetoCu
                         elementoArray1: {
                             id: objetoCuadrante.id,
                             centro: objetoCuadrante.total.nombreCentro,
-                            mail: objetoCuadrante.total.mail,
+                            mail: segundoMail ? objetoCuadrante.total.mail2 : objetoCuadrante.total.mail,
                             estado: "error"
                         }
                     }
@@ -280,7 +280,7 @@ const handleClickEnviarMailAccion = (mail, file, mes, anyo, individual, objetoCu
                         elementoArray1: {
                             id: objetoCuadrante.id,
                             centro: objetoCuadrante.total.nombreCentro,
-                            mail: objetoCuadrante.total.mail,
+                            mail: segundoMail ? objetoCuadrante.total.mail2 : objetoCuadrante.total.mail,
                             estado: "enviado"
                         }
                     }
@@ -290,7 +290,7 @@ const handleClickEnviarMailAccion = (mail, file, mes, anyo, individual, objetoCu
                     payload: {
                         objeto: {
                             centro: objetoCuadrante.total.nombreCentro,
-                            mail: objetoCuadrante.total.mail,
+                            mail: segundoMail ? objetoCuadrante.total.mail2 : objetoCuadrante.total.mail,
                             estado: "correcto"
                         }
                     }
@@ -402,7 +402,7 @@ export const gestionarMailingLoteAccion = (arrayCuadrantes, anyo, mes) => async 
                 const file = new File([blob], `${objetoFacturaPDF.numero}.pdf`, { type: 'application/pdf' });
                 await sendEmailWithRetry(objetoFacturaPDF.mail, file, mes, anyo, objetoCuadrante, dispatch, false);
                 dispatch(incrementProcessedEmails());
-                if (objetoFacturaPDF.mail2) {
+                if (objetoFacturaPDF.mail2) {   
                     await sendEmailWithRetry(objetoFacturaPDF.mail2, file, mes, anyo, objetoCuadrante, dispatch, true);
                     dispatch(incrementProcessedEmails());
                 }
@@ -458,7 +458,7 @@ export const generaArchivoXLSMailingAccion = (mes) => async (dispatch, getState)
             nombreCentro: cuadrante.centro,
             mail: cuadrante.mail,
             estado: cuadrante.estado,
-        })).sort((a, b) => a.nombreCentro.localeCompare(b.nombreCentro));
+        })).sort((a, b) => a.nombreCentro.localeCompare(b.nombreCentro));        
         const elListadoCuadrantesEnviadosImprimir = [
             [`LISTADO EMAILS ENVIADOS MES ${mes}`],
             ["CENTRO", "MAIL", "ESTADO"],
