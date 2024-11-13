@@ -853,7 +853,7 @@ const Configuracion = (props) => {
                                                                 </Fragment>
                                                             }
                                                         />
-                                                    </ListItem >
+                                                    </ListItem>
                                                     <ListItem>
                                                         <ListItemText
                                                             primary="V. 1.02 - 31/01/2022"
@@ -875,7 +875,7 @@ const Configuracion = (props) => {
                                                                 </Fragment>
                                                             }
                                                         />
-                                                    </ListItem >
+                                                    </ListItem>
                                                     <ListItem>
                                                         <ListItemText
                                                             primary="V. 1.03 - 10/02/2022"
@@ -897,7 +897,7 @@ const Configuracion = (props) => {
                                                                 </Fragment>
                                                             }
                                                         />
-                                                    </ListItem >
+                                                    </ListItem>
                                                     <ListItem>
                                                         <ListItemText
                                                             primary="V. 1.04 - 12/02/2022"
@@ -908,7 +908,7 @@ const Configuracion = (props) => {
                                                                 </Fragment>
                                                             }
                                                         />
-                                                    </ListItem >
+                                                    </ListItem>
                                                     <ListItem>
                                                         <ListItemText
                                                             primary="V. 1.05 - 14/02/2022"
@@ -919,7 +919,7 @@ const Configuracion = (props) => {
                                                                 </Fragment>
                                                             }
                                                         />
-                                                    </ListItem >
+                                                    </ListItem>
                                                     <ListItem>
                                                         <ListItemText
                                                             primary="V. 1.06 - 18/02/2022"
@@ -930,7 +930,7 @@ const Configuracion = (props) => {
                                                                 </Fragment>
                                                             }
                                                         />
-                                                    </ListItem >
+                                                    </ListItem>
                                                     <ListItem>
                                                         <ListItemText
                                                             primary="V. 1.07 - 21/02/2022"
@@ -945,7 +945,7 @@ const Configuracion = (props) => {
                                                                 </Fragment>
                                                             }
                                                         />
-                                                    </ListItem >
+                                                    </ListItem>
                                                     <ListItem>
                                                         <ListItemText
                                                             primary="V. 1.08 - 07/03/2022"
@@ -956,7 +956,7 @@ const Configuracion = (props) => {
                                                                 </Fragment>
                                                             }
                                                         />
-                                                    </ListItem >
+                                                    </ListItem>
                                                     <ListItem>
                                                         <ListItemText
                                                             primary="V. 1.09 - 23/03/2022"
@@ -971,7 +971,7 @@ const Configuracion = (props) => {
                                                                 </Fragment>
                                                             }
                                                         />
-                                                    </ListItem >
+                                                    </ListItem>
                                                     <ListItem>
                                                         <ListItemText
                                                             primary="V. 1.10 - 29/03/2022"
@@ -982,7 +982,7 @@ const Configuracion = (props) => {
                                                                 </Fragment>
                                                             }
                                                         />
-                                                    </ListItem >
+                                                    </ListItem>
                                                     <ListItem>
                                                         <ListItemText
                                                             primary="V. 1.11 - 24/04/2022"
@@ -1006,7 +1006,7 @@ const Configuracion = (props) => {
                                                                 </Fragment>
                                                             }
                                                         />
-                                                    </ListItem >
+                                                    </ListItem>
                                                     <ListItem>
                                                         <ListItemText
                                                             primary="V. 1.12 + 1 - 21/05/2022"
@@ -1021,7 +1021,7 @@ const Configuracion = (props) => {
                                                                 </Fragment>
                                                             }
                                                         />
-                                                    </ListItem >
+                                                    </ListItem>
                                                     <ListItem>
                                                         <ListItemText
                                                             primary="V. 1.14 - 01/06/2022"
@@ -1036,7 +1036,7 @@ const Configuracion = (props) => {
                                                                 </Fragment>
                                                             }
                                                         />
-                                                    </ListItem >
+                                                    </ListItem>
                                                     <ListItem>
                                                         <ListItemText
                                                             primary="V. 1.15 - 05/06/2022"
@@ -1051,7 +1051,7 @@ const Configuracion = (props) => {
                                                                 </Fragment>
                                                             }
                                                         />
-                                                    </ListItem >
+                                                    </ListItem>
                                                     <ListItem>
                                                         <ListItemText
                                                             primary="V. 1.16 - 27/06/2022"
@@ -1066,7 +1066,7 @@ const Configuracion = (props) => {
                                                                 </Fragment>
                                                             }
                                                         />
-                                                    </ListItem >
+                                                    </ListItem>
                                                     <ListItem>
                                                         <ListItemText
                                                             primary="V. 1.17 - 20/07/2022"
@@ -1077,7 +1077,7 @@ const Configuracion = (props) => {
                                                                 </Fragment>
                                                             }
                                                         />
-                                                    </ListItem >
+                                                    </ListItem>
                                                     <ListItem>
                                                         <ListItemText
                                                             primary="V. 1.18 - 22/07/2022"
@@ -1088,7 +1088,7 @@ const Configuracion = (props) => {
                                                                 </Fragment>
                                                             }
                                                         />
-                                                    </ListItem >
+                                                    </ListItem>
                                                     <ListItem>
                                                         <ListItemText
                                                             primary="V. 1.19 - 28/11/2022"
@@ -1099,7 +1099,7 @@ const Configuracion = (props) => {
                                                                 </Fragment>
                                                             }
                                                         />
-                                                    </ListItem >
+                                                    </ListItem>
                                                     <ListItem>
                                                         <ListItemText
                                                             primary="V. 1.20 - 10/04/2023"
@@ -1112,7 +1112,7 @@ const Configuracion = (props) => {
                                                                 </Fragment>
                                                             }
                                                         />
-                                                    </ListItem >
+                                                    </ListItem>
                                                     <ListItem>
                                                         <ListItemText
                                                             primary="V. 2.01 - 31/05/2024"
@@ -1125,7 +1125,7 @@ const Configuracion = (props) => {
                                                                 </Fragment>
                                                             }
                                                         />
-                                                    </ListItem >
+                                                    </ListItem>
                                                     <ListItem>
                                                         <ListItemText
                                                             primary="V. 2.02 - 03/09/2024"
@@ -1138,7 +1138,18 @@ const Configuracion = (props) => {
                                                                 </Fragment>
                                                             }
                                                         />
-                                                    </ListItem >
+                                                    </ListItem>
+                                                    <ListItem>
+                                                        <ListItemText
+                                                            primary="V. 2.03 - 13/11/2024"
+                                                            secondary={
+                                                                <Fragment>
+                                                                    <Typography component="span" variant="body2">1.- Implementada funcionalidad para gestionar bajas - altas trabajadores en un mismo día.</Typography>
+                                                                    <br />                                                                    
+                                                                </Fragment>
+                                                            }
+                                                        />
+                                                    </ListItem>
                                                 </List>
                                             </Box>
                                         </Box>

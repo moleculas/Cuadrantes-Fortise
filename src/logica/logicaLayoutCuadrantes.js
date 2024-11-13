@@ -86,19 +86,21 @@ function LogicaLayoutCuadrantes() {
             };
             return festivos[tipoFestivo] || '';
         }
+        const bajas = {
+            bajaIT: 'Baja IT',
+            bajaACCTE: 'Baja ACCTE',
+            bajaCIA: 'Baja CIA',
+            vacaciones: 'Vacaciones',
+            excedencia: 'Excedencia',
+            personales: 'Motivos personales',
+            permisoRET: 'Permiso RET',
+            ausenciaINJ: 'Ausencia INJ',
+        };
         if (columna[dia]?.baja) {
-            const bajas = {
-                bajaIT: 'Baja IT',
-                bajaACCTE: 'Baja ACCTE',
-                bajaCIA: 'Baja CIA',
-                vacaciones: 'Vacaciones',
-                excedencia: 'Excedencia',
-                personales: 'Motivos personales',
-                permisoRET: 'Permiso RET',
-                ausenciaINJ: 'Ausencia INJ',
-            };
             return bajas[columna[dia]?.tipoBaja] || '';
         }
+        //modificador: gestió mateix dia alta-baixa
+        const contieneAltaYBaja = columna[dia]?.contieneAltaYbaja ? `${bajas[columna[dia].contieneAltaYbaja]} Mismo día` : "";
         const horarios = {
             rango: (inicio, fin) => (
                 inicio && fin && IsNumeric(inicio[0]) && IsNumeric(fin[0])
@@ -122,23 +124,30 @@ function LogicaLayoutCuadrantes() {
             case 'rango':
                 inicio1 = columna[dia][`${diaSemanaValor}InicioRango`]?.split(':');
                 fin1 = columna[dia][`${diaSemanaValor}FinRango`]?.split(':');
-                return horarios.rango(inicio1, fin1);
+                return inicio1 && fin1 ? `${horarios.rango(inicio1, fin1)} ${contieneAltaYBaja}` : contieneAltaYBaja;
             case 'rangoDescanso':
                 inicio1 = columna[dia][`${diaSemanaValor}Inicio1RangoDescanso`]?.split(':');
                 fin1 = columna[dia][`${diaSemanaValor}Fin1RangoDescanso`]?.split(':');
                 inicio2 = columna[dia][`${diaSemanaValor}Inicio2RangoDescanso`]?.split(':');
                 fin2 = columna[dia][`${diaSemanaValor}Fin2RangoDescanso`]?.split(':');
-                return horarios.rangoDescanso(inicio1, fin1, inicio2, fin2);
+                return inicio1 && fin1 ? `${horarios.rangoDescanso(inicio1, fin1, inicio2, fin2)} ${contieneAltaYBaja}` : contieneAltaYBaja;
             case 'cantidad':
                 const cantidad = columna[dia][`${diaSemanaValor}Cantidad`];
-                return horarios.cantidad(cantidad);
+                return cantidad ? `${horarios.cantidad(cantidad)} ${contieneAltaYBaja}` : contieneAltaYBaja;
             default:
                 return '';
         }
     };
 
-
-    const gestionaClassesColoresGeneralAccion = (dia, trabajadorDiaDeBaja, modificado, nombreTrabajador, tipoBaja, tipoVariacion) => {
+    const gestionaClassesColoresGeneralAccion = (
+        dia,
+        trabajadorDiaDeBaja,
+        modificado,
+        nombreTrabajador,
+        tipoBaja,
+        tipoVariacion,
+        contieneAltaYbaja
+    ) => {
         if (stateFestivo['estadoFestivoDia' + (dia)]) {
             if (stateFestivo['tipoFestivoDia' + (dia)] === 1) {
                 return classes.casillaFestivo;
@@ -150,13 +159,18 @@ function LogicaLayoutCuadrantes() {
                 return classes.casillaFestivoCierreSinComputo;
             };
         };
-        if (trabajadorDiaDeBaja) {
-            return classes.casillaBaja;
+        //modificador: gestió mateix dia alta-baixa
+        if (trabajadorDiaDeBaja || contieneAltaYbaja) {
             // if (tipoBaja === 'bajaCIA' || tipoBaja === 'excedencia') {
             //     return classes.casillaBajaEsp;
             // } else {
             //     return classes.casillaBaja;
             // };
+            if (contieneAltaYbaja) {
+                return classes.casillaBajaActiva;
+            } else {
+                return classes.casillaBaja;
+            }
         };
         if (modificado) {
             if (tipoVariacion) {

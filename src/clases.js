@@ -254,6 +254,12 @@ const Clases = makeStyles((theme) => ({
         pointerEvents: 'none',
         padding: 9
     },
+    casillaBajaActiva: {
+        backgroundColor: `${amber[100]} !important`,
+        color: '#78909c',       
+        cursor: 'pointer', 
+        padding: 9
+    },
     casillaBajaEsp: {
         backgroundColor: `${amber[100]} !important`,
         color: '#78909c',

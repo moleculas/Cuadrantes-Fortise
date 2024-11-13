@@ -110,7 +110,7 @@ export default function cuadrantesMailingReducer(state = dataInicial, action) {
 const formatNumerics = (arr) => {
     return arr.map(subArray =>
         subArray.map(item =>
-            typeof item === 'number' ? parseFloat(item.toFixed(2)) : item
+            typeof item === 'number' ? Number(item.toFixed(2)) : item
         )
     );
 };

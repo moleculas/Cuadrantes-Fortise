@@ -385,7 +385,8 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
             const myFechaFinRango = dispatch(retornaFechaEnBaseAAnoMesDiaAccion(finRango));
             //modificador: canvi per problema detecta vacances al mes següent          
             myFechaFinRango.setDate(myFechaFinRango.getDate());
-            if (myFechaInicioRango >= myFechaFinRango) {
+            //modificador: gestió mateix dia alta-baixa        
+            if (myFechaInicioRango > myFechaFinRango) {
                 setAlert({
                     mensaje: "La fecha de final no puede ser anterior a la fecha de inicio.",
                     tipo: 'error'

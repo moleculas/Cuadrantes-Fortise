@@ -39,7 +39,15 @@ const CasillaGeneral = ({ dia, indexDia, columna, indexColumna, esDesktop, scrol
                 < Box
                     m={0.3}
                     p={1.5}
-                    className={gestionaClassesColoresGeneralAccion(indexDia + 1, columna[postRef].baja, columna[postRef].modificado, columna.nombreTrabajador, columna[postRef].tipoBaja, columna[postRef].tipoVariacion) || null}
+                    className={gestionaClassesColoresGeneralAccion(
+                        indexDia + 1,
+                        columna[postRef].baja,
+                        columna[postRef].modificado,
+                        columna.nombreTrabajador,
+                        columna[postRef].tipoBaja,
+                        columna[postRef].tipoVariacion,
+                        columna[postRef]?.contieneAltaYbaja || null
+                    ) || null}
                     style={{ width: 40, minHeight: alturaCasilla(esDesktop), maxHeight: alturaCasilla(esDesktop), pointerEvents: 'none' }}
                 >
                 </Box>
@@ -48,12 +56,27 @@ const CasillaGeneral = ({ dia, indexDia, columna, indexColumna, esDesktop, scrol
                     m={0.3}
                     p={1.5}
                     ref={ref => { boxes.current[indexColumna] = ref }}
-                    className={gestionaClassesColoresGeneralAccion(indexDia + 1, columna[postRef].baja, columna[postRef].modificado, columna.nombreTrabajador, columna[postRef].tipoBaja, columna[postRef].tipoVariacion) || null}
+                    className={gestionaClassesColoresGeneralAccion(
+                        indexDia + 1,
+                        columna[postRef].baja,
+                        columna[postRef].modificado,
+                        columna.nombreTrabajador,
+                        columna[postRef].tipoBaja,
+                        columna[postRef].tipoVariacion,
+                        columna[postRef]?.contieneAltaYbaja || null
+                    ) || null}
                     style={{ width: retornaAnchoColumna(columna.reducido, ampleColumna), minHeight: alturaCasilla(esDesktop), maxHeight: alturaCasilla(esDesktop), display: 'flex', flexDirection: 'row', justifycontent: 'space-between', alignItems: 'center' }}
                     onClick={(event) => dispatch(abrePopoverGeneralAccion(postRef, indexDia, dia[1][0], columna, indexColumna, indexColumna, event, scrollable, boxes, classes))}
                 >
                     <Grid item xs={10}>
-                        <Typography variant='body2' style={{ color: 'secondary.contrastText' }}>{gestionaTextoCasillasAccion(indexDia + 1, postRef, columna, dia[1][0])}</Typography>
+                        <Typography
+                            variant='body2'
+                            style={{ color: 'secondary.contrastText' }}
+                            dangerouslySetInnerHTML={{
+                                __html: gestionaTextoCasillasAccion(indexDia + 1, postRef, columna, dia[1][0])
+                            }}
+                            className={classes.truncate}
+                        ></Typography>
                     </Grid>
                     <Grid item xs={2}>
                         <Box style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
