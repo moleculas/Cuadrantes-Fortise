@@ -168,7 +168,7 @@ const CuadranteCompleto = (props) => {
 
     useEffect(() => {
         listadoTrabajadores.length === 0
-            ? dispatch(obtenerTrabajadoresAccion('trabajadores'))
+            ? dispatch(obtenerTrabajadoresAccion('trabajadores', true))
             : trabajadoresCargados && dispatch(obtenerTrabajadoresSubcategoriaAccion(2));
     }, [listadoTrabajadores]);
 

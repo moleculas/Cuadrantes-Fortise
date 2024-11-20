@@ -1,4 +1,11 @@
-import React, { useState, useEffect, Fragment, forwardRef, useImperativeHandle, useCallback } from 'react';
+import React, {
+    useState,
+    useEffect,
+    Fragment,
+    forwardRef,
+    useImperativeHandle,
+    useCallback
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Constantes from "../constantes";
 import clsx from 'clsx';
@@ -23,13 +30,22 @@ import {
     Tab,
     IconButton,
     Tooltip,
-    Checkbox
+    Checkbox,
+    Button,
+    ListItem,
+    ListItemSecondaryAction,
+    ListItemText
 } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import {
     LibraryAdd,
-    Delete
+    Delete,
+    Save as SaveIcon,
+    Delete as DeleteIcon
 } from '@material-ui/icons';
+import DateFnsUtils from '@date-io/date-fns';
+import { es } from "date-fns/locale";
+import { MuiPickersUtilsProvider, KeyboardDatePicker, } from '@material-ui/pickers';
 
 //carga componentes
 import DialogComponente from '../comun/DialogComponente';
@@ -60,7 +76,8 @@ import {
     generaFechaAccion,
     onEstemAccion,
     abreObjetoDialogAccion,
-    cierraObjetoDialogAccion
+    cierraObjetoDialogAccion,
+    retornaAnoMesDiaAccion
 } from '../redux/appDucks';
 import {
     TabPanel,
@@ -85,10 +102,9 @@ const {
     TIPO_SERVICIO_FIJO: tiposServicioFijo,
     TIPO_SERVICIO: tipoServicio,
     EXCEPCIONES_CENTROS: excepciones,
-    DIAS_SEMANA: diasSemana
+    DIAS_SEMANA: diasSemana,
+    CALENDARIO_FESTIVOS: arrayFestivos
 } = Constantes;
-
-
 
 const CentrosEditar = forwardRef((props, ref) => {
     const classes = Clases();
@@ -136,7 +152,8 @@ const CentrosEditar = forwardRef((props, ref) => {
             acc[`int_${curr.prefix}`] = false;
             acc[`trab_${curr.prefix}`] = '';
             return acc;
-        }, {})
+        }, {}),
+        festivos: null
     });
     const initialStateSemana = (tipo) => {
         return diasSemana.reduce((acc, curr) => {
@@ -224,6 +241,10 @@ const CentrosEditar = forwardRef((props, ref) => {
         5: 140,
         6: 150
     };
+    const [datosFestivosEdicion, setDatosFestivosEdicion] = useState({
+        dia: null,
+        descripcion: ''
+    });
 
     //useEffect
 
@@ -241,7 +262,7 @@ const CentrosEditar = forwardRef((props, ref) => {
         dispatch(onEstemAccion('editarCentros'));
         listadoCentros.length === 0 && dispatch(obtenerCentrosAccion('centros', false));
         listadoTrabajadores.length === 0
-            ? dispatch(obtenerTrabajadoresAccion('trabajadores'))
+            ? dispatch(obtenerTrabajadoresAccion('trabajadores', false))
             : trabajadoresCargados && dispatch(obtenerTrabajadoresSubcategoriaAccion(2));
     }, [listadoCentros, listadoTrabajadores]);
 
@@ -294,7 +315,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                         horario: centroAEditar.horario.horario[i],
                         servicios_fijos: centroAEditar.serviciosFijos.serviciosFijos[i],
                         trabajadores: centroAEditar.trabajadores.trabajadores[i],
-                        observaciones: centroAEditar.observaciones.observaciones[i]
+                        observaciones: centroAEditar.observaciones.observaciones[i],
+                        festivos: centroAEditar?.festivos?.festivos[i] || null,
                     },
                     guardado: true
                 };
@@ -712,7 +734,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                     eliminarCentro();
                     break;
                 case 'procesarDatosEdicion':
-                    const procesarDatosEdicion = () => {                  
+                    const procesarDatosEdicion = () => {
                         let centroAGuardar;
                         let objCategorias = null;
                         let objHorario = null;
@@ -720,6 +742,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                         let objTrabajadores = null;
                         let objObservaciones = null;
                         let centroDefinitivoAGuardar;
+                        let objFestivos = null;
                         if (numeroCuadrantesEdicion.length === 1) {
                             dispatch(procesarDatosPromesa(
                                 valuesFormEdicionGenerales,
@@ -756,7 +779,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         activo_num_cuenta: valuesFormEdicionGenerales.activoNumCuenta ? 'si' : 'no',
                                         horario: values.horario || null,
                                         servicios_fijos: values.servicios || null,
-                                        trabajadores: values.trabajadores || null
+                                        trabajadores: values.trabajadores || null,
+                                        festivos: valuesFormEdicion.festivos || null
                                     };
                                     centroDefinitivoAGuardar = { ...centroAGuardar };
                                     objCategorias = {
@@ -780,6 +804,10 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         objeto: 'observaciones',
                                         observaciones: []
                                     };
+                                    objFestivos = {
+                                        objeto: 'festivos',
+                                        festivos: []
+                                    };
                                     objCategorias.categoria.push(centroAGuardar.categoria);
                                     objObservaciones.observaciones.push(centroAGuardar.observaciones);
                                     if (centroAGuardar.horario) {
@@ -797,13 +825,19 @@ const CentrosEditar = forwardRef((props, ref) => {
                                     } else {
                                         objTrabajadores.trabajadores.push(null);
                                     };
+                                    if (centroAGuardar.festivos) {
+                                        objFestivos.festivos.push(centroAGuardar.festivos);
+                                    } else {
+                                        objFestivos.festivos.push(null);
+                                    };
                                     centroDefinitivoAGuardar = {
                                         ...centroDefinitivoAGuardar,
                                         categoria: JSON.stringify(objCategorias),
                                         horario: JSON.stringify(objHorario),
                                         servicios_fijos: JSON.stringify(objServiciosFijos),
                                         trabajadores: JSON.stringify(objTrabajadores),
-                                        observaciones: JSON.stringify(objObservaciones)
+                                        observaciones: JSON.stringify(objObservaciones),
+                                        festivos: JSON.stringify(objFestivos),
                                     };
                                     dispatch(actualizarCentroAccion('centros', centroDefinitivoAGuardar.id, centroDefinitivoAGuardar));
                                     dispatch(registrarIntervencionAccion(true));
@@ -847,6 +881,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         horario: values.horario || null,
                                         servicios_fijos: values.servicios || null,
                                         trabajadores: values.trabajadores || null,
+                                        festivos: valuesFormEdicion.festivos || null
                                     };
                                     let arrayCuadrantes = [...numeroCuadrantesEdicion];
                                     arrayCuadrantes.forEach((cuadrante, index) => {
@@ -856,7 +891,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                 observaciones: valuesFormEdicion.observaciones ? valuesFormEdicion.observaciones : null,
                                                 horario: values.horario ? (values.horario) : null,
                                                 servicios_fijos: values.servicios ? (values.servicios) : null,
-                                                trabajadores: values.trabajadores ? (values.trabajadores) : null
+                                                trabajadores: values.trabajadores ? (values.trabajadores) : null,
+                                                festivos: valuesFormEdicion.festivos || null
                                             };
                                             cuadrante.guardado = true;
                                         }
@@ -883,6 +919,10 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         objeto: 'observaciones',
                                         observaciones: []
                                     };
+                                    objFestivos = {
+                                        objeto: 'festivos',
+                                        festivos: []
+                                    };
                                     arrayCuadrantes.forEach((cuadrante, index) => {
                                         if (cuadrante.guardado) {
                                             objCategorias.categoria.push(cuadrante.cuadrante.categoria);
@@ -902,6 +942,11 @@ const CentrosEditar = forwardRef((props, ref) => {
                                             } else {
                                                 objTrabajadores.trabajadores.push(null);
                                             };
+                                            if (cuadrante.cuadrante.festivos) {
+                                                objFestivos.festivos.push(cuadrante.cuadrante.festivos);
+                                            } else {
+                                                objFestivos.festivos.push(null);
+                                            };
                                         } else {
                                             objCategorias.categoria.push(centroAGuardar.categoria);
                                             objObservaciones.observaciones.push(centroAGuardar.observaciones);
@@ -920,6 +965,11 @@ const CentrosEditar = forwardRef((props, ref) => {
                                             } else {
                                                 objTrabajadores.trabajadores.push(null);
                                             };
+                                            if (centroAGuardar.festivos) {
+                                                objFestivos.festivos.push(centroAGuardar.festivos);
+                                            } else {
+                                                objFestivos.festivos.push(null);
+                                            };
                                             cuadrante.cuadrante = centroAGuardar;
                                             cuadrante.guardado = true;
                                         };
@@ -930,7 +980,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         horario: JSON.stringify(objHorario),
                                         servicios_fijos: JSON.stringify(objServiciosFijos),
                                         trabajadores: JSON.stringify(objTrabajadores),
-                                        observaciones: JSON.stringify(objObservaciones)
+                                        observaciones: JSON.stringify(objObservaciones),
+                                        festivos: JSON.stringify(objFestivos)
                                     };
                                     dispatch(actualizarCentroAccion('centros', centroDefinitivoAGuardar.id, centroDefinitivoAGuardar));
                                     dispatch(registrarIntervencionAccion(true));
@@ -974,7 +1025,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                     acc[`int_${curr.prefix}`] = false;
                     acc[`trab_${curr.prefix}`] = '';
                     return acc;
-                }, {})
+                }, {}),
+                festivos: null
             });
             setValuesFormEdicionGenerales({
                 id: null,
@@ -1024,7 +1076,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                     acc[`int_${curr.prefix}`] = false;
                     acc[`trab_${curr.prefix}`] = '';
                     return acc;
-                }, {})
+                }, {}),
+                festivos: null
             });
         };
         setValueTimePickerInicioEdicion([initialStateSemana(null)]);
@@ -1052,6 +1105,10 @@ const CentrosEditar = forwardRef((props, ref) => {
                 return acc;
             }, {})
         });
+        setDatosFestivosEdicion({
+            dia: null,
+            descripcion: ''
+        });
     };
 
     const handleAnadirCuadranteCentroEdicion = () => {
@@ -1066,13 +1123,14 @@ const CentrosEditar = forwardRef((props, ref) => {
             null
         )).then(values => {
             if (values.resuelto) {
-                //registramos
+                //registramos       
                 const centroAGuardar = {
                     categoria: valuesFormEdicion.categoria,
                     observaciones: valuesFormEdicion.observaciones ? valuesFormEdicion.observaciones : null,
                     horario: values.horario ? (values.horario) : null,
                     servicios_fijos: values.servicios ? (values.servicios) : null,
-                    trabajadores: values.trabajadores ? (values.trabajadores) : null
+                    trabajadores: values.trabajadores ? (values.trabajadores) : null,
+                    festivos: valuesFormEdicion.festivos ? valuesFormEdicion.festivos : null
                 };
                 let arrayCuadrantes = [...numeroCuadrantesEdicion];
                 arrayCuadrantes.forEach((cuadrante, index) => {
@@ -1129,7 +1187,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                     observaciones: valuesFormEdicion.observaciones ? valuesFormEdicion.observaciones : null,
                     horario: values.horario ? (values.horario) : null,
                     servicios_fijos: values.servicios ? (values.servicios) : null,
-                    trabajadores: values.trabajadores ? (values.trabajadores) : null
+                    trabajadores: values.trabajadores ? (values.trabajadores) : null,
+                    festivos: valuesFormEdicion.festivos ? valuesFormEdicion.festivos : null
                 };
                 let arrayCuadrantes = [...numeroCuadrantesEdicion];
                 arrayCuadrantes.forEach((cuadrante, index) => {
@@ -1145,6 +1204,7 @@ const CentrosEditar = forwardRef((props, ref) => {
             };
         });
     };
+
     const gestionaContenidoCuadranteEdicion = (elCuadrante) => {
         let cuadranteAGestionarCompleto = numeroCuadrantesEdicion.find(cuadrante => cuadrante.value === elCuadrante);
         let cuadranteAGestionar = cuadranteAGestionarCompleto.cuadrante;
@@ -1230,7 +1290,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                 acc[`int_${curr.prefix}`] = myObjetoServiciosFijos[`int_${curr.prefix}`];
                 acc[`trab_${curr.prefix}`] = myObjetoServiciosFijos[`trab_${curr.prefix}`] || '';
                 return acc;
-            }, {})
+            }, {}),
+            festivos: cuadranteAGestionar?.festivos ? cuadranteAGestionar.festivos : null
         });
         if (cuadranteAGestionar.horario) {
             if (cuadranteAGestionar.horario.tipo === "rango") {
@@ -1348,9 +1409,122 @@ const CentrosEditar = forwardRef((props, ref) => {
         };
     };
 
+    const handleChangeDatePickerFestivosEdicion = (newValue) => {
+        const fecha = new Date(newValue);
+        const dia = `${fecha.getDate()}-${fecha.getMonth() + 1}`;
+        if (arrayFestivos.includes(dia)) {
+            setAlert({
+                mensaje: "Este festivo ya está contemplado en los festivos genéricos.",
+                tipo: 'error',
+            });
+            setOpenSnack(true);
+            return; 
+        }
+        setDatosFestivosEdicion((prev) => ({
+            ...prev,
+            dia: dispatch(retornaAnoMesDiaAccion(newValue)),
+        }));
+    };
+
+    const handleChangeDescripcionFestivosEdicion = (e) => {
+        const descripcion = e.target.value;
+        setDatosFestivosEdicion((prev) => ({
+            ...prev,
+            descripcion,
+        }));
+    };
+
+    const handleClickGestionarInputsFestivosEdicion = () => {
+        if (!datosFestivosEdicion.dia) {
+            setAlert({
+                mensaje: "Falta seleccionar la fecha del día festivo.",
+                tipo: 'error'
+            })
+            setOpenSnack(true);
+            return
+        }
+        if (valuesFormEdicionGenerales?.festivos?.some(festivo => festivo.dia === datosFestivosEdicion.dia)) {
+            setAlert({
+                mensaje: "Este día ya está registrado como festivo.",
+                tipo: 'error'
+            });
+            setOpenSnack(true);
+            return;
+        }
+        const arrayObjetoHistoricoFestivos = valuesFormEdicion.festivos ? [...valuesFormEdicion.festivos] : [];
+        arrayObjetoHistoricoFestivos.push({
+            dia: datosFestivosEdicion.dia,
+            descripcion: datosFestivosEdicion.descripcion
+        });
+        setValuesFormEdicion({
+            ...valuesFormEdicion,
+            festivos: arrayObjetoHistoricoFestivos
+        });
+        setDatosFestivosEdicion({
+            dia: null,
+            descripcion: ''
+        });
+        dispatch(registrarIntervencionAccion(false));
+        dispatch(activarDesactivarActualizarCentroAccion(false));
+    };
+
+    const deleteFestivoEdicion = (index) => {
+        const updatedFestivos = valuesFormEdicion.festivos.filter((_, i) => i !== index);
+        setValuesFormEdicion((prevState) => ({
+            ...prevState,
+            festivos: updatedFestivos.length > 0 ? updatedFestivos : null,
+        }));
+        dispatch(registrarIntervencionAccion(false));
+        dispatch(activarDesactivarActualizarCentroAccion(false));
+    };
+
+    const HistoricoFestivosEdicion = () => {
+        if (!valuesFormEdicion.festivos || valuesFormEdicion.festivos.length === 0) return null;
+        const currentYear = new Date().getFullYear();
+        return (
+            <Fragment>
+                <Box
+                    p={1.5}
+                    m={0.5}
+                    bgcolor="secondary.light"
+                    color="secondary.contrastText"
+                    className={clsx(classes.mb25, classes.mt20)}
+                >
+                    Histórico anual festivos {currentYear}
+                </Box>
+                <Box p={0.5} m={0.5}>
+                    <Box className={classes.paper}>
+                        <List dense>
+                            {valuesFormEdicion.festivos.map((historico, index) => (
+                                <ListItem key={`listadoFestivos${index}`}>
+                                    <ListItemText
+                                        primary="Festivo personalizado"
+                                        secondary={
+                                            <Typography component="span" variant="body2">
+                                                {historico.dia}
+                                                {historico.descripcion !== '' ? `: ${historico.descripcion}` : ''}
+                                            </Typography>
+                                        }
+                                    />
+                                    <ListItemSecondaryAction>
+                                        <Tooltip title="Eliminar festivo" placement="right" arrow>
+                                            <IconButton onClick={() => deleteFestivoEdicion(index)} edge="end">
+                                                <DeleteIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </ListItemSecondaryAction>
+                                </ListItem>
+                            ))}
+                        </List>
+                    </Box>
+                </Box>
+            </Fragment>
+        );
+    };
+
     return (
         <div>
-            {/* {console.log(horarioIntervencionEdicion)} */}
+            {/* {console.log(valuesFormEdicion)} */}
             <Backdrop className={classes.loading} open={openLoading}>
                 <CircularProgress color="inherit" />
             </Backdrop>
@@ -1741,7 +1915,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                     <Tab label="Horario" {...a11yProps(1)} style={{ paddingBottom: 10 }} />
                                     <Tab label="Servicios extra" {...a11yProps(2)} style={{ paddingBottom: 10 }} />
                                     <Tab label="Forma de pago" {...a11yProps(3)} style={{ paddingBottom: 10 }} />
-                                    <Tab label="Observaciones" {...a11yProps(4)} style={{ paddingBottom: 10 }} />
+                                    <Tab label="Varios" {...a11yProps(4)} style={{ paddingBottom: 10 }} />
                                 </Tabs>
                             </AppBar>
                             <TabPanel value={valueTabCentrosEdicion} index={0} className={classes.scrollable} style={{ height: heightScrollable }}>
@@ -2143,20 +2317,88 @@ const CentrosEditar = forwardRef((props, ref) => {
                                 </Grid>
                             </TabPanel>
                             <TabPanel value={valueTabCentrosEdicion} index={4} className={classes.scrollable} style={{ height: heightScrollable }}>
-                                <Grid item lg={6} sm={6} xs={12}>
-                                    <TextField
-                                        label="Observaciones"
-                                        id="form-observaciones-edicion"
-                                        value={valuesFormEdicion.observaciones || ''}
-                                        className={clsx(classes.form, classes.mb25)}
-                                        fullWidth
-                                        placeholder={'Observaciones Cuadrante ' + cuadranteEnUsoEdicion}
-                                        multiline
-                                        rows={3}
-                                        variant="outlined"
-                                        onChange={handleChangeFormEdicion('observaciones')}
-                                        disabled={disabledItem}
-                                    />
+                                <Grid
+                                    container
+                                    direction="row"
+                                    justifycontent="flex-start"
+                                    alignItems="flex-start"
+                                    spacing={4}
+                                >
+                                    <Grid item lg={6} sm={6} xs={12}>
+                                        <Box
+                                            m={0.5}
+                                            color="secondary.contrastText"
+                                            className={valuesFormEdicionGenerales.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
+                                        >
+                                            Observaciones
+                                        </Box>
+                                        <TextField
+                                            label="Observaciones"
+                                            id="form-observaciones-edicion"
+                                            value={valuesFormEdicion.observaciones || ''}
+                                            className={clsx(classes.form, classes.mb25)}
+                                            fullWidth
+                                            placeholder={'Observaciones Cuadrante ' + cuadranteEnUsoEdicion}
+                                            multiline
+                                            rows={3}
+                                            variant="outlined"
+                                            onChange={handleChangeFormEdicion('observaciones')}
+                                            disabled={disabledItem}
+                                        />
+                                    </Grid>
+                                    <Grid item lg={6} sm={6} xs={12}>
+                                        <Box
+                                            m={0.5}
+                                            color="secondary.contrastText"
+                                            className={valuesFormEdicionGenerales.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
+                                        >
+                                            Festivos
+                                        </Box>
+                                        <MuiPickersUtilsProvider locale={es} utils={DateFnsUtils}>
+                                            <KeyboardDatePicker
+                                                inputVariant="outlined"
+                                                className={clsx(classes.form, classes.mb10)}
+                                                fullWidth
+                                                label="Festivo personalizado Centro"
+                                                format="dd/MM/yyyy"
+                                                clearable={true}
+                                                cancelLabel="Cancelar"
+                                                clearLabel="Borrar"
+                                                value={datosFestivosEdicion.dia || null}
+                                                onChange={(newValue) => {
+                                                    handleChangeDatePickerFestivosEdicion(newValue);
+                                                }}
+                                                size="small"
+                                                disabled={disabledItem}
+                                            />
+                                        </MuiPickersUtilsProvider>
+                                        <TextField
+                                            label="Descripción"
+                                            className={clsx(classes.form, classes.mb10)}
+                                            value={datosFestivosEdicion.descripcion || ''}
+                                            fullWidth
+                                            placeholder={'Descripción festivo'}
+                                            multiline
+                                            rows={1}
+                                            variant="outlined"
+                                            onChange={handleChangeDescripcionFestivosEdicion}
+                                            disabled={disabledItem}
+                                        />
+                                        <Box className={clsx(classes.form, classes.mb10)} >
+                                            <Button
+                                                disabled={disabledItem}
+                                                fullWidth
+                                                variant="contained"
+                                                size="small"
+                                                color="secondary"
+                                                startIcon={<SaveIcon />}
+                                                onClick={handleClickGestionarInputsFestivosEdicion}
+                                            >
+                                                Registrar festivo
+                                            </Button>
+                                        </Box>
+                                        <HistoricoFestivosEdicion />
+                                    </Grid>
                                 </Grid>
                             </TabPanel>
                         </div>

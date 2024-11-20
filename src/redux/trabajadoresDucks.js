@@ -154,20 +154,20 @@ export const resetearCentrosVinculadosAccion = () => (dispatch, getState) => {
     });
 };
 
-export const obtenerTrabajadoresAccion = (objeto) => async (dispatch, getState) => {
+export const obtenerTrabajadoresAccion = (objeto, filtrados) => async (dispatch, getState) => {
     dispatch({
         type: LOADING_TRABAJADORES
     });
     try {
         const formData = new FormData();
         formData.append("objeto", objeto);
-        let apiUrl = rutaApi + "listar.php";
+        const apiUrl = rutaApi + (filtrados ? "listar_filtrados.php" : "listar.php");
         const res = await axios.post(apiUrl, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
             }
         });
-        const respuesta = res.data;
+        const respuesta = res.data;        
         respuesta.sort((a, b) => a.nombre.localeCompare(b.nombre));
         dispatch({
             type: OBTENER_TRABAJADORES_EXITO,

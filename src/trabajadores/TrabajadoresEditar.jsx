@@ -129,7 +129,7 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
         //dispatch(vaciarDatosTrabajadoresAccion());
         dispatch(onEstemAccion('editarTrabajadores'));
         if (listadoTrabajadores.length === 0) {
-            dispatch(obtenerTrabajadoresAccion('trabajadores'));
+            dispatch(obtenerTrabajadoresAccion('trabajadores', false));
         };
     }, [dispatch]);
 
@@ -441,7 +441,6 @@ const TrabajadoresEditar = forwardRef((props, ref) => {
             });
             setValueDatePickerInicioEdicion(null);
             setValueDatePickerFinEdicion(null);
-
         } else {
             setValueDatePickerFinEdicion(newValue);
             switch (valuesFormEdicion.estado) {

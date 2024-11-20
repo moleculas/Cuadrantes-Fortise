@@ -1150,6 +1150,17 @@ const Configuracion = (props) => {
                                                             }
                                                         />
                                                     </ListItem>
+                                                    <ListItem>
+                                                        <ListItemText
+                                                            primary="V. 2.04 - 19/11/2024"
+                                                            secondary={
+                                                                <Fragment>
+                                                                    <Typography component="span" variant="body2">1.- Implementada funcionalidad para añadir festivos personalizados a centros desde pantalla Centros y operativo en gestión de Cuadrantes.</Typography>
+                                                                    <br />                                                                    
+                                                                </Fragment>
+                                                            }
+                                                        />
+                                                    </ListItem>
                                                 </List>
                                             </Box>
                                         </Box>

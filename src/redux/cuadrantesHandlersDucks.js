@@ -287,9 +287,33 @@ export const handleCloseMenuAccion = () => (dispatch) => {
 
 export const esFestivoFuncionAccion = (elDia) => (dispatch, getState) => {
     const { calendarioAGestionar } = getState().variablesCuadrantes;
+    const { cuadranteEnUsoCuadrantes } = getState().variablesCuadrantesSetters;
     const { monthNum } = dispatch(retornaAnoMesCuadranteAccion(calendarioAGestionar));
+    //modificador: festivos personalizados
+    const festivosPersonalizados = getState().variablesCentros?.objetoCentro?.festivos?.festivos || null;
+    const procesarFestivos = (festivos, mesYAnio, arrayExistente) => {
+        const [year, month] = mesYAnio.split("-").map(Number);
+        const nuevosFestivos = festivos.flatMap((group, index) => {
+            if (!group || index + 1 !== cuadranteEnUsoCuadrantes) return [];
+            return group
+                .filter((festivo) => {
+                    const [festivoYear, festivoMonth] = festivo.dia.split("-").map(Number);
+                    return festivoYear === year && festivoMonth === month;
+                })
+                .map((festivo) => {
+                    const [_, festivoMonth, festivoDay] = festivo.dia.split("-").map(Number);
+                    return `${festivoDay}-${festivoMonth}`;
+                });
+        });
+        const resultadoFinal = [...new Set([...arrayExistente, ...nuevosFestivos])];
+        return resultadoFinal;
+    };
+    const arrayFestivosGestionado =
+        festivosPersonalizados?.length > 0
+            ? procesarFestivos(festivosPersonalizados, calendarioAGestionar, arrayFestivos)
+            : arrayFestivos;
     const diaFecha = `${elDia}-${monthNum}`;
-    return arrayFestivos.includes(diaFecha);
+    return arrayFestivosGestionado.includes(diaFecha);
 };
 
 export const handleClickMenuAccion = (event) => (dispatch, getState) => {
@@ -1605,7 +1629,7 @@ export const handleChangeFormConfiguracionServiciosFijosAccion = (tipo, prop, ev
             losEstados[codigo] = event.target.checked;
         }
         dispatch(setItemEditandoServiciosFijosAccion({ switch: losEstados, servicios: losServicios }));
-    } else if (tipo === "input") {      
+    } else if (tipo === "input") {
         if (IsNumeric(event.target.value)) {
             losServicios[prop] = event.target.value;
             dispatch(setItemEditandoServiciosFijosAccion({ ...itemEditandoServiciosFijos, servicios: losServicios }));

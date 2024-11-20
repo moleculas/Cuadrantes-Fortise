@@ -48,6 +48,10 @@ const dataInicial = {
             objeto: 'observaciones',
             observaciones: []
         },
+        festivos: {
+            objeto: 'festivos',
+            festivos: []
+        },
     },
     exitoActualizacionCentro: false,
     exitoRegistroCentro: false,
@@ -159,16 +163,11 @@ export const obtenerCentrosPorCategoriaAccion = (objeto, categoria) => async (di
 export const obtenerCentrosAccion = (objeto, filtrados) => async (dispatch, getState) => {
     dispatch({
         type: LOADING_CENTROS
-    });   
+    });
     try {
         const formData = new FormData();
         formData.append("objeto", objeto);
-        let apiUrl;
-        if (filtrados) {
-            apiUrl = rutaApi + "listar_filtrados.php";
-        } else {
-            apiUrl = rutaApi + "listar.php";
-        };
+        const apiUrl = rutaApi + (filtrados ? "listar_filtrados.php" : "listar.php");
         const res = await axios.post(apiUrl, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
@@ -197,7 +196,7 @@ export const obtenerCentrosInicioAccion = (objeto) => async (dispatch, getState)
     try {
         const formData = new FormData();
         formData.append("objeto", objeto);
-        let apiUrl = rutaApi + "listar_centros_inicio.php";       
+        let apiUrl = rutaApi + "listar_centros_inicio.php";
         const res = await axios.post(apiUrl, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
@@ -255,7 +254,7 @@ export const vaciarDatosCentroAccion = () => (dispatch, getState) => {
             telefono: '',
             telefono2: '',
             formaPago: '',
-            tempPago: '',          
+            tempPago: '',
             diaPago: '',
             activoNumCuenta: false,
             horario: {
@@ -295,8 +294,29 @@ export const vaciarDatosCentroAccion = () => (dispatch, getState) => {
                 objeto: 'observaciones',
                 observaciones: []
             },
+            festivos: {
+                objeto: 'festivos',
+                festivos: []
+            },
         }
     });
+};
+
+export const filterFestivosPorAno = (data) => {
+    const currentYear = new Date().getFullYear();
+    return {
+        ...data,
+        festivos: data.festivos.map(group => {
+            if (group === null) {
+                return null;
+            }
+            const filteredGroup = group.filter(({ dia }) => {
+                const year = new Date(dia).getFullYear();
+                return year === currentYear;
+            });
+            return filteredGroup.length > 0 ? filteredGroup : [];
+        }),
+    };
 };
 
 export const obtenerCentroAccion = (objeto, id) => async (dispatch, getState) => {
@@ -313,6 +333,9 @@ export const obtenerCentroAccion = (objeto, id) => async (dispatch, getState) =>
                 "Content-Type": "multipart/form-data",
             }
         });
+        const festivos = res.data?.festivos
+            ? filterFestivosPorAno(JSON.parse(res.data.festivos))
+            : null;
         dispatch({
             type: OBTENER_CENTRO_EXITO,
             payload: {
@@ -332,13 +355,14 @@ export const obtenerCentroAccion = (objeto, id) => async (dispatch, getState) =>
                 telefono: res.data.telefono,
                 telefono2: res.data.telefono_2,
                 formaPago: res.data.forma_pago,
-                tempPago: res.data.temp_pago,                
+                tempPago: res.data.temp_pago,
                 diaPago: res.data.dia_pago,
                 activoNumCuenta: res.data.activo_num_cuenta,
                 horario: JSON.parse(res.data.horario),
                 serviciosFijos: JSON.parse(res.data.servicios_fijos),
                 trabajadores: JSON.parse(res.data.trabajadores),
                 observaciones: JSON.parse(res.data.observaciones),
+                festivos,
             }
         });
     } catch (error) {

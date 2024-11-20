@@ -23,12 +23,21 @@ import {
     Tab,
     IconButton,
     Tooltip,
-    Checkbox
+    Checkbox,
+    Button,
+    ListItem,
+    ListItemSecondaryAction,
+    ListItemText
 } from '@material-ui/core';
 import {
     LibraryAdd,
-    Delete
+    Delete,
+    Save as SaveIcon,
+    Delete as DeleteIcon
 } from '@material-ui/icons';
+import DateFnsUtils from '@date-io/date-fns';
+import { es } from "date-fns/locale";
+import { MuiPickersUtilsProvider, KeyboardDatePicker, } from '@material-ui/pickers';
 
 //carga componentes
 import HorarioCentros from './componentes/HorarioCentros';
@@ -55,7 +64,9 @@ import {
     registrarIntervencionAccion,
     onEstemAccion,
     activarDesactivarAccion,
-    generaFechaAccion
+    generaFechaAccion,
+    cierraObjetoDialogAccion,
+    retornaAnoMesDiaAccion
 } from '../redux/appDucks';
 import {
     TabPanel,
@@ -80,7 +91,8 @@ const {
     TIPO_SERVICIO_FIJO: tiposServicioFijo,
     TIPO_SERVICIO: tipoServicio,
     EXCEPCIONES_CENTROS: excepciones,
-    DIAS_SEMANA: diasSemana
+    DIAS_SEMANA: diasSemana,    
+    CALENDARIO_FESTIVOS: arrayFestivos
 } = Constantes;
 
 const CentrosRegistrar = forwardRef((props, ref) => {
@@ -122,7 +134,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             acc[`int_${curr.prefix}`] = false;
             acc[`trab_${curr.prefix}`] = '';
             return acc;
-        }, {})
+        }, {}),
+        festivos: null
     });
     const initialStateSemana = (tipo) => {
         return diasSemana.reduce((acc, curr) => {
@@ -209,6 +222,10 @@ const CentrosRegistrar = forwardRef((props, ref) => {
         5: 140,
         6: 150
     };
+    const [datosFestivosRegistro, setDatosFestivosRegistro] = useState({
+        dia: null,
+        descripcion: ''
+    });
 
     //useEffect
 
@@ -225,7 +242,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
     useEffect(() => {
         dispatch(onEstemAccion('registrarCentros'));
         listadoTrabajadores.length === 0
-            ? dispatch(obtenerTrabajadoresAccion('trabajadores'))
+            ? dispatch(obtenerTrabajadoresAccion('trabajadores', false))
             : trabajadoresCargados && dispatch(obtenerTrabajadoresSubcategoriaAccion(2));
         listadoCentros.length === 0 && dispatch(obtenerCentrosAccion('centros', false));
     }, [listadoCentros, listadoTrabajadores]);
@@ -605,6 +622,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                         let objTrabajadores = null;
                         let objObservaciones = null;
                         let centroDefinitivoAGuardar;
+                        let objFestivos = null;
                         if (numeroCuadrantesRegistro.length === 1) {
                             dispatch(procesarDatosPromesa(
                                 valuesFormRegistroGenerales,
@@ -641,7 +659,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         activo_num_cuenta: valuesFormRegistroGenerales.activoNumCuenta ? 'si' : 'no',
                                         horario: values.horario ? (values.horario) : null,
                                         servicios_fijos: values.servicios ? (values.servicios) : null,
-                                        trabajadores: values.trabajadores ? (values.trabajadores) : null
+                                        trabajadores: values.trabajadores ? (values.trabajadores) : null,
+                                        festivos: valuesFormRegistro.festivos || null
                                     };
                                     centroDefinitivoAGuardar = { ...centroAGuardar };
                                     objCategorias = {
@@ -665,6 +684,10 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         objeto: 'observaciones',
                                         observaciones: []
                                     };
+                                    objFestivos = {
+                                        objeto: 'festivos',
+                                        festivos: []
+                                    };
                                     objCategorias.categoria.push(centroAGuardar.categoria);
                                     objObservaciones.observaciones.push(centroAGuardar.observaciones);
                                     if (centroAGuardar.horario) {
@@ -682,13 +705,19 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                     } else {
                                         objTrabajadores.trabajadores.push(null);
                                     };
+                                    if (centroAGuardar.festivos) {
+                                        objFestivos.festivos.push(centroAGuardar.festivos);
+                                    } else {
+                                        objFestivos.festivos.push(null);
+                                    };
                                     centroDefinitivoAGuardar = {
                                         ...centroDefinitivoAGuardar,
                                         categoria: JSON.stringify(objCategorias),
                                         horario: JSON.stringify(objHorario),
                                         servicios_fijos: JSON.stringify(objServiciosFijos),
                                         trabajadores: JSON.stringify(objTrabajadores),
-                                        observaciones: JSON.stringify(objObservaciones)
+                                        observaciones: JSON.stringify(objObservaciones),
+                                        festivos: JSON.stringify(objFestivos),
                                     };
                                     dispatch(registrarCentroAccion('centros', centroDefinitivoAGuardar.id, centroDefinitivoAGuardar));
                                     dispatch(registrarIntervencionAccion(true));
@@ -733,7 +762,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         activo_num_cuenta: valuesFormRegistroGenerales.activoNumCuenta ? 'si' : 'no',
                                         horario: values.horario ? (values.horario) : null,
                                         servicios_fijos: values.servicios ? (values.servicios) : null,
-                                        trabajadores: values.trabajadores ? (values.trabajadores) : null
+                                        trabajadores: values.trabajadores ? (values.trabajadores) : null,
+                                        festivos: valuesFormRegistro.festivos || null
                                     };
                                     let arrayCuadrantes = [...numeroCuadrantesRegistro];
                                     arrayCuadrantes.forEach((cuadrante, index) => {
@@ -743,7 +773,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                 observaciones: valuesFormRegistro.observaciones ? valuesFormRegistro.observaciones : null,
                                                 horario: values.horario ? (values.horario) : null,
                                                 servicios_fijos: values.servicios ? (values.servicios) : null,
-                                                trabajadores: values.trabajadores ? (values.trabajadores) : null
+                                                trabajadores: values.trabajadores ? (values.trabajadores) : null,
+                                                festivos: valuesFormRegistro.festivos || null
                                             };
                                             cuadrante.guardado = true;
                                         }
@@ -770,6 +801,10 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         objeto: 'observaciones',
                                         observaciones: []
                                     };
+                                    objFestivos = {
+                                        objeto: 'festivos',
+                                        festivos: []
+                                    };
                                     arrayCuadrantes.forEach((cuadrante, index) => {
                                         if (cuadrante.guardado) {
                                             objCategorias.categoria.push(cuadrante.cuadrante.categoria);
@@ -789,6 +824,11 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                             } else {
                                                 objTrabajadores.trabajadores.push(null);
                                             };
+                                            if (cuadrante.cuadrante.festivos) {
+                                                objFestivos.festivos.push(cuadrante.cuadrante.festivos);
+                                            } else {
+                                                objFestivos.festivos.push(null);
+                                            };
                                         } else {
                                             objCategorias.categoria.push(centroAGuardar.categoria);
                                             objCategorias.observaciones.push(centroAGuardar.observaciones);
@@ -807,6 +847,11 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                             } else {
                                                 objTrabajadores.trabajadores.push(null);
                                             };
+                                            if (centroAGuardar.festivos) {
+                                                objFestivos.festivos.push(centroAGuardar.festivos);
+                                            } else {
+                                                objFestivos.festivos.push(null);
+                                            };
                                             cuadrante.cuadrante = centroAGuardar;
                                             cuadrante.guardado = true;
                                         };
@@ -817,7 +862,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         horario: JSON.stringify(objHorario),
                                         servicios_fijos: JSON.stringify(objServiciosFijos),
                                         trabajadores: JSON.stringify(objTrabajadores),
-                                        observaciones: JSON.stringify(objObservaciones)
+                                        observaciones: JSON.stringify(objObservaciones),
+                                        festivos: JSON.stringify(objFestivos)
                                     };
                                     dispatch(registrarCentroAccion('centros', centroDefinitivoAGuardar.id, centroDefinitivoAGuardar));
                                     dispatch(registrarIntervencionAccion(true));
@@ -861,7 +907,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     acc[`int_${curr.prefix}`] = false;
                     acc[`trab_${curr.prefix}`] = '';
                     return acc;
-                }, {})
+                }, {}),
+                festivos: null
             });
             setValuesFormRegistroGenerales({
                 id: null,
@@ -910,7 +957,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     acc[`int_${curr.prefix}`] = false;
                     acc[`trab_${curr.prefix}`] = '';
                     return acc;
-                }, {})
+                }, {}),
+                festivos: null
             });
         };
         setValueTimePickerInicioRegistro([initialStateSemana(null)]);
@@ -938,6 +986,10 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 return acc;
             }, {})
         });
+        setDatosFestivosRegistro({
+            dia: null,
+            descripcion: ''
+        });
     };
 
     const handleAnadirCuadranteCentroRegistro = () => {
@@ -958,7 +1010,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     observaciones: valuesFormRegistro.observaciones ? valuesFormRegistro.observaciones : null,
                     horario: values.horario ? (values.horario) : null,
                     servicios_fijos: values.servicios ? (values.servicios) : null,
-                    trabajadores: values.trabajadores ? (values.trabajadores) : null
+                    trabajadores: values.trabajadores ? (values.trabajadores) : null,
+                    festivos: valuesFormRegistro.festivos ? valuesFormRegistro.festivos : null
                 };
                 let arrayCuadrantes = [...numeroCuadrantesRegistro];
                 arrayCuadrantes.forEach((cuadrante, index) => {
@@ -1015,7 +1068,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     observaciones: valuesFormRegistro.observaciones ? valuesFormRegistro.observaciones : null,
                     horario: values.horario ? (values.horario) : null,
                     servicios_fijos: values.servicios ? (values.servicios) : null,
-                    trabajadores: values.trabajadores ? (values.trabajadores) : null
+                    trabajadores: values.trabajadores ? (values.trabajadores) : null,
+                    festivos: valuesFormRegistro.festivos ? valuesFormRegistro.festivos : null
                 };
                 let arrayCuadrantes = [...numeroCuadrantesRegistro];
                 arrayCuadrantes.forEach((cuadrante, index) => {
@@ -1117,7 +1171,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 acc[`int_${curr.prefix}`] = myObjetoServiciosFijos[`int_${curr.prefix}`];
                 acc[`trab_${curr.prefix}`] = myObjetoServiciosFijos[`trab_${curr.prefix}`] || '';
                 return acc;
-            }, {})
+            }, {}),
+            festivos: cuadranteAGestionar?.festivos ? cuadranteAGestionar.festivos : null
         });
         if (cuadranteAGestionar.horario) {
             if (cuadranteAGestionar.horario.tipo === "rango") {
@@ -1233,6 +1288,119 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 tipoRegistroTrabajador: [initialStateHorarioSemana()],
             });
         };
+    };
+
+    const handleChangeDatePickerFestivosRegistro = (newValue) => {
+        const fecha = new Date(newValue);
+        const dia = `${fecha.getDate()}-${fecha.getMonth() + 1}`;
+        if (arrayFestivos.includes(dia)) {
+            setAlert({
+                mensaje: "Este festivo ya está contemplado en los festivos genéricos.",
+                tipo: 'error',
+            });
+            setOpenSnack(true);
+            return; 
+        }
+        setDatosFestivosRegistro((prev) => ({
+            ...prev,
+            dia: dispatch(retornaAnoMesDiaAccion(newValue)),
+        }));
+    };
+
+    const handleChangeDescripcionFestivosRegistro = (e) => {
+        const descripcion = e.target.value;
+        setDatosFestivosRegistro((prev) => ({
+            ...prev,
+            descripcion,
+        }));
+    };
+
+    const handleClickGestionarInputsFestivosRegistro = () => {
+        if (!datosFestivosRegistro.dia) {
+            setAlert({
+                mensaje: "Falta seleccionar la fecha del día festivo.",
+                tipo: 'error'
+            })
+            setOpenSnack(true);
+            return
+        }
+        if (valuesFormRegistroGenerales?.festivos?.some(festivo => festivo.dia === datosFestivosRegistro.dia)) {
+            setAlert({
+                mensaje: "Este día ya está registrado como festivo.",
+                tipo: 'error'
+            });
+            setOpenSnack(true);
+            return;
+        }
+        const arrayObjetoHistoricoFestivos = valuesFormRegistro.festivos ? [...valuesFormRegistro.festivos] : [];
+        arrayObjetoHistoricoFestivos.push({
+            dia: datosFestivosRegistro.dia,
+            descripcion: datosFestivosRegistro.descripcion
+        });
+        setValuesFormRegistro({
+            ...valuesFormRegistro,
+            festivos: arrayObjetoHistoricoFestivos
+        });
+        setDatosFestivosRegistro({
+            dia: null,
+            descripcion: ''
+        });
+        dispatch(registrarIntervencionAccion(false));
+        dispatch(activarDesactivarRegistrarCentroAccion(false));
+    };
+
+    const deleteFestivoRegistro = (index) => {
+        const updatedFestivos = valuesFormRegistro.festivos.filter((_, i) => i !== index);
+        setValuesFormRegistro((prevState) => ({
+            ...prevState,
+            festivos: updatedFestivos.length > 0 ? updatedFestivos : null,
+        }));
+        dispatch(registrarIntervencionAccion(false));
+        dispatch(activarDesactivarRegistrarCentroAccion(false));
+    };
+
+    const HistoricoFestivosRegistro = () => {
+        if (!valuesFormRegistro.festivos || valuesFormRegistro.festivos.length === 0) return null;
+        const currentYear = new Date().getFullYear();       
+        return (
+            <Fragment>
+                <Box
+                    p={1.5}
+                    m={0.5}
+                    bgcolor="secondary.light"
+                    color="secondary.contrastText"
+                    className={clsx(classes.mb25, classes.mt20)}
+                >
+                    Histórico anual festivos {currentYear}
+                </Box>
+                <Box p={0.5} m={0.5}>
+                    <Box className={classes.paper}>
+                        <List dense>
+                            {valuesFormRegistro.festivos.map((historico, index) => (
+                                <ListItem key={`listadoFestivos${index}`}>
+                                    <ListItemText
+                                        primary="Festivo personalizado"
+                                        secondary={
+                                            <Typography component="span" variant="body2">
+                                                {historico.dia}
+                                                {historico.descripcion !== '' ? `: ${historico.descripcion}` : ''}
+                                            </Typography>
+                                        }
+                                    />
+                                    <ListItemSecondaryAction>
+                                        <Tooltip title="Eliminar festivo" placement="right" arrow>
+                                            <IconButton onClick={() => deleteFestivoRegistro(index)} edge="end">
+                                                <DeleteIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </ListItemSecondaryAction>
+                                </ListItem>
+                            ))}
+                        </List>
+                    </Box>
+                </Box>
+            </Fragment>
+        );
     };
 
     return (
@@ -1588,7 +1756,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                     <Tab label="Horario" {...a11yProps(1)} style={{ paddingBottom: 10 }} />
                                     <Tab label="Servicios extra" {...a11yProps(2)} style={{ paddingBottom: 10 }} />
                                     <Tab label="Forma de pago" {...a11yProps(3)} style={{ paddingBottom: 10 }} />
-                                    <Tab label="Observaciones" {...a11yProps(4)} style={{ paddingBottom: 10 }} />
+                                    <Tab label="Varios" {...a11yProps(4)} style={{ paddingBottom: 10 }} />
                                 </Tabs>
                             </AppBar>
                             <TabPanel value={valueTabCentrosRegistro} index={0} className={classes.scrollable} style={{ height: heightScrollable }}>
@@ -1980,19 +2148,84 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                 </Grid>
                             </TabPanel>
                             <TabPanel value={valueTabCentrosRegistro} index={4} className={classes.scrollable} style={{ height: heightScrollable }}>
-                                <Grid item lg={6} sm={6} xs={12}>
-                                    <TextField
-                                        label="Observaciones"
-                                        id="form-observaciones-registro"
-                                        value={valuesFormRegistro.observaciones || ''}
-                                        className={clsx(classes.form, classes.mb25)}
-                                        fullWidth
-                                        placeholder={'Observaciones Cuadrante ' + cuadranteEnUsoRegistro}
-                                        multiline
-                                        rows={3}
-                                        variant="outlined"
-                                        onChange={handleChangeFormRegistro('observaciones')}
-                                    />
+                                <Grid
+                                    container
+                                    direction="row"
+                                    justifycontent="flex-start"
+                                    alignItems="flex-start"
+                                    spacing={4}
+                                >
+                                    <Grid item lg={6} sm={6} xs={12}>
+                                        <Box
+                                            m={0.5}
+                                            color="secondary.contrastText"
+                                            className={valuesFormRegistroGenerales.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
+                                        >
+                                            Observaciones
+                                        </Box>
+                                        <TextField
+                                            label="Observaciones"
+                                            id="form-observaciones-edicion"
+                                            value={valuesFormRegistro.observaciones || ''}
+                                            className={clsx(classes.form, classes.mb25)}
+                                            fullWidth
+                                            placeholder={'Observaciones Cuadrante ' + cuadranteEnUsoRegistro}
+                                            multiline
+                                            rows={3}
+                                            variant="outlined"
+                                            onChange={handleChangeFormRegistro('observaciones')}
+                                        />
+                                    </Grid>
+                                    <Grid item lg={6} sm={6} xs={12}>
+                                        <Box
+                                            m={0.5}
+                                            color="secondary.contrastText"
+                                            className={valuesFormRegistroGenerales.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
+                                        >
+                                            Festivos
+                                        </Box>
+                                        <MuiPickersUtilsProvider locale={es} utils={DateFnsUtils}>
+                                            <KeyboardDatePicker
+                                                inputVariant="outlined"
+                                                className={clsx(classes.form, classes.mb10)}
+                                                fullWidth
+                                                label="Festivo personalizado Centro"
+                                                format="dd/MM/yyyy"
+                                                clearable={true}
+                                                cancelLabel="Cancelar"
+                                                clearLabel="Borrar"
+                                                value={datosFestivosRegistro.dia || null}
+                                                onChange={(newValue) => {
+                                                    handleChangeDatePickerFestivosRegistro(newValue);
+                                                }}
+                                                size="small"
+                                            />
+                                        </MuiPickersUtilsProvider>
+                                        <TextField
+                                            label="Descripción"
+                                            className={clsx(classes.form, classes.mb10)}
+                                            value={datosFestivosRegistro.descripcion || ''}
+                                            fullWidth
+                                            placeholder={'Descripción festivo'}
+                                            multiline
+                                            rows={1}
+                                            variant="outlined"
+                                            onChange={handleChangeDescripcionFestivosRegistro}
+                                        />
+                                        <Box className={clsx(classes.form, classes.mb10)} >
+                                            <Button
+                                                fullWidth
+                                                variant="contained"
+                                                size="small"
+                                                color="secondary"
+                                                startIcon={<SaveIcon />}
+                                                onClick={handleClickGestionarInputsFestivosRegistro}
+                                            >
+                                                Registrar festivo
+                                            </Button>
+                                        </Box>
+                                        <HistoricoFestivosRegistro />
+                                    </Grid>
                                 </Grid>
                             </TabPanel>
                         </div>

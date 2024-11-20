@@ -85,7 +85,7 @@ const PantallaHorasTrabajadores = () => {
 
     useEffect(() => {
         if (listadoTrabajadores.length === 0) {
-            dispatch(obtenerTrabajadoresAccion('trabajadores'));
+            dispatch(obtenerTrabajadoresAccion('trabajadores', false));
         };
     }, [dispatch]);
 

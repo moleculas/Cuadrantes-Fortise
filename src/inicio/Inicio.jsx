@@ -94,7 +94,7 @@ const Inicio = (props) => {
             dispatch(obtenerCentrosInicioAccion('centros'));
         };
         if (listadoTrabajadores.length === 0) {
-            dispatch(obtenerTrabajadoresAccion('trabajadores'));
+            dispatch(obtenerTrabajadoresAccion('trabajadores', false));
         };
         dispatch(forzarRecargaGraficosCuadrantesAccion(true));
         dispatch(forzarRecargaGraficosHorasTrabajadoresAccion(true));

@@ -1032,7 +1032,7 @@ export const gestionaFestivosInicio = () => (dispatch, getState) => {
     if (cuadranteRegistrado === 'si') {
         const condicion1 = !numeroCuadrantesCuadrantes[cuadranteEnUsoCuadrantes - 1].revisado;
         const condicion2 = objetoCuadrante.datosBuffer.datosBuffer && objetoCuadrante.datosBuffer.datosBuffer.length > 0;
-        const condicion4 = bufferSwitchedDiasFestivosCuadrante.length > 0;
+        const condicion4 = bufferSwitchedDiasFestivosCuadrante.length > 0;        
         if (condicion1) {
             if (condicion2) {
                 if (condicion3) {
@@ -1055,9 +1055,9 @@ export const gestionaFestivosInicio = () => (dispatch, getState) => {
             };
         };
     } else if (cuadranteRegistrado === 'no') {
-        if (condicion3) {
+        if (condicion3) {           
             dispatch(configuraStateFestivoAccion());
-        } else {
+        } else {            
             const objFestivos = iterarFestivos(bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1]);
             dispatch(setStateFestivoAccion(objFestivos));
         };
