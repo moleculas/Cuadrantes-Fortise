@@ -70,7 +70,8 @@ export const gestionaCuadrantesAccion = () => (dispatch, getState) => {
     let contadorPendientes = 0, contadorRegistrados = 0, contadorFacturados = 0, contadorBajas = 0;
     arrayCentros.forEach(centro => {
         const cuadranteEncontrado = arrayCuadantes.find(cuadrante => {
-            if (cuadrante && cuadrante.total && centro.estado !== "baja") {
+            //if (cuadrante && cuadrante.total && centro.estado !== "baja") { //modificador: llistar quadrants de baixa
+            if (cuadrante && cuadrante.total) {
                 const totalDeserializado = parse(cuadrante.total);
                 if (totalDeserializado.nombreCentro === centro.nombre && totalDeserializado?.subNombreCentro === centro?.sub_nombre) {
                     return cuadrante;

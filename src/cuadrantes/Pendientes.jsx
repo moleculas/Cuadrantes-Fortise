@@ -87,7 +87,7 @@ const Pendientes = (props) => {
     };
 
     return (
-        <div>           
+        <div>
             <Grid
                 spacing={1}
                 container

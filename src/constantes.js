@@ -162,7 +162,8 @@ const Constantes = {
         { value: 'rangoDescanso', label: 'Rango de horas con descanso' }
     ],
     EXCEPCIONES_CENTROS: [
-        { value: 1, label: 'Festivos restan cómputo horas' }
+        { value: 1, label: 'Festivos restan cómputo horas' },
+        { value: 2, label: 'Festivos activos' }
     ],
     SUBCATEGORIAS_TRABAJADORES: [
         { value: 2, label: 'Servicios Extra' }

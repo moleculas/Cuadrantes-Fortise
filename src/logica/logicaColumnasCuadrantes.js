@@ -105,33 +105,39 @@ export const limpiarCuadranteAccion = (elCuadrante) => (dispatch, getState) => {
                 switch (tipoHorario) {
                     case 'rango':
                         if (prop.includes(diaObj.label)) {
+                            //modificador: festivos activos   
                             if (cuadranteColumna[prop][`${diaObj.value}InicioRango`] ||
                                 cuadranteColumna[prop].baja ||
                                 cuadranteColumna[prop].festivo ||
                                 cuadranteColumna[prop].observaciones ||
-                                cuadranteColumna[prop].modificado) {
+                                cuadranteColumna[prop].modificado ||
+                                cuadranteColumna[prop]?.festivoActivo) {
                                 objetoResultante[prop] = cuadranteColumna[prop];
                             };
                         };
                         break;
                     case 'rangoDescanso':
                         if (prop.includes(diaObj.label)) {
+                            //modificador: festivos activos   
                             if (cuadranteColumna[prop][`${diaObj.value}Inicio1RangoDescanso`] ||
                                 cuadranteColumna[prop].baja ||
                                 cuadranteColumna[prop].festivo ||
                                 cuadranteColumna[prop].observaciones ||
-                                cuadranteColumna[prop].modificado) {
+                                cuadranteColumna[prop].modificado ||
+                                cuadranteColumna[prop]?.festivoActivo) {
                                 objetoResultante[prop] = cuadranteColumna[prop];
                             };
                         };
                         break;
                     case 'cantidad':
                         if (prop.includes(diaObj.label)) {
+                            //modificador: festivos activos   
                             if (cuadranteColumna[prop][`${diaObj.value}Cantidad`] ||
                                 cuadranteColumna[prop].baja ||
                                 cuadranteColumna[prop].festivo ||
                                 cuadranteColumna[prop].observaciones ||
-                                cuadranteColumna[prop].modificado) {
+                                cuadranteColumna[prop].modificado ||
+                                cuadranteColumna[prop]?.festivoActivo) {
                                 objetoResultante[prop] = cuadranteColumna[prop];
                             };
                         };
@@ -551,6 +557,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
         };
         hayTrabajador = false;
     };
+    //modificador: festivos activos
+    const festivosActivos = informe.excepcion === 2;
     columnaAnadir['reducido'] = hayTrabajador && arrayBaja.length === losDiasDelMes.length && esInicio;
     const [anyoCalendario, mesCalendario] = calendarioAGestionar.split("-").map(Number);
     losDiasDelMes.forEach((dia, index) => {
@@ -573,7 +581,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                     `${diaObj.value}Cantidad`
                 ]
             };
-            const retornaObjCasilla = (tipo, contieneAltaYbaja = false) => {
+            const retornaObjCasilla = (tipo, contieneAltaYbaja = false, festivoActivo = false) => {
                 //modificador: gestió mateix dia alta-baixa
                 const objBase = {
                     ...(tipoHorario === 'rango' && {
@@ -597,7 +605,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
                     modificado: false,
                     visibleVariaciones: false,
                     tipoVariacion: '',
-                    contieneAltaYbaja: contieneAltaYbaja ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : null
+                    contieneAltaYbaja: contieneAltaYbaja ? dispatch(retornaTipoBajaPorHistorico(index + 1, arrayRegistrosHistorico, trabajador.estado)) : null,
+                    festivoActivo
                 };
                 switch (tipo) {
                     case "festivo":
@@ -621,6 +630,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                         }
                         break;
                     case "activo":
+                    case "festivoActivo":
                         return {
                             ...objBase,
                             ...(tipoHorario === 'rango' && {
@@ -706,7 +716,8 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     esActualizacion
                                 ),
                             }),
-                            tipoServicio: elTipoServicio
+                            //modificador: festivos activos
+                            tipoServicio: elTipoServicio ? (festivoActivo ? "FEST" : elTipoServicio) : ""
                         }
                         break;
                     default:
@@ -745,7 +756,23 @@ const gestionaColumnaCuadranteInteriorAccion = (
             };
             if (stateFestivo['estadoFestivoDia' + (index + 1)] || !hayTrabajador) {
                 if (dia[1][0] === diaObj.label) {
-                    columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('festivo');
+                    //modificador: festivos activos
+                    if (festivosActivos) {
+                        if ((tipoTrabajador === 'suplente' &&
+                            cuadrante[posicionAnterior] &&
+                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]][horarios[tipoHorario][0]]) ||
+                            (tipoTrabajador === 'suplente' &&
+                                cuadrante[posicionAnterior] &&
+                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                            columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('festivo');
+                        } else {
+                            columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('festivoActivo', false, true);
+                        };
+                    } else {
+                        columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('festivo');
+                    }
                     if (stateFestivo['estadoFestivoDia' + (index + 1)]) {
                         if (arrayBuffer.length > 0 && !esInicio) {
                             const indiceObjeto = arrayBuffer[cuadranteEnUsoCuadrantes - 1].findIndex(dia => dia[elDia] !== undefined);
@@ -789,7 +816,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                     };
                 };
             } else {
-                if (trabajador.estado !== 'alta' || arrayRegistrosHistorico.length > 0) {                   
+                if (trabajador.estado !== 'alta' || arrayRegistrosHistorico.length > 0) {
                     if (arrayBaja.includes(index + 1)) {
                         if (dia[1][0] === diaObj.label) {
                             columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('baja');
@@ -817,7 +844,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                 if (((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
                                     (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')) {
                                     if (dia[1][0] === diaObj.label) {
-                                        columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('nulo', contieneAltaYBaja);
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('nulo', contieneAltaYBaja, false);
                                     };
                                 } else {
                                     if (dia[1][0] === diaObj.label) {
@@ -829,9 +856,9 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                                 cuadrante[posicionAnterior] &&
                                                 cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                                 !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
-                                            columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('nulo', contieneAltaYBaja);
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('nulo', contieneAltaYBaja, false);
                                         } else {
-                                            columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('activo', contieneAltaYBaja);
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('activo', contieneAltaYBaja, false);
                                         };
                                     };
                                 };
@@ -840,7 +867,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             if (((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
                                 (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')) {
                                 if (dia[1][0] === diaObj.label) {
-                                    columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('nulo', contieneAltaYBaja);
+                                    columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('nulo', contieneAltaYBaja, false);
                                 };
                             } else {
                                 if (dia[1][0] === diaObj.label) {
@@ -852,9 +879,9 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             cuadrante[posicionAnterior] &&
                                             cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
                                             !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
-                                        columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('nulo', contieneAltaYBaja);
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('nulo', contieneAltaYBaja, false);
                                     } else {
-                                        columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('activo', contieneAltaYBaja);
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('activo', contieneAltaYBaja, false);
                                     };
                                 };
                             };

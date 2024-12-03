@@ -51,7 +51,7 @@ const dataInicial = {
         festivos: {
             objeto: 'festivos',
             festivos: []
-        },
+        }
     },
     exitoActualizacionCentro: false,
     exitoRegistroCentro: false,
@@ -297,7 +297,7 @@ export const vaciarDatosCentroAccion = () => (dispatch, getState) => {
             festivos: {
                 objeto: 'festivos',
                 festivos: []
-            },
+            }
         }
     });
 };
@@ -362,7 +362,7 @@ export const obtenerCentroAccion = (objeto, id) => async (dispatch, getState) =>
                 serviciosFijos: JSON.parse(res.data.servicios_fijos),
                 trabajadores: JSON.parse(res.data.trabajadores),
                 observaciones: JSON.parse(res.data.observaciones),
-                festivos,
+                festivos
             }
         });
     } catch (error) {
@@ -405,7 +405,7 @@ export const actualizarCentroAccion = (objeto, id, datos) => async (dispatch, ge
     dispatch({
         type: LOADING_CENTROS
     });
-    try {
+    try {  
         const losDatos = JSON.stringify(datos);
         const formData = new FormData();
         formData.append("objeto", objeto);

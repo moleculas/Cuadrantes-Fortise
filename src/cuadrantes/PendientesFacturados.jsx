@@ -71,6 +71,7 @@ const PendientesFacturados = (props) => {
         exitoGenerarMailing,
         itemEnviando
     } = useSelector(store => store.variablesCuadrantesMailing);
+    const listadoCentros = useSelector(store => store.variablesCentros.arrayCentros);
     const [arrayCuadrantesModificadosFacturados, setArrayCuadrantesModificadosFacturados] = useState([]);
     const [expandedAccordion, setExpandedAccordion] = useState(false);
     const [heightContenedoresGra, setHeightContenedoresGra] = useState(getHeightContenedoresGra(280));
@@ -236,12 +237,24 @@ const PendientesFacturados = (props) => {
 
     const retornaCuadranteFacturado = (cuadrante, index) => {
         const nombreSplitted = cuadrante.nombre.split("-");
+        //modificador: llistar quadrants de baixa
+        const centroDeBaja = listadoCentros.some(
+            (centro) => Number(cuadrante.idCentro) === centro.id && centro.estado === 'baja'
+        );
         return (
             <Box
                 key={'listaCuadrantes' + index}
             >
                 <ListItem
-                    className={cuadrante.total.procesado.valor === 'si' ? (cuadrante.total.mailEnviado === "si" ? classes.casillaProcesadosMailing : classes.casillaProcesados) : classes.casilla}
+                    className={
+                        centroDeBaja
+                            ? classes.casillaBajasInicio
+                            : cuadrante.total.procesado.valor === 'si'
+                                ? cuadrante.total.mailEnviado === 'si'
+                                    ? classes.casillaProcesadosMailing
+                                    : classes.casillaProcesados
+                                : classes.casilla
+                    }
                     style={{ display: 'flex', alignItems: 'flex-start' }}
                 >
                     <Checkbox
@@ -253,7 +266,13 @@ const PendientesFacturados = (props) => {
                         disabled={retornaDisabledCheckedItem(cuadrante.total)}
                     />
                     <ListItemText
-                        primary={cuadrante.total.subNombreCentro ? (cuadrante.nombreCentro + " - " + cuadrante.total.subNombreCentro) : cuadrante.nombreCentro}
+                        primary={
+                            centroDeBaja
+                                ? `${cuadrante.total.subNombreCentro ? cuadrante.nombreCentro + " - " + cuadrante.total.subNombreCentro : cuadrante.nombreCentro} (Centro de baja)`
+                                : cuadrante.total.subNombreCentro
+                                    ? cuadrante.nombreCentro + " - " + cuadrante.total.subNombreCentro
+                                    : cuadrante.nombreCentro
+                        }
                         secondary={
                             cuadrante.total.procesado.valor === 'no' ? (
                                 <Fragment>

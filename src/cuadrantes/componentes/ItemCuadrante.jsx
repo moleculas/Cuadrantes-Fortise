@@ -228,6 +228,7 @@ const ItemCuadrante = (props) => {
 
     return (
         <div>
+            {/* {console.log(valoresPrevios)} */}
             <Box
                 display="flex"
                 alignItems="center"

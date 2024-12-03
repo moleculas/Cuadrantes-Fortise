@@ -79,7 +79,7 @@ export const procesarDatosPromesa = (
         let serviciosExtraSinTrabajador = { estado: false, servicio: null };
         tiposServicioFijo.forEach(servicio => {
             const precioHoraKey = `precioHora_${servicio.prefix}`;
-            const trabKey = `trab_${servicio.prefix}`;        
+            const trabKey = `trab_${servicio.prefix}`;
             if (valuesForm[precioHoraKey] !== null && !valuesForm[trabKey]) {
                 serviciosExtraSinTrabajador = { estado: true, servicio: servicio.label }
             }
@@ -352,6 +352,18 @@ export const procesarDatosPromesa = (
             if (trabajadores.trabajadores[i]['trabajador_' + (i + 1)] === '' && trabajadores.trabajadores[i]['suplente_' + (i + 1)] === '') {
                 setAlert({
                     mensaje: "Alguno de los registros Trabajadores - Suplentes está vacío. Completa o cambia la cantidad de trabajadores asignados.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return;
+            }
+        };
+        //modificador: festivos activos     
+        if (valuesForm.excepcion === 2 && valuesForm.computo === 2) {
+            const hayPrecioHoraFestivo = tipoServicio.some(servicio => valuesForm[`precioHora_F`]);
+            if (!hayPrecioHoraFestivo) {
+                setAlert({
+                    mensaje: "Para una excepción Festivos activos se debe determinar Precio hora FESTIVO.",
                     tipo: 'error'
                 })
                 setOpenSnack(true);

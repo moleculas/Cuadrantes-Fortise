@@ -233,11 +233,23 @@ const Clases = makeStyles((theme) => ({
         pointerEvents: 'none',
         padding: 9
     },
+    casillaFestivoActivo: {
+        backgroundColor: `${amber[100]} !important`,
+        color: '#78909c',
+        cursor: 'pointer',
+        padding: 9
+    },
     casillaFestivoCierre: {
         backgroundColor: `${brown[50]} !important`,
         color: '#78909c',
         cursor: 'default',
         pointerEvents: 'none',
+        padding: 9
+    },
+    casillaFestivoCierreActivo: {
+        backgroundColor: `${brown[100]} !important`,
+        color: '#78909c',
+        cursor: 'pointer',
         padding: 9
     },
     casillaFestivoCierreSinComputo: {
@@ -246,7 +258,13 @@ const Clases = makeStyles((theme) => ({
         cursor: 'default',
         pointerEvents: 'none',
         padding: 9
-    },
+    },   
+    casillaFestivoCierreSinComputoActivo: {
+        backgroundColor: `${deepPurple[100]} !important`,
+        color: '#78909c',
+        cursor: 'pointer',
+        padding: 9
+    },     
     casillaBaja: {
         backgroundColor: `${amber[300]} !important`,
         color: '#78909c',

@@ -77,15 +77,20 @@ function LogicaLayoutCuadrantes() {
 
     const gestionaTextoCasillasAccion = (indexDia, dia, columna, diaSemana) => {
         const diaSemanaValor = diasSemana.find(d => d.label === diaSemana)?.value;
+        //modificador: festivos activos     
+        let festivoActivo = '';
+        const tipoFestivo = stateFestivo['tipoFestivoDia' + indexDia];
+        const festivos = {
+            1: 'Día festivo',
+            2: 'Cierre centro',
+            3: 'Cierre centro facturar',
+        };        
         if (stateFestivo['estadoFestivoDia' + indexDia]) {
-            const tipoFestivo = stateFestivo['tipoFestivoDia' + indexDia];
-            const festivos = {
-                1: 'Día festivo',
-                2: 'Cierre centro',
-                3: 'Cierre centro facturar',
-            };
-            return festivos[tipoFestivo] || '';
-        }
+            if (!columna[dia]?.festivoActivo) {
+                return festivos[tipoFestivo] || '';
+            }
+            festivoActivo = `${festivos[tipoFestivo]} activo`;
+        }       
         const bajas = {
             bajaIT: 'Baja IT',
             bajaACCTE: 'Baja ACCTE',
@@ -124,16 +129,16 @@ function LogicaLayoutCuadrantes() {
             case 'rango':
                 inicio1 = columna[dia][`${diaSemanaValor}InicioRango`]?.split(':');
                 fin1 = columna[dia][`${diaSemanaValor}FinRango`]?.split(':');
-                return inicio1 && fin1 ? `${horarios.rango(inicio1, fin1)} ${contieneAltaYBaja}` : contieneAltaYBaja;
+                return inicio1 && fin1 ? `${horarios.rango(inicio1, fin1)} ${contieneAltaYBaja}` : (contieneAltaYBaja ? contieneAltaYBaja : festivoActivo ? festivoActivo : "");
             case 'rangoDescanso':
                 inicio1 = columna[dia][`${diaSemanaValor}Inicio1RangoDescanso`]?.split(':');
                 fin1 = columna[dia][`${diaSemanaValor}Fin1RangoDescanso`]?.split(':');
                 inicio2 = columna[dia][`${diaSemanaValor}Inicio2RangoDescanso`]?.split(':');
                 fin2 = columna[dia][`${diaSemanaValor}Fin2RangoDescanso`]?.split(':');
-                return inicio1 && fin1 ? `${horarios.rangoDescanso(inicio1, fin1, inicio2, fin2)} ${contieneAltaYBaja}` : contieneAltaYBaja;
+                return inicio1 && fin1 ? `${horarios.rangoDescanso(inicio1, fin1, inicio2, fin2)} ${contieneAltaYBaja}` : (contieneAltaYBaja ? contieneAltaYBaja : festivoActivo ? "Día festivo activo" : "");
             case 'cantidad':
                 const cantidad = columna[dia][`${diaSemanaValor}Cantidad`];
-                return cantidad ? `${horarios.cantidad(cantidad)} ${contieneAltaYBaja}` : contieneAltaYBaja;
+                return cantidad ? `${horarios.cantidad(cantidad)} ${contieneAltaYBaja}` : (contieneAltaYBaja ? contieneAltaYBaja : festivoActivo ? festivoActivo : "");
             default:
                 return '';
         }
@@ -146,18 +151,20 @@ function LogicaLayoutCuadrantes() {
         nombreTrabajador,
         tipoBaja,
         tipoVariacion,
-        contieneAltaYbaja
+        contieneAltaYbaja,
+        festivoActivo
     ) => {
+        //modificador: festivos activos  
         if (stateFestivo['estadoFestivoDia' + (dia)]) {
             if (stateFestivo['tipoFestivoDia' + (dia)] === 1) {
-                return classes.casillaFestivo;
-            };
+                return festivoActivo ? classes.casillaFestivoActivo : classes.casillaFestivo;
+            }
             if (stateFestivo['tipoFestivoDia' + (dia)] === 2) {
-                return classes.casillaFestivoCierre;
-            };
+                return festivoActivo ? classes.casillaFestivoCierreActivo : classes.casillaFestivoCierre;
+            }
             if (stateFestivo['tipoFestivoDia' + (dia)] === 3) {
-                return classes.casillaFestivoCierreSinComputo;
-            };
+                return festivoActivo ? classes.casillaFestivoCierreSinComputoActivo : classes.casillaFestivoCierreSinComputo;
+            }
         };
         //modificador: gestió mateix dia alta-baixa
         if (trabajadorDiaDeBaja || contieneAltaYbaja) {
@@ -288,7 +295,8 @@ function LogicaLayoutCuadrantes() {
 
     const gestionaValoresCasillasAccion = (indexDia, dia, columna, diaSemana, casilla) => {
         const diaSemanaValor = diasSemana.find(d => d.label === diaSemana)?.value;
-        if (columna[dia]?.baja || stateFestivo['estadoFestivoDia' + (indexDia - 1)]) {
+        //modificador: festivos activos  
+        if ((columna[dia]?.baja || (stateFestivo['estadoFestivoDia' + (indexDia - 1)]) && !columna[dia]?.festivoActivo)) {
             return columna.tipoHorario === 'cantidad' ? '' : null;
         }
         const dispatchAction = (key) => columna[dia][key] ? dispatch(generaFechaAccion(columna[dia][key])) : null;

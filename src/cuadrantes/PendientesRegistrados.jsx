@@ -123,9 +123,9 @@ const PendientesRegistrados = (props) => {
     }, [cuadrantesRegistradosArray]);
 
     useEffect(() => {
-        if ((laDataFAC.length > 0) && (laDataFAC.length === arrayCuadrantesDefsParaCheck.length)) {           
+        if ((laDataFAC.length > 0) && (laDataFAC.length === arrayCuadrantesDefsParaCheck.length)) {
             dispatch(actualizarCuadrantesIteradosAccion()).then(({ payload }) => {
-                if (payload) {                  
+                if (payload) {
                     setArrayCuadrantesDefsParaCheck([]);
                     dispatch(finalizarArchivosXLSLoteAccion(true));
                     dispatch(emitirArchivosXLSLoteAccion(laDataFAC, laDataLFA));
@@ -134,10 +134,10 @@ const PendientesRegistrados = (props) => {
                     setHeighCambio({
                         scroller: heighCambio.scroller + 70,
                         accordion: heighCambio.accordion - 0
-                    });                   
+                    });
                     dispatch(forzarRecargaGraficosCuadrantesAccion(true));
                     dispatch(setValorTabPantallaCuadrantesAccion(2));
-                    dispatch(setTiempoEsperaloteAccion(false));                    
+                    dispatch(setTiempoEsperaloteAccion(false));
                 };
             });
         };
@@ -248,17 +248,25 @@ const PendientesRegistrados = (props) => {
         if (!total.totalesPeriodicos) return false;
         return total.totalesPeriodicos.noExisteCuadrante || false;
     };
-    
+
     //retorno componentes
 
     const retornaCuadranteRegistrado = (cuadrante, index) => {
+        //modificador: llistar quadrants de baixa
+        const centroDeBaja = listadoCentros.some(
+            (centro) => Number(cuadrante.idCentro) === centro.id && centro.estado === 'baja'
+        );
         return (
             <Box
                 key={'listaCuadrantes' + index}
             >
                 <ListItem
-                    className={cuadrante.total.tocaFacturar.valor === 'no' && cuadrante.total.tocaFacturar.razon !== 'gest' ? classes.casillaBajasInicio :
-                        !cuadrante.total.codigo ? classes.casillaBajasInicio : classes.casilla}
+                    className={
+                        (cuadrante.total.tocaFacturar.valor === 'no' && cuadrante.total.tocaFacturar.razon !== 'gest') ||
+                            !cuadrante.total.codigo || centroDeBaja
+                            ? classes.casillaBajasInicio
+                            : classes.casilla
+                    }
                     style={{ display: 'flex', alignItems: 'flex-start' }}
                 >
                     <Checkbox
@@ -269,8 +277,14 @@ const PendientesRegistrados = (props) => {
                         style={{ marginTop: -3 }}
                         disabled={retornaDisabledCheckedItem(cuadrante.total)}
                     />
-                    <ListItemText
-                        primary={cuadrante.total.subNombreCentro ? (cuadrante.nombreCentro + " - " + cuadrante.total.subNombreCentro) : cuadrante.nombreCentro}
+                    <ListItemText                       
+                        primary={
+                            centroDeBaja
+                                ? `${cuadrante.total.subNombreCentro ? cuadrante.nombreCentro + " - " + cuadrante.total.subNombreCentro : cuadrante.nombreCentro} (Centro de baja)`
+                                : cuadrante.total.subNombreCentro
+                                ? cuadrante.nombreCentro + " - " + cuadrante.total.subNombreCentro
+                                : cuadrante.nombreCentro
+                        }
                         secondary={
                             cuadrante.total.tocaFacturar.valor === 'si' ? (
                                 cuadrante.total.codigo ? (

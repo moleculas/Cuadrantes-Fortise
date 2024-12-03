@@ -316,7 +316,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                         servicios_fijos: centroAEditar.serviciosFijos.serviciosFijos[i],
                         trabajadores: centroAEditar.trabajadores.trabajadores[i],
                         observaciones: centroAEditar.observaciones.observaciones[i],
-                        festivos: centroAEditar?.festivos?.festivos[i] || null,
+                        festivos: centroAEditar?.festivos?.festivos[i] || null
                     },
                     guardado: true
                 };
@@ -837,7 +837,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         servicios_fijos: JSON.stringify(objServiciosFijos),
                                         trabajadores: JSON.stringify(objTrabajadores),
                                         observaciones: JSON.stringify(objObservaciones),
-                                        festivos: JSON.stringify(objFestivos),
+                                        festivos: JSON.stringify(objFestivos)
                                     };
                                     dispatch(actualizarCentroAccion('centros', centroDefinitivoAGuardar.id, centroDefinitivoAGuardar));
                                     dispatch(registrarIntervencionAccion(true));
@@ -1418,7 +1418,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                 tipo: 'error',
             });
             setOpenSnack(true);
-            return; 
+            return;
         }
         setDatosFestivosEdicion((prev) => ({
             ...prev,
@@ -1524,7 +1524,7 @@ const CentrosEditar = forwardRef((props, ref) => {
 
     return (
         <div>
-            {/* {console.log(valuesFormEdicion)} */}
+            {/* {console.log(centroAEditar)} */}
             <Backdrop className={classes.loading} open={openLoading}>
                 <CircularProgress color="inherit" />
             </Backdrop>
@@ -2352,7 +2352,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                             color="secondary.contrastText"
                                             className={valuesFormEdicionGenerales.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
                                         >
-                                            Festivos
+                                            Festivos personalizados
                                         </Box>
                                         <MuiPickersUtilsProvider locale={es} utils={DateFnsUtils}>
                                             <KeyboardDatePicker

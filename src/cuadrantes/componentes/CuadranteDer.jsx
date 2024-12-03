@@ -275,11 +275,13 @@ const CuadranteDer = (props) => {
                                                                         />
                                                                     }
                                                                 >
-                                                                    {listadoTrabajadores.map((option) => (
-                                                                        <MenuItem key={option.id} value={option.id}>
-                                                                            {option.nombre}
-                                                                        </MenuItem>
-                                                                    ))}
+                                                                    {listadoTrabajadores
+                                                                        .filter(option => option.estado === "alta") //modificador: filtrar treballadors baixa
+                                                                        .map(option => (
+                                                                            <MenuItem key={option.id} value={option.id}>
+                                                                                {option.nombre}
+                                                                            </MenuItem>
+                                                                        ))}
                                                                 </Select>
                                                             </FormControl>
                                                             <FormControl
@@ -346,7 +348,7 @@ const CuadranteDer = (props) => {
                     </Box>
                     {visibleCuadranteServiciosFijos ? (
                         cuadranteServiciosFijos.length > 0 ? (
-                            cuadranteServiciosFijos.map((servicio, indexColSF) => {                                                       
+                            cuadranteServiciosFijos.map((servicio, indexColSF) => {
                                 const trabajador = Object.keys(servicio)
                                     .find(key => key.startsWith('trab_')) ? servicio[Object.keys(servicio).find(key => key.startsWith('trab_'))] : null;
                                 return (
@@ -358,7 +360,7 @@ const CuadranteDer = (props) => {
                                             <CasillaServiciosFijos
                                                 key={"casillaServiciosFijos-" + indexDia}
                                                 dia={dia}
-                                                indexDia={indexDia}                                         
+                                                indexDia={indexDia}
                                                 servicio={servicio}
                                                 indice={indexColSF}
                                                 esDesktop={esDesktop}

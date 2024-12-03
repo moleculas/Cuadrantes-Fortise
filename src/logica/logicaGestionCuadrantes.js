@@ -89,7 +89,7 @@ export const cambiarEstadoCuadranteEnUsoRevisadoAccion = (estado) => (dispatch, 
 export const centroAGestionarInicioAccion = () => (dispatch, getState) => {
     const { objetoCentro } = getState().variablesCentros;
     const { cuadranteRegistrado, objetoCuadrante, calendarioAGestionar } = getState().variablesCuadrantes;
-    dispatch(setOpenLoadingAccion(true));
+    dispatch(setOpenLoadingAccion(true));    
     if (objetoCentro.nombre !== '') {
         if (cuadranteRegistrado === 'no') {
             dispatch(calculaNumeroCuadrantesAccion(objetoCentro.categoria.categoria.length));
@@ -1035,22 +1035,22 @@ export const gestionaFestivosInicio = () => (dispatch, getState) => {
         const condicion4 = bufferSwitchedDiasFestivosCuadrante.length > 0;        
         if (condicion1) {
             if (condicion2) {
-                if (condicion3) {
+                if (condicion3) {              
                     dispatch(setBufferSwitchedDiasFestivosCuadranteAccion(objetoCuadrante.datosBuffer.datosBuffer));
-                    const objFestivos = iterarFestivos(objetoCuadrante.datosBuffer.datosBuffer[cuadranteEnUsoCuadrantes - 1]);
+                    const objFestivos = iterarFestivos(objetoCuadrante.datosBuffer.datosBuffer[cuadranteEnUsoCuadrantes - 1]);                  
                     dispatch(setStateFestivoAccion(objFestivos));
-                } else {
+                } else {                    
                     const objFestivos = iterarFestivos(bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1]);
                     dispatch(setStateFestivoAccion(objFestivos));
                 };
-            } else {
+            } else {              
                 dispatch(configuraStateFestivoAccion());
             };
         } else {
-            if (condicion4) {
+            if (condicion4) {              
                 const objFestivos = iterarFestivos(bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1]);
                 dispatch(setStateFestivoAccion(objFestivos));
-            } else {
+            } else {              
                 dispatch(configuraStateFestivoAccion());
             };
         };
@@ -1156,14 +1156,6 @@ const procesarDatosCuadrantePromesa = (index, noHayRegistro) => (dispatch, getSt
             cuadranteRegistrado === 'no' && (arrayTrabajadoresInicialesCuadrante[index] = null);
         };
     };
-    Promise.allSettled([
-        dispatch(setTrabajadoresEnCuadranteAccion([])),
-        dispatch(setSuplentesEnCuadranteAccion([])),
-        dispatch(setEsCambioTraAccion(false)),
-        dispatch(setEsCambioSupAccion(false)),
-        dispatch(setEsInicioTraAccion(true)),
-        dispatch(setEsInicioSupAccion(true))
-    ]);
     const objSumatorios = dispatch(calculoTotalHoras());
     const objTotalAAFacturar = informeIn && tipoServicio.reduce((acc, curr) => {
         acc[`elTotalAAFacturar_${curr.prefix}`] = informeIn[`totalFacturado_${curr.prefix}`] ?
@@ -1257,20 +1249,28 @@ const procesarDatosCuadrantePromesa = (index, noHayRegistro) => (dispatch, getSt
             centro,
             procesado,
             horasTrabajadoresSF
-        );
-        const hayTrabajadoresNull = arrayHorasTrabajadores.some(obj => obj.trabajadorId === 999);
+        );   
+        const hayTrabajadoresNull = arrayHorasTrabajadores.some(obj => obj.trabajadorId === 999);      
         if (hayTrabajadoresNull) {
             return {
                 error: true
             };
-        };
+        }
         dispatch(setProcesoHorasTrabajadoresAccion({
             horasTrabajadores: arrayHorasTrabajadores,
             cuadrantesProcesados: procesoHorasTrabajadores.cuadrantesProcesados.includes(cuadranteEnUsoCuadrantes)
                 ? procesoHorasTrabajadores.cuadrantesProcesados
                 : [...procesoHorasTrabajadores.cuadrantesProcesados, cuadranteEnUsoCuadrantes]
         }));
-    };
+    };    
+    Promise.allSettled([
+        dispatch(setTrabajadoresEnCuadranteAccion([])),
+        dispatch(setSuplentesEnCuadranteAccion([])),
+        dispatch(setEsCambioTraAccion(false)),
+        dispatch(setEsCambioSupAccion(false)),
+        dispatch(setEsInicioTraAccion(true)),
+        dispatch(setEsInicioSupAccion(true))
+    ]);
     return ({
         cuadranteDevuelto: elObjetoDatosCuadrante,
         informeDevuelto: elObjetoDatosInforme,
@@ -1309,21 +1309,21 @@ const procesarHorasTrabajadoresAccion = (
                     return acc;
                 }, {});
                 registroLimpio.cuadrante = cuadranteEnUsoCuadrantes;
-                registroLimpio.centro = centro;
+                registroLimpio.centro = centro;                
                 nuevosRegistros.push(registroLimpio);
             });
         }
-    });
-    nuevosRegistros.push(...horasTrabajadoresSF);
+    });    
+    nuevosRegistros.push(...horasTrabajadoresSF);   
     const aplicarReemplazoCondicional = (array) => {
         if (procesado.valor && procesado.cuadrante === cuadranteEnUsoCuadrantes) {
-            const registrosNoCoinciden = array.filter(registro => registro.cuadrante !== cuadranteEnUsoCuadrantes);
+            const registrosNoCoinciden = array.filter(registro => registro.cuadrante !== cuadranteEnUsoCuadrantes);            
             array.length = 0;
             array.push(...registrosNoCoinciden, ...nuevosRegistros);
-        } else {
+        } else {           
             array.push(...nuevosRegistros);
         }
-    };
+    };    
     aplicarReemplazoCondicional(horasTrabajadores);
     aplicarReemplazoCondicional(horasTrabajadoresSF);
     return horasTrabajadores;
@@ -2003,7 +2003,7 @@ const finalizaRegistroCuadrante = (
             total: losDatosTotales
         }));
     };
-    if (cuadranteRegistrado === 'no') {
+    if (cuadranteRegistrado === 'no') {     
         dispatch(
             registrarCuadranteAccion(
                 'cuadrantes',

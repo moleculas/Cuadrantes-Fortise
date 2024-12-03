@@ -674,10 +674,12 @@ export const configuraStateFestivoAccion = () => (dispatch, getState) => {
 };
 
 export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, tipoFestivo, esPeriodo, scrollable, classes) => (dispatch, getState) => {
-    const { cuadrante, stateFestivo, cuadranteRegistrado, losDiasDelMes } = getState().variablesCuadrantes;
+    const { cuadrante, stateFestivo, cuadranteRegistrado, losDiasDelMes, objetoCuadrante } = getState().variablesCuadrantes;
     const { bufferSwitchedDiasFestivosCuadrante, cuadranteEnUsoCuadrantes, numeroCuadrantesCuadrantes } = getState().variablesCuadrantesSetters;
     const { cuadranteServiciosFijos } = getState().variablesCuadrantesServiciosFijos;
     const { objetoCentro } = getState().variablesCentros;
+    //modificador: festivos activos
+    const festivosActivos = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].excepcion === 2;
     let valorEvento;
     let elTipoFestivo;
     let esInicio = false;
@@ -785,7 +787,8 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
         let festivoComputable;
         let variableBuffer1, variableBuffer2, variableBuffer3, variableBuffer4;
         cuadrante.forEach((columna, indexFor) => {
-            columna[postRef].festivo = valorEvento;
+            //modificador: festivos activos
+            columna[postRef].festivo = festivosActivos ? false : valorEvento;
             if (columna.nombreTrabajador || columna.nombreTrabajador === '') {
                 if (valorEvento) {
                     if (!esInicio) {
@@ -875,8 +878,11 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                                             };
                                         };
                                     };
-                                    columna[postRef][`${dia.value}InicioRango`] = null;
-                                    columna[postRef][`${dia.value}FinRango`] = null;
+                                    //modificador: festivos activos
+                                    if (!festivosActivos) {
+                                        columna[postRef][`${dia.value}InicioRango`] = null;
+                                        columna[postRef][`${dia.value}FinRango`] = null;
+                                    }
                                 }
                             });
                             break;
@@ -951,10 +957,13 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                                             };
                                         };
                                     };
-                                    columna[postRef][`${dia.value}Inicio1RangoDescanso`] = null;
-                                    columna[postRef][`${dia.value}Fin1RangoDescanso`] = null;
-                                    columna[postRef][`${dia.value}Inicio2RangoDescanso`] = null;
-                                    columna[postRef][`${dia.value}Fin2RangoDescanso`] = null;
+                                    //modificador: festivos activos
+                                    if (!festivosActivos) {
+                                        columna[postRef][`${dia.value}Inicio1RangoDescanso`] = null;
+                                        columna[postRef][`${dia.value}Fin1RangoDescanso`] = null;
+                                        columna[postRef][`${dia.value}Inicio2RangoDescanso`] = null;
+                                        columna[postRef][`${dia.value}Fin2RangoDescanso`] = null;
+                                    }
                                 }
                             });
                             break;
@@ -1023,7 +1032,10 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                                             };
                                         };
                                     };
-                                    columna[postRef][`${dia.value}Cantidad`] = '';
+                                    //modificador: festivos activos
+                                    if (!festivosActivos) {
+                                        columna[postRef][`${dia.value}Cantidad`] = '';
+                                    }
                                 }
                             });
                             break;
@@ -1131,7 +1143,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                     };
                 };
             };
-        });
+        });       
         if (arrayCuadrante.length > 0) {
             dispatch(setCuadranteAccion(arrayCuadrante));
         }

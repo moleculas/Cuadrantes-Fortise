@@ -146,7 +146,8 @@ const CuadranteCompleto = (props) => {
     //mediaQueries
     const esDesktop = useMediaQuery(theme => theme.breakpoints.up('desktop'));
 
-    //per test    
+    //per test     
+    //const { stateFestivo } = useSelector(store => store.variablesCuadrantes);
 
     //useEffect
 
@@ -168,7 +169,7 @@ const CuadranteCompleto = (props) => {
 
     useEffect(() => {
         listadoTrabajadores.length === 0
-            ? dispatch(obtenerTrabajadoresAccion('trabajadores', true))
+            ? dispatch(obtenerTrabajadoresAccion('trabajadores', false))
             : trabajadoresCargados && dispatch(obtenerTrabajadoresSubcategoriaAccion(2));
     }, [listadoTrabajadores]);
 
@@ -412,6 +413,7 @@ const CuadranteCompleto = (props) => {
 
     return (
         <>
+            {/* {console.log(cuadrante)} */}
             <Grid container
                 direction="row"
                 justifycontent="flex-start"

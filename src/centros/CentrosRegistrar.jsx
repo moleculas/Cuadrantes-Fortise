@@ -91,7 +91,7 @@ const {
     TIPO_SERVICIO_FIJO: tiposServicioFijo,
     TIPO_SERVICIO: tipoServicio,
     EXCEPCIONES_CENTROS: excepciones,
-    DIAS_SEMANA: diasSemana,    
+    DIAS_SEMANA: diasSemana,
     CALENDARIO_FESTIVOS: arrayFestivos
 } = Constantes;
 
@@ -717,7 +717,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         servicios_fijos: JSON.stringify(objServiciosFijos),
                                         trabajadores: JSON.stringify(objTrabajadores),
                                         observaciones: JSON.stringify(objObservaciones),
-                                        festivos: JSON.stringify(objFestivos),
+                                        festivos: JSON.stringify(objFestivos)
                                     };
                                     dispatch(registrarCentroAccion('centros', centroDefinitivoAGuardar.id, centroDefinitivoAGuardar));
                                     dispatch(registrarIntervencionAccion(true));
@@ -1299,7 +1299,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 tipo: 'error',
             });
             setOpenSnack(true);
-            return; 
+            return;
         }
         setDatosFestivosRegistro((prev) => ({
             ...prev,
@@ -1361,7 +1361,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
 
     const HistoricoFestivosRegistro = () => {
         if (!valuesFormRegistro.festivos || valuesFormRegistro.festivos.length === 0) return null;
-        const currentYear = new Date().getFullYear();       
+        const currentYear = new Date().getFullYear();
         return (
             <Fragment>
                 <Box
@@ -2182,7 +2182,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                             color="secondary.contrastText"
                                             className={valuesFormRegistroGenerales.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
                                         >
-                                            Festivos
+                                            Festivos personalizados
                                         </Box>
                                         <MuiPickersUtilsProvider locale={es} utils={DateFnsUtils}>
                                             <KeyboardDatePicker
@@ -2239,7 +2239,6 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 tipoCuadrante={false}
                 setOpenSnack={setOpenSnack}
             />
-            {/* {console.log(arrayTrabajadoresSubcategoria)} */}
         </div>
     )
 })
