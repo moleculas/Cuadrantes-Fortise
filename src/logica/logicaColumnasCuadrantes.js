@@ -408,7 +408,9 @@ const periodoBajaTrabajadorAccion = (calendarioAGestionar, inicioBaja, finBaja, 
     const mesFinB = finBaja ? finBaja.split("-")[1] : mesCalendario;
     const diaFinB = finBaja ? finBaja.split("-")[2] : diasMes;
     const empezamosPor = (anyoInicioB < anyoCalendario || mesInicioB < mesCalendario) ? 1 : diaInicioB;
-    const acabamosPor = (anyoFinB > anyoCalendario || mesFinB > mesCalendario) ? diasMes : (finBaja ? diaFinB - 1 : diaFinB);
+    //modificar: dies baixa complerts
+    //const acabamosPor = (anyoFinB > anyoCalendario || mesFinB > mesCalendario) ? diasMes : (finBaja ? diaFinB - 1 : diaFinB);
+    const acabamosPor = (anyoFinB > anyoCalendario || mesFinB > mesCalendario) ? diasMes : (finBaja ? diaFinB : diaFinB);
     const arrayBaja = Array.from({ length: acabamosPor - empezamosPor + 1 }, (_, i) => i + empezamosPor);
     return arrayBaja;
 };
@@ -858,7 +860,11 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                                 !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('nulo', contieneAltaYBaja, false);
                                         } else {
-                                            columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('activo', contieneAltaYBaja, false);
+                                            if (contieneAltaYBaja) {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('nulo', contieneAltaYBaja, false);
+                                            } else {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('activo', contieneAltaYBaja, false);
+                                            }
                                         };
                                     };
                                 };
@@ -881,7 +887,11 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                             !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
                                         columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('nulo', contieneAltaYBaja, false);
                                     } else {
-                                        columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('activo', contieneAltaYBaja, false);
+                                        if (contieneAltaYBaja) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('nulo', contieneAltaYBaja, false);
+                                        } else {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('activo', contieneAltaYBaja, false);
+                                        }
                                     };
                                 };
                             };

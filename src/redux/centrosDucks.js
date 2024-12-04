@@ -30,6 +30,7 @@ const dataInicial = {
         formaPago: '',
         tempPago: '',
         diaPago: '',
+        iban: '',
         activoNumCuenta: false,
         horario: {
             objeto: 'horario',
@@ -256,6 +257,7 @@ export const vaciarDatosCentroAccion = () => (dispatch, getState) => {
             formaPago: '',
             tempPago: '',
             diaPago: '',
+            iban: '',
             activoNumCuenta: false,
             horario: {
                 tipo: '',
@@ -357,6 +359,7 @@ export const obtenerCentroAccion = (objeto, id) => async (dispatch, getState) =>
                 formaPago: res.data.forma_pago,
                 tempPago: res.data.temp_pago,
                 diaPago: res.data.dia_pago,
+                iban: res.data.iban,
                 activoNumCuenta: res.data.activo_num_cuenta,
                 horario: JSON.parse(res.data.horario),
                 serviciosFijos: JSON.parse(res.data.servicios_fijos),

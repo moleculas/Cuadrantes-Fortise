@@ -213,6 +213,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
         formaPago: '',
         tempPago: '',
         diaPago: '',
+        iban: '',
         activoNumCuenta: false,
         gestionEspSF: false
     });
@@ -656,6 +657,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         forma_pago: valuesFormRegistroGenerales.formaPago,
                                         temp_pago: valuesFormRegistroGenerales.tempPago,
                                         dia_pago: valuesFormRegistroGenerales.diaPago ? valuesFormRegistroGenerales.diaPago : null,
+                                        iban: valuesFormRegistroGenerales.iban || null,
                                         activo_num_cuenta: valuesFormRegistroGenerales.activoNumCuenta ? 'si' : 'no',
                                         horario: values.horario ? (values.horario) : null,
                                         servicios_fijos: values.servicios ? (values.servicios) : null,
@@ -759,6 +761,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         forma_pago: valuesFormRegistroGenerales.formaPago,
                                         temp_pago: valuesFormRegistroGenerales.tempPago,
                                         dia_pago: valuesFormRegistroGenerales.diaPago ? valuesFormRegistroGenerales.diaPago : null,
+                                        iban: valuesFormRegistroGenerales.iban || null,
                                         activo_num_cuenta: valuesFormRegistroGenerales.activoNumCuenta ? 'si' : 'no',
                                         horario: values.horario ? (values.horario) : null,
                                         servicios_fijos: values.servicios ? (values.servicios) : null,
@@ -928,6 +931,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 formaPago: '',
                 tempPago: '',
                 diaPago: '',
+                iban: '',
                 activoNumCuenta: false,
                 gestionEspSF: false,
             });
@@ -2130,6 +2134,20 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                                     </MenuItem>
                                                 ))}
                                             </Select>
+                                        </FormControl>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>IBAN</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb20}
+                                                fullWidth
+                                                value={valuesFormRegistroGenerales.iban}
+                                                onChange={handleChangeFormRegistroGenerales('iban')}
+                                                labelWidth={40}
+                                            />
                                         </FormControl>
                                         <Box className={classes.boxChekin}>
                                             <FormControlLabel

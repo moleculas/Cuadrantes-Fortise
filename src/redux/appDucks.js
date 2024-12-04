@@ -123,6 +123,22 @@ export default function appReducer(state = dataInicial, action) {
 
 //acciones
 
+export const validarIBAN = (input) => {
+    const iban = input.replace(/\s/g, '').toUpperCase();
+    if (iban.length < 15 || iban.length > 34) return false;
+    if (!/^[A-Z]{2}[0-9A-Z]{13,32}$/.test(iban)) return false;
+    const rearranged = iban.slice(4) + iban.slice(0, 4);
+    const converted = rearranged.split('').map(char => {
+        const code = char.charCodeAt(0);
+        return code >= 65 ? (code - 55).toString() : char;
+    }).join('');
+    let remainder = 0;
+    for (let i = 0; i < converted.length; i++) {
+        remainder = ((remainder * 10) + parseInt(converted[i])) % 97;
+    }
+    return remainder === 1;
+};
+
 export const setNewControllerAccion = (array) => (dispatch, getState) => {
     dispatch({
         type: SET_NEWCONTROLLER,

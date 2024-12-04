@@ -679,7 +679,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
     const { cuadranteServiciosFijos } = getState().variablesCuadrantesServiciosFijos;
     const { objetoCentro } = getState().variablesCentros;
     //modificador: festivos activos
-    const festivosActivos = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].excepcion === 2;
+    const festivosActivos = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1]?.excepcion === 2;
     let valorEvento;
     let elTipoFestivo;
     let esInicio = false;

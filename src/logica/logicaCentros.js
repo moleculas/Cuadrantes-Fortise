@@ -1,4 +1,7 @@
-import { validarMailAccion } from '../redux/appDucks';
+import { 
+    validarMailAccion,
+    validarIBAN
+ } from '../redux/appDucks';
 import Constantes from "../constantes";
 
 //constantes
@@ -190,7 +193,7 @@ export const procesarDatosPromesa = (
                 };
             };
         };
-        //validacion mail
+        //validación mail
         if (valuesFormGenerales.mail) {
             const validacionMail = dispatch(validarMailAccion(valuesFormGenerales.mail));
             if (!validacionMail) {
@@ -213,6 +216,18 @@ export const procesarDatosPromesa = (
                 return;
             };
         };
+        //validación iban
+        if (valuesFormGenerales.iban) {
+            const ibanValido = validarIBAN(valuesFormGenerales.iban);
+            if (!ibanValido) {
+                setAlert({
+                    mensaje: "El campo IBAN no es válido. Revisa el formulario.",
+                    tipo: 'error'
+                })
+                setOpenSnack(true);
+                return;
+            };
+        }
         if (horarioIntervencion.tipo === "rango") {
             for (let i = 0; i < horarioIntervencion.tipoRegistroTrabajador.length; i++) {
                 const horarioTrabajador = horarioIntervencion.tipoRegistroTrabajador[i];

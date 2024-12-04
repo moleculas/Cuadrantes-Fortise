@@ -232,6 +232,7 @@ const CentrosEditar = forwardRef((props, ref) => {
         formaPago: '',
         tempPago: '',
         diaPago: '',
+        iban: '',
         activoNumCuenta: false,
         gestionEspSF: false,
     });
@@ -341,7 +342,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                 telefono2: centroAEditar.telefono2 || '',
                 formaPago: centroAEditar.formaPago || '',
                 tempPago: centroAEditar.tempPago || '',
-                diaPago: centroAEditar.diaPago ? centroAEditar.diaPago : '',
+                diaPago: centroAEditar.diaPago || '',
+                iban: centroAEditar.iban || '',
                 activoNumCuenta: centroAEditar.activoNumCuenta === 'si' ? true : false,
                 gestionEspSF: centroAEditar.serviciosFijos.gestionEspSF || false
             });
@@ -577,7 +579,7 @@ const CentrosEditar = forwardRef((props, ref) => {
             dispatch(registrarIntervencionAccion(false));
             dispatch(activarDesactivarActualizarCentroAccion(false));
             return;
-        };
+        };        
         setValuesFormEdicionGenerales({ ...valuesFormEdicionGenerales, [prop]: e.target.value });
         dispatch(registrarIntervencionAccion(false));
         dispatch(activarDesactivarActualizarCentroAccion(false));
@@ -776,6 +778,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         forma_pago: valuesFormEdicionGenerales.formaPago,
                                         temp_pago: valuesFormEdicionGenerales.tempPago,
                                         dia_pago: valuesFormEdicionGenerales.diaPago || null,
+                                        iban: valuesFormEdicionGenerales.iban || null,
                                         activo_num_cuenta: valuesFormEdicionGenerales.activoNumCuenta ? 'si' : 'no',
                                         horario: values.horario || null,
                                         servicios_fijos: values.servicios || null,
@@ -877,6 +880,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         forma_pago: valuesFormEdicionGenerales.formaPago,
                                         temp_pago: valuesFormEdicionGenerales.tempPago,
                                         dia_pago: valuesFormEdicionGenerales.diaPago || null,
+                                        iban: valuesFormEdicionGenerales.iban || null,
                                         activo_num_cuenta: valuesFormEdicionGenerales.activoNumCuenta ? 'si' : 'no',
                                         horario: values.horario || null,
                                         servicios_fijos: values.servicios || null,
@@ -1046,6 +1050,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                 formaPago: '',
                 tempPago: '',
                 diaPago: '',
+                iban: '',
                 activoNumCuenta: false,
                 gestionEspSF: false,
             });
@@ -2284,7 +2289,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                             <InputLabel>Temporización</InputLabel>
                                             <Select
                                                 fullWidth
-                                                className={classes.mb20}
+                                                className={classes.mb15}
                                                 id="form-tempPago-edicion"
                                                 label="Temporización"
                                                 value={valuesFormEdicionGenerales.tempPago || ''}
@@ -2298,6 +2303,21 @@ const CentrosEditar = forwardRef((props, ref) => {
                                                     </MenuItem>
                                                 ))}
                                             </Select>
+                                        </FormControl>
+                                        <FormControl
+                                            variant="outlined"
+                                            className={classes.form}
+                                            size="small"
+                                        >
+                                            <InputLabel>IBAN</InputLabel>
+                                            <OutlinedInput
+                                                className={classes.mb20}
+                                                fullWidth
+                                                value={valuesFormEdicionGenerales.iban}
+                                                onChange={handleChangeFormEdicionGenerales('iban')}
+                                                labelWidth={40}
+                                                disabled={disabledItem}
+                                            />
                                         </FormControl>
                                         <Box className={disabledItem ? classes.boxChekinSinHover : classes.boxChekin}>
                                             <FormControlLabel
