@@ -80,7 +80,7 @@ const CasillaGeneral = ({ dia, indexDia, columna, indexColumna, esDesktop, scrol
                             className={classes.truncate}
                         ></Typography>
                     </Grid>
-                    <Grid item xs={2}>     
+                    <Grid item xs={2}>
                         <Box style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
                             {columna[postRef].observaciones && !columna[postRef].festivo && !columna[postRef].baja ? (
                                 <Tooltip title={columna[postRef].observaciones} placement="top-end" arrow >

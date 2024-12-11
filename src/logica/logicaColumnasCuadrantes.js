@@ -567,6 +567,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
         objetoBuffer = {};
         const numeroSemana = numeroSemanaMes(`${anyoCalendario}-${mesCalendario}-${dia[0][0]}`);
         const elDia = dia[1][0] + dia[0][0];
+        const contieneAltaYBaja = arrayAltaYBaja?.includes(index + 1);
         diasSemana.forEach(diaObj => {
             const horarios = {
                 'rango': [
@@ -722,6 +723,11 @@ const gestionaColumnaCuadranteInteriorAccion = (
                             tipoServicio: elTipoServicio ? (festivoActivo ? "FEST" : elTipoServicio) : ""
                         }
                         break;
+                    case "festivoActivoSinHorario":
+                        return {
+                            ...objBase
+                        }
+                        break;
                     default:
                 };
             };
@@ -760,18 +766,104 @@ const gestionaColumnaCuadranteInteriorAccion = (
                 if (dia[1][0] === diaObj.label) {
                     //modificador: festivos activos
                     if (festivosActivos) {
-                        if ((tipoTrabajador === 'suplente' &&
-                            cuadrante[posicionAnterior] &&
-                            cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
-                            cuadrante[posicionAnterior][dia[1][0] + dia[0][0]][horarios[tipoHorario][0]]) ||
-                            (tipoTrabajador === 'suplente' &&
-                                cuadrante[posicionAnterior] &&
-                                cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
-                                !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
-                            columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('festivo');
+                        if (trabajador.estado !== 'alta' || arrayRegistrosHistorico.length > 0) {
+                            if (arrayBaja.includes(index + 1)) {
+                                columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('baja');
+                                if ((elHorarioCuadrante.variacion === 'primSemana' && ((primeraSemanaServicio && numeroSemana === 1) || (!primeraSemanaServicio && numeroSemana === 2)))
+                                    || (elHorarioCuadrante.variacion === 'semanaSiNo' && numeroSemana !== priDigSem && numeroSemana !== segDigSem && numeroSemana !== terDigSem)
+                                    || elHorarioCuadrante.variacion === 'todasSemanas') {
+                                    const bajaComputable = gestionaDiasFestivosOBajas(
+                                        elHorarioCuadrante,
+                                        tipoRegistro,
+                                        cantidadTrabajadoresCentro,
+                                        tipoHorario,
+                                        posicionTrabajador,
+                                        horarios[tipoHorario][0]
+                                    );
+                                    contadorHorasBajasComputables += bajaComputable.cantidad;
+                                };
+                            } else {
+                                //modificador: gestió mateix dia alta-baixa
+                                if (esActualizacion) {
+                                    if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
+                                        columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];
+                                    } else {
+                                        if (((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                            (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')) {
+                                            if (dia[1][0] === diaObj.label) {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('nulo', contieneAltaYBaja, false);
+                                            };
+                                        } else {
+                                            if (dia[1][0] === diaObj.label) {
+                                                if ((tipoTrabajador === 'suplente' &&
+                                                    cuadrante[posicionAnterior] &&
+                                                    cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                                    cuadrante[posicionAnterior][dia[1][0] + dia[0][0]][horarios[tipoHorario][0]]) ||
+                                                    (tipoTrabajador === 'suplente' &&
+                                                        cuadrante[posicionAnterior] &&
+                                                        cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                        !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                                    columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('nulo', contieneAltaYBaja, false);
+                                                } else {
+                                                    if (contieneAltaYBaja) {
+                                                        columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('nulo', contieneAltaYBaja, false);
+                                                    } else {
+                                                        columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('festivoActivo', contieneAltaYBaja, true);
+                                                    }
+                                                };
+                                            };
+                                        };
+                                    };
+                                } else {
+                                    if (((numeroSemana === priDigSem || numeroSemana === segDigSem || numeroSemana === terDigSem) && elHorarioCuadrante.variacion === 'semanaSiNo') ||
+                                        (((primeraSemanaServicio && numeroSemana !== 1) || (!primeraSemanaServicio && numeroSemana !== 2)) && elHorarioCuadrante.variacion === 'primSemana')) {
+                                        if (dia[1][0] === diaObj.label) {
+                                            columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('nulo', contieneAltaYBaja, false);
+                                        };
+                                    } else {
+                                        if (dia[1][0] === diaObj.label) {
+                                            if ((tipoTrabajador === 'suplente' &&
+                                                cuadrante[posicionAnterior] &&
+                                                cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                                cuadrante[posicionAnterior][dia[1][0] + dia[0][0]][horarios[tipoHorario][0]]) ||
+                                                (tipoTrabajador === 'suplente' &&
+                                                    cuadrante[posicionAnterior] &&
+                                                    cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                                    !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                                columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('nulo', contieneAltaYBaja, false);
+                                            } else {
+                                                if (contieneAltaYBaja) {
+                                                    columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('nulo', contieneAltaYBaja, false);
+                                                } else {
+                                                    columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('festivoActivo', contieneAltaYBaja, true);
+                                                }
+                                            };
+                                        };
+                                    };
+                                };
+                            };
                         } else {
-                            columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('festivoActivo', false, true);
-                        };
+                            if ((tipoTrabajador === 'suplente' &&
+                                cuadrante[posicionAnterior] &&
+                                cuadrante[posicionAnterior].tipoTrabajador === 'trabajador' &&
+                                cuadrante[posicionAnterior][dia[1][0] + dia[0][0]][horarios[tipoHorario][0]]) ||
+                                (tipoTrabajador === 'suplente' &&
+                                    cuadrante[posicionAnterior] &&
+                                    cuadrante[posicionAnterior].tipoTrabajador === 'suplente' &&
+                                    !cuadrante[posicionAnterior][dia[1][0] + dia[0][0]].baja)) {
+                                if (dia[1][0] !== "Domingo") {
+                                    columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('festivoActivoSinHorario', false, true);
+                                } else {
+                                    columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('festivo');
+                                }
+                            } else {
+                                if (dia[1][0] !== "Domingo") {
+                                    columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('festivoActivo', false, true);
+                                } else {
+                                    columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('festivo');
+                                }
+                            }
+                        }
                     } else {
                         columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('festivo');
                     }
@@ -838,7 +930,6 @@ const gestionaColumnaCuadranteInteriorAccion = (
                         };
                     } else {
                         //modificador: gestió mateix dia alta-baixa
-                        const contieneAltaYBaja = arrayAltaYBaja?.includes(index + 1);
                         if (esActualizacion) {
                             if (cuadrante[columna][dia[1][0] + dia[0][0]].modificado) {
                                 columnaAnadir[dia[1][0] + dia[0][0]] = cuadrante[columna][dia[1][0] + dia[0][0]];

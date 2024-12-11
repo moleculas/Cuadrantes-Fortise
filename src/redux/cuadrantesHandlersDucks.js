@@ -1143,7 +1143,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
                     };
                 };
             };
-        });       
+        });
         if (arrayCuadrante.length > 0) {
             dispatch(setCuadranteAccion(arrayCuadrante));
         }
@@ -1154,7 +1154,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
             objetoBuffer.tipo = 0;
             arrayBuffer[cuadranteEnUsoCuadrantes - 1][indexABorrar] = objetoBuffer;
         };
-    };
+    };    
     const contadorDias = arrayBuffer[cuadranteEnUsoCuadrantes - 1].filter(festivo => festivo.activo).length;
     if (losDiasDelMes.length === contadorDias) {
         dispatch(setMesConFestivosCompletoAccion(true));

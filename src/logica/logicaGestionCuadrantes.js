@@ -1055,7 +1055,7 @@ export const gestionaFestivosInicio = () => (dispatch, getState) => {
             };
         };
     } else if (cuadranteRegistrado === 'no') {
-        if (condicion3) {           
+        if (condicion3) {                  
             dispatch(configuraStateFestivoAccion());
         } else {            
             const objFestivos = iterarFestivos(bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1]);
