@@ -117,9 +117,11 @@ const formatNumerics = (arr) => {
 
 function gestionarFechaDePago(diaPago, mes, anyo, formaDePago) {
     const forma = formasDePago.find(fp => fp.value === formaDePago);
-    let fecha = new Date(anyo, mes - 1, diaPago);
-    fecha.setDate(fecha.getDate() + forma.dias);
-    const fechaAjustada = new Date(fecha.getFullYear(), fecha.getMonth(), diaPago);
+    //let fecha = new Date(anyo, mes - 1, diaPago);
+    //modificador: corrector venciments
+    let fecha = new Date(anyo, mes, diaPago);       
+    fecha.setDate(fecha.getDate() + forma.dias);  
+    const fechaAjustada = new Date(fecha.getFullYear(), fecha.getMonth(), diaPago);     
     return `${String(fechaAjustada.getDate()).padStart(2, '0')}-${String(fechaAjustada.getMonth() + 1).padStart(2, '0')}-${fechaAjustada.getFullYear()}`;
 };
 

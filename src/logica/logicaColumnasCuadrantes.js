@@ -912,6 +912,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
             } else {
                 if (trabajador.estado !== 'alta' || arrayRegistrosHistorico.length > 0) {
                     if (arrayBaja.includes(index + 1)) {
+                        console.log("pasa1")
                         if (dia[1][0] === diaObj.label) {
                             columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('baja');
                             if ((elHorarioCuadrante.variacion === 'primSemana' && ((primeraSemanaServicio && numeroSemana === 1) || (!primeraSemanaServicio && numeroSemana === 2)))
@@ -953,6 +954,16 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                         } else {
                                             if (contieneAltaYBaja) {
                                                 columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('nulo', contieneAltaYBaja, false);
+                                                //modificador: corrector gestió mateix dia alta-baixa
+                                                const bajaComputable = gestionaDiasFestivosOBajas(
+                                                    elHorarioCuadrante,
+                                                    tipoRegistro,
+                                                    cantidadTrabajadoresCentro,
+                                                    tipoHorario,
+                                                    posicionTrabajador,
+                                                    horarios[tipoHorario][0]
+                                                );
+                                                contadorHorasBajasComputables += bajaComputable.cantidad;
                                             } else {
                                                 columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('activo', contieneAltaYBaja, false);
                                             }
@@ -980,6 +991,16 @@ const gestionaColumnaCuadranteInteriorAccion = (
                                     } else {
                                         if (contieneAltaYBaja) {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('nulo', contieneAltaYBaja, false);
+                                            //modificador: corrector gestió mateix dia alta-baixa
+                                            const bajaComputable = gestionaDiasFestivosOBajas(
+                                                elHorarioCuadrante,
+                                                tipoRegistro,
+                                                cantidadTrabajadoresCentro,
+                                                tipoHorario,
+                                                posicionTrabajador,
+                                                horarios[tipoHorario][0]
+                                            );
+                                            contadorHorasBajasComputables += bajaComputable.cantidad;
                                         } else {
                                             columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('activo', contieneAltaYBaja, false);
                                         }
