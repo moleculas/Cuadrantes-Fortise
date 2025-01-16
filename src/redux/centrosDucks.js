@@ -52,7 +52,8 @@ const dataInicial = {
         festivos: {
             objeto: 'festivos',
             festivos: []
-        }
+        },
+        facturar: true,
     },
     exitoActualizacionCentro: false,
     exitoRegistroCentro: false,
@@ -299,7 +300,8 @@ export const vaciarDatosCentroAccion = () => (dispatch, getState) => {
             festivos: {
                 objeto: 'festivos',
                 festivos: []
-            }
+            },
+            facturar: true
         }
     });
 };
@@ -365,7 +367,8 @@ export const obtenerCentroAccion = (objeto, id) => async (dispatch, getState) =>
                 serviciosFijos: JSON.parse(res.data.servicios_fijos),
                 trabajadores: JSON.parse(res.data.trabajadores),
                 observaciones: JSON.parse(res.data.observaciones),
-                festivos
+                festivos,
+                facturar: res.data.facturar
             }
         });
     } catch (error) {

@@ -190,7 +190,8 @@ export const centroAGestionarInicioAccion = () => (dispatch, getState) => {
                     mail: objetoCentro.mail,
                     mail2: objetoCentro.mail2 || null,
                     diaPago: objetoCentro.diaPago || null,
-                    datosCuadrante: arrayHorario
+                    datosCuadrante: arrayHorario,
+                    facturar: objetoCentro.facturar
                 },
                 datosServicios: {
                     objeto: 'serviciosFijos',
@@ -221,10 +222,13 @@ const calculaTocaFacturacionAccion = () => (dispatch, getState) => {
     const { calendarioAGestionar, totalesPeriodicos } = getState().variablesCuadrantes;
     const { objetoCentro } = getState().variablesCentros;
     const mes = parseInt(calendarioAGestionar.split("-")[1]);
-    const { tempPago, horario, serviciosFijos } = objetoCentro;
+    const { tempPago, horario, serviciosFijos, facturar } = objetoCentro;
     const horarioCentro = horario?.horario || [];
     let objetoRetornoCalculo = { valor: 'si', razon: '' };
-    if (tempPago === 'bimensual' && mes % 2 === 1) {
+    //modificador: No facturar
+    if(facturar === "no"){
+        objetoRetornoCalculo = { valor: 'no', razon: 'orig' };
+    }else if (tempPago === 'bimensual' && mes % 2 === 1) {
         objetoRetornoCalculo = { valor: 'no', razon: 'temp' };
     } else if (tempPago === 'bimensual' && mes % 2 === 0) {
         if (!totalesPeriodicos.total) {

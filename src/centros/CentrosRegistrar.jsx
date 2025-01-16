@@ -215,7 +215,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
         diaPago: '',
         iban: '',
         activoNumCuenta: false,
-        gestionEspSF: false
+        gestionEspSF: false,
+        facturar: true
     });
     const lengthLabelServicio = {
         3: 120,
@@ -466,13 +467,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
     };
 
     const handleChangeFormRegistroGenerales = (prop) => (e) => {
-        if (prop === "activoNumCuenta") {
-            setValuesFormRegistroGenerales({ ...valuesFormRegistroGenerales, [prop]: e.target.checked });
-            dispatch(registrarIntervencionAccion(false));
-            dispatch(activarDesactivarRegistrarCentroAccion(false));
-            return;
-        };
-        if (prop === "gestionEspSF") {
+        if (prop === "activoNumCuenta" || prop === "gestionEspSF" || prop === "facturar") {
             setValuesFormRegistroGenerales({ ...valuesFormRegistroGenerales, [prop]: e.target.checked });
             dispatch(registrarIntervencionAccion(false));
             dispatch(activarDesactivarRegistrarCentroAccion(false));
@@ -662,7 +657,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         horario: values.horario ? (values.horario) : null,
                                         servicios_fijos: values.servicios ? (values.servicios) : null,
                                         trabajadores: values.trabajadores ? (values.trabajadores) : null,
-                                        festivos: valuesFormRegistro.festivos || null
+                                        festivos: valuesFormRegistro.festivos || null,
+                                        facturar: valuesFormRegistroGenerales.facturar ? 'si' : 'no'
                                     };
                                     centroDefinitivoAGuardar = { ...centroAGuardar };
                                     objCategorias = {
@@ -766,7 +762,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         horario: values.horario ? (values.horario) : null,
                                         servicios_fijos: values.servicios ? (values.servicios) : null,
                                         trabajadores: values.trabajadores ? (values.trabajadores) : null,
-                                        festivos: valuesFormRegistro.festivos || null
+                                        festivos: valuesFormRegistro.festivos || null,
+                                        facturar: valuesFormRegistroGenerales.facturar ? 'si' : 'no'
                                     };
                                     let arrayCuadrantes = [...numeroCuadrantesRegistro];
                                     arrayCuadrantes.forEach((cuadrante, index) => {
@@ -934,6 +931,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 iban: '',
                 activoNumCuenta: false,
                 gestionEspSF: false,
+                facturar: true
             });
             setNumeroCuadrantesRegistro([{ value: 1, cuadrante: null, guardado: false }]);
             setCuadranteEnUsoRegistro(1);
@@ -2193,6 +2191,26 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                             variant="outlined"
                                             onChange={handleChangeFormRegistro('observaciones')}
                                         />
+                                        <Box
+                                            m={0.5}
+                                            color="secondary.contrastText"
+                                            className={valuesFormRegistroGenerales.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
+                                        >
+                                            Facturar
+                                        </Box>
+                                        <Box className={classes.boxChekin}>
+                                            <FormControlLabel
+                                                control={
+                                                    <Checkbox
+                                                        checked={valuesFormRegistroGenerales.facturar || false}
+                                                        onChange={handleChangeFormRegistroGenerales('facturar')}
+                                                        name="checkedFacturar-registro"
+                                                        color="secondary"
+                                                    />
+                                                }
+                                                label={<Typography className={classes.colorText} style={{ fontSize: '0.9rem' }}>Facturar cuadrante por defecto.</Typography>}
+                                            />
+                                        </Box>
                                     </Grid>
                                     <Grid item lg={6} sm={6} xs={12}>
                                         <Box

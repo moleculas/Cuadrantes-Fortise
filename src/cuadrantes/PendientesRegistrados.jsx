@@ -277,13 +277,13 @@ const PendientesRegistrados = (props) => {
                         style={{ marginTop: -3 }}
                         disabled={retornaDisabledCheckedItem(cuadrante.total)}
                     />
-                    <ListItemText                       
+                    <ListItemText
                         primary={
                             centroDeBaja
                                 ? `${cuadrante.total.subNombreCentro ? cuadrante.nombreCentro + " - " + cuadrante.total.subNombreCentro : cuadrante.nombreCentro} (Centro de baja)`
                                 : cuadrante.total.subNombreCentro
-                                ? cuadrante.nombreCentro + " - " + cuadrante.total.subNombreCentro
-                                : cuadrante.nombreCentro
+                                    ? cuadrante.nombreCentro + " - " + cuadrante.total.subNombreCentro
+                                    : cuadrante.nombreCentro
                         }
                         secondary={
                             cuadrante.total.tocaFacturar.valor === 'si' ? (
@@ -329,7 +329,8 @@ const PendientesRegistrados = (props) => {
                                         No se emite factura: {
                                             cuadrante.total.tocaFacturar.razon === 'a0' ? 'Cuadrante a 0 €.' :
                                                 cuadrante.total.tocaFacturar.razon === 'temp' ? 'No toca por temporización.' :
-                                                    'Gestión especial de horas.'
+                                                    cuadrante.total.tocaFacturar.razon === 'orig' ? 'Desactivado en Centro.' :
+                                                        'Gestión especial de horas.'
                                         }
                                     </Typography>
                                 </Fragment>

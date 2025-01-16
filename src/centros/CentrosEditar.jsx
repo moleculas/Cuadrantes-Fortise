@@ -235,6 +235,7 @@ const CentrosEditar = forwardRef((props, ref) => {
         iban: '',
         activoNumCuenta: false,
         gestionEspSF: false,
+        facturar: true
     });
     const lengthLabelServicio = {
         3: 120,
@@ -306,7 +307,7 @@ const CentrosEditar = forwardRef((props, ref) => {
     }, [exitoEliminarCentro]);
 
     useEffect(() => {
-        if (centroAEditar.categoria.categoria.length > 0) {
+        if (centroAEditar.categoria.categoria.length > 0) {            
             let arrayAAnadir = [];
             for (let i = 0; i < centroAEditar.categoria.categoria.length; i++) {
                 let objAAnadir = {
@@ -345,7 +346,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                 diaPago: centroAEditar.diaPago || '',
                 iban: centroAEditar.iban || '',
                 activoNumCuenta: centroAEditar.activoNumCuenta === 'si' ? true : false,
-                gestionEspSF: centroAEditar.serviciosFijos.gestionEspSF || false
+                gestionEspSF: centroAEditar.serviciosFijos.gestionEspSF || false,
+                facturar: centroAEditar.facturar === 'si' ? true : false,
             });
             if (centroAEditar.estado === 'baja') {
                 setStateSwitchEstadoEdicion(true);
@@ -567,19 +569,13 @@ const CentrosEditar = forwardRef((props, ref) => {
         dispatch(activarDesactivarActualizarCentroAccion(false));
     };
 
-    const handleChangeFormEdicionGenerales = (prop) => (e) => {
-        if (prop === "activoNumCuenta") {
+    const handleChangeFormEdicionGenerales = (prop) => (e) => {   
+        if (prop === "activoNumCuenta" || prop === "gestionEspSF" || prop === "facturar") {
             setValuesFormEdicionGenerales({ ...valuesFormEdicionGenerales, [prop]: e.target.checked });
             dispatch(registrarIntervencionAccion(false));
             dispatch(activarDesactivarActualizarCentroAccion(false));
             return;
         };
-        if (prop === "gestionEspSF") {
-            setValuesFormEdicionGenerales({ ...valuesFormEdicionGenerales, [prop]: e.target.checked });
-            dispatch(registrarIntervencionAccion(false));
-            dispatch(activarDesactivarActualizarCentroAccion(false));
-            return;
-        };        
         setValuesFormEdicionGenerales({ ...valuesFormEdicionGenerales, [prop]: e.target.value });
         dispatch(registrarIntervencionAccion(false));
         dispatch(activarDesactivarActualizarCentroAccion(false));
@@ -783,7 +779,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         horario: values.horario || null,
                                         servicios_fijos: values.servicios || null,
                                         trabajadores: values.trabajadores || null,
-                                        festivos: valuesFormEdicion.festivos || null
+                                        festivos: valuesFormEdicion.festivos || null,
+                                        facturar: valuesFormEdicionGenerales.facturar ? 'si' : 'no'
                                     };
                                     centroDefinitivoAGuardar = { ...centroAGuardar };
                                     objCategorias = {
@@ -885,7 +882,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         horario: values.horario || null,
                                         servicios_fijos: values.servicios || null,
                                         trabajadores: values.trabajadores || null,
-                                        festivos: valuesFormEdicion.festivos || null
+                                        festivos: valuesFormEdicion.festivos || null,
+                                        facturar: valuesFormEdicionGenerales.facturar ? 'si' : 'no'
                                     };
                                     let arrayCuadrantes = [...numeroCuadrantesEdicion];
                                     arrayCuadrantes.forEach((cuadrante, index) => {
@@ -1053,6 +1051,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                 iban: '',
                 activoNumCuenta: false,
                 gestionEspSF: false,
+                facturar: true
             });
             setNumeroCuadrantesEdicion([{ value: 1, cuadrante: null, guardado: false }]);
             setCuadranteEnUsoEdicion(1);
@@ -1529,7 +1528,7 @@ const CentrosEditar = forwardRef((props, ref) => {
 
     return (
         <div>
-            {/* {console.log(centroAEditar)} */}
+            {/* {console.log(valuesFormEdicionGenerales)} */}
             <Backdrop className={classes.loading} open={openLoading}>
                 <CircularProgress color="inherit" />
             </Backdrop>
@@ -2365,6 +2364,27 @@ const CentrosEditar = forwardRef((props, ref) => {
                                             onChange={handleChangeFormEdicion('observaciones')}
                                             disabled={disabledItem}
                                         />
+                                        <Box
+                                            m={0.5}
+                                            color="secondary.contrastText"
+                                            className={valuesFormEdicionGenerales.estado === 'baja' ? clsx(classes.fondoBaja, classes.boxStl2, classes.mb20) : clsx(classes.fondoAlta, classes.boxStl2, classes.mb20)}
+                                        >
+                                            Facturar
+                                        </Box>
+                                        <Box className={disabledItem ? classes.boxChekinSinHover : classes.boxChekin}>
+                                            <FormControlLabel
+                                                control={
+                                                    <Checkbox
+                                                        checked={valuesFormEdicionGenerales.facturar || false}
+                                                        onChange={handleChangeFormEdicionGenerales('facturar')}
+                                                        name="checkedFacturar-edicion"
+                                                        color="secondary"
+                                                        disabled={disabledItem}
+                                                    />
+                                                }
+                                                label={<Typography className={classes.colorText} style={{ fontSize: '0.9rem' }}>Facturar cuadrante por defecto.</Typography>}
+                                            />
+                                        </Box>
                                     </Grid>
                                     <Grid item lg={6} sm={6} xs={12}>
                                         <Box

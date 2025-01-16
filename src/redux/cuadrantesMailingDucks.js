@@ -116,7 +116,7 @@ const formatNumerics = (arr) => {
 };
 
 function gestionarFechaDePago(diaPago, mes, anyo, formaDePago) {
-    const forma = formasDePago.find(fp => fp.value === formaDePago);
+    const forma = formasDePago.find(fp => fp.value === formaDePago); 
     //let fecha = new Date(anyo, mes - 1, diaPago);
     //modificador: corrector venciments
     let fecha = new Date(anyo, mes, diaPago);       
