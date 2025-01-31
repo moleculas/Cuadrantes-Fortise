@@ -16,7 +16,7 @@ const actualizarObjetoResultante = (objeto, propiedad, servicio) => {
 
 export const existePrefixSF = (servicio) => {
     const activoKey = Object.keys(servicio).find(key => key.startsWith('activo_'));
-    const propiedad = activoKey.split('_')[1];;
+    const propiedad = activoKey?.split('_')[1];
     const existePrefix = tiposServicioFijo.some(servicio => servicio.prefix === propiedad);
     return { propiedad, existePrefix }
 };

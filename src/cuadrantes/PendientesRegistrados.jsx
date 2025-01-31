@@ -102,7 +102,7 @@ const PendientesRegistrados = (props) => {
     }, []);
 
     useEffect(() => {
-        if (cuadrantesRegistradosArray.length > 0) {
+        if (cuadrantesRegistradosArray.length > 0) {      
             selectNoneChecked();
             let cuadrantes = [];
             let nombreSplitted;

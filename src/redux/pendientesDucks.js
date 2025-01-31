@@ -69,11 +69,11 @@ export const gestionaCuadrantesAccion = () => (dispatch, getState) => {
     const { arrayCentros } = getState().variablesCentros;
     let contadorPendientes = 0, contadorRegistrados = 0, contadorFacturados = 0, contadorBajas = 0;
     arrayCentros.forEach(centro => {
-        const cuadranteEncontrado = arrayCuadantes.find(cuadrante => {
-            //if (cuadrante && cuadrante.total && centro.estado !== "baja") { //modificador: llistar quadrants de baixa
-            if (cuadrante && cuadrante.total) {
-                const totalDeserializado = parse(cuadrante.total);
-                if (totalDeserializado.nombreCentro === centro.nombre && totalDeserializado?.subNombreCentro === centro?.sub_nombre) {
+        const cuadranteEncontrado = arrayCuadantes.find((cuadrante) => {
+            //if (cuadrante && cuadrante.total && centro.estado !== "baja") { //modificador: llistar quadrants de baixa         
+            if (cuadrante && cuadrante.total) {           
+                const totalDeserializado = parse(cuadrante.total);      
+                if (totalDeserializado.nombreCentro === centro.nombre && totalDeserializado?.subNombreCentro === centro?.sub_nombre) {                                    
                     return cuadrante;
                 }
             }
@@ -130,7 +130,7 @@ export const obtenerCuadrantesAccion = (objeto, mes) => async (dispatch, getStat
             headers: {
                 "Content-Type": "multipart/form-data"
             }
-        });
+        });    
         dispatch({
             type: OBTENER_CUADRANTES,
             payload: {

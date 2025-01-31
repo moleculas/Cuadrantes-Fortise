@@ -59,6 +59,8 @@ nvm use 18.14.2
 -a cuadrantesFacturacionDucks.js
 -agefir servei a funció export const generaInformacionCuadrantesAccion
 
+//Compte amb els centres de baixa si el nom és igal que el centre de alta perquè eren 2 quadrants en un mateix centre: (Ex: ALUMINIOS BARCELONA, S.L.) s'ha
+de posar un identificador que els diferenciï perquè sinó sortirá duplicat a cuadrantes pendientes
 
 
 

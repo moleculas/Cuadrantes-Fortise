@@ -1642,7 +1642,7 @@ export const handleChangeFormConfiguracionServiciosFijosAccion = (tipo, prop, ev
         }
         dispatch(setItemEditandoServiciosFijosAccion({ switch: losEstados, servicios: losServicios }));
     } else if (tipo === "input") {
-        if (IsNumeric(event.target.value)) {
+        if (IsNumeric(event.target.value)) {            
             losServicios[prop] = event.target.value;
             dispatch(setItemEditandoServiciosFijosAccion({ ...itemEditandoServiciosFijos, servicios: losServicios }));
         };
@@ -2060,7 +2060,7 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
     if (tipoServicioFijo.some(({ prefix }) =>
         itemEditandoServiciosFijos.switch[prefix] &&
         !itemEditandoServiciosFijos.servicios[`int_${prefix}`] &&
-        !itemEditandoServiciosFijos.servicios[`precioHora_${prefix}`]
+        (!itemEditandoServiciosFijos.servicios[`precioHora_${prefix}`] || itemEditandoServiciosFijos.servicios[`precioHora_${prefix}`] === "0") //modificador: parche evitar serveis a 0 que peta
     )) {
         dispatch(setAlertaAccion({
             abierto: true,
@@ -2068,7 +2068,7 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
             tipo: 'error'
         }));
         return;
-    }
+    }   
     valoresComputoPreciosHoraFijos = !tipoServicioFijo.some(({ prefix }) =>
         itemEditandoServiciosFijos.servicios[`precioHora_${prefix}`]
     );
