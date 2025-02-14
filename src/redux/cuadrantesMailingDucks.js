@@ -138,7 +138,8 @@ const decodificadorItemsFactura = (objetoTotal, anyo, mes) => (dispatch, getStat
         poblacion: objetoTotal.poblacion,
         provincia: objetoTotal.provincia,
         codigo: objetoTotal.codigo,
-        numero: `F${objetoTotal.procesado.numF.toString().padStart(5, '0')}-${anyo.toString().slice(-2)}`,
+        //numero: `F${objetoTotal.procesado.numF.toString().padStart(5, '0')}-${anyo.toString().slice(-2)}`,
+        numero: `${objetoTotal.procesado.numF.toString().padStart(5, '0')}`,
         formaPago: (formasDePago.find(item => item.value === objetoTotal.formaPago) || {}).label,
         nif: objetoTotal.nif,
         lineas: arrayElementosFormateados,
@@ -168,13 +169,13 @@ export const gestionarMailingIndividualAccion = (objetoCuadrante) => async (disp
         const blob = await myPdf.toBlob();
         //modificador: check per test 
         // if (blob) {
-        //     const file = new File([blob], `Recibo-${objetoCuadrante.nombre}.pdf`, { type: 'application/pdf' });
+        //     const file = new File([blob], `Factura 1-${objetoCuadrante.numero}.pdf`, { type: 'application/pdf' });
         //     const fileURL = URL.createObjectURL(file);
         //     const pdfWindow = window.open();
         //     pdfWindow.location.href = fileURL;
         // }
         if (blob) {           
-            let file = new File([blob], `${objetoFacturaPDF.numero}.pdf`, { type: 'application/pdf' });
+            let file = new File([blob], `Factura 1-${objetoFacturaPDF.numero}.pdf`, { type: 'application/pdf' });
             await dispatch(handleClickEnviarMailAccion(objetoFacturaPDF.mail, file, mes, anyo, true, objetoCuadrante, false));
             objetoFacturaPDF.mail2 && (await dispatch(handleClickEnviarMailAccion(objetoFacturaPDF.mail2, file, mes, anyo, true, objetoCuadrante, true)));
         }
@@ -401,7 +402,7 @@ export const gestionarMailingLoteAccion = (arrayCuadrantes, anyo, mes) => async 
             myPdf.updateContainer(element);
             const blob = await myPdf.toBlob();
             if (blob) {
-                const file = new File([blob], `${objetoFacturaPDF.numero}.pdf`, { type: 'application/pdf' });
+                const file = new File([blob], `Factura 1-${objetoFacturaPDF.numero}.pdf`, { type: 'application/pdf' });
                 await sendEmailWithRetry(objetoFacturaPDF.mail, file, mes, anyo, objetoCuadrante, dispatch, false);
                 dispatch(incrementProcessedEmails());
                 if (objetoFacturaPDF.mail2) {   
