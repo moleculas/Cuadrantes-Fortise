@@ -1154,7 +1154,7 @@ export const handleChangeFestivoDiaAccion = (postRef, index, diaSemana, event, t
             objetoBuffer.tipo = 0;
             arrayBuffer[cuadranteEnUsoCuadrantes - 1][indexABorrar] = objetoBuffer;
         };
-    };    
+    };
     const contadorDias = arrayBuffer[cuadranteEnUsoCuadrantes - 1].filter(festivo => festivo.activo).length;
     if (losDiasDelMes.length === contadorDias) {
         dispatch(setMesConFestivosCompletoAccion(true));
@@ -1642,7 +1642,7 @@ export const handleChangeFormConfiguracionServiciosFijosAccion = (tipo, prop, ev
         }
         dispatch(setItemEditandoServiciosFijosAccion({ switch: losEstados, servicios: losServicios }));
     } else if (tipo === "input") {
-        if (IsNumeric(event.target.value)) {            
+        if (IsNumeric(event.target.value)) {
             losServicios[prop] = event.target.value;
             dispatch(setItemEditandoServiciosFijosAccion({ ...itemEditandoServiciosFijos, servicios: losServicios }));
         };
@@ -2068,7 +2068,7 @@ export const handleRegistrarCambioEnCasillaServiciosFijosAccion = (scrollable, c
             tipo: 'error'
         }));
         return;
-    }   
+    }
     valoresComputoPreciosHoraFijos = !tipoServicioFijo.some(({ prefix }) =>
         itemEditandoServiciosFijos.servicios[`precioHora_${prefix}`]
     );
@@ -2239,7 +2239,9 @@ export const handleRegistrarCambioEnCasillaConfiguracionAccion = (scrollable, cl
     if (
         (itemEditandoConfiguracion.computo === 1 && !itemEditandoConfiguracion.mensualPactado) ||
         (itemEditandoConfiguracion.computo === 2 && !algunPrecioPresente) ||
-        (itemEditandoConfiguracion.computo === 3 && (todosPreciosFaltan || !itemEditandoConfiguracion.mensualPactado))
+        (itemEditandoConfiguracion.computo === 3 && (
+            (!itemEditandoConfiguracion.mensualPactado && todosPreciosFaltan && !algunPrecioPresente) 
+        ))
     ) {
         dispatch(setAlertaAccion({
             abierto: true,
