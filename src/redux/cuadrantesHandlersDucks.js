@@ -1609,7 +1609,7 @@ export const handleChangeFormConfiguracionCuadranteAccion = (prop, event) => (di
         objetoFestivos = { ...itemEditandoConfiguracion.festivos };
         objetoFestivos.tipo = event.target.value;
         dispatch(setItemEditandoConfiguracionAccion({ ...itemEditandoConfiguracion, festivos: objetoFestivos }));
-    };
+    };   
     if (prop === "seqSemSiNo") {
         dispatch(setItemEditandoConfiguracionAccion({
             ...itemEditandoConfiguracion,
@@ -2292,7 +2292,7 @@ export const handleRegistrarCambioEnCasillaConfiguracionAccion = (scrollable, cl
         precioHora_L2: itemEditandoConfiguracion.precioHora_L2 ? parseFloat(itemEditandoConfiguracion.precioHora_L2) : null,
         precioHora_F: itemEditandoConfiguracion.precioHora_F ? parseFloat(itemEditandoConfiguracion.precioHora_F) : null,
         seqSemSiNo: itemEditandoConfiguracion.seqSemSiNo ? itemEditandoConfiguracion.seqSemSiNo : null
-    };
+    };  
     elArrayDatosInforme[cuadranteEnUsoCuadrantes - 1] = elObjetoDatosInforme;
     const losDatosInforme = {
         ...objetoCuadrante.datosInforme,

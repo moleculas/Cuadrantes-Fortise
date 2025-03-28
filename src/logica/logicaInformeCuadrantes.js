@@ -56,9 +56,15 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
     const informe = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1];
     const cantidadMensualPactadoInicial = parseFloat(informe?.mensualPactadoInicial);
     const cantidadMensualPactado = parseFloat(informe?.mensualPactado) || null;
+    const cantidadPrecioHoraTotal = parseFloat(informe?.precioHoraTotal) || null;
     //modificador: correcció error canvis en configuració
-    const esMensualPactado = (informe.computo === 1 || informe.computo === 3) &&
-        (cambioConf ? cantidadMensualPactado >= 0 : cantidadMensualPactadoInicial >= 0);
+    //modificador 2: correcció de cantidadMensualPactado >= 0 a (cantidadMensualPactado >= 0 && cantidadPrecioHoraTotal === null) perquè les gestiones especial de horas a precio/hora donàven error
+
+    const esMensualPactado = (informe.computo === 1 || informe.computo === 3)
+        ? (cambioConf
+            ? (cantidadMensualPactado >= 0 && cantidadPrecioHoraTotal === null)
+            : (cantidadMensualPactadoInicial >= 0))
+        : false;
     const arrayResultante = [];
     let elTipoServicio;
     let sumatorioTotalHorasVariacion = 0;
@@ -239,7 +245,7 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
             const totalHorasInicial = (totalHorasInicialTra || 0) + (totalHorasInicialSup || 0) + sumatorioTotalHorasVariacion;
             const condicion1 = cuadranteRegistrado === 'no' && !numeroCuadrantesCuadrantes[cuadranteEnUsoCuadrantes - 1].revisado;
             const condicion2 = cuadranteRegistrado === 'si' || (cuadranteRegistrado === 'no' && numeroCuadrantesCuadrantes[cuadranteEnUsoCuadrantes - 1].revisado)
-            const retornaPreciosHora = (proporcion, condicion) => {                
+            const retornaPreciosHora = (proporcion, condicion) => {
                 return tipoServicio.reduce((acc, curr) => ({
                     ...acc,
                     [`elPrecioHora_${curr.prefix}`]:
@@ -293,11 +299,11 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                         proporcion = condicion1
                             ? cantidadMensualPactadoInicial /
                             totalHorasGeneral
-                            : condicion2 ? informe.proporcion : null;                            
+                            : condicion2 ? informe.proporcion : null;
                     };
                     objPreciosHora = condicion1
                         ? retornaPreciosHora(proporcion, "cnd1")
-                        : condicion2 ? retornaPreciosHora(proporcion, "cnd2") : null;                      
+                        : condicion2 ? retornaPreciosHora(proporcion, "cnd2") : null;
                     totalMensualPactado = condicion1
                         ? tipoServicio.reduce(
                             (total, servicio) =>
@@ -336,7 +342,7 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
                 }), {}),
             };
             dispatch(setItemEditandoConfiguracionAccion(objetoDatosCuadrante));
-            cambioSecuenciaSemanas.gestion && (dispatch(setCambioSecuenciaSemanasAccion({ inicial: false, gestion: false })));           
+            cambioSecuenciaSemanas.gestion && (dispatch(setCambioSecuenciaSemanasAccion({ inicial: false, gestion: false })));
         };
         if (cuadranteSiIniciado) {
             const condicion1 = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].bloqueado === 'no';
@@ -399,7 +405,7 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
             const objetoDatosCuadrante = {
                 ...itemEditandoConfiguracion,
                 mensualPactado: totalMensualPactado
-            };            
+            };
             dispatch(setItemEditandoConfiguracionAccion(objetoDatosCuadrante));
         };
     } else {

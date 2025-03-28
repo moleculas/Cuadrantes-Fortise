@@ -49,6 +49,7 @@ import {
 } from '../../logica/logicaGestionCuadrantes';
 import { gestionarMailingIndividualAccion } from '../../redux/cuadrantesMailingDucks';
 import { obtenerNumeracionAccion } from '../../redux/appDucks';
+import { setAlertaAccion } from '../../redux/cuadrantesSettersDucks';
 
 //estilos
 import Clases from "../../clases";
@@ -126,6 +127,14 @@ const Menu = () => {
             const numRecibo = objetoCuadrante.total.procesado.numR || await dispatch(obtenerNumeracionAccion('numero_recibo'));
             if (!numRecibo) {
                 console.error('Error: No se pudo obtener el número de recibo');
+                return;
+            }
+            if (objetoCuadrante.datosInforme.datosGestionEsp.total === "0.00") {
+                dispatch(setAlertaAccion({
+                    abierto: true,
+                    mensaje: "No es posible emitir un recibo con cantidad total a 0.00€.",
+                    tipo: 'error'
+                }));
                 return;
             }
             dispatch(gestionarDocumentosCuadranteAccion('recibo', numRecibo));
@@ -243,11 +252,11 @@ const Menu = () => {
                                 //modificador: No facturar
                                 disabled={
                                     !objetoCuadrante.datosCuadrante?.facturar
-                                      ? objetoCuadrante.estado === 'facturado' && disabledItemBotonActualizar
-                                        ? false
-                                        : true
-                                      : objetoCuadrante.datosCuadrante.facturar === "no"
-                                  }
+                                        ? objetoCuadrante.estado === 'facturado' && disabledItemBotonActualizar
+                                            ? false
+                                            : true
+                                        : objetoCuadrante.datosCuadrante.facturar === "no"
+                                }
                             >
                                 <ListItemText primary={((objetoCentro.nombre !== '' && objetoCentro?.horario?.horario?.some(item => item?.computo === 3)) || (objetoCentro.nombre !== '' && objetoCentro.serviciosFijos.gestionEspSF)) ? "Generar Recibo" : "Generar Archivos"} />
                                 {openFacturacionInterior ? <ExpandLess /> : <ExpandMore />}

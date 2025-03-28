@@ -1947,8 +1947,8 @@ const finalizaRegistroCuadrante = (
     losDatosInforme = {
         ...losDatosInforme,
         datosGestionEsp: null
-    };
-    if (losDatosInforme.tocaFacturar.valor === 'no' && losDatosInforme.tocaFacturar.razon === 'gest' && source === 'informe') {
+    };     
+    if (losDatosInforme.tocaFacturar.valor === 'no' && (losDatosInforme.tocaFacturar.razon === 'gest' || losDatosInforme.tocaFacturar.razon === 'a0') && source === 'informe') {    
         losDatosInforme = {
             ...losDatosInforme,
             datosGestionEsp: {
