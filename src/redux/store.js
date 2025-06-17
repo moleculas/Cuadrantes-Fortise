@@ -18,6 +18,7 @@ import cuadrantesHandlersReducer from './cuadrantesHandlersDucks';
 import cuadrantesFacturacionReducer from './cuadrantesFacturacionDucks';
 import cuadrantesMailingReducer from './cuadrantesMailingDucks';
 import horasTrabajadoresReducer from './horasTrabajadoresDucks';
+import cuadrantesRemesasReducer from './cuadrantesRemesasDucks';
 
 const rootReducer = combineReducers({
     variablesCentros: centrosReducer,
@@ -34,7 +35,8 @@ const rootReducer = combineReducers({
     variablesCuadrantesHandlers: cuadrantesHandlersReducer,
     variablesCuadrantesFacturacion: cuadrantesFacturacionReducer,
     variablesCuadrantesMailing: cuadrantesMailingReducer,
-    variablesHorasTrabajadores: horasTrabajadoresReducer
+    variablesHorasTrabajadores: horasTrabajadoresReducer,
+    variablesCuadrantesRemesas: cuadrantesRemesasReducer
 })
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;

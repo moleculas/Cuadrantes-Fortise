@@ -20,6 +20,7 @@ import Bajas from '../comun/Bajas';
 import GraficoCuadrantes from './graficos/GraficoCuadrantes';
 import PendientesRegistrados from './PendientesRegistrados';
 import PendientesFacturados from './PendientesFacturados';
+import PendientesRemesas from './PendientesRemesas';
 import CustomSnack from '../comun/CustomSnack';
 
 //estilos
@@ -116,12 +117,12 @@ const PantallaCuadrantes = () => {
 
     useEffect(() => {
         dispatch(vaciarDatosPendientesAccion());
-        if (finalizandoLoteEstado) {  
+        if (finalizandoLoteEstado) {
             dispatch(forzarRecargaGraficosCuadrantesAccion(false));
         }
     }, [calendarioAGestionar, finalizandoLoteEstado]);
 
-    useEffect(() => {       
+    useEffect(() => {
         if (listadoCentros.length > 0 && finalizandoLoteEstado) {
             if (cuadrantesPendientesArray.length === 0) {
                 dispatch(finalizarArchivosXLSLoteAccion(false));
@@ -223,20 +224,25 @@ const PantallaCuadrantes = () => {
                                 <Tooltip title={'Cuadrantes del mes de ' + monthLet + ' facturados'} placement="top-start" arrow>
                                     <Tab label={'Facturados'} {...a11yProps(2)} style={{ paddingBottom: 10 }} />
                                 </Tooltip>
+                                <Tooltip title={'Cuadrantes del mes de ' + monthLet + ' para remesa'} placement="top-start" arrow>
+                                    <Tab label={'Remesas'} {...a11yProps(3)} style={{ paddingBottom: 10 }} />
+                                </Tooltip>
                             </Tabs>
                             <Box className={classes.alignRight}>
-                                <Avatar
-                                    className={clsx(classes.small3, valueTab === 0 ? classes.red : valueTab === 1 ? classes.orange : classes.green)}
-                                    style={{ marginRight: 8, marginTop: 3 }}
-                                >
-                                    <Typography variant='body2'>{
-                                        valueTab === 0 ?
-                                            (numeroCuadrantesPendientes ? numeroCuadrantesPendientes : 0) :
-                                            valueTab === 1 ?
-                                                (numeroCuadrantesRegistrados ? numeroCuadrantesRegistrados : 0) :
-                                                (numeroCuadrantesFacturados ? numeroCuadrantesFacturados : 0)
-                                    }</Typography>
-                                </Avatar>
+                                {(valueTab !== 3) && (
+                                    <Avatar
+                                        className={clsx(classes.small3, valueTab === 0 ? classes.red : valueTab === 1 ? classes.orange : classes.green)}
+                                        style={{ marginRight: 8, marginTop: 3 }}
+                                    >
+                                        <Typography variant='body2'>{
+                                            valueTab === 0 ?
+                                                (numeroCuadrantesPendientes ? numeroCuadrantesPendientes : 0) :
+                                                valueTab === 1 ?
+                                                    (numeroCuadrantesRegistrados ? numeroCuadrantesRegistrados : 0) :
+                                                    (numeroCuadrantesFacturados ? numeroCuadrantesFacturados : 0)
+                                        }</Typography>
+                                    </Avatar>
+                                )}
                                 {(valueTab === 0 || valueTab === 1) && (
                                     <Tooltip title={valueTab === 0 ? 'Crear Excel listado Cuadrantes PENDIENTES ' + monthLet : 'Crear Excel listado Cuadrantes REGISTRADOS ' + monthLet} placement="top-start" arrow >
                                         <Box
@@ -325,6 +331,26 @@ const PantallaCuadrantes = () => {
                                 >
                                     <Fragment>
                                         <PendientesFacturados prWidthContenedores={widthContenedores} prOpenLoading={openLoading} prMes={monthLet} />
+                                    </Fragment>
+                                </Grid>
+                            </Paper>
+                        </TabPanel>
+                        <TabPanel value={valueTab} index={3}>
+                            <Paper
+                                elevation={1}
+                                style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra, marginTop: -20, marginLeft: -24, marginRight: -24 }}
+                            >
+                                <Grid
+                                    spacing={1}
+                                    container
+                                    direction="column"
+                                    justifycontent="flex-start"
+                                    alignItems="flex-start"
+                                    p={0}
+                                    style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra }}
+                                >
+                                    <Fragment>
+                                        <PendientesRemesas prWidthContenedores={widthContenedores} prOpenLoading={openLoading} prMes={monthLet} />
                                     </Fragment>
                                 </Grid>
                             </Paper>

@@ -258,13 +258,13 @@ const Clases = makeStyles((theme) => ({
         cursor: 'default',
         pointerEvents: 'none',
         padding: 9
-    },   
+    },
     casillaFestivoCierreSinComputoActivo: {
         backgroundColor: `${deepPurple[100]} !important`,
         color: '#78909c',
         cursor: 'pointer',
         padding: 9
-    },     
+    },
     casillaBaja: {
         backgroundColor: `${amber[300]} !important`,
         color: '#78909c',
@@ -293,6 +293,10 @@ const Clases = makeStyles((theme) => ({
     suplente: {
         backgroundColor: `${blueGrey[200]} !important`,
         color: 'white',
+    },
+    remesa: {
+        backgroundColor: `${blue[300]} !important`,
+        color: 'white'
     },
     suplenteVacio: {
         backgroundColor: `${red[100]} !important`,
@@ -700,6 +704,34 @@ const Clases = makeStyles((theme) => ({
             backgroundColor: `${blue[100]} !important`,
         },
     },
+    casillaRemesas: {
+        cursor: 'pointer',
+        backgroundColor: `${blue[50]} !important`,
+        marginBottom: 5,
+        marginRight: 10,
+        paddingRight: 10,
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        "&:hover": {
+            backgroundColor: `${blue[100]} !important`,
+        },
+    },
+     casillaRemesasRemesado: {
+        cursor: 'pointer',
+        backgroundColor: `${grey[50]} !important`,
+        marginBottom: 5,
+        marginRight: 10,
+        paddingRight: 10,
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        "&:hover": {
+            backgroundColor: `${grey[100]} !important`,
+        },
+    },
     red: {
         color: theme.palette.getContrastText(red[500]),
         backgroundColor: red[500],
@@ -804,10 +836,6 @@ const Clases = makeStyles((theme) => ({
     },
     colorTextNegre: {
         color: 'rgba(0, 0, 0, 0.87)',
-    },
-    tabsStl: {
-        minHeight: 40,
-        maxHeight: 40
     },
     boxStl: {
         minHeight: 40,
@@ -1025,6 +1053,22 @@ const Clases = makeStyles((theme) => ({
         overflow: 'hidden',
         textOverflow: 'ellipsis',
         width: '100%',
+    },
+    tabsStl: {
+        '& .MuiTab-root': {
+            minWidth: 100,
+            marginLeft: theme.spacing(0, 5),
+            marginRight: theme.spacing(0, 5),
+            padding: theme.spacing(1, 2),
+        },
+        '& .MuiTab-root:first-child': {
+            marginLeft: 0,
+        },
+        '& .MuiTab-root:last-child': {
+            marginRight: 0,
+        },
+        minHeight: 40,
+        maxHeight: 40
     }
 }), { index: 1 });
 

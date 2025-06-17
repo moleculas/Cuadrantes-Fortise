@@ -89,7 +89,7 @@ export const cambiarEstadoCuadranteEnUsoRevisadoAccion = (estado) => (dispatch, 
 export const centroAGestionarInicioAccion = () => (dispatch, getState) => {
     const { objetoCentro } = getState().variablesCentros;
     const { cuadranteRegistrado, objetoCuadrante, calendarioAGestionar } = getState().variablesCuadrantes;
-    dispatch(setOpenLoadingAccion(true));    
+    dispatch(setOpenLoadingAccion(true));
     if (objetoCentro.nombre !== '') {
         if (cuadranteRegistrado === 'no') {
             dispatch(calculaNumeroCuadrantesAccion(objetoCentro.categoria.categoria.length));
@@ -191,7 +191,8 @@ export const centroAGestionarInicioAccion = () => (dispatch, getState) => {
                     mail2: objetoCentro.mail2 || null,
                     diaPago: objetoCentro.diaPago || null,
                     datosCuadrante: arrayHorario,
-                    facturar: objetoCentro.facturar
+                    facturar: objetoCentro.facturar,
+                    iban: objetoCentro.iban || null
                 },
                 datosServicios: {
                     objeto: 'serviciosFijos',
@@ -202,7 +203,8 @@ export const centroAGestionarInicioAccion = () => (dispatch, getState) => {
                     objeto: 'informe',
                     tocaFacturar: dispatch(calculaTocaFacturacionAccion()),
                     datosInforme: arrayInforme,
-                    mailEnviado: 'no'
+                    mailEnviado: 'no',
+                    remesado: 'no',
                 },
                 datosTrabajadoresIniciales: {
                     objeto: 'trabajadores',
@@ -226,9 +228,9 @@ const calculaTocaFacturacionAccion = () => (dispatch, getState) => {
     const horarioCentro = horario?.horario || [];
     let objetoRetornoCalculo = { valor: 'si', razon: '' };
     //modificador: No facturar
-    if(facturar === "no"){
+    if (facturar === "no") {
         objetoRetornoCalculo = { valor: 'no', razon: 'orig' };
-    }else if (tempPago === 'bimensual' && mes % 2 === 1) {
+    } else if (tempPago === 'bimensual' && mes % 2 === 1) {
         objetoRetornoCalculo = { valor: 'no', razon: 'temp' };
     } else if (tempPago === 'bimensual' && mes % 2 === 0) {
         if (!totalesPeriodicos.total) {
@@ -1036,32 +1038,32 @@ export const gestionaFestivosInicio = () => (dispatch, getState) => {
     if (cuadranteRegistrado === 'si') {
         const condicion1 = !numeroCuadrantesCuadrantes[cuadranteEnUsoCuadrantes - 1].revisado;
         const condicion2 = objetoCuadrante.datosBuffer.datosBuffer && objetoCuadrante.datosBuffer.datosBuffer.length > 0;
-        const condicion4 = bufferSwitchedDiasFestivosCuadrante.length > 0;        
+        const condicion4 = bufferSwitchedDiasFestivosCuadrante.length > 0;
         if (condicion1) {
             if (condicion2) {
-                if (condicion3) {              
+                if (condicion3) {
                     dispatch(setBufferSwitchedDiasFestivosCuadranteAccion(objetoCuadrante.datosBuffer.datosBuffer));
-                    const objFestivos = iterarFestivos(objetoCuadrante.datosBuffer.datosBuffer[cuadranteEnUsoCuadrantes - 1]);                  
+                    const objFestivos = iterarFestivos(objetoCuadrante.datosBuffer.datosBuffer[cuadranteEnUsoCuadrantes - 1]);
                     dispatch(setStateFestivoAccion(objFestivos));
-                } else {                    
+                } else {
                     const objFestivos = iterarFestivos(bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1]);
                     dispatch(setStateFestivoAccion(objFestivos));
                 };
-            } else {              
+            } else {
                 dispatch(configuraStateFestivoAccion());
             };
         } else {
-            if (condicion4) {              
+            if (condicion4) {
                 const objFestivos = iterarFestivos(bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1]);
                 dispatch(setStateFestivoAccion(objFestivos));
-            } else {              
+            } else {
                 dispatch(configuraStateFestivoAccion());
             };
         };
     } else if (cuadranteRegistrado === 'no') {
-        if (condicion3) {                  
+        if (condicion3) {
             dispatch(configuraStateFestivoAccion());
-        } else {            
+        } else {
             const objFestivos = iterarFestivos(bufferSwitchedDiasFestivosCuadrante[cuadranteEnUsoCuadrantes - 1]);
             dispatch(setStateFestivoAccion(objFestivos));
         };
@@ -1185,6 +1187,7 @@ const procesarDatosCuadrantePromesa = (index, noHayRegistro) => (dispatch, getSt
         excepcion: informeIn.excepcion,
         bloqueado: informeIn.bloqueado,
         mailEnviado: informeIn.mailEnviado,
+        remesado: informeIn.remesado,
         tipoRegistro: informeIn.tipoRegistro,
         ...(informeIn.mensualPactadoInicial ? {
             mensualPactado: parseFloat(informeIn.mensualPactado),
@@ -1253,8 +1256,8 @@ const procesarDatosCuadrantePromesa = (index, noHayRegistro) => (dispatch, getSt
             centro,
             procesado,
             horasTrabajadoresSF
-        );   
-        const hayTrabajadoresNull = arrayHorasTrabajadores.some(obj => obj.trabajadorId === 999);      
+        );
+        const hayTrabajadoresNull = arrayHorasTrabajadores.some(obj => obj.trabajadorId === 999);
         if (hayTrabajadoresNull) {
             return {
                 error: true
@@ -1266,7 +1269,7 @@ const procesarDatosCuadrantePromesa = (index, noHayRegistro) => (dispatch, getSt
                 ? procesoHorasTrabajadores.cuadrantesProcesados
                 : [...procesoHorasTrabajadores.cuadrantesProcesados, cuadranteEnUsoCuadrantes]
         }));
-    };    
+    };
     Promise.allSettled([
         dispatch(setTrabajadoresEnCuadranteAccion([])),
         dispatch(setSuplentesEnCuadranteAccion([])),
@@ -1313,21 +1316,21 @@ const procesarHorasTrabajadoresAccion = (
                     return acc;
                 }, {});
                 registroLimpio.cuadrante = cuadranteEnUsoCuadrantes;
-                registroLimpio.centro = centro;                
+                registroLimpio.centro = centro;
                 nuevosRegistros.push(registroLimpio);
             });
         }
-    });    
-    nuevosRegistros.push(...horasTrabajadoresSF);   
+    });
+    nuevosRegistros.push(...horasTrabajadoresSF);
     const aplicarReemplazoCondicional = (array) => {
         if (procesado.valor && procesado.cuadrante === cuadranteEnUsoCuadrantes) {
-            const registrosNoCoinciden = array.filter(registro => registro.cuadrante !== cuadranteEnUsoCuadrantes);            
+            const registrosNoCoinciden = array.filter(registro => registro.cuadrante !== cuadranteEnUsoCuadrantes);
             array.length = 0;
             array.push(...registrosNoCoinciden, ...nuevosRegistros);
-        } else {           
+        } else {
             array.push(...nuevosRegistros);
         }
-    };    
+    };
     aplicarReemplazoCondicional(horasTrabajadores);
     aplicarReemplazoCondicional(horasTrabajadoresSF);
     return horasTrabajadores;
@@ -1677,7 +1680,9 @@ const calculoTotales = (servicios, informes, horas) => (dispatch, getState) => {
         mail2: objetoCuadrante.datosCuadrante.mail2,
         diaPago: objetoCuadrante.datosCuadrante.diaPago,
         tocaFacturar: objetoCuadrante.datosInforme.tocaFacturar,
-        mailEnviado: objetoCuadrante.datosInforme.mailEnviado
+        mailEnviado: objetoCuadrante.datosInforme.mailEnviado,
+        remesado: objetoCuadrante.datosInforme.remesado,
+        iban: objetoCuadrante.datosCuadrante.iban
     };
     if (iteracionCompleja === "primera" || iteracionCompleja === "segunda") {
         for (let i = 0; i <= informes.length - 1; i++) {
@@ -1947,8 +1952,8 @@ const finalizaRegistroCuadrante = (
     losDatosInforme = {
         ...losDatosInforme,
         datosGestionEsp: null
-    };     
-    if (losDatosInforme.tocaFacturar.valor === 'no' && (losDatosInforme.tocaFacturar.razon === 'gest' || losDatosInforme.tocaFacturar.razon === 'a0') && source === 'informe') {    
+    };
+    if (losDatosInforme.tocaFacturar.valor === 'no' && (losDatosInforme.tocaFacturar.razon === 'gest' || losDatosInforme.tocaFacturar.razon === 'a0') && source === 'informe') {
         losDatosInforme = {
             ...losDatosInforme,
             datosGestionEsp: {
@@ -2007,7 +2012,7 @@ const finalizaRegistroCuadrante = (
             total: losDatosTotales
         }));
     };
-    if (cuadranteRegistrado === 'no') {     
+    if (cuadranteRegistrado === 'no') {
         dispatch(
             registrarCuadranteAccion(
                 'cuadrantes',

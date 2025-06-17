@@ -314,6 +314,17 @@ const Constantes = {
     ],
     MESES: meses,
     NUMERACIO_INSTRUCCIONS: numeracioInstruccions,
-    NUMERO_CUENTA_FORTISE: "ES96 2100 0804 3102 0076 4493"
+    NUMERO_CUENTA_FORTISE: "ES96 2100 0804 3102 0076 4493",
+    REMESAS: [
+        { value: '', label: 'Selecciona remesa...', special: '', numero: '' },
+        { value: '5B', label: 'Vto 05 BBVA', special: 'Vto 05', numero: '5' },
+        { value: '10C', label: 'Vto 10 La Caixa', special: 'Vto 10', numero: '10' },
+        { value: '15C', label: 'Vto 15 La Caixa', special: 'Vto 15', numero: '15' },
+        { value: '17B', label: 'Vto 17 BBVA', special: 'Vto 17', numero: '17' },
+        { value: '20C', label: 'Vto 20 La Caixa', special: 'Vto 20', numero: '20' },
+        { value: '25C', label: 'Vto 25 La Caixa', special: 'Vto 25', numero: '25' },
+        { value: '28B', label: 'Vto 28 BBVA', special: 'Vto 28', numero: '28' },
+        { value: '30C', label: 'Vto 30 La Caixa', special: 'Vto 30', numero: '30' }
+    ]
 };
 export default Constantes;

@@ -70,7 +70,7 @@ const HeaderInfIzq = () => {
                             format="MM/yyyy"
                             label="Mes a gestionar"
                             minDate={new Date('2021-1')}
-                            maxDate={new Date(dispatch(gestionaMaxDateCalendarAccion(5)))}
+                            maxDate={new Date(dispatch(gestionaMaxDateCalendarAccion(12)))} //modificador fo09052025 canvi a 12 mesos per mostrar tot l'any
                             value={valueDatePicker}
                             disabled={disableCargando}
                             onChange={(newValue) => {

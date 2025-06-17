@@ -101,7 +101,18 @@ const Configuracion = (props) => {
             entidad: '',
             oficina: '',
             digitosControl: '',
-            numeroCuenta: ''
+            numeroCuenta: '',
+            identificadorSepa: ''
+        },
+        cuenta2: {
+            iban: '',
+            bic: '',
+            nombreBanco: '',
+            entidad: '',
+            oficina: '',
+            digitosControl: '',
+            numeroCuenta: '',
+            identificadorSepa: ''
         }
     });
     const [valuesHerramientasParseador, setValuesHerramientasParseador] = useState({
@@ -187,8 +198,19 @@ const Configuracion = (props) => {
                     entidad: objetoConfiguracion.cuenta1.entidad,
                     oficina: objetoConfiguracion.cuenta1.oficina,
                     digitosControl: objetoConfiguracion.cuenta1.digitosControl,
-                    numeroCuenta: objetoConfiguracion.cuenta1.numeroCuenta
+                    numeroCuenta: objetoConfiguracion.cuenta1.numeroCuenta,
+                    identificadorSepa: objetoConfiguracion.cuenta1.identificadorSepa || ''
                 },
+                cuenta2: {
+                    iban: objetoConfiguracion.cuenta2?.iban || '',
+                    bic: objetoConfiguracion.cuenta2?.bic || '',
+                    nombreBanco: objetoConfiguracion.cuenta2?.nombreBanco || '',
+                    entidad: objetoConfiguracion.cuenta2?.entidad || '',
+                    oficina: objetoConfiguracion.cuenta2?.oficina || '',
+                    digitosControl: objetoConfiguracion.cuenta2?.digitosControl || '',
+                    numeroCuenta: objetoConfiguracion.cuenta2?.numeroCuenta || '',
+                    identificadorSepa: objetoConfiguracion.cuenta2?.identificadorSepa || ''
+                }
             })
         }
     }, [objetoConfiguracion]);
@@ -280,26 +302,33 @@ const Configuracion = (props) => {
         if (prop === "mensajeMailCentros") {
             setValuesFormConfiguracion({ ...valuesFormConfiguracion, [prop]: e.target.value });
         }
-        if (prop === "bic" || prop === "nombreBanco") {
-            let objetoCuenta = { ...valuesFormConfiguracion.cuenta1, [prop]: e.target.value };
-            setValuesFormConfiguracion({ ...valuesFormConfiguracion, cuenta1: objetoCuenta });
-        };
-        if (prop === "iban") {
-            const elIban = e.target.value;
-            const decEntidad = elIban.substr(4, 4);
-            const decOficina = elIban.substr(8, 4);
-            const decDigitosControl = elIban.substr(12, 2);
-            const decNumeroCuenta = elIban.substr(14, 10);
-            let objetoCuenta = {
-                ...valuesFormConfiguracion.cuenta1,
-                [prop]: e.target.value,
-                entidad: decEntidad,
-                oficina: decOficina,
-                digitosControl: decDigitosControl,
-                numeroCuenta: decNumeroCuenta
-            };
-            setValuesFormConfiguracion({ ...valuesFormConfiguracion, cuenta1: objetoCuenta });
-        };
+
+        // MODIFICAR PARA MANEJAR AMBAS CUENTAS
+        if (prop.startsWith('cuenta1_') || prop.startsWith('cuenta2_')) {
+            const [cuenta, campo] = prop.split('_');
+
+            if (campo === "iban") {
+                const elIban = e.target.value;
+                const decEntidad = elIban.substr(4, 4);
+                const decOficina = elIban.substr(8, 4);
+                const decDigitosControl = elIban.substr(12, 2);
+                const decNumeroCuenta = elIban.substr(14, 10);
+
+                let objetoCuenta = {
+                    ...valuesFormConfiguracion[cuenta],
+                    iban: e.target.value,
+                    entidad: decEntidad,
+                    oficina: decOficina,
+                    digitosControl: decDigitosControl,
+                    numeroCuenta: decNumeroCuenta
+                };
+                setValuesFormConfiguracion({ ...valuesFormConfiguracion, [cuenta]: objetoCuenta });
+            } else {
+                let objetoCuenta = { ...valuesFormConfiguracion[cuenta], [campo]: e.target.value };
+                setValuesFormConfiguracion({ ...valuesFormConfiguracion, [cuenta]: objetoCuenta });
+            }
+        }
+
         dispatch(activarDesactivarAccion(false));
         dispatch(registrarIntervencionAccion(false));
     };
@@ -340,13 +369,14 @@ const Configuracion = (props) => {
     };
 
     const procesarDatosConfiguracion = () => {
-        //comprobamos que no haya campos vacíos
+        //comprobamos que no haya campos vacíos (cuenta1 obligatoria, cuenta2 opcional)
         if (!valuesFormConfiguracion.precioHoraNormal ||
             !valuesFormConfiguracion.precioHoraExtra ||
             valuesFormConfiguracion.mensajeMailCentros === '' ||
             valuesFormConfiguracion.cuenta1.iban === '' ||
             valuesFormConfiguracion.cuenta1.bic === '' ||
-            valuesFormConfiguracion.cuenta1.nombreBanco === '') {
+            valuesFormConfiguracion.cuenta1.nombreBanco === '' ||
+            valuesFormConfiguracion.cuenta1.identificadorSepa === '') {
             setAlert({
                 mensaje: "Faltan datos por completar. Revisa el formulario.",
                 tipo: 'error'
@@ -354,14 +384,27 @@ const Configuracion = (props) => {
             setOpenSnack(true);
             return;
         };
+
+        // Validar IBAN cuenta1
         if (valuesFormConfiguracion.cuenta1.iban.length !== 24) {
             setAlert({
-                mensaje: "El formato del IBAN es incorrecto.",
+                mensaje: "El formato del IBAN de la cuenta 1 es incorrecto.",
                 tipo: 'error'
             })
             setOpenSnack(true);
             return;
         };
+
+        // Validar IBAN cuenta2 si está informada
+        if (valuesFormConfiguracion.cuenta2.iban && valuesFormConfiguracion.cuenta2.iban.length !== 24) {
+            setAlert({
+                mensaje: "El formato del IBAN de la cuenta 2 es incorrecto.",
+                tipo: 'error'
+            })
+            setOpenSnack(true);
+            return;
+        };
+
         const objetoConfiguracion = {
             precioHoraNormal: valuesFormConfiguracion.precioHoraNormal,
             precioHoraExtra: valuesFormConfiguracion.precioHoraExtra,
@@ -373,9 +416,21 @@ const Configuracion = (props) => {
                 entidad: valuesFormConfiguracion.cuenta1.entidad,
                 oficina: valuesFormConfiguracion.cuenta1.oficina,
                 digitosControl: valuesFormConfiguracion.cuenta1.digitosControl,
-                numeroCuenta: valuesFormConfiguracion.cuenta1.numeroCuenta
+                numeroCuenta: valuesFormConfiguracion.cuenta1.numeroCuenta,
+                identificadorSepa: valuesFormConfiguracion.cuenta1.identificadorSepa
+            },
+            cuenta2: { // AÑADIR CUENTA2
+                iban: valuesFormConfiguracion.cuenta2.iban,
+                bic: valuesFormConfiguracion.cuenta2.bic,
+                nombreBanco: valuesFormConfiguracion.cuenta2.nombreBanco,
+                entidad: valuesFormConfiguracion.cuenta2.entidad,
+                oficina: valuesFormConfiguracion.cuenta2.oficina,
+                digitosControl: valuesFormConfiguracion.cuenta2.digitosControl,
+                numeroCuenta: valuesFormConfiguracion.cuenta2.numeroCuenta,
+                identificadorSepa: valuesFormConfiguracion.cuenta2.identificadorSepa
             }
-        }
+        };
+
         //actualizamos
         const configuracionAGuardar = {
             datos_configuracion: JSON.stringify(objetoConfiguracion)
@@ -742,76 +797,116 @@ const Configuracion = (props) => {
                                 </Grid>
                             </TabPanel>
                             <TabPanel value={valueTab} index={3} className={classes.scrollable} style={{ height: heightScrollable }}>
-                                <Grid
-                                    container
-                                    direction="row"
-                                    justifycontent="flex-start"
-                                    alignItems="flex-start"
-                                    spacing={2}
-                                >
-                                    <Grid item lg={4} sm={4} xs={12}>
+                                <Grid container direction="row" justifycontent="flex-start" alignItems="flex-start" spacing={2}>
+                                    <Grid item lg={8} sm={8} xs={12}>
                                         <Box>
-                                            <Box
-                                                m={0.5}
-                                                bgcolor="secondary.light"
-                                                color="secondary.contrastText"
-                                                className={clsx(classes.boxStl2, classes.mb20)}
-                                            >
+                                            <Box m={0.5} bgcolor="secondary.light" color="secondary.contrastText" className={clsx(classes.boxStl2, classes.mb20)}>
                                                 Datos bancarios
                                             </Box>
-                                            <Box
-                                                m={0.5}
-                                                className={clsx(classes.mb25, classes.tituloSecundario)}
-                                            >
-                                                Cuenta corriente para ingresos
-                                            </Box>
-                                            <FormControl
-                                                variant="outlined"
-                                                className={classes.form}
-                                                size="small"
-                                            >
-                                                <InputLabel>Nombre del banco</InputLabel>
-                                                <OutlinedInput
-                                                    className={classes.mb15}
-                                                    fullWidth
-                                                    id="form-configuracion-hora-normal"
-                                                    value={valuesFormConfiguracion.cuenta1.nombreBanco || ''}
-                                                    onChange={handleChangeFormConfiguracion('nombreBanco')}
-                                                    labelWidth={135}
-                                                />
-                                            </FormControl>
-                                            <Grid container>
-                                                <Grid item xs={8}>
-                                                    <FormControl
-                                                        variant="outlined"
-                                                        className={classes.form}
-                                                        size="small"
-                                                    >
-                                                        <InputLabel>IBAN</InputLabel>
+
+                                            <Grid container spacing={2}>
+                                                {/* CUENTA 1 */}
+                                                <Grid item lg={6} sm={6} xs={12}>
+                                                    <Box m={0.5} className={clsx(classes.mb25, classes.tituloSecundario)}>
+                                                        Cuenta corriente 1 - Principal
+                                                    </Box>
+                                                    <FormControl variant="outlined" className={classes.form} size="small">
+                                                        <InputLabel>Nombre del banco</InputLabel>
                                                         <OutlinedInput
                                                             className={classes.mb15}
                                                             fullWidth
-                                                            id="form-configuracion-hora-normal"
-                                                            value={valuesFormConfiguracion.cuenta1.iban || ''}
-                                                            onChange={handleChangeFormConfiguracion('iban')}
-                                                            labelWidth={40}
+                                                            value={valuesFormConfiguracion.cuenta1.nombreBanco || ''}
+                                                            onChange={handleChangeFormConfiguracion('cuenta1_nombreBanco')}
+                                                            labelWidth={135}
+                                                        />
+                                                    </FormControl>
+                                                    <Grid container>
+                                                        <Grid item xs={8}>
+                                                            <FormControl variant="outlined" className={classes.form} size="small">
+                                                                <InputLabel>IBAN</InputLabel>
+                                                                <OutlinedInput
+                                                                    className={classes.mb15}
+                                                                    fullWidth
+                                                                    value={valuesFormConfiguracion.cuenta1.iban || ''}
+                                                                    onChange={handleChangeFormConfiguracion('cuenta1_iban')}
+                                                                    labelWidth={40}
+                                                                />
+                                                            </FormControl>
+                                                        </Grid>
+                                                        <Grid item xs={4}>
+                                                            <FormControl variant="outlined" className={classes.form} size="small">
+                                                                <InputLabel>BIC</InputLabel>
+                                                                <OutlinedInput
+                                                                    className={classes.mb15}
+                                                                    fullWidth
+                                                                    value={valuesFormConfiguracion.cuenta1.bic || ''}
+                                                                    onChange={handleChangeFormConfiguracion('cuenta1_bic')}
+                                                                    labelWidth={35}
+                                                                />
+                                                            </FormControl>
+                                                        </Grid>
+                                                    </Grid>
+                                                    <FormControl variant="outlined" className={classes.form} size="small">
+                                                        <InputLabel>Identificador SEPA</InputLabel>
+                                                        <OutlinedInput
+                                                            className={classes.mb15}
+                                                            fullWidth
+                                                            value={valuesFormConfiguracion.cuenta1.identificadorSepa || ''}
+                                                            onChange={handleChangeFormConfiguracion('cuenta1_identificadorSepa')}
+                                                            labelWidth={130}
                                                         />
                                                     </FormControl>
                                                 </Grid>
-                                                <Grid item xs={4}>
-                                                    <FormControl
-                                                        variant="outlined"
-                                                        className={classes.form}
-                                                        size="small"
-                                                    >
-                                                        <InputLabel>BIC</InputLabel>
+
+                                                {/* CUENTA 2 */}
+                                                <Grid item lg={6} sm={6} xs={12}>
+                                                    <Box m={0.5} className={clsx(classes.mb25, classes.tituloSecundario)}>
+                                                        Cuenta corriente 2 - Secundaria
+                                                    </Box>
+                                                    <FormControl variant="outlined" className={classes.form} size="small">
+                                                        <InputLabel>Nombre del banco</InputLabel>
                                                         <OutlinedInput
                                                             className={classes.mb15}
                                                             fullWidth
-                                                            id="form-configuracion-hora-normal"
-                                                            value={valuesFormConfiguracion.cuenta1.bic || ''}
-                                                            onChange={handleChangeFormConfiguracion('bic')}
-                                                            labelWidth={35}
+                                                            value={valuesFormConfiguracion.cuenta2.nombreBanco || ''}
+                                                            onChange={handleChangeFormConfiguracion('cuenta2_nombreBanco')}
+                                                            labelWidth={135}
+                                                        />
+                                                    </FormControl>
+                                                    <Grid container>
+                                                        <Grid item xs={8}>
+                                                            <FormControl variant="outlined" className={classes.form} size="small">
+                                                                <InputLabel>IBAN</InputLabel>
+                                                                <OutlinedInput
+                                                                    className={classes.mb15}
+                                                                    fullWidth
+                                                                    value={valuesFormConfiguracion.cuenta2.iban || ''}
+                                                                    onChange={handleChangeFormConfiguracion('cuenta2_iban')}
+                                                                    labelWidth={40}
+                                                                />
+                                                            </FormControl>
+                                                        </Grid>
+                                                        <Grid item xs={4}>
+                                                            <FormControl variant="outlined" className={classes.form} size="small">
+                                                                <InputLabel>BIC</InputLabel>
+                                                                <OutlinedInput
+                                                                    className={classes.mb15}
+                                                                    fullWidth
+                                                                    value={valuesFormConfiguracion.cuenta2.bic || ''}
+                                                                    onChange={handleChangeFormConfiguracion('cuenta2_bic')}
+                                                                    labelWidth={35}
+                                                                />
+                                                            </FormControl>
+                                                        </Grid>
+                                                    </Grid>
+                                                    <FormControl variant="outlined" className={classes.form} size="small">
+                                                        <InputLabel>Identificador SEPA</InputLabel>
+                                                        <OutlinedInput
+                                                            className={classes.mb15}
+                                                            fullWidth
+                                                            value={valuesFormConfiguracion.cuenta2.identificadorSepa || ''}
+                                                            onChange={handleChangeFormConfiguracion('cuenta2_identificadorSepa')}
+                                                            labelWidth={130}
                                                         />
                                                     </FormControl>
                                                 </Grid>
@@ -1145,7 +1240,7 @@ const Configuracion = (props) => {
                                                             secondary={
                                                                 <Fragment>
                                                                     <Typography component="span" variant="body2">1.- Implementada funcionalidad para gestionar bajas - altas trabajadores en un mismo día.</Typography>
-                                                                    <br />                                                                    
+                                                                    <br />
                                                                 </Fragment>
                                                             }
                                                         />
@@ -1156,7 +1251,38 @@ const Configuracion = (props) => {
                                                             secondary={
                                                                 <Fragment>
                                                                     <Typography component="span" variant="body2">1.- Implementada funcionalidad para añadir festivos personalizados a centros desde pantalla Centros y operativo en gestión de Cuadrantes.</Typography>
-                                                                    <br />                                                                    
+                                                                    <br />
+                                                                </Fragment>
+                                                            }
+                                                        />
+                                                    </ListItem>
+                                                    <ListItem>
+                                                        <ListItemText
+                                                            primary="V. 3.01 - 17/06/2025"
+                                                            secondary={
+                                                                <Fragment>
+                                                                    <Typography component="span" variant="body2">1.- Implementada funcionalidad completa para gestión de remesas bancarias SEPA en pantalla Cuadrantes.</Typography>
+                                                                    <br />
+                                                                    <Typography component="span" variant="body2">2.- Desarrollado componente PendientesRemesas para gestionar cuadrantes facturados con recibos domiciliados.</Typography>
+                                                                    <br />
+                                                                    <Typography component="span" variant="body2">3.- Implementada generación automática de archivos XML según normativa SEPA para remesas bancarias.</Typography>
+                                                                    <br />
+                                                                    <Typography component="span" variant="body2">4.- Añadida agrupación inteligente de cuadrantes por fecha de vencimiento con ajuste automático al siguiente mes si la fecha ya pasó.</Typography>
+                                                                    <br />
+                                                                    <Typography component="span" variant="body2">5.- Implementado filtrado automático por formas de pago (solo recibos domiciliados RE, R1, R2, R3).</Typography>
+                                                                    <br />
+                                                                    <Typography component="span" variant="body2">6.- Añadida funcionalidad para selección múltiple de cuadrantes con validación de IBAN.</Typography>
+                                                                    <br />
+                                                                    <Typography component="span" variant="body2">7.- Implementada descarga automática de archivos XML con pausas entre descargas múltiples.</Typography>
+                                                                    <br />
+                                                                    <Typography component="span" variant="body2">8.- Añadidos indicadores visuales para cuadrantes remesados (color verde e icono check).</Typography>
+                                                                    <br />
+                                                                    <Typography component="span" variant="body2">9.- Implementada actualización automática del estado remesado en base de datos tras procesamiento exitoso.</Typography>
+                                                                    <br />
+                                                                    <Typography component="span" variant="body2">10.- Añadida configuración de múltiples cuentas bancarias (BBVA/La Caixa) con identificadores SEPA en pantalla Configuración.</Typography>
+                                                                    <br />
+                                                                    <Typography component="span" variant="body2">11.- Integrada obtención dinámica de datos bancarios desde configuración para generación de remesas.</Typography>
+                                                                    <br />
                                                                 </Fragment>
                                                             }
                                                         />
