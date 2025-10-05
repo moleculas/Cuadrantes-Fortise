@@ -44,6 +44,7 @@ import InstruccionesTrabajadores from './InstruccionesTrabajadores';
 import InstruccionesVarios from './InstruccionesVarios';
 import InstruccionesControlHorario from './InstruccionesControlHorario';
 import InstruccionesServiciosFijos from './InstruccionesServiciosFijos';
+import InstruccionesRemesas from './InstruccionesRemesas';
 import CustomSnack from '../comun/CustomSnack';
 
 //estilos
@@ -128,6 +129,7 @@ const Configuracion = (props) => {
     const [openMenu4, setOpenMenu4] = useState(false);
     const [openMenu5, setOpenMenu5] = useState(false);
     const [openMenu6, setOpenMenu6] = useState(false);
+    const [openMenu7, setOpenMenu7] = useState(false);
 
     //useEffect
 
@@ -224,6 +226,7 @@ const Configuracion = (props) => {
         setOpenMenu4(false);
         setOpenMenu5(false);
         setOpenMenu6(false);
+        setOpenMenu7(false);
     };
 
     const handleClickMenuInstrucciones2 = () => {
@@ -233,6 +236,7 @@ const Configuracion = (props) => {
         setOpenMenu4(false);
         setOpenMenu5(false);
         setOpenMenu6(false);
+        setOpenMenu7(false);
     };
 
     const handleClickMenuInstrucciones3 = () => {
@@ -242,6 +246,7 @@ const Configuracion = (props) => {
         setOpenMenu4(false);
         setOpenMenu5(false);
         setOpenMenu6(false);
+        setOpenMenu7(false);
     };
 
     const handleClickMenuInstrucciones4 = () => {
@@ -251,6 +256,7 @@ const Configuracion = (props) => {
         setOpenMenu3(false);
         setOpenMenu5(false);
         setOpenMenu6(false);
+        setOpenMenu7(false);
     };
 
     const handleClickMenuInstrucciones5 = () => {
@@ -260,6 +266,7 @@ const Configuracion = (props) => {
         setOpenMenu3(false);
         setOpenMenu4(false);
         setOpenMenu6(false);
+        setOpenMenu7(false);
     };
 
     const handleClickMenuInstrucciones6 = () => {
@@ -269,6 +276,17 @@ const Configuracion = (props) => {
         setOpenMenu3(false);
         setOpenMenu4(false);
         setOpenMenu5(false);
+        setOpenMenu7(false);
+    };
+
+    const handleClickMenuInstrucciones7 = () => {
+        setOpenMenu7(!openMenu7);
+        setOpenMenu2(false);
+        setOpenMenu1(false);
+        setOpenMenu3(false);
+        setOpenMenu4(false);
+        setOpenMenu5(false);
+        setOpenMenu6(false);
     };
 
     const handleClickMenu = (e) => {
@@ -684,18 +702,47 @@ const Configuracion = (props) => {
                                                                     </ListItem>
                                                                 </List>
                                                             </Collapse>
+                                                            <ListItem button onClick={handleClickMenuInstrucciones7}>
+                                                                <ListItemText primary="Gestión Remesas" />
+                                                                {openMenu7 ? <ExpandLess /> : <ExpandMore />}
+                                                            </ListItem>
+                                                            <Collapse in={openMenu7} timeout="auto" unmountOnExit>
+                                                                <List component="div" disablePadding>
+                                                                    <ListItem button className={classes.nestedIns}>
+                                                                        <HashLink to={'#rem1'} scroll={(el) => el.scrollIntoView({ behavior: 'auto', block: 'end' })} className={classes.nestedInsLink}>
+                                                                            <ListItemText primary="Requisitos previos para remesar" />
+                                                                        </HashLink>
+                                                                    </ListItem>
+                                                                    <ListItem button className={classes.nestedIns}>
+                                                                        <HashLink to={'#rem2'} scroll={(el) => el.scrollIntoView({ behavior: 'auto', block: 'end' })} className={classes.nestedInsLink}>
+                                                                            <ListItemText primary="Acceso a la gestión de remesas" />
+                                                                        </HashLink>
+                                                                    </ListItem>
+                                                                    <ListItem button className={classes.nestedIns}>
+                                                                        <HashLink to={'#rem3'} scroll={(el) => el.scrollIntoView({ behavior: 'auto', block: 'end' })} className={classes.nestedInsLink}>
+                                                                            <ListItemText primary="Tipos de remesas disponibles" />
+                                                                        </HashLink>
+                                                                    </ListItem>
+                                                                    <ListItem button className={classes.nestedIns}>
+                                                                        <HashLink to={'#rem4'} scroll={(el) => el.scrollIntoView({ behavior: 'auto', block: 'end' })} className={classes.nestedInsLink}>
+                                                                            <ListItemText primary="Proceso de selección y generación de remesa" />
+                                                                        </HashLink>
+                                                                    </ListItem>
+                                                                </List>
+                                                            </Collapse>
                                                         </List>
                                                     </Box>
                                                 </Grid>
                                             </Grid>
                                             <Grid item lg={9} sm={9} xs={9}>
                                                 <SimpleReactLightbox>
-                                                    {openMenu1 || (!openMenu1 && !openMenu2 && !openMenu3 && !openMenu4 && !openMenu5 && !openMenu6) ? (<InstruccionesCuadrantes />) : null}
+                                                    {openMenu1 || (!openMenu1 && !openMenu2 && !openMenu3 && !openMenu4 && !openMenu5 && !openMenu6 && !openMenu7) ? (<InstruccionesCuadrantes />) : null}
                                                     {openMenu2 ? (<InstruccionesCentros />) : null}
                                                     {openMenu3 ? (<InstruccionesTrabajadores />) : null}
                                                     {openMenu4 ? (<InstruccionesVarios />) : null}
                                                     {openMenu5 ? (<InstruccionesControlHorario />) : null}
                                                     {openMenu6 ? (<InstruccionesServiciosFijos />) : null}
+                                                    {openMenu7 ? (<InstruccionesRemesas />) : null}
                                                 </SimpleReactLightbox>
                                             </Grid>
                                         </Grid>

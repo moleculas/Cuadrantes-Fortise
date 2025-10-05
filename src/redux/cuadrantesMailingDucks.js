@@ -115,15 +115,85 @@ const formatNumerics = (arr) => {
     );
 };
 
+// modificador: corrector venciments
+// function gestionarFechaDePago(diaPago, mes, anyo, formaDePago) {
+//     console.log(diaPago)
+//     const forma = formasDePago.find(fp => fp.value === formaDePago);
+    
+//     // Obtener el día actual (día real de emisión de la factura)
+//     let diaEmision = new Date().getDate();
+    
+//     // Crear la fecha de emisión real
+//     let fechaEmision = new Date(anyo, mes - 1, diaEmision);
+    
+//     // Calcular fecha base sumando los días de la forma de pago
+//     let fecha = new Date(fechaEmision);
+//     fecha.setDate(fecha.getDate() + forma.dias);
+    
+//     // Crear fecha ajustada con el día de pago del cliente
+//     let fechaAjustada = new Date(fecha.getFullYear(), fecha.getMonth(), diaPago);
+    
+//     // Caso especial: formas de pago a 0 días
+//     if (forma.dias === 0) {
+//         // Si la fecha ajustada es igual o anterior a la fecha de emisión,
+//         // pasar al mes siguiente
+//         if (fechaAjustada <= fechaEmision) {
+//             fechaAjustada.setMonth(fechaAjustada.getMonth() + 1);
+//             fechaAjustada.setDate(diaPago);
+//         }
+//     } else {
+//         // Para formas de pago con plazo > 0 días
+//         // Si el día de pago es anterior a la fecha calculada, ir al siguiente mes
+//         if (fechaAjustada < fecha) {
+//             fechaAjustada.setMonth(fechaAjustada.getMonth() + 1);
+//             fechaAjustada.setDate(diaPago);
+//         }
+//     }
+    
+//     return `${String(fechaAjustada.getDate()).padStart(2, '0')}-${String(fechaAjustada.getMonth() + 1).padStart(2, '0')}-${fechaAjustada.getFullYear()}`;
+// };
+
 function gestionarFechaDePago(diaPago, mes, anyo, formaDePago) {
-    const forma = formasDePago.find(fp => fp.value === formaDePago); 
-    //let fecha = new Date(anyo, mes - 1, diaPago);
-    //modificador: corrector venciments
-    let fecha = new Date(anyo, mes, diaPago);       
-    fecha.setDate(fecha.getDate() + forma.dias);  
-    const fechaAjustada = new Date(fecha.getFullYear(), fecha.getMonth(), diaPago);     
+    console.log(mes)
+    const forma = formasDePago.find(fp => fp.value === formaDePago);
+    
+    // El problema estaba aquí - necesitas usar el día del mes/año que pasas como parámetro
+    // No el día actual del sistema
+    let diaEmision = new Date(anyo, mes - 1 + 1, 0).getDate(); // Último día del mes
+    
+    // Si quieres que el día de emisión sea el último día del mes:
+    let fechaEmision = new Date(anyo, mes - 1, diaEmision);
+    
+    // O si el día de emisión debe ser un día específico, deberías pasarlo como parámetro:
+    // function gestionarFechaDePago(diaPago, diaEmision, mes, anyo, formaDePago) {
+    //     let fechaEmision = new Date(anyo, mes - 1, diaEmision);
+    
+    // Calcular fecha base sumando los días de la forma de pago
+    let fecha = new Date(fechaEmision);
+    fecha.setDate(fecha.getDate() + forma.dias);
+    
+    // Crear fecha ajustada con el día de pago del cliente
+    let fechaAjustada = new Date(fecha.getFullYear(), fecha.getMonth(), diaPago);
+    
+    // Caso especial: formas de pago a 0 días
+    if (forma.dias === 0) {
+        // Si la fecha ajustada es igual o anterior a la fecha de emisión,
+        // pasar al mes siguiente
+        if (fechaAjustada <= fechaEmision) {
+            fechaAjustada.setMonth(fechaAjustada.getMonth() + 1);
+            fechaAjustada.setDate(diaPago);
+        }
+    } else {
+        // Para formas de pago con plazo > 0 días
+        // Si el día de pago es anterior a la fecha calculada, ir al siguiente mes
+        if (fechaAjustada < fecha) {
+            fechaAjustada.setMonth(fechaAjustada.getMonth() + 1);
+            fechaAjustada.setDate(diaPago);
+        }
+    }
+    
     return `${String(fechaAjustada.getDate()).padStart(2, '0')}-${String(fechaAjustada.getMonth() + 1).padStart(2, '0')}-${fechaAjustada.getFullYear()}`;
-};
+}
 
 const decodificadorItemsFactura = (objetoTotal, anyo, mes) => (dispatch, getState) => {
     const ultimoDia = new Date(anyo, mes, 0);

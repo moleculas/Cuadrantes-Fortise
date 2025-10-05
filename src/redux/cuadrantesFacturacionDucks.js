@@ -113,7 +113,7 @@ export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
     let bloqueadoSF = false;
     const arrayInforme = [];
     arrayInforme.push(['Mes: ' + calendarioAGestionar, 'normal']);
-    arrayInforme.push(['Centro: ' + objetoCentro.nombre, 'normal']);
+    arrayInforme.push(['Centro: ' + objetoCentro.nombre, 'normal']);      
     if (numeroCuadrantesCuadrantes.length > 1) {
         arrayInforme.push(['Cuadrante: ' + cuadranteEnUsoCuadrantes + '/' + numeroCuadrantesCuadrantes.length, 'normal']);
     };
@@ -200,7 +200,7 @@ export const generaInformacionCuadrantesAccion = () => (dispatch, getState) => {
             const prefix = servicio.prefix;
             const label = servicio.label;
             if (sumatorioHoras[`sumatorioHoras_${prefix}`]) {
-                const precioHora = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1][`precioHora_${prefix}`];
+                const precioHora = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1][`precioHora_${prefix}`];                
                 const totalFacturado = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1][`totalFacturado_${prefix}`];
                 const computo = objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].computo;
                 if (computo === 4) {
