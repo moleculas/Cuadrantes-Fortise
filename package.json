@@ -10,7 +10,7 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.58",
     "@material-ui/pickers": "^3.2.8",
-    "@react-pdf/renderer": "^2.0.21",
+    "@react-pdf/renderer": "^3.4.5",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
@@ -25,7 +25,7 @@
     "react-redux": "^7.2.5",
     "react-router-dom": "^5.2.0",
     "react-router-hash-link": "^2.4.3",
-    "react-scripts": "4.0.3",
+    "react-scripts": "5.0.1",
     "recharts": "^2.1.6",
     "redux": "^4.1.1",
     "redux-devtools-extension": "^2.13.9",
@@ -37,9 +37,9 @@
     "zipson": "^0.2.12"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -59,5 +59,15 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@craco/craco": "^7.1.0",
+    "assert": "^2.1.0",
+    "browserify-zlib": "^0.2.0",
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.1",
+    "process": "^0.11.10",
+    "stream-browserify": "^3.0.0",
+    "util": "^0.12.5"
   }
 }

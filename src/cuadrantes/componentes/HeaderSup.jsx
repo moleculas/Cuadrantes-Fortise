@@ -35,7 +35,7 @@ const HeaderSup = () => {
         <Box style={{ display: 'flex', flexDirection: 'row', justifycontent: 'space-between', alignItems: 'center' }}>
             <Grid item xs={9}>
                 <Badge
-                    overlap="circle"
+                    overlap="circular"
                     classes={{
                         badge:
                             firmaActualizacion && objetoCentro.nombre && intervencionRegistrada && objetoCuadrante.estado === 'facturado' ?

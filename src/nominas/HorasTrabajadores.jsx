@@ -193,7 +193,7 @@ const HorasTrabajadores = (props) => {
                 <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Grid item xs={9}>
                         <Badge
-                            overlap="circle"
+                            overlap="circular"
                             anchorOrigin={{
                                 vertical: 'bottom',
                                 horizontal: 'right',

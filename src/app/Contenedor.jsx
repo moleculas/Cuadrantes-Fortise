@@ -139,7 +139,7 @@ const Contenedor = () => {
                         container
                         direction="column"
                         alignItems="center"
-                        justify="center"
+                        justifyContent="center"
                     >
                         <Grid item xs={6}>
                             <Box mt={4}>

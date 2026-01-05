@@ -1191,6 +1191,50 @@ export const generaArchivoXLSCuadrantesFacturadosPisosAccion = (mes) => (dispatc
     exportarAExcel(elListadoCuadrantesFacturadosImprimir, nombreArchivo);
 };
 
+export const generaArchivoXLSRemesasAccion = (mes, remesaData) => (dispatch, getState) => {
+    const cuadrantesRemesa = remesaData.cuadrantes || [];
+    const remesaInfo = remesaData.remesaInfo;
+    
+    let cuadrantes = [];
+    cuadrantesRemesa.forEach((cuadrante, index) => {
+        let objeto = {};
+        objeto['nombreCentro'] = cuadrante.total.subNombreCentro 
+            ? (cuadrante.total.nombreCentro + " - " + cuadrante.total.subNombreCentro) 
+            : cuadrante.total.nombreCentro;
+        objeto['numeroFactura'] = cuadrante.total.procesado?.numF || "";
+        objeto['diaPago'] = cuadrante.total.diaPago || "";
+        objeto['totalMasIva'] = parseFloat(cuadrante.total.totalMasIva).toFixed(2) + ' €';
+        objeto['remesado'] = cuadrante.total.remesado === 'si' ? 'Sí' : 'No';
+        cuadrantes.push(objeto);
+    });
+    
+    // Ordenar alfabéticamente por centro
+    cuadrantes.sort((a, b) => a.nombreCentro.localeCompare(b.nombreCentro));
+    
+    // Crear estructura del Excel
+    const tituloRemesa = remesaInfo.label || 'REMESAS';
+    const elListadoRemesasImprimir = [
+        [`LISTADO REMESAS ${tituloRemesa.toUpperCase()} MES ${mes.toUpperCase()}`],
+        ["CENTRO", "NÚMERO FACTURA", "DÍA PAGO", "TOTAL + IVA", "ESTADO REMESADO"]
+    ];
+    
+    cuadrantes.forEach((cuadrante) => {
+        elListadoRemesasImprimir.push([
+            cuadrante.nombreCentro,
+            cuadrante.numeroFactura,
+            cuadrante.diaPago,
+            cuadrante.totalMasIva,
+            cuadrante.remesado
+        ]);
+    });
+    
+    // Generar nombre del archivo
+    const remesaLabel = remesaInfo.label ? remesaInfo.label.toLowerCase().replace(/ /g, '_') : 'remesa';
+    const nombreArchivo = `listado_remesas_${remesaLabel}_${mes}`;
+    
+    exportarAExcel(elListadoRemesasImprimir, nombreArchivo);
+};
+
 export const generaArchivoXLSHorasTrabajadoresAccion = (mes) => (dispatch, getState) => {
     const horasTrabajadoresGestionadas = dispatch(gestionArrayHorasTrabajadoresAccion());
     const horasTrabajadores = horasTrabajadoresGestionadas.map(horaTrabajador => ({

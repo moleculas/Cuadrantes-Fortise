@@ -355,7 +355,7 @@ const PendientesRegistrados = (props) => {
                 container
                 direction="column"
                 alignItems="center"
-                justify="center"
+                justifyContent="center"
                 p={2}
                 className={classes.rootPendientes}
                 style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra, width: props.prWidthContenedores + 10 }}

@@ -44,6 +44,7 @@ import {
 import { setTiempoEsperaloteAccion } from '../redux/cuadrantesSettersDucks';
 import {
     gestionarMailingLoteAccion,
+    gestionarMailingLoteAccionLocal,
     actualizarCuadrantesIteradosMailingAccion,
     reseteaMailingAccion,
     generaArchivoXLSMailingAccion,
@@ -229,6 +230,9 @@ const PendientesFacturados = (props) => {
             arrayIdsCuadrantes.includes(cuadrante.id)
         );
         const [anyo, mes] = calendarioAGestionar.split("-");
+        // per test enviament mails local
+        //dispatch(gestionarMailingLoteAccionLocal(arrayCuadrantesDef, anyo, mes));
+        // producció enviament mails
         dispatch(gestionarMailingLoteAccion(arrayCuadrantesDef, anyo, mes));
         dispatch(setTiempoEsperaloteAccion(true));
     };
@@ -343,7 +347,7 @@ const PendientesFacturados = (props) => {
                 container
                 direction="column"
                 alignItems="center"
-                justify="center"
+                justifyContent="center"
                 p={2}
                 className={classes.rootPendientes}
                 style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra, width: props.prWidthContenedores + 10 }}

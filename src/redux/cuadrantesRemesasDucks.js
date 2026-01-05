@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Constantes from "../constantes";
 import { create } from 'xmlbuilder2';
-import { stringify } from 'zipson';
+import { stringify, parse } from 'zipson';
 
 //importación acciones
 import { setAlertaAccion } from './cuadrantesSettersDucks';
@@ -20,6 +20,7 @@ const dataInicial = {
     errorGenerarRemesas: false,
     isRemesaComplete: false,
     cuadrantesIteradosActualizarRemesa: [],
+    cuadrantesRemesables: null
 };
 
 //types
@@ -28,6 +29,8 @@ const EXITO_GENERAR_REMESAS = 'EXITO_GENERAR_REMESAS';
 const ERROR_GENERAR_REMESAS = 'ERROR_GENERAR_REMESAS';
 const RESETEA_EXITO_REMESAS = 'RESETEA_EXITO_REMESAS';
 const SET_CUADRANTESITERADOSACTUALIZAR_REMESA = 'SET_CUADRANTESITERADOSACTUALIZAR_REMESA';
+const OBTENER_REMESABLES = 'OBTENER_REMESABLES';
+const RESETEAR_CUADRANTES_REMESABLES = 'RESETEAR_CUADRANTES_REMESABLES';
 
 //reducer
 export default function cuadrantesRemesasReducer(state = dataInicial, action) {
@@ -49,10 +52,15 @@ export default function cuadrantesRemesasReducer(state = dataInicial, action) {
                 exitoGenerarRemesas: false,
                 procesandoLoteEstadoRemesas: false,
                 isRemesaComplete: false,
-                cuadrantesIteradosActualizarRemesa: []
+                cuadrantesIteradosActualizarRemesa: [],
+                cuadrantesRemesables: null
             }
         case SET_CUADRANTESITERADOSACTUALIZAR_REMESA:
             return { ...state, cuadrantesIteradosActualizarRemesa: [...state.cuadrantesIteradosActualizarRemesa, action.payload.elementoArray] }
+        case OBTENER_REMESABLES:
+            return { ...state, cuadrantesRemesables: action.payload.array }
+        case RESETEAR_CUADRANTES_REMESABLES:
+            return { ...state, cuadrantesRemesables: null }
         default:
             return { ...state }
     }
@@ -60,9 +68,92 @@ export default function cuadrantesRemesasReducer(state = dataInicial, action) {
 
 //acciones
 
+export const obtenerCuadrantesRemesablesAccion = (objeto, mes) => async (dispatch, getState) => {
+    dispatch({
+        type: LOADING_REMESAS
+    });
+    try {
+        const formData = new FormData();
+        formData.append("objeto", objeto);
+        formData.append("mes", mes);
+        let apiUrl = rutaApi + "obtener_remesables.php";
+        const res = await axios.post(apiUrl, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        });
+        const cuadrantesProcesados = res.data.map(cuadrante => ({
+            ...cuadrante,
+            total: parse(cuadrante.total)
+        }));
+        
+        const cuadrantesRemesables = cuadrantesProcesados.filter(cuadrante => {
+            const formaPago = cuadrante.total?.formaPago;
+            
+            // Primera criba: forma de pago
+            if (!['RE', 'R1', 'R2', 'R3'].includes(formaPago)) {
+                return false;
+            }
+            
+            // Segunda criba: por vencimiento según mes
+            const nombreCuadrante = cuadrante.nombre;
+            const partesNombre = nombreCuadrante.split('-');
+            if (partesNombre.length < 3) return false;
+            
+            const mesCuadrante = parseInt(partesNombre[1], 10);
+            const mesActual = mes;
+            
+            // Calcular para qué mes de REMESA sirve este cuadrante
+            // según su mes de origen y forma de pago
+            // NOTA: Todos los cuadrantes se consideran facturados el último día de su mes
+            // REGLA: No se puede cobrar/remesar antes de la fecha de vencimiento
+            // Por tanto, como facturamos el día 30 y los días de pago suelen ser antes (5,10,15,17,20,25,28,30),
+            // debemos ir al siguiente mes después del vencimiento
+            let mesRemesaCalculado = mesCuadrante;
+            
+            switch (formaPago) {
+                case 'RE': // 0 días: vencimiento 30 sept → remesa mes siguiente (octubre)
+                    mesRemesaCalculado = mesCuadrante + 1;
+                    break;
+                case 'R1': // 30 días: vencimiento 30 oct → remesa mes siguiente (noviembre)
+                    mesRemesaCalculado = mesCuadrante + 2;
+                    break;
+                case 'R2': // 60 días: vencimiento ~29 nov → remesa mes siguiente (diciembre)
+                    mesRemesaCalculado = mesCuadrante + 3;
+                    break;
+                case 'R3': // 90 días: vencimiento ~29 dic → remesa mes siguiente (enero)
+                    mesRemesaCalculado = mesCuadrante + 4;
+                    break;
+                default:
+                    return false;
+            }
+            
+            // Incluir si el mes de remesa calculado coincide con el mes que estamos gestionando
+            return mesRemesaCalculado === mesActual;
+        });
+        
+        dispatch({
+            type: OBTENER_REMESABLES,
+            payload: {
+                array: cuadrantesRemesables
+            }
+        });
+    } catch (err) {
+        dispatch({
+            type: ERROR_GENERAR_REMESAS
+        });
+    }
+};
+
 export const reseteaRemesasAccion = () => (dispatch, getState) => {
     dispatch({
         type: RESETEA_EXITO_REMESAS
+    });
+};
+
+export const resetearCuadrantesRemesablesAccion = () => (dispatch, getState) => {   
+    dispatch({
+        type: RESETEAR_CUADRANTES_REMESABLES
     });
 };
 
@@ -117,37 +208,39 @@ export const gestionarRemesaLoteAccion = (arrayCuadrantes, anyo, mes, remesa, ob
         return `${fechaAjustada.getFullYear()}-${String(fechaAjustada.getMonth() + 1).padStart(2, '0')}-${String(fechaAjustada.getDate()).padStart(2, '0')}`;
     }
 
-    // Agrupar cuadrantes por fecha de vencimiento
-    const cuadrantesPorFecha = {};
+    // Agrupar cuadrantes por día de pago
+    const cuadrantesPorDiaPago = {};
 
     arrayCuadrantes.forEach(cuadrante => {
-        const fechaVencimiento = gestionarFechaDePagoRemesas(
-            parseInt(cuadrante.total.diaPago),
-            parseInt(mes) - 1,
-            parseInt(anyo),
-            cuadrante.total.formaPago
-        );
+        const diaPago = cuadrante.total.diaPago;
 
-        if (!cuadrantesPorFecha[fechaVencimiento]) {
-            cuadrantesPorFecha[fechaVencimiento] = [];
+        if (!cuadrantesPorDiaPago[diaPago]) {
+            cuadrantesPorDiaPago[diaPago] = [];
         }
-        cuadrantesPorFecha[fechaVencimiento].push(cuadrante);
-
+        cuadrantesPorDiaPago[diaPago].push(cuadrante);
     });
 
-    console.log('Cuadrantes agrupados por fecha:', cuadrantesPorFecha);
-    console.log(`Total de lotes a generar: ${Object.keys(cuadrantesPorFecha).length}`);
+    console.log('Cuadrantes agrupados por día de pago:', cuadrantesPorDiaPago);
+    console.log(`Total de lotes a generar: ${Object.keys(cuadrantesPorDiaPago).length}`);
 
     // Obtener información del banco desde la remesa seleccionada
     const remesaInfo = optionsRemesas.find(r => r.value === remesa);
     const banco = remesa.includes('B') ? 'BBVA' : 'La Caixa';
 
     try {
-        // Iterar sobre cada lote de cuadrantes por fecha
+        // Iterar sobre cada lote de cuadrantes por día de pago
         const resultados = [];
         const cuadrantesProcesadosExitosamente = []; // Array para tracking
-        for (const [fechaVencimiento, cuadrantesLote] of Object.entries(cuadrantesPorFecha)) {
-            console.log(`Procesando lote para fecha ${fechaVencimiento} con ${cuadrantesLote.length} cuadrantes`);
+        for (const [diaPago, cuadrantesLote] of Object.entries(cuadrantesPorDiaPago)) {
+            console.log(`Procesando lote para día de pago ${diaPago} con ${cuadrantesLote.length} cuadrantes`);
+
+            // Calcular fecha de vencimiento para este día de pago
+            const fechaVencimiento = gestionarFechaDePagoRemesas(
+                parseInt(diaPago),
+                parseInt(mes) - 1,
+                parseInt(anyo),
+                cuadrantesLote[0].total.formaPago // Usar la forma de pago del primer cuadrante del lote
+            );
 
             // Llamar a la función generadora de remesa SEPA
             const resultadoRemesa = await generarRemesaSEPA(
@@ -168,8 +261,8 @@ export const gestionarRemesaLoteAccion = (arrayCuadrantes, anyo, mes, remesa, ob
                 cuadrantesProcesadosExitosamente.push(...cuadrantesLote);
 
                 // MEJORAR EL TIEMPO DE ESPERA
-                const totalLotes = Object.keys(cuadrantesPorFecha).length;
-                const indiceActual = Object.keys(cuadrantesPorFecha).indexOf(fechaVencimiento);
+                const totalLotes = Object.keys(cuadrantesPorDiaPago).length;
+                const indiceActual = Object.keys(cuadrantesPorDiaPago).indexOf(diaPago);
 
                 // Solo pausar si no es el último archivo
                 if (totalLotes > 1 && indiceActual < totalLotes - 1) {
@@ -365,9 +458,18 @@ const generarRemesaSEPA = async (cuadrantesLote, fechaVencimiento, banco, remesa
             drctDbtTxInf.ele('Purp').ele('Cd').txt('CASH');
 
             // Información de la remesa
-            const fechaActual = new Date();
-            const fechaFormateada = `${String(fechaActual.getDate()).padStart(2, '0')}/${String(fechaActual.getMonth() + 1).padStart(2, '0')}/${fechaActual.getFullYear()}`;
-            const concepto = `FORTISE,S.L. Factura: ${cuadrante.nombre} de: ${fechaFormateada}`;
+            const nombreSplitted = cuadrante.nombre.split('-');
+            const mesCuadrante = parseInt(nombreSplitted[1], 10);
+            const anyoCuadrante = nombreSplitted[0];
+            
+            // Convertir mes a letra
+            const meses = [
+                'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+            ];
+            const mesEnLetra = meses[mesCuadrante - 1];
+            
+            const concepto = `FORTISE,S.L. Factura: ${cuadrante.total.procesado.numF} de: ${mesEnLetra} de ${anyoCuadrante}`;
             drctDbtTxInf.ele('RmtInf').ele('Ustrd').txt(concepto);
         });
 

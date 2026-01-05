@@ -1,4 +1,4 @@
-import { fade, makeStyles } from "@material-ui/core";
+import { alpha, makeStyles } from "@material-ui/core";
 import { amber, blueGrey, green, lime, indigo, red, grey, blue, yellow, teal, brown, lightGreen, orange, deepPurple, cyan } from '@material-ui/core/colors';
 
 const Clases = makeStyles((theme) => ({
@@ -1037,7 +1037,7 @@ const Clases = makeStyles((theme) => ({
     },
     fonsLogo: {
         borderRadius: 60,
-        backgroundColor: fade(theme.palette.common.white, 0.55),
+        backgroundColor: alpha(theme.palette.common.white, 0.55),
         paddingLeft: 10,
         paddingRight: 10,
         paddingTop: 7,

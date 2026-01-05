@@ -94,7 +94,7 @@ const Login = (props) => {
             <Grid
                 container
                 direction="row"
-                justify="center"
+                justifyContent="center"
                 alignItems="center"
                 spacing={4}
                 style={{ minHeight: '60vh' }}

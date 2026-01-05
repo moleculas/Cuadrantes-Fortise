@@ -42,6 +42,7 @@ import {
     vaciarDatosPendientesAccion
 } from '../redux/pendientesDucks';
 import { obtenerCentroAccion, vaciarDatosCentrosAccion } from '../redux/centrosDucks';
+import { handleChangeSelectCalendarioAccion } from '../redux/cuadrantesHandlersDucks';
 import {
     Alert,
     getHeightContenedoresGra,
@@ -54,7 +55,8 @@ import {
 import {
     gestionarRemesaLoteAccion,
     actualizarCuadrantesRemesasAccion,
-    reseteaRemesasAccion
+    reseteaRemesasAccion,
+    obtenerCuadrantesRemesablesAccion
 } from '../redux/cuadrantesRemesasDucks';
 import { obtenerConfiguracionAccion } from '../redux/appDucks';
 
@@ -69,6 +71,16 @@ const {
     REMESAS: optionsRemesas,
     FORMA_DE_PAGO: formasDePago
 } = Constantes;
+
+/**
+ * CONFIGURACIÓN: Habilitar/Deshabilitar la desactivación de remesas vencidas
+ * 
+ * - true: Las remesas con fecha vencida se deshabilitan en el selector
+ * - false: Todas las remesas están disponibles independientemente de la fecha
+ * 
+ * Para reactivar la funcionalidad en el futuro, cambiar a true
+ */
+const HABILITAR_DESACTIVACION_REMESAS_VENCIDAS = false;
 
 //parche temporal
 const arrayIbans = [
@@ -233,14 +245,15 @@ const arrayIbans = [
 const PendientesRemesas = (props) => {
     const classes = Clases();
     const dispatch = useDispatch();
+    const { onRemesaSeleccionada } = props;
     const {
-        cuadrantesFacturadosArray,
-        numeroCuadrantesFacturados
+        cuadrantesFacturadosArray
     } = useSelector(store => store.variablesPendientes);
     const calendarioAGestionar = useSelector(store => store.variablesCuadrantes.calendarioAGestionar);
     const {
         exitoGenerarRemesas,
-        isRemesaComplete
+        isRemesaComplete,
+        cuadrantesRemesables
     } = useSelector(store => store.variablesCuadrantesRemesas);
     const objetoConfiguracion = useSelector(store => store.variablesApp.objetoConfiguracion);
     const [arrayCuadrantesRemesa, setArrayCuadrantesRemesa] = useState([]);
@@ -313,52 +326,60 @@ const PendientesRemesas = (props) => {
     //temporal deshabilitat a canviar en 3 mesos
 
     useEffect(() => {
-        if (cuadrantesFacturadosArray.length > 0) {
+        const mesActual = parseInt(calendarioAGestionar.split('-')[1], 10); 
+        dispatch(obtenerCuadrantesRemesablesAccion("cuadrantes", mesActual));
+    }, []);
+
+    // useEffect para detectar cuando cuadrantesRemesables se resetea a null
+    useEffect(() => {
+        if (cuadrantesRemesables === null) {
+            const mesActual = parseInt(calendarioAGestionar.split('-')[1], 10);
+            dispatch(obtenerCuadrantesRemesablesAccion("cuadrantes", mesActual));
+        }
+    }, [cuadrantesRemesables]);
+
+    useEffect(() => {
+        if (cuadrantesRemesables && cuadrantesRemesables.length > 0) {
             let cuadrantes = [];
-            cuadrantesFacturadosArray.forEach((cuadrante, index) => {
-                if (cuadrante.total?.procesado?.valor === "si") {
-                    const formaPago = cuadrante.total?.formaPago;
-                    if (['RE', 'R1', 'R2', 'R3'].includes(formaPago)) {
-                        const nombreSplitted = cuadrante.nombre.split("-");
+            cuadrantesRemesables.forEach((cuadrante, index) => {
+                const nombreSplitted = cuadrante.nombre.split("-");
 
-                        // Preparar el cuadrante con IBAN
-                        let cuadranteConIban = { ...cuadrante };
+                // Preparar el cuadrante con IBAN
+                let cuadranteConIban = { ...cuadrante };
 
-                        // Si no tiene IBAN, buscar en la constante
-                        if (!cuadrante.total.iban || cuadrante.total.iban.trim() === '') {
-                            const centroEncontrado = arrayIbans.find(item =>
-                                item.centro === cuadrante.total.nombreCentro
-                            );
+                // Si no tiene IBAN, buscar en la constante
+                if (!cuadrante.total.iban || cuadrante.total.iban.trim() === '') {
+                    const centroEncontrado = arrayIbans.find(item =>
+                        item.centro === cuadrante.total.nombreCentro
+                    );
 
-                            if (centroEncontrado && centroEncontrado.iban) {
-                                // Se encontró el IBAN en la constante
-                                cuadranteConIban.total = {
-                                    ...cuadrante.total,
-                                    iban: centroEncontrado.iban
-                                };
-                            } else {
-                                // No se encontró ni en el cuadrante ni en la constante
-                                // Dejar el IBAN como null o vacío
-                                cuadranteConIban.total = {
-                                    ...cuadrante.total,
-                                    iban: null
-                                };
-                            }
-                        }
-
-                        const objeto = normalizarCuadrante({
-                            ...cuadranteConIban,
-                            ['nombreCentro']: cuadranteConIban.total.nombreCentro,
-                            idCentro: nombreSplitted[2]
-                        });
-                        cuadrantes.push(objeto);
+                    if (centroEncontrado && centroEncontrado.iban) {
+                        // Se encontró el IBAN en la constante
+                        cuadranteConIban.total = {
+                            ...cuadrante.total,
+                            iban: centroEncontrado.iban
+                        };
+                    } else {
+                        // No se encontró ni en el cuadrante ni en la constante
+                        // Dejar el IBAN como null o vacío
+                        cuadranteConIban.total = {
+                            ...cuadrante.total,
+                            iban: null
+                        };
                     }
                 }
+
+                const objeto = normalizarCuadrante({
+                    ...cuadranteConIban,
+                    ['nombreCentro']: cuadranteConIban.total.nombreCentro,
+                    idCentro: nombreSplitted[2]
+                });
+                cuadrantes.push(objeto);
             });
             cuadrantes.sort((a, b) => a.nombreCentro.localeCompare(b.nombreCentro));
             setArrayCuadrantesRemesa(cuadrantes);
         }
-    }, [cuadrantesFacturadosArray]);
+    }, [cuadrantesRemesables]);
 
     useEffect(() => {
         if (exitoGenerarRemesas) {
@@ -385,6 +406,10 @@ const PendientesRemesas = (props) => {
                     dispatch(vaciarDatosCentrosAccion());
                     selectNoneChecked();
                     setSelectedIndexBotoRemesas(0);
+                    
+                    // Recargar cuadrantes remesables para mostrar los cambios
+                    const mesActual = parseInt(calendarioAGestionar.split('-')[1], 10);
+                    dispatch(obtenerCuadrantesRemesablesAccion("cuadrantes", mesActual));
                 }
             } catch (error) {
                 console.error('Error en el procesamiento de mailing:', error);
@@ -394,6 +419,19 @@ const PendientesRemesas = (props) => {
             procesarRemesaFinalizado();
         }
     }, [isRemesaComplete]);
+
+    // Notificar al padre cuando cambia la remesa seleccionada
+    useEffect(() => {
+        if (onRemesaSeleccionada) {
+            const cuadrantesFiltrados = retornaCuadrantesFiltrados();
+            onRemesaSeleccionada({
+                index: selectedIndexBotoRemesas,
+                remesaInfo: optionsRemesas[selectedIndexBotoRemesas],
+                cuadrantes: cuadrantesFiltrados
+            });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedIndexBotoRemesas, arrayCuadrantesRemesa]);
 
     //funciones
 
@@ -411,7 +449,16 @@ const PendientesRemesas = (props) => {
         setChecked({ ...checked, [e.target.name]: e.target.checked });
     };
 
-    const handleCuadrantesFacturados = (centro) => {
+    const handleCuadrantesFacturados = (centro, nombreCuadrante) => {
+        // Extraer el mes del cuadrante para cambiar el calendario
+        const nombreSplitted = nombreCuadrante.split('-');
+        if (nombreSplitted.length >= 3) {
+            const mesCuadrante = parseInt(nombreSplitted[1], 10);
+            const anyoCuadrante = parseInt(nombreSplitted[0], 10);
+            const nuevaFecha = new Date(anyoCuadrante, mesCuadrante - 1, 1);
+            dispatch(handleChangeSelectCalendarioAccion(nuevaFecha));
+        }
+        
         dispatch(setCentroAccion(centro));
         dispatch(obtenerCentroAccion('centros', centro));
         dispatch(cambioEstadoInicioCuadrantesAccion(false));
@@ -511,6 +558,41 @@ const PendientesRemesas = (props) => {
         const [anyo, mes] = calendarioAGestionar.split("-");
 
         dispatch(gestionarRemesaLoteAccion(arrayCuadrantesRemesaDef, anyo, mes, optionsRemesas[selectedIndexBotoRemesas].value, objetoConfiguracion));
+    };
+
+    const esVencimientoDeshabilitado = (option) => {
+        // Si la funcionalidad está desactivada, nunca deshabilitar ninguna remesa
+        if (!HABILITAR_DESACTIVACION_REMESAS_VENCIDAS) {
+            return false;
+        }
+        
+        // La primera opción (Selecciona remesa...) nunca se deshabilita
+        if (!option.numero) {
+            return false;
+        }
+        
+        // Obtener fecha actual
+        const fechaActual = new Date();
+        const anyoActual = fechaActual.getFullYear();
+        const mesActual = fechaActual.getMonth() + 1; // getMonth() retorna 0-11
+        const diaActual = fechaActual.getDate();
+        
+        // Obtener año y mes del calendario a gestionar
+        const [anyoGestionar, mesGestionar] = calendarioAGestionar.split('-').map(Number);
+        
+        // Si gestionamos un mes futuro → todos habilitados
+        if (anyoGestionar > anyoActual || (anyoGestionar === anyoActual && mesGestionar > mesActual)) {
+            return false;
+        }
+        
+        // Si gestionamos un mes pasado → todos deshabilitados
+        if (anyoGestionar < anyoActual || (anyoGestionar === anyoActual && mesGestionar < mesActual)) {
+            return true;
+        }
+        
+        // Si gestionamos el mes actual → deshabilitar si el día ya pasó
+        const numeroVencimiento = parseInt(option.numero, 10);
+        return diaActual > numeroVencimiento;
     };
 
     const retornaCuadrantesFiltrados = () => {
@@ -615,7 +697,7 @@ const PendientesRemesas = (props) => {
                                     </span>
                                 </Fragment>
                             )}
-                        onClick={() => handleCuadrantesFacturados(parseInt(nombreSplitted[2]))}
+                        onClick={() => handleCuadrantesFacturados(parseInt(nombreSplitted[2]), cuadrante.nombre)}
                     />
                     <ListItemSecondaryAction>
                         <ExitToAppIcon
@@ -628,14 +710,13 @@ const PendientesRemesas = (props) => {
     };
 
     return (
-        <div>
-            {/* {console.log(props.prOpenLoading)}  */}
+        <div>              
             <Grid
                 spacing={1}
                 container
                 direction="column"
                 alignItems="center"
-                justify="center"
+                justifyContent="center"
                 p={2}
                 className={classes.rootPendientes}
                 style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra, width: props.prWidthContenedores + 10 }}
@@ -646,9 +727,9 @@ const PendientesRemesas = (props) => {
                     >
                         <CircularProgress />
                     </Box>
-                ) : (numeroCuadrantesFacturados < 1 ? (
+                ) : (cuadrantesRemesables < 1 ? (
                     <Box p={3} style={{ width: '100%', minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra, marginTop: 0, marginLeft: 0 }}>
-                        <Alert severity="info">No hay cuadrantes facturados por gestionar.</Alert>
+                        <Alert severity="info">No hay cuadrantes remesables por gestionar.</Alert>
                     </Box>
                 ) : (
                     <>
@@ -754,6 +835,7 @@ const PendientesRemesas = (props) => {
                                                                     <MenuItem
                                                                         key={option.value}
                                                                         selected={index === selectedIndexBotoRemesas}
+                                                                        disabled={esVencimientoDeshabilitado(option)}
                                                                         onClick={(event) => handleMenuItemClickBotoRemesas(event, index)}
                                                                     >
                                                                         {option.label}

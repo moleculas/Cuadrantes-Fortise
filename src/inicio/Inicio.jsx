@@ -267,7 +267,7 @@ const Inicio = (props) => {
                                     spacing={1}
                                     container
                                     direction="column"
-                                    justify="center"
+                                    justifyContent="center"
                                     alignItems="center"
                                     p={2}
                                     className={classes.rootPendientes}
@@ -304,7 +304,7 @@ const Inicio = (props) => {
                                     spacing={1}
                                     container
                                     direction="column"
-                                    justify="center"
+                                    justifyContent="center"
                                     alignItems="center"
                                     p={2}
                                     className={classes.rootPendientes}
@@ -368,7 +368,7 @@ const Inicio = (props) => {
                                 spacing={1}
                                 container
                                 direction="column"
-                                justify="center"
+                                justifyContent="center"
                                 alignItems="center"
                                 p={2}
                                 className={classes.rootPendientes}

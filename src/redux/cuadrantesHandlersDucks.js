@@ -1,4 +1,5 @@
 import Constantes from "../constantes";
+import { resetearCuadrantesRemesablesAccion } from './cuadrantesRemesasDucks';
 import {
     setAnchorElMenuAccion,
     setOpenFacturacionAccion,
@@ -324,7 +325,7 @@ export const handleClickMenuAccion = (event) => (dispatch, getState) => {
 export const handleChangeSelectCalendarioAccion = (newValue) => (dispatch, getState) => {
     const { esInicioCuadrantes, estadoIntervencionCuadranteNuevoRegistrada } = getState().variablesCuadrantes;
     const { estadoIntervencionRegistrada } = getState().variablesApp;
-    if (esInicioCuadrantes) {
+    if (esInicioCuadrantes) {      
         dispatch(reseteaContenidoCuadranteAccion());
         dispatch(vaciarDatosCentroAccion());
         dispatch(vaciarDatosCuadrantesAccion());
@@ -333,7 +334,8 @@ export const handleChangeSelectCalendarioAccion = (newValue) => (dispatch, getSt
         dispatch(setCalendarioAGestionarAccion(retornaAnoMesAccion(newValue)));
         dispatch(cambioEstadoInicioCuadrantesAccion(true));
         dispatch(forzarRecargaGraficosCuadrantesAccion(true));
-    } else {
+        dispatch(resetearCuadrantesRemesablesAccion());
+    } else {     
         if (!estadoIntervencionCuadranteNuevoRegistrada) {
             dispatch(handleClickOpenDialogCuadrantes2Accion());
         } else {

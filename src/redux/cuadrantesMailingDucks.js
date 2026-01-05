@@ -475,7 +475,7 @@ export const gestionarMailingLoteAccion = (arrayCuadrantes, anyo, mes) => async 
                 const file = new File([blob], `Factura 1-${objetoFacturaPDF.numero}.pdf`, { type: 'application/pdf' });
                 await sendEmailWithRetry(objetoFacturaPDF.mail, file, mes, anyo, objetoCuadrante, dispatch, false);
                 dispatch(incrementProcessedEmails());
-                if (objetoFacturaPDF.mail2) {   
+                if (objetoFacturaPDF.mail2) {
                     await sendEmailWithRetry(objetoFacturaPDF.mail2, file, mes, anyo, objetoCuadrante, dispatch, true);
                     dispatch(incrementProcessedEmails());
                 }
@@ -485,6 +485,101 @@ export const gestionarMailingLoteAccion = (arrayCuadrantes, anyo, mes) => async 
         dispatch(completeMailingProcess());
     } catch (error) {
         console.error('Error al gestionar las facturas PDF en lote:', error);
+    }
+};
+
+// Versión para desarrollo local - NO envía emails, solo actualiza datos
+export const gestionarMailingLoteAccionLocal = (arrayCuadrantes, anyo, mes) => async (dispatch, getState) => {
+    dispatch(resetMailingProcess());
+    dispatch({ type: PROCESANDO_LOTE_MAILING });
+    const totalEmails = arrayCuadrantes.reduce((total, cuadrante) => {
+        return total + (cuadrante.total.mail2 ? 2 : 1);
+    }, 0);
+    dispatch(iniciarProcesoMailing(totalEmails));
+    const options = { fullPrecisionFloats: true };
+    try {
+        const tasks = arrayCuadrantes.map(objetoCuadrante => async () => {
+            const objetoFacturaPDF = await dispatch(decodificadorItemsFactura(objetoCuadrante.total, anyo, mes));
+            if (!objetoFacturaPDF) {
+                console.error(`Error: No se pudo obtener el objeto de la factura para el cuadrante ${objetoCuadrante.id}`);
+                dispatch(incrementProcessedEmails());
+                return;
+            }
+
+            // Simular envío de mail principal
+            dispatch({
+                type: ITEM_ENVIANDO,
+                payload: {
+                    objeto: {
+                        centro: objetoCuadrante.total.nombreCentro,
+                        mail: objetoFacturaPDF.mail,
+                        estado: "simulado (local)"
+                    }
+                }
+            });
+
+            // Actualizar estado del cuadrante como si se hubiera enviado
+            const objetoTotales = {
+                ...objetoCuadrante.total,
+                mailEnviado: "si",
+            };
+
+            dispatch({
+                type: SET_CUADRANTESITERADOSACTUALIZAR_MAILING,
+                payload: {
+                    elementoArray: {
+                        id: objetoCuadrante.id,
+                        total: stringify(objetoTotales, options)
+                    }
+                }
+            });
+
+            dispatch({
+                type: ITERACION_MAILING_EXITO,
+                payload: {
+                    elementoArray1: {
+                        id: objetoCuadrante.id,
+                        centro: objetoCuadrante.total.nombreCentro,
+                        mail: objetoFacturaPDF.mail,
+                        estado: "simulado"
+                    }
+                }
+            });
+
+            dispatch(incrementProcessedEmails());
+
+            // Simular envío de mail secundario si existe
+            if (objetoFacturaPDF.mail2) {
+                dispatch({
+                    type: ITEM_ENVIANDO,
+                    payload: {
+                        objeto: {
+                            centro: objetoCuadrante.total.nombreCentro,
+                            mail: objetoFacturaPDF.mail2,
+                            estado: "simulado (local)"
+                        }
+                    }
+                });
+
+                dispatch({
+                    type: ITERACION_MAILING_EXITO,
+                    payload: {
+                        elementoArray1: {
+                            id: objetoCuadrante.id,
+                            centro: objetoCuadrante.total.nombreCentro,
+                            mail: objetoFacturaPDF.mail2,
+                            estado: "simulado"
+                        }
+                    }
+                });
+
+                dispatch(incrementProcessedEmails());
+            }
+        });
+        await promisePool(tasks, 1);
+        dispatch(completeMailingProcess());
+    } catch (error) {
+        console.error('Error al gestionar las facturas PDF en lote (modo local):', error);
     }
 };
 

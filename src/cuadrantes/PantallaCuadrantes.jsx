@@ -37,7 +37,8 @@ import {
     generaArchivoXLSCuadrantesPendientesAccion,
     generaArchivoXLSCuadrantesRegistradosAccion,
     generaArchivoXLSCuadrantesFacturadosEmpresasAccion,
-    generaArchivoXLSCuadrantesFacturadosPisosAccion
+    generaArchivoXLSCuadrantesFacturadosPisosAccion,
+    generaArchivoXLSRemesasAccion
 } from '../redux/appDucks';
 import { obtenerCentrosAccion } from '../redux/centrosDucks';
 import {
@@ -94,6 +95,7 @@ const PantallaCuadrantes = () => {
     const [openSnack, setOpenSnack] = useState(false);
     const [alert, setAlert] = useState({});
     const [openLoading, setOpenLoading] = useState(false);
+    const [remesaSeleccionada, setRemesaSeleccionada] = useState(null);
 
     //useEffect
 
@@ -196,6 +198,15 @@ const PantallaCuadrantes = () => {
                 dispatch(generaArchivoXLSCuadrantesFacturadosPisosAccion(monthLet));
             };
         };
+        if (valueTab === 3 && tipo === 'remesas') {
+            if (remesaSeleccionada) {
+                dispatch(generaArchivoXLSRemesasAccion(monthLet, remesaSeleccionada));
+            };
+        };
+    };
+
+    const handleRemesaSeleccionada = (remesaData) => {
+        setRemesaSeleccionada(remesaData);
     };
 
     return (
@@ -272,6 +283,30 @@ const PantallaCuadrantes = () => {
                                             </Box>
                                         </Tooltip>
                                     </Fragment>
+                                )}
+                                {valueTab === 3 && remesaSeleccionada && remesaSeleccionada.index !== 0 && (                                 
+                                    <Tooltip title={`Crear Excel listado ${remesaSeleccionada.remesaInfo.label} ${monthLet}`} placement="top-start" arrow >
+                                        <Box
+                                            style={{ marginRight: 6, marginLeft: 6, cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                                            onClick={() => handleGenerarXLSCuadrantes('remesas')}
+                                        >
+                                            <Typography
+                                                variant="body2"
+                                                style={{
+                                                    color: 'white',
+                                                    fontWeight: 'bold',
+                                                    border: '1px solid white',
+                                                    borderRadius: '4px',
+                                                    padding: '2px 6px',
+                                                    marginRight: 6,
+                                                    fontSize: '0.875rem'
+                                                }}
+                                            >
+                                                {remesaSeleccionada.remesaInfo.numero}
+                                            </Typography>
+                                            <DescriptionIcon style={{ color: 'white', marginTop: 5 }} />
+                                        </Box>
+                                    </Tooltip>
                                 )}
                             </Box>
                         </AppBar>
@@ -350,7 +385,12 @@ const PantallaCuadrantes = () => {
                                     style={{ minHeight: heightContenedoresGra, maxHeight: heightContenedoresGra }}
                                 >
                                     <Fragment>
-                                        <PendientesRemesas prWidthContenedores={widthContenedores} prOpenLoading={openLoading} prMes={monthLet} />
+                                        <PendientesRemesas 
+                                            prWidthContenedores={widthContenedores} 
+                                            prOpenLoading={openLoading} 
+                                            prMes={monthLet}
+                                            onRemesaSeleccionada={handleRemesaSeleccionada}
+                                        />
                                     </Fragment>
                                 </Grid>
                             </Paper>

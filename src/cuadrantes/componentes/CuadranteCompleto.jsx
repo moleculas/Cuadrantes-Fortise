@@ -442,7 +442,7 @@ const CuadranteCompleto = (props) => {
                             spacing={1}
                             container
                             direction="column"
-                            justify="center"
+                            justifyContent="center"
                             alignItems="center"
                             p={2}
                             style={{ minHeight: heightScrollable - 50, maxHeight: heightScrollable - 50, width: '100%' }}
