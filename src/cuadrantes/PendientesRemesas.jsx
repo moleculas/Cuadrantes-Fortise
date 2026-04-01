@@ -326,15 +326,15 @@ const PendientesRemesas = (props) => {
     //temporal deshabilitat a canviar en 3 mesos
 
     useEffect(() => {
-        const mesActual = parseInt(calendarioAGestionar.split('-')[1], 10); 
-        dispatch(obtenerCuadrantesRemesablesAccion("cuadrantes", mesActual));
+        const [anyoActual, mesActual] = calendarioAGestionar.split('-').map(Number);
+        dispatch(obtenerCuadrantesRemesablesAccion("cuadrantes", anyoActual, mesActual));
     }, []);
 
     // useEffect para detectar cuando cuadrantesRemesables se resetea a null
     useEffect(() => {
         if (cuadrantesRemesables === null) {
-            const mesActual = parseInt(calendarioAGestionar.split('-')[1], 10);
-            dispatch(obtenerCuadrantesRemesablesAccion("cuadrantes", mesActual));
+            const [anyoActual, mesActual] = calendarioAGestionar.split('-').map(Number);
+            dispatch(obtenerCuadrantesRemesablesAccion("cuadrantes", anyoActual, mesActual));
         }
     }, [cuadrantesRemesables]);
 
@@ -408,8 +408,8 @@ const PendientesRemesas = (props) => {
                     setSelectedIndexBotoRemesas(0);
                     
                     // Recargar cuadrantes remesables para mostrar los cambios
-                    const mesActual = parseInt(calendarioAGestionar.split('-')[1], 10);
-                    dispatch(obtenerCuadrantesRemesablesAccion("cuadrantes", mesActual));
+                    const [anyoActual, mesActual] = calendarioAGestionar.split('-').map(Number);
+                    dispatch(obtenerCuadrantesRemesablesAccion("cuadrantes", anyoActual, mesActual));
                 }
             } catch (error) {
                 console.error('Error en el procesamiento de mailing:', error);

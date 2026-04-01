@@ -62,12 +62,18 @@ nvm use 18.14.2
 //Compte amb els centres de baixa si el nom és igal que el centre de alta perquè eren 2 quadrants en un mateix centre: (Ex: ALUMINIOS BARCELONA, S.L.) s'ha
 de posar un identificador que els diferenciï perquè sinó sortirá duplicat a cuadrantes pendientes
 
+//modificacions per llistar treballadors que estan de baixa:
+- a CuadrantDer.jsx eliminat filtre 
+- logicaGestionCuadrantes.js modificats els if, revisar: //modificador: llistar treballadors de baixa a quadrants
 
+- a quadrantesMailingDucks.js modificador per check factures //modificador check per test
 
-
-
-
+// modificador venciments
+- tots els canvis a gestionarFechaDePago
     
+// modificador simulació d'enviament de mails en local simulate_enviar_mail.php
+
+// estrenada carpeta /documentacion on s'enregistaran les incidències trobades i com s'ha corregit
 
 
 

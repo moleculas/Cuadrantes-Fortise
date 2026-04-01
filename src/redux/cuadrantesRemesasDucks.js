@@ -68,7 +68,7 @@ export default function cuadrantesRemesasReducer(state = dataInicial, action) {
 
 //acciones
 
-export const obtenerCuadrantesRemesablesAccion = (objeto, mes) => async (dispatch, getState) => {
+export const obtenerCuadrantesRemesablesAccion = (objeto, anyo, mes) => async (dispatch, getState) => {
     dispatch({
         type: LOADING_REMESAS
     });
@@ -86,52 +86,59 @@ export const obtenerCuadrantesRemesablesAccion = (objeto, mes) => async (dispatc
             ...cuadrante,
             total: parse(cuadrante.total)
         }));
-        
+
         const cuadrantesRemesables = cuadrantesProcesados.filter(cuadrante => {
             const formaPago = cuadrante.total?.formaPago;
-            
+
             // Primera criba: forma de pago
             if (!['RE', 'R1', 'R2', 'R3'].includes(formaPago)) {
                 return false;
             }
-            
-            // Segunda criba: por vencimiento según mes
+
+            // Segunda criba: por vencimiento según mes y año
             const nombreCuadrante = cuadrante.nombre;
             const partesNombre = nombreCuadrante.split('-');
             if (partesNombre.length < 3) return false;
-            
+
+            const anyoCuadrante = parseInt(partesNombre[0], 10);
             const mesCuadrante = parseInt(partesNombre[1], 10);
-            const mesActual = mes;
-            
-            // Calcular para qué mes de REMESA sirve este cuadrante
+
+            // Calcular para qué mes/año de REMESA sirve este cuadrante
             // según su mes de origen y forma de pago
             // NOTA: Todos los cuadrantes se consideran facturados el último día de su mes
             // REGLA: No se puede cobrar/remesar antes de la fecha de vencimiento
             // Por tanto, como facturamos el día 30 y los días de pago suelen ser antes (5,10,15,17,20,25,28,30),
             // debemos ir al siguiente mes después del vencimiento
             let mesRemesaCalculado = mesCuadrante;
-            
+            let anyoRemesaCalculado = anyoCuadrante;
+
             switch (formaPago) {
-                case 'RE': // 0 días: vencimiento 30 sept → remesa mes siguiente (octubre)
+                case 'RE': // 0 días: vencimiento fin de mes → remesa mes siguiente
                     mesRemesaCalculado = mesCuadrante + 1;
                     break;
-                case 'R1': // 30 días: vencimiento 30 oct → remesa mes siguiente (noviembre)
+                case 'R1': // 30 días: vencimiento +30 días → remesa +2 meses
                     mesRemesaCalculado = mesCuadrante + 2;
                     break;
-                case 'R2': // 60 días: vencimiento ~29 nov → remesa mes siguiente (diciembre)
+                case 'R2': // 60 días: vencimiento +60 días → remesa +3 meses
                     mesRemesaCalculado = mesCuadrante + 3;
                     break;
-                case 'R3': // 90 días: vencimiento ~29 dic → remesa mes siguiente (enero)
+                case 'R3': // 90 días: vencimiento +90 días → remesa +4 meses
                     mesRemesaCalculado = mesCuadrante + 4;
                     break;
                 default:
                     return false;
             }
-            
-            // Incluir si el mes de remesa calculado coincide con el mes que estamos gestionando
-            return mesRemesaCalculado === mesActual;
+
+            // Ajustar cambio de año si el mes supera 12
+            if (mesRemesaCalculado > 12) {
+                mesRemesaCalculado = mesRemesaCalculado - 12;
+                anyoRemesaCalculado = anyoCuadrante + 1;
+            }
+
+            // Incluir si el mes y año de remesa calculado coincide con el mes/año que estamos gestionando
+            return mesRemesaCalculado === mes && anyoRemesaCalculado === anyo;
         });
-        
+
         dispatch({
             type: OBTENER_REMESABLES,
             payload: {

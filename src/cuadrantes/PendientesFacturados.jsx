@@ -198,7 +198,7 @@ const PendientesFacturados = (props) => {
 
     const selectAllChecked = () => {
         const object = cuadrantesFacturadosArray.reduce((acc, cuadrante) => {
-            if (cuadrante.total.mailEnviado === 'no' && cuadrante.total.mail && cuadrante.total.procesado.valor === "si") {
+            if (cuadrante.total.mailEnviado === 'no' && cuadrante.total.mail && cuadrante.total.procesado?.valor === "si" && !cuadrante.total.procesado?.numR) {
                 acc[`checked-${cuadrante.id}`] = true;
             };
             return acc;
@@ -220,7 +220,7 @@ const PendientesFacturados = (props) => {
 
     const retornaDisabledChecked = () => !Object.values(checked).includes(true);
 
-    const retornaDisabledCheckedItem = (total) => total.mailEnviado === "si" || !total.mail || total.procesado.valor === "no";
+    const retornaDisabledCheckedItem = (total) => total.mailEnviado === "si" || !total.mail || !total.procesado || total.procesado.valor === "no" || !!total.procesado.numR;
 
     const handleGenerarLoteMailing = () => {
         const arrayIdsCuadrantes = Object.keys(checked)

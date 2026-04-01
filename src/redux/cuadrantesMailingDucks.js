@@ -119,20 +119,20 @@ const formatNumerics = (arr) => {
 // function gestionarFechaDePago(diaPago, mes, anyo, formaDePago) {
 //     console.log(diaPago)
 //     const forma = formasDePago.find(fp => fp.value === formaDePago);
-    
+
 //     // Obtener el día actual (día real de emisión de la factura)
 //     let diaEmision = new Date().getDate();
-    
+
 //     // Crear la fecha de emisión real
 //     let fechaEmision = new Date(anyo, mes - 1, diaEmision);
-    
+
 //     // Calcular fecha base sumando los días de la forma de pago
 //     let fecha = new Date(fechaEmision);
 //     fecha.setDate(fecha.getDate() + forma.dias);
-    
+
 //     // Crear fecha ajustada con el día de pago del cliente
 //     let fechaAjustada = new Date(fecha.getFullYear(), fecha.getMonth(), diaPago);
-    
+
 //     // Caso especial: formas de pago a 0 días
 //     if (forma.dias === 0) {
 //         // Si la fecha ajustada es igual o anterior a la fecha de emisión,
@@ -149,49 +149,37 @@ const formatNumerics = (arr) => {
 //             fechaAjustada.setDate(diaPago);
 //         }
 //     }
-    
+
 //     return `${String(fechaAjustada.getDate()).padStart(2, '0')}-${String(fechaAjustada.getMonth() + 1).padStart(2, '0')}-${fechaAjustada.getFullYear()}`;
 // };
 
 function gestionarFechaDePago(diaPago, mes, anyo, formaDePago) {
-    console.log(mes)
     const forma = formasDePago.find(fp => fp.value === formaDePago);
-    
-    // El problema estaba aquí - necesitas usar el día del mes/año que pasas como parámetro
-    // No el día actual del sistema
-    let diaEmision = new Date(anyo, mes - 1 + 1, 0).getDate(); // Último día del mes
-    
-    // Si quieres que el día de emisión sea el último día del mes:
-    let fechaEmision = new Date(anyo, mes - 1, diaEmision);
-    
-    // O si el día de emisión debe ser un día específico, deberías pasarlo como parámetro:
-    // function gestionarFechaDePago(diaPago, diaEmision, mes, anyo, formaDePago) {
-    //     let fechaEmision = new Date(anyo, mes - 1, diaEmision);
-    
+
+    // Último día del mes de facturación
+    const diaEmision = new Date(anyo, mes, 0).getDate();
+    const fechaEmision = new Date(anyo, mes - 1, diaEmision);
+
     // Calcular fecha base sumando los días de la forma de pago
     let fecha = new Date(fechaEmision);
     fecha.setDate(fecha.getDate() + forma.dias);
-    
-    // Crear fecha ajustada con el día de pago del cliente
+
+    // Situar el diaPago en el mes resultante
     let fechaAjustada = new Date(fecha.getFullYear(), fecha.getMonth(), diaPago);
-    
-    // Caso especial: formas de pago a 0 días
-    if (forma.dias === 0) {
-        // Si la fecha ajustada es igual o anterior a la fecha de emisión,
-        // pasar al mes siguiente
-        if (fechaAjustada <= fechaEmision) {
-            fechaAjustada.setMonth(fechaAjustada.getMonth() + 1);
-            fechaAjustada.setDate(diaPago);
-        }
-    } else {
-        // Para formas de pago con plazo > 0 días
-        // Si el día de pago es anterior a la fecha calculada, ir al siguiente mes
-        if (fechaAjustada < fecha) {
-            fechaAjustada.setMonth(fechaAjustada.getMonth() + 1);
-            fechaAjustada.setDate(diaPago);
-        }
+
+    // Si el diaPago ya pasó en ese mes, avanzar al siguiente
+    if (fechaAjustada < fecha) {
+        fechaAjustada.setMonth(fechaAjustada.getMonth() + 1);
+        fechaAjustada.setDate(diaPago);
     }
-    
+
+    // Garantizar mínimo 30 días entre emisión y vencimiento
+    const diffDias = (fechaAjustada - fechaEmision) / (1000 * 60 * 60 * 24);
+    if (diffDias < 30) {
+        fechaAjustada.setMonth(fechaAjustada.getMonth() + 1);
+        fechaAjustada.setDate(diaPago);
+    }
+
     return `${String(fechaAjustada.getDate()).padStart(2, '0')}-${String(fechaAjustada.getMonth() + 1).padStart(2, '0')}-${fechaAjustada.getFullYear()}`;
 }
 
@@ -209,7 +197,7 @@ const decodificadorItemsFactura = (objetoTotal, anyo, mes) => (dispatch, getStat
         provincia: objetoTotal.provincia,
         codigo: objetoTotal.codigo,
         //numero: `F${objetoTotal.procesado.numF.toString().padStart(5, '0')}-${anyo.toString().slice(-2)}`,
-        numero: `${objetoTotal.procesado.numF.toString().padStart(5, '0')}`,
+        numero: `${parseInt(objetoTotal.procesado.numF).toString().padStart(5, '0')}`,
         formaPago: (formasDePago.find(item => item.value === objetoTotal.formaPago) || {}).label,
         nif: objetoTotal.nif,
         lineas: arrayElementosFormateados,
@@ -244,7 +232,7 @@ export const gestionarMailingIndividualAccion = (objetoCuadrante) => async (disp
         //     const pdfWindow = window.open();
         //     pdfWindow.location.href = fileURL;
         // }
-        if (blob) {           
+        if (blob) {
             let file = new File([blob], `Factura 1-${objetoFacturaPDF.numero}.pdf`, { type: 'application/pdf' });
             await dispatch(handleClickEnviarMailAccion(objetoFacturaPDF.mail, file, mes, anyo, true, objetoCuadrante, false));
             objetoFacturaPDF.mail2 && (await dispatch(handleClickEnviarMailAccion(objetoFacturaPDF.mail2, file, mes, anyo, true, objetoCuadrante, true)));
@@ -275,7 +263,7 @@ const handleClickEnviarMailAccion = (mail, file, mes, anyo, individual, objetoCu
             headers: {
                 "Content-Type": "multipart/form-data",
             }
-        });        
+        });
         if (res.data.status !== "success") {
             if (individual) {
                 dispatch({
@@ -459,26 +447,42 @@ export const gestionarMailingLoteAccion = (arrayCuadrantes, anyo, mes) => async 
     dispatch(iniciarProcesoMailing(totalEmails));
     try {
         const tasks = arrayCuadrantes.map(objetoCuadrante => async () => {
-            const objetoFacturaPDF = await dispatch(decodificadorItemsFactura(objetoCuadrante.total, anyo, mes));
-            if (!objetoFacturaPDF) {
-                console.error(`Error: No se pudo obtener el objeto de la factura para el cuadrante ${objetoCuadrante.id}`);
-                dispatch(incrementProcessedEmails());
-                return;
-            }
-            const element = (
-                <FacturaPDF objetoFacturaPDF={objetoFacturaPDF} />
-            );
-            const myPdf = pdf([]);
-            myPdf.updateContainer(element);
-            const blob = await myPdf.toBlob();
-            if (blob) {
-                const file = new File([blob], `Factura 1-${objetoFacturaPDF.numero}.pdf`, { type: 'application/pdf' });
-                await sendEmailWithRetry(objetoFacturaPDF.mail, file, mes, anyo, objetoCuadrante, dispatch, false);
-                dispatch(incrementProcessedEmails());
-                if (objetoFacturaPDF.mail2) {
-                    await sendEmailWithRetry(objetoFacturaPDF.mail2, file, mes, anyo, objetoCuadrante, dispatch, true);
+            try {
+                const objetoFacturaPDF = await dispatch(decodificadorItemsFactura(objetoCuadrante.total, anyo, mes));
+                if (!objetoFacturaPDF) {
+                    console.error(`Error: No se pudo obtener el objeto de la factura para el cuadrante ${objetoCuadrante.id}`);
                     dispatch(incrementProcessedEmails());
+                    return;
                 }
+                const element = (
+                    <FacturaPDF objetoFacturaPDF={objetoFacturaPDF} />
+                );
+                const myPdf = pdf([]);
+                myPdf.updateContainer(element);
+                const blob = await myPdf.toBlob();
+                if (blob) {
+                    const file = new File([blob], `Factura 1-${objetoFacturaPDF.numero}.pdf`, { type: 'application/pdf' });
+                    await sendEmailWithRetry(objetoFacturaPDF.mail, file, mes, anyo, objetoCuadrante, dispatch, false);
+                    dispatch(incrementProcessedEmails());
+                    if (objetoFacturaPDF.mail2) {
+                        await sendEmailWithRetry(objetoFacturaPDF.mail2, file, mes, anyo, objetoCuadrante, dispatch, true);
+                        dispatch(incrementProcessedEmails());
+                    }
+                }
+            } catch (error) {
+                console.error(`Error procesando cuadrante ${objetoCuadrante.id}:`, error);
+                dispatch({
+                    type: ITERACION_MAILING_EXITO,
+                    payload: {
+                        elementoArray1: {
+                            id: objetoCuadrante.id,
+                            centro: objetoCuadrante.total?.nombreCentro || 'Desconocido',
+                            mail: objetoCuadrante.total?.mail || '',
+                            estado: "error"
+                        }
+                    }
+                });
+                dispatch(incrementProcessedEmails());
             }
         });
         await promisePool(tasks, 1);
@@ -499,64 +503,38 @@ export const gestionarMailingLoteAccionLocal = (arrayCuadrantes, anyo, mes) => a
     const options = { fullPrecisionFloats: true };
     try {
         const tasks = arrayCuadrantes.map(objetoCuadrante => async () => {
-            const objetoFacturaPDF = await dispatch(decodificadorItemsFactura(objetoCuadrante.total, anyo, mes));
-            if (!objetoFacturaPDF) {
-                console.error(`Error: No se pudo obtener el objeto de la factura para el cuadrante ${objetoCuadrante.id}`);
-                dispatch(incrementProcessedEmails());
-                return;
-            }
-
-            // Simular envío de mail principal
-            dispatch({
-                type: ITEM_ENVIANDO,
-                payload: {
-                    objeto: {
-                        centro: objetoCuadrante.total.nombreCentro,
-                        mail: objetoFacturaPDF.mail,
-                        estado: "simulado (local)"
-                    }
+            try {
+                const objetoFacturaPDF = await dispatch(decodificadorItemsFactura(objetoCuadrante.total, anyo, mes));
+                if (!objetoFacturaPDF) {
+                    console.error(`Error: No se pudo obtener el objeto de la factura para el cuadrante ${objetoCuadrante.id}`);
+                    dispatch(incrementProcessedEmails());
+                    return;
                 }
-            });
 
-            // Actualizar estado del cuadrante como si se hubiera enviado
-            const objetoTotales = {
-                ...objetoCuadrante.total,
-                mailEnviado: "si",
-            };
-
-            dispatch({
-                type: SET_CUADRANTESITERADOSACTUALIZAR_MAILING,
-                payload: {
-                    elementoArray: {
-                        id: objetoCuadrante.id,
-                        total: stringify(objetoTotales, options)
-                    }
-                }
-            });
-
-            dispatch({
-                type: ITERACION_MAILING_EXITO,
-                payload: {
-                    elementoArray1: {
-                        id: objetoCuadrante.id,
-                        centro: objetoCuadrante.total.nombreCentro,
-                        mail: objetoFacturaPDF.mail,
-                        estado: "simulado"
-                    }
-                }
-            });
-
-            dispatch(incrementProcessedEmails());
-
-            // Simular envío de mail secundario si existe
-            if (objetoFacturaPDF.mail2) {
+                // Simular envío de mail principal
                 dispatch({
                     type: ITEM_ENVIANDO,
                     payload: {
                         objeto: {
                             centro: objetoCuadrante.total.nombreCentro,
-                            mail: objetoFacturaPDF.mail2,
+                            mail: objetoFacturaPDF.mail,
                             estado: "simulado (local)"
+                        }
+                    }
+                });
+
+                // Actualizar estado del cuadrante como si se hubiera enviado
+                const objetoTotales = {
+                    ...objetoCuadrante.total,
+                    mailEnviado: "si",
+                };
+
+                dispatch({
+                    type: SET_CUADRANTESITERADOSACTUALIZAR_MAILING,
+                    payload: {
+                        elementoArray: {
+                            id: objetoCuadrante.id,
+                            total: stringify(objetoTotales, options)
                         }
                     }
                 });
@@ -567,12 +545,54 @@ export const gestionarMailingLoteAccionLocal = (arrayCuadrantes, anyo, mes) => a
                         elementoArray1: {
                             id: objetoCuadrante.id,
                             centro: objetoCuadrante.total.nombreCentro,
-                            mail: objetoFacturaPDF.mail2,
+                            mail: objetoFacturaPDF.mail,
                             estado: "simulado"
                         }
                     }
                 });
 
+                dispatch(incrementProcessedEmails());
+
+                // Simular envío de mail secundario si existe
+                if (objetoFacturaPDF.mail2) {
+                    dispatch({
+                        type: ITEM_ENVIANDO,
+                        payload: {
+                            objeto: {
+                                centro: objetoCuadrante.total.nombreCentro,
+                                mail: objetoFacturaPDF.mail2,
+                                estado: "simulado (local)"
+                            }
+                        }
+                    });
+
+                    dispatch({
+                        type: ITERACION_MAILING_EXITO,
+                        payload: {
+                            elementoArray1: {
+                                id: objetoCuadrante.id,
+                                centro: objetoCuadrante.total.nombreCentro,
+                                mail: objetoFacturaPDF.mail2,
+                                estado: "simulado"
+                            }
+                        }
+                    });
+
+                    dispatch(incrementProcessedEmails());
+                }
+            } catch (error) {
+                console.error(`Error procesando cuadrante ${objetoCuadrante.id} (local):`, error);
+                dispatch({
+                    type: ITERACION_MAILING_EXITO,
+                    payload: {
+                        elementoArray1: {
+                            id: objetoCuadrante.id,
+                            centro: objetoCuadrante.total?.nombreCentro || 'Desconocido',
+                            mail: objetoCuadrante.total?.mail || '',
+                            estado: "error"
+                        }
+                    }
+                });
                 dispatch(incrementProcessedEmails());
             }
         });
@@ -626,7 +646,7 @@ export const generaArchivoXLSMailingAccion = (mes) => async (dispatch, getState)
             nombreCentro: cuadrante.centro,
             mail: cuadrante.mail,
             estado: cuadrante.estado,
-        })).sort((a, b) => a.nombreCentro.localeCompare(b.nombreCentro));        
+        })).sort((a, b) => a.nombreCentro.localeCompare(b.nombreCentro));
         const elListadoCuadrantesEnviadosImprimir = [
             [`LISTADO EMAILS ENVIADOS MES ${mes}`],
             ["CENTRO", "MAIL", "ESTADO"],

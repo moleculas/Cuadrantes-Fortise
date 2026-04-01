@@ -654,7 +654,9 @@ export const gestionTrabajadorAccion = (objetoTrabajadorInicio) => (dispatch, ge
         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].tipoRegistro === 'individual') {
             objetoTrabajador['laPosicionDelTrabajador'] = posicionTrabajadorPrevioACambiar;
         };
-        if (objetoTrabajador.estado !== 'alta' && !esUnaActualizacionTrabajador) {
+        //modificador: llistar treballadors de baixa a quadrants
+        //if (objetoTrabajador.estado !== 'alta' && !esUnaActualizacionTrabajador) {
+        if (false) {
             dispatch(setAlertaAccion({
                 abierto: true,
                 mensaje: "Este trabajador se encuentra de baja o está en reserva, selecciona otro.",
@@ -770,7 +772,9 @@ export const gestionSuplenteAccion = (objetoSuplenteInicio) => (dispatch, getSta
         if (objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].tipoRegistro === 'individual') {
             objetoSuplente['laPosicionDelTrabajador'] = posicionSuplentePrevioACambiar;
         };
-        if (objetoSuplente.estado !== 'alta' && !esUnaActualizacionTrabajador) {
+        //modificador: llistar treballadors de baixa a quadrants
+        //if (objetoSuplente.estado !== 'alta' && !esUnaActualizacionTrabajador) {
+        if (false) {
             dispatch(setAlertaAccion({
                 abierto: true,
                 mensaje: "Este trabajador se encuentra de baja, selecciona otro.",

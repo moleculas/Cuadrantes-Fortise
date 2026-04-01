@@ -276,7 +276,8 @@ const CuadranteDer = (props) => {
                                                                     }
                                                                 >
                                                                     {listadoTrabajadores
-                                                                        .filter(option => option.estado === "alta") //modificador: filtrar treballadors baixa
+                                                                        //modificador: llistar treballadors de baixa a quadrants
+                                                                        //.filter(option => option.estado === "alta") //modificador: filtrar treballadors baixa
                                                                         .map(option => (
                                                                             <MenuItem key={option.id} value={option.id}>
                                                                                 {option.nombre}
