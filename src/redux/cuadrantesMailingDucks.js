@@ -197,7 +197,7 @@ const decodificadorItemsFactura = (objetoTotal, anyo, mes) => (dispatch, getStat
         provincia: objetoTotal.provincia,
         codigo: objetoTotal.codigo,
         //numero: `F${objetoTotal.procesado.numF.toString().padStart(5, '0')}-${anyo.toString().slice(-2)}`,
-        numero: `${parseInt(objetoTotal.procesado.numF).toString().padStart(5, '0')}`,
+        numero: `${parseInt(objetoTotal.procesado.numF).toString().padStart(6, '0')}`,
         formaPago: (formasDePago.find(item => item.value === objetoTotal.formaPago) || {}).label,
         nif: objetoTotal.nif,
         lineas: arrayElementosFormateados,
