@@ -2,6 +2,7 @@ import axios from 'axios';
 import Constantes from "../constantes";
 import { create } from 'xmlbuilder2';
 import { stringify, parse } from 'zipson';
+import { calcularFechaVencimiento, formatoYYYYMMDD } from '../logica/logicaVencimientos';
 
 //importación acciones
 import { setAlertaAccion } from './cuadrantesSettersDucks';
@@ -199,55 +200,68 @@ export const gestionarRemesaLoteAccion = (arrayCuadrantes, anyo, mes, remesa, ob
     const fechaActual = new Date();
     fechaActual.setHours(0, 0, 0, 0);
 
-    // Función auxiliar para calcular fecha
-    function gestionarFechaDePagoRemesas(diaPago, mes, anyo, formaDePago) {
-        const forma = formasDePago.find(fp => fp.value === formaDePago);
-        let fecha = new Date(anyo, mes, diaPago);
-        fecha.setDate(fecha.getDate() + forma.dias);
-        const fechaAjustada = new Date(fecha.getFullYear(), fecha.getMonth(), diaPago);
+    // OBSOLETO — referencia histórica. Lógica vigente en src/logica/logicaVencimientos.js. No reactivar.
+    // Esta función reaplicaba forma.dias sobre el mes de la remesa actual (que ya incorporaba el plazo en
+    // obtenerCuadrantesRemesablesAccion), provocando doble conteo: R1 se cobraba un mes tarde, R2 dos meses, etc.
+    // function gestionarFechaDePagoRemesas(diaPago, mes, anyo, formaDePago) {
+    //     const forma = formasDePago.find(fp => fp.value === formaDePago);
+    //     let fecha = new Date(anyo, mes, diaPago);
+    //     fecha.setDate(fecha.getDate() + forma.dias);
+    //     const fechaAjustada = new Date(fecha.getFullYear(), fecha.getMonth(), diaPago);
+    //
+    //     // Verificar si la fecha ya pasó
+    //     if (fechaAjustada < fechaActual) {
+    //         fechaAjustada.setMonth(fechaAjustada.getMonth() + 1);
+    //         console.log(`Fecha ${fechaAjustada.toISOString().split('T')[0]} ya pasada, moviendo al siguiente mes`);
+    //     }
+    //
+    //     return `${fechaAjustada.getFullYear()}-${String(fechaAjustada.getMonth() + 1).padStart(2, '0')}-${String(fechaAjustada.getDate()).padStart(2, '0')}`;
+    // }
 
-        // Verificar si la fecha ya pasó
-        if (fechaAjustada < fechaActual) {
-            fechaAjustada.setMonth(fechaAjustada.getMonth() + 1);
-            console.log(`Fecha ${fechaAjustada.toISOString().split('T')[0]} ya pasada, moviendo al siguiente mes`);
-        }
-
-        return `${fechaAjustada.getFullYear()}-${String(fechaAjustada.getMonth() + 1).padStart(2, '0')}-${String(fechaAjustada.getDate()).padStart(2, '0')}`;
-    }
-
-    // Agrupar cuadrantes por día de pago
-    const cuadrantesPorDiaPago = {};
+    // Agrupar cuadrantes por fecha de vencimiento (misma fuente de verdad que el PDF).
+    // El mes de origen del cuadrante se extrae de cuadrante.nombre = "anyo-mes-idCentro".
+    const cuadrantesPorFecha = {};
 
     arrayCuadrantes.forEach(cuadrante => {
-        const diaPago = cuadrante.total.diaPago;
+        const partes = cuadrante.nombre.split('-');
+        const anyoOrigen = parseInt(partes[0], 10);
+        const mesOrigen = parseInt(partes[1], 10);
 
-        if (!cuadrantesPorDiaPago[diaPago]) {
-            cuadrantesPorDiaPago[diaPago] = [];
+        let fechaVto = calcularFechaVencimiento(
+            cuadrante.total.diaPago,
+            mesOrigen,
+            anyoOrigen,
+            cuadrante.total.formaPago,
+            formasDePago
+        );
+
+        // Salvaguarda SEPA: no presentar un cargo con fecha pasada.
+        // Caso raro (remesa generada después del vencimiento). Si se activa, introduce una
+        // discrepancia esperada entre PDF y SEPA para ese cuadrante puntual.
+        if (fechaVto < fechaActual) {
+            const fechaOriginal = formatoYYYYMMDD(fechaVto);
+            fechaVto.setMonth(fechaVto.getMonth() + 1);
+            console.warn(`Salvaguarda SEPA: vencimiento ${fechaOriginal} ya pasado para cuadrante ${cuadrante.nombre}, cargo movido a ${formatoYYYYMMDD(fechaVto)}`);
         }
-        cuadrantesPorDiaPago[diaPago].push(cuadrante);
+
+        const clave = formatoYYYYMMDD(fechaVto);
+        if (!cuadrantesPorFecha[clave]) cuadrantesPorFecha[clave] = [];
+        cuadrantesPorFecha[clave].push(cuadrante);
     });
 
-    console.log('Cuadrantes agrupados por día de pago:', cuadrantesPorDiaPago);
-    console.log(`Total de lotes a generar: ${Object.keys(cuadrantesPorDiaPago).length}`);
+    console.log('Cuadrantes agrupados por fecha de vencimiento:', cuadrantesPorFecha);
+    console.log(`Total de lotes a generar: ${Object.keys(cuadrantesPorFecha).length}`);
 
     // Obtener información del banco desde la remesa seleccionada
     const remesaInfo = optionsRemesas.find(r => r.value === remesa);
     const banco = remesa.includes('B') ? 'BBVA' : 'La Caixa';
 
     try {
-        // Iterar sobre cada lote de cuadrantes por día de pago
+        // Iterar sobre cada lote de cuadrantes por fecha de vencimiento
         const resultados = [];
         const cuadrantesProcesadosExitosamente = []; // Array para tracking
-        for (const [diaPago, cuadrantesLote] of Object.entries(cuadrantesPorDiaPago)) {
-            console.log(`Procesando lote para día de pago ${diaPago} con ${cuadrantesLote.length} cuadrantes`);
-
-            // Calcular fecha de vencimiento para este día de pago
-            const fechaVencimiento = gestionarFechaDePagoRemesas(
-                parseInt(diaPago),
-                parseInt(mes) - 1,
-                parseInt(anyo),
-                cuadrantesLote[0].total.formaPago // Usar la forma de pago del primer cuadrante del lote
-            );
+        for (const [fechaVencimiento, cuadrantesLote] of Object.entries(cuadrantesPorFecha)) {
+            console.log(`Procesando lote para fecha de vencimiento ${fechaVencimiento} con ${cuadrantesLote.length} cuadrantes`);
 
             // Llamar a la función generadora de remesa SEPA
             const resultadoRemesa = await generarRemesaSEPA(
@@ -268,8 +282,8 @@ export const gestionarRemesaLoteAccion = (arrayCuadrantes, anyo, mes, remesa, ob
                 cuadrantesProcesadosExitosamente.push(...cuadrantesLote);
 
                 // MEJORAR EL TIEMPO DE ESPERA
-                const totalLotes = Object.keys(cuadrantesPorDiaPago).length;
-                const indiceActual = Object.keys(cuadrantesPorDiaPago).indexOf(diaPago);
+                const totalLotes = Object.keys(cuadrantesPorFecha).length;
+                const indiceActual = Object.keys(cuadrantesPorFecha).indexOf(fechaVencimiento);
 
                 // Solo pausar si no es el último archivo
                 if (totalLotes > 1 && indiceActual < totalLotes - 1) {

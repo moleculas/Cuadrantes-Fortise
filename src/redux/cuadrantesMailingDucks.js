@@ -6,6 +6,7 @@ import {
 } from './appDucks';
 import { handleCloseMenuAccion } from './cuadrantesHandlersDucks';
 import { stringify } from 'zipson';
+import { calcularFechaVencimiento, formatoDDMMYYYY } from '../logica/logicaVencimientos';
 
 //carga componentes
 import FacturaPDF from "../cuadrantes/FacturaPDF";
@@ -115,7 +116,8 @@ const formatNumerics = (arr) => {
     );
 };
 
-// modificador: corrector venciments
+// OBSOLETO — referencia histórica. Lógica vigente en src/logica/logicaVencimientos.js. No reactivar.
+// Primera versión: usaba new Date().getDate() como día de emisión (resultados no deterministas).
 // function gestionarFechaDePago(diaPago, mes, anyo, formaDePago) {
 //     console.log(diaPago)
 //     const forma = formasDePago.find(fp => fp.value === formaDePago);
@@ -153,34 +155,41 @@ const formatNumerics = (arr) => {
 //     return `${String(fechaAjustada.getDate()).padStart(2, '0')}-${String(fechaAjustada.getMonth() + 1).padStart(2, '0')}-${fechaAjustada.getFullYear()}`;
 // };
 
+// OBSOLETO — referencia histórica. Lógica vigente en src/logica/logicaVencimientos.js. No reactivar.
+// Segunda versión: introdujo la regla inventada de "mínimo 30 días" que empujaba un mes extra y discrepaba con Factusol.
+// function gestionarFechaDePago(diaPago, mes, anyo, formaDePago) {
+//     const forma = formasDePago.find(fp => fp.value === formaDePago);
+//
+//     // Último día del mes de facturación
+//     const diaEmision = new Date(anyo, mes, 0).getDate();
+//     const fechaEmision = new Date(anyo, mes - 1, diaEmision);
+//
+//     // Calcular fecha base sumando los días de la forma de pago
+//     let fecha = new Date(fechaEmision);
+//     fecha.setDate(fecha.getDate() + forma.dias);
+//
+//     // Situar el diaPago en el mes resultante
+//     let fechaAjustada = new Date(fecha.getFullYear(), fecha.getMonth(), diaPago);
+//
+//     // Si el diaPago ya pasó en ese mes, avanzar al siguiente
+//     if (fechaAjustada < fecha) {
+//         fechaAjustada.setMonth(fechaAjustada.getMonth() + 1);
+//         fechaAjustada.setDate(diaPago);
+//     }
+//
+//     // Garantizar mínimo 30 días entre emisión y vencimiento
+//     const diffDias = (fechaAjustada - fechaEmision) / (1000 * 60 * 60 * 24);
+//     if (diffDias < 30) {
+//         fechaAjustada.setMonth(fechaAjustada.getMonth() + 1);
+//         fechaAjustada.setDate(diaPago);
+//     }
+//
+//     return `${String(fechaAjustada.getDate()).padStart(2, '0')}-${String(fechaAjustada.getMonth() + 1).padStart(2, '0')}-${fechaAjustada.getFullYear()}`;
+// }
+
 function gestionarFechaDePago(diaPago, mes, anyo, formaDePago) {
-    const forma = formasDePago.find(fp => fp.value === formaDePago);
-
-    // Último día del mes de facturación
-    const diaEmision = new Date(anyo, mes, 0).getDate();
-    const fechaEmision = new Date(anyo, mes - 1, diaEmision);
-
-    // Calcular fecha base sumando los días de la forma de pago
-    let fecha = new Date(fechaEmision);
-    fecha.setDate(fecha.getDate() + forma.dias);
-
-    // Situar el diaPago en el mes resultante
-    let fechaAjustada = new Date(fecha.getFullYear(), fecha.getMonth(), diaPago);
-
-    // Si el diaPago ya pasó en ese mes, avanzar al siguiente
-    if (fechaAjustada < fecha) {
-        fechaAjustada.setMonth(fechaAjustada.getMonth() + 1);
-        fechaAjustada.setDate(diaPago);
-    }
-
-    // Garantizar mínimo 30 días entre emisión y vencimiento
-    const diffDias = (fechaAjustada - fechaEmision) / (1000 * 60 * 60 * 24);
-    if (diffDias < 30) {
-        fechaAjustada.setMonth(fechaAjustada.getMonth() + 1);
-        fechaAjustada.setDate(diaPago);
-    }
-
-    return `${String(fechaAjustada.getDate()).padStart(2, '0')}-${String(fechaAjustada.getMonth() + 1).padStart(2, '0')}-${fechaAjustada.getFullYear()}`;
+    const fechaVto = calcularFechaVencimiento(diaPago, parseInt(mes, 10), parseInt(anyo, 10), formaDePago, formasDePago);
+    return formatoDDMMYYYY(fechaVto);
 }
 
 const decodificadorItemsFactura = (objetoTotal, anyo, mes) => (dispatch, getState) => {
@@ -226,7 +235,7 @@ export const gestionarMailingIndividualAccion = (objetoCuadrante) => async (disp
         myPdf.updateContainer(element);
         const blob = await myPdf.toBlob();
         //modificador: check per test 
-        // if (blob) {
+        //  if (blob) {
         //     const file = new File([blob], `Factura 1-${objetoCuadrante.numero}.pdf`, { type: 'application/pdf' });
         //     const fileURL = URL.createObjectURL(file);
         //     const pdfWindow = window.open();
