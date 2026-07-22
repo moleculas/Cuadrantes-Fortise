@@ -401,16 +401,24 @@ const numeroSemanaMes = (date) => {
     return weekNumber;
 };
 
-const periodoBajaTrabajadorAccion = (calendarioAGestionar, inicioBaja, finBaja, diasMes) => {
+export const periodoBajaTrabajadorAccion = (calendarioAGestionar, inicioBaja, finBaja, diasMes) => {
     const [anyoCalendario, mesCalendario] = calendarioAGestionar.split("-").map(Number);
     const [anyoInicioB, mesInicioB, diaInicioB] = inicioBaja.split("-").map(Number);
-    const anyoFinB = finBaja ? finBaja.split("-")[0] : anyoCalendario;
-    const mesFinB = finBaja ? finBaja.split("-")[1] : mesCalendario;
-    const diaFinB = finBaja ? finBaja.split("-")[2] : diasMes;
-    const empezamosPor = (anyoInicioB < anyoCalendario || mesInicioB < mesCalendario) ? 1 : diaInicioB;
+    const anyoFinB = finBaja ? Number(finBaja.split("-")[0]) : anyoCalendario;
+    const mesFinB = finBaja ? Number(finBaja.split("-")[1]) : mesCalendario;
+    const diaFinB = finBaja ? Number(finBaja.split("-")[2]) : diasMes;
+    //modificador: acotar baja al mes gestionado (comparar por año*12+mes evita fallos en cambio de año)
+    const mesCalendarioComp = anyoCalendario * 12 + mesCalendario;
+    const mesInicioComp = anyoInicioB * 12 + mesInicioB;
+    const mesFinComp = anyoFinB * 12 + mesFinB;
+    //la baja empieza en un mes posterior al gestionado, o terminó en un mes anterior: no afecta a este mes
+    if (mesInicioComp > mesCalendarioComp || mesFinComp < mesCalendarioComp) {
+        return [];
+    };
+    const empezamosPor = mesInicioComp < mesCalendarioComp ? 1 : diaInicioB;
     //modificar: dies baixa complerts
-    //const acabamosPor = (anyoFinB > anyoCalendario || mesFinB > mesCalendario) ? diasMes : (finBaja ? diaFinB - 1 : diaFinB);
-    const acabamosPor = (anyoFinB > anyoCalendario || mesFinB > mesCalendario) ? diasMes : (finBaja ? diaFinB : diaFinB);
+    //const acabamosPor = mesFinComp > mesCalendarioComp ? diasMes : (finBaja ? diaFinB - 1 : diaFinB);
+    const acabamosPor = mesFinComp > mesCalendarioComp ? diasMes : diaFinB;
     const arrayBaja = Array.from({ length: acabamosPor - empezamosPor + 1 }, (_, i) => i + empezamosPor);
     return arrayBaja;
 };
