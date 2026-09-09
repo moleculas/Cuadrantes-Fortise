@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Constantes from "../constantes";
+import { parseSubNombresCuadrantes } from '../logica/logicaSubNombresCuadrantes';
 
 //constantes
 const rutaApi = Constantes.RUTA_API;
@@ -12,6 +13,7 @@ const dataInicial = {
         id: null,
         nombre: '',
         subNombre: '',
+        subNombresCuadrantes: [],
         estado: 'alta',
         categoria: {
             objeto: 'categoria',
@@ -240,6 +242,7 @@ export const vaciarDatosCentroAccion = () => (dispatch, getState) => {
             id: null,
             nombre: '',
             subNombre: '',
+            subNombresCuadrantes: [],
             estado: 'alta',
             categoria: {
                 objeto: 'categoria',
@@ -340,14 +343,18 @@ export const obtenerCentroAccion = (objeto, id) => async (dispatch, getState) =>
         const festivos = res.data?.festivos
             ? filterFestivosPorAno(JSON.parse(res.data.festivos))
             : null;
+        const categoriaParseada = JSON.parse(res.data.categoria);
+        const numeroCuadrantesCentro = categoriaParseada?.categoria?.length || 1;
         dispatch({
             type: OBTENER_CENTRO_EXITO,
             payload: {
                 id: res.data.id,
                 nombre: res.data.nombre,
                 subNombre: res.data.sub_nombre,
+                //modificador: identificador por cuadrante (con caída al escalar antiguo)
+                subNombresCuadrantes: parseSubNombresCuadrantes(res.data.sub_nombres_cuadrantes, res.data.sub_nombre, numeroCuadrantesCentro),
                 estado: res.data.estado,
-                categoria: JSON.parse(res.data.categoria),
+                categoria: categoriaParseada,
                 codigo: res.data.codigo,
                 domicilio: res.data.domicilio,
                 codigoPostal: res.data.codigo_postal,

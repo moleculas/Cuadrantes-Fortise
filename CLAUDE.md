@@ -75,7 +75,11 @@ Axios contra `RUTA_API` definido en [src/constantes.js](src/constantes.js#L1-L8)
 - **Persistencia de objetos complejos**: los `total` de cada cuadrante llegan
   del backend como string comprimido con `zipson` y se hace `parse(...)` al
   recibirlos / `stringify(..., { fullPrecisionFloats: true })` al guardarlos.
-- **No hay tests escritos**: el script `test` existe pero no hay specs en `src/`.
+- **Tests solo de lógica pura**: los helpers de `src/logica/` que se han ido
+  extrayendo llevan su `*.test.js` al lado (62 tests en 4 suites a 2026-09-09).
+  No hay tests de componentes ni de reducers. Al tocar reglas de negocio, la
+  costumbre del proyecto es **extraer la regla a `src/logica/` con tests** en vez
+  de dejarla dentro del componente.
 - **No hay configuración de Prettier ni linter más allá del CRA por defecto**
   (`react-app` + `react-app/jest`).
 - **Comentarios "modificador:"** en el código (p.ej.
@@ -105,9 +109,13 @@ quadrants-fortise/
 ├── craco.config.js            ← polyfills + ESM fix
 ├── package.json               ← scripts: craco start/build/test
 ├── public/                    ← index.html, favicon, manifest
-├── documentacion/             ← todos los demás MDs viven aquí
+├── documentacion/             ← todos los demás MDs viven aquí (carpeta en .gitignore)
 │   ├── SEGUIMIENTO_PROYECTO.md  ← estado del desarrollo (se actualiza por intervención)
-│   └── LOGICA_REMESAS.md        ← spec funcional del cálculo de remesas (2025-10-28)
+│   ├── LOGICA_REMESAS.md        ← spec funcional del cálculo de remesas (2025-10-28)
+│   ├── LOGICA_VENCIMIENTOS.md   ← cálculo único de vencimientos según Factusol (2026-06-05)
+│   ├── LOGICA_BAJAS_CUADRANTES.md ← acotación de bajas de trabajador al mes (2026-07-22)
+│   ├── LOGICA_IDENTIFICADOR_POR_CUADRANTE.md ← sub_nombre por cuadrante (2026-08-06)
+│   └── LOGICA_CENTROS_DE_BAJA.md ← centros de baja en cuadrantes (2026-09-09)
 ├── retirat/                   ← código retirado (ahora desconectado del build)
 │   ├── Nominas.jsx, Faltantes*.jsx, CasillaServiciosFijos.jsx
 │   └── faltantesDucks.js, retirat.js
@@ -171,11 +179,14 @@ quadrants-fortise/
     │   ├── logicaApp.js           ← helpers UI generales (TabPanel, Alert,
     │   │                              get*Height/Width, controlActualizacionesPorFecha)
     │   ├── logicaCentros.js
-    │   ├── logicaColumnasCuadrantes.js
+    │   ├── logicaCentrosDeBaja.js  ← (+test) centros de baja en cuadrantes
+    │   ├── logicaColumnasCuadrantes.js (+test)
     │   ├── logicaGestionCuadrantes.js
     │   ├── logicaInformeCuadrantes.js
     │   ├── logicaLayoutCuadrantes.js
-    │   └── logicaServiciosFijos.js
+    │   ├── logicaServiciosFijos.js
+    │   ├── logicaSubNombresCuadrantes.js (+test) ← Identificador por cuadrante
+    │   └── logicaVencimientos.js   ← (+test) fuente única de vencimientos
     │
     └── redux/                  ← Reducers + actions (patrón ducks)
         ├── store.js               ← combineReducers + thunk
@@ -375,6 +386,8 @@ un identificador para evitar duplicados en "cuadrantes pendientes".
 | Tocar UI de remesas | [src/cuadrantes/PendientesRemesas.jsx](src/cuadrantes/PendientesRemesas.jsx) |
 | Añadir un nuevo tipo de servicio fijo | Seguir el checklist de [src/notes.txt](src/notes.txt#L35-L60) |
 | Tocar el cálculo del cuadrante (horas) | [src/logica/logicaGestionCuadrantes.js](src/logica/logicaGestionCuadrantes.js) y `logicaColumnasCuadrantes.js` |
+| Centros de baja (qué se lista, qué se puede crear) | [src/logica/logicaCentrosDeBaja.js](src/logica/logicaCentrosDeBaja.js) + [documentacion/LOGICA_CENTROS_DE_BAJA.md](documentacion/LOGICA_CENTROS_DE_BAJA.md) |
+| Fecha de factura o vencimiento | [src/logica/logicaVencimientos.js](src/logica/logicaVencimientos.js) (vencimiento) y [appDucks.js:848](src/redux/appDucks.js#L848) (fecha del FAC) |
 | Tocar el envío masivo de facturas por mail | [src/redux/cuadrantesMailingDucks.js](src/redux/cuadrantesMailingDucks.js) |
 | Cambiar tema / estilos globales | [src/temaConfig.js](src/temaConfig.js), [src/clases.js](src/clases.js) |
 | Configuración bancaria / IBAN empresa | [src/configuracion/Configuracion.jsx](src/configuracion/Configuracion.jsx) |

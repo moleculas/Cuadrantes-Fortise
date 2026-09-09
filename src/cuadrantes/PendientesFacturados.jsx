@@ -41,6 +41,7 @@ import {
     AccordionSummary3Cua as AccordionSummary,
     controlActualizacionesPorFecha
 } from '../logica/logicaApp';
+import { esCentroDeBajaPorId } from '../logica/logicaCentrosDeBaja';
 import { setTiempoEsperaloteAccion } from '../redux/cuadrantesSettersDucks';
 import {
     gestionarMailingLoteAccion,
@@ -242,22 +243,18 @@ const PendientesFacturados = (props) => {
     const retornaCuadranteFacturado = (cuadrante, index) => {
         const nombreSplitted = cuadrante.nombre.split("-");
         //modificador: llistar quadrants de baixa
-        const centroDeBaja = listadoCentros.some(
-            (centro) => Number(cuadrante.idCentro) === centro.id && centro.estado === 'baja'
-        );
+        const centroDeBaja = esCentroDeBajaPorId(cuadrante.idCentro, listadoCentros);
         return (
             <Box
                 key={'listaCuadrantes' + index}
             >
                 <ListItem
                     className={
-                        centroDeBaja
-                            ? classes.casillaBajasInicio
-                            : cuadrante.total.procesado.valor === 'si'
-                                ? cuadrante.total.mailEnviado === 'si'
-                                    ? classes.casillaProcesadosMailing
-                                    : classes.casillaProcesados
-                                : classes.casilla
+                        cuadrante.total.procesado.valor === 'si'
+                            ? cuadrante.total.mailEnviado === 'si'
+                                ? classes.casillaProcesadosMailing
+                                : classes.casillaProcesados
+                            : classes.casilla
                     }
                     style={{ display: 'flex', alignItems: 'flex-start' }}
                 >

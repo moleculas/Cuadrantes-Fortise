@@ -88,6 +88,10 @@ import {
 import {
     procesarDatosPromesa
 } from '../logica/logicaCentros';
+import {
+    serializaSubNombresCuadrantes,
+    subNombrePrincipal
+} from '../logica/logicaSubNombresCuadrantes';
 
 //constantes
 const {
@@ -131,6 +135,7 @@ const CentrosEditar = forwardRef((props, ref) => {
     const [alert, setAlert] = useState({});
     const [valuesFormEdicion, setValuesFormEdicion] = useState({
         categoria: '',
+        subNombre: '',
         variacion: '',
         excepcion: '',
         observaciones: '',
@@ -314,6 +319,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                     value: i + 1,
                     cuadrante: {
                         categoria: centroAEditar.categoria.categoria[i],
+                        subNombre: (centroAEditar.subNombresCuadrantes && centroAEditar.subNombresCuadrantes[i]) || '',
                         horario: centroAEditar.horario.horario[i],
                         servicios_fijos: centroAEditar.serviciosFijos.serviciosFijos[i],
                         trabajadores: centroAEditar.trabajadores.trabajadores[i],
@@ -735,6 +741,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                     const procesarDatosEdicion = () => {
                         let centroAGuardar;
                         let objCategorias = null;
+                        let objSubNombre = null;
                         let objHorario = null;
                         let objServiciosFijos = null;
                         let objTrabajadores = null;
@@ -758,6 +765,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         id: valuesFormEdicionGenerales.id,
                                         nombre: valuesFormEdicionGenerales.nombre,
                                         sub_nombre: valuesFormEdicionGenerales.subNombre || null,
+                                        subNombre: valuesFormEdicion.subNombre || '',
                                         estado: valuesFormEdicionGenerales.estado,
                                         categoria: valuesFormEdicion.categoria,
                                         observaciones: valuesFormEdicion.observaciones || null,
@@ -787,6 +795,10 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         objeto: 'categoria',
                                         categoria: []
                                     };
+                                    objSubNombre = {
+                                        objeto: 'sub_nombre',
+                                        sub_nombre: []
+                                    };
                                     objHorario = {
                                         objeto: 'horario',
                                         horario: []
@@ -809,6 +821,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         festivos: []
                                     };
                                     objCategorias.categoria.push(centroAGuardar.categoria);
+                                    objSubNombre.sub_nombre.push(centroAGuardar.subNombre || '');
                                     objObservaciones.observaciones.push(centroAGuardar.observaciones);
                                     if (centroAGuardar.horario) {
                                         objHorario.horario.push(centroAGuardar.horario);
@@ -832,6 +845,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                                     };
                                     centroDefinitivoAGuardar = {
                                         ...centroDefinitivoAGuardar,
+                                        sub_nombre: subNombrePrincipal(objSubNombre.sub_nombre),
+                                        sub_nombres_cuadrantes: serializaSubNombresCuadrantes(objSubNombre.sub_nombre),
                                         categoria: JSON.stringify(objCategorias),
                                         horario: JSON.stringify(objHorario),
                                         servicios_fijos: JSON.stringify(objServiciosFijos),
@@ -861,6 +876,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         id: valuesFormEdicionGenerales.id,
                                         nombre: valuesFormEdicionGenerales.nombre,
                                         sub_nombre: valuesFormEdicionGenerales.subNombre || null,
+                                        subNombre: valuesFormEdicion.subNombre || '',
                                         estado: valuesFormEdicionGenerales.estado,
                                         categoria: valuesFormEdicion.categoria,
                                         observaciones: valuesFormEdicion.observaciones || null,
@@ -890,6 +906,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         if (cuadrante.value === cuadranteEnUsoEdicion) {
                                             cuadrante.cuadrante = {
                                                 categoria: valuesFormEdicion.categoria,
+                                                subNombre: valuesFormEdicion.subNombre || '',
                                                 observaciones: valuesFormEdicion.observaciones ? valuesFormEdicion.observaciones : null,
                                                 horario: values.horario ? (values.horario) : null,
                                                 servicios_fijos: values.servicios ? (values.servicios) : null,
@@ -903,6 +920,10 @@ const CentrosEditar = forwardRef((props, ref) => {
                                     objCategorias = {
                                         objeto: 'categoria',
                                         categoria: []
+                                    };
+                                    objSubNombre = {
+                                        objeto: 'sub_nombre',
+                                        sub_nombre: []
                                     };
                                     objHorario = {
                                         objeto: 'horario',
@@ -928,6 +949,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                     arrayCuadrantes.forEach((cuadrante, index) => {
                                         if (cuadrante.guardado) {
                                             objCategorias.categoria.push(cuadrante.cuadrante.categoria);
+                                            objSubNombre.sub_nombre.push(cuadrante.cuadrante.subNombre || '');
                                             objObservaciones.observaciones.push(cuadrante.cuadrante.observaciones);
                                             if (cuadrante.cuadrante.horario) {
                                                 objHorario.horario.push(cuadrante.cuadrante.horario);
@@ -951,6 +973,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                                             };
                                         } else {
                                             objCategorias.categoria.push(centroAGuardar.categoria);
+                                            objSubNombre.sub_nombre.push(centroAGuardar.subNombre || '');
                                             objObservaciones.observaciones.push(centroAGuardar.observaciones);
                                             if (centroAGuardar.horario) {
                                                 objHorario.horario.push(centroAGuardar.horario);
@@ -978,6 +1001,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                                     });
                                     centroDefinitivoAGuardar = {
                                         ...centroDefinitivoAGuardar,
+                                        sub_nombre: subNombrePrincipal(objSubNombre.sub_nombre),
+                                        sub_nombres_cuadrantes: serializaSubNombresCuadrantes(objSubNombre.sub_nombre),
                                         categoria: JSON.stringify(objCategorias),
                                         horario: JSON.stringify(objHorario),
                                         servicios_fijos: JSON.stringify(objServiciosFijos),
@@ -1006,6 +1031,7 @@ const CentrosEditar = forwardRef((props, ref) => {
             setValuesAutocompleteCentrosValores(null);
             setValuesFormEdicion({
                 categoria: '',
+                subNombre: '',
                 variacion: '',
                 excepcion: '',
                 observaciones: '',
@@ -1059,6 +1085,7 @@ const CentrosEditar = forwardRef((props, ref) => {
         } else {
             setValuesFormEdicion({
                 categoria: '',
+                subNombre: '',
                 variacion: '',
                 excepcion: '',
                 observaciones: '',
@@ -1130,6 +1157,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                 //registramos       
                 const centroAGuardar = {
                     categoria: valuesFormEdicion.categoria,
+                    subNombre: valuesFormEdicion.subNombre || '',
                     observaciones: valuesFormEdicion.observaciones ? valuesFormEdicion.observaciones : null,
                     horario: values.horario ? (values.horario) : null,
                     servicios_fijos: values.servicios ? (values.servicios) : null,
@@ -1188,6 +1216,7 @@ const CentrosEditar = forwardRef((props, ref) => {
                 //registramos
                 const centroAGuardar = {
                     categoria: valuesFormEdicion.categoria,
+                    subNombre: valuesFormEdicion.subNombre || '',
                     observaciones: valuesFormEdicion.observaciones ? valuesFormEdicion.observaciones : null,
                     horario: values.horario ? (values.horario) : null,
                     servicios_fijos: values.servicios ? (values.servicios) : null,
@@ -1273,6 +1302,7 @@ const CentrosEditar = forwardRef((props, ref) => {
         setStateSwitchTipoServicioFijoEdicion(objetoEstadosSwitch);
         setValuesFormEdicion({
             categoria: cuadranteAGestionar.categoria,
+            subNombre: cuadranteAGestionar.subNombre || '',
             variacion: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.variacion : '',
             excepcion: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.excepcion : '',
             observaciones: cuadranteAGestionar.observaciones ? cuadranteAGestionar.observaciones : '',
@@ -1694,8 +1724,8 @@ const CentrosEditar = forwardRef((props, ref) => {
                                         className={classes.mb15}
                                         fullWidth
                                         id="form-subNombre-centro-edicion"
-                                        value={valuesFormEdicionGenerales.subNombre || ''}//modificat: select
-                                        onChange={handleChangeFormEdicionGenerales('subNombre')}
+                                        value={valuesFormEdicion.subNombre || ''}//modificador: identificador por cuadrante
+                                        onChange={handleChangeFormEdicion('subNombre')}
                                         labelWidth={95}
                                         disabled={disabledItem}
 

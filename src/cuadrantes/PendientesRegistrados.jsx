@@ -52,6 +52,7 @@ import {
     AccordionDetailsCua as AccordionDetails,
     AccordionSummary3Cua as AccordionSummary,
 } from '../logica/logicaApp';
+import { esCentroDeBajaPorId } from '../logica/logicaCentrosDeBaja';
 
 //carga componentes
 import CustomSnack from '../comun/CustomSnack';
@@ -253,9 +254,7 @@ const PendientesRegistrados = (props) => {
 
     const retornaCuadranteRegistrado = (cuadrante, index) => {
         //modificador: llistar quadrants de baixa
-        const centroDeBaja = listadoCentros.some(
-            (centro) => Number(cuadrante.idCentro) === centro.id && centro.estado === 'baja'
-        );
+        const centroDeBaja = esCentroDeBajaPorId(cuadrante.idCentro, listadoCentros);
         return (
             <Box
                 key={'listaCuadrantes' + index}
@@ -263,7 +262,7 @@ const PendientesRegistrados = (props) => {
                 <ListItem
                     className={
                         (cuadrante.total.tocaFacturar.valor === 'no' && cuadrante.total.tocaFacturar.razon !== 'gest') ||
-                            !cuadrante.total.codigo || centroDeBaja
+                            !cuadrante.total.codigo
                             ? classes.casillaBajasInicio
                             : classes.casilla
                     }

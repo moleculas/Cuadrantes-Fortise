@@ -28,6 +28,7 @@ import {
     handleClickOpenDialogCuadrantes5Accion,
     handleChangeSelectCentroAccion
 } from '../../redux/cuadrantesHandlersDucks';
+import { opcionCentroDeshabilitada } from '../../logica/logicaCentrosDeBaja';
 
 //estilos
 import Clases from "../../clases";
@@ -38,7 +39,10 @@ const categorias = Constantes.CATEGORIAS_CENTROS;
 const HeaderInfIzq = () => {
     const classes = Clases();
     const dispatch = useDispatch();
-    const { arrayCentrosPorCategoria: centrosPorCategoria } = useSelector(store => store.variablesCentros);
+    const {
+        arrayCentrosPorCategoria: centrosPorCategoria,
+        arrayCentros: listadoCentros
+    } = useSelector(store => store.variablesCentros);
     const {
         objetoCuadrante,
         categoria
@@ -128,7 +132,12 @@ const HeaderInfIzq = () => {
                             }
                         >
                             {centrosPorCategoria.map((option) => (
-                                <MenuItem key={option.id} value={option.id}>
+                                //modificador: un centro de baja no genera cuadrantes nuevos
+                                <MenuItem
+                                    key={option.id}
+                                    value={option.id}
+                                    disabled={opcionCentroDeshabilitada(option, listadoCentros, objetoCuadrante.datosCuadrante.centro)}
+                                >
                                     {option.sub_nombre ? (option.nombre + " - " + option.sub_nombre) : option.nombre}
                                 </MenuItem>
                             ))}

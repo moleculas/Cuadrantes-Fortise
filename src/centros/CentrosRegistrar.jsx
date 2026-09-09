@@ -77,6 +77,10 @@ import {
 import {
     procesarDatosPromesa
 } from '../logica/logicaCentros';
+import {
+    serializaSubNombresCuadrantes,
+    subNombrePrincipal
+} from '../logica/logicaSubNombresCuadrantes';
 
 //constantes
 const {
@@ -113,6 +117,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
     const [alert, setAlert] = useState({});
     const [valuesFormRegistro, setValuesFormRegistro] = useState({
         categoria: '',
+        subNombre: '',
         variacion: '',
         excepcion: '',
         observaciones: '',
@@ -613,6 +618,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                     const procesarDatosRegistro = () => {
                         let centroAGuardar;
                         let objCategorias = null;
+                        let objSubNombre = null;
                         let objHorario = null;
                         let objServiciosFijos = null;
                         let objTrabajadores = null;
@@ -636,6 +642,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         id: valuesFormRegistroGenerales.id,
                                         nombre: valuesFormRegistroGenerales.nombre,
                                         sub_nombre: valuesFormRegistroGenerales.subNombre || null,
+                                        subNombre: valuesFormRegistro.subNombre || '',
                                         estado: valuesFormRegistroGenerales.estado,
                                         categoria: valuesFormRegistro.categoria,
                                         observaciones: valuesFormRegistro.observaciones ? valuesFormRegistro.observaciones : null,
@@ -665,6 +672,10 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         objeto: 'categoria',
                                         categoria: []
                                     };
+                                    objSubNombre = {
+                                        objeto: 'sub_nombre',
+                                        sub_nombre: []
+                                    };
                                     objHorario = {
                                         objeto: 'horario',
                                         horario: []
@@ -687,6 +698,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         festivos: []
                                     };
                                     objCategorias.categoria.push(centroAGuardar.categoria);
+                                    objSubNombre.sub_nombre.push(centroAGuardar.subNombre || '');
                                     objObservaciones.observaciones.push(centroAGuardar.observaciones);
                                     if (centroAGuardar.horario) {
                                         objHorario.horario.push(centroAGuardar.horario);
@@ -710,6 +722,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                     };
                                     centroDefinitivoAGuardar = {
                                         ...centroDefinitivoAGuardar,
+                                        sub_nombre: subNombrePrincipal(objSubNombre.sub_nombre),
+                                        sub_nombres_cuadrantes: serializaSubNombresCuadrantes(objSubNombre.sub_nombre),
                                         categoria: JSON.stringify(objCategorias),
                                         horario: JSON.stringify(objHorario),
                                         servicios_fijos: JSON.stringify(objServiciosFijos),
@@ -741,6 +755,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         id: valuesFormRegistroGenerales.id,
                                         nombre: valuesFormRegistroGenerales.nombre,
                                         sub_nombre: valuesFormRegistroGenerales.subNombre || null,
+                                        subNombre: valuesFormRegistro.subNombre || '',
                                         estado: valuesFormRegistroGenerales.estado,
                                         categoria: valuesFormRegistro.categoria,
                                         observaciones: valuesFormRegistro.observaciones ? valuesFormRegistro.observaciones : null,
@@ -770,6 +785,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         if (cuadrante.value === cuadranteEnUsoRegistro) {
                                             cuadrante.cuadrante = {
                                                 categoria: valuesFormRegistro.categoria,
+                                                subNombre: valuesFormRegistro.subNombre || '',
                                                 observaciones: valuesFormRegistro.observaciones ? valuesFormRegistro.observaciones : null,
                                                 horario: values.horario ? (values.horario) : null,
                                                 servicios_fijos: values.servicios ? (values.servicios) : null,
@@ -783,6 +799,10 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                     objCategorias = {
                                         objeto: 'categoria',
                                         categoria: []
+                                    };
+                                    objSubNombre = {
+                                        objeto: 'sub_nombre',
+                                        sub_nombre: []
                                     };
                                     objHorario = {
                                         objeto: 'horario',
@@ -808,6 +828,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                     arrayCuadrantes.forEach((cuadrante, index) => {
                                         if (cuadrante.guardado) {
                                             objCategorias.categoria.push(cuadrante.cuadrante.categoria);
+                                            objSubNombre.sub_nombre.push(cuadrante.cuadrante.subNombre || '');
                                             objObservaciones.observaciones.push(cuadrante.cuadrante.observaciones);
                                             if (cuadrante.cuadrante.horario) {
                                                 objHorario.horario.push(cuadrante.cuadrante.horario);
@@ -831,6 +852,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                             };
                                         } else {
                                             objCategorias.categoria.push(centroAGuardar.categoria);
+                                            objSubNombre.sub_nombre.push(centroAGuardar.subNombre || '');
                                             objCategorias.observaciones.push(centroAGuardar.observaciones);
                                             if (centroAGuardar.horario) {
                                                 objHorario.horario.push(centroAGuardar.horario);
@@ -858,6 +880,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                     });
                                     centroDefinitivoAGuardar = {
                                         ...centroDefinitivoAGuardar,
+                                        sub_nombre: subNombrePrincipal(objSubNombre.sub_nombre),
+                                        sub_nombres_cuadrantes: serializaSubNombresCuadrantes(objSubNombre.sub_nombre),
                                         categoria: JSON.stringify(objCategorias),
                                         horario: JSON.stringify(objHorario),
                                         servicios_fijos: JSON.stringify(objServiciosFijos),
@@ -886,6 +910,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
             dispatch(cambiarEstadoYaEstaRegistradoAccion(false));
             setValuesFormRegistro({
                 categoria: '',
+                subNombre: '',
                 variacion: '',
                 excepcion: '',
                 observaciones: '',
@@ -938,6 +963,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
         } else {
             setValuesFormRegistro({
                 categoria: '',
+                subNombre: '',
                 variacion: '',
                 excepcion: '',
                 observaciones: '',
@@ -1009,6 +1035,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 //registramos
                 const centroAGuardar = {
                     categoria: valuesFormRegistro.categoria,
+                    subNombre: valuesFormRegistro.subNombre || '',
                     observaciones: valuesFormRegistro.observaciones ? valuesFormRegistro.observaciones : null,
                     horario: values.horario ? (values.horario) : null,
                     servicios_fijos: values.servicios ? (values.servicios) : null,
@@ -1067,6 +1094,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                 //registramos
                 const centroAGuardar = {
                     categoria: valuesFormRegistro.categoria,
+                    subNombre: valuesFormRegistro.subNombre || '',
                     observaciones: valuesFormRegistro.observaciones ? valuesFormRegistro.observaciones : null,
                     horario: values.horario ? (values.horario) : null,
                     servicios_fijos: values.servicios ? (values.servicios) : null,
@@ -1152,6 +1180,7 @@ const CentrosRegistrar = forwardRef((props, ref) => {
         setStateSwitchTipoServicioFijoRegistro(objetoEstadosSwitch);
         setValuesFormRegistro({
             categoria: cuadranteAGestionar.categoria,
+            subNombre: cuadranteAGestionar.subNombre || '',
             variacion: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.variacion : '',
             excepcion: cuadranteAGestionar.horario ? cuadranteAGestionar.horario.excepcion : '',
             observaciones: cuadranteAGestionar.observaciones ? cuadranteAGestionar.observaciones : '',
@@ -1546,8 +1575,8 @@ const CentrosRegistrar = forwardRef((props, ref) => {
                                         className={classes.mb15}
                                         fullWidth
                                         id="form-subNombre-centro-registro"
-                                        value={valuesFormRegistroGenerales.subNombre}
-                                        onChange={handleChangeFormRegistroGenerales('subNombre')}
+                                        value={valuesFormRegistro.subNombre || ''}
+                                        onChange={handleChangeFormRegistro('subNombre')}
                                         labelWidth={95}
                                     />
                                 </FormControl>
