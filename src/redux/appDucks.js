@@ -3,6 +3,7 @@ import Constantes from "../constantes";
 import * as XLSX from "xlsx";
 import { stringify } from 'zipson';
 import { gestionArrayHorasTrabajadoresAccion } from './horasTrabajadoresDucks';
+import { anyoMesDeCuadrante, fechaEmisionTexto } from '../logica/logicaFechasCuadrante';
 
 //constantes
 const {
@@ -821,12 +822,20 @@ export const actualizarCuadrantesIteradosAccion = () => async (dispatch, getStat
     };
 };
 
-export const generarArchivosXLSLoteAccion = (numFactusol, arrayCuadrantes, anyo, mes) => (dispatch, getState) => {
+// La fecha de cada factura sale del nombre del cuadrante ("AÑO-MES-IDCENTRO"),
+// nunca del selector de pantalla. Ver logicaFechasCuadrante.js.
+export const generarArchivosXLSLoteAccion = (numFactusol, arrayCuadrantes) => (dispatch, getState) => {
     dispatch({
         type: PROCESANDO_LOTE
     });
     const elNumFactusol = parseInt(numFactusol) + 1;
     try {
+        // Todo o nada: si algún cuadrante no lleva mes válido, no se toca ninguno.
+        const cuadrantesSinMes = arrayCuadrantes.filter(cuadrante => !anyoMesDeCuadrante(cuadrante.nombre));
+        if (cuadrantesSinMes.length > 0) {
+            console.error('Lote FAC/LFA abortado: cuadrantes sin mes válido en el nombre:', cuadrantesSinMes.map(c => c.nombre));
+            throw new Error('Cuadrantes sin mes válido en el nombre');
+        }
         const dataFAC = [];
         const dataLFA = [];
         arrayCuadrantes.map((cuadranteIterado, index, arr) => {
@@ -845,9 +854,8 @@ export const generarArchivosXLSLoteAccion = (numFactusol, arrayCuadrantes, anyo,
                 totalIva: parseFloat(cuadranteIterado.total.totalIva).toFixed(2),
                 totalMasIva: parseFloat(cuadranteIterado.total.totalMasIva).toFixed(2)
             };
-            const ultimoDia = new Date(anyo, mes, 0);
-            const day = ultimoDia.getDate();
-            const fechaHoy = day + "/" + mes + "/" + anyo;
+            const { anyo, mes } = anyoMesDeCuadrante(cuadranteIterado.nombre);
+            const fechaHoy = fechaEmisionTexto(anyo, mes);
             dataFAC.push([
                 1,
                 elNumFactusol + index,

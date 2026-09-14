@@ -1,6 +1,7 @@
 import axios from 'axios';
 import Constantes from "../constantes";
 import { parse } from 'zipson';
+import { anyoMesDeCalendario } from '../logica/logicaFechasCuadrante';
 
 //constantes
 const rutaApi = Constantes.RUTA_API;
@@ -117,6 +118,17 @@ export const gestionaCuadrantesAccion = () => (dispatch, getState) => {
     });
 };
 
+// Una respuesta solo se aplica si el mes pedido sigue siendo el mes gestionado.
+// Al montar /cuadrantes pueden salir dos peticiones seguidas (la del mes que
+// había en el store y la del mes actual) y ganaba la última en llegar, dejando
+// en pantalla la lista de un mes con el selector en otro (incidencia factura
+// 001535, 2026-09). Ver logicaFechasCuadrante.js.
+const mismoAnyoMes = (a, b) => {
+    const am = anyoMesDeCalendario(a);
+    const bm = anyoMesDeCalendario(b);
+    return !!am && !!bm && am.anyo === bm.anyo && am.mes === bm.mes;
+};
+
 export const obtenerCuadrantesAccion = (objeto, mes) => async (dispatch, getState) => {
     dispatch({
         type: LOADING_PENDIENTES
@@ -130,7 +142,12 @@ export const obtenerCuadrantesAccion = (objeto, mes) => async (dispatch, getStat
             headers: {
                 "Content-Type": "multipart/form-data"
             }
-        });    
+        });
+        const { calendarioAGestionar } = getState().variablesCuadrantes;
+        if (!mismoAnyoMes(mes, calendarioAGestionar)) {
+            console.warn(`Respuesta de cuadrantes descartada: se pidió ${mes} pero el mes gestionado ya es ${calendarioAGestionar}`);
+            return;
+        }
         dispatch({
             type: OBTENER_CUADRANTES,
             payload: {

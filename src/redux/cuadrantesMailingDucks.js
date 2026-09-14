@@ -7,6 +7,7 @@ import {
 import { handleCloseMenuAccion } from './cuadrantesHandlersDucks';
 import { stringify } from 'zipson';
 import { calcularFechaVencimiento, formatoDDMMYYYY } from '../logica/logicaVencimientos';
+import { anyoMesDeCuadrante, fechaEmisionTexto } from '../logica/logicaFechasCuadrante';
 
 //carga componentes
 import FacturaPDF from "../cuadrantes/FacturaPDF";
@@ -192,12 +193,12 @@ function gestionarFechaDePago(diaPago, mes, anyo, formaDePago) {
     return formatoDDMMYYYY(fechaVto);
 }
 
+// anyo/mes: SIEMPRE los del cuadrante (anyoMesDeCuadrante), nunca los del selector.
 const decodificadorItemsFactura = (objetoTotal, anyo, mes) => (dispatch, getState) => {
-    const ultimoDia = new Date(anyo, mes, 0);
     const arrayElementos = dispatch(retornaArrayElementosAccion(objetoTotal));
     const arrayElementosFormateados = formatNumerics(arrayElementos);
     return {
-        fecha: `${ultimoDia.getDate()}/${mes}/${anyo}`,
+        fecha: fechaEmisionTexto(anyo, mes),
         nombreCentro: objetoTotal.nombreCentro,
         subNombreCentro: objetoTotal.subNombreCentro ?? "",
         domicilio: objetoTotal.domicilio,
@@ -222,7 +223,12 @@ const decodificadorItemsFactura = (objetoTotal, anyo, mes) => (dispatch, getStat
 export const gestionarMailingIndividualAccion = (objetoCuadrante) => async (dispatch, getState) => {
     try {
         dispatch(handleCloseMenuAccion());
-        const [anyo, mes] = objetoCuadrante.nombre.split("-");
+        const anyoMes = anyoMesDeCuadrante(objetoCuadrante.nombre);
+        if (!anyoMes) {
+            console.error(`Error: el cuadrante ${objetoCuadrante.id} no lleva mes válido en el nombre (${objetoCuadrante.nombre})`);
+            return;
+        }
+        const { anyo, mes } = anyoMes;
         const objetoFacturaPDF = await dispatch(decodificadorItemsFactura(objetoCuadrante.total, anyo, mes));
         if (!objetoFacturaPDF) {
             console.error('Error: No se pudo obtener el objeto de la factura');
@@ -447,7 +453,9 @@ const sendEmailWithRetry = async (mail, file, mes, anyo, objetoCuadrante, dispat
     return false;
 };
 
-export const gestionarMailingLoteAccion = (arrayCuadrantes, anyo, mes) => async (dispatch, getState) => {
+// La fecha, el vencimiento y el asunto del correo de cada factura salen del
+// nombre del cuadrante, nunca del selector de pantalla. Ver logicaFechasCuadrante.js.
+export const gestionarMailingLoteAccion = (arrayCuadrantes) => async (dispatch, getState) => {
     dispatch(resetMailingProcess());
     dispatch({ type: PROCESANDO_LOTE_MAILING });
     const totalEmails = arrayCuadrantes.reduce((total, cuadrante) => {
@@ -457,6 +465,11 @@ export const gestionarMailingLoteAccion = (arrayCuadrantes, anyo, mes) => async 
     try {
         const tasks = arrayCuadrantes.map(objetoCuadrante => async () => {
             try {
+                const anyoMes = anyoMesDeCuadrante(objetoCuadrante.nombre);
+                if (!anyoMes) {
+                    throw new Error(`El cuadrante no lleva mes válido en el nombre (${objetoCuadrante.nombre})`);
+                }
+                const { anyo, mes } = anyoMes;
                 const objetoFacturaPDF = await dispatch(decodificadorItemsFactura(objetoCuadrante.total, anyo, mes));
                 if (!objetoFacturaPDF) {
                     console.error(`Error: No se pudo obtener el objeto de la factura para el cuadrante ${objetoCuadrante.id}`);
@@ -501,8 +514,11 @@ export const gestionarMailingLoteAccion = (arrayCuadrantes, anyo, mes) => async 
     }
 };
 
-// Versión para desarrollo local - NO envía emails, solo actualiza datos
-export const gestionarMailingLoteAccionLocal = (arrayCuadrantes, anyo, mes) => async (dispatch, getState) => {
+// Versión para desarrollo local: hace TODO el proceso del lote real (fecha y
+// vencimiento del cuadrante, PDF, adjunto, marcado de mailEnviado, contadores,
+// listado final) excepto la llamada a enviar_mail.php. Sirve para simular un
+// lote completo sin mandar ningún correo.
+export const gestionarMailingLoteAccionLocal = (arrayCuadrantes) => async (dispatch, getState) => {
     dispatch(resetMailingProcess());
     dispatch({ type: PROCESANDO_LOTE_MAILING });
     const totalEmails = arrayCuadrantes.reduce((total, cuadrante) => {
@@ -513,12 +529,30 @@ export const gestionarMailingLoteAccionLocal = (arrayCuadrantes, anyo, mes) => a
     try {
         const tasks = arrayCuadrantes.map(objetoCuadrante => async () => {
             try {
+                const anyoMes = anyoMesDeCuadrante(objetoCuadrante.nombre);
+                if (!anyoMes) {
+                    throw new Error(`El cuadrante no lleva mes válido en el nombre (${objetoCuadrante.nombre})`);
+                }
+                const { anyo, mes } = anyoMes;
                 const objetoFacturaPDF = await dispatch(decodificadorItemsFactura(objetoCuadrante.total, anyo, mes));
                 if (!objetoFacturaPDF) {
                     console.error(`Error: No se pudo obtener el objeto de la factura para el cuadrante ${objetoCuadrante.id}`);
                     dispatch(incrementProcessedEmails());
                     return;
                 }
+                // Mismo trabajo que el envío real: se genera el PDF y el fichero adjunto.
+                // Lo ÚNICO que se omite es la llamada a enviar_mail.php.
+                const element = (
+                    <FacturaPDF objetoFacturaPDF={objetoFacturaPDF} />
+                );
+                const myPdf = pdf([]);
+                myPdf.updateContainer(element);
+                const blob = await myPdf.toBlob();
+                if (!blob) {
+                    throw new Error(`No se pudo generar el PDF del cuadrante ${objetoCuadrante.id}`);
+                }
+                // eslint-disable-next-line no-unused-vars
+                const file = new File([blob], `Factura 1-${objetoFacturaPDF.numero}.pdf`, { type: 'application/pdf' });
 
                 // Simular envío de mail principal
                 dispatch({

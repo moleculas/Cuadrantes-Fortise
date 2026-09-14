@@ -42,6 +42,7 @@ import {
     controlActualizacionesPorFecha
 } from '../logica/logicaApp';
 import { esCentroDeBajaPorId } from '../logica/logicaCentrosDeBaja';
+import { cuadrantesFueraDeMes, mensajeCuadrantesFueraDeMes } from '../logica/logicaFechasCuadrante';
 import { setTiempoEsperaloteAccion } from '../redux/cuadrantesSettersDucks';
 import {
     gestionarMailingLoteAccion,
@@ -230,11 +231,21 @@ const PendientesFacturados = (props) => {
         const arrayCuadrantesDef = cuadrantesFacturadosArray.filter(cuadrante =>
             arrayIdsCuadrantes.includes(cuadrante.id)
         );
-        const [anyo, mes] = calendarioAGestionar.split("-");
+        // Guarda de mes cruzado: si la pantalla no está sincronizada con el
+        // selector, se bloquea el lote. Ver logicaFechasCuadrante.js.
+        const fueraDeMes = cuadrantesFueraDeMes(arrayCuadrantesDef, calendarioAGestionar);
+        if (fueraDeMes.length > 0) {
+            setAlert({
+                mensaje: mensajeCuadrantesFueraDeMes(fueraDeMes, calendarioAGestionar),
+                tipo: 'error'
+            });
+            setOpenSnack(true);
+            return;
+        };
         // per test enviament mails local
-        //dispatch(gestionarMailingLoteAccionLocal(arrayCuadrantesDef, anyo, mes));
+        //dispatch(gestionarMailingLoteAccionLocal(arrayCuadrantesDef));
         // producció enviament mails
-        dispatch(gestionarMailingLoteAccion(arrayCuadrantesDef, anyo, mes));
+        dispatch(gestionarMailingLoteAccion(arrayCuadrantesDef));
         dispatch(setTiempoEsperaloteAccion(true));
     };
 

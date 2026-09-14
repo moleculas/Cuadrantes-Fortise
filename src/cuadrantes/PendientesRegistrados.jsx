@@ -53,6 +53,7 @@ import {
     AccordionSummary3Cua as AccordionSummary,
 } from '../logica/logicaApp';
 import { esCentroDeBajaPorId } from '../logica/logicaCentrosDeBaja';
+import { cuadrantesFueraDeMes, mensajeCuadrantesFueraDeMes } from '../logica/logicaFechasCuadrante';
 
 //carga componentes
 import CustomSnack from '../comun/CustomSnack';
@@ -229,9 +230,20 @@ const PendientesRegistrados = (props) => {
                     arrayCuadrantesDef.push(cuadrante)
                 }
             });
+            // Guarda de mes cruzado: si la pantalla no está sincronizada con el
+            // selector, se bloquea el lote (la fecha sale del cuadrante, pero el
+            // usuario debe ver lo que está facturando). Ver logicaFechasCuadrante.js.
+            const fueraDeMes = cuadrantesFueraDeMes(arrayCuadrantesDef, calendarioAGestionar);
+            if (fueraDeMes.length > 0) {
+                setAlert({
+                    mensaje: mensajeCuadrantesFueraDeMes(fueraDeMes, calendarioAGestionar),
+                    tipo: 'error'
+                });
+                setOpenSnack(true);
+                return;
+            };
             setArrayCuadrantesDefsParaCheck(arrayCuadrantesDef);
-            const [anyo, mes] = calendarioAGestionar.split("-");
-            dispatch(generarArchivosXLSLoteAccion(numeroFactusolPendientes, arrayCuadrantesDef, anyo, mes));
+            dispatch(generarArchivosXLSLoteAccion(numeroFactusolPendientes, arrayCuadrantesDef));
             dispatch(setTiempoEsperaloteAccion(true));
         } else {
             setAlert({

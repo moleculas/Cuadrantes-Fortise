@@ -31,7 +31,8 @@ import { forzarRecargaGraficosCuadrantesAccion } from '../redux/graficosDucks';
 import {
     setOpenLoadingAccion,
     reseteaContenidoCuadranteAccion,
-    setDisableCargandoAccion
+    setDisableCargandoAccion,
+    setValueDatePickerAccion
 } from '../redux/cuadrantesSettersDucks';
 
 const Cuadrantes = (props) => {
@@ -62,7 +63,12 @@ const Cuadrantes = (props) => {
     }, []);
 
     useEffect(() => {
-        dispatch(setCalendarioAGestionarAccion(retornaAnoMesAccion()));
+        // Al montar, el mes gestionado vuelve al actual. El picker DEBE seguirlo:
+        // si no, muestra un mes y el estado interno lleva otro (incidencia
+        // factura 001535, 2026-09). Ver logicaFechasCuadrante.js.
+        const anyoMesActual = retornaAnoMesAccion();
+        dispatch(setCalendarioAGestionarAccion(anyoMesActual));
+        dispatch(setValueDatePickerAccion(new Date(anyoMesActual)));
         dispatch(forzarRecargaGraficosCuadrantesAccion(true));
         dispatch(onEstemAccion('cuadrantes'));
     }, [dispatch]);
