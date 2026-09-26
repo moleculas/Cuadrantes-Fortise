@@ -76,7 +76,7 @@ Axios contra `RUTA_API` definido en [src/constantes.js](src/constantes.js#L1-L8)
   del backend como string comprimido con `zipson` y se hace `parse(...)` al
   recibirlos / `stringify(..., { fullPrecisionFloats: true })` al guardarlos.
 - **Tests solo de lógica pura**: los helpers de `src/logica/` que se han ido
-  extrayendo llevan su `*.test.js` al lado (85 tests en 5 suites a 2026-09-14).
+  extrayendo llevan su `*.test.js` al lado (93 tests en 6 suites a 2026-09-26).
   No hay tests de componentes ni de reducers. Al tocar reglas de negocio, la
   costumbre del proyecto es **extraer la regla a `src/logica/` con tests** en vez
   de dejarla dentro del componente.
@@ -120,7 +120,8 @@ quadrants-fortise/
 │   ├── LOGICA_BAJAS_CUADRANTES.md ← acotación de bajas de trabajador al mes (2026-07-22)
 │   ├── LOGICA_IDENTIFICADOR_POR_CUADRANTE.md ← sub_nombre por cuadrante (2026-08-06)
 │   ├── LOGICA_CENTROS_DE_BAJA.md ← centros de baja en cuadrantes (2026-09-09)
-│   └── LOGICA_FECHA_DOCUMENTOS.md ← la fecha sale del cuadrante, no del selector (2026-09-14)
+│   ├── LOGICA_FECHA_DOCUMENTOS.md ← la fecha sale del cuadrante, no del selector (2026-09-14)
+│   └── LOGICA_RESETEO_CUADRANTE.md ← resetear retira las horas del control horario (2026-09-26)
 ├── retirat/                   ← código retirado (ahora desconectado del build)
 │   ├── Nominas.jsx, Faltantes*.jsx, CasillaServiciosFijos.jsx
 │   └── faltantesDucks.js, retirat.js
@@ -190,6 +191,7 @@ quadrants-fortise/
     │   ├── logicaGestionCuadrantes.js
     │   ├── logicaInformeCuadrantes.js
     │   ├── logicaLayoutCuadrantes.js
+    │   ├── logicaReseteoCuadrante.js ← (+test) aviso de horas retiradas al resetear
     │   ├── logicaServiciosFijos.js
     │   ├── logicaSubNombresCuadrantes.js (+test) ← Identificador por cuadrante
     │   └── logicaVencimientos.js   ← (+test) fuente única de vencimientos
@@ -267,7 +269,50 @@ maneja la respuesta in-place. Endpoints conocidos por inspección:
 - `actualizar_lote.php` (cuadrantes batch update)
 - Y los implícitos en los demás `obtener*Accion` / `actualizar*Accion`.
 
-El backend vive en otro repo (`api_quadrants`) y no está versionado aquí.
+El backend vive en otro repo (`api_quadrants`) y no está versionado aquí. En
+la máquina de desarrollo está en `D:\INSTALACIONES\XAMP\htdocs\api_quadrants`
+(BD `quadrants_fortise4`, XAMPP) y **sí se puede leer** para diagnosticar; sus
+cambios los despliega el usuario aparte del frontend.
+
+#### Envío de facturas por mail (`enviar_mail.php`)
+
+- PHPMailer contra SMTP propio `smtp.fortisesl.com:465`. **From fijo**
+  `mail@fortisesl.com` "Fortise S.L."; **sin Reply-To ni copia**.
+- El frontend solo envía `email`, `file` (PDF) y `asunto`. El **cuerpo está en
+  el PHP** (`cuerpoFacturaHTML()` + `AltBody`, UTF-8; desde 2026-09-15 con el
+  aviso de buzón no atendido y el teléfono 93 274 11 41).
+- El campo "Mensaje" de Configuración → "Plantillas mails" (`mensajeMailCentros`)
+  **no lo usa nadie**: se guarda en BD y nunca se conectó al envío.
+- El mail del destinatario sale del blob `total` del cuadrante (`mail`/`mail2`),
+  no de la ficha del centro.
+- **Desde local no se puede enviar**: el handshake TLS de PHP en XAMPP falla
+  contra ese SMTP. Las pruebas de correo se hacen desde producción con un centro
+  de pruebas. No desactivar la verificación de certificado para "probar".
+
+### 5.1.bis El control horario vive en su propia tabla
+
+El control horario **no lee los cuadrantes**. Lee `horas_trabajadores`: una
+fila por trabajador y mes (`nombre` = `AÑO-MES-IDTRABAJADOR`) con un array
+JSON de registros, uno por centro:
+
+```json
+{"tipo":"suplente","totalHorasNormal_L":11.5,"totalHoras":11.5,"cuadrante":1,"centro":"73"}
+```
+
+Son **dos almacenes independientes y nada los reconcilia**: el cuadrante puede
+estar bien y el control horario mal. Consecuencias a tener presentes:
+
+- `registrarHorasTrabajadores` (backend) **solo añade o sustituye por centro**;
+  nunca borra. Retirar horas exige mandar un registro de ese centro con
+  `totalHoras: 0`, o borrarlo desde el backend.
+- Al **registrar** un cuadrante hay una red de seguridad que pone a cero a los
+  trabajadores que ya no están (`logicaGestionCuadrantes.js:1880`), y depende
+  de `trabajadoresInicio`.
+- Al **resetear** (borrar) un cuadrante, el backend retira sus horas en la misma
+  transacción (`eliminarCuadrante` en `funciones.php`, desde 2026-09-26). Ver
+  `documentacion/LOGICA_RESETEO_CUADRANTE.md`.
+- Los registros con `totalHoras: 0` **no se muestran** en pantalla
+  (`PantallaHoraTrabajador.jsx:244`), pero existen en la BD.
 
 ### 5.2 El "objeto total" comprimido (zipson)
 
@@ -394,7 +439,9 @@ un identificador para evitar duplicados en "cuadrantes pendientes".
 | Tocar el cálculo del cuadrante (horas) | [src/logica/logicaGestionCuadrantes.js](src/logica/logicaGestionCuadrantes.js) y `logicaColumnasCuadrantes.js` |
 | Centros de baja (qué se lista, qué se puede crear) | [src/logica/logicaCentrosDeBaja.js](src/logica/logicaCentrosDeBaja.js) + [documentacion/LOGICA_CENTROS_DE_BAJA.md](documentacion/LOGICA_CENTROS_DE_BAJA.md) |
 | Fecha de factura, vencimiento, mes de un documento | [src/logica/logicaFechasCuadrante.js](src/logica/logicaFechasCuadrante.js) (mes del cuadrante, guarda) + [src/logica/logicaVencimientos.js](src/logica/logicaVencimientos.js) (vencimiento) + [documentacion/LOGICA_FECHA_DOCUMENTOS.md](documentacion/LOGICA_FECHA_DOCUMENTOS.md) |
-| Tocar el envío masivo de facturas por mail | [src/redux/cuadrantesMailingDucks.js](src/redux/cuadrantesMailingDucks.js) |
+| Tocar el envío de facturas por mail (frontend) | [src/redux/cuadrantesMailingDucks.js](src/redux/cuadrantesMailingDucks.js) — `gestionarMailingLoteAccionLocal` simula el lote entero sin enviar |
+| Cambiar From, cuerpo o adjunto del correo | Backend `api_quadrants/enviar_mail.php` (ver §5.1) — no está en este repo |
+| Control horario / horas de un trabajador | Tabla `horas_trabajadores` (ver §5.1.bis) + [documentacion/LOGICA_RESETEO_CUADRANTE.md](documentacion/LOGICA_RESETEO_CUADRANTE.md) |
 | Cambiar tema / estilos globales | [src/temaConfig.js](src/temaConfig.js), [src/clases.js](src/clases.js) |
 | Configuración bancaria / IBAN empresa | [src/configuracion/Configuracion.jsx](src/configuracion/Configuracion.jsx) |
 | Añadir/cambiar catálogos (formas de pago, tipos de servicio, remesas…) | [src/constantes.js](src/constantes.js) |
@@ -416,3 +463,7 @@ un identificador para evitar duplicados en "cuadrantes pendientes".
   desarrollador en catalán y refleja decisiones históricas.
 - **Reescribir reducers en Redux Toolkit**: el resto del proyecto es ducks
   manuales; una migración parcial rompería la consistencia.
+- **Tocar `eliminarCuadrante` en `api_quadrants/funciones.php`** sin tener
+  presente que además de borrar el cuadrante retira sus horas del control
+  horario, en una transacción. Es un borrado de datos: cualquier cambio ahí
+  exige reproducción en local con copia de seguridad previa.

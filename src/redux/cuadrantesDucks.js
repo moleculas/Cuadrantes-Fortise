@@ -485,6 +485,12 @@ export const registrarCuadranteAccion = (objeto, id, datos, datosTrabajadores) =
     }
 }
 
+// Resetear = borrar el cuadrante. Desde 2026-09-26 el backend retira además las
+// horas que ese cuadrante había apuntado en el control horario y devuelve el
+// resumen de lo retirado, que se devuelve aquí para que el llamador lo avise.
+// Si el backend aún no está actualizado la respuesta no trae resumen: el reseteo
+// funciona igual que siempre y no se avisa de nada.
+// Ver documentacion/LOGICA_RESETEO_CUADRANTE.md.
 export const resetearCuadranteAccion = (objeto, id) => async (dispatch, getState) => {
     dispatch({
         type: LOADING_CUADRANTES
@@ -494,7 +500,7 @@ export const resetearCuadranteAccion = (objeto, id) => async (dispatch, getState
         formData.append("objeto", objeto);
         formData.append("id", id);
         let apiUrl = rutaApi + "eliminar_cuadrante.php";
-        await axios.post(apiUrl, formData, {
+        const res = await axios.post(apiUrl, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
             }
@@ -505,6 +511,7 @@ export const resetearCuadranteAccion = (objeto, id) => async (dispatch, getState
         dispatch({
             type: RESETEA_EXITO_CUADRANTES
         });
+        return res.data;
     } catch (error) {
         dispatch({
             type: ERROR_DE_CARGA_CUADRANTES

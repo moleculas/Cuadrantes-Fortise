@@ -101,6 +101,7 @@ import {
 import {
     gestionaColumnaCuadranteAccion
 } from '../logica/logicaColumnasCuadrantes';
+import { mensajeHorasRetiradas } from '../logica/logicaReseteoCuadrante';
 import {
     retornaMinutosAccionEnCuadrantes,
     IsNumeric
@@ -156,11 +157,20 @@ const eliminarTildes = (texto) => {
     return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 };
 
-export const handleCloseDialogBotonesCuadrantes1Accion = (respuesta) => (dispatch, getState) => {
+export const handleCloseDialogBotonesCuadrantes1Accion = (respuesta) => async (dispatch, getState) => {
     //resetear cuadrante
     const { calendarioAGestionar, objetoCuadrante } = getState().variablesCuadrantes;
     if (respuesta === "acuerdo") {
-        dispatch(resetearCuadranteAccion('cuadrantes', objetoCuadrante.id));
+        //modificador: avisar de las horas retiradas del control horario al resetear
+        const resultadoReseteo = await dispatch(resetearCuadranteAccion('cuadrantes', objetoCuadrante.id));
+        const avisoHorasRetiradas = mensajeHorasRetiradas(resultadoReseteo);
+        if (avisoHorasRetiradas) {
+            dispatch(setAlertaAccion({
+                abierto: true,
+                mensaje: avisoHorasRetiradas,
+                tipo: 'success'
+            }));
+        };
         const centroId = objetoCuadrante.datosCuadrante.centro;
         dispatch(vaciarDatosCentroAccion());
         dispatch(reseteaContenidoCentroAccion(false));
