@@ -11,6 +11,7 @@ import { handleCloseMenuAccion } from './cuadrantesHandlersDucks';
 import { IsNumeric } from '../logica/logicaApp';
 import { procesarDatosCuadranteAccion } from '../logica/logicaGestionCuadrantes';
 import { existePrefixSF } from '../logica/logicaServiciosFijos';
+import { textoImporteTotal } from '../logica/logicaImporteCuadrante';
 
 //constantes
 const dataInicial = {
@@ -83,12 +84,14 @@ export const retornaInfoFabButtonAccion = () => (dispatch, getState) => {
                     };
                 };
                 return cuadranteMultiple + 'Horas: ' + parseFloat(sumatorioTotal).toFixed(2) + ' - Total' + stringBloqueado + ': ' +
-                    parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado +
-                        sumatorioServiciosFijos).toFixed(2) + ' €' + stringPeriodico;
+                    //modificador: no imprimir un importe que todavía no está calculado (salía "NaN €")
+                    textoImporteTotal(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].mensualPactado,
+                        sumatorioServiciosFijos) + stringPeriodico;
             } else {
                 return cuadranteMultiple + 'Horas: ' + parseFloat(sumatorioTotal).toFixed(2) + ' - Total' + stringBloqueado + ': ' +
-                    parseFloat(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHoraTotal +
-                        sumatorioServiciosFijos).toFixed(2) + ' €' + stringPeriodico;
+                    //modificador: no imprimir un importe que todavía no está calculado (salía "NaN €")
+                    textoImporteTotal(objetoCuadrante.datosInforme.datosInforme[cuadranteEnUsoCuadrantes - 1].precioHoraTotal,
+                        sumatorioServiciosFijos) + stringPeriodico;
             };
         } else {
             return cuadranteMultiple + 'Horas: 0.00 - Total' + stringBloqueado + ': 0.00 €' + stringPeriodico;

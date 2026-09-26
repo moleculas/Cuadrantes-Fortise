@@ -76,7 +76,7 @@ Axios contra `RUTA_API` definido en [src/constantes.js](src/constantes.js#L1-L8)
   del backend como string comprimido con `zipson` y se hace `parse(...)` al
   recibirlos / `stringify(..., { fullPrecisionFloats: true })` al guardarlos.
 - **Tests solo de lógica pura**: los helpers de `src/logica/` que se han ido
-  extrayendo llevan su `*.test.js` al lado (93 tests en 6 suites a 2026-09-26).
+  extrayendo llevan su `*.test.js` al lado (100 tests en 7 suites a 2026-09-26).
   No hay tests de componentes ni de reducers. Al tocar reglas de negocio, la
   costumbre del proyecto es **extraer la regla a `src/logica/` con tests** en vez
   de dejarla dentro del componente.
@@ -189,6 +189,7 @@ quadrants-fortise/
     │   ├── logicaColumnasCuadrantes.js (+test)
     │   ├── logicaFechasCuadrante.js ← (+test) mes/año de un cuadrante; guarda de mes cruzado
     │   ├── logicaGestionCuadrantes.js
+    │   ├── logicaImporteCuadrante.js ← (+test) texto del importe en el indicador del cuadrante
     │   ├── logicaInformeCuadrantes.js
     │   ├── logicaLayoutCuadrantes.js
     │   ├── logicaReseteoCuadrante.js ← (+test) aviso de horas retiradas al resetear
