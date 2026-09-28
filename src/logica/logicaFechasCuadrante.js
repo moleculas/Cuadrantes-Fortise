@@ -71,3 +71,19 @@ export const mensajeCuadrantesFueraDeMes = (fueraDeMes, calendarioAGestionar) =>
         `Ejemplo: ${centro} (${ejemplo?.nombre || 'sin nombre'}). ` +
         `Vuelve a seleccionar el mes en "Mes a gestionar" y repite la operación.`;
 };
+
+// Mes con el que componer el nombre de un cuadrante nuevo ("AÑO-MES-IDCENTRO").
+//
+// Normalmente es calendarioAGestionar. Pero el reseteo lo deja vacío durante un
+// instante —guarda su valor en preValueCalendarioAGestionarReseteo y lo restaura
+// después desde un efecto de CuadranteCompleto—, y si el cuadrante se compone en
+// esa ventana el nombre nace sin año-mes ("-302"): una fila huérfana que no
+// aparece en ningún mes. Incidencia 2026-09-28.
+//
+// El mes no se ha perdido: está en el valor guardado para restaurar. Se usa ese.
+// Si tampoco hay, se devuelve '' y quien guarda debe rechazar el cuadrante.
+export const mesParaNombreCuadrante = (calendarioAGestionar, preValueReseteo) => {
+    if (anyoMesDeCalendario(calendarioAGestionar)) return calendarioAGestionar;
+    if (anyoMesDeCalendario(preValueReseteo)) return preValueReseteo;
+    return '';
+};

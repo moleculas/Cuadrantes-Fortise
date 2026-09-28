@@ -76,7 +76,7 @@ Axios contra `RUTA_API` definido en [src/constantes.js](src/constantes.js#L1-L8)
   del backend como string comprimido con `zipson` y se hace `parse(...)` al
   recibirlos / `stringify(..., { fullPrecisionFloats: true })` al guardarlos.
 - **Tests solo de lógica pura**: los helpers de `src/logica/` que se han ido
-  extrayendo llevan su `*.test.js` al lado (100 tests en 7 suites a 2026-09-26).
+  extrayendo llevan su `*.test.js` al lado (115 tests en 8 suites a 2026-09-28).
   No hay tests de componentes ni de reducers. Al tocar reglas de negocio, la
   costumbre del proyecto es **extraer la regla a `src/logica/` con tests** en vez
   de dejarla dentro del componente.
@@ -121,7 +121,9 @@ quadrants-fortise/
 │   ├── LOGICA_IDENTIFICADOR_POR_CUADRANTE.md ← sub_nombre por cuadrante (2026-08-06)
 │   ├── LOGICA_CENTROS_DE_BAJA.md ← centros de baja en cuadrantes (2026-09-09)
 │   ├── LOGICA_FECHA_DOCUMENTOS.md ← la fecha sale del cuadrante, no del selector (2026-09-14)
-│   └── LOGICA_RESETEO_CUADRANTE.md ← resetear retira las horas del control horario (2026-09-26)
+│   ├── LOGICA_RESETEO_CUADRANTE.md ← resetear retira las horas del control horario (2026-09-26)
+│   ├── LOGICA_HORAS_FESTIVAS.md ← las festivas del mes se cuentan una vez (2026-09-28)
+│   └── LOGICA_NOMBRE_CUADRANTE.md ← el nombre siempre lleva año y mes (2026-09-28)
 ├── retirat/                   ← código retirado (ahora desconectado del build)
 │   ├── Nominas.jsx, Faltantes*.jsx, CasillaServiciosFijos.jsx
 │   └── faltantesDucks.js, retirat.js
@@ -189,6 +191,7 @@ quadrants-fortise/
     │   ├── logicaColumnasCuadrantes.js (+test)
     │   ├── logicaFechasCuadrante.js ← (+test) mes/año de un cuadrante; guarda de mes cruzado
     │   ├── logicaGestionCuadrantes.js
+    │   ├── logicaHorasFestivas.js ← (+test) festivas del mes contadas una vez
     │   ├── logicaImporteCuadrante.js ← (+test) texto del importe en el indicador del cuadrante
     │   ├── logicaInformeCuadrantes.js
     │   ├── logicaLayoutCuadrantes.js
@@ -438,6 +441,7 @@ un identificador para evitar duplicados en "cuadrantes pendientes".
 | Tocar UI de remesas | [src/cuadrantes/PendientesRemesas.jsx](src/cuadrantes/PendientesRemesas.jsx) |
 | Añadir un nuevo tipo de servicio fijo | Seguir el checklist de [src/notes.txt](src/notes.txt#L35-L60) |
 | Tocar el cálculo del cuadrante (horas) | [src/logica/logicaGestionCuadrantes.js](src/logica/logicaGestionCuadrantes.js) y `logicaColumnasCuadrantes.js` |
+| Prorrateo del mensual pactado / horas festivas | [src/logica/logicaHorasFestivas.js](src/logica/logicaHorasFestivas.js) + [documentacion/LOGICA_HORAS_FESTIVAS.md](documentacion/LOGICA_HORAS_FESTIVAS.md) |
 | Centros de baja (qué se lista, qué se puede crear) | [src/logica/logicaCentrosDeBaja.js](src/logica/logicaCentrosDeBaja.js) + [documentacion/LOGICA_CENTROS_DE_BAJA.md](documentacion/LOGICA_CENTROS_DE_BAJA.md) |
 | Fecha de factura, vencimiento, mes de un documento | [src/logica/logicaFechasCuadrante.js](src/logica/logicaFechasCuadrante.js) (mes del cuadrante, guarda) + [src/logica/logicaVencimientos.js](src/logica/logicaVencimientos.js) (vencimiento) + [documentacion/LOGICA_FECHA_DOCUMENTOS.md](documentacion/LOGICA_FECHA_DOCUMENTOS.md) |
 | Tocar el envío de facturas por mail (frontend) | [src/redux/cuadrantesMailingDucks.js](src/redux/cuadrantesMailingDucks.js) — `gestionarMailingLoteAccionLocal` simula el lote entero sin enviar |

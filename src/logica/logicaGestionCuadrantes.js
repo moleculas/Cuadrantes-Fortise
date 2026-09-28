@@ -68,6 +68,7 @@ import {
 } from './logicaColumnasCuadrantes';
 import { limpiarCuadranteInformeAccion } from './logicaInformeCuadrantes';
 import { stringify } from 'zipson';
+import { anyoMesDeCuadrante, mesParaNombreCuadrante } from './logicaFechasCuadrante';
 
 const {
     TIPO_SERVICIO_FIJO: tiposServicioFijo,
@@ -89,6 +90,11 @@ export const cambiarEstadoCuadranteEnUsoRevisadoAccion = (estado) => (dispatch, 
 export const centroAGestionarInicioAccion = () => (dispatch, getState) => {
     const { objetoCentro } = getState().variablesCentros;
     const { cuadranteRegistrado, objetoCuadrante, calendarioAGestionar } = getState().variablesCuadrantes;
+    //modificador: durante el reseteo calendarioAGestionar queda vacío un instante y el
+    //mes vive en preValueCalendarioAGestionarReseteo; sin este respaldo el nombre del
+    //cuadrante nacía sin año-mes ("-302"). Incidencia 2026-09-28. Ver logicaFechasCuadrante.js.
+    const { preValueCalendarioAGestionarReseteo } = getState().variablesCuadrantesSetters;
+    const elMesDelNombre = mesParaNombreCuadrante(calendarioAGestionar, preValueCalendarioAGestionarReseteo);
     dispatch(setOpenLoadingAccion(true));
     if (objetoCentro.nombre !== '') {
         if (cuadranteRegistrado === 'no') {
@@ -173,7 +179,7 @@ export const centroAGestionarInicioAccion = () => (dispatch, getState) => {
             };
             dispatch(actualizarObjetoCuadranteAccion({
                 ...objetoCuadrante,
-                nombre: calendarioAGestionar + '-' + objetoCentro.id,
+                nombre: elMesDelNombre + '-' + objetoCentro.id,
                 datosCuadrante: {
                     objeto: 'cuadrante',
                     centro: objetoCentro.id,
@@ -1905,6 +1911,21 @@ const finalizaRegistroCuadrante = (
     const { objetoCuadrante, cuadranteRegistrado, procesoHorasTrabajadores } = getState().variablesCuadrantes;
     const { cuadranteEnUsoCuadrantes } = getState().variablesCuadrantesSetters;
     const { trabajadoresInicio } = getState().variablesHorasTrabajadores;
+    //modificador: no guardar un cuadrante cuyo nombre no sea "AÑO-MES-IDCENTRO".
+    //El nombre se compone con calendarioAGestionar (arriba, en centroAGestionarInicioAccion),
+    //y el reseteo lo deja vacío hasta que un efecto de CuadranteCompleto lo restaura.
+    //Registrar en esa ventana producía nombres como "-302": filas huérfanas que no
+    //aparecen en ningún mes y dejan al centro sin cuadrante visible. Incidencia 2026-09-28.
+    //Ver documentacion/LOGICA_NOMBRE_CUADRANTE.md.
+    if (!anyoMesDeCuadrante(objetoCuadrante.nombre)) {
+        console.error(`Registro abortado: el cuadrante no tiene un nombre válido (${objetoCuadrante.nombre})`);
+        dispatch(setAlertaAccion({
+            abierto: true,
+            mensaje: "No se ha podido guardar el cuadrante porque ha perdido el mes de referencia. Vuelve a seleccionar el mes en 'Mes a gestionar', abre el centro otra vez y repite la operación. No se ha guardado nada.",
+            tipo: 'error'
+        }));
+        return;
+    };
     //modificador: control horas trabajadores       
     const horasTrabajadoresRegistro = procesarHorasTrabajadores(objetoCuadrante, procesoHorasTrabajadores, laFirmaActualizacion, trabajadoresInicio);
     let elArrayDatosCuadranteLimpiado = [];

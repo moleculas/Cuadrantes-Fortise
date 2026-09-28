@@ -6,6 +6,7 @@ import {
     setEstamosActualizandoCuadranteSinCargaAccion
 } from '../redux/cuadrantesSettersDucks';
 import { actualizarObjetoCuadranteAccion } from '../redux/cuadrantesDucks';
+import { horasFestivasDelMes } from './logicaHorasFestivas';
 
 const {
     DIAS_SEMANA: diasSemana,
@@ -257,12 +258,18 @@ export const gestionarInformeAccion = (cambioConf) => (dispatch, getState) => {
             let proporcion, objPreciosHora;
             switch (excepcion) {
                 case 1:
+                    //modificador: las horas festivas del mes se cuentan UNA vez, no por columna.
+                    //Antes se sumaban las del titular y las del suplente, y como las dos columnas
+                    //registran el mismo festivo el divisor salía inflado y se facturaba de menos
+                    //(incidencia MARCET FERNÁNDEZ, 2026-09-28). Ver logicaHorasFestivas.js.
                     proporcion = condicion1
                         ? cantidadMensualPactadoInicial /
                         (totalHorasInicialTra +
                             (sumatorioTotales[`sumatorioHorasBajasComputablesTra`] || 0) +
-                            (sumatorioTotales[`sumatorioTotalHorasFestivasComputablesTra`] || 0) +
-                            (sumatorioTotales[`sumatorioTotalHorasFestivasComputablesSup`] || 0)
+                            horasFestivasDelMes(
+                                sumatorioTotales[`sumatorioTotalHorasFestivasComputablesTra`],
+                                sumatorioTotales[`sumatorioTotalHorasFestivasComputablesSup`]
+                            )
                         )
                         : condicion2 ? informe.proporcion : null;
                     objPreciosHora = condicion1

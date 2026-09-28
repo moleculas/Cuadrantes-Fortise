@@ -153,3 +153,35 @@ describe('mensajeCuadrantesFueraDeMes', () => {
         expect(msg).toContain('2 cuadrantes no pertenecen');
     });
 });
+
+describe('mesParaNombreCuadrante — el mes no se pierde durante el reseteo', () => {
+    const { mesParaNombreCuadrante } = require('./logicaFechasCuadrante');
+
+    test('caso normal: se usa el mes del selector', () => {
+        expect(mesParaNombreCuadrante('2026-9', null)).toBe('2026-9');
+    });
+
+    test('REGRESIÓN: durante el reseteo el selector está vacío → se usa el guardado', () => {
+        expect(mesParaNombreCuadrante('', '2026-9')).toBe('2026-9');
+        expect(mesParaNombreCuadrante(null, '2026-9')).toBe('2026-9');
+        expect(mesParaNombreCuadrante(undefined, '2026-9')).toBe('2026-9');
+    });
+
+    test('el selector manda sobre el guardado cuando los dos son válidos', () => {
+        expect(mesParaNombreCuadrante('2026-10', '2026-9')).toBe('2026-10');
+    });
+
+    test('ninguno válido → cadena vacía (quien guarda debe rechazarlo)', () => {
+        expect(mesParaNombreCuadrante('', null)).toBe('');
+        expect(mesParaNombreCuadrante(null, null)).toBe('');
+        expect(mesParaNombreCuadrante('', '')).toBe('');
+        expect(mesParaNombreCuadrante('basura', 'basura')).toBe('');
+    });
+
+    test('el nombre resultante es válido en el caso de la incidencia', () => {
+        const { anyoMesDeCuadrante } = require('./logicaFechasCuadrante');
+        const nombre = mesParaNombreCuadrante('', '2026-9') + '-' + 302;
+        expect(nombre).toBe('2026-9-302');
+        expect(anyoMesDeCuadrante(nombre)).toEqual({ anyo: 2026, mes: 9 });
+    });
+});
