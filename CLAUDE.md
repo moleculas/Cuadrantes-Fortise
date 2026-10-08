@@ -76,7 +76,7 @@ Axios contra `RUTA_API` definido en [src/constantes.js](src/constantes.js#L1-L8)
   del backend como string comprimido con `zipson` y se hace `parse(...)` al
   recibirlos / `stringify(..., { fullPrecisionFloats: true })` al guardarlos.
 - **Tests solo de lógica pura**: los helpers de `src/logica/` que se han ido
-  extrayendo llevan su `*.test.js` al lado (115 tests en 8 suites a 2026-09-28).
+  extrayendo llevan su `*.test.js` al lado (124 tests en 9 suites a 2026-10-09).
   No hay tests de componentes ni de reducers. Al tocar reglas de negocio, la
   costumbre del proyecto es **extraer la regla a `src/logica/` con tests** en vez
   de dejarla dentro del componente.
@@ -123,7 +123,8 @@ quadrants-fortise/
 │   ├── LOGICA_FECHA_DOCUMENTOS.md ← la fecha sale del cuadrante, no del selector (2026-09-14)
 │   ├── LOGICA_RESETEO_CUADRANTE.md ← resetear retira las horas del control horario (2026-09-26)
 │   ├── LOGICA_HORAS_FESTIVAS.md ← las festivas del mes se cuentan una vez (2026-09-28)
-│   └── LOGICA_NOMBRE_CUADRANTE.md ← el nombre siempre lleva año y mes (2026-09-28)
+│   ├── LOGICA_NOMBRE_CUADRANTE.md ← el nombre siempre lleva año y mes (2026-09-28)
+│   └── LOGICA_AVISO_RESETEO.md ← aviso al resetear con documento emitido (2026-10-09)
 ├── retirat/                   ← código retirado (ahora desconectado del build)
 │   ├── Nominas.jsx, Faltantes*.jsx, CasillaServiciosFijos.jsx
 │   └── faltantesDucks.js, retirat.js
@@ -184,6 +185,7 @@ quadrants-fortise/
     │   └── InformePDF.jsx
     │
     ├── logica/                 ← Lógica de negocio pura (no UI, no Redux)
+    │   ├── logicaAvisoReseteo.js ← (+test) aviso al resetear con factura/recibo emitido
     │   ├── logicaApp.js           ← helpers UI generales (TabPanel, Alert,
     │   │                              get*Height/Width, controlActualizacionesPorFecha)
     │   ├── logicaCentros.js

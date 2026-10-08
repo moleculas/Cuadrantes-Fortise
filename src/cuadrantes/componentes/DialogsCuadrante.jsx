@@ -13,6 +13,7 @@ import {
     handleCloseDialogBotonesCuadrantes5Accion
 } from '../../redux/cuadrantesHandlersDucks';
 import { generaInformacionCuadrantesAccion } from '../../redux/cuadrantesFacturacionDucks';
+import { descripcionReseteoCuadrante } from '../../logica/logicaAvisoReseteo';
 
 const DialogsCuadrante = (props) => {
     const dispatch = useDispatch();
@@ -21,6 +22,8 @@ const DialogsCuadrante = (props) => {
         arrayInformeLineas,
     } = useSelector(store => store.variablesCuadrantesSetters);
     const { objetoCentro } = useSelector(store => store.variablesCentros);
+    //modificador: avisar en el reseteo si el cuadrante ya tiene factura o recibo emitido
+    const objetoCuadrante = useSelector(store => store.variablesCuadrantes.objetoCuadrante);
     const openDialog4 = useSelector(store => store.variablesApp.openDialog[3]);
     const openDialog5 = useSelector(store => store.variablesApp.openDialog[4]);
     const openDialog7 = useSelector(store => store.variablesApp.openDialog[6]);
@@ -45,7 +48,7 @@ const DialogsCuadrante = (props) => {
                 prIsOpen={openDialog4}
                 prHandleCloseDialogBotones={(respuesta) => dispatch(handleCloseDialogBotonesCuadrantes1Accion(respuesta))}
                 prTituloDialog={"¿Estás seguro que quieres resetear el Cuadrante?"}
-                prDescripcionDialog={"Para volver el cuadrante a sus valores iniciales pulsa 'De acuerdo', de lo contrario pulsa 'No'."}
+                prDescripcionDialog={descripcionReseteoCuadrante(objetoCuadrante?.total?.procesado)}
             />
             <DialogComponente
                 prIsOpen={openDialog5}
