@@ -76,7 +76,7 @@ Axios contra `RUTA_API` definido en [src/constantes.js](src/constantes.js#L1-L8)
   del backend como string comprimido con `zipson` y se hace `parse(...)` al
   recibirlos / `stringify(..., { fullPrecisionFloats: true })` al guardarlos.
 - **Tests solo de lógica pura**: los helpers de `src/logica/` que se han ido
-  extrayendo llevan su `*.test.js` al lado (124 tests en 9 suites a 2026-10-09).
+  extrayendo llevan su `*.test.js` al lado (138 tests en 10 suites a 2026-10-29).
   No hay tests de componentes ni de reducers. Al tocar reglas de negocio, la
   costumbre del proyecto es **extraer la regla a `src/logica/` con tests** en vez
   de dejarla dentro del componente.
@@ -124,7 +124,8 @@ quadrants-fortise/
 │   ├── LOGICA_RESETEO_CUADRANTE.md ← resetear retira las horas del control horario (2026-09-26)
 │   ├── LOGICA_HORAS_FESTIVAS.md ← las festivas del mes se cuentan una vez (2026-09-28)
 │   ├── LOGICA_NOMBRE_CUADRANTE.md ← el nombre siempre lleva año y mes (2026-09-28)
-│   └── LOGICA_AVISO_RESETEO.md ← aviso al resetear con documento emitido (2026-10-09)
+│   ├── LOGICA_AVISO_RESETEO.md ← aviso al resetear con documento emitido (2026-10-09)
+│   └── LOGICA_FESTIVOS_EN_RESETEO.md ← el festivo no es hora de baja (2026-10-29)
 ├── retirat/                   ← código retirado (ahora desconectado del build)
 │   ├── Nominas.jsx, Faltantes*.jsx, CasillaServiciosFijos.jsx
 │   └── faltantesDucks.js, retirat.js
@@ -191,6 +192,7 @@ quadrants-fortise/
     │   ├── logicaCentros.js
     │   ├── logicaCentrosDeBaja.js  ← (+test) centros de baja en cuadrantes
     │   ├── logicaColumnasCuadrantes.js (+test)
+    │   ├── logicaEstadoFestivos.js ← (+test) saber si un día es festivo con el estado aún vacío
     │   ├── logicaFechasCuadrante.js ← (+test) mes/año de un cuadrante; guarda de mes cruzado
     │   ├── logicaGestionCuadrantes.js
     │   ├── logicaHorasFestivas.js ← (+test) festivas del mes contadas una vez
@@ -425,6 +427,32 @@ con `MyFallbackComponent` que, en producción, hace `window.location.reload()`
 silenciosamente. En dev, loguea el error en consola. **No hay logging
 estructurado ni telemetría**.
 
+### 5.9.bis La ventana del reseteo (leer antes de tocar nada del reseteo)
+
+Resetear un cuadrante **vacía trozos del estado de Redux como disparador de
+recarga** y los repuebla un instante después. Lo que se calcule dentro de esa
+ventana nace con el estado a medias. Afecta al menos a:
+
+- `calendarioAGestionar` → `''` ([cuadrantesHandlersDucks.js:173](src/redux/cuadrantesHandlersDucks.js#L173)).
+  Produjo cuadrantes guardados como `-302` (`documentacion/LOGICA_NOMBRE_CUADRANTE.md`).
+- `stateFestivo` → `{}` ([cuadrantesSettersDucks.js:1079](src/redux/cuadrantesSettersDucks.js#L1079)
+  y [:1130](src/redux/cuadrantesSettersDucks.js#L1130)).
+  Produjo el festivo contado como hora de baja (`documentacion/LOGICA_FESTIVOS_EN_RESETEO.md`).
+
+Dos consecuencias prácticas:
+
+1. **Lo que se ve en pantalla no es lo que había en el estado cuando se calculó.**
+   El selector mostraba el mes correcto con el estado vacío; el día salía pintado
+   como festivo aunque el contador lo hubiera tratado como laborable. Para
+   diagnosticar en esta zona hay que **medir el blob de la BD o instrumentar**, no
+   fiarse de la interfaz.
+2. **El resultado puede depender del camino por el que se cargue el cuadrante.**
+   Al reproducir una incidencia de cálculo, probar siempre los tres: cargar desde
+   Gestión Cuadrantes, resetear sin salir, y resetear + volver a inicio + cargar.
+
+Los dos arreglos hechos hasta ahora tapan la consecuencia (respaldo con guarda,
+sin tocar la orquestación). **La causa sigue viva** y seguirá dando casos.
+
 ### 5.10 Notas de desarrollo internas
 
 [src/notes.txt](src/notes.txt) contiene notas del desarrollador (en catalán)
@@ -444,6 +472,7 @@ un identificador para evitar duplicados en "cuadrantes pendientes".
 | Añadir un nuevo tipo de servicio fijo | Seguir el checklist de [src/notes.txt](src/notes.txt#L35-L60) |
 | Tocar el cálculo del cuadrante (horas) | [src/logica/logicaGestionCuadrantes.js](src/logica/logicaGestionCuadrantes.js) y `logicaColumnasCuadrantes.js` |
 | Prorrateo del mensual pactado / horas festivas | [src/logica/logicaHorasFestivas.js](src/logica/logicaHorasFestivas.js) + [documentacion/LOGICA_HORAS_FESTIVAS.md](documentacion/LOGICA_HORAS_FESTIVAS.md) |
+| Saber si un día es festivo al construir una columna | [src/logica/logicaEstadoFestivos.js](src/logica/logicaEstadoFestivos.js) + [documentacion/LOGICA_FESTIVOS_EN_RESETEO.md](documentacion/LOGICA_FESTIVOS_EN_RESETEO.md) |
 | Centros de baja (qué se lista, qué se puede crear) | [src/logica/logicaCentrosDeBaja.js](src/logica/logicaCentrosDeBaja.js) + [documentacion/LOGICA_CENTROS_DE_BAJA.md](documentacion/LOGICA_CENTROS_DE_BAJA.md) |
 | Fecha de factura, vencimiento, mes de un documento | [src/logica/logicaFechasCuadrante.js](src/logica/logicaFechasCuadrante.js) (mes del cuadrante, guarda) + [src/logica/logicaVencimientos.js](src/logica/logicaVencimientos.js) (vencimiento) + [documentacion/LOGICA_FECHA_DOCUMENTOS.md](documentacion/LOGICA_FECHA_DOCUMENTOS.md) |
 | Tocar el envío de facturas por mail (frontend) | [src/redux/cuadrantesMailingDucks.js](src/redux/cuadrantesMailingDucks.js) — `gestionarMailingLoteAccionLocal` simula el lote entero sin enviar |

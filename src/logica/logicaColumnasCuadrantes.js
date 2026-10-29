@@ -14,6 +14,9 @@ import {
 } from '../redux/cuadrantesDucks';
 import { retornaMinutosAccionEnCuadrantes } from './logicaApp';
 import { setTrabajadoresInicioAccion } from '../redux/horasTrabajadoresDucks';
+//modificador: el reseteo deja stateFestivo vacío un instante; ver logicaEstadoFestivos.js
+import { esDiaFestivo } from './logicaEstadoFestivos';
+import { esFestivoFuncionAccion } from '../redux/cuadrantesHandlersDucks';
 
 const diasSemana = Constantes.DIAS_SEMANA;
 
@@ -570,6 +573,16 @@ const gestionaColumnaCuadranteInteriorAccion = (
     //modificador: festivos activos
     const festivosActivos = informe.excepcion === 2;
     columnaAnadir['reducido'] = hayTrabajador && arrayBaja.length === losDiasDelMes.length && esInicio;
+    //modificador: el reseteo vacía stateFestivo y lo repuebla un instante después. Las
+    //columnas calculadas en esa ventana no veían ningún festivo y el día festivo se
+    //contaba como hora de baja del titular, inflando el divisor del prorrateo
+    //(incidencia GRG NOTARIOS ASOCIADOS, 2026-10-29). Si el estado todavía no ha
+    //llegado se calcula el festivo con la misma fuente que lo repoblará.
+    const festivoDelDia = (elNumeroDeDia) => esDiaFestivo(
+        stateFestivo,
+        elNumeroDeDia,
+        (diaARevisar) => dispatch(esFestivoFuncionAccion(diaARevisar))
+    );
     const [anyoCalendario, mesCalendario] = calendarioAGestionar.split("-").map(Number);
     losDiasDelMes.forEach((dia, index) => {
         objetoBuffer = {};
@@ -770,7 +783,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                     columnaAnadir['tipoServicio'] = buscarTipoServicioEncuadrante(elHorarioCuadrante.tipoRegistroTrabajador, 'TipoServicio')
                 };
             };
-            if (stateFestivo['estadoFestivoDia' + (index + 1)] || !hayTrabajador) {
+            if (festivoDelDia(index + 1) || !hayTrabajador) {
                 if (dia[1][0] === diaObj.label) {
                     //modificador: festivos activos
                     if (festivosActivos) {
@@ -875,7 +888,7 @@ const gestionaColumnaCuadranteInteriorAccion = (
                     } else {
                         columnaAnadir[dia[1][0] + dia[0][0]] = retornaObjCasilla('festivo');
                     }
-                    if (stateFestivo['estadoFestivoDia' + (index + 1)]) {
+                    if (festivoDelDia(index + 1)) {
                         if (arrayBuffer.length > 0 && !esInicio) {
                             const indiceObjeto = arrayBuffer[cuadranteEnUsoCuadrantes - 1].findIndex(dia => dia[elDia] !== undefined);
                             if (indiceObjeto >= 0) {
